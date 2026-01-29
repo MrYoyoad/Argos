@@ -793,18 +793,17 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             self.send_error_json("Transcription cannot be empty", 400)
             return
 
-        # Save transcription
-        text_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
-        text_dir.mkdir(parents=True, exist_ok=True)
-
-        text_file = text_dir / f"{segment_id}.txt"
+        # Save transcription to unified .transcriptions directory as .wrd file
+        from .services.transcription_manager import TranscriptionManager
 
         try:
-            words = transcription.split()
-            with open(text_file, 'w') as f:
-                for word in words:
-                    f.write(word + '\n')
+            transcription_mgr = TranscriptionManager()
+            filename = f"{segment_id}.mp4"
 
+            # Save as manual transcription
+            transcription_mgr.save_transcription(filename, transcription, transcription_type='manual')
+
+            words = transcription.split()
             self.send_json({
                 'success': True,
                 'message': 'Transcription saved',

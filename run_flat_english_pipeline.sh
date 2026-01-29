@@ -386,6 +386,9 @@ run_client_outputs "$VSP" "$ARCHIVE_ROOT" "$FLAT_VID_DIR" "$PREP_ROOT" \
 
 deactivate
 
+# Set POST_ROOT for final summary
+POST_ROOT="$ARCHIVE_ROOT/client_outputs"
+
 echo
 echo ">>> Pipeline complete!"
 echo "    - Mouth crops: $PREP_ROOT"

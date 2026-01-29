@@ -8,7 +8,7 @@
 # ---------- Logging Functions ----------
 
 log_info() {
-    echo "[$(date +'%H:%M:%S')] INFO: $*"
+    echo "[$(date +'%H:%M:%S')] INFO: $*" >&2
 }
 
 log_error() {

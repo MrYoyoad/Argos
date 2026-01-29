@@ -78,14 +78,16 @@ lib/
 
 This approach minimizes overhead by activating the VSP venv once for multiple stages.
 
-### Intelligent Transcription Matching (Step 0.6 Enhancement)
+### Transcription Reuse (Step 0.6 Enhancement)
 
-The ASR module includes a two-pass transcription matching algorithm:
+The ASR module includes simple direct transcription matching:
 
-1. **First pass**: Exact segment name matches (e.g., `video_00_000000_999999.wrd`)
-2. **Second pass**: Intelligent base name matching (e.g., `video.wrd` → all `video_*.mp4` segments)
+**How it works**:
+- Video segments matched 1:1 with transcription files by exact name
+- Example: `video_00_000000_000300.mp4` → `video_00_000000_000300.wrd`
+- Whisper automatically skips segments with existing `.wrd` files
 
-**Benefit**: Users can transcribe the original video once, and the transcription automatically applies to all segments. Whisper skips all matched segments, saving hours of processing time.
+**Benefit**: Users can manually transcribe specific segments, and those transcriptions persist across all pipeline runs in `.transcriptions/` directory. Whisper skips all matched segments, saving hours of processing time.
 
 ### Testing
 
@@ -1173,3 +1175,265 @@ The following changes have been made to the EC2 version and need to be replicate
 
   - See `/tmp/transcription_persistence_fix.md` for complete code
   - **Critical**: Without this fix, manual segment transcriptions are ignored and Whisper re-transcribes everything every run
+
+10. **POST_ROOT Undefined Variable Bugfix** (Added Jan 29, 2026): Fixed pipeline exit error caused by undefined variable
+   - **Problem**: Pipeline completed successfully but exited with code 1 and showed "Error" in UI
+   - **Root Cause**: Line 394 (EC2) / Line 429 (container) referenced undefined `POST_ROOT` variable in final summary
+   - **Impact**: Despite successful processing, pipeline appeared to fail with "Processing failed at stage: Generate Outputs"
+
+   **The Fix**:
+   - Added `POST_ROOT="$ARCHIVE_ROOT/client_outputs"` before final summary echo statements
+   - Location: After Step 8 client outputs complete, before pipeline completion message
+
+   **Code Change** (both EC2 and container versions):
+   ```bash
+   # BEFORE (line 394/429 - undefined variable):
+   deactivate
+
+   echo
+   echo ">>> Pipeline complete!"
+   echo "    - Outputs: $POST_ROOT"  # ❌ POST_ROOT never defined
+
+   # AFTER (added line after deactivate):
+   deactivate
+
+   # Set POST_ROOT for final summary
+   POST_ROOT="$ARCHIVE_ROOT/client_outputs"
+
+   echo
+   echo ">>> Pipeline complete!"
+   echo "    - Outputs: $POST_ROOT"  # ✅ Now properly defined
+   ```
+
+**POST_ROOT Bugfix Files Modified for Linux Container (Jan 29, 2026)**:
+- `/workspace/run_flat_english_pipeline.sh` - Define POST_ROOT before final summary (after line ~422, before line ~425)
+  - Add: `POST_ROOT="$ARCHIVE_ROOT/client_outputs"`
+  - Location: After `deactivate` line following client outputs step
+  - Critical: Without this fix, pipeline exits with code 1 even when successful, showing error in UI
+
+11. **Decode Output Duplication Bugfix** (Added Jan 29, 2026): Fixed duplicate INST/REF/HYP logging in decode step
+   - **Problem**: Each segment's decode output appeared twice in logs, making logs verbose and confusing
+   - **Root Cause**: Python logger propagation - child logger messages propagated to root logger, causing duplicate output
+   - **Impact**: Decode logs showed each segment twice, doubling log size and making it hard to read
+
+   **The Issue**:
+   - Line 47: Root logger configured with `logging.basicConfig()`
+   - Line 100-105: Another `basicConfig()` call for formatting
+   - Line 106: Child logger `"hybrid.speech_recognize"` created
+   - Line 219: `logger.info()` logs INST/REF/HYP
+   - **Problem**: Child logger inherits from root, messages propagate to both → duplicate output!
+
+   **The Fix**:
+   - Set `logger.propagate = False` to prevent messages reaching root logger
+   - Add explicit handlers to child logger for both file and stdout output
+   - Messages now appear exactly once with proper formatting
+
+   **Code Change** (lines ~106-108):
+   ```python
+   # BEFORE:
+   logger = logging.getLogger("hybrid.speech_recognize")
+   if output_file is not sys.stdout:  # also print to stdout
+       logger.addHandler(logging.StreamHandler(sys.stdout))
+
+   # AFTER:
+   logger = logging.getLogger("hybrid.speech_recognize")
+   logger.propagate = False  # Prevent duplicate logging to root logger
+   logger.setLevel(logging.INFO)
+
+   # Add file/stdout handler
+   file_handler = logging.StreamHandler(output_file)
+   file_handler.setFormatter(logging.Formatter(
+       "%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+       datefmt="%Y-%m-%d %H:%M:%S"
+   ))
+   logger.addHandler(file_handler)
+
+   # If outputting to file, also print to stdout
+   if output_file is not sys.stdout:
+       stdout_handler = logging.StreamHandler(sys.stdout)
+       stdout_handler.setFormatter(logging.Formatter(
+           "%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+           datefmt="%Y-%m-%d %H:%M:%S"
+       ))
+       logger.addHandler(stdout_handler)
+   ```
+
+**Decode Duplication Bugfix Files Modified for Linux Container (Jan 29, 2026)**:
+- `/workspace/VSP-LLM/src/vsp_llm_decode.py` - Fix logger propagation (lines ~106-123)
+  - Add: `logger.propagate = False`
+  - Add explicit file and stdout handlers with formatters
+  - Critical: Without this fix, decode logs show each segment twice
+
+12. **Segment Transcription Save Location Bugfix** (Added Jan 29, 2026): Fixed segment transcriptions saving to wrong location
+   - **Problem**: Manual transcriptions created in segment review screen were not being used by pipeline
+   - **Root Cause**: Segment transcriptions saved to `flat_text_seg12s/` as `.txt` files, but pipeline looks in `.transcriptions/` for `.wrd` files
+   - **Impact**: Users manually transcribed segments, but Whisper re-transcribed them anyway, wasting hours of work
+
+   **The Issue**:
+   - `/api/save-segment-transcription` endpoint saved to: `~/auto_avsr/preprocessed_flat_seg12/flat/flat_text_seg12s/{segment_id}.txt`
+   - Pipeline Steps 0.6 and 1.5 looked in: `~/vsp_input/.transcriptions/{segment_id}.wrd`
+   - **Result**: Transcriptions never found, Whisper ran on all segments every time!
+
+   **The Fix**:
+   - Modified `handle_save_segment_transcription()` to use `TranscriptionManager`
+   - Segment transcriptions now save to `.transcriptions/` as `.wrd` files (unified location)
+   - Pipeline Steps 0.6 and 1.5 now find and reuse segment transcriptions
+   - Whisper skips all manually transcribed segments
+
+   **Code Change** (lines ~796-814 in server.py):
+   ```python
+   # BEFORE:
+   # Save transcription
+   text_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
+   text_dir.mkdir(parents=True, exist_ok=True)
+   text_file = text_dir / f"{segment_id}.txt"
+
+   try:
+       words = transcription.split()
+       with open(text_file, 'w') as f:
+           for word in words:
+               f.write(word + '\n')
+       # ... send success ...
+
+   # AFTER:
+   # Save transcription to unified .transcriptions directory as .wrd file
+   from .services.transcription_manager import TranscriptionManager
+
+   try:
+       transcription_mgr = TranscriptionManager()
+       filename = f"{segment_id}.mp4"
+
+       # Save as manual transcription
+       transcription_mgr.save_transcription(filename, transcription, transcription_type='manual')
+
+       words = transcription.split()
+       # ... send success ...
+   ```
+
+   **Benefits**:
+   - ✅ All transcriptions in one unified location (`.transcriptions/`)
+   - ✅ All transcriptions in same format (`.wrd` files)
+   - ✅ Segment transcriptions persist across pipeline runs
+   - ✅ Whisper skips manually transcribed segments (huge time savings!)
+   - ✅ Consistent behavior between validation screen and segment review screen
+
+**Segment Transcription Location Fix Files Modified for Linux Container (Jan 29, 2026)**:
+- `/workspace/vsp-ui/app/server.py` - Update `handle_save_segment_transcription()` method (lines ~796-814)
+  - Replace direct file save with `TranscriptionManager.save_transcription()` call
+  - Save to `.transcriptions/` directory as `.wrd` files
+  - Mark as 'manual' type
+  - Critical: Without this fix, segment transcriptions are ignored by pipeline and Whisper re-transcribes everything
+
+13. **Disable Validation Screen Transcription Buttons** (Added Jan 29, 2026): Removed transcription functionality from validation screen
+   - **Rationale**: Transcribing full videos on validation screen doesn't help when videos get segmented during preprocessing
+   - **Impact**: Simplifies workflow - users only transcribe final segments after preprocessing completes
+   - **User Request**: "if it possible to do it from the validation screen i wish to disable it"
+
+   **What Changed**:
+   - Removed "Add Transcription" / "Edit Transcription" buttons from validation screen video list
+   - Removed "Delete" transcription buttons
+   - Removed event listeners for removed buttons
+   - Transcription functionality now ONLY available in segment review screen (after preprocessing)
+
+   **Workflow After Change**:
+   1. **Validation Screen**: Add videos, adjust settings, click "Start Processing" (NO transcription buttons)
+   2. **Processing**: Pipeline segments videos and runs Whisper ASR
+   3. **Segment Review Screen**: Review segments, add/edit transcriptions for individual segments
+   4. **Benefits**:
+      - ✅ Clearer workflow - transcribe final output, not intermediate videos
+      - ✅ Avoids confusion about full-video vs segment transcriptions
+      - ✅ Transcriptions match actual pipeline segments
+
+   **Code Changes** (lines ~571-608 in app.js):
+   ```javascript
+   // BEFORE: Validation screen had transcription buttons
+   <div class="video-actions">
+       <button class="btn-transcription" ...>
+           ${v.has_transcription ? 'Edit' : 'Add'} Transcription
+       </button>
+       ${v.has_transcription ? `<button class="btn-delete-transcription"...>Delete</button>` : ''}
+       <button class="btn-remove" ...>Remove</button>
+   </div>
+
+   // Event listeners for transcription buttons
+   document.querySelectorAll('.btn-transcription').forEach(btn => { ... });
+   document.querySelectorAll('.btn-delete-transcription').forEach(btn => { ... });
+
+   // AFTER: Validation screen has only Remove button
+   <div class="video-actions">
+       <button class="btn-remove" ...>Remove</button>
+   </div>
+
+   // No transcription button event listeners
+   ```
+
+**Validation Screen Transcription Removal Files Modified for Linux Container (Jan 29, 2026)**:
+- `/workspace/vsp-ui/app/static/app.js` - Remove transcription buttons from `displayValidationResults()` function
+  - Lines ~571-584: Remove transcription button HTML (keep only Remove button)
+  - Lines ~596-608: Remove transcription button event listeners
+  - Result: Validation screen shows only video list with Remove buttons
+
+14. **Log Output Stdout Contamination Bug** (Added Jan 29, 2026): Fixed `log_info` contaminating function return values
+   - **Problem**: Client outputs (reports and burned videos) not generated, `POST_ROOT` and `ARCHIVE_ROOT` variables contained log messages
+   - **Root Cause**: `log_info()` function in `lib/common.sh` echoed to stdout instead of stderr
+   - **Impact**: When functions like `archive_previous_run()` used `log_info` and returned values via `echo`, command substitution captured BOTH log messages and return value
+
+   **Why This Broke Everything**:
+   ```bash
+   # In archive_previous_run():
+   log_info "Run ID: 20260129_162742"        # Goes to stdout ❌
+   log_info "Archiving previous outputs..."   # Goes to stdout ❌
+   echo "${archive_root}"                      # Also goes to stdout
+
+   # In pipeline:
+   ARCHIVE_ROOT=$(archive_previous_run ...)   # Captures ALL stdout!
+   # Result: ARCHIVE_ROOT = "[16:27:42] INFO: Run ID: ...\n[16:27:42] INFO: Archiving...\n/path/to/archive"
+
+   # Then later:
+   POST_ROOT="$ARCHIVE_ROOT/client_outputs"
+   # Result: POST_ROOT = "[16:27:42] INFO: ...\n.../client_outputs"
+
+   # Finally:
+   python make_report.py --out_dir "$POST_ROOT"
+   # Python tries to create directory with newlines and timestamps in the name! ❌
+   ```
+
+   **Symptoms**:
+   - Reports and burned videos not created
+   - Log output showing "Wrote: [16:27:42] INFO: Run ID: ..." (contaminated paths)
+   - `ls ARCHIVE_ROOT/client_outputs` returned "No such file or directory"
+   - Pipeline appeared to succeed but no outputs generated
+
+   **The Fix**:
+   - Changed `log_info()` to redirect to stderr like `log_error()` and `log_warn()` already do
+   - This prevents log messages from contaminating function return values captured via `$()`
+
+   **Code Change** (lib/common.sh line ~10):
+   ```bash
+   # BEFORE:
+   log_info() {
+       echo "[$(date +'%H:%M:%S')] INFO: $*"     # ❌ Goes to stdout
+   }
+
+   # AFTER:
+   log_info() {
+       echo "[$(date +'%H:%M:%S')] INFO: $*" >&2  # ✅ Goes to stderr
+   }
+   ```
+
+   **Why This Works**:
+   - Stderr (`>&2`) is for diagnostic/logging output
+   - Stdout is for data/return values
+   - Command substitution `$(...)` only captures stdout, not stderr
+   - Now `ARCHIVE_ROOT=$(archive_previous_run ...)` gets clean path without log contamination
+
+   **Best Practice**:
+   - All logging functions should output to stderr
+   - Only data meant to be captured should go to stdout
+   - Functions that "return" values via `echo` must ensure no other stdout output occurs
+
+**Log Stdout Contamination Fix Files Modified for Linux Container (Jan 29, 2026)**:
+- `/workspace/lib/common.sh` - Update `log_info()` function (line ~10)
+  - Change: `echo "[$(date +'%H:%M:%S')] INFO: $*"` → `echo "[$(date +'%H:%M:%S')] INFO: $*" >&2`
+  - Critical: Without this fix, all bash functions using `log_info` and returning values via `echo` will have contaminated return values, breaking client outputs, archive paths, and any derived variables
+  - Transcription functionality available ONLY in segment review screen

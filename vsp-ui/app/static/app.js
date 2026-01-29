@@ -569,18 +569,6 @@ function displayValidationResults() {
                             : ''}
                     </div>
                     <div class="video-actions">
-                        <button class="btn-transcription"
-                                data-filename="${escapeHtml(v.filename)}"
-                                data-has-transcription="${v.has_transcription || false}"
-                                data-type="${v.transcription_type || ''}">
-                            ${v.has_transcription ? 'Edit' : 'Add'} Transcription
-                        </button>
-                        ${v.has_transcription
-                            ? `<button class="btn-delete-transcription"
-                                       data-filename="${escapeHtml(v.filename)}"
-                                       data-type="${v.transcription_type || ''}"
-                                       title="Delete transcription">Delete</button>`
-                            : ''}
                         <button class="btn-remove" data-index="${index}">Remove</button>
                     </div>
                 </div>
@@ -591,20 +579,6 @@ function displayValidationResults() {
     // Add event listeners to remove buttons
     document.querySelectorAll('.btn-remove').forEach(btn => {
         btn.addEventListener('click', () => removeVideo(parseInt(btn.dataset.index)));
-    });
-
-    // Add event listeners to transcription buttons
-    document.querySelectorAll('.btn-transcription').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const filename = btn.dataset.filename;
-            const type = btn.dataset.type || null;
-            openTranscriptionModal(filename, btn.dataset.hasTranscription === 'true', type);
-        });
-    });
-
-    // Add event listeners to delete transcription buttons
-    document.querySelectorAll('.btn-delete-transcription').forEach(btn => {
-        btn.addEventListener('click', () => deleteTranscriptionFromList(btn.dataset.filename, btn.dataset.type));
     });
 
     // Invalid videos
