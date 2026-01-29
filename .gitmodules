@@ -1,0 +1,9 @@
+[submodule "VSP-LLM"]
+	path = VSP-LLM
+	url = https://github.com/Sally-SH/VSP-LLM.git
+[submodule "auto_avsr"]
+	path = auto_avsr
+	url = git@github.com:MrYoyoad/auto_avsr.git
+[submodule "av_hubert"]
+	path = av_hubert
+	url = https://github.com/facebookresearch/av_hubert.git
