@@ -54,11 +54,14 @@ run_asr_transcription() {
   # ============================================
   # STEP 0.6: Copy existing transcriptions from .transcriptions/ to working directory
   # ============================================
-  echo ">>> [0.6] Checking for existing manual transcriptions"
+  echo ">>> [0.6] Checking for existing manual transcriptions (with intelligent name matching)"
   local transcriptions_dir="$home_dir/vsp_input/.transcriptions"
 
   if [ -d "$transcriptions_dir" ]; then
     local copied_count=0
+    local matched_count=0
+
+    # First pass: Copy exact matches (segment transcriptions with frame numbers)
     for wrd_file in "$transcriptions_dir"/*.wrd; do
       if [ -f "$wrd_file" ]; then
         local filename=$(basename "$wrd_file")
@@ -66,15 +69,47 @@ run_asr_transcription() {
         if [[ "$filename" =~ _[0-9]{2}_[0-9]{6}_[0-9]{6}\.wrd$ ]]; then
           cp "$wrd_file" "$segment_wrd_tmp/"
           copied_count=$((copied_count + 1))
-          echo ">>> [0.6]   Copied manual transcription: $filename"
+          echo ">>> [0.6]   Copied exact match: $filename"
         fi
       fi
     done
 
-    if [ $copied_count -gt 0 ]; then
-      echo ">>> [0.6] Copied $copied_count existing transcription(s) - Whisper will skip these segments"
+    # Second pass: Intelligent matching for base video names → preprocessed segments
+    # E.g., match "video.wrd" to "video_00_000000_999999.mp4" in segment_vid_dir
+    for wrd_file in "$transcriptions_dir"/*.wrd; do
+      if [ -f "$wrd_file" ]; then
+        local filename=$(basename "$wrd_file")
+        local base_name="${filename%.wrd}"
+
+        # Skip if already has segment naming (handled in first pass)
+        if [[ "$filename" =~ _[0-9]{2}_[0-9]{6}_[0-9]{6}\.wrd$ ]]; then
+          continue
+        fi
+
+        # Look for preprocessed segments that start with this base name
+        # E.g., "video.wrd" matches "video_00_000000_999999.mp4"
+        for video_file in "$segment_vid_dir"/${base_name}_*.mp4; do
+          if [ -f "$video_file" ]; then
+            local segment_name=$(basename "$video_file" .mp4)
+            local dest_wrd="$segment_wrd_tmp/${segment_name}.wrd"
+
+            # Only copy if not already exists (exact match takes precedence)
+            if [ ! -f "$dest_wrd" ]; then
+              cp "$wrd_file" "$dest_wrd"
+              matched_count=$((matched_count + 1))
+              echo ">>> [0.6]   Matched base name: $filename → $segment_name.wrd"
+            fi
+          fi
+        done
+      fi
+    done
+
+    local total_count=$((copied_count + matched_count))
+    if [ $total_count -gt 0 ]; then
+      echo ">>> [0.6] Copied $copied_count exact matches + $matched_count intelligent matches = $total_count total"
+      echo ">>> [0.6] Whisper will skip these $total_count segments"
     else
-      echo ">>> [0.6] No existing segment transcriptions found"
+      echo ">>> [0.6] No existing transcriptions found"
     fi
   else
     echo ">>> [0.6] No .transcriptions directory found (first run)"

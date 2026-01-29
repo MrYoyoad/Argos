@@ -6,7 +6,8 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Use absolute path to avoid SCRIPT_DIR conflicts when sourcing modules
+LIB_DIR="/home/ubuntu/lib"
 TEST_TEMP_DIR="/tmp/vsp_module_tests_$$"
 mkdir -p "$TEST_TEMP_DIR"
 
@@ -39,7 +40,7 @@ echo ""
 # TEST 1: lib/common.sh
 # ================================================
 echo "[TEST 1] Testing lib/common.sh..."
-source "${SCRIPT_DIR}/common.sh"
+source "${LIB_DIR}/common.sh"
 
 # Test logging functions
 output=$(log_info "Test message" 2>&1)
@@ -71,7 +72,7 @@ echo ""
 # TEST 2: lib/config.sh
 # ================================================
 echo "[TEST 2] Testing lib/config.sh..."
-source "${SCRIPT_DIR}/config.sh"
+source "${LIB_DIR}/config.sh"
 
 # Test environment detection
 [[ -n "$ENV_TYPE" ]] && pass "ENV_TYPE is set: $ENV_TYPE" || fail "ENV_TYPE not set"
@@ -109,7 +110,7 @@ echo ""
 # TEST 3: lib/venv/venv_utils.sh
 # ================================================
 echo "[TEST 3] Testing lib/venv/venv_utils.sh..."
-source "${SCRIPT_DIR}/venv/venv_utils.sh"
+source "${LIB_DIR}/venv/venv_utils.sh"
 
 # Test function exports
 declare -F activate_venv >/dev/null && pass "activate_venv function exported" || fail "activate_venv not exported"
@@ -144,7 +145,7 @@ echo ""
 # TEST 4: lib/normalization.sh
 # ================================================
 echo "[TEST 4] Testing lib/normalization.sh..."
-source "${SCRIPT_DIR}/normalization.sh"
+source "${LIB_DIR}/normalization.sh"
 
 # Test function exports
 declare -F run_normalization >/dev/null && pass "run_normalization function exported" || fail "run_normalization not exported"
@@ -174,7 +175,7 @@ echo ""
 # TEST 5: lib/archive.sh
 # ================================================
 echo "[TEST 5] Testing lib/archive.sh..."
-source "${SCRIPT_DIR}/archive.sh"
+source "${LIB_DIR}/archive.sh"
 
 # Test function exports
 declare -F archive_previous_run >/dev/null && pass "archive_previous_run function exported" || fail "archive_previous_run not exported"
@@ -217,7 +218,7 @@ echo ""
 # TEST 6: lib/asr.sh (Phase 1.4)
 # ================================================
 echo "[TEST 6] Testing lib/asr.sh..."
-source "${SCRIPT_DIR}/asr.sh"
+source "${LIB_DIR}/asr.sh"
 
 # Test function exports
 declare -F run_asr_transcription >/dev/null && pass "run_asr_transcription function exported" || fail "run_asr_transcription not exported"
@@ -232,7 +233,7 @@ echo ""
 # TEST 7: lib/lrs3_prep.sh (Phase 1.4)
 # ================================================
 echo "[TEST 7] Testing lib/lrs3_prep.sh..."
-source "${SCRIPT_DIR}/lrs3_prep.sh"
+source "${LIB_DIR}/lrs3_prep.sh"
 
 # Test function exports
 declare -F run_lrs3_preparation >/dev/null && pass "run_lrs3_preparation function exported" || fail "run_lrs3_preparation not exported"
@@ -245,7 +246,7 @@ echo ""
 # TEST 8: lib/manifests.sh (Phase 1.4)
 # ================================================
 echo "[TEST 8] Testing lib/manifests.sh..."
-source "${SCRIPT_DIR}/manifests.sh"
+source "${LIB_DIR}/manifests.sh"
 
 # Test function exports
 declare -F run_manifest_generation >/dev/null && pass "run_manifest_generation function exported" || fail "run_manifest_generation not exported"
@@ -258,7 +259,7 @@ echo ""
 # TEST 9: lib/clustering.sh (Phase 1.4)
 # ================================================
 echo "[TEST 9] Testing lib/clustering.sh..."
-source "${SCRIPT_DIR}/clustering.sh"
+source "${LIB_DIR}/clustering.sh"
 
 # Test function exports
 declare -F run_clustering >/dev/null && pass "run_clustering function exported" || fail "run_clustering not exported"
@@ -271,7 +272,7 @@ echo ""
 # TEST 10: lib/decode.sh (Phase 1.5)
 # ================================================
 echo "[TEST 10] Testing lib/decode.sh..."
-source "${SCRIPT_DIR}/decode.sh"
+source "${LIB_DIR}/decode.sh"
 
 # Test function exports
 declare -F run_vsp_decode >/dev/null && pass "run_vsp_decode function exported" || fail "run_vsp_decode not exported"
@@ -285,7 +286,7 @@ echo ""
 # TEST 11: lib/outputs.sh (Phase 1.5)
 # ================================================
 echo "[TEST 11] Testing lib/outputs.sh..."
-source "${SCRIPT_DIR}/outputs.sh"
+source "${LIB_DIR}/outputs.sh"
 
 # Test function exports
 declare -F run_client_outputs >/dev/null && pass "run_client_outputs function exported" || fail "run_client_outputs not exported"
