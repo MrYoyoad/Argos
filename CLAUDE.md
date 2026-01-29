@@ -1437,3 +1437,112 @@ The following changes have been made to the EC2 version and need to be replicate
   - Change: `echo "[$(date +'%H:%M:%S')] INFO: $*"` → `echo "[$(date +'%H:%M:%S')] INFO: $*" >&2`
   - Critical: Without this fix, all bash functions using `log_info` and returning values via `echo` will have contaminated return values, breaking client outputs, archive paths, and any derived variables
   - Transcription functionality available ONLY in segment review screen
+
+15. **Non-Segmented Video Naming and Metadata Fix** (Added Jan 29, 2026): Fixed two issues with non-segmented (whole) videos
+   - **Problem 1**: Manual transcriptions not being used by pipeline
+   - **Problem 2**: Burned videos showing mouth-cropped videos instead of full-frame originals
+   - **Root Cause**: Artificial segment-like naming (`_00_000000_999999` suffix) added to non-segmented videos
+   - **Impact**: Confusing naming, transcription matching failures, and inability to extract from original videos
+
+   **The Core Issue**:
+   Videos too short for segmentation (<24s) were artificially renamed with segment-like suffixes:
+   - Input: `00008.mp4`
+   - Copied as: `00008_00_000000_999999.mp4`
+   - Transcription: `00008_00_000000_999999.wrd` (from UI)
+   - BUT preprocessing outputs: `00008.mp4` (original name, no suffix!)
+   - ASR looks for: `00008.wrd` (doesn't exist)
+   - Result: Manual transcription ignored, Whisper runs unnecessarily
+
+   **Why Burned Videos Used Mouth Crops**:
+   - `make_burn.py` tries 3 strategies to get video source
+   - Strategy 1 (preferred): Extract segment from original full-frame video using `segment_metadata.json` timing
+   - Strategy 2 (fallback): Use preprocessed mouth-cropped segment video
+   - Strategy 3 (last resort): Use full original video
+
+   **metadata.json was broken**:
+   ```json
+   // BEFORE (empty structure, no timing info):
+   {"segments": [], "total_videos": 1, "segmentation_enabled": false}
+
+   // Strategy 1 check fails because video ID not in metadata
+   // Falls back to Strategy 2 → mouth crops used
+   ```
+
+   **The Fixes**:
+
+   **Fix 1: Remove Artificial Segment Naming** (run_flat_english_pipeline.sh line ~130-139)
+   ```bash
+   # BEFORE (added confusing suffix):
+   video_id="${video_name%.*}"
+   video_ext="${video_name##*.}"
+   output_name="${video_id}_00_000000_999999.${video_ext}"  # ❌ Artificial suffix
+   cp "$video_file" "${FAST_SEG_DIR}/${output_name}"
+
+   # AFTER (keep original name):
+   output_name="${video_name}"  # ✅ Simple and correct
+   cp "$video_file" "${FAST_SEG_DIR}/${output_name}"
+   ```
+
+   **Fix 2: Proper segment_metadata.json Structure** (run_flat_english_pipeline.sh line ~147-195)
+   ```json
+   // AFTER (proper structure with timing):
+   {
+     "00008": {
+       "original_duration": 3.584,
+       "segment_duration": 3.584,
+       "overlap_duration": 0,
+       "num_segments": 1,
+       "segments": [
+         {
+           "index": 0,
+           "start_frame": 0,
+           "end_frame": 89,
+           "start_sec": 0.0,
+           "end_sec": 3.584,
+           "duration": 3.584
+         }
+       ]
+     }
+   }
+   ```
+
+   **Benefits**:
+   - ✅ Naming is conceptually correct: segmented videos have segment IDs, whole videos don't
+   - ✅ Transcription matching is simple: `video_name.wrd` matches `video_name.mp4`
+   - ✅ Burned videos use full-frame originals (Strategy 1 works with proper metadata)
+   - ✅ No special-case logic needed - everything works consistently
+
+   **Code Changes**:
+   1. **Naming fix** (lines ~130-139):
+      - Removed: `video_id="${video_name%.*}"`, `video_ext="${video_name##*.}"`, `output_name="${video_id}_00_000000_999999.${video_ext}"`
+      - Added: `output_name="${video_name}"`
+
+   2. **Metadata fix - SEGMENT_ONLY mode** (lines ~147-195):
+      - Removed: Single-line JSON with empty segments array
+      - Added: 49-line loop that creates proper metadata in FAST_SEG_DIR (for UI preview)
+
+   3. **Metadata fix - Full pipeline** (NEW Step 2.5, lines ~318-375):
+      - **Critical Fix**: Added second metadata creation after preprocessing completes
+      - **Why needed**: make_burn.py looks for metadata at `${PREP_ROOT}/segment_metadata.json`, not in fast_segments/
+      - Location: After Step 2 (preprocessing), before Step 3 (ASR)
+      - Creates metadata at correct location for make_burn.py
+      - Uses FLAT_VID_DIR videos as source (after normalization/preprocessing)
+      - Enables Strategy 1 (extract from original full-frame video) in make_burn.py
+
+   **Testing**:
+   - Non-segmented videos now keep original names throughout pipeline
+   - Manual transcriptions work (simple name matching)
+   - Burned videos use full-frame originals (Strategy 1 succeeds with proper metadata at correct location)
+
+**Non-Segmented Video Fix Files Modified for Linux Container (Jan 29, 2026)**:
+- `/workspace/run_flat_english_pipeline.sh` - Three fixes:
+  1. **Line ~130-139**: Remove segment suffix from output_name
+     - Change: `output_name="${video_id}_00_000000_999999.${video_ext}"` → `output_name="${video_name}"`
+  2. **Line ~147-195**: Replace empty metadata JSON with proper structure (SEGMENT_ONLY mode)
+     - Replace single-line `echo "{\"segments\": [], ...}"` with 49-line loop
+     - Creates metadata in fast_segments/ for UI preview
+  3. **Line ~318-375** (NEW Step 2.5): Create metadata at PREP_ROOT for make_burn.py
+     - Add after Step 2 (preprocessing), before Step 3 (ASR)
+     - Only runs when SEGMENTATION_ENABLED=0
+     - Creates metadata at `${PREP_ROOT}/segment_metadata.json` (correct location!)
+- `/workspace/lib/asr.sh` - No changes needed (already has simple direct matching)

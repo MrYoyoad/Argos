@@ -146,7 +146,7 @@ if [ "$SEGMENT_ONLY" = "1" ]; then
     echo "{" > "${FAST_SEG_DIR}/segment_metadata.json"
     first_video=true
     shopt -s nullglob
-    for video_file in "$RAW_DIR"/*.{mp4,mkv,avi,mov,webm,MP4,MKV,AVI,MOV,WEBM}; do
+    for video_file in "${RAW_DIR}"/*.mp4 "${RAW_DIR}"/*.mkv "${RAW_DIR}"/*.webm "${RAW_DIR}"/*.mov "${RAW_DIR}"/*.avi "${RAW_DIR}"/*.m4v; do
       if [ -f "$video_file" ]; then
         video_name=$(basename "$video_file")
         video_id="${video_name%.*}"
@@ -325,7 +325,7 @@ if [ "$SEGMENTATION_ENABLED" = "0" ]; then
   echo "{" > "${PREP_ROOT}/segment_metadata.json"
   first_video=true
   shopt -s nullglob
-  for video_file in "$FLAT_VID_DIR"/*.{mp4,mkv,avi,mov,webm,MP4,MKV,AVI,MOV,WEBM}; do
+  for video_file in "${FLAT_VID_DIR}"/*.mp4 "${FLAT_VID_DIR}"/*.mkv "${FLAT_VID_DIR}"/*.webm "${FLAT_VID_DIR}"/*.mov "${FLAT_VID_DIR}"/*.avi "${FLAT_VID_DIR}"/*.m4v; do
     if [ -f "$video_file" ]; then
       video_name=$(basename "$video_file")
       video_id="${video_name%.*}"
@@ -458,23 +458,58 @@ run_clustering "$PREP_ROOT" "$FEAT_DIR" "$KM_PATH" "$LAB_DIR" "$AVH" "$VSP" "${T
 deactivate
 
 #######################
-# STEP 7: LLM decode
+# STEP 7: Check fairseq Cython extensions (Linux container requirement)
+########################
+echo ">>> [7] Checking fairseq Cython extensions"
+source "$VSP_VENV/bin/activate"
+
+FAIRSEQ_REPO="${VSP}/fairseq"
+
+if python - <<CYTHON_CHECK
+import sys
+sys.path.insert(0, "${FAIRSEQ_REPO}")
+try:
+    from fairseq.data import data_utils_fast
+    import pathlib, fairseq
+    print("fairseq imported from:", pathlib.Path(fairseq.__file__).resolve())
+    print("fairseq Cython OK:", data_utils_fast)
+except ImportError as e:
+    print(f"ERROR: {e}")
+    sys.exit(1)
+CYTHON_CHECK
+then
+    echo ">>> [7] fairseq extensions already built — skipping compilation"
+else
+    echo ">>> [7] fairseq extensions missing — building now (one-time)"
+    cd "$FAIRSEQ_REPO"
+    python setup.py build_ext --inplace || {
+        echo "ERROR: Failed to build fairseq Cython extensions" >&2
+        deactivate
+        exit 10
+    }
+    cd - >/dev/null
+    echo ">>> [7] Cython extensions built successfully"
+fi
+
+echo
+
+#######################
+# STEP 8: LLM decode
 ########################
 # Load decode module
 source "${HOME}/lib/decode.sh"
 
-source "$VSP_VENV/bin/activate"
 cd "$VSP"
 
 run_vsp_decode "$VSP" "$MANIFEST_ROOT" "$LAB_DIR" "$WRD_ROOT" "$PREP_ROOT" \
   "$SEGMENTATION_ENABLED" "$OVERLAP_ENABLED" || {
   deactivate
   echo "ERROR: VSP-LLM decode failed" >&2
-  exit 8
+  exit 11
 }
 
 ########################
-# STEP 8: Client outputs
+# STEP 9: Client outputs
 ########################
 # Load outputs module
 source "${HOME}/lib/outputs.sh"
@@ -483,7 +518,7 @@ run_client_outputs "$VSP" "$ARCHIVE_ROOT" "$FLAT_VID_DIR" "$PREP_ROOT" \
   "$DATA_NAME" "$DIR_SUFFIX" || {
   deactivate
   echo "ERROR: Client outputs generation failed" >&2
-  exit 9
+  exit 12
 }
 
 deactivate
