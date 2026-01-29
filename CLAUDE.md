@@ -1546,3 +1546,49 @@ The following changes have been made to the EC2 version and need to be replicate
      - Only runs when SEGMENTATION_ENABLED=0
      - Creates metadata at `${PREP_ROOT}/segment_metadata.json` (correct location!)
 - `/workspace/lib/asr.sh` - No changes needed (already has simple direct matching)
+
+16. **Non-Segmented Video Burned Output Fix** (Added Jan 29, 2026): Fixed burned videos showing mouth crops for non-segmented videos
+   - **Problem**: When segmentation disabled (videos <24s), burned videos showed 96x96 mouth crops instead of full-frame originals
+   - **Root Cause**: `make_burn.py` couldn't match non-segmented video IDs to metadata segments
+   - **Impact**: Even with proper metadata created in Step 2.5, Strategy 1 extraction failed and fell back to mouth crops
+
+   **Why It Failed**:
+   - Non-segmented video IDs don't have frame numbers: `"00008"` (not `"00008_00_000000_000300"`)
+   - `parse_segment_id("00008")` returns `seg_idx = -1` (can't parse frame numbers)
+   - Segment lookup searched for `index == -1` but metadata has `index == 0`
+   - No match found → fell back to Strategy 2 (preprocessed mouth crops)
+
+   **The Fix** (make_burn.py lines ~329-343):
+   ```python
+   # BEFORE:
+   segment_info = None
+   for seg in segments:
+       if seg.get("index") == seg_idx:  # Fails when seg_idx == -1
+           segment_info = seg
+           break
+
+   # AFTER:
+   segment_info = None
+   if seg_idx == -1:
+       # Non-segmented video - use first (and only) segment
+       if segments:
+           segment_info = segments[0]
+           print(f"[INFO] {uid}: Using whole video (non-segmented)")
+   else:
+       # Segmented video - find by index
+       for seg in segments:
+           if seg.get("index") == seg_idx:
+               segment_info = seg
+               break
+   ```
+
+   **Results**:
+   - Non-segmented videos: Strategy 1 succeeds, extracts from original (224x224 full-frame)
+   - Segmented videos: Unchanged behavior, still use Strategy 1 with index matching
+
+**Non-Segmented Burned Output Fix Files Modified for Linux Container (Jan 29, 2026)**:
+- `/workspace/VSP-LLM/scripts/make_burn.py` - Update segment matching logic (lines ~329-343)
+  - Add special case for `seg_idx == -1` to use first segment
+  - Enables Strategy 1 extraction for non-segmented videos
+  - Critical: Without this fix, burned videos show mouth crops even with proper metadata
+
