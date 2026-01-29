@@ -12,6 +12,96 @@ This repository contains a visual speech processing (VSP) pipeline that combines
 
 The main pipeline (`run_flat_english_pipeline.sh`) orchestrates these components to process raw videos through ASR transcription, mouth cropping, feature extraction, clustering, and LLM-based decoding.
 
+## **Refactored Modular Architecture (January 2026)**
+
+**Mission 1 Complete**: The pipeline has been refactored from a monolithic 823-line script into a modular architecture with reusable components.
+
+### Modular Structure
+
+All pipeline functionality is now organized into **11 modules** under the `lib/` directory:
+
+```
+lib/
+├── common.sh              # Logging and validation utilities
+├── config.sh              # Environment detection (EC2/container) and path configuration
+├── archive.sh             # Archive management with transcription preservation
+├── normalization.sh       # Video normalization (HDR/10-bit conversion, GPU encoding)
+├── asr.sh                 # Whisper ASR with intelligent transcription management
+├── lrs3_prep.sh           # LRS3 format conversion
+├── manifests.sh           # Manifest and TSV generation
+├── clustering.sh          # K-means clustering and cluster counts
+├── decode.sh              # VSP-LLM decode
+├── outputs.sh             # Client reports and burned videos
+└── venv/
+    └── venv_utils.sh      # Virtual environment management
+```
+
+### Benefits of Refactoring
+
+- **52% Line Reduction**: Main pipeline: 823 → 393 lines
+- **Reusability**: Each module can be used independently or in other scripts
+- **Testability**: Comprehensive test suite (`lib/test_all_modules.sh`) with 37 tests
+- **Maintainability**: Clear separation of concerns, easier debugging
+- **Environment-Aware**: Automatic detection of EC2 vs Linux container environment
+- **Consistent Error Handling**: Standardized logging and error reporting across all stages
+
+### Module Responsibilities
+
+**Phase 1.1: Infrastructure**
+- `common.sh`: Logging (`log_info`, `log_error`, `log_stage`), validation (`validate_directory`)
+- `config.sh`: Environment detection, path configuration, derived path functions
+- `venv_utils.sh`: Virtual environment activation/deactivation with error handling
+
+**Phase 1.2: Normalization**
+- `normalization.sh`: Video normalization with HDR/10-bit tone mapping, GPU acceleration (NVENC), fallback to CPU encoding
+
+**Phase 1.3: Archive**
+- `archive.sh`: Archive previous run outputs with special handling to preserve segment transcriptions
+
+**Phase 1.4: Processing Stages**
+- `asr.sh`: Whisper ASR with intelligent transcription matching
+  - Step 0.6: Copy existing transcriptions (exact + intelligent name matching)
+  - Step 3: Run Whisper (skips segments with existing transcriptions)
+  - Step 1.5: Save new auto-transcriptions for future reuse
+- `lrs3_prep.sh`: Convert flat dataset to LRS3 format
+- `manifests.sh`: Generate manifests, splits, TSVs, and segment timing metadata
+- `clustering.sh`: K-means feature extraction and cluster count generation
+
+**Phase 1.5: Decode & Outputs**
+- `decode.sh`: VSP-LLM decode with symlink setup, merge logic (disabled for segment-level output)
+- `outputs.sh`: Generate segment-level reports (JSON) and burned videos
+
+### Virtual Environment Strategy
+
+- **ASR module** (`asr.sh`): Self-contained, activates `ASR_VENV` internally
+- **Other modules**: Expect caller to activate `VSP_VENV` (shared across stages 5-8 for efficiency)
+
+This approach minimizes overhead by activating the VSP venv once for multiple stages.
+
+### Intelligent Transcription Matching (Step 0.6 Enhancement)
+
+The ASR module includes a two-pass transcription matching algorithm:
+
+1. **First pass**: Exact segment name matches (e.g., `video_00_000000_999999.wrd`)
+2. **Second pass**: Intelligent base name matching (e.g., `video.wrd` → all `video_*.mp4` segments)
+
+**Benefit**: Users can transcribe the original video once, and the transcription automatically applies to all segments. Whisper skips all matched segments, saving hours of processing time.
+
+### Testing
+
+Run the complete test suite:
+```bash
+bash /home/ubuntu/lib/test_all_modules.sh
+```
+
+All 37 tests validate module exports, functionality, and integration points.
+
+### Git Tags
+
+- `refactor-v1.0` - Modular pipeline refactoring complete (January 2026)
+- `ec2-v1.1` - EC2 version with refactored modules
+- `container-v1.1` - Linux container version (to be synced)
+
 ## **CRITICAL: EC2 and Linux Container Synchronization**
 
 ⚠️ **IMPORTANT REQUIREMENT**: This codebase exists in TWO environments:
