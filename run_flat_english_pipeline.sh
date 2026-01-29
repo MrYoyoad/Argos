@@ -292,7 +292,8 @@ fi
 ########################
 # STEP 3: ASR on segmented videos -> .txt files
 ########################
-echo ">>> [3] Running ASR on videos"
+# Load ASR module
+source "${HOME}/lib/asr.sh"
 
 # Determine directory suffix based on SEGMENTATION_ENABLED
 if [ "$SEGMENTATION_ENABLED" = "1" ]; then
@@ -301,234 +302,56 @@ else
     DIR_SUFFIX="whole"
 fi
 
-# Get the video directory (segmented or whole)
+# Run ASR transcription (includes Steps 0.6, 3, and 1.5)
+run_asr_transcription "$PREP_ROOT" "$ASR_VENV" "$AUTO_AVSR" "$DATA_NAME" \
+  "$SEGMENTATION_ENABLED" "$SEG_DURATION" "$HOME" || {
+  echo "ERROR: ASR transcription failed" >&2
+  exit 4
+}
+
+# Set output directories for next stages
 SEGMENT_VID_DIR="$PREP_ROOT/${DATA_NAME}/${DATA_NAME}_video_${DIR_SUFFIX}"
 SEGMENT_TXT_DIR="$PREP_ROOT/${DATA_NAME}/${DATA_NAME}_text_${DIR_SUFFIX}"
 
-if [ ! -d "$SEGMENT_VID_DIR" ]; then
-    echo "ERROR: Segmented video directory not found: $SEGMENT_VID_DIR" >&2
-    exit 4
-fi
-
-# Create temp directory for ASR output (.wrd format)
-SEGMENT_WRD_TMP="${PREP_ROOT}/segment_wrd_tmp"
-mkdir -p "$SEGMENT_WRD_TMP"
-
-########################
-# STEP 0.6: Copy existing transcriptions from .transcriptions/ to working directory
-########################
-echo ">>> [0.6] Checking for existing manual transcriptions"
-TRANSCRIPTIONS_DIR="$HOME/vsp_input/.transcriptions"
-
-if [ -d "$TRANSCRIPTIONS_DIR" ]; then
-  copied_count=0
-  for wrd_file in "$TRANSCRIPTIONS_DIR"/*.wrd; do
-    if [ -f "$wrd_file" ]; then
-      filename=$(basename "$wrd_file")
-      # Check if this is a segment transcription (has frame numbers in name)
-      if [[ "$filename" =~ _[0-9]{2}_[0-9]{6}_[0-9]{6}\.wrd$ ]]; then
-        cp "$wrd_file" "$SEGMENT_WRD_TMP/"
-        copied_count=$((copied_count + 1))
-        echo ">>> [0.6]   Copied manual transcription: $filename"
-      fi
-    fi
-  done
-
-  if [ $copied_count -gt 0 ]; then
-    echo ">>> [0.6] Copied $copied_count existing transcription(s) - Whisper will skip these segments"
-  else
-    echo ">>> [0.6] No existing segment transcriptions found"
-  fi
-else
-  echo ">>> [0.6] No .transcriptions directory found (first run)"
-fi
-
-echo ">>> [3] Running Whisper on segmented videos from: $SEGMENT_VID_DIR"
-source "$ASR_VENV/bin/activate"
-
-python "$AUTO_AVSR/asr_to_words_notime.py" \
-  --in_videos "$SEGMENT_VID_DIR" \
-  --out_wrd   "$SEGMENT_WRD_TMP" \
-  --model medium \
-  --lang en \
-  --tokenize alnum \
-  --lower
-
-deactivate
-
-########################
-# STEP 1.5: Save new Whisper outputs to .transcriptions/ for future reuse
-########################
-echo ">>> [1.5] Saving new auto-transcriptions to .transcriptions/"
-mkdir -p "$TRANSCRIPTIONS_DIR"
-
-# Load metadata to check which transcriptions are manual
-METADATA_FILE="$TRANSCRIPTIONS_DIR/metadata.json"
-if [ ! -f "$METADATA_FILE" ]; then
-  echo '{"transcriptions":{}}' > "$METADATA_FILE"
-fi
-
-saved_count=0
-skipped_count=0
-
-for wrd_file in "$SEGMENT_WRD_TMP"/*.wrd; do
-  if [ -f "$wrd_file" ]; then
-    filename=$(basename "$wrd_file")
-    dest_file="$TRANSCRIPTIONS_DIR/$filename"
-
-    # Check if this is a segment transcription
-    if [[ "$filename" =~ _[0-9]{2}_[0-9]{6}_[0-9]{6}\.wrd$ ]]; then
-      # Check if transcription already exists and is manual
-      is_manual=$(python3 -c "
-import json, sys
-try:
-    with open('$METADATA_FILE') as f:
-        meta = json.load(f)
-    filename_mp4 = '${filename%.wrd}.mp4'
-    trans_type = meta.get('transcriptions', {}).get(filename_mp4, {}).get('type', 'auto')
-    print('yes' if trans_type == 'manual' else 'no')
-except:
-    print('no')
-" 2>/dev/null)
-
-      if [ "$is_manual" = "yes" ]; then
-        echo ">>> [1.5]   Skipping $filename (manual transcription exists)"
-        skipped_count=$((skipped_count + 1))
-      else
-        cp "$wrd_file" "$dest_file"
-        saved_count=$((saved_count + 1))
-
-        # Update metadata to mark as 'auto'
-        python3 << EOF
-import json
-from datetime import datetime
-
-try:
-    with open('$METADATA_FILE', 'r') as f:
-        meta = json.load(f)
-except:
-    meta = {'transcriptions': {}}
-
-filename_mp4 = '${filename%.wrd}.mp4'
-word_count = len(open('$wrd_file').read().strip().split('\n'))
-
-meta['transcriptions'][filename_mp4] = {
-    'type': 'auto',
-    'created_at': datetime.utcnow().isoformat() + 'Z',
-    'edited_at': None,
-    'word_count': word_count,
-    'video_checksum': None
-}
-
-with open('$METADATA_FILE', 'w') as f:
-    json.dump(meta, f, indent=2)
-EOF
-      fi
-    fi
-  fi
-done
-
-if [ $saved_count -gt 0 ]; then
-  echo ">>> [1.5] Saved $saved_count new auto-transcription(s) to .transcriptions/"
-fi
-if [ $skipped_count -gt 0 ]; then
-  echo ">>> [1.5] Skipped $skipped_count manual transcription(s) (preserved)"
-fi
-
-# Convert .wrd files to .txt files (space-separated format expected by pipeline)
-echo ">>> [3] Converting .wrd to .txt format"
-mkdir -p "$SEGMENT_TXT_DIR"
-
-for wrd_file in "$SEGMENT_WRD_TMP"/*.wrd; do
-    if [ -f "$wrd_file" ]; then
-        basename_noext=$(basename "$wrd_file" .wrd)
-        txt_file="$SEGMENT_TXT_DIR/${basename_noext}.txt"
-        # Convert one-word-per-line to space-separated
-        tr '\n' ' ' < "$wrd_file" | sed 's/ $//' > "$txt_file"
-        echo "$txt_file" >> /dev/null  # Suppress output
-    fi
-done
-
-# Clean up temp directory
-rm -rf "$SEGMENT_WRD_TMP"
-
-echo ">>> [3] ASR complete. Transcriptions saved to: $SEGMENT_TXT_DIR"
 echo
 
 ########################
 # STEP 4: flat_to_lrs3_preperation.sh
 ########################
-echo ">>> [4] Running flat_to_lrs3_preperation.sh"
+# Load LRS3 preparation module
+source "${HOME}/lib/lrs3_prep.sh"
 
-# Use the same DIR_SUFFIX as preprocessing
-SEG_DURATION="$SEG_DURATION" \
-DIR_SUFFIX="$DIR_SUFFIX" \
-LRS3_ROOT="$PREP_ROOT" \
-bash "$AVH/avhubert/preparation/flat_to_lrs3_preperation.sh" \
-  "$PREP_ROOT"
+run_lrs3_preparation "$PREP_ROOT" "$AVH" "$SEG_DURATION" "$DIR_SUFFIX" || {
+  echo "ERROR: LRS3 preparation failed" >&2
+  exit 5
+}
 
 ########################
 # STEP 5: manifests + splits + train.tsv
 ########################
-echo ">>> [5] Building manifests and TSVs"
+# Load manifest generation module
+source "${HOME}/lib/manifests.sh"
 
 source "$VSP_VENV/bin/activate"
 
-python "$AUTO_AVSR/make_simple_manifest.py" \
-  --root "$PREP_ROOT" \
-  --split train \
-  --out-dir "$MANIFEST_ROOT"
-
-python "$AVH/avhubert/preparation/split_flat_dataset.py" \
-  --root "$PREP_ROOT" \
-  --train-ratio 1.0 \
-  --valid-ratio 0.0 \
-  --test-ratio 0.0 \
-  --seed 0
-
-python "$VSP/scripts/build_flat_train_tsv.py" \
-  --root "$PREP_ROOT"
-
-########################
-# STEP 5a: Generate segment timing metadata (if segmentation and overlap enabled)
-########################
-if [ "$SEGMENTATION_ENABLED" = "1" ] && [ "$OVERLAP_ENABLED" = "1" ]; then
-    echo ">>> [5a] Generating segment timing metadata..."
-
-    python "$AUTO_AVSR/generate_segment_timing.py" \
-      --manifest-tsv "$MANIFEST_ROOT/train.tsv" \
-      --segment-metadata "$PREP_ROOT/segment_metadata.json" \
-      --output-json "$MANIFEST_ROOT/segment_timing.json"
-
-    echo ">>> [INFO] Timing metadata saved to: $MANIFEST_ROOT/segment_timing.json"
-else
-    echo ">>> [5a] Skipping segment timing (segmentation disabled or overlap disabled)"
-fi
+run_manifest_generation "$PREP_ROOT" "$MANIFEST_ROOT" "$AUTO_AVSR" "$AVH" "$VSP" \
+  "$SEGMENTATION_ENABLED" "$OVERLAP_ENABLED" || {
+  deactivate
+  echo "ERROR: Manifest generation failed" >&2
+  exit 6
+}
 
 #########################
 # STEP 6: k-means + cluster counts
 ########################
-echo ">>> [6] Running k-means and cluster count extraction"
+# Load clustering module
+source "${HOME}/lib/clustering.sh"
 
-cd "$AVH/avhubert/preparation"
-
-TRAIN_KMEANS="${TRAIN_KMEANS:-1}" \
-LRS3_ROOT="$PREP_ROOT" \
-SPLIT="train" \
-NSHARD=1 \
-PERCENT=1.0 \
-FEAT_DIR="$FEAT_DIR" \
-KM_PATH="$KM_PATH" \
-LAB_DIR="$LAB_DIR" \
-"$VSP/scripts/run_flat_kmeans.sh"
-
-LRS3_ROOT="$PREP_ROOT" \
-FEAT_DIR="$FEAT_DIR" \
-KM_PATH="$KM_PATH" \
-LAB_DIR="$LAB_DIR" \
-SPLIT="train" \
-NSHARD=1 \
-"$VSP/scripts/run_cluster_counts.sh"
+run_clustering "$PREP_ROOT" "$FEAT_DIR" "$KM_PATH" "$LAB_DIR" "$AVH" "$VSP" "${TRAIN_KMEANS:-1}" || {
+  deactivate
+  echo "ERROR: K-means clustering failed" >&2
+  exit 7
+}
 
 deactivate
 
@@ -585,8 +408,8 @@ mkdir -p "$REPORT_DIR" "$BURN_DIR"
 # Find decode output (check both nested and flat paths)
 DECODE_JSON="$(ls -t ${VSP}/decode/vsr/en/vsr/en/hypo-*.json ${VSP}/decode/vsr/en/hypo-*.json 2>/dev/null | grep -v "merged" | head -n 1)"
 
-# Use segmented video directory for burning (each segment is separate video)
-SEGMENT_VID_DIR="${PREP_ROOT}/${DATA_NAME}/${DATA_NAME}_video_seg${SEG_DURATION}s"
+# Use video directory for burning (dynamic based on segmentation mode)
+SEGMENT_VID_DIR="${PREP_ROOT}/${DATA_NAME}/${DATA_NAME}_video_${DIR_SUFFIX}"
 SEGMENT_METADATA="${PREP_ROOT}/segment_metadata.json"
 
 echo ">>> [8] Generating segment-level reports and burned videos"
