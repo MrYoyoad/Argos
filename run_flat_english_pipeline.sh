@@ -358,72 +358,31 @@ deactivate
 #######################
 # STEP 7: LLM decode
 ########################
-echo ">>> [7] Running VSP-LLM decode"
-
-mkdir -p "$VSP/src/dataset/vsr/en"
-
-ln -sf "$MANIFEST_ROOT/train.tsv" "$VSP/src/dataset/vsr/en/train.tsv"
-ln -sf "$MANIFEST_ROOT/train.wrd" "$VSP/src/dataset/vsr/en/train.wrd"
-ln -sf "$LAB_DIR/train.cluster_counts" "$VSP/src/dataset/vsr/en/train.cluster_counts"
-
-ln -sf "$VSP/src/dataset/vsr/en/train.tsv" "$VSP/src/dataset/vsr/en/test.tsv"
-ln -sf "$VSP/src/dataset/vsr/en/train.wrd" "$VSP/src/dataset/vsr/en/test.wrd"
-ln -sf "$VSP/src/dataset/vsr/en/train.cluster_counts" "$VSP/src/dataset/vsr/en/test.cluster_counts"
+# Load decode module
+source "${HOME}/lib/decode.sh"
 
 source "$VSP_VENV/bin/activate"
 cd "$VSP"
 
-LANG="en" \
-SPLIT="train" \
-LRS3_ROOT="$PREP_ROOT" \
-LAB_DIR="$LAB_DIR" \
-WRD_ROOT="$WRD_ROOT" \
-bash "$VSP/scripts/run_flat_decode.sh"
-
-########################
-# STEP 7a: Merge - DISABLED (segments treated independently, or whole videos if no segmentation)
-########################
-if [ "$SEGMENTATION_ENABLED" = "1" ]; then
-    if [ "$OVERLAP_ENABLED" = "1" ]; then
-        echo ">>> [7a] Segments processed independently - merge step skipped"
-        echo "    Each segment will appear separately in reports and burned videos"
-    else
-        echo ">>> [7a] Segments processed independently (overlap disabled)"
-    fi
-else
-    echo ">>> [7a] Whole videos processed (no segmentation) - merge step not applicable"
-fi
+run_vsp_decode "$VSP" "$MANIFEST_ROOT" "$LAB_DIR" "$WRD_ROOT" "$PREP_ROOT" \
+  "$SEGMENTATION_ENABLED" "$OVERLAP_ENABLED" || {
+  deactivate
+  echo "ERROR: VSP-LLM decode failed" >&2
+  exit 8
+}
 
 ########################
 # STEP 8: Client outputs
 ########################
-echo ">>> [8] Building client outputs"
+# Load outputs module
+source "${HOME}/lib/outputs.sh"
 
-POST_ROOT="${ARCHIVE_ROOT}/client_outputs"
-REPORT_DIR="${POST_ROOT}/report"
-BURN_DIR="${POST_ROOT}/burned_videos"
-
-mkdir -p "$REPORT_DIR" "$BURN_DIR"
-
-# Find decode output (check both nested and flat paths)
-DECODE_JSON="$(ls -t ${VSP}/decode/vsr/en/vsr/en/hypo-*.json ${VSP}/decode/vsr/en/hypo-*.json 2>/dev/null | grep -v "merged" | head -n 1)"
-
-# Use video directory for burning (dynamic based on segmentation mode)
-SEGMENT_VID_DIR="${PREP_ROOT}/${DATA_NAME}/${DATA_NAME}_video_${DIR_SUFFIX}"
-SEGMENT_METADATA="${PREP_ROOT}/segment_metadata.json"
-
-echo ">>> [8] Generating segment-level reports and burned videos"
-
-python "$VSP/scripts/make_report.py" \
-    --jsonl "$DECODE_JSON" \
-    --out_dir "$REPORT_DIR"
-
-python "$VSP/scripts/make_burn.py" \
-    --jsonl "$DECODE_JSON" \
-    --video_dir "$FLAT_VID_DIR" \
-    --segment_dir "$SEGMENT_VID_DIR" \
-    --segment_metadata "$SEGMENT_METADATA" \
-    --out_dir "$BURN_DIR"
+run_client_outputs "$VSP" "$ARCHIVE_ROOT" "$FLAT_VID_DIR" "$PREP_ROOT" \
+  "$DATA_NAME" "$DIR_SUFFIX" || {
+  deactivate
+  echo "ERROR: Client outputs generation failed" >&2
+  exit 9
+}
 
 deactivate
 
