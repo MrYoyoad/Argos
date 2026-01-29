@@ -57,73 +57,16 @@ VSP_VENV="${HOME_DIR}/vsp-llm-yoad-venv"
 ########################
 # ARCHIVE PREVIOUS RUN
 ########################
+# Load archive module
+source "${HOME}/lib/archive.sh"
 
-RUN_ID="$(date +'%Y%m%d_%H%M%S')"
-ARCHIVE_ROOT="${HOME_DIR}/flat_runs_archive/${RUN_ID}"
-mkdir -p "${ARCHIVE_ROOT}"
+# Archive standard directories
+ARCHIVE_ROOT=$(archive_previous_run "$HOME_DIR" "$SEG_DURATION" \
+  "${WRD_DIR}" "${TXT_DIR}" "${READY_DIR}" "${FEAT_DIR}" "${LAB_DIR}")
 
-echo ">>> [INIT] Run ID: ${RUN_ID}"
-echo ">>> [INIT] Archiving previous outputs (if any) to: ${ARCHIVE_ROOT}"
+# Archive PREP_ROOT with special handling for segment transcriptions
+archive_prep_root "${PREP_ROOT}" "${ARCHIVE_ROOT}" "${SEG_DURATION}"
 
-TO_ARCHIVE=(
-  # "${FLAT_VID_DIR}"
-  "${WRD_DIR}"
-  "${TXT_DIR}"
-  "${READY_DIR}"
-  # "${PREP_ROOT}"  # Handled specially below to preserve segment transcriptions
-  "${FEAT_DIR}"
-  "${LAB_DIR}"
-)
-
-for d in "${TO_ARCHIVE[@]}"; do
-  if [[ -e "${d}" ]]; then
-    echo ">>> [INIT] Moving ${d} -> ${ARCHIVE_ROOT}/"
-    mv "${d}" "${ARCHIVE_ROOT}/"
-  fi
-done
-
-# Handle PREP_ROOT specially: archive everything EXCEPT segment transcriptions
-if [[ -e "${PREP_ROOT}" ]]; then
-  echo ">>> [INIT] Archiving ${PREP_ROOT} (preserving segment transcriptions)..."
-  mkdir -p "${ARCHIVE_ROOT}/preprocessed_flat_seg${SEG_DURATION}"
-
-  # Move everything except flat/flat_text_seg*
-  for item in "${PREP_ROOT}"/*; do
-    if [[ -e "${item}" ]]; then
-      basename_item=$(basename "${item}")
-
-      # Skip the 'flat' directory - we'll handle it separately
-      if [[ "${basename_item}" == "flat" ]]; then
-        continue
-      fi
-
-      echo ">>> [INIT]   Moving ${item}"
-      mv "${item}" "${ARCHIVE_ROOT}/preprocessed_flat_seg${SEG_DURATION}/"
-    fi
-  done
-
-  # Handle 'flat' subdirectory: preserve flat_text_seg* folders
-  if [[ -d "${PREP_ROOT}/flat" ]]; then
-    mkdir -p "${ARCHIVE_ROOT}/preprocessed_flat_seg${SEG_DURATION}/flat"
-
-    for item in "${PREP_ROOT}/flat"/*; do
-      if [[ -e "${item}" ]]; then
-        basename_item=$(basename "${item}")
-
-        # Skip flat_text_seg* folders (these contain manual/auto segment transcriptions)
-        if [[ "${basename_item}" =~ ^flat_text_seg[0-9]+s$ ]]; then
-          echo ">>> [INIT]   Preserving ${item} (segment transcriptions)"
-          continue
-        fi
-
-        echo ">>> [INIT]   Moving ${item}"
-        mv "${item}" "${ARCHIVE_ROOT}/preprocessed_flat_seg${SEG_DURATION}/flat/"
-      fi
-    done
-  fi
-fi
-
-echo ">>> [INIT] Archive step done"
 echo
 
 ########################
