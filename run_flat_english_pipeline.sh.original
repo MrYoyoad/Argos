@@ -226,10 +226,6 @@ fi
 ############################################
 # STEP 0.5: Prepare/Normalize raw videos -> FLAT_VID_DIR
 ############################################
-# Load normalization module
-source "${HOME}/lib/normalization.sh"
-
-# Configuration variables with defaults
 SKIP_NORM="${SKIP_NORM:-0}"
 MAX_DIM="${MAX_DIM:-0}"  # 0 = keep original resolution, or set to 720/1080/etc to limit
 FPS_OUT="${FPS_OUT:-25}"
@@ -238,14 +234,178 @@ NORM_TIMEOUT_SEC="${NORM_TIMEOUT_SEC:-600}"
 
 echo ">>> [0.5] Preparing videos (SKIP_NORM=${SKIP_NORM}, USE_GPU_NORM=${USE_GPU_NORM}, MAX_DIM=${MAX_DIM}, FPS=${FPS_OUT}, TIMEOUT=${NORM_TIMEOUT_SEC}s)"
 
-# Prepare output directory
 PREP_DIR="${AUTO_AVSR}/${DATA_NAME}_prepared"
+rm -rf "${PREP_DIR}" || true
+mkdir -p "${PREP_DIR}"
 
-# Run normalization
-run_normalization "$RAW_DIR" "$PREP_DIR" "$SKIP_NORM" "$MAX_DIM" "$FPS_OUT" "$USE_GPU_NORM" "$NORM_TIMEOUT_SEC" || {
-  echo "ERROR: Video normalization failed" >&2
-  exit 3
+TIMEOUT_BIN="$(command -v timeout || true)"
+FFLOG="error"
+
+NVENC_OK=0
+ffmpeg -hide_banner -encoders 2>/dev/null | grep -q "h264_nvenc" && NVENC_OK=1
+SCALE_CUDA_OK=0
+ffmpeg -hide_banner -filters 2>/dev/null | grep -q "scale_cuda" && SCALE_CUDA_OK=1
+
+echo ">>> [0.5] NVENC available: ${NVENC_OK} | scale_cuda available: ${SCALE_CUDA_OK}"
+
+copy_raw() {
+  local src="$1"
+  local bn dst
+  bn="$(basename "$src")"
+  dst="${PREP_DIR}/${bn%.*}.mp4"
+  cp -f -- "$src" "$dst"
 }
+
+# Check if video is 10-bit or HDR and needs special handling
+needs_tonemap() {
+  local f="$1"
+  local probe_out
+
+  probe_out=$(ffprobe -v quiet -print_format json -show_streams "$f" 2>/dev/null || echo "")
+
+  # Check for 10-bit pixel format (yuv420p10le, yuv420p10be, etc.)
+  if echo "$probe_out" | grep -q '"pix_fmt".*10le\|10be'; then
+    return 0  # true - needs tonemap
+  fi
+
+  # Check for HDR color space (bt2020)
+  if echo "$probe_out" | grep -q '"color_space".*"bt2020'; then
+    return 0  # true - needs tonemap
+  fi
+
+  return 1  # false - standard 8-bit SDR
+}
+
+norm_ok=0
+norm_fail=0
+norm_timeout=0
+fallback_copy=0
+
+# Build scale filter based on MAX_DIM
+if [ "${MAX_DIM}" -gt 0 ]; then
+  SCALE_W="w='if(gt(iw,ih),${MAX_DIM},-2)'"
+  SCALE_H="h='if(gt(iw,ih),-2,${MAX_DIM})'"
+  SCALE_FILTER="scale=${SCALE_W}:${SCALE_H},"
+  SCALE_CUDA_FILTER="scale_cuda=${SCALE_W}:${SCALE_H},"
+else
+  # No scaling - keep original resolution
+  SCALE_FILTER=""
+  SCALE_CUDA_FILTER=""
+fi
+
+while IFS= read -r -d '' f; do
+  bn="$(basename "$f")"
+  out="${PREP_DIR}/${bn%.*}.mp4"
+
+  echo "    [VID] ${bn}"
+
+  if [ ! -f "$f" ]; then
+    norm_fail=$((norm_fail+1))
+    continue
+  fi
+
+  if [ "${SKIP_NORM}" = "1" ]; then
+    if copy_raw "$f" >/dev/null 2>&1; then
+      fallback_copy=$((fallback_copy+1))
+    else
+      norm_fail=$((norm_fail+1))
+    fi
+    continue
+  fi
+
+  # Check if video needs HDR/10-bit tone mapping
+  if needs_tonemap "$f"; then
+    # Use zscale with tonemap for 10-bit/HDR -> 8-bit SDR conversion
+    TONEMAP_FILTER="zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"
+    FORMAT_FILTER="${TONEMAP_FILTER}"
+  else
+    # Standard 8-bit conversion
+    FORMAT_FILTER="format=yuv420p"
+  fi
+
+  if [ "${USE_GPU_NORM}" = "1" ] && [ "${NVENC_OK}" = "1" ] && [ "${SCALE_CUDA_OK}" = "1" ]; then
+    # Note: GPU path doesn't support zscale tonemap, so we fall back to CPU for HDR videos
+    if needs_tonemap "$f"; then
+      cmd=(ffmpeg -y -nostdin -hide_banner -loglevel "${FFLOG}"
+           -fflags +genpts+discardcorrupt -err_detect ignore_err
+           -probesize 10M -analyzeduration 10M
+           -i "$f"
+           -vf "${SCALE_FILTER}fps=${FPS_OUT},${FORMAT_FILTER}"
+           -c:v libx264 -preset slow -crf 18
+           -c:a aac -ac 1 -ar 16000
+           -max_muxing_queue_size 2048
+           -movflags +faststart
+           "$out")
+    else
+      cmd=(ffmpeg -y -nostdin -hide_banner -loglevel "${FFLOG}"
+           -hwaccel cuda -hwaccel_output_format cuda
+           -fflags +genpts+discardcorrupt -err_detect ignore_err
+           -probesize 10M -analyzeduration 10M
+           -i "$f"
+           -vf "${SCALE_CUDA_FILTER}fps=${FPS_OUT}"
+           -c:v h264_nvenc -preset p7 -rc vbr -cq 18 -b:v 0
+           -c:a aac -ac 1 -ar 16000
+           -max_muxing_queue_size 2048
+           -movflags +faststart
+           "$out")
+    fi
+  elif [ "${USE_GPU_NORM}" = "1" ] && [ "${NVENC_OK}" = "1" ]; then
+    cmd=(ffmpeg -y -nostdin -hide_banner -loglevel "${FFLOG}"
+         -fflags +genpts+discardcorrupt -err_detect ignore_err
+         -probesize 10M -analyzeduration 10M
+         -i "$f"
+         -vf "${SCALE_FILTER}fps=${FPS_OUT},${FORMAT_FILTER}"
+         -c:v h264_nvenc -preset p7 -rc vbr -cq 18 -b:v 0
+         -c:a aac -ac 1 -ar 16000
+         -max_muxing_queue_size 2048
+         -movflags +faststart
+         "$out")
+  else
+    cmd=(ffmpeg -y -nostdin -hide_banner -loglevel "${FFLOG}"
+         -fflags +genpts+discardcorrupt -err_detect ignore_err
+         -probesize 10M -analyzeduration 10M
+         -i "$f"
+         -vf "${SCALE_FILTER}fps=${FPS_OUT},${FORMAT_FILTER}"
+         -c:v libx264 -preset slow -crf 18
+         -c:a aac -ac 1 -ar 16000
+         -max_muxing_queue_size 2048
+         -movflags +faststart
+         "$out")
+  fi
+
+  run_one() {
+    if [ -n "${TIMEOUT_BIN}" ]; then
+      "${TIMEOUT_BIN}" -k 5 "${NORM_TIMEOUT_SEC}" "${cmd[@]}" >/dev/null 2>&1
+    else
+      "${cmd[@]}" >/dev/null 2>&1
+    fi
+  }
+
+  if run_one; then
+    norm_ok=$((norm_ok+1))
+  else
+    rc=$?
+    rm -f -- "$out" || true
+    if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then
+      norm_timeout=$((norm_timeout+1))
+    else
+      norm_fail=$((norm_fail+1))
+    fi
+
+    if copy_raw "$f" >/dev/null 2>&1; then
+      fallback_copy=$((fallback_copy+1))
+    fi
+  fi
+done < <(find "$RAW_DIR" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.MP4" \) -print0)
+
+echo ">>> [0.5] Summary: ok=${norm_ok}, failed=${norm_fail}, timeout=${norm_timeout}, fallback_copy=${fallback_copy}"
+echo
+
+NUM_PREP="$(find "$PREP_DIR" -maxdepth 1 -type f -name "*.mp4" | wc -l | tr -d ' ')"
+if [ "$NUM_PREP" -eq 0 ]; then
+  echo "ERROR: No videos available after normalize/copy." >&2
+  exit 3
+fi
 
 # IMPORTANT: wipe FLAT_VID_DIR so Whisper does NOT see leftovers
 echo ">>> [0.5] Resetting FLAT_VID_DIR and copying prepared videos -> ${FLAT_VID_DIR}"
@@ -273,15 +433,12 @@ echo
 ########################
 # STEP 2: Preprocessing with optional overlap/segmentation
 ########################
-# Determine directory suffix and flags based on SEGMENTATION_ENABLED
 if [ "$SEGMENTATION_ENABLED" = "1" ]; then
     SEG_MODE_MSG="segmented (${SEG_DURATION}s segments)"
     DISABLE_SEG_FLAG=""
-    DIR_SUFFIX="seg${SEG_DURATION}s"
 else
     SEG_MODE_MSG="whole videos (no segmentation)"
     DISABLE_SEG_FLAG="--disable-segmentation"
-    DIR_SUFFIX="whole"
 fi
 
 if [ "$SEGMENTATION_ENABLED" = "1" ] && [ "$OVERLAP_ENABLED" = "1" ]; then
@@ -517,9 +674,7 @@ echo
 ########################
 echo ">>> [4] Running flat_to_lrs3_preperation.sh"
 
-# Use the same DIR_SUFFIX as preprocessing
 SEG_DURATION="$SEG_DURATION" \
-DIR_SUFFIX="$DIR_SUFFIX" \
 LRS3_ROOT="$PREP_ROOT" \
 bash "$AVH/avhubert/preparation/flat_to_lrs3_preperation.sh" \
   "$PREP_ROOT"
