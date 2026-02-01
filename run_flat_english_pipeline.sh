@@ -77,98 +77,92 @@ mkdir -p \
   "$MANIFEST_ROOT" "$FEAT_DIR" "$LAB_DIR"
 
 ############################################
-# STEP 0.1: FAST SEGMENTATION (if SEGMENT_ONLY=1)
+# STEP 0.1: FAST SEGMENTATION (always run for efficiency)
 ############################################
+# Segment raw videos FIRST, then normalize segments (not whole videos)
+# This is much more efficient for long videos
+
 SEGMENT_ONLY="${SEGMENT_ONLY:-0}"
+FAST_SEG_DIR="${PREP_ROOT}/fast_segments"
+mkdir -p "${FAST_SEG_DIR}"
 
-if [ "$SEGMENT_ONLY" = "1" ]; then
-  FAST_SEG_DIR="${PREP_ROOT}/fast_segments"
-  mkdir -p "${FAST_SEG_DIR}"
+if [ "$SEGMENTATION_ENABLED" = "1" ]; then
+  echo ">>> [0.1] Fast Segmentation (splitting videos into ${SEG_DURATION}s segments)"
+  echo ">>> [0.1] This creates raw segments before normalization (efficient for long videos)"
 
-  if [ "$SEGMENTATION_ENABLED" = "1" ]; then
-    echo ">>> [0.1] Fast Segmentation Mode (splitting videos)"
-    echo ">>> [0.1] This creates raw segments quickly so users can start transcribing"
+  source "${PREP_VENV}/bin/activate"
 
-    source "${PREP_VENV}/bin/activate"
-
-    # Determine overlap settings
-    if [ "$OVERLAP_ENABLED" = "1" ]; then
-      OVERLAP_ARG="--overlap ${OVERLAP_DURATION}"
-      echo ">>> [0.1] Using ${OVERLAP_DURATION}s overlap for videos >${MIN_SPLIT_DURATION}s"
-    else
-      OVERLAP_ARG="--overlap 0.0"
-      echo ">>> [0.1] Overlap disabled (no overlap between segments)"
-    fi
-
-    python "${AUTO_AVSR}/preparation/fast_segment.py" \
-      --data-dir "${RAW_DIR}" \
-      --output-dir "${FAST_SEG_DIR}" \
-      --seg-duration "${SEG_DURATION}" \
-      ${OVERLAP_ARG} \
-      --min-split-duration "${MIN_SPLIT_DURATION}"
-
-    echo
-    echo ">>> [0.1] Fast segmentation complete!"
-    echo ">>> [0.1] Segments saved to: ${FAST_SEG_DIR}"
-    echo ">>> [0.1] Metadata: ${FAST_SEG_DIR}/segment_metadata.json"
+  # Determine overlap settings
+  if [ "$OVERLAP_ENABLED" = "1" ]; then
+    OVERLAP_ARG="--overlap ${OVERLAP_DURATION}"
+    echo ">>> [0.1] Using ${OVERLAP_DURATION}s overlap for videos >${MIN_SPLIT_DURATION}s"
   else
-    echo ">>> [0.1] Whole Video Mode (segmentation disabled)"
-    echo ">>> [0.1] Copying videos as-is for transcription review"
+    OVERLAP_ARG="--overlap 0.0"
+    echo ">>> [0.1] Overlap disabled (no overlap between segments)"
+  fi
 
-    # Also create the expected directory structure for when pipeline continues
-    SEGMENT_VID_DIR="$PREP_ROOT/${DATA_NAME}/${DATA_NAME}_video_seg${SEG_DURATION}s"
-    mkdir -p "${SEGMENT_VID_DIR}"
+  python "${AUTO_AVSR}/preparation/fast_segment.py" \
+    --data-dir "${RAW_DIR}" \
+    --output-dir "${FAST_SEG_DIR}" \
+    --seg-duration "${SEG_DURATION}" \
+    ${OVERLAP_ARG} \
+    --min-split-duration "${MIN_SPLIT_DURATION}"
 
-    # Copy whole videos to both locations
-    # 1. fast_segments/ for UI review
-    # 2. preprocessed directory for pipeline continuation
-    copied_count=0
-    shopt -s nullglob  # Avoid literal glob patterns if no files match
-    for video_file in "${RAW_DIR}"/*.mp4 "${RAW_DIR}"/*.mkv "${RAW_DIR}"/*.webm "${RAW_DIR}"/*.mov "${RAW_DIR}"/*.avi "${RAW_DIR}"/*.m4v; do
-      if [ -f "$video_file" ]; then
-        video_name=$(basename "$video_file")
-        # Keep original name (no segment suffix for whole videos)
-        output_name="${video_name}"
+  deactivate
 
-        # Copy to fast_segments for UI review
-        cp "$video_file" "${FAST_SEG_DIR}/${output_name}"
+  echo
+  echo ">>> [0.1] Fast segmentation complete!"
+  echo ">>> [0.1] Segments saved to: ${FAST_SEG_DIR}"
+  echo ">>> [0.1] Metadata: ${FAST_SEG_DIR}/segment_metadata.json"
+else
+  echo ">>> [0.1] Whole Video Mode (segmentation disabled)"
+  echo ">>> [0.1] Copying videos as-is"
 
-        # Also copy to preprocessed directory for pipeline continuation
-        cp "$video_file" "${SEGMENT_VID_DIR}/${output_name}"
+  # Copy whole videos to fast_segments
+  copied_count=0
+  shopt -s nullglob  # Avoid literal glob patterns if no files match
+  for video_file in "${RAW_DIR}"/*.mp4 "${RAW_DIR}"/*.mkv "${RAW_DIR}"/*.webm "${RAW_DIR}"/*.mov "${RAW_DIR}"/*.avi "${RAW_DIR}"/*.m4v; do
+    if [ -f "$video_file" ]; then
+      video_name=$(basename "$video_file")
+      # Keep original name (no segment suffix for whole videos)
+      output_name="${video_name}"
 
-        copied_count=$((copied_count + 1))
-        echo "  ✓ Copied: $video_name (whole video)"
+      # Copy to fast_segments
+      cp "$video_file" "${FAST_SEG_DIR}/${output_name}"
+
+      copied_count=$((copied_count + 1))
+      echo "  ✓ Copied: $video_name (whole video)"
+    fi
+  done
+  shopt -u nullglob
+
+  # Create proper segment metadata for whole videos
+  echo "{" > "${FAST_SEG_DIR}/segment_metadata.json"
+  first_video=true
+  shopt -s nullglob
+  for video_file in "$RAW_DIR"/*.{mp4,mkv,avi,mov,webm,MP4,MKV,AVI,MOV,WEBM}; do
+    if [ -f "$video_file" ]; then
+      video_name=$(basename "$video_file")
+      video_id="${video_name%.*}"
+
+      # Get video duration
+      duration=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$video_file" 2>/dev/null || echo "0")
+
+      # Get frame count (at 25fps)
+      frame_count=$(ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 "$video_file" 2>/dev/null || echo "0")
+      if [ "$frame_count" = "0" ]; then
+        # Estimate from duration if frame count unavailable
+        frame_count=$(echo "$duration * 25" | bc -l | cut -d. -f1)
       fi
-    done
-    shopt -u nullglob
 
-    # Create proper segment metadata for whole videos
-    echo "{" > "${FAST_SEG_DIR}/segment_metadata.json"
-    first_video=true
-    shopt -s nullglob
-    for video_file in "$RAW_DIR"/*.{mp4,mkv,avi,mov,webm,MP4,MKV,AVI,MOV,WEBM}; do
-      if [ -f "$video_file" ]; then
-        video_name=$(basename "$video_file")
-        video_id="${video_name%.*}"
+      # Add comma before entry (except for first)
+      if [ "$first_video" = false ]; then
+        echo "," >> "${FAST_SEG_DIR}/segment_metadata.json"
+      fi
+      first_video=false
 
-        # Get video duration
-        duration=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$video_file" 2>/dev/null || echo "0")
-
-        # Get frame count (at 25fps)
-        frame_count=$(ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 "$video_file" 2>/dev/null || echo "0")
-        if [ "$frame_count" = "0" ]; then
-          # Estimate from duration if frame count unavailable
-          frame_count=$(echo "$duration * 25" | bc -l | cut -d. -f1)
-        fi
-
-        # Add comma before entry (except for first)
-        if [ "$first_video" = false ]; then
-          echo "," >> "${FAST_SEG_DIR}/segment_metadata.json"
-        fi
-        first_video=false
-
-        # Write video metadata entry
-        cat >> "${FAST_SEG_DIR}/segment_metadata.json" <<EOF
+      # Write video metadata entry
+      cat >> "${FAST_SEG_DIR}/segment_metadata.json" <<EOF
   "$video_id": {
     "original_duration": $duration,
     "segment_duration": $duration,
@@ -186,23 +180,25 @@ if [ "$SEGMENT_ONLY" = "1" ]; then
     ]
   }
 EOF
-      fi
-    done
-    shopt -u nullglob
-    echo "}" >> "${FAST_SEG_DIR}/segment_metadata.json"
-
-    echo
-    echo ">>> [0.1] Copied $copied_count whole video(s)"
-    echo ">>> [0.1] Videos saved to: ${FAST_SEG_DIR}"
-    echo ">>> [0.1] Also prepared in: ${SEGMENT_VID_DIR}"
-  fi
+    fi
+  done
+  shopt -u nullglob
+  echo "}" >> "${FAST_SEG_DIR}/segment_metadata.json"
 
   echo
+  echo ">>> [0.1] Copied $copied_count whole video(s)"
+  echo ">>> [0.1] Videos saved to: ${FAST_SEG_DIR}"
+fi
+
+echo
+
+# If SEGMENT_ONLY mode, stop here for transcription review
+if [ "$SEGMENT_ONLY" = "1" ]; then
   echo ">>> [INFO] SEGMENT_ONLY mode - stopping for transcription review"
   echo ">>> [INFO] Next steps:"
   echo "    1. Review/transcribe videos in the UI"
   echo "    2. Continue pipeline for full processing:"
-  echo "       - Video normalization (HDR/10-bit conversion)"
+  echo "       - Video normalization on segments (efficient!)"
   echo "       - Face detection & mouth cropping"
   echo "       - ASR (auto-transcription for remaining videos)"
   echo "       - K-means clustering & VSP-LLM decoding"
@@ -211,7 +207,7 @@ EOF
 fi
 
 ############################################
-# STEP 0.5: Prepare/Normalize raw videos -> FLAT_VID_DIR
+# STEP 0.5: Normalize segments -> FLAT_VID_DIR
 ############################################
 # Load normalization module
 source "${HOME}/lib/normalization.sh"
@@ -223,19 +219,21 @@ FPS_OUT="${FPS_OUT:-25}"
 USE_GPU_NORM="${USE_GPU_NORM:-1}"
 NORM_TIMEOUT_SEC="${NORM_TIMEOUT_SEC:-600}"
 
-echo ">>> [0.5] Preparing videos (SKIP_NORM=${SKIP_NORM}, USE_GPU_NORM=${USE_GPU_NORM}, MAX_DIM=${MAX_DIM}, FPS=${FPS_OUT}, TIMEOUT=${NORM_TIMEOUT_SEC}s)"
+echo ">>> [0.5] Normalizing segments (SKIP_NORM=${SKIP_NORM}, USE_GPU_NORM=${USE_GPU_NORM}, MAX_DIM=${MAX_DIM}, FPS=${FPS_OUT}, TIMEOUT=${NORM_TIMEOUT_SEC}s)"
+echo ">>> [0.5] Input: ${FAST_SEG_DIR} (pre-segmented videos)"
 
 # Prepare output directory
 PREP_DIR="${AUTO_AVSR}/${DATA_NAME}_prepared"
 
-# Run normalization
-run_normalization "$RAW_DIR" "$PREP_DIR" "$SKIP_NORM" "$MAX_DIM" "$FPS_OUT" "$USE_GPU_NORM" "$NORM_TIMEOUT_SEC" || {
+# Run normalization on SEGMENTS (not raw videos!)
+# This is much more efficient for long videos
+run_normalization "$FAST_SEG_DIR" "$PREP_DIR" "$SKIP_NORM" "$MAX_DIM" "$FPS_OUT" "$USE_GPU_NORM" "$NORM_TIMEOUT_SEC" || {
   echo "ERROR: Video normalization failed" >&2
   exit 3
 }
 
 # IMPORTANT: wipe FLAT_VID_DIR so Whisper does NOT see leftovers
-echo ">>> [0.5] Resetting FLAT_VID_DIR and copying prepared videos -> ${FLAT_VID_DIR}"
+echo ">>> [0.5] Resetting FLAT_VID_DIR and copying normalized segments -> ${FLAT_VID_DIR}"
 rm -rf "$FLAT_VID_DIR"
 mkdir -p "$FLAT_VID_DIR"
 cp -a "${PREP_DIR}/." "${FLAT_VID_DIR}/"
@@ -258,21 +256,25 @@ echo ">>> [1] Videos copied to $READY_DIR"
 echo
 
 ########################
-# STEP 2: Preprocessing with optional overlap/segmentation
+# STEP 2: Mouth cropping (face detection + cropping)
 ########################
-# Determine directory suffix and flags based on SEGMENTATION_ENABLED
+# NOTE: Videos are ALREADY segmented and normalized from Step 0.1 and 0.5
+# Preprocessing now ONLY does face detection and mouth cropping (no segmentation!)
+
+# Always disable segmentation since videos are already segmented
+DISABLE_SEG_FLAG="--disable-segmentation"
+
 if [ "$SEGMENTATION_ENABLED" = "1" ]; then
-    SEG_MODE_MSG="segmented (${SEG_DURATION}s segments)"
-    DISABLE_SEG_FLAG=""
+    SEG_MODE_MSG="pre-segmented (${SEG_DURATION}s segments, normalized)"
     DIR_SUFFIX="seg${SEG_DURATION}s"
 else
-    SEG_MODE_MSG="whole videos (no segmentation)"
-    DISABLE_SEG_FLAG="--disable-segmentation"
+    SEG_MODE_MSG="whole videos (normalized, no segmentation)"
     DIR_SUFFIX="whole"
 fi
 
 if [ "$SEGMENTATION_ENABLED" = "1" ] && [ "$OVERLAP_ENABLED" = "1" ]; then
-    echo ">>> [2] Running preprocess_with_overlap.py (mediapipe, ${SEG_MODE_MSG}, overlap=${OVERLAP_DURATION}s)"
+    echo ">>> [2] Running preprocess_with_overlap.py (mediapipe, ${SEG_MODE_MSG})"
+    echo ">>> [2] Processing pre-segmented, normalized videos (face detection + mouth cropping only)"
 
     source "$PREP_VENV/bin/activate"
     cd "$AUTO_AVSR/preparation"
@@ -292,9 +294,10 @@ if [ "$SEGMENTATION_ENABLED" = "1" ] && [ "$OVERLAP_ENABLED" = "1" ]; then
       $DISABLE_SEG_FLAG
 
     deactivate
-    echo ">>> [INFO] Overlapping segments + metadata in: $PREP_ROOT"
+    echo ">>> [INFO] Mouth-cropped segments in: $PREP_ROOT"
 else
     echo ">>> [2] Running preprocess_lrs2lrs3.py (mediapipe, ${SEG_MODE_MSG})"
+    echo ">>> [2] Processing normalized videos (face detection + mouth cropping only)"
 
     source "$PREP_VENV/bin/activate"
     cd "$AUTO_AVSR/preparation"
@@ -312,7 +315,7 @@ else
       $DISABLE_SEG_FLAG
 
     deactivate
-    echo ">>> [INFO] Standard mouth crops in: $PREP_ROOT"
+    echo ">>> [INFO] Mouth-cropped videos in: $PREP_ROOT"
 fi
 
 ########################

@@ -263,17 +263,23 @@ Always activate the appropriate environment before running commands from that co
 ```
 Raw Videos (.mp4)
     ↓
+[0.1 Fast Segmentation] → Split videos into segments (or copy whole videos)
+    ↓                      (codec copy, very fast - 12s segments with 2s overlap)
+    ↓                      Output: preprocessed_flat_seg12/fast_segments/
+[0.5 Normalization] → Normalize SEGMENTS (not whole videos!)
+    ↓                  (HDR/10-bit conversion, GPU encoding - efficient for long videos)
+    ↓                  Output: auto_avsr/flat_prepared/ → auto_avsr/flat/
 [0.6 Transcription Reuse] → Copy existing .transcriptions/*.wrd → flat_wrd/
     ↓                        (Enables Whisper skip for existing transcriptions)
-[1. ASR - Whisper] → .wrd transcription files (skips videos with existing .wrd)
+[1. Prepare Directories] → Copy normalized segments to preprocess_ready/
     ↓
-[1.5 Save Transcriptions] → Copy new flat_wrd/*.wrd → .transcriptions/
+[2. Mouth Cropping] → Face detection + mouth cropping (NO segmentation!)
+    ↓                  (mediapipe, 88x88 crops at 25fps - segments already done)
+    ↓                  Output: preprocessed_flat_seg12/
+[3. ASR - Whisper] → .wrd transcription files (skips videos with existing .wrd)
+    ↓
+[3.5 Save Transcriptions] → Copy new flat_wrd/*.wrd → .transcriptions/
     ↓                        (Persist Whisper outputs for future reuse)
-[2. make_preprocess_ready.sh] → Prepare directory structure
-    ↓
-[3. preprocess_lrs2lrs3.py] → Mouth cropping + segmentation
-    ↓                          (mediapipe, 12s segments, 2s overlap)
-    ↓                          Output: preprocessed_flat_seg12/
 [4. flat_to_lrs3_preperation.sh] → Convert to LRS3 format
     ↓
 [5. Manifest Generation] → train.tsv, train.wrd, splits
@@ -289,10 +295,14 @@ Raw Videos (.mp4)
     - One report entry per segment
     - One burned video per segment
 
-Note: Steps 0.6 and 1.5 implement unified transcription management.
+Note: Steps 0.6 and 3.5 implement unified transcription management.
       Whisper only runs ONCE per unique video filename across all pipeline runs!
 
-Architecture: SEGMENT-LEVEL (since Jan 2026)
+Architecture: SEGMENT-FIRST NORMALIZATION (since Feb 2026)
+      - Raw videos segmented FIRST (Step 0.1) using fast codec copy
+      - Normalization works on SEGMENTS (Step 0.5) not whole videos - efficient!
+      - For 60-min video: normalize 300× 12s segments instead of 1× 60min video
+      - Benefits: Lower memory usage, faster processing, better parallelization
       - Videos split into 12s segments with 2s overlap
       - Each segment processed independently through entire pipeline
       - No merging - segments remain separate in all outputs
@@ -1591,4 +1601,37 @@ The following changes have been made to the EC2 version and need to be replicate
   - Add special case for `seg_idx == -1` to use first segment
   - Enables Strategy 1 extraction for non-segmented videos
   - Critical: Without this fix, burned videos show mouth crops even with proper metadata
+
+17. **Segmented Video Naming Fix for Non-Split Videos** (Added Feb 1, 2026): Fixed transcription matching when segmentation is enabled but video is too short to split
+   - **Problem**: When segmentation enabled, videos too short for splitting (<24s) were getting artificial segment suffixes, breaking transcription matching
+   - **Root Cause**: `preprocess_with_overlap.py` always added segment suffix even for single-segment videos
+   - **Impact**: Manual transcriptions ignored, Whisper re-transcribed unnecessarily
+
+   **Example Before Fix**:
+   - Input: `00008.mp4` (20 seconds - too short to split)
+   - Output: `00008_00_000000_000500.mp4` (artificial suffix)
+   - User saves: `00008_00_000000_000500.wrd`
+   - ASR expects: `00008.wrd`
+   - Result: Transcription ignored
+
+   **Example After Fix**:
+   - Input: `00008.mp4` (20 seconds)
+   - Output: `00008.mp4` (original name kept)
+   - User saves: `00008.wrd`
+   - ASR expects: `00008.wrd`
+   - Result: Transcription used
+
+   **Code Change** (lines ~229-240):
+   ```python
+   # Check if video was actually split before adding suffix
+   if len(time_segments) == 1:
+       segment_suffix = ""  # Single segment - keep original name
+   else:
+       segment_suffix = f"_{idx:02d}_{start_frame:06d}_{end_frame:06d}"
+   ```
+
+**Segmented Video Naming Fix Files Modified for Linux Container (Feb 1, 2026)**:
+- `/workspace/auto_avsr/preparation/preprocess_with_overlap.py` - Update segment naming (lines ~229-240)
+  - Add: `if len(time_segments) == 1: segment_suffix = "" else: segment_suffix = f"_{idx:02d}_{start_frame:06d}_{end_frame:06d}"`
+  - Critical: Without this fix, non-split videos get artificial suffixes that break transcription matching
 
