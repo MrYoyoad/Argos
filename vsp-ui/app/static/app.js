@@ -915,18 +915,24 @@ async function deleteCurrentTranscription() {
             return;
         }
 
-        // Update validation results
-        const video = validationResult.valid_videos.find(
-            v => v.filename === currentTranscriptionFilename
-        );
-        if (video) {
-            video.has_transcription = false;
-            video.transcription_type = null;
-        }
-
-        // Refresh display and close modal
-        displayValidationResults();
+        // Close modal first
         closeTranscriptionModal();
+
+        // Refresh the current screen - check which screen we're on
+        if (currentScreen === 'segmentReview') {
+            // Reload segments to show updated transcription
+            await loadAndDisplaySegments();
+        } else if (validationResult) {
+            // Update validation results if we're on validation screen
+            const video = validationResult.valid_videos.find(
+                v => v.filename === currentTranscriptionFilename
+            );
+            if (video) {
+                video.has_transcription = false;
+                video.transcription_type = null;
+            }
+            displayValidationResults();
+        }
 
     } catch (err) {
         alert(`Failed to delete: ${err.message}`);
@@ -1425,16 +1431,73 @@ function uploadFile(file, fileId) {
 
         const xhr = new XMLHttpRequest();
 
-        // Progress event
+        // Track upload state
+        let lastProgressUpdate = 0;
+        let simulatedProgress = 0;
+        let progressSimulationInterval = null;
+        let hasRealProgress = false;
+        const fileSize = file.size;
+        const isLargeFile = fileSize > 10 * 1024 * 1024; // >10MB
+
+        // Simulate smooth progress for localhost/fast uploads
+        const simulateProgress = () => {
+            if (simulatedProgress < 95) {
+                // Slower progress for large files, faster for small
+                const increment = isLargeFile ? 2 : 8;
+                simulatedProgress = Math.min(simulatedProgress + increment, 95);
+
+                // Only use simulated progress if we haven't received real progress
+                if (!hasRealProgress || lastProgressUpdate < simulatedProgress) {
+                    updateUploadProgress(fileId, simulatedProgress);
+                }
+            }
+        };
+
+        // Loadstart event - fired when upload actually begins
+        xhr.upload.addEventListener('loadstart', () => {
+            simulatedProgress = 0;
+            updateUploadProgress(fileId, 0);
+            setUploadStatus(fileId, 'Uploading...');
+
+            // Start simulated progress animation
+            // This ensures users see gradual progress even for instant localhost uploads
+            progressSimulationInterval = setInterval(simulateProgress, 100);
+        });
+
+        // Progress event - real upload progress from browser
         xhr.upload.addEventListener('progress', (e) => {
             if (e.lengthComputable) {
+                hasRealProgress = true;
                 const percent = Math.round((e.loaded / e.total) * 100);
-                updateUploadProgress(fileId, percent);
+
+                // Use real progress if available and higher than simulated
+                if (percent > lastProgressUpdate) {
+                    lastProgressUpdate = percent;
+                    simulatedProgress = percent;
+                    updateUploadProgress(fileId, percent);
+                }
             }
         });
 
-        // Load event (success)
+        // Loadend event - upload phase complete, server processing begins
+        xhr.upload.addEventListener('loadend', () => {
+            // Clear simulation
+            if (progressSimulationInterval) {
+                clearInterval(progressSimulationInterval);
+            }
+
+            // Show upload complete, waiting for server
+            updateUploadProgress(fileId, 100);
+            setUploadStatus(fileId, 'Processing...');
+        });
+
+        // Load event (server response received)
         xhr.addEventListener('load', () => {
+            // Clear simulation interval (safety)
+            if (progressSimulationInterval) {
+                clearInterval(progressSimulationInterval);
+            }
+
             if (xhr.status === 200) {
                 try {
                     const response = JSON.parse(xhr.responseText);
@@ -1457,12 +1520,18 @@ function uploadFile(file, fileId) {
 
         // Error event
         xhr.addEventListener('error', () => {
+            if (progressSimulationInterval) {
+                clearInterval(progressSimulationInterval);
+            }
             markUploadComplete(fileId, false);
             resolve({ success: false, error: 'Network error' });
         });
 
         // Abort event
         xhr.addEventListener('abort', () => {
+            if (progressSimulationInterval) {
+                clearInterval(progressSimulationInterval);
+            }
             markUploadComplete(fileId, false);
             resolve({ success: false, error: 'Upload cancelled' });
         });
@@ -1493,6 +1562,18 @@ function updateUploadProgress(fileId, percent) {
     });
 
     elements.uploadStatus.textContent = `Uploading ${completedCount} of ${allItems.length} files...`;
+}
+
+function setUploadStatus(fileId, statusText) {
+    const item = document.querySelector(`[data-file-id="${fileId}"]`);
+    if (!item) return;
+
+    const status = item.querySelector('.upload-file-status');
+    if (status) {
+        status.textContent = statusText;
+        status.style.color = '#666';
+        status.style.fontSize = '0.85em';
+    }
 }
 
 function markUploadComplete(fileId, success) {

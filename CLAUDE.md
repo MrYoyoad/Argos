@@ -1635,3 +1635,167 @@ The following changes have been made to the EC2 version and need to be replicate
   - Add: `if len(time_segments) == 1: segment_suffix = "" else: segment_suffix = f"_{idx:02d}_{start_frame:06d}_{end_frame:06d}"`
   - Critical: Without this fix, non-split videos get artificial suffixes that break transcription matching
 
+18. **Delete Modal Transcription Screen Fix** (Added Feb 1, 2026): Fixed "Delete Transcription" button in modal failing when on segment review screen
+   - **Problem**: Clicking "Delete Transcription" button in the transcription modal caused JavaScript error when on segment review screen
+   - **Root Cause**: `deleteCurrentTranscription()` always tried to update validation screen elements, even when on segment review screen
+   - **Impact**: Users unable to delete manual transcriptions from the modal dialog on segment review screen
+
+   **The Issue**:
+   - Same bug as fix #8, but in a different function
+   - `deleteCurrentTranscription()` (called from modal button) lacked screen check
+   - Always called `displayValidationResults()` which expects validation screen DOM elements
+   - On segment review screen → null reference error, delete fails
+
+   **The Fix**:
+   - Added same screen check pattern from `deleteTranscriptionFromList()` fix #8
+   - Check `currentScreen` variable to determine active screen
+   - If on segment review: call `loadAndDisplaySegments()` to refresh
+   - If on validation screen: call `displayValidationResults()` as before
+   - Moved `closeTranscriptionModal()` before refresh for better UX
+
+   **Code Change** (lines ~907-936 in app.js):
+   ```javascript
+   // BEFORE (always used validation screen refresh):
+   try {
+       const result = await api('transcription', 'POST', {
+           filename: currentTranscriptionFilename,
+           delete: true
+       });
+
+       if (!result.success) {
+           alert(`Failed to delete: ${result.error || 'Unknown error'}`);
+           return;
+       }
+
+       // Update validation results
+       const video = validationResult.valid_videos.find(
+           v => v.filename === currentTranscriptionFilename
+       );
+       if (video) {
+           video.has_transcription = false;
+           video.transcription_type = null;
+       }
+
+       // Refresh display and close modal
+       displayValidationResults();
+       closeTranscriptionModal();
+
+   } catch (err) {
+       alert(`Failed to delete: ${err.message}`);
+   }
+
+   // AFTER (check current screen):
+   try {
+       const result = await api('transcription', 'POST', {
+           filename: currentTranscriptionFilename,
+           delete: true
+       });
+
+       if (!result.success) {
+           alert(`Failed to delete: ${result.error || 'Unknown error'}`);
+           return;
+       }
+
+       // Close modal first
+       closeTranscriptionModal();
+
+       // Refresh the current screen - check which screen we're on
+       if (currentScreen === 'segmentReview') {
+           // Reload segments to show updated transcription
+           await loadAndDisplaySegments();
+       } else if (validationResult) {
+           // Update validation results if we're on validation screen
+           const video = validationResult.valid_videos.find(
+               v => v.filename === currentTranscriptionFilename
+           );
+           if (video) {
+               video.has_transcription = false;
+               video.transcription_type = null;
+           }
+           displayValidationResults();
+       }
+
+   } catch (err) {
+       alert(`Failed to delete: ${err.message}`);
+   }
+   ```
+
+**Delete Modal Fix Files Modified for Linux Container (Feb 1, 2026)**:
+- `/workspace/vsp-ui/app/static/app.js` - Update `deleteCurrentTranscription()` function (lines ~907-936)
+  - Add screen check before refreshing display
+  - Call `loadAndDisplaySegments()` for segment review screen
+  - Call `displayValidationResults()` for validation screen
+  - Move `closeTranscriptionModal()` to happen before refresh
+  - Critical: Without this fix, "Delete Transcription" button in modal fails with null reference error on segment review screen
+
+19. **VSP-LLM max_len Configuration Fix** (Added Feb 1, 2026): Fixed Hydra schema validation error preventing decode step
+   - **Problem**: Decode step failed with "Key 'max_len' not in 'GenerationConfig'" error
+   - **Root Cause**: Config file `s2s_decode.yaml` set `generation.max_len: 2048` but GenerationConfig dataclass lacked this field
+   - **Impact**: Pipeline failed at decode step [7], unable to run VSP-LLM inference
+
+   **The Issue**:
+   - Config: `s2s_decode.yaml` has `generation.max_len: 2048`
+   - Hydra validates config against `GenerationConfig` schema in fairseq
+   - GenerationConfig had `max_len_a`, `max_len_b`, `min_len` but NOT `max_len`
+   - Hydra schema validation failed → decode script couldn't start
+
+   **Why max_len is Important**:
+   - Model's `generate()` method accepts `max_length` parameter (vsp_llm.py:353)
+   - Passed to HuggingFace LLaMA decoder as `max_new_tokens` (vsp_llm.py:386)
+   - Controls maximum output sequence length (default 30, config wants 2048)
+   - Without it, long videos may have truncated transcriptions
+
+   **The Fix (Two Parts)**:
+
+   **Part 1: Add max_len to GenerationConfig Schema**
+   ```python
+   # /workspace/VSP-LLM/fairseq/fairseq/dataclass/configs.py (after line 743)
+   max_len_b: int = field(
+       default=200,
+       metadata={
+           "help": "generate sequences of maximum length ax + b, where x is the source length"
+       },
+   )
+   max_len: int = field(
+       default=0,
+       metadata={
+           "help": "maximum length of generated sequence (hard cap), 0 = use model default"
+       },
+   )
+   min_len: int = field(
+       default=1, metadata={"help": "minimum generation length"},
+   )
+   ```
+
+   **Part 2: Pass max_len to Model Generate**
+   ```python
+   # /workspace/VSP-LLM/src/vsp_llm_decode.py (lines 217-221)
+   # BEFORE:
+   best_hypo = model.generate(target_list=sample["target"],
+                              num_beams=cfg.generation.beam,
+                              length_penalty=cfg.generation.lenpen,
+                              **sample["net_input"])
+
+   # AFTER:
+   best_hypo = model.generate(target_list=sample["target"],
+                              num_beams=cfg.generation.beam,
+                              max_length=cfg.generation.max_len,
+                              length_penalty=cfg.generation.lenpen,
+                              **sample["net_input"])
+   ```
+
+   **Benefits**:
+   - ✅ Decode step passes Hydra schema validation
+   - ✅ Config value actually used by model (previously ignored)
+   - ✅ Longer output sequences possible (2048 vs default 30)
+   - ✅ Better handling of long video transcriptions
+
+**VSP-LLM max_len Fix Files Modified for Linux Container (Feb 1, 2026)**:
+- `/workspace/VSP-LLM/fairseq/fairseq/dataclass/configs.py` - Add `max_len` field to GenerationConfig (after line 743)
+  - Insert between `max_len_b` and `min_len` fields
+  - Default value: 0 (use model default)
+  - Critical: Without this, Hydra schema validation fails and decode step cannot start
+- `/workspace/VSP-LLM/src/vsp_llm_decode.py` - Pass `max_length=cfg.generation.max_len` to model.generate() (line ~220)
+  - Add parameter between `num_beams` and `length_penalty`
+  - Critical: Without this, config value is ignored and model uses hardcoded default (30 tokens)
+

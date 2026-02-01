@@ -14,7 +14,7 @@ ARCHIVE_DIR = HOME_DIR / "flat_runs_archive"
 AUTO_AVSR_DIR = HOME_DIR / "auto_avsr"
 
 # Server settings
-SERVER_HOST = "127.0.0.1"
+SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 8765
 PID_FILE = HOME_DIR / ".vsp-ui.pid"
 LOG_FILE = HOME_DIR / ".vsp-ui.log"
