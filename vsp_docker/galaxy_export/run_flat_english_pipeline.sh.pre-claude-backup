@@ -1,0 +1,673 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+############################################
+# Logging controls
+############################################
+QUIET="${QUIET:-0}"
+NORM_VERBOSE="${NORM_VERBOSE:-0}"
+TRAIN_KMEANS="${TRAIN_KMEANS:-1}"
+
+log() {
+  if [ "$QUIET" = "0" ]; then
+    echo "$@"
+  fi
+}
+
+############################################
+# Usage:
+#   EXPORT_ROOT=/workspace bash run_flat_english_pipeline.sh /path/to/raw_videos_dir
+#   EXPORT_ROOT=/host/galaxy_export bash /host/galaxy_export/run_flat_english_pipeline.sh /host/galaxy_export/ui/input_videos
+############################################
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 /path/to/raw_videos_dir" >&2
+  exit 1
+fi
+
+RAW_DIR="$1"
+RAW_DIR="$(printf '%s' "$RAW_DIR" | tr -d '\r\n')"
+if command -v realpath >/dev/null 2>&1; then
+  RAW_DIR="$(realpath "$RAW_DIR")"
+else
+  RAW_DIR="$(cd "$RAW_DIR" && pwd -P)"
+fi
+
+############################################
+# ROOTS (Host vs Docker)
+############################################
+if [ -z "${EXPORT_ROOT:-}" ]; then
+  if [ -d "/workspace/auto_avsr" ]; then
+    EXPORT_ROOT="/workspace"
+  else
+    EXPORT_ROOT="$HOME"
+  fi
+fi
+
+AUTO_AVSR="${EXPORT_ROOT}/auto_avsr"
+VSP="${EXPORT_ROOT}/VSP-LLM"
+AVH="${EXPORT_ROOT}/av_hubert"
+
+DATA_NAME="flat"
+LANG="en"
+
+# Default: always export outputs to mounted host (override if you want)
+EXPORT_OUT="${EXPORT_OUT:-/host/galaxy_export}"
+
+# Core dirs for this dataset
+FLAT_VID_DIR="${AUTO_AVSR}/${DATA_NAME}"
+WRD_DIR="${AUTO_AVSR}/${DATA_NAME}_wrd"
+TXT_DIR="${AUTO_AVSR}/${DATA_NAME}_txt"
+READY_DIR="${AUTO_AVSR}/preprocess_ready_${DATA_NAME}"
+PREP_ROOT="${AUTO_AVSR}/preprocessed_${DATA_NAME}_seg4"
+MANIFEST_ROOT="${PREP_ROOT}/433h_data"
+
+# AV-HuBERT / VSP-LLM-related dirs
+FEAT_DIR="${VSP}/${DATA_NAME}_features"
+KM_PATH="${VSP}/${DATA_NAME}_kmeans_200.bin"
+LAB_DIR="${VSP}/${DATA_NAME}_labels"
+DECODE_ROOT="${VSP}/decode"
+
+# Venvs
+ASR_VENV="${AUTO_AVSR}/pre-process-venv"
+PREP_VENV="${AUTO_AVSR}/pre-process-venv"
+VSP_VENV="${EXPORT_ROOT}/vsp-llm-yoad-venv"
+
+############################################
+# Pre-flight checks
+############################################
+log ">>> [CHECK] EXPORT_ROOT=${EXPORT_ROOT}"
+log ">>> [CHECK] RAW_DIR=${RAW_DIR}"
+log ">>> [CHECK] TRAIN_KMEANS=${TRAIN_KMEANS}  (KM_PATH=${KM_PATH})"
+log ">>> [CHECK] EXPORT_OUT=${EXPORT_OUT}"
+log ">>> [CHECK] NORM_VERBOSE=${NORM_VERBOSE}"
+echo
+
+need_paths=(
+  "$AUTO_AVSR"
+  "$VSP"
+  "$AVH"
+  "$ASR_VENV/bin/activate"
+  "$VSP_VENV/bin/activate"
+)
+for p in "${need_paths[@]}"; do
+  if [ ! -e "$p" ]; then
+    echo "ERROR: Missing path: $p" >&2
+    exit 2
+  fi
+done
+if [ ! -d "$RAW_DIR" ]; then
+  echo "ERROR: RAW_DIR is not a directory: $RAW_DIR" >&2
+  exit 2
+fi
+
+############################################
+# Patch avhubert script hardcoded EC2 paths
+############################################
+FLT_SH="${AVH}/avhubert/preparation/flat_to_lrs3_preperation.sh"
+if [ ! -f "${FLT_SH}" ]; then
+  echo "ERROR: cannot find ${FLT_SH}" >&2
+  exit 20
+fi
+
+sed -i "s#/home/ubuntu/auto_avsr/pre-process-venv#${AUTO_AVSR}/pre-process-venv#g" "${FLT_SH}" || true
+sed -i "s#/home/ubuntu/auto_avsr#${AUTO_AVSR}#g" "${FLT_SH}" || true
+sed -i "s#/home/ubuntu/av_hubert#${AVH}#g" "${FLT_SH}" || true
+sed -i "s#avhubert/preperation#avhubert/preparation#g" "${FLT_SH}" || true
+
+############################################
+# Run IDs / logging dirs (define ONCE)
+############################################
+RUN_ID="$(date +'%Y%m%d_%H%M%S')"
+
+# This is where we store run logs + failure logs (and later export outputs)
+FAIL_LOG_DIR="${EXPORT_OUT}/outputs_flat_${RUN_ID}"
+LOG_DIR="${FAIL_LOG_DIR}/normalize_logs"
+FAIL_LOG="${FAIL_LOG_DIR}/normalize_failures.txt"
+
+ARCHIVE_ROOT="${EXPORT_ROOT}/flat_runs_archive/${RUN_ID}"
+
+mkdir -p "${FAIL_LOG_DIR}"
+mkdir -p "${LOG_DIR}"
+: > "${FAIL_LOG}"
+
+log ">>> [INIT] Run ID: ${RUN_ID}"
+log ">>> [INIT] FAIL_LOG_DIR: ${FAIL_LOG_DIR}"
+log ">>> [INIT] ARCHIVE_ROOT: ${ARCHIVE_ROOT}"
+echo
+
+############################################
+# HARD CLEAN for half-baked runs
+############################################
+CLEAN_ON_START="${CLEAN_ON_START:-1}"
+CLEAN_ON_FAIL="${CLEAN_ON_FAIL:-1}"
+
+DATASET_DIR="${VSP}/src/dataset/vsr/${LANG}"
+HALF_BAKED_LINKS=(
+  "${DATASET_DIR}/train.tsv"
+  "${DATASET_DIR}/train.wrd"
+  "${DATASET_DIR}/train.cluster_counts"
+  "${DATASET_DIR}/test.tsv"
+  "${DATASET_DIR}/test.wrd"
+  "${DATASET_DIR}/test.cluster_counts"
+)
+
+HALF_BAKED_DIRS=(
+  "${FLAT_VID_DIR}"
+  "${AUTO_AVSR}/${DATA_NAME}_prepared"
+  "${AUTO_AVSR}/${DATA_NAME}_normalized"
+  "${WRD_DIR}"
+  "${TXT_DIR}"
+  "${READY_DIR}"
+  "${PREP_ROOT}"
+  "${FEAT_DIR}"
+  "${LAB_DIR}"
+  "${VSP}/decode/vsr/${LANG}"
+)
+
+cleanup_half_baked() {
+  echo ">>> [CLEAN] Removing half-baked outputs (flat pipeline working dirs + dataset symlinks)"
+  rm -f  "${HALF_BAKED_LINKS[@]}" 2>/dev/null || true
+  rm -rf "${HALF_BAKED_DIRS[@]}"  2>/dev/null || true
+  echo ">>> [CLEAN] Done."
+}
+
+on_fail() {
+  code=$?
+  if [ "${CLEAN_ON_FAIL}" = "1" ]; then
+    cleanup_half_baked
+  fi
+  exit $code
+}
+
+trap on_fail INT TERM ERR
+
+if [ "${CLEAN_ON_START}" = "1" ]; then
+  cleanup_half_baked
+fi
+
+############################################
+# Archive previous outputs (now safe: archive dir exists)
+############################################
+mkdir -p "${ARCHIVE_ROOT}"
+
+log ">>> [ARCHIVE] Moving any existing outputs -> ${ARCHIVE_ROOT}"
+TO_ARCHIVE=(
+  "${FLAT_VID_DIR}"
+  "${WRD_DIR}"
+  "${TXT_DIR}"
+  "${READY_DIR}"
+  "${PREP_ROOT}"
+  "${FEAT_DIR}"
+  "${LAB_DIR}"
+  "${VSP}/decode/vsr/${LANG}"
+)
+for d in "${TO_ARCHIVE[@]}"; do
+  if [[ -e "${d}" ]]; then
+    mv "${d}" "${ARCHIVE_ROOT}/" || true
+  fi
+done
+echo
+
+############################################
+# Create fresh directories
+############################################
+log ">>> [0] Creating fresh output directories"
+mkdir -p "$FLAT_VID_DIR" "$WRD_DIR" "$TXT_DIR" \
+         "$READY_DIR" "$PREP_ROOT" "$MANIFEST_ROOT" \
+         "$FEAT_DIR" "$LAB_DIR"
+echo
+
+############################################
+# STEP 0.5: Prepare/Normalize raw videos -> FLAT_VID_DIR
+############################################
+SKIP_NORM="${SKIP_NORM:-0}"
+MAX_DIM="${MAX_DIM:-720}"
+FPS_OUT="${FPS_OUT:-25}"
+USE_GPU_NORM="${USE_GPU_NORM:-1}"
+NORM_TIMEOUT_SEC="${NORM_TIMEOUT_SEC:-600}"
+
+log ">>> [0.5] Preparing videos (SKIP_NORM=${SKIP_NORM}, USE_GPU_NORM=${USE_GPU_NORM}, MAX_DIM=${MAX_DIM}, FPS=${FPS_OUT}, TIMEOUT=${NORM_TIMEOUT_SEC}s)"
+
+PREP_DIR="${AUTO_AVSR}/${DATA_NAME}_prepared"
+rm -rf "${PREP_DIR}" || true
+mkdir -p "${PREP_DIR}"
+
+TIMEOUT_BIN="$(command -v timeout || true)"
+
+FFLOG="error"
+if [ "${NORM_VERBOSE}" = "1" ]; then
+  FFLOG="info"
+fi
+
+NVENC_OK=0
+ffmpeg -hide_banner -encoders 2>/dev/null | grep -q "h264_nvenc" && NVENC_OK=1
+SCALE_CUDA_OK=0
+ffmpeg -hide_banner -filters 2>/dev/null | grep -q "scale_cuda" && SCALE_CUDA_OK=1
+
+log ">>> [0.5] NVENC available: ${NVENC_OK} | scale_cuda available: ${SCALE_CUDA_OK}"
+
+copy_raw() {
+  local src="$1"
+  local bn dst
+  bn="$(basename "$src")"
+  dst="${PREP_DIR}/${bn%.*}.mp4"
+  cp -f -- "$src" "$dst"
+}
+
+norm_ok=0
+norm_fail=0
+norm_timeout=0
+fallback_copy=0
+
+SCALE_W="w='if(gt(iw,ih),${MAX_DIM},-2)'"
+SCALE_H="h='if(gt(iw,ih),-2,${MAX_DIM})'"
+
+while IFS= read -r -d '' f; do
+  bn="$(basename "$f")"
+  bn_safe="${bn//[^A-Za-z0-9._-]/_}"
+  out="${PREP_DIR}/${bn%.*}.mp4"
+  vlog="${LOG_DIR}/${bn_safe}.log"
+
+  log "    [VID] ${bn}"
+
+  if [ ! -f "$f" ]; then
+    printf "[MISSING_FILE] %s\n" "$(printf "%s" "$f" | cat -A)" >> "${FAIL_LOG}"
+    norm_fail=$((norm_fail+1))
+    continue
+  fi
+
+  if [ "${SKIP_NORM}" = "1" ]; then
+    if copy_raw "$f" >/dev/null 2>&1; then
+      fallback_copy=$((fallback_copy+1))
+      printf "[COPY_ONLY] %q\n" "$f" >> "${FAIL_LOG}"
+    else
+      norm_fail=$((norm_fail+1))
+      printf "[COPY_FAILED] %q\n" "$f" >> "${FAIL_LOG}"
+    fi
+    continue
+  fi
+
+  if [ "${USE_GPU_NORM}" = "1" ] && [ "${NVENC_OK}" = "1" ] && [ "${SCALE_CUDA_OK}" = "1" ]; then
+    cmd=(ffmpeg -y -nostdin -hide_banner -loglevel "${FFLOG}"
+         -hwaccel cuda -hwaccel_output_format cuda
+         -fflags +genpts+discardcorrupt -err_detect ignore_err
+         -probesize 10M -analyzeduration 10M
+         -i "$f"
+         -vf "scale_cuda=${SCALE_W}:${SCALE_H},fps=${FPS_OUT}"
+         -c:v h264_nvenc -preset p7 -rc vbr -cq 18 -b:v 0
+         -c:a aac -ac 1 -ar 16000
+         -max_muxing_queue_size 2048
+         -movflags +faststart
+         "$out")
+  elif [ "${USE_GPU_NORM}" = "1" ] && [ "${NVENC_OK}" = "1" ]; then
+    cmd=(ffmpeg -y -nostdin -hide_banner -loglevel "${FFLOG}"
+         -fflags +genpts+discardcorrupt -err_detect ignore_err
+         -probesize 10M -analyzeduration 10M
+         -i "$f"
+         -vf "scale=${SCALE_W}:${SCALE_H},fps=${FPS_OUT},format=yuv420p"
+         -c:v h264_nvenc -preset p7 -rc vbr -cq 18 -b:v 0
+         -c:a aac -ac 1 -ar 16000
+         -max_muxing_queue_size 2048
+         -movflags +faststart
+         "$out")
+  else
+    cmd=(ffmpeg -y -nostdin -hide_banner -loglevel "${FFLOG}"
+         -fflags +genpts+discardcorrupt -err_detect ignore_err
+         -probesize 10M -analyzeduration 10M
+         -i "$f"
+         -vf "scale=${SCALE_W}:${SCALE_H},fps=${FPS_OUT},format=yuv420p"
+         -c:v libx264 -preset slow -crf 18
+         -c:a aac -ac 1 -ar 16000
+         -max_muxing_queue_size 2048
+         -movflags +faststart
+         "$out")
+  fi
+
+  run_one() {
+    if [ -n "${TIMEOUT_BIN}" ]; then
+      "${TIMEOUT_BIN}" -k 5 "${NORM_TIMEOUT_SEC}" "${cmd[@]}" >/dev/null 2>"$vlog"
+    else
+      "${cmd[@]}" >/dev/null 2>"$vlog"
+    fi
+  }
+
+  if run_one; then
+    norm_ok=$((norm_ok+1))
+  else
+    rc=$?
+    rm -f -- "$out" || true
+    if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then
+      norm_timeout=$((norm_timeout+1))
+      printf "[TIMEOUT %ss] %q (log=%q)\n" "${NORM_TIMEOUT_SEC}" "$f" "$vlog" >> "${FAIL_LOG}"
+    else
+      norm_fail=$((norm_fail+1))
+      printf "[FAILED rc=%s] %q (log=%q)\n" "$rc" "$f" "$vlog" >> "${FAIL_LOG}"
+    fi
+
+    if copy_raw "$f" >/dev/null 2>&1; then
+      fallback_copy=$((fallback_copy+1))
+      printf "[FALLBACK_COPY] %q\n" "$f" >> "${FAIL_LOG}"
+    else
+      printf "[FALLBACK_COPY_FAILED] %q\n" "$f" >> "${FAIL_LOG}"
+    fi
+  fi
+done < <(find "$RAW_DIR" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.MP4" \) -print0)
+
+log ">>> [0.5] Summary: ok=${norm_ok}, failed=${norm_fail}, timeout=${norm_timeout}, fallback_copy=${fallback_copy}"
+log ">>> [0.5] Failure log: ${FAIL_LOG}"
+log ">>> [0.5] ffmpeg stderr logs: ${LOG_DIR}"
+echo
+
+NUM_PREP="$(find "$PREP_DIR" -maxdepth 1 -type f -name "*.mp4" | wc -l | tr -d ' ')"
+if [ "$NUM_PREP" -eq 0 ]; then
+  echo "ERROR: No videos available after normalize/copy. See ${FAIL_LOG} and ${LOG_DIR}." >&2
+  exit 3
+fi
+
+# IMPORTANT: wipe FLAT_VID_DIR so Whisper does NOT see leftovers
+log ">>> [0.5] Resetting FLAT_VID_DIR and copying prepared videos -> ${FLAT_VID_DIR}"
+rm -rf "$FLAT_VID_DIR"
+mkdir -p "$FLAT_VID_DIR"
+cp -a "${PREP_DIR}/." "${FLAT_VID_DIR}/"
+
+log ">>> [0.5] FLAT_VID_DIR mp4 count:"
+find "$FLAT_VID_DIR" -maxdepth 1 -type f -iname "*.mp4" | wc -l
+echo
+
+############################################
+# STEP 1: Whisper OFFLINE -> .wrd
+############################################
+log ">>> [1] ASR (Whisper) -> .wrd"
+
+log ">>> [1-PRECHECK] Whisper input dir: $FLAT_VID_DIR"
+log ">>> [1-PRECHECK] mp4 count:"
+find "$FLAT_VID_DIR" -maxdepth 1 -type f -iname "*.mp4" | wc -l
+echo
+
+WHISPER_SRC="/host/galaxy_export/whisper/medium.pt"
+WHISPER_CACHE="${HOME}/.cache/whisper"
+mkdir -p "${WHISPER_CACHE}"
+
+if [ ! -f "${WHISPER_SRC}" ]; then
+  echo "ERROR: Whisper weight not found at: ${WHISPER_SRC}" >&2
+  exit 4
+fi
+
+ln -sf "${WHISPER_SRC}" "${WHISPER_CACHE}/medium.pt"
+ln -sf "${WHISPER_SRC}" "${WHISPER_CACHE}/medium.en.pt"
+
+source "$ASR_VENV/bin/activate"
+python "$AUTO_AVSR/asr_to_words_notime.py" \
+  --in_videos "$FLAT_VID_DIR" \
+  --out_wrd   "$WRD_DIR" \
+  --model medium \
+  --lang en \
+  --tokenize alnum \
+  --lower
+deactivate
+
+log ">>> [1] Done. WRD_DIR=${WRD_DIR}"
+echo
+
+############################################
+# STEP 2: make_preprocess_ready.sh
+############################################
+log ">>> [2] make_preprocess_ready.sh"
+bash "$AUTO_AVSR/make_preprocess_ready.sh" \
+  "$FLAT_VID_DIR" \
+  "$WRD_DIR" \
+  "$READY_DIR"
+log ">>> [2] Done. READY_DIR=${READY_DIR}"
+echo
+
+############################################
+# STEP 3: preprocess_lrs2lrs3.py
+############################################
+log ">>> [3] preprocess_lrs2lrs3.py (mediapipe, seg=4s)"
+source "$PREP_VENV/bin/activate"
+bash -lc "cd '$AUTO_AVSR/preparation' && python preprocess_lrs2lrs3.py \
+  --data-dir '$READY_DIR' \
+  --root-dir '$PREP_ROOT' \
+  --dataset flat \
+  --detector mediapipe \
+  --gpu_type cuda \
+  --subset train \
+  --seg-duration 4 \
+  --groups 1 \
+  --job-index 0"
+deactivate
+log ">>> [3] Done. PREP_ROOT=${PREP_ROOT}"
+echo
+
+############################################
+# STEP 4: flat_to_lrs3_preperation.sh
+############################################
+log ">>> [4] flat_to_lrs3_preperation.sh (LRS3_ROOT=${PREP_ROOT})"
+bash "$FLT_SH" "$PREP_ROOT"
+log ">>> [4] Done."
+echo
+
+############################################
+# STEP 5: manifests + splits + train.tsv
+############################################
+log ">>> [5] manifests + splits + train.tsv"
+source "$VSP_VENV/bin/activate"
+
+SIMPLE_MANIFEST_DIR="${MANIFEST_ROOT}/_simple_manifest_tmp"
+rm -rf "$SIMPLE_MANIFEST_DIR" || true
+mkdir -p "$SIMPLE_MANIFEST_DIR"
+
+python "$AUTO_AVSR/make_simple_manifest.py" \
+  --root "$PREP_ROOT" \
+  --split train \
+  --out-dir "$SIMPLE_MANIFEST_DIR"
+
+python "$AVH/avhubert/preparation/split_flat_dataset.py" \
+  --root "$PREP_ROOT" \
+  --train-ratio 1.0 \
+  --valid-ratio 0.0 \
+  --test-ratio 0.0 \
+  --seed 0
+
+python "$VSP/scripts/build_flat_train_tsv.py" \
+  --root "$PREP_ROOT"
+
+cp -f "$SIMPLE_MANIFEST_DIR/train.wrd"     "$MANIFEST_ROOT/train.wrd"
+cp -f "$SIMPLE_MANIFEST_DIR/dict.wrd.txt" "$MANIFEST_ROOT/dict.wrd.txt"
+
+if [ ! -f "$MANIFEST_ROOT/train.wrd" ]; then
+  echo "ERROR: missing $MANIFEST_ROOT/train.wrd after Step 5" >&2
+  ls -lah "$SIMPLE_MANIFEST_DIR" "$MANIFEST_ROOT" || true
+  exit 55
+fi
+
+deactivate
+log ">>> [5] Done. 433h_data contains train.tsv + train.wrd"
+echo
+
+############################################
+# STEP 6: k-means + cluster counts
+############################################
+log ">>> [6] k-means (TRAIN_KMEANS=${TRAIN_KMEANS}) + cluster counts"
+
+if [ "${TRAIN_KMEANS}" = "0" ] && [ ! -f "${KM_PATH}" ]; then
+  echo "ERROR: TRAIN_KMEANS=0 but KM_PATH missing: ${KM_PATH}" >&2
+  echo "Run once with TRAIN_KMEANS=1 to create it." >&2
+  exit 6
+fi
+
+source "$VSP_VENV/bin/activate"
+
+bash -lc "LRS3_ROOT='$PREP_ROOT' \
+SPLIT='train' \
+NSHARD=1 \
+TRAIN_KMEANS='${TRAIN_KMEANS}' \
+PERCENT=1.0 \
+FEAT_DIR='$FEAT_DIR' \
+KM_PATH='$KM_PATH' \
+LAB_DIR='$LAB_DIR' \
+bash '$VSP/scripts/run_flat_kmeans.sh'"
+
+bash -lc "LAB_DIR='$LAB_DIR' bash '$VSP/scripts/run_cluster_counts.sh' train"
+
+deactivate
+log ">>> [6] Done. LAB_DIR=${LAB_DIR}"
+echo
+
+############################################
+# STEP 7: Ensure fairseq Cython extensions exist
+############################################
+log ">>> [7] Checking fairseq Cython extensions (VSP-LLM repo fairseq)"
+FAIRSEQ_REPO="${EXPORT_ROOT}/VSP-LLM/fairseq"
+source "$VSP_VENV/bin/activate"
+
+if python - <<PY
+import sys
+sys.path.insert(0, "${FAIRSEQ_REPO}")
+from fairseq.data import data_utils_fast
+import pathlib, fairseq
+print("fairseq imported from:", pathlib.Path(fairseq.__file__).resolve())
+print("fairseq Cython OK:", data_utils_fast)
+PY
+then
+  log ">>> [7] fairseq extensions already built — skipping compilation"
+else
+  log ">>> [7] fairseq extensions missing — building now (one-time)"
+  cd "$FAIRSEQ_REPO"
+  python setup.py build_ext --inplace
+  cd - >/dev/null
+fi
+
+deactivate
+echo
+
+############################################
+# Link dataset files for decode (test=train)
+############################################
+mkdir -p "$DATASET_DIR"
+
+ln -sf "$PREP_ROOT/433h_data/train.tsv" "$DATASET_DIR/train.tsv"
+ln -sf "$PREP_ROOT/433h_data/train.wrd" "$DATASET_DIR/train.wrd"
+ln -sf "$LAB_DIR/train.cluster_counts"  "$DATASET_DIR/train.cluster_counts"
+
+ln -sf "$DATASET_DIR/train.tsv" "$DATASET_DIR/test.tsv"
+ln -sf "$DATASET_DIR/train.wrd" "$DATASET_DIR/test.wrd"
+ln -sf "$DATASET_DIR/train.cluster_counts" "$DATASET_DIR/test.cluster_counts"
+
+############################################
+# STEP 8: decode
+############################################
+log ">>> [8] decode (LANG=en)"
+source "$VSP_VENV/bin/activate"
+
+bash -lc "LANG='en' \
+SPLIT='train' \
+LRS3_ROOT='$PREP_ROOT' \
+LAB_DIR='$LAB_DIR' \
+WRD_ROOT='$PREP_ROOT/433h_data' \
+bash '$VSP/scripts/run_flat_decode.sh'"
+
+deactivate
+log ">>> [8] Done."
+echo
+
+############################################
+# STEP 9: Client outputs (non-fatal)
+############################################
+log ">>> [9] Building client outputs"
+
+POST_ROOT="${ARCHIVE_ROOT}/client_outputs"
+REPORT_DIR="${POST_ROOT}/report"
+BURN_DIR="${POST_ROOT}/burned_videos"
+mkdir -p "$REPORT_DIR" "$BURN_DIR"
+
+source "$VSP_VENV/bin/activate"
+
+# --- Locate make_report.py / make_burn.py robustly ---
+MAKE_REPORT=""
+MAKE_BURN=""
+
+for p in \
+  "${VSP}/scripts/make_report.py" \
+  "$(dirname "$0")/VSP-LLM/scripts/make_report.py" \
+  "/home/ds/Desktop/galaxy_export/VSP-LLM/scripts/make_report.py"
+do
+  if [ -f "$p" ]; then MAKE_REPORT="$p"; break; fi
+done
+
+for p in \
+  "${VSP}/scripts/make_burn.py" \
+  "$(dirname "$0")/VSP-LLM/scripts/make_burn.py" \
+  "/home/ds/Desktop/galaxy_export/VSP-LLM/scripts/make_burn.py"
+do
+  if [ -f "$p" ]; then MAKE_BURN="$p"; break; fi
+done
+
+if [ -z "$MAKE_REPORT" ] || [ -z "$MAKE_BURN" ]; then
+  echo "WARNING: make_report.py/make_burn.py not found. Skipping Step 9." >&2
+  echo "Tried under VSP=${VSP} and relative to script dir." >&2
+  deactivate
+  return 0 2>/dev/null || true
+fi
+
+# --- Locate decode JSON robustly ---
+DECODE_JSON=""
+for candidate in \
+    "${VSP}/decode/vsr/${LANG}/vsr/${LANG}/hypo-"*.json \
+    "${VSP}/decode/vsr/${LANG}/hypo-"*.json \
+    "${DECODE_ROOT}/vsr/${LANG}/vsr/${LANG}/hypo-"*.json \
+    "${DECODE_ROOT}/vsr/${LANG}/hypo-"*.json; do
+    if compgen -G "$candidate" > /dev/null 2>&1; then
+        DECODE_JSON="$(ls -t -- $candidate 2>/dev/null | head -n 1)"
+        log ">>> [9] Found decode JSON at: ${DECODE_JSON}"
+        break
+    fi
+done
+
+# last-resort search (bounded)
+if [ -z "$DECODE_JSON" ]; then
+  DECODE_JSON="$(find "${VSP}/decode" -maxdepth 6 -type f -name "hypo-*.json" 2>/dev/null | sort -r | head -n 1 || true)"
+  if [ -n "$DECODE_JSON" ]; then
+    log ">>> [9] Found decode JSON via find: ${DECODE_JSON}"
+  fi
+fi
+
+if [ -z "${DECODE_JSON}" ] || [ ! -f "${DECODE_JSON}" ]; then
+    echo "WARNING: No decode JSON found. Skipping Step 9." >&2
+    echo "DEBUG: JSONs under ${VSP}/decode (first 20):" >&2
+    find "${VSP}/decode" -name "*.json" 2>/dev/null | head -20 >&2 || true
+else
+    log ">>> [9] Using decode JSON: ${DECODE_JSON}"
+    python "$MAKE_REPORT" --jsonl "$DECODE_JSON" --out_dir "$REPORT_DIR" || echo "WARNING: make_report failed" >&2
+    python "$MAKE_BURN"   --jsonl "$DECODE_JSON" --video_dir "$FLAT_VID_DIR" --out_dir "$BURN_DIR" || echo "WARNING: make_burn failed" >&2
+    log ">>> [9] Done. Client outputs: ${POST_ROOT}"
+fi
+
+deactivate
+
+############################################
+# EXPORT outputs to mounted host
+############################################
+if [ -n "${EXPORT_OUT:-}" ]; then
+  OUTDIR="${EXPORT_OUT}/outputs_flat_${RUN_ID}"
+  log ">>> [EXPORT] Copying outputs -> ${OUTDIR}"
+  mkdir -p "$OUTDIR"
+  cp -a "$WRD_DIR"     "$OUTDIR"/
+  cp -a "$READY_DIR"   "$OUTDIR"/
+  cp -a "$PREP_ROOT"   "$OUTDIR"/
+  cp -a "$FEAT_DIR"    "$OUTDIR"/
+  cp -a "$LAB_DIR"     "$OUTDIR"/
+  cp -a "$DECODE_ROOT" "$OUTDIR"/
+  # Also copy client outputs if they exist
+  if [ -d "$POST_ROOT" ]; then
+    cp -a "$POST_ROOT" "$OUTDIR"/
+  fi
+  log ">>> [EXPORT] Done."
+fi
+
+log ">>> Pipeline complete."
+log "    - Mouth crops: $PREP_ROOT"
+log "    - TSVs: $MANIFEST_ROOT"
+log "    - Labels: $LAB_DIR"
+log "    - Client outputs: $POST_ROOT"
+exit 0
