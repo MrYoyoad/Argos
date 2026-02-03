@@ -14,11 +14,14 @@ RAW_DIR="$(realpath "$RAW_DIR")"
 # GLOBAL CONFIG
 ########################
 
-HOME_DIR="${HOME}"
+# Auto-detect installation directory from script location
+# Works regardless of where galaxy_export is installed (/home/ubuntu, /workspace, /host, etc.)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE_DIR="$SCRIPT_DIR"
 
-AUTO_AVSR="${HOME_DIR}/auto_avsr"
-VSP="${HOME_DIR}/VSP-LLM"
-AVH="${HOME_DIR}/av_hubert"
+AUTO_AVSR="${BASE_DIR}/auto_avsr"
+VSP="${BASE_DIR}/VSP-LLM"
+AVH="${BASE_DIR}/av_hubert"
 
 DATA_NAME="flat"
 LANG="en"
@@ -50,18 +53,21 @@ LAB_DIR="${VSP}/${DATA_NAME}_labels"
 WRD_ROOT="${PREP_ROOT}/433h_data"
 DECODE_ROOT="${VSP}/decode"
 
-ASR_VENV="${AUTO_AVSR}/pre-process-venv"
-PREP_VENV="${AUTO_AVSR}/pre-process-venv"
-VSP_VENV="${HOME_DIR}/vsp-llm-yoad-venv"
+# CONTAINER VERSION: Hardcoded /workspace paths for standalone Linux container
+# - galaxy_export code at: /host/galaxy_export
+# - venvs at: /workspace/...
+ASR_VENV="/workspace/auto_avsr/pre-process-venv"
+PREP_VENV="/workspace/auto_avsr/pre-process-venv"
+VSP_VENV="/workspace/vsp-llm-yoad-venv"
 
 ########################
 # ARCHIVE PREVIOUS RUN
 ########################
 # Load archive module
-source "${HOME}/lib/archive.sh"
+source "${SCRIPT_DIR}/lib/archive.sh"
 
 # Archive standard directories
-ARCHIVE_ROOT=$(archive_previous_run "$HOME_DIR" "$SEG_DURATION" \
+ARCHIVE_ROOT=$(archive_previous_run "$BASE_DIR" "$SEG_DURATION" \
   "${WRD_DIR}" "${TXT_DIR}" "${READY_DIR}" "${FEAT_DIR}" "${LAB_DIR}")
 
 # Archive PREP_ROOT with special handling for segment transcriptions
@@ -101,7 +107,7 @@ if [ "$SEGMENTATION_ENABLED" = "1" ]; then
     echo ">>> [0.1] Overlap disabled (no overlap between segments)"
   fi
 
-  python "${AUTO_AVSR}/preparation/fast_segment.py" \
+  python3 "${AUTO_AVSR}/preparation/fast_segment.py" \
     --data-dir "${RAW_DIR}" \
     --output-dir "${FAST_SEG_DIR}" \
     --seg-duration "${SEG_DURATION}" \
@@ -210,7 +216,7 @@ fi
 # STEP 0.5: Normalize segments -> FLAT_VID_DIR
 ############################################
 # Load normalization module
-source "${HOME}/lib/normalization.sh"
+source "${SCRIPT_DIR}/lib/normalization.sh"
 
 # Configuration variables with defaults
 SKIP_NORM="${SKIP_NORM:-0}"
@@ -279,7 +285,7 @@ if [ "$SEGMENTATION_ENABLED" = "1" ] && [ "$OVERLAP_ENABLED" = "1" ]; then
     source "$PREP_VENV/bin/activate"
     cd "$AUTO_AVSR/preparation"
 
-    python preprocess_with_overlap.py \
+    python3 preprocess_with_overlap.py \
       --data-dir "$READY_DIR" \
       --root-dir "$PREP_ROOT" \
       --dataset flat \
@@ -302,7 +308,7 @@ else
     source "$PREP_VENV/bin/activate"
     cd "$AUTO_AVSR/preparation"
 
-    python preprocess_lrs2lrs3.py \
+    python3 preprocess_lrs2lrs3.py \
       --data-dir "$READY_DIR" \
       --root-dir "$PREP_ROOT" \
       --dataset flat \
@@ -398,7 +404,7 @@ fi
 # STEP 3: ASR on segmented videos -> .txt files
 ########################
 # Load ASR module
-source "${HOME}/lib/asr.sh"
+source "${SCRIPT_DIR}/lib/asr.sh"
 
 # Determine directory suffix based on SEGMENTATION_ENABLED
 if [ "$SEGMENTATION_ENABLED" = "1" ]; then
@@ -409,7 +415,7 @@ fi
 
 # Run ASR transcription (includes Steps 0.6, 3, and 1.5)
 run_asr_transcription "$PREP_ROOT" "$ASR_VENV" "$AUTO_AVSR" "$DATA_NAME" \
-  "$SEGMENTATION_ENABLED" "$SEG_DURATION" "$HOME" || {
+  "$SEGMENTATION_ENABLED" "$SEG_DURATION" "$RAW_DIR" || {
   echo "ERROR: ASR transcription failed" >&2
   exit 4
 }
@@ -424,7 +430,7 @@ echo
 # STEP 4: flat_to_lrs3_preperation.sh
 ########################
 # Load LRS3 preparation module
-source "${HOME}/lib/lrs3_prep.sh"
+source "${SCRIPT_DIR}/lib/lrs3_prep.sh"
 
 run_lrs3_preparation "$PREP_ROOT" "$AVH" "$SEG_DURATION" "$DIR_SUFFIX" || {
   echo "ERROR: LRS3 preparation failed" >&2
@@ -435,7 +441,7 @@ run_lrs3_preparation "$PREP_ROOT" "$AVH" "$SEG_DURATION" "$DIR_SUFFIX" || {
 # STEP 5: manifests + splits + train.tsv
 ########################
 # Load manifest generation module
-source "${HOME}/lib/manifests.sh"
+source "${SCRIPT_DIR}/lib/manifests.sh"
 
 source "$VSP_VENV/bin/activate"
 
@@ -450,7 +456,7 @@ run_manifest_generation "$PREP_ROOT" "$MANIFEST_ROOT" "$AUTO_AVSR" "$AVH" "$VSP"
 # STEP 6: k-means + cluster counts
 ########################
 # Load clustering module
-source "${HOME}/lib/clustering.sh"
+source "${SCRIPT_DIR}/lib/clustering.sh"
 
 run_clustering "$PREP_ROOT" "$FEAT_DIR" "$KM_PATH" "$LAB_DIR" "$AVH" "$VSP" "${TRAIN_KMEANS:-1}" || {
   deactivate
@@ -464,7 +470,7 @@ deactivate
 # STEP 7: LLM decode
 ########################
 # Load decode module
-source "${HOME}/lib/decode.sh"
+source "${SCRIPT_DIR}/lib/decode.sh"
 
 source "$VSP_VENV/bin/activate"
 cd "$VSP"
@@ -480,7 +486,7 @@ run_vsp_decode "$VSP" "$MANIFEST_ROOT" "$LAB_DIR" "$WRD_ROOT" "$PREP_ROOT" \
 # STEP 8: Client outputs
 ########################
 # Load outputs module
-source "${HOME}/lib/outputs.sh"
+source "${SCRIPT_DIR}/lib/outputs.sh"
 
 run_client_outputs "$VSP" "$ARCHIVE_ROOT" "$FLAT_VID_DIR" "$PREP_ROOT" \
   "$DATA_NAME" "$DIR_SUFFIX" || {
