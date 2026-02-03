@@ -7,8 +7,8 @@
 # Works on EC2 and Linux container
 
 # Source common utilities for logging
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${MODULE_DIR}/common.sh"
 
 # Run ASR transcription on segmented videos
 # Parameters:
@@ -18,7 +18,7 @@ source "${SCRIPT_DIR}/common.sh"
 #   $4 - DATA_NAME (e.g., "flat")
 #   $5 - SEGMENTATION_ENABLED flag (0 or 1)
 #   $6 - SEG_DURATION value
-#   $7 - HOME directory (for .transcriptions/)
+#   $7 - RAW_DIR (input video directory - for .transcriptions/)
 run_asr_transcription() {
   local prep_root="$1"
   local asr_venv="$2"
@@ -26,7 +26,7 @@ run_asr_transcription() {
   local data_name="$4"
   local segmentation_enabled="${5:-1}"
   local seg_duration="${6:-12}"
-  local home_dir="$7"
+  local raw_dir="$7"
 
   log_stage "3" "Running ASR on videos"
 
@@ -38,8 +38,8 @@ run_asr_transcription() {
     dir_suffix="whole"
   fi
 
-  # Get the video directory (segmented or whole)
-  local segment_vid_dir="$prep_root/${data_name}/${data_name}_video_${dir_suffix}"
+  # Get the video directory - use normalized videos from flat/ (with audio), not preprocessed mouth crops
+  local segment_vid_dir="$auto_avsr_dir/${data_name}"
   local segment_txt_dir="$prep_root/${data_name}/${data_name}_text_${dir_suffix}"
 
   if [ ! -d "$segment_vid_dir" ]; then
@@ -55,7 +55,10 @@ run_asr_transcription() {
   # STEP 0.6: Copy existing transcriptions from .transcriptions/ to working directory
   # ============================================
   echo ">>> [0.6] Checking for existing transcriptions"
-  local transcriptions_dir="$home_dir/vsp_input/.transcriptions"
+
+  # Use .transcriptions directory in the input video directory
+  # This automatically works with any mount point or path
+  local transcriptions_dir="${raw_dir}/.transcriptions"
 
   if [ -d "$transcriptions_dir" ]; then
     local copied_count=0
@@ -94,7 +97,7 @@ run_asr_transcription() {
     return 1
   }
 
-  python "$auto_avsr_dir/asr_to_words_notime.py" \
+  python3 "$auto_avsr_dir/asr_to_words_notime.py" \
     --in_videos "$segment_vid_dir" \
     --out_wrd   "$segment_wrd_tmp" \
     --model medium \

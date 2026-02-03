@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VSP Pipeline
+Comment=Visual Speech Processing Pipeline
+GenericName=Video Processor
+Exec=/workspace/vsp-ui/launcher.sh
+Icon=/workspace/vsp-ui/icon.svg
+Terminal=false
+Categories=AudioVideo;Video;
+StartupNotify=true
+StartupWMClass=vsp-pipeline
