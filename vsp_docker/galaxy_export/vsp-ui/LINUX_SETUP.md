@@ -131,7 +131,7 @@ For easy one-click access to the VSP Pipeline UI, you can install a desktop icon
 **Quick Install:**
 
 ```bash
-cd /workspace/vsp-ui
+cd /host/galaxy_export/vsp-ui
 chmod +x vsp-pipeline.desktop
 cp vsp-pipeline.desktop ~/Desktop/
 ```

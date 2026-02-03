@@ -19,7 +19,7 @@ This makes it easy to start working without remembering terminal commands!
 Install an icon on your desktop for quick access:
 
 ```bash
-cd /workspace/vsp-ui
+cd /host/galaxy_export/vsp-ui
 chmod +x vsp-pipeline.desktop
 cp vsp-pipeline.desktop ~/Desktop/
 ```
@@ -35,7 +35,7 @@ After copying, you may need to:
 Install to your system applications menu:
 
 ```bash
-cd /workspace/vsp-ui
+cd /host/galaxy_export/vsp-ui
 chmod +x vsp-pipeline.desktop
 mkdir -p ~/.local/share/applications
 cp vsp-pipeline.desktop ~/.local/share/applications/
@@ -48,7 +48,7 @@ The VSP Pipeline will appear in your applications menu under "Audio & Video" or 
 For maximum convenience, install to both desktop and applications menu:
 
 ```bash
-cd /workspace/vsp-ui
+cd /host/galaxy_export/vsp-ui
 chmod +x vsp-pipeline.desktop
 cp vsp-pipeline.desktop ~/Desktop/
 mkdir -p ~/.local/share/applications
@@ -78,13 +78,13 @@ If the server is already running:
 To stop the VSP Pipeline server:
 
 ```bash
-/workspace/vsp-ui/launcher.sh stop
+/host/galaxy_export/vsp-ui/launcher.sh stop
 ```
 
 Or check server status:
 
 ```bash
-/workspace/vsp-ui/launcher.sh status
+/host/galaxy_export/vsp-ui/launcher.sh status
 ```
 
 ## Troubleshooting
@@ -100,7 +100,7 @@ Or check server status:
 
 3. Check that the launcher script is executable:
    ```bash
-   chmod +x /workspace/vsp-ui/launcher.sh
+   chmod +x /host/galaxy_export/vsp-ui/launcher.sh
    ```
 
 ### Browser Doesn't Open Automatically
@@ -145,7 +145,7 @@ Common issues:
 If you prefer to launch from the terminal:
 
 ```bash
-/workspace/vsp-ui/launcher.sh
+/host/galaxy_export/vsp-ui/launcher.sh
 ```
 
 Commands:
