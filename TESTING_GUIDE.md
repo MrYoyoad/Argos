@@ -27,7 +27,7 @@ Comprehensive testing procedures to verify all fixes are working correctly.
 ### Run Verification Script
 
 ```bash
-cd /workspace  # or /host/galaxy_export
+cd /host/galaxy_export  # or /host/galaxy_export
 bash /path/to/vsp_linux_container_FINAL/VERIFY.sh
 ```
 
@@ -68,7 +68,7 @@ Check which specific fix is missing and reinstall:
 ```bash
 # Example: Fix #2 missing
 cp vsp_linux_container_FINAL/VSP-LLM/src/conf/s2s_decode.yaml \
-   /workspace/VSP-LLM/src/conf/
+   /host/galaxy_export/VSP-LLM/src/conf/
 
 # Re-run verification
 bash VERIFY.sh
@@ -85,7 +85,7 @@ bash VERIFY.sh
 ### Run Module Test Suite
 
 ```bash
-cd /workspace
+cd /host/galaxy_export
 bash lib/test_all_modules.sh
 ```
 
@@ -123,13 +123,13 @@ Module Tests Complete: 37/37 PASSED ✅
 2. Read error message carefully
 3. Common issues:
    - Missing dependencies (python3, ffmpeg, etc.)
-   - Wrong directory (must run from /workspace)
+   - Wrong directory (must run from /host/galaxy_export)
    - File permissions
 
 **Fix and re-test**:
 ```bash
 # Re-install specific module
-cp vsp_linux_container_FINAL/lib/failing_module.sh /workspace/lib/
+cp vsp_linux_container_FINAL/lib/failing_module.sh /host/galaxy_export/lib/
 
 # Re-run tests
 bash lib/test_all_modules.sh
@@ -152,7 +152,7 @@ bash lib/test_all_modules.sh
 ### Run Smoke Test
 
 ```bash
-cd /workspace
+cd /host/galaxy_export
 
 # Test with non-segmented video
 SEGMENTATION_ENABLED=0 ./run_flat_english_pipeline.sh /path/to/test_video.mp4
@@ -239,7 +239,7 @@ tail -100 flat_runs_archive/*/vsp_llm_decode.log | grep "INST:"
 **Video**: 60-second clip (or longer)
 
 ```bash
-cd /workspace
+cd /host/galaxy_export
 ./run_flat_english_pipeline.sh /path/to/long_video.mp4
 ```
 
@@ -311,7 +311,7 @@ ls flat_runs_archive/*/client_outputs/burned_videos/
 **Video**: 15-second clip (< 24 seconds)
 
 ```bash
-cd /workspace
+cd /host/galaxy_export
 SEGMENTATION_ENABLED=0 ./run_flat_english_pipeline.sh /path/to/short_video.mp4
 ```
 
@@ -358,7 +358,7 @@ ffprobe flat_runs_archive/*/client_outputs/burned_videos/*.mp4 2>&1 | grep Strea
 ### Start UI Server
 
 ```bash
-cd /workspace/vsp-ui
+cd /host/galaxy_export/vsp-ui
 python3 app/server.py
 # Should start without import errors
 ```
@@ -474,7 +474,7 @@ Savings:      ~60% time reduction on reruns
 
 **Diagnosis**:
 ```bash
-cd /workspace/VSP-LLM/fairseq
+cd /host/galaxy_export/VSP-LLM/fairseq
 python3 setup.py build_ext --inplace
 # Check error output
 ```
@@ -496,7 +496,7 @@ apt-get update && apt-get install -y build-essential python3-dev
 
 **Diagnosis**:
 ```bash
-grep "max_len:" /workspace/VSP-LLM/src/conf/s2s_decode.yaml
+grep "max_len:" /host/galaxy_export/VSP-LLM/src/conf/s2s_decode.yaml
 # Should show: max_len: 2048
 ```
 
@@ -504,7 +504,7 @@ grep "max_len:" /workspace/VSP-LLM/src/conf/s2s_decode.yaml
 ```bash
 # Reinstall config file
 cp vsp_linux_container_FINAL/VSP-LLM/src/conf/s2s_decode.yaml \
-   /workspace/VSP-LLM/src/conf/
+   /host/galaxy_export/VSP-LLM/src/conf/
 ```
 
 ### Transcriptions Not Persisting (Fix #3)
@@ -514,19 +514,19 @@ cp vsp_linux_container_FINAL/VSP-LLM/src/conf/s2s_decode.yaml \
 **Diagnosis**:
 ```bash
 # Check ASR module
-grep 'transcriptions_dir="${raw_dir}/.transcriptions"' /workspace/lib/asr.sh
+grep 'transcriptions_dir="${raw_dir}/.transcriptions"' /host/galaxy_export/lib/asr.sh
 # Should be present
 
 # Check pipeline passes RAW_DIR
-grep 'run_asr_transcription.*RAW_DIR' /workspace/run_flat_english_pipeline.sh
+grep 'run_asr_transcription.*RAW_DIR' /host/galaxy_export/run_flat_english_pipeline.sh
 # Should show: ..."$RAW_DIR"...
 ```
 
 **Solution**:
 ```bash
 # Reinstall ASR module and pipeline
-cp vsp_linux_container_FINAL/lib/asr.sh /workspace/lib/
-cp vsp_linux_container_FINAL/run_flat_english_pipeline.sh /workspace/
+cp vsp_linux_container_FINAL/lib/asr.sh /host/galaxy_export/lib/
+cp vsp_linux_container_FINAL/run_flat_english_pipeline.sh /host/galaxy_export/
 ```
 
 ---

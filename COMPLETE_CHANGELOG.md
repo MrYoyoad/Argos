@@ -101,7 +101,7 @@ generation:
 
 **Root Cause**: ASR module had hardcoded paths:
 - `/host/vsp_input/.transcriptions`
-- `/workspace/vsp_input/.transcriptions`
+- `/host/galaxy_export/vsp_input/.transcriptions`
 
 **Solution**: Updated ASR module to dynamically derive `.transcriptions/` from input directory.
 

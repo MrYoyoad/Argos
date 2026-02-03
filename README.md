@@ -53,7 +53,7 @@ cd vsp_linux_container_FINAL
 
 ```bash
 # From inside the container (or host machine if shared filesystem)
-cd /workspace  # or /host/galaxy_export
+cd /host/galaxy_export  # or /host/galaxy_export
 
 # Run automated installation
 bash /path/to/vsp_linux_container_FINAL/INSTALL.sh
@@ -75,7 +75,7 @@ bash /path/to/vsp_linux_container_FINAL/VERIFY.sh
 
 ```bash
 # Quick smoke test
-cd /workspace
+cd /host/galaxy_export
 ./run_flat_english_pipeline.sh /path/to/test/video.mp4
 ```
 
@@ -185,7 +185,7 @@ vsp_linux_container_FINAL/
 ### Method 1: Automated (Recommended)
 
 ```bash
-cd /workspace  # or /host/galaxy_export
+cd /host/galaxy_export  # or /host/galaxy_export
 bash /path/to/INSTALL.sh
 ```
 
@@ -199,11 +199,11 @@ Benefits:
 
 ```bash
 # Copy files manually
-cp -r lib /workspace/
-cp run_flat_english_pipeline.sh /workspace/
-cp -r VSP-LLM/src /workspace/VSP-LLM/
-cp -r VSP-LLM/scripts /workspace/VSP-LLM/
-cp -r vsp-ui /workspace/
+cp -r lib /host/galaxy_export/
+cp run_flat_english_pipeline.sh /host/galaxy_export/
+cp -r VSP-LLM/src /host/galaxy_export/VSP-LLM/
+cp -r VSP-LLM/scripts /host/galaxy_export/VSP-LLM/
+cp -r vsp-ui /host/galaxy_export/
 
 # Verify
 bash VERIFY.sh
@@ -313,18 +313,18 @@ If you need to revert changes:
 
 ```bash
 # Restore from backup (created by INSTALL.sh)
-cd /workspace
-tar xzf ../workspace_backup_YYYYMMDD_HHMMSS.tar.gz
+cd /host/galaxy_export
+tar xzf ../host/galaxy_export_backup_YYYYMMDD_HHMMSS.tar.gz
 ```
 
 Or revert individual components:
 
 ```bash
 # Restore just the pipeline script
-cp ../workspace_backup/run_flat_english_pipeline.sh .
+cp ../host/galaxy_export_backup/run_flat_english_pipeline.sh .
 
 # Restore lib modules
-cp -r ../workspace_backup/lib .
+cp -r ../host/galaxy_export_backup/lib .
 ```
 
 ---

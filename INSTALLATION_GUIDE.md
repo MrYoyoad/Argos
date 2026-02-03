@@ -23,7 +23,7 @@ Complete installation instructions for deploying all fixes to the Linux containe
 - Variable space for processing outputs
 
 ### Permissions
-- Write access to `/workspace/` or `/host/galaxy_export/`
+- Write access to `/host/galaxy_export/` or `/host/galaxy_export/`
 - Ability to execute bash scripts
 - Access to container filesystem
 
@@ -81,7 +81,7 @@ Complete installation instructions for deploying all fixes to the Linux containe
 Installation Complete
 ========================================
 
-Backup created: /workspace_backup_20260203_140523.tar.gz
+Backup created: /host/galaxy_export_backup_20260203_140523.tar.gz
 
 Installed Components:
 ✅ lib/ (11 modules)
@@ -113,8 +113,8 @@ Next steps:
 #### Step 1: Create Backup
 
 ```bash
-cd /workspace  # or /host/galaxy_export
-tar czf ../workspace_backup_$(date +%Y%m%d_%H%M%S).tar.gz \
+cd /host/galaxy_export  # or /host/galaxy_export
+tar czf ../host/galaxy_export_backup_$(date +%Y%m%d_%H%M%S).tar.gz \
   lib run_flat_english_pipeline.sh VSP-LLM vsp-ui
 ```
 
@@ -122,10 +122,10 @@ tar czf ../workspace_backup_$(date +%Y%m%d_%H%M%S).tar.gz \
 
 ```bash
 # Copy all 11 modules
-cp -r /path/to/vsp_linux_container_FINAL/lib /workspace/
+cp -r /path/to/vsp_linux_container_FINAL/lib /host/galaxy_export/
 
 # Verify module tests
-bash /workspace/lib/test_all_modules.sh
+bash /host/galaxy_export/lib/test_all_modules.sh
 # Expected: 37/37 tests pass
 ```
 
@@ -139,17 +139,17 @@ bash /workspace/lib/test_all_modules.sh
 
 ```bash
 # Backup existing pipeline
-cp /workspace/run_flat_english_pipeline.sh \
-   /workspace/run_flat_english_pipeline.sh.backup
+cp /host/galaxy_export/run_flat_english_pipeline.sh \
+   /host/galaxy_export/run_flat_english_pipeline.sh.backup
 
 # Install new pipeline with all fixes
-cp /path/to/vsp_linux_container_FINAL/run_flat_english_pipeline.sh /workspace/
+cp /path/to/vsp_linux_container_FINAL/run_flat_english_pipeline.sh /host/galaxy_export/
 
 # Verify fixes are present
-grep -q 'POST_ROOT="$ARCHIVE_ROOT/client_outputs"' /workspace/run_flat_english_pipeline.sh && echo "✅ Fix 7"
-grep -q 'output_name="${video_name}"' /workspace/run_flat_english_pipeline.sh && echo "✅ Fix 9"
-grep -q "metadata for whole videos" /workspace/run_flat_english_pipeline.sh && echo "✅ Fix 8"
-grep -q "SEGMENT_DURATION.*12" /workspace/run_flat_english_pipeline.sh && echo "✅ Fix 12"
+grep -q 'POST_ROOT="$ARCHIVE_ROOT/client_outputs"' /host/galaxy_export/run_flat_english_pipeline.sh && echo "✅ Fix 7"
+grep -q 'output_name="${video_name}"' /host/galaxy_export/run_flat_english_pipeline.sh && echo "✅ Fix 9"
+grep -q "metadata for whole videos" /host/galaxy_export/run_flat_english_pipeline.sh && echo "✅ Fix 8"
+grep -q "SEGMENT_DURATION.*12" /host/galaxy_export/run_flat_english_pipeline.sh && echo "✅ Fix 12"
 ```
 
 **What's Installed**:
@@ -164,25 +164,25 @@ grep -q "SEGMENT_DURATION.*12" /workspace/run_flat_english_pipeline.sh && echo "
 
 ```bash
 # Create backup
-cp /workspace/VSP-LLM/src/conf/s2s_decode.yaml \
-   /workspace/VSP-LLM/src/conf/s2s_decode.yaml.backup
-cp /workspace/VSP-LLM/scripts/make_burn.py \
-   /workspace/VSP-LLM/scripts/make_burn.py.backup
-cp /workspace/VSP-LLM/src/vsp_llm_decode.py \
-   /workspace/VSP-LLM/src/vsp_llm_decode.py.backup
+cp /host/galaxy_export/VSP-LLM/src/conf/s2s_decode.yaml \
+   /host/galaxy_export/VSP-LLM/src/conf/s2s_decode.yaml.backup
+cp /host/galaxy_export/VSP-LLM/scripts/make_burn.py \
+   /host/galaxy_export/VSP-LLM/scripts/make_burn.py.backup
+cp /host/galaxy_export/VSP-LLM/src/vsp_llm_decode.py \
+   /host/galaxy_export/VSP-LLM/src/vsp_llm_decode.py.backup
 
 # Install fixes
 cp /path/to/vsp_linux_container_FINAL/VSP-LLM/src/conf/s2s_decode.yaml \
-   /workspace/VSP-LLM/src/conf/
+   /host/galaxy_export/VSP-LLM/src/conf/
 cp /path/to/vsp_linux_container_FINAL/VSP-LLM/scripts/make_burn.py \
-   /workspace/VSP-LLM/scripts/
+   /host/galaxy_export/VSP-LLM/scripts/
 cp /path/to/vsp_linux_container_FINAL/VSP-LLM/src/vsp_llm_decode.py \
-   /workspace/VSP-LLM/src/
+   /host/galaxy_export/VSP-LLM/src/
 
 # Verify fixes
-grep -q "max_len: 2048" /workspace/VSP-LLM/src/conf/s2s_decode.yaml && echo "✅ Fix 2"
-grep -q "if seg_idx == -1:" /workspace/VSP-LLM/scripts/make_burn.py && echo "✅ Fix 10"
-grep -q "logger.propagate = False" /workspace/VSP-LLM/src/vsp_llm_decode.py && echo "✅ Fix 11"
+grep -q "max_len: 2048" /host/galaxy_export/VSP-LLM/src/conf/s2s_decode.yaml && echo "✅ Fix 2"
+grep -q "if seg_idx == -1:" /host/galaxy_export/VSP-LLM/scripts/make_burn.py && echo "✅ Fix 10"
+grep -q "logger.propagate = False" /host/galaxy_export/VSP-LLM/src/vsp_llm_decode.py && echo "✅ Fix 11"
 ```
 
 **What's Installed**:
@@ -194,20 +194,20 @@ grep -q "logger.propagate = False" /workspace/VSP-LLM/src/vsp_llm_decode.py && e
 
 ```bash
 # Create backup
-tar czf /workspace/vsp-ui_backup.tar.gz /workspace/vsp-ui
+tar czf /host/galaxy_export/vsp-ui_backup.tar.gz /host/galaxy_export/vsp-ui
 
 # Install UI fixes
 cp /path/to/vsp_linux_container_FINAL/vsp-ui/app/config.py \
-   /workspace/vsp-ui/app/
+   /host/galaxy_export/vsp-ui/app/
 cp /path/to/vsp_linux_container_FINAL/vsp-ui/app/services/transcription_manager.py \
-   /workspace/vsp-ui/app/services/
+   /host/galaxy_export/vsp-ui/app/services/
 cp -r /path/to/vsp_linux_container_FINAL/vsp-ui/app/static \
-   /workspace/vsp-ui/app/
+   /host/galaxy_export/vsp-ui/app/
 
 # Verify fixes
-grep -q "VSP_INPUT_DIR" /workspace/vsp-ui/app/config.py && echo "✅ Fix 4"
-grep -q "from app.config import INPUT_DIR" /workspace/vsp-ui/app/services/transcription_manager.py && echo "✅ Fix 5"
-grep -q "SEGMENT_DURATION = 12" /workspace/vsp-ui/app/config.py && echo "✅ Fix 12"
+grep -q "VSP_INPUT_DIR" /host/galaxy_export/vsp-ui/app/config.py && echo "✅ Fix 4"
+grep -q "from app.config import INPUT_DIR" /host/galaxy_export/vsp-ui/app/services/transcription_manager.py && echo "✅ Fix 5"
+grep -q "SEGMENT_DURATION = 12" /host/galaxy_export/vsp-ui/app/config.py && echo "✅ Fix 12"
 ```
 
 **What's Installed**:
@@ -223,7 +223,7 @@ grep -q "SEGMENT_DURATION = 12" /workspace/vsp-ui/app/config.py && echo "✅ Fix
 bash /path/to/vsp_linux_container_FINAL/VERIFY.sh
 
 # Or manual verification
-cd /workspace
+cd /host/galaxy_export
 grep -q ">&2" lib/common.sh && echo "✅ Fix 6"
 grep -q "CRITICAL: Check and build fairseq Cython" lib/decode.sh && echo "✅ Fix 1"
 # ... verify all 12 fixes
@@ -284,8 +284,8 @@ bash INSTALL.sh
 
 **Solution**: Make sure you're in the correct directory:
 ```bash
-cd /workspace  # or /host/galaxy_export
-pwd  # Should show /workspace or /host/galaxy_export
+cd /host/galaxy_export  # or /host/galaxy_export
+pwd  # Should show /host/galaxy_export or /host/galaxy_export
 bash /path/to/INSTALL.sh
 ```
 
@@ -295,7 +295,7 @@ bash /path/to/INSTALL.sh
 
 **Solution**: Remove old backup or rename it:
 ```bash
-mv ../workspace_backup_*.tar.gz ../workspace_backup_old.tar.gz
+mv ../host/galaxy_export_backup_*.tar.gz ../host/galaxy_export_backup_old.tar.gz
 bash INSTALL.sh
 ```
 
@@ -305,8 +305,8 @@ bash INSTALL.sh
 
 **Solution**: Restore from backup and re-run:
 ```bash
-cd /workspace
-tar xzf ../workspace_backup_YYYYMMDD_HHMMSS.tar.gz
+cd /host/galaxy_export
+tar xzf ../host/galaxy_export_backup_YYYYMMDD_HHMMSS.tar.gz
 bash /path/to/INSTALL.sh
 ```
 
@@ -317,10 +317,10 @@ bash /path/to/INSTALL.sh
 **Solution**: Check which specific fix is missing and install manually:
 ```bash
 # If Fix #2 missing
-cp vsp_linux_container_FINAL/VSP-LLM/src/conf/s2s_decode.yaml /workspace/VSP-LLM/src/conf/
+cp vsp_linux_container_FINAL/VSP-LLM/src/conf/s2s_decode.yaml /host/galaxy_export/VSP-LLM/src/conf/
 
 # If Fix #6 missing
-cp vsp_linux_container_FINAL/lib/common.sh /workspace/lib/
+cp vsp_linux_container_FINAL/lib/common.sh /host/galaxy_export/lib/
 
 # Re-verify
 bash VERIFY.sh
@@ -335,12 +335,12 @@ bash VERIFY.sh
 If you need to completely revert to pre-installation state:
 
 ```bash
-cd /workspace
+cd /host/galaxy_export
 # Remove installed files
 rm -rf lib run_flat_english_pipeline.sh VSP-LLM/src/conf VSP-LLM/scripts VSP-LLM/src vsp-ui
 
 # Restore from backup
-tar xzf ../workspace_backup_YYYYMMDD_HHMMSS.tar.gz
+tar xzf ../host/galaxy_export_backup_YYYYMMDD_HHMMSS.tar.gz
 ```
 
 ### Partial Rollback
@@ -349,13 +349,13 @@ Revert specific components:
 
 ```bash
 # Rollback pipeline script only
-tar xzf ../workspace_backup_*.tar.gz run_flat_english_pipeline.sh
+tar xzf ../host/galaxy_export_backup_*.tar.gz run_flat_english_pipeline.sh
 
 # Rollback lib modules only
-tar xzf ../workspace_backup_*.tar.gz lib/
+tar xzf ../host/galaxy_export_backup_*.tar.gz lib/
 
 # Rollback VSP-LLM fixes only
-tar xzf ../workspace_backup_*.tar.gz VSP-LLM/
+tar xzf ../host/galaxy_export_backup_*.tar.gz VSP-LLM/
 ```
 
 ---
