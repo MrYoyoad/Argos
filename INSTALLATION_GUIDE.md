@@ -113,7 +113,7 @@ Next steps:
 #### Step 1: Create Backup
 
 ```bash
-cd /host/galaxy_export  # or /host/galaxy_export
+cd /host/galaxy_export
 tar czf ../host/galaxy_export_backup_$(date +%Y%m%d_%H%M%S).tar.gz \
   lib run_flat_english_pipeline.sh VSP-LLM vsp-ui
 ```
@@ -284,8 +284,8 @@ bash INSTALL.sh
 
 **Solution**: Make sure you're in the correct directory:
 ```bash
-cd /host/galaxy_export  # or /host/galaxy_export
-pwd  # Should show /host/galaxy_export or /host/galaxy_export
+cd /host/galaxy_export
+pwd  # Should show /host/galaxy_export
 bash /path/to/INSTALL.sh
 ```
 

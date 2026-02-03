@@ -27,7 +27,7 @@ Comprehensive testing procedures to verify all fixes are working correctly.
 ### Run Verification Script
 
 ```bash
-cd /host/galaxy_export  # or /host/galaxy_export
+cd /host/galaxy_export
 bash /path/to/vsp_linux_container_FINAL/VERIFY.sh
 ```
 
