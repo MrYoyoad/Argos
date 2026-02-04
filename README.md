@@ -97,18 +97,30 @@ pip install -r preparation/requirements.txt  # opencv, ffmpeg-python, sentencepi
 pip install mediapipe-0.10.9-cp311-cp311-linux_x86_64.whl
 ```
 
-**Key Dependencies**:
-- `torch` + `torchvision` + `torchaudio` - PyTorch with CUDA 12.1
-- `pytorch-lightning` - Training framework
-- `openai-whisper==20250625` - ASR transcription
-- `mediapipe` - Face and mouth detection
-- `opencv-python` - Video processing
-- `ffmpeg-python` - Video manipulation
-- `sentencepiece` - Text tokenization
-- `tqdm` - Progress bars
-- `scikit-image` - Image processing
+**Total Packages**: **106** (including all dependencies and CUDA libraries)
 
-See [`auto_avsr/preparation/requirements.txt`](auto_avsr/preparation/requirements.txt) for complete list.
+**Key Dependencies**:
+
+*Core ML & Processing:*
+- `torch==2.8.0` + `torchvision==0.23.0` + `torchaudio==2.8.0` - PyTorch with CUDA 12.1
+- `pytorch-lightning==2.5.5` - Training framework
+- `openai-whisper` (git) - ASR transcription
+- `mediapipe==0.10.21` - Face and mouth detection
+- `opencv-python==4.11.0.86` + `opencv-contrib-python` - Video processing
+- `scikit-learn==1.6.1`, `scikit-image==0.24.0` - ML/image processing
+- `numba==0.60.0` - JIT compilation
+
+*Audio & Video:*
+- `ffmpeg-python==0.2.0`, `av==15.1.0` - Video manipulation
+- `sounddevice==0.5.3`, `pydub==0.25.1` - Audio I/O and processing
+
+*NLP & Utils:*
+- `sentencepiece==0.2.1`, `tiktoken==0.12.0` - Tokenization
+- `numpy==1.26.4`, `pandas==2.3.3`, `scipy==1.13.1`
+- `tqdm==4.67.1`, `Cython==3.2.1`
+- 12 NVIDIA CUDA libraries (cublas, nvrtc, etc.)
+
+See [`auto_avsr/preparation/requirements.txt`](auto_avsr/preparation/requirements.txt) for base requirements.
 
 ### 2. VSP-LLM Environment
 
@@ -141,37 +153,47 @@ pip install -e .
 pip install soundfile joblib sklearn submitit npy-append-array
 ```
 
-**Key Dependencies** (from `requirements.txt`):
-- `torch==2.5.1` - PyTorch with CUDA 12.1
+**Total Packages**: **105** (including all dependencies and CUDA libraries)
+
+**Key Dependencies**:
+
+*Core ML & LLM:*
+- `torch==2.5.1` + `torchvision` + `torchaudio` - PyTorch with CUDA 12.1
 - `transformers==4.49.0` - HuggingFace for LLaMA2
-- `fairseq` - Sequence-to-sequence framework (custom install)
-- `bitsandbytes==0.42.0` - 8-bit optimizers
-- `Cython==3.0.8` - Fairseq compilation
+- `fairseq` (editable) - Sequence-to-sequence framework (custom install)
+- `bitsandbytes==0.48.2` - 8-bit optimizers for efficient inference
+- `accelerate==0.33.0` - Distributed training utilities
+- `peft==0.17.1` - Parameter-efficient fine-tuning (LoRA)
+- `safetensors==0.4.2` - Fast model serialization
+
+*Configuration:*
+- `hydra-core==1.0.7`, `omegaconf==2.0.6` - Hierarchical configuration
+- `Cython==3.0.8` - Fairseq Cython extension compilation
+
+*Data Processing:*
 - `datasets==2.17.0` - HuggingFace datasets
-- `editdistance==0.6.0` - WER calculation
-- `einops==0.7.0` - Tensor operations
-- `hydra-core==1.0.7` - Configuration management
-- `librosa==0.10.1` - Audio processing
-- `numba==0.59.0` - JIT compilation
-- `numpy==1.23.5` - Numerical computing
-- `omegaconf==2.0.6` - Config management
-- `opencv-python==4.5.4.60` - Video processing
-- `pandas==2.2.0` - Data manipulation
-- `peft` - Parameter-efficient fine-tuning
+- `numpy==1.23.5`, `pandas==2.2.0`, `scipy==1.10.0`
 - `scikit-learn==1.4.0` - K-means clustering
-- `scipy==1.10.0` - Scientific computing
-- `sentencepiece==0.1.96` - Tokenization
-- `sacrebleu==2.4.0` - BLEU score calculation
-- `safetensors==0.4.2` - Model serialization
-- Plus: `joblib`, `psutil`, `python-speech-features`, `tqdm`, `typing_extensions`
+- `joblib==1.3.2`, `multiprocess==0.70.16` - Parallel processing
 
-**Clustering Dependencies** (from `src/clustering/requirements.txt`):
-- `soundfile` - Audio I/O
-- `sklearn` - K-means implementation
-- `submitit` - Cluster job submission
-- `npy-append-array` - NumPy array appending
+*Audio & Video:*
+- `librosa==0.10.1`, `soundfile==0.13.1`, `audioread==3.1.0` - Audio processing
+- `opencv-python==4.5.4.60` - Video processing
 
-See [`VSP-LLM/requirements.txt`](VSP-LLM/requirements.txt) for complete list.
+*NLP & Metrics:*
+- `sentencepiece==0.1.96`, `tokenizers==0.21.4` - Tokenization
+- `editdistance==0.6.0` - WER calculation
+- `sacrebleu==2.4.0` - BLEU score
+- `python_speech_features==0.6` - Speech feature extraction
+
+*Utilities:*
+- `einops==0.7.0` - Tensor operations
+- `numba==0.59.0` - JIT compilation
+- `tqdm==4.67.1`, `psutil==5.9.8`
+- `npy-append-array==0.9.16` - Efficient array operations
+- 12 NVIDIA CUDA libraries (cublas, nvrtc, nccl, etc.)
+
+See [`VSP-LLM/requirements.txt`](VSP-LLM/requirements.txt) for base requirements.
 
 ### 3. Web UI Environment
 
