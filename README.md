@@ -71,6 +71,8 @@ Videos segmented first using fast codec copy, then normalized at segment level. 
 
 ## Environment Setup
 
+> **Note**: These installation instructions are designed for **updating an existing working container** from the pre-Claude version. If you already have a functional VSP pipeline container/environment, these steps will help you update it with the latest improvements and bug fixes documented in this repository.
+
 The pipeline uses **3 separate Python virtual environments** for different components:
 
 ### 1. ASR & Preprocessing Environment
