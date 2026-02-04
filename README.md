@@ -69,6 +69,125 @@ Videos segmented first using fast codec copy, then normalized at segment level. 
 - **FFmpeg**: With NVENC support for GPU encoding
 - **Dependencies**: Fairseq (custom), Transformers 4.49.0, Mediapipe, Whisper, SentencePiece
 
+## Environment Setup
+
+The pipeline uses **3 separate Python virtual environments** for different components:
+
+### 1. ASR & Preprocessing Environment
+
+**Location**: `~/auto_avsr/pre-process-venv/`
+**Purpose**: Whisper ASR, video preprocessing, face detection, mouth cropping
+
+```bash
+# Create environment
+cd ~/auto_avsr
+python3 -m venv pre-process-venv
+source pre-process-venv/bin/activate
+
+# Install dependencies
+pip install --upgrade pip
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+pip install openai-whisper==20250625
+pip install -r preparation/requirements.txt  # opencv, ffmpeg-python, sentencepiece, etc.
+
+# Install mediapipe from wheel (required for face detection)
+pip install mediapipe-0.10.9-cp311-cp311-linux_x86_64.whl
+```
+
+**Key Dependencies**:
+- `openai-whisper` - ASR transcription
+- `mediapipe` - Face and mouth detection
+- `opencv-python` - Video processing
+- `ffmpeg-python` - Video manipulation
+- `sentencepiece` - Text tokenization
+
+### 2. VSP-LLM Environment
+
+**Location**: `~/vsp-llm-yoad-venv/`
+**Purpose**: LLaMA2 inference, AV-HuBERT features, K-means clustering, decoding
+
+```bash
+# Create environment
+cd ~
+python3 -m venv vsp-llm-yoad-venv
+source vsp-llm-yoad-venv/bin/activate
+
+# Install PyTorch with CUDA 12.1
+pip install --upgrade pip
+pip install torch==2.5.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Install VSP-LLM requirements
+cd ~/VSP-LLM
+pip install -r requirements.txt
+
+# Install Fairseq (editable mode)
+cd ~/VSP-LLM/fairseq
+pip install -e .
+
+# Install AV-HuBERT Fairseq (editable mode)
+cd ~/av_hubert/fairseq
+pip install -e .
+```
+
+**Key Dependencies**:
+- `torch==2.5.1` - PyTorch with CUDA 12.1
+- `transformers==4.49.0` - HuggingFace for LLaMA2
+- `fairseq` - Sequence-to-sequence framework (custom install)
+- `sentencepiece==0.1.96` - Tokenization
+- `scikit-learn` - K-means clustering
+- `hydra-core==1.0.7` - Configuration management
+- `editdistance` - WER calculation
+
+### 3. Web UI Environment
+
+**Location**: `~/vsp-ui/venv/`
+**Purpose**: Flask web interface, video validation, transcription management
+
+```bash
+# Create environment
+cd ~/vsp-ui
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install --upgrade pip
+pip install flask
+pip install opencv-python  # For video metadata
+```
+
+**Key Dependencies**:
+- `flask` - Web framework
+- `opencv-python` - Video validation
+
+### Environment Activation
+
+The pipeline automatically activates the correct environment for each stage:
+
+```bash
+# Manual activation examples
+source ~/auto_avsr/pre-process-venv/bin/activate        # For ASR/preprocessing
+source ~/vsp-llm-yoad-venv/bin/activate                 # For VSP-LLM
+source ~/vsp-ui/venv/bin/activate                       # For web UI
+```
+
+### Verification
+
+Test each environment:
+
+```bash
+# Test ASR environment
+source ~/auto_avsr/pre-process-venv/bin/activate
+python -c "import whisper; import cv2; import mediapipe; print('ASR env OK')"
+
+# Test VSP-LLM environment
+source ~/vsp-llm-yoad-venv/bin/activate
+python -c "import torch; import transformers; import fairseq; print('VSP-LLM env OK')"
+
+# Test UI environment
+source ~/vsp-ui/venv/bin/activate
+python -c "import flask; print('UI env OK')"
+```
+
 ## Documentation
 
 - **[CLAUDE.md](CLAUDE.md)** - Comprehensive architecture, workflows, and troubleshooting (1800+ lines)
