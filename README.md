@@ -87,6 +87,7 @@ source pre-process-venv/bin/activate
 # Install dependencies
 pip install --upgrade pip
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+pip install pytorch-lightning  # For AVSR training framework
 pip install openai-whisper==20250625
 pip install -r preparation/requirements.txt  # opencv, ffmpeg-python, sentencepiece, etc.
 
@@ -95,11 +96,17 @@ pip install mediapipe-0.10.9-cp311-cp311-linux_x86_64.whl
 ```
 
 **Key Dependencies**:
-- `openai-whisper` - ASR transcription
+- `torch` + `torchvision` + `torchaudio` - PyTorch with CUDA 12.1
+- `pytorch-lightning` - Training framework
+- `openai-whisper==20250625` - ASR transcription
 - `mediapipe` - Face and mouth detection
 - `opencv-python` - Video processing
 - `ffmpeg-python` - Video manipulation
 - `sentencepiece` - Text tokenization
+- `tqdm` - Progress bars
+- `scikit-image` - Image processing
+
+See [`auto_avsr/preparation/requirements.txt`](auto_avsr/preparation/requirements.txt) for complete list.
 
 ### 2. VSP-LLM Environment
 
@@ -127,16 +134,42 @@ pip install -e .
 # Install AV-HuBERT Fairseq (editable mode)
 cd ~/av_hubert/fairseq
 pip install -e .
+
+# Install clustering dependencies (for K-means)
+pip install soundfile joblib sklearn submitit npy-append-array
 ```
 
-**Key Dependencies**:
+**Key Dependencies** (from `requirements.txt`):
 - `torch==2.5.1` - PyTorch with CUDA 12.1
 - `transformers==4.49.0` - HuggingFace for LLaMA2
 - `fairseq` - Sequence-to-sequence framework (custom install)
-- `sentencepiece==0.1.96` - Tokenization
-- `scikit-learn` - K-means clustering
+- `bitsandbytes==0.42.0` - 8-bit optimizers
+- `Cython==3.0.8` - Fairseq compilation
+- `datasets==2.17.0` - HuggingFace datasets
+- `editdistance==0.6.0` - WER calculation
+- `einops==0.7.0` - Tensor operations
 - `hydra-core==1.0.7` - Configuration management
-- `editdistance` - WER calculation
+- `librosa==0.10.1` - Audio processing
+- `numba==0.59.0` - JIT compilation
+- `numpy==1.23.5` - Numerical computing
+- `omegaconf==2.0.6` - Config management
+- `opencv-python==4.5.4.60` - Video processing
+- `pandas==2.2.0` - Data manipulation
+- `peft` - Parameter-efficient fine-tuning
+- `scikit-learn==1.4.0` - K-means clustering
+- `scipy==1.10.0` - Scientific computing
+- `sentencepiece==0.1.96` - Tokenization
+- `sacrebleu==2.4.0` - BLEU score calculation
+- `safetensors==0.4.2` - Model serialization
+- Plus: `joblib`, `psutil`, `python-speech-features`, `tqdm`, `typing_extensions`
+
+**Clustering Dependencies** (from `src/clustering/requirements.txt`):
+- `soundfile` - Audio I/O
+- `sklearn` - K-means implementation
+- `submitit` - Cluster job submission
+- `npy-append-array` - NumPy array appending
+
+See [`VSP-LLM/requirements.txt`](VSP-LLM/requirements.txt) for complete list.
 
 ### 3. Web UI Environment
 
