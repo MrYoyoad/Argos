@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VSP Pipeline
+Comment=Visual Speech Processing Pipeline - Start UI
+Exec=/home/ds/Desktop/galaxy_export/vsp-start.sh
+Icon=video-display
+Terminal=true
+Categories=AudioVideo;Video;
+StartupNotify=true

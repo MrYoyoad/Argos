@@ -32,6 +32,25 @@ run_vsp_decode() {
 
   log_stage "7" "Running VSP-LLM decode"
 
+  # CRITICAL: Check and build fairseq Cython extensions if needed
+  # Container environments may need this on first run due to different Python/CPU architecture
+  log_info "Checking fairseq Cython extensions"
+  if ! python3 -c "from fairseq.data.data_utils_fast import batch_by_size_vec" 2>/dev/null; then
+    log_info "Fairseq Cython extensions not found - building now (one-time setup)"
+    cd "$vsp_dir/fairseq" || {
+      log_error "Failed to cd to fairseq directory"
+      return 1
+    }
+    python3 setup.py build_ext --inplace || {
+      log_error "Failed to build fairseq Cython extensions"
+      return 1
+    }
+    log_info "Fairseq Cython extensions built successfully"
+    cd "$vsp_dir" || return 1
+  else
+    log_info "Fairseq Cython extensions already present"
+  fi
+
   # Create dataset directory and symlinks
   mkdir -p "$vsp_dir/src/dataset/vsr/en"
 

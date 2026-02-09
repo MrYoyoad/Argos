@@ -94,13 +94,29 @@ run_asr_transcription() {
     return 1
   }
 
+  # Auto-detect Whisper model cache directory
+  local base_dir="$(dirname "$auto_avsr_dir")"
+  local whisper_root=""
+  if [ -d "$base_dir/whisper" ]; then
+    whisper_root="$base_dir/whisper"
+  elif [ -d "$HOME/.cache/whisper" ]; then
+    whisper_root="$HOME/.cache/whisper"
+  fi
+
+  local download_root_arg=""
+  if [ -n "$whisper_root" ]; then
+    echo ">>> [3] Using Whisper model cache: $whisper_root"
+    download_root_arg="--download_root $whisper_root"
+  fi
+
   python "$auto_avsr_dir/asr_to_words_notime.py" \
     --in_videos "$segment_vid_dir" \
     --out_wrd   "$segment_wrd_tmp" \
     --model medium \
     --lang en \
     --tokenize alnum \
-    --lower || {
+    --lower \
+    $download_root_arg || {
     log_error "Whisper ASR failed"
     deactivate
     return 1

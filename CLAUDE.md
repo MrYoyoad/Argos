@@ -69,6 +69,10 @@ lib/
 
 **Phase 1.5: Decode & Outputs**
 - `decode.sh`: VSP-LLM decode with symlink setup, merge logic (disabled for segment-level output)
+  - **CRITICAL**: Includes automatic Cython extension check/build for fairseq
+  - Container environments require this on first run due to different Python/CPU architecture
+  - Checks if `fairseq.data.data_utils_fast` can be imported, builds if missing
+  - This step must NEVER be removed - decode will fail without Cython extensions
 - `outputs.sh`: Generate segment-level reports (JSON) and burned videos
 
 ### Virtual Environment Strategy

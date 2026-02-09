@@ -55,16 +55,20 @@ if [ ! -f "run_flat_english_pipeline.sh" ]; then
     exit 1
 fi
 
-# Check required directories exist
+# Create required directories if they don't exist (fresh installation)
 if [ ! -d "lib" ]; then
-    echo -e "${RED}ERROR: lib/ directory not found${NC}"
-    echo "This directory needs existing VSP installation"
-    exit 1
+    echo -e "${YELLOW}  lib/ not found - creating (fresh installation)${NC}"
+    mkdir -p lib
 fi
 
 if [ ! -d "VSP-LLM" ]; then
-    echo -e "${RED}ERROR: VSP-LLM/ directory not found${NC}"
-    exit 1
+    echo -e "${YELLOW}  VSP-LLM/ not found - creating (fresh installation)${NC}"
+    mkdir -p VSP-LLM/src/conf VSP-LLM/scripts
+fi
+
+if [ ! -d "vsp-ui" ]; then
+    echo -e "${YELLOW}  vsp-ui/ not found - creating (fresh installation)${NC}"
+    mkdir -p vsp-ui/app/services vsp-ui/app/static
 fi
 
 echo -e "${GREEN}✅ Prerequisites OK${NC}"
@@ -141,6 +145,109 @@ else
     echo -e "${YELLOW}  ⚠️  VSP UI not found in package (optional)${NC}"
 fi
 
+# Component 7: auto_avsr scripts (pipeline processing scripts)
+echo -e "${BLUE}[3.7] Installing auto_avsr scripts...${NC}"
+if [ -d "$SCRIPT_DIR/auto_avsr" ]; then
+    mkdir -p auto_avsr/preparation
+    cp "$SCRIPT_DIR/auto_avsr/preparation/"*.py auto_avsr/preparation/ 2>/dev/null || true
+    cp "$SCRIPT_DIR/auto_avsr/"*.py auto_avsr/ 2>/dev/null || true
+    # Copy data module (AVSRDataLoader)
+    if [ -d "$SCRIPT_DIR/auto_avsr/preparation/data" ]; then
+        mkdir -p auto_avsr/preparation/data
+        cp "$SCRIPT_DIR/auto_avsr/preparation/data/"*.py auto_avsr/preparation/data/ 2>/dev/null || true
+    fi
+    # Copy face detectors (mediapipe + retinaface)
+    if [ -d "$SCRIPT_DIR/auto_avsr/preparation/detectors" ]; then
+        mkdir -p auto_avsr/preparation/detectors/mediapipe auto_avsr/preparation/detectors/retinaface
+        cp -r "$SCRIPT_DIR/auto_avsr/preparation/detectors/mediapipe/"* auto_avsr/preparation/detectors/mediapipe/ 2>/dev/null || true
+        cp -r "$SCRIPT_DIR/auto_avsr/preparation/detectors/retinaface/"* auto_avsr/preparation/detectors/retinaface/ 2>/dev/null || true
+    fi
+    # Copy SentencePiece model files
+    if [ -d "$SCRIPT_DIR/auto_avsr/spm" ]; then
+        mkdir -p auto_avsr/spm/unigram
+        cp "$SCRIPT_DIR/auto_avsr/spm/unigram/"* auto_avsr/spm/unigram/ 2>/dev/null || true
+    fi
+    echo -e "${GREEN}  ✅ auto_avsr scripts installed${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  auto_avsr scripts not found in package${NC}"
+fi
+
+# Component 8: av_hubert scripts (LRS3 conversion)
+echo -e "${BLUE}[3.8] Installing av_hubert scripts...${NC}"
+if [ -d "$SCRIPT_DIR/av_hubert" ]; then
+    mkdir -p av_hubert/avhubert/preparation
+    cp "$SCRIPT_DIR/av_hubert/avhubert/preparation/"* av_hubert/avhubert/preparation/ 2>/dev/null || true
+    echo -e "${GREEN}  ✅ av_hubert scripts installed${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  av_hubert scripts not found in package${NC}"
+fi
+
+# Component 9: VSP-LLM clustering modules
+echo -e "${BLUE}[3.9] Installing VSP-LLM clustering modules...${NC}"
+if [ -d "$SCRIPT_DIR/VSP-LLM/src/clustering" ]; then
+    mkdir -p VSP-LLM/src/clustering
+    cp "$SCRIPT_DIR/VSP-LLM/src/clustering/"*.py VSP-LLM/src/clustering/ 2>/dev/null || true
+    echo -e "${GREEN}  ✅ VSP-LLM clustering modules installed${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  VSP-LLM clustering modules not found in package${NC}"
+fi
+
+# Component 10: Fairseq max_len patch
+echo -e "${BLUE}[3.10] Patching fairseq GenerationConfig (max_len field)...${NC}"
+if [ -f "$SCRIPT_DIR/patch_fairseq_max_len.py" ]; then
+    # Find the VSP venv to use for patching (fairseq is installed there)
+    PATCH_VENV=""
+    if [ -d "/workspace/vsp-llm-yoad-venv" ]; then
+        PATCH_VENV="/workspace/vsp-llm-yoad-venv"
+    elif [ -d "$HOME/vsp-llm-yoad-venv" ]; then
+        PATCH_VENV="$HOME/vsp-llm-yoad-venv"
+    fi
+
+    if [ -n "$PATCH_VENV" ]; then
+        source "$PATCH_VENV/bin/activate"
+        python3 "$SCRIPT_DIR/patch_fairseq_max_len.py"
+        PATCH_RESULT=$?
+        deactivate
+        if [ $PATCH_RESULT -eq 0 ]; then
+            echo -e "${GREEN}  ✅ Fairseq max_len patch applied${NC}"
+        else
+            echo -e "${RED}  ❌ Fairseq max_len patch failed - decode step may fail${NC}"
+        fi
+    else
+        echo -e "${YELLOW}  ⚠️  VSP venv not found - run patch_fairseq_max_len.py manually after activating venv${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠️  Patch script not found in package${NC}"
+fi
+
+# Component 11: Test suite
+echo -e "${BLUE}[3.11] Installing test suite...${NC}"
+if [ -d "$SCRIPT_DIR/tests" ]; then
+    mkdir -p tests
+    cp "$SCRIPT_DIR/tests/"*.sh tests/ 2>/dev/null || true
+    chmod +x tests/*.sh 2>/dev/null || true
+    echo -e "${GREEN}  ✅ Test suite installed${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  Test suite not found in package${NC}"
+fi
+
+# Component 12: Host-side launcher
+echo -e "${BLUE}[3.12] Installing host-side launcher...${NC}"
+if [ -f "$SCRIPT_DIR/vsp-start.sh" ]; then
+    cp "$SCRIPT_DIR/vsp-start.sh" .
+    chmod +x vsp-start.sh
+    # Copy desktop file to package root
+    if [ -f "$SCRIPT_DIR/vsp-pipeline.desktop" ]; then
+        cp "$SCRIPT_DIR/vsp-pipeline.desktop" .
+    fi
+    echo -e "${GREEN}  ✅ Host launcher installed (vsp-start.sh)${NC}"
+    echo -e "${YELLOW}  To add desktop icon, run ON THE HOST (not inside container):${NC}"
+    echo -e "${YELLOW}    cp /home/ds/Desktop/galaxy_export/vsp-pipeline.desktop ~/Desktop/${NC}"
+    echo -e "${YELLOW}    chmod +x ~/Desktop/vsp-pipeline.desktop${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  Host launcher not found in package${NC}"
+fi
+
 echo ""
 echo -e "${GREEN}✅ All components installed${NC}"
 echo ""
@@ -207,6 +314,14 @@ verify_fix 11 "Logger duplication fix" \
 verify_fix 12 "Segment duration = 12s" \
     'grep -q "SEGMENT_DURATION = 12" vsp-ui/app/config.py' || ((FAILED_FIXES++))
 
+if [ -n "$PATCH_VENV" ]; then
+    verify_fix 13 "Fairseq max_len field" \
+        'source "'"$PATCH_VENV"'/bin/activate" && python3 -c "from fairseq.dataclass.configs import GenerationConfig; assert hasattr(GenerationConfig, \"max_len\")" && deactivate' || ((FAILED_FIXES++))
+else
+    verify_fix 13 "Fairseq max_len field" \
+        'python3 -c "from fairseq.dataclass.configs import GenerationConfig; assert hasattr(GenerationConfig, \"max_len\")"' || ((FAILED_FIXES++))
+fi
+
 echo ""
 
 if [ $FAILED_FIXES -eq 0 ]; then
@@ -261,7 +376,7 @@ if [ -f "$BACKUP_FILE" ]; then
 fi
 
 echo -e "${GREEN}Verification:${NC}"
-echo "  ✅ $(( 12 - FAILED_FIXES ))/12 fixes verified"
+echo "  ✅ $(( 13 - FAILED_FIXES ))/13 fixes verified"
 if [ $FAILED_FIXES -gt 0 ]; then
     echo -e "  ${YELLOW}⚠️  $FAILED_FIXES fix(es) need manual verification${NC}"
 fi
