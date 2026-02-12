@@ -37,33 +37,61 @@ if [ ! -f "$ICON_FILE" ]; then
     ICON_FILE="video-display"
 fi
 
-# Make launcher executable
-chmod +x "$LAUNCHER"
+# Make launcher executable (may fail on mounted filesystems - that's OK)
+chmod +x "$LAUNCHER" 2>/dev/null || true
 
 # Generate .desktop file with correct paths
+# Use "bash <path>" instead of just "<path>" so execute permission isn't needed
 DESKTOP_CONTENT="[Desktop Entry]
 Version=1.0
 Type=Application
 Name=VSP Pipeline
 Comment=Visual Speech Processing Pipeline - Start UI
-Exec=${LAUNCHER}
+Exec=bash ${LAUNCHER}
 Icon=${ICON_FILE}
 Terminal=true
 Categories=AudioVideo;Video;
 StartupNotify=true"
 
+# Find the real home directory (don't trust $HOME - it may be wrong)
+REAL_HOME="$(getent passwd "$(whoami)" 2>/dev/null | cut -d: -f6)"
+if [ -z "$REAL_HOME" ]; then
+    REAL_HOME="$HOME"
+fi
+
+# Find Desktop directory - try multiple locations
+DESKTOP_DIR=""
+for candidate in \
+    "${REAL_HOME}/Desktop" \
+    "${HOME}/Desktop" \
+    "/home/$(whoami)/Desktop" \
+    "/home/ds/Desktop"; do
+    if [ -d "$candidate" ]; then
+        DESKTOP_DIR="$candidate"
+        break
+    fi
+done
+
 # Install to applications menu
-mkdir -p ~/.local/share/applications
-echo "$DESKTOP_CONTENT" > ~/.local/share/applications/vsp-pipeline.desktop
+mkdir -p "${REAL_HOME}/.local/share/applications" 2>/dev/null || mkdir -p ~/.local/share/applications
+APP_DIR="${REAL_HOME}/.local/share/applications"
+[ -d "$APP_DIR" ] || APP_DIR=~/.local/share/applications
+echo "$DESKTOP_CONTENT" > "${APP_DIR}/vsp-pipeline.desktop"
 echo "Installed to applications menu."
 
-# Install to Desktop if it exists
-if [ -d "${HOME}/Desktop" ]; then
-    echo "$DESKTOP_CONTENT" > "${HOME}/Desktop/vsp-pipeline.desktop"
-    chmod +x "${HOME}/Desktop/vsp-pipeline.desktop"
+# Install to Desktop
+if [ -n "$DESKTOP_DIR" ]; then
+    echo "$DESKTOP_CONTENT" > "${DESKTOP_DIR}/vsp-pipeline.desktop"
+    chmod +x "${DESKTOP_DIR}/vsp-pipeline.desktop" 2>/dev/null || true
     # Mark as trusted on GNOME
-    gio set "${HOME}/Desktop/vsp-pipeline.desktop" metadata::trusted true 2>/dev/null || true
-    echo "Installed to Desktop."
+    gio set "${DESKTOP_DIR}/vsp-pipeline.desktop" metadata::trusted true 2>/dev/null || true
+    echo "Installed to Desktop: ${DESKTOP_DIR}/vsp-pipeline.desktop"
+else
+    echo "WARNING: Could not find Desktop directory."
+    echo "Tried: ${REAL_HOME}/Desktop, ${HOME}/Desktop, /home/$(whoami)/Desktop, /home/ds/Desktop"
+    echo ""
+    echo "To install manually, copy this to your Desktop:"
+    echo "  echo '$DESKTOP_CONTENT' > /path/to/Desktop/vsp-pipeline.desktop"
 fi
 
 echo ""
