@@ -231,19 +231,54 @@ else
     echo -e "${YELLOW}  ⚠️  Test suite not found in package${NC}"
 fi
 
-# Component 12: Host-side launcher
-echo -e "${BLUE}[3.12] Installing host-side launcher...${NC}"
+# Component 12: Docker configuration (detect image name)
+echo -e "${BLUE}[3.12] Generating docker.conf...${NC}"
+DETECTED_IMAGE=""
+# Try to detect Docker image name from inside the container
+if command -v docker &>/dev/null && [ -S /var/run/docker.sock ]; then
+    DETECTED_IMAGE=$(docker inspect "$(hostname)" --format '{{.Config.Image}}' 2>/dev/null) || true
+fi
+
+DOCKER_CONF="docker.conf"
+if [ -n "$DETECTED_IMAGE" ]; then
+    echo "# Docker image for VSP Pipeline" > "$DOCKER_CONF"
+    echo "# Auto-detected during installation" >> "$DOCKER_CONF"
+    echo "DOCKER_IMAGE=${DETECTED_IMAGE}" >> "$DOCKER_CONF"
+    echo -e "${GREEN}  ✅ Docker image detected: ${DETECTED_IMAGE}${NC}"
+else
+    echo "# Docker image for VSP Pipeline" > "$DOCKER_CONF"
+    echo "# IMPORTANT: Set this to your Docker image name!" >> "$DOCKER_CONF"
+    echo "#" >> "$DOCKER_CONF"
+    echo "# Known images:" >> "$DOCKER_CONF"
+    echo "#   Client:    vsp-llm-pipeline:latest" >> "$DOCKER_CONF"
+    echo "#   Developer: vsp-flat-standalone:cu128-exact" >> "$DOCKER_CONF"
+    echo "DOCKER_IMAGE=CHANGE_ME" >> "$DOCKER_CONF"
+    echo -e "${RED}  ⚠️  Could not detect Docker image name automatically.${NC}"
+    echo -e "${YELLOW}  Edit docker.conf and set DOCKER_IMAGE to your image name.${NC}"
+    echo -e "${YELLOW}  Known images:${NC}"
+    echo -e "${YELLOW}    Client:    vsp-llm-pipeline:latest${NC}"
+    echo -e "${YELLOW}    Developer: vsp-flat-standalone:cu128-exact${NC}"
+fi
+
+# Component 13: Host-side launcher + desktop icon
+echo -e "${BLUE}[3.13] Installing host-side launcher + desktop icon...${NC}"
 if [ -f "$SCRIPT_DIR/vsp-start.sh" ]; then
     cp "$SCRIPT_DIR/vsp-start.sh" .
+    cp "$SCRIPT_DIR/docker-run.sh" . 2>/dev/null || true
     chmod +x vsp-start.sh
-    # Copy desktop file to package root
-    if [ -f "$SCRIPT_DIR/vsp-pipeline.desktop" ]; then
-        cp "$SCRIPT_DIR/vsp-pipeline.desktop" .
+    chmod +x docker-run.sh 2>/dev/null || true
+    # Copy desktop file template and icon installer
+    cp "$SCRIPT_DIR/vsp-pipeline.desktop" . 2>/dev/null || true
+    cp "$SCRIPT_DIR/install-desktop-icon.sh" . 2>/dev/null || true
+    chmod +x install-desktop-icon.sh 2>/dev/null || true
+    # Copy peacock logo for desktop icon
+    if [ -f "$SCRIPT_DIR/vsp-ui/logo.png" ]; then
+        cp "$SCRIPT_DIR/vsp-ui/logo.png" vsp-ui/logo.png 2>/dev/null || true
     fi
     echo -e "${GREEN}  ✅ Host launcher installed (vsp-start.sh)${NC}"
     echo -e "${YELLOW}  To add desktop icon, run ON THE HOST (not inside container):${NC}"
-    echo -e "${YELLOW}    cp /home/ds/Desktop/galaxy_export/vsp-pipeline.desktop ~/Desktop/${NC}"
-    echo -e "${YELLOW}    chmod +x ~/Desktop/vsp-pipeline.desktop${NC}"
+    echo -e "${YELLOW}    cd /path/to/galaxy_export${NC}"
+    echo -e "${YELLOW}    bash install-desktop-icon.sh${NC}"
 else
     echo -e "${YELLOW}  ⚠️  Host launcher not found in package${NC}"
 fi

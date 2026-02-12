@@ -19,13 +19,28 @@ set -euo pipefail
 # Configuration
 # =====================
 CONTAINER_NAME="vsp-pipeline"
-DOCKER_IMAGE="vsp-flat-standalone:cu128-exact"
 PORT=8765
 URL="http://localhost:${PORT}"
 
 # Auto-detect galaxy_export dir from script location
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GALAXY_EXPORT_DIR="${GALAXY_EXPORT_DIR:-${SCRIPT_DIR}}"
+
+# Load Docker image name from docker.conf
+if [ -f "${SCRIPT_DIR}/docker.conf" ]; then
+    source "${SCRIPT_DIR}/docker.conf"
+fi
+if [ -z "${DOCKER_IMAGE:-}" ] || [ "${DOCKER_IMAGE}" = "CHANGE_ME" ]; then
+    echo "ERROR: DOCKER_IMAGE not configured."
+    echo ""
+    echo "  Edit ${SCRIPT_DIR}/docker.conf and set DOCKER_IMAGE to your image name."
+    echo "  Known images:"
+    echo "    Client:    vsp-llm-pipeline:latest"
+    echo "    Developer: vsp-flat-standalone:cu128-exact"
+    echo ""
+    echo "  Or run directly: DOCKER_IMAGE=your-image:tag $0"
+    exit 1
+fi
 
 # =====================
 # Functions
@@ -121,7 +136,7 @@ do_start() {
         echo ""
         echo "ERROR: Failed to start container."
         echo "  1. Is Docker running?       docker info"
-        echo "  2. Image exists?            docker images | grep vsp-flat"
+        echo "  2. Image exists?            docker images | grep ${DOCKER_IMAGE%%:*}"
         echo "  3. Port in use?             fuser ${PORT}/tcp"
         echo "  4. Another container?       docker ps"
         echo ""

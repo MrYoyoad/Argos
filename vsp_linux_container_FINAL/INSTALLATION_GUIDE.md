@@ -60,14 +60,18 @@ Complete installation instructions for deploying all fixes to the Linux containe
 
 3. **Run installation** (from inside container or host with shared filesystem)
    ```bash
-   # Start container with volume mount
-   docker run -it --gpus all \
+   # Start container with volume mount (use YOUR Docker image name)
+   # Client standalone:    vsp-llm-pipeline:latest
+   # Developer standalone: vsp-flat-standalone:cu128-exact
+   docker run --rm -it --gpus all -p 8765:8765 \
      -v /home/ds/Desktop/galaxy_export:/host/galaxy_export \
-     vsp-llm-pipeline:latest
+     YOUR_IMAGE_NAME:TAG
 
    # Inside container, run installer
    cd /host/galaxy_export
    bash /host/galaxy_export/../vsp_linux_container_FINAL/INSTALL.sh
+   # INSTALL.sh will generate docker.conf with the image name
+   # If auto-detection fails, edit docker.conf manually
    ```
 
 4. **Verify installation**
