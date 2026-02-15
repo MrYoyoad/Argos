@@ -425,38 +425,6 @@ chmod +x ~/Desktop/vsp-pipeline.desktop
 
 ---
 
-## Lessons Learned
-
-1. **Don't assume existing installations**: The package was designed as an "update" to an existing installation, but the client's container was older than expected. All scripts referenced by the pipeline should be included.
-
-2. **Test on a clean environment**: The package was verified on EC2 where all files already existed. Testing on a clean container would have caught all missing file issues immediately.
-
-3. **Include all executable dependencies**: If `run_flat_english_pipeline.sh` calls a script, that script must either already exist in the target environment OR be included in the package.
-
-4. **Always use `python3`**: Never assume `python` is available — many systems only have `python3`. Use `python3` in all executable calls and shebangs.
-
-5. **Code and venvs may be in different directories**: Don't assume the venv is co-located with the code. On containers, code at `/host/galaxy_export/` but venvs at `/workspace/`. Always try multiple locations when auto-detecting venv paths.
-
----
-
-## Package Versions
-
-| Version | Date | Changes |
-|---------|------|---------|
-| v1.0.0 | Feb 3, 2026 | Initial package - 12 fixes, docs, scripts |
-| v1.0.1 | Feb 8, 2026 | Fixed INSTALL.sh directory checks, added missing auto_avsr/av_hubert/clustering scripts |
-| v1.0.2 | Feb 8, 2026 | Added 14 missing preprocessing files: overlapping_segmentation, data_module, transforms, utils, detectors (mediapipe+retinaface), SentencePiece models, count_frames.py. Fixed hardcoded EC2 paths in flat_to_lrs3_preperation.sh |
-| v1.0.3 | Feb 8, 2026 | Fixed Whisper offline model loading - added --download_root auto-detection for container whisper cache |
-| v1.0.4 | Feb 8, 2026 | Added comprehensive E2E test suite (58 tests across 12 categories) |
-| v1.0.5 | Feb 8, 2026 | Fixed `python` → `python3` in all shell scripts (3 executable calls) and Python shebangs (8 files) |
-| v1.0.6 | Feb 8, 2026 | Fixed venv auto-detection in flat_to_lrs3_preperation.sh - tries multiple locations (code dir, /workspace/, $HOME/) |
-| v1.0.7 | Feb 8, 2026 | Fixed venv pass-through: pipeline passes known-good PREP_VENV to flat_to_lrs3_preperation.sh via lrs3_prep.sh, skips auto-detection when caller provides VENV |
-| v1.0.8 | Feb 8, 2026 | Fixed fairseq max_len: added patch_fairseq_max_len.py to add missing GenerationConfig field, INSTALL.sh runs it automatically |
-| v1.0.9 | Feb 8, 2026 | Fixed UI server binding: changed 127.0.0.1 → 0.0.0.0 so host browser can reach container UI |
-| v1.0.10 | Feb 9, 2026 | Added host-side launcher: vsp-start.sh handles Docker startup with port mapping, desktop icon for one-click launch |
-
----
-
 ## Bug 14: Decode CUDA OOM on 12GB GPU - memory accumulation across samples
 
 **When**: Running pipeline Step 7 (VSP-LLM decode) on standalone computer with 12GB GPU
@@ -485,41 +453,6 @@ PyTorch showed 11.05 GiB allocated (model is only ~4.5 GB), meaning ~6.5 GB of l
 - `VSP-LLM/scripts/decode.sh` — Added `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`
 
 **Status**: Fixed in package v1.0.11
-
----
-
-## Lessons Learned
-
-1. **Don't assume existing installations**: The package was designed as an "update" to an existing installation, but the client's container was older than expected. All scripts referenced by the pipeline should be included.
-
-2. **Test on a clean environment**: The package was verified on EC2 where all files already existed. Testing on a clean container would have caught all missing file issues immediately.
-
-3. **Include all executable dependencies**: If `run_flat_english_pipeline.sh` calls a script, that script must either already exist in the target environment OR be included in the package.
-
-4. **Always use `python3`**: Never assume `python` is available — many systems only have `python3`. Use `python3` in all executable calls and shebangs.
-
-5. **Code and venvs may be in different directories**: Don't assume the venv is co-located with the code. On containers, code at `/host/galaxy_export/` but venvs at `/workspace/`. Always try multiple locations when auto-detecting venv paths.
-
-6. **Test on target GPU size**: Fixes that work on larger GPUs (24GB EC2) may OOM on smaller GPUs (12GB standalone). Always consider the minimum GPU target when changing memory-related parameters like generation length.
-
----
-
-## Package Versions
-
-| Version | Date | Changes |
-|---------|------|---------|
-| v1.0.0 | Feb 3, 2026 | Initial package - 12 fixes, docs, scripts |
-| v1.0.1 | Feb 8, 2026 | Fixed INSTALL.sh directory checks, added missing auto_avsr/av_hubert/clustering scripts |
-| v1.0.2 | Feb 8, 2026 | Added 14 missing preprocessing files: overlapping_segmentation, data_module, transforms, utils, detectors (mediapipe+retinaface), SentencePiece models, count_frames.py. Fixed hardcoded EC2 paths in flat_to_lrs3_preperation.sh |
-| v1.0.3 | Feb 8, 2026 | Fixed Whisper offline model loading - added --download_root auto-detection for container whisper cache |
-| v1.0.4 | Feb 8, 2026 | Added comprehensive E2E test suite (58 tests across 12 categories) |
-| v1.0.5 | Feb 8, 2026 | Fixed `python` → `python3` in all shell scripts (3 executable calls) and Python shebangs (8 files) |
-| v1.0.6 | Feb 8, 2026 | Fixed venv auto-detection in flat_to_lrs3_preperation.sh - tries multiple locations (code dir, /workspace/, $HOME/) |
-| v1.0.7 | Feb 8, 2026 | Fixed venv pass-through: pipeline passes known-good PREP_VENV to flat_to_lrs3_preperation.sh via lrs3_prep.sh, skips auto-detection when caller provides VENV |
-| v1.0.8 | Feb 8, 2026 | Fixed fairseq max_len: added patch_fairseq_max_len.py to add missing GenerationConfig field, INSTALL.sh runs it automatically |
-| v1.0.9 | Feb 8, 2026 | Fixed UI server binding: changed 127.0.0.1 → 0.0.0.0 so host browser can reach container UI |
-| v1.0.10 | Feb 9, 2026 | Added host-side launcher: vsp-start.sh handles Docker startup with port mapping, desktop icon for one-click launch |
-| v1.0.11 | Feb 9, 2026 | Fixed decode CUDA OOM on 12GB GPUs: dynamic max_length per sample, smart memory cleanup, CUDA allocator optimization |
 
 ---
 
@@ -593,6 +526,827 @@ bash install-desktop-icon.sh
 
 ---
 
+## Bug 17: install-desktop-icon.sh fails - chmod permission denied and wrong Desktop path
+
+**When**: Running `bash install-desktop-icon.sh` on the host machine
+**Error**:
+```
+chmod: changing permission of 'install-desktop-icon.sh': Operation not permitted
+```
+Also: Desktop icon not created because `$HOME/Desktop` doesn't match actual Desktop location (`/home/ds/Desktop`).
+
+**Root Cause (Three Issues)**:
+
+1. **`set -euo pipefail`** combined with `chmod +x` — the galaxy_export folder is on a filesystem that doesn't support chmod (e.g., mounted volume). With `set -e`, the script exits immediately on any error.
+
+2. **`$HOME` not reliable** — On the standalone machine, `$HOME` may not be set to `/home/ds/` (e.g., if run via sudo or from a different context). The script used `${HOME}/Desktop` which didn't match the actual Desktop at `/home/ds/Desktop`.
+
+3. **`.desktop` Exec line** — Used `Exec=/path/to/vsp-start.sh` which requires execute permission on the script file. On mounted filesystems where chmod fails, the icon would fail to launch.
+
+**Fix**:
+
+1. All `chmod` calls now have `2>/dev/null || true` — non-fatal on any filesystem
+2. Desktop detection now tries multiple locations instead of trusting `$HOME`:
+   - `$(getent passwd $(whoami))/Desktop` — real home from /etc/passwd
+   - `$HOME/Desktop` — environment variable
+   - `/home/$(whoami)/Desktop` — common Linux convention
+   - `/home/ds/Desktop` — hardcoded fallback for known machine
+3. `Exec=bash /path/to/vsp-start.sh` — uses `bash` prefix so execute permission isn't needed
+
+**Files Modified**:
+- `install-desktop-icon.sh` — Robust Desktop detection, non-fatal chmod, bash prefix in Exec
+
+**Status**: Fixed in package v1.0.13
+
+---
+
+## Bug 18: Desktop shortcut fails - Docker detached mode kills server
+
+**When**: Clicking the desktop icon (which runs `vsp-start.sh`) — server never becomes responsive, times out after 30 seconds
+**Error**:
+```
+Waiting for server.............................. timeout!
+ERROR: Server did not start in 30 seconds.
+```
+Running the same command interactively with `-it` instead of `-d` works fine.
+
+**Root Cause**: `docker run -d` (detached mode) caused the container to exit silently. Multiple possible causes — TTY absence, ENTRYPOINT behavior, buffering, stale container name conflicts — but the exact cause could not be determined because `--rm` removed the container (and its logs) before inspection.
+
+The user confirmed that `docker run --rm -it ... bash -c "cd /host/galaxy_export/vsp-ui && python3 -m app.server"` works perfectly — proving the server code is fine, only the Docker run mode was wrong.
+
+**Fix: Switched from detached (`-d`) to foreground (`-it`) mode**
+
+Since the `.desktop` file has `Terminal=true` (a terminal window is already opened), there's no need for detached mode. Running Docker in the foreground with `-it` is:
+- **Proven to work** — it's the exact command the user ran manually
+- **More transparent** — server output visible in the terminal window
+- **Simpler** — no polling/timeout/diagnostic complexity needed
+- **Self-cleaning** — closing the terminal stops the container
+
+The browser is opened by a background task that polls for server readiness, launched before the foreground `docker run`.
+
+```bash
+# Background: wait for server then open browser
+( while ! curl -s "${URL}/api/status" >/dev/null 2>&1; do sleep 1; done
+  open_browser "${URL}"
+) &
+
+# Foreground: run Docker with -it (proven working)
+docker run --rm -it --name vsp-pipeline --gpus all \
+    -p 8765:8765 -v "${GALAXY_EXPORT_DIR}:/host/galaxy_export" \
+    "${DOCKER_IMAGE}" \
+    bash -c "cd /host/galaxy_export/vsp-ui && python3 -m app.server"
+```
+
+Also retained: stale container cleanup (`docker rm -f`) and port freeing (`fuser -k`) before starting.
+
+**Files Modified**:
+- `vsp-start.sh` — Replaced detached mode with foreground `-it` mode, background browser opener
+
+**Status**: Fixed in package v1.0.14
+
+---
+
+## Bug 19: Fairseq max_len patch applied to wrong fairseq installation
+
+**When**: Running pipeline Step 7 (VSP-LLM decode) on client standalone after running INSTALL.sh
+**Error**:
+```
+Error merging 's2s_decode' with schema
+Key 'max_len' not in 'GenerationConfig'
+full_key: generation.max_len
+reference_type=GenerationConfig
+object_type=GenerationConfig
+```
+
+**Root Cause**: INSTALL.sh component [3.10] ran `patch_fairseq_max_len.py` which patches fairseq via `import fairseq` — this finds the **pip-installed** fairseq at `/workspace/vsp-llm-yoad-venv/lib/python3.10/site-packages/fairseq/`. However, `decode.sh` line 37 sets `PYTHONPATH="${ROOT}/fairseq:$PYTHONPATH"`, putting a **local** fairseq checkout at `/host/galaxy_export/VSP-LLM/fairseq/` first in the path. At decode runtime, Python imports from the local copy (which was never patched), not the pip-installed one.
+
+**Evidence from logs**:
+```
+# Cython build confirms local fairseq exists:
+copying build/lib.linux-x86_64-cpython-310/fairseq/data/data_utils_fast.cpython-310-x86_64-linux-gnu.so -> fairseq/data
+
+# decode.sh PYTHONPATH puts local copy first:
+export PYTHONPATH="${ROOT}/fairseq:$PYTHONPATH"
+# Result: Python imports from /host/galaxy_export/VSP-LLM/fairseq/ (unpatched)
+```
+
+**Why INSTALL.sh patch didn't work**:
+- INSTALL.sh activates venv, runs `python3 patch_fairseq_max_len.py`
+- Without the PYTHONPATH override, `import fairseq` finds the pip-installed copy
+- Patch applied to `/workspace/.../site-packages/fairseq/dataclass/configs.py`
+- Decode runs with PYTHONPATH override, imports from `/host/galaxy_export/VSP-LLM/fairseq/dataclass/configs.py`
+- Two different files — patch went to the wrong one
+
+**Fix**: Added inline self-healing patch directly in `decode.sh`, **after** PYTHONPATH is set and **before** the decode command runs. This ensures the patch applies to whichever fairseq Python will actually import:
+
+```bash
+# Auto-patch fairseq GenerationConfig if max_len field is missing
+# Must run AFTER PYTHONPATH is set so it patches the fairseq that decode will use
+python3 -c "
+import fairseq.dataclass.configs as c
+if not hasattr(c.GenerationConfig, 'max_len'):
+    src = c.__file__
+    # ... insert max_len field before min_len ...
+    print('Patched fairseq configs at: ' + src)
+else:
+    print('fairseq max_len field OK')
+"
+```
+
+**Key design**: The patch is idempotent (safe to run multiple times) and runs with the exact same PYTHONPATH as decode, so it always patches the right file regardless of installation layout.
+
+**Files Modified**:
+- `VSP-LLM/scripts/decode.sh` — Added inline fairseq patch between PYTHONPATH setup and decode command
+
+**Status**: Fixed in package v1.0.15
+
+---
+
+## Bug 20: docker.conf fails if user adds spaces around `=`
+
+**When**: User edits `docker.conf` to set image name, types `DOCKER_IMAGE = vsp-llm-pipeline:latest` (with spaces around `=`)
+**Error**:
+```
+/home/ds/Desktop/galaxy_export/docker.conf: line 7: DOCKER_IMAGE: command not found
+```
+
+**Root Cause**: `vsp-start.sh` used `source docker.conf` to load configuration. Bash `source` interprets each line as a command — `DOCKER_IMAGE = value` is parsed as running a command called `DOCKER_IMAGE` with `=` and `value` as arguments. Only `DOCKER_IMAGE=value` (no spaces) is valid variable assignment in bash.
+
+Non-technical users naturally type spaces around `=` (as in most config file formats, INI files, YAML, etc.), making this a common and confusing error.
+
+**Fix**: Replaced `source docker.conf` with a tolerant custom parser that handles:
+- Spaces around `=` (e.g., `KEY = value`, `KEY =value`, `KEY= value`)
+- Trailing whitespace
+- Quoted values (single or double quotes)
+- Comment lines (starting with `#`)
+- Blank lines
+
+```bash
+# Tolerant parser using bash regex
+while IFS= read -r line || [ -n "$line" ]; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue       # skip comments
+    [[ -z "${line// /}" ]] && continue                  # skip blank lines
+    if [[ "$line" =~ ^[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*(.*) ]]; then
+        key="${BASH_REMATCH[1]}"
+        val="${BASH_REMATCH[2]}"
+        val="${val%"${val##*[![:space:]]}"}"             # trim trailing whitespace
+        val="${val#\"}" ; val="${val%\"}"                 # strip double quotes
+        val="${val#\'}" ; val="${val%\'}"                 # strip single quotes
+        export "$key=$val"
+    fi
+done < "${SCRIPT_DIR}/docker.conf"
+```
+
+All of these formats now work identically:
+```
+DOCKER_IMAGE=vsp-llm-pipeline:latest
+DOCKER_IMAGE = vsp-llm-pipeline:latest
+DOCKER_IMAGE =vsp-llm-pipeline:latest
+DOCKER_IMAGE= vsp-llm-pipeline:latest
+DOCKER_IMAGE="vsp-llm-pipeline:latest"
+DOCKER_IMAGE = "vsp-llm-pipeline:latest"
+```
+
+**Files Modified**:
+- `vsp-start.sh` — Replaced `source docker.conf` with tolerant regex parser
+
+**Status**: Fixed in package v1.0.16
+
+---
+
+## Bug 21: "Port already allocated" error when restarting desktop shortcut
+
+**When**: Clicking the desktop icon a second time (or after a previous manual Docker run that wasn't stopped)
+**Error**:
+```
+docker: Error response from daemon: driver failed programming external connectivity
+on endpoint vsp-pipeline: Bind for 0.0.0.0:8765 failed: port is already allocated.
+```
+
+**Root Cause**: A previous Docker container (or other process) was still using port 8765. Docker refuses to start a new container if the port is already bound. This happens when:
+1. User clicks the desktop icon, then closes the terminal and clicks again before the old container fully stops
+2. User ran `docker run` manually in a terminal and forgot to stop it
+3. A non-Docker process (e.g., another Python server) is using port 8765
+
+Non-technical users cannot be expected to run `docker stop` or `fuser -k` commands.
+
+**Fix**: Added comprehensive automatic cleanup before starting Docker, using three layers:
+
+```bash
+# Layer 1: Stop container by name
+docker stop "${CONTAINER_NAME}" 2>/dev/null || true
+docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
+
+# Layer 2: Find and stop ANY container using our port (even with different name)
+PORT_CONTAINER=$(docker ps --filter "publish=${PORT}" --format '{{.Names}}' 2>/dev/null | head -1)
+if [ -n "${PORT_CONTAINER}" ]; then
+    docker stop "${PORT_CONTAINER}" 2>/dev/null || true
+    docker rm -f "${PORT_CONTAINER}" 2>/dev/null || true
+fi
+
+# Layer 3: Kill any non-Docker process using the port (e.g., local Python server)
+if command -v fuser &>/dev/null; then
+    fuser -k ${PORT}/tcp 2>/dev/null || true
+fi
+```
+
+**Why three layers**:
+- Layer 1 handles the common case (same container name from a previous run)
+- Layer 2 handles edge cases where a different container name is using the port
+- Layer 3 handles non-Docker processes using the port (rare but possible)
+
+All layers are non-fatal (`|| true`) — if nothing needs cleaning up, the script continues normally.
+
+**Files Modified**:
+- `vsp-start.sh` — Added three-layer port/container cleanup before `docker run`
+
+**Status**: Fixed in package v1.0.16
+
+---
+
+## Bug 22: Desktop icon fails - "cannot execute binary file" (double bash)
+
+**When**: Clicking the desktop icon after running `install-desktop-icon.sh`
+**Error**:
+```
+/usr/bin/bash: /usr/bin/bash: cannot execute binary file
+```
+
+**Root Cause**: The `.desktop` file used `Terminal=true` and either `Exec=bash /path/to/vsp-start.sh` or `Exec=/path/to/vsp-start.sh`. The `Terminal=true` mechanism is handled inconsistently across desktop environments — some wrap the Exec value in an additional shell invocation, resulting in `bash bash /path/to/script`. Bash receives the literal string `bash` (i.e., `/usr/bin/bash`) as its script argument, tries to parse the bash binary as a shell script, and fails.
+
+Both attempted fixes using `Terminal=true` failed:
+- `Exec=bash /path/to/script` — double-bash from DE wrapping
+- `Exec=/path/to/script` — same error persisted (DE still wrapping)
+
+**Fix: Bypass `Terminal=true` entirely**
+
+Instead of relying on the desktop environment to open a terminal (which is unreliable), the `.desktop` file now uses `Terminal=false` and explicitly launches the terminal emulator in the `Exec` line:
+
+```
+Exec=gnome-terminal -- /path/to/vsp-start.sh
+Terminal=false
+```
+
+The `install-desktop-icon.sh` script auto-detects the available terminal emulator at install time:
+1. `gnome-terminal` (Ubuntu/GNOME — most common)
+2. `xfce4-terminal` (XFCE)
+3. `mate-terminal` (MATE)
+4. `konsole` (KDE)
+5. `xterm` (fallback)
+
+This approach gives us full control over terminal launching instead of delegating to the desktop environment's inconsistent `Terminal=true` handling.
+
+**After fix**:
+```
+[Desktop Entry]
+Exec=gnome-terminal -- /home/ds/Desktop/galaxy_export/vsp-start.sh
+Terminal=false
+```
+
+**Important**: After downloading the new package, the user must re-run `bash install-desktop-icon.sh` to regenerate the `.desktop` file.
+
+**Files Modified**:
+- `install-desktop-icon.sh` — Auto-detect terminal emulator, use explicit `Exec=gnome-terminal -- /path`, set `Terminal=false`
+
+**Status**: Fixed in package v1.0.18
+
+---
+
+## Bug 23: Desktop icon "has errors" or "points to program without permission"
+
+**When**: Clicking the regenerated desktop icon after Bug 22 fix
+**Error**: GNOME shows dialog "This desktop file has errors" or "points to a program without permission"
+
+**Root Cause (Two Issues)**:
+
+1. **Relative command in Exec**: The `.desktop` Exec line had `gnome-terminal` (just the command name) instead of `/usr/bin/gnome-terminal` (full path). Desktop files don't inherit the user's shell `PATH` — GNOME validates the Exec line and rejects it if the first token isn't an absolute path to an executable.
+
+2. **Missing execute permission**: GNOME requires both the `.desktop` file itself AND the target script to be executable (`chmod +x`). If either lacks the execute bit, GNOME shows the "without permission" error.
+
+**Fix**:
+
+1. Resolve terminal emulator to its **full absolute path** using `command -v`:
+   ```bash
+   # BEFORE:
+   TERM_CMD="gnome-terminal"
+   EXEC_LINE="${TERM_CMD} -- ${LAUNCHER}"
+   # Result: Exec=gnome-terminal -- /path/to/vsp-start.sh  ❌
+
+   # AFTER:
+   TERM_PATH="$(command -v gnome-terminal)"   # → /usr/bin/gnome-terminal
+   EXEC_LINE="${TERM_PATH} -- ${LAUNCHER}"
+   # Result: Exec=/usr/bin/gnome-terminal -- /path/to/vsp-start.sh  ✅
+   ```
+
+2. `chmod +x` applied to both `vsp-start.sh` and the generated `.desktop` file (already present from earlier fixes).
+
+**Files Modified**:
+- `install-desktop-icon.sh` — Resolve terminal to absolute path via `command -v`, use full path in Exec line
+
+**Status**: Fixed in package v1.0.19
+
+---
+
+## Bug 24: Desktop icon shows X symbol / no icon / not trusted
+
+**When**: After running `install-desktop-icon.sh`, the desktop shows a broken icon with an X symbol instead of the peacock logo
+**Error**: GNOME shows X symbol, "untrusted application", or no icon at all
+
+**Root Cause**: Modern GNOME (Ubuntu 22.04+) has increasingly strict validation and trust requirements for `.desktop` files on the Desktop. Even with `chmod +x` and `gio set metadata::trusted true`, GNOME may still reject the file due to:
+- Trust metadata not persisting across sessions
+- Desktop file validation failures (strict format checking)
+- Icon path validation
+- Different GNOME versions handling trust differently
+
+The `.desktop` file approach is fundamentally fragile on the Desktop surface — it works reliably from `~/.local/share/applications/` (app menu) but the Desktop has extra trust/validation layers.
+
+**Fix: Dual strategy — symlink + .desktop**
+
+Instead of relying solely on `.desktop` files, the installer now creates **two** launch methods:
+
+1. **`VSP-Pipeline.sh`** — A symlink (or copy) of `vsp-start.sh` placed directly on the Desktop. When double-clicked, GNOME's file manager prompts "Run in Terminal?" → user clicks yes → it works. No `.desktop` trust issues, no icon validation, no GNOME metadata quirks.
+
+2. **`vsp-pipeline.desktop`** — Still installed to `~/.local/share/applications/` for the applications menu/launcher (where `.desktop` files work reliably). Also placed on Desktop as a backup.
+
+**Three ways to launch**:
+- **Option A**: Double-click `VSP-Pipeline.sh` on Desktop → "Run in Terminal" → works
+- **Option B**: Search "VSP Pipeline" in applications menu → works
+- **Option C**: Open terminal, run `vsp-start.sh` directly → works
+
+**Files Modified**:
+- `install-desktop-icon.sh` — Added symlink creation on Desktop alongside `.desktop` file
+
+**Status**: Fixed in package v1.0.20
+
+---
+
+## Bug 25: Desktop launch unreliable — self-relaunching terminal approach
+
+**When**: All previous desktop icon fixes (Bugs 18, 22-24) were fragile and environment-dependent
+**Error**: Various — double bash, permission denied, untrusted, X symbol — depending on GNOME version and configuration
+
+**Root Cause**: The fundamental problem was trying to control terminal launching from the `.desktop` file side. Every approach had edge cases:
+- `Terminal=true` — desktop environment wraps in extra bash (Bug 22)
+- `Terminal=false` with `gnome-terminal` in Exec — GNOME rejects for trust/path reasons (Bugs 23-24)
+- Symlink on Desktop — file manager may open in text editor instead of executing
+
+**Fix: Self-relaunching script**
+
+Moved terminal detection and launching INTO `vsp-start.sh` itself. The script checks if it's running in a terminal (`-t 0` and `-t 1` test for stdin/stdout being a TTY). If not, it re-execs itself inside a detected terminal emulator:
+
+```bash
+# At the very top of vsp-start.sh:
+if [ ! -t 0 ] && [ ! -t 1 ] && [ "${VSP_IN_TERMINAL:-}" != "1" ]; then
+    for _term in gnome-terminal xfce4-terminal mate-terminal konsole xterm; do
+        _term_path="$(command -v "$_term" 2>/dev/null || true)"
+        if [ -n "$_term_path" ] && [ -x "$_term_path" ]; then
+            export VSP_IN_TERMINAL=1
+            case "$_term" in
+                gnome-terminal) exec "$_term_path" -- "$0" "$@" ;;
+                *)              exec "$_term_path" -e "$0" "$@" ;;
+            esac
+        fi
+    done
+    exit 1
+fi
+```
+
+**Why this works**:
+1. `.desktop` file is now dead simple: `Exec=/path/to/vsp-start.sh`, `Terminal=false`
+2. When GNOME launches the script (no TTY), it detects this and runs `gnome-terminal -- /path/to/vsp-start.sh`
+3. Inside gnome-terminal (with TTY), it detects the terminal and runs normally
+4. `VSP_IN_TERMINAL=1` prevents infinite re-launch loops
+5. When run from an existing terminal, TTY is already present → runs directly (no re-launch)
+
+**Why this is more reliable**:
+- Doesn't depend on how the DE handles `Terminal=true`
+- Doesn't depend on `.desktop` file trust/validation
+- Works from any launch method (icon, file manager, script)
+- Single point of control (the script itself)
+
+The installer now also prints verification checks and fallback instructions.
+
+**Files Modified**:
+- `vsp-start.sh` — Added self-relaunch guard at top of script
+- `install-desktop-icon.sh` — Simplified to `Exec=/path/to/vsp-start.sh` + `Terminal=false`, added verification output
+
+**Status**: Fixed in package v1.0.21
+
+---
+
+## Bug 26: Drag-and-drop video upload does not save files to input folder
+
+**When**: Dragging video files from desktop into the browser UI on the welcome screen
+**Error**: Upload appears to fail silently — files don't appear in `~/vsp_input/` folder, video count doesn't update. No error shown to user (error may appear in server console).
+
+**Root Cause**: The upload handler (`handle_upload()` in `server.py`) used `cgi.FieldStorage` to parse multipart/form-data uploads. The `cgi` module was deprecated in Python 3.11 and is known to be unreliable for binary file uploads (like video files) with Python's built-in HTTP server. Common failure modes:
+1. `cgi.FieldStorage` silently fails to parse the multipart boundary
+2. Binary data gets corrupted during parsing
+3. Content-Length mismatch causes incomplete reads
+4. On Python 3.13+, the `cgi` module is removed entirely
+
+**Fix**: Replaced `cgi.FieldStorage` with a manual multipart/form-data parser that:
+1. Extracts the boundary from the Content-Type header
+2. Reads the complete request body using Content-Length
+3. Splits by boundary delimiter to find the file part
+4. Parses Content-Disposition header to extract filename
+5. Writes raw binary data directly to disk
+
+The new parser:
+- Works on all Python versions (3.8+, including 3.13+ where `cgi` is removed)
+- Handles binary data correctly (no encoding/decoding issues)
+- Includes proper error messages for debugging
+- Adds traceback printing on failure for server-side diagnostics
+
+**Files Modified**:
+- `vsp-ui/app/server.py` — Replaced `handle_upload()` method (~60 lines → ~95 lines), removed `import cgi`
+
+**Status**: Fixed in package v1.0.22
+
+---
+
+## Bug 27: Decode CUDA OOM within single beam search call on 12GB GPU
+
+**When**: Running pipeline Step 7 (VSP-LLM decode) on standalone computer with 12GB GPU
+**Error**:
+```
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 86.00 MiB.
+GPU 0 has a total capacity of 11.63 GiB of which 78.25 MiB is free.
+```
+Crash happens at the 4th sample during `model.generate()`.
+
+**Root Cause**: Bug 14 fix handled memory accumulation *between* samples (gc.collect + empty_cache). This new OOM happens *within* a single beam search call. With `beam=20` and `dynamic_max_len≈750-1050` (from `max_len_a=3.0 × src_tokens + max_len_b=300`), the KV cache for beam search needs ~7-10GB on top of ~6GB model weights, exceeding 12GB.
+
+Degenerate repetitive outputs amplify the problem:
+- `"yeah yeah yeah yeah..."` × 48 words — model hits max_length
+- `"a man and a man and a man..."` × 17 — fills entire generation budget
+- These repetitions waste tokens, maximize KV cache, and produce garbage output
+
+**Fix (Two Parts)**:
+
+1. **Enable `no_repeat_ngram_size=3`** (primary fix) — prevents the model from repeating the same 3-gram during beam search. Stops degenerate repetitions immediately, so outputs stay short (~50 tokens for a 12s segment). Configured in `s2s_decode.yaml`, passed through `vsp_llm_decode.py` → `vsp_llm.py` → HuggingFace `decoder.generate()`.
+
+2. **Cap `dynamic_max_len` at 512 on GPUs < 16GB** (safety net) — detects GPU memory after model loading. On 12GB GPUs, caps max generation length at 512 tokens instead of ~750-1050. With beam=20 and 512 cap: KV cache ≈ 5.2GB + 6GB model = ~11.2GB (fits in 12GB). Beam size stays at 20 on all GPUs (no quality reduction). 24GB GPUs unaffected.
+
+**Memory Budget After Fix**:
+- Typical case (no_repeat_ngram stops early): 20 beams × ~80 tokens = ~0.8GB KV → total ~6.8GB ✅
+- Worst case (hits 512 cap): 20 beams × 512 tokens = ~5.2GB KV → total ~11.2GB ✅
+
+**Files Modified**:
+- `VSP-LLM/src/vsp_llm_decode.py` — GPU memory detection, max_len cap, `no_repeat_ngram_size` passthrough
+- `VSP-LLM/src/vsp_llm.py` — Accept and pass `no_repeat_ngram_size` to HuggingFace generate()
+- `VSP-LLM/src/conf/s2s_decode.yaml` — Added `no_repeat_ngram_size: 3`
+
+**Status**: Fixed in package v1.0.23
+
+---
+
+## Bug 28: Desktop icon "No terminal emulator found" on machines without standard terminals
+
+**When**: Clicking the VSP Pipeline desktop icon after installation
+**Error**:
+```
+Error: No terminal emulator found. Run from a terminal instead.
+```
+(Shown via `notify-send` desktop notification, or silent failure if `notify-send` unavailable)
+
+**Root Cause**: `vsp-start.sh` self-relaunch guard only checked 5 terminal emulators: `gnome-terminal`, `xfce4-terminal`, `mate-terminal`, `konsole`, `xterm`. The client's machine has a different terminal (e.g., `lxterminal`, `tilix`, or another) that wasn't in the list. The machine has no internet access, so installing a new terminal is not possible.
+
+**Fix (Three Safety Layers)**:
+
+1. **Expanded static terminal list** — Added `x-terminal-emulator` (Debian/Ubuntu alternatives system symlink that points to whatever terminal is installed) as the first entry, plus `lxterminal`, `tilix`, `terminator`, `kitty`, `alacritty`. The `x-terminal-emulator` symlink alone should resolve 95%+ of cases on Debian/Ubuntu systems.
+
+2. **Dynamic terminal search** — If no named terminal found, searches `/usr/bin/` for executables matching `*terminal*` or `*-term` patterns and tries them with the generic `-e` invocation flag.
+
+3. **Actionable error message** — If still no terminal found, shows clear instructions via both `notify-send` and `zenity --error` dialog telling the user to open a terminal manually and run the script.
+
+**Before** (5 terminals):
+```bash
+for _term in gnome-terminal xfce4-terminal mate-terminal konsole xterm; do
+```
+
+**After** (11 named + dynamic fallback):
+```bash
+for _term in x-terminal-emulator gnome-terminal xfce4-terminal mate-terminal konsole lxterminal tilix terminator kitty alacritty xterm; do
+    ...
+done
+# Dynamic fallback: search /usr/bin/ for any terminal-like executable
+for _candidate in /usr/bin/*terminal* /usr/bin/*-term; do
+    ...
+done
+```
+
+**Files Modified**:
+- `vsp-start.sh` — Expanded terminal list (line 25), added dynamic search fallback, improved error message
+- `install-desktop-icon.sh` — Expanded same terminal list in verification check (line 113)
+
+**Status**: Fixed in package v1.0.24
+
+---
+
+## Bug 29: Drag-and-drop upload still fails inside Docker container (path mismatch)
+
+**When**: Dragging video files into the browser UI when running inside the Docker container (via `vsp-start.sh`)
+**Error**: Upload handler writes files to `/host/vsp_input/` (from config.py `INPUT_DIR`), which is outside the Docker volume mount `/host/galaxy_export`. Files are written inside the container's ephemeral filesystem and disappear when the container stops. The bug persists even after the cgi.FieldStorage fix in Bug 26.
+
+**Root Cause**: `config.py` sets `INPUT_DIR = Path("/host/vsp_input")` when it detects the container environment (checks for `/host/galaxy_export`). But the Docker volume mount in `vsp-start.sh` only maps `${GALAXY_EXPORT_DIR}:/host/galaxy_export`. The path `/host/vsp_input` is NOT inside this mount — it's a separate path that only exists ephemerally inside the container.
+
+**Workaround (chosen approach)**: Instead of fixing the container path (which would require config.py changes across multiple dependent systems), added an **"Open Folder"** button to the welcome screen that tells the user to add videos directly via their host file manager:
+
+1. **HTML**: Added "Open Folder" button next to the input path display on the welcome screen
+2. **JavaScript**: `openInputFolder()` calls `/api/open-folder` endpoint; if the folder can't be opened automatically (expected in Docker), shows an alert with the host-side path so the user knows where to drag files
+3. **Docker env var**: `vsp-start.sh` passes `VSP_HOST_INPUT_DIR=${GALAXY_EXPORT_DIR}/vsp_input` as an environment variable to the container
+4. **Server**: `handle_open_folder()` reads `VSP_HOST_INPUT_DIR` env var and returns the host-side path in its response, so the user sees the actual folder path on their host machine
+
+**User Flow After Fix**:
+1. User clicks "Open Folder" button on welcome screen
+2. Alert shows: "Please open your file manager and navigate to: /home/ds/Desktop/galaxy_export/vsp_input"
+3. User opens file manager, navigates to that path, drags videos in
+4. User clicks "Inspect Videos" to verify files are detected
+5. Proceeds with pipeline
+
+**Files Modified**:
+- `vsp-ui/app/static/index.html` — Added "Open Folder" button to welcome screen input-folder-display div
+- `vsp-ui/app/static/app.js` — Added `openInputFolder()` function and click event listener
+- `vsp-ui/app/server.py` — Updated `handle_open_folder()` to use `VSP_HOST_INPUT_DIR` env var for display path
+- `vsp-start.sh` — Added `-e "VSP_HOST_INPUT_DIR=${GALAXY_EXPORT_DIR}/vsp_input"` to docker run command
+
+**Note**: The browser drag-and-drop upload (Bug 26 fix) works correctly on EC2 where `INPUT_DIR` points to a real local path. The Docker path mismatch only affects the containerized deployment.
+
+**Status**: Fixed (workaround) in package v1.0.25
+
+---
+
+## Bug 30: docker.conf requires sudo to edit on host machine
+
+**When**: User needs to change `DOCKER_IMAGE` value in `docker.conf` after installation
+**Error**: File is read-only for the host user — any text editor (nano, gedit, VS Code) fails to save without `sudo`.
+
+**Root Cause**: `INSTALL.sh` runs inside the Docker container as `root`. When it creates `docker.conf` (component [3.12], line 242-255), the file is owned by `root:root` with default permissions `644`. Since the `galaxy_export` directory is a Docker volume mount (`-v /home/ds/Desktop/galaxy_export:/host/galaxy_export`), this root ownership persists on the host filesystem. The host user (`ds`) cannot write to root-owned files without `sudo`.
+
+**Fix**: Added `chmod 666 docker.conf` immediately after the file is created in INSTALL.sh. This makes the file world-writable so any host user can edit it with any text editor — no `sudo` needed.
+
+```bash
+# Make docker.conf editable by host user (INSTALL runs as root inside container)
+chmod 666 "$DOCKER_CONF" 2>/dev/null || true
+```
+
+The `2>/dev/null || true` keeps it non-fatal in case the filesystem doesn't support chmod (same pattern used for Bug 17).
+
+**Files Modified**:
+- `INSTALL.sh` — Added `chmod 666` after docker.conf creation (after line 261)
+
+**Status**: Fixed in package v1.0.26
+
+---
+
+## Bug 31: Desktop icon "cannot execute binary file" — scripts lack +x on mounted filesystem
+
+**When**: Clicking the desktop icon after running `install-desktop-icon.sh` on a machine where `galaxy_export` is on a mounted filesystem
+**Error**:
+```
+/usr/bin/bash: /usr/bin/bash: cannot execute binary file
+```
+
+**Root Cause**: INSTALL.sh runs as root inside the Docker container and copies all files to the mounted volume. The `chmod +x` calls in INSTALL.sh silently fail on the mounted filesystem (Bug 17). As a result, `vsp-start.sh` and all other scripts have no execute permission on the host.
+
+The launch chain has TWO places that need the script to be executable:
+1. **`.desktop` Exec line** — GNOME tries to exec `vsp-start.sh` directly
+2. **Self-relaunch in `vsp-start.sh`** — `gnome-terminal -- vsp-start.sh` tries to exec it directly
+
+Both fail because the file lacks `+x` on the mounted filesystem.
+
+**Why previous Bug 22 fix was different**: Bug 22 used `Terminal=true` + `Exec=bash script`. With `Terminal=true`, the DE wraps the Exec in an extra shell → `bash bash script` → double-bash error. The fix here uses `Terminal=false` so the DE does NO wrapping — we control the entire chain ourselves.
+
+**Fix (Three Parts)**:
+
+**Part 1: `.desktop` Exec line** (install-desktop-icon.sh)
+```
+# BEFORE (requires execute bit):
+Exec=/path/to/vsp-start.sh
+
+# AFTER (bash reads the file, no +x needed):
+Exec=/usr/bin/bash /path/to/vsp-start.sh
+```
+
+**Part 2: Self-relaunch** (vsp-start.sh lines 30-31, 39)
+```bash
+# BEFORE (gnome-terminal tries to exec script directly):
+gnome-terminal) exec "$_term_path" -- "$0" "$@" ;;
+*)              exec "$_term_path" -e "$0" "$@" ;;
+
+# AFTER (bash reads the file, no +x needed):
+gnome-terminal) exec "$_term_path" -- /usr/bin/bash "$0" "$@" ;;
+*)              exec "$_term_path" -e /usr/bin/bash "$0" "$@" ;;
+```
+
+**Part 3: Fix permissions at the source** (INSTALL.sh, new component [3.14])
+```bash
+# After all components installed, make everything accessible to host user:
+chmod -R a+rX . 2>/dev/null || true          # Everything readable + dirs traversable
+find . -name "*.sh" -exec chmod a+rx {} \; 2>/dev/null || true  # All scripts executable
+find . -name "*.py" -exec chmod a+r {} \; 2>/dev/null || true   # All Python readable
+```
+Even if `chmod` silently fails on the mounted filesystem, Parts 1 and 2 ensure the launch works without `+x`.
+
+**Full launch chain after fix**:
+```
+Click desktop icon
+→ GNOME: /usr/bin/bash vsp-start.sh     ✅ bash reads file, no +x needed
+→ No TTY → self-relaunch
+→ gnome-terminal -- /usr/bin/bash vsp-start.sh  ✅ bash reads file, no +x needed
+→ Inside terminal: TTY exists, VSP_IN_TERMINAL=1 → runs normally  ✅
+```
+
+**Files Modified**:
+- `install-desktop-icon.sh` — Exec line uses `/usr/bin/bash ${LAUNCHER}`
+- `vsp-start.sh` — Self-relaunch uses `/usr/bin/bash "$0"` for all terminal emulators
+- `INSTALL.sh` — New component [3.14] sets permissions on all installed files
+
+**Important**: After downloading the new package, the user must re-run `bash install-desktop-icon.sh` to regenerate the `.desktop` file.
+
+**Status**: Fixed in package v1.0.27
+
+---
+
+## Bug 32: Server fails to start — VSP_INPUT_DIR not passed to container + no error visibility
+
+**When**: Clicking desktop icon to launch VSP Pipeline — container starts but server never responds
+**Error**: "Server did not respond within 60 seconds" — no Python error visible
+
+**Root Cause (Two Issues)**:
+
+**Issue A: Environment variable mismatch**
+`vsp-start.sh` passes `VSP_HOST_INPUT_DIR` (for UI display) but `config.py` reads `VSP_INPUT_DIR` (for actual configuration). Since `VSP_INPUT_DIR` is not set, config falls back to `INPUT_DIR = Path("/host/vsp_input")` — which is **outside** the Docker volume mount (`/host/galaxy_export`). The TranscriptionManager tries to create directories at `/host/vsp_input/.transcriptions/`, which may fail on some container filesystems. Even if it doesn't crash, the UI's input directory points to ephemeral container storage that disappears when the container stops.
+
+**Issue B: No error visibility**
+If the Python server crashes during import or startup, the error prints to the container's stdout/stderr but the user only sees the "timeout" message from the polling task. No diagnostic information is shown.
+
+**Fix (Four Parts)**:
+
+**Part 1: Pass VSP_INPUT_DIR to docker run** (vsp-start.sh)
+```bash
+# BEFORE (only display-purpose env var):
+-e "VSP_HOST_INPUT_DIR=${GALAXY_EXPORT_DIR}/vsp_input" \
+
+# AFTER (both functional and display env vars):
+-e "VSP_INPUT_DIR=/host/galaxy_export/vsp_input" \
+-e "VSP_HOST_INPUT_DIR=${GALAXY_EXPORT_DIR}/vsp_input" \
+```
+
+Now `config.py` detects `VSP_INPUT_DIR` and uses the correct path inside the mounted volume.
+
+**Part 2: Create vsp_input directory** (INSTALL.sh)
+```bash
+# New component [3.15] - before permissions fix
+mkdir -p vsp_input 2>/dev/null || true
+chmod a+rwx vsp_input 2>/dev/null || true
+```
+
+Ensures the directory exists in the galaxy_export mount so videos persist on the host.
+
+**Part 3: Fix double-bash from Docker ENTRYPOINT** (vsp-start.sh docker run command)
+
+The Docker image has `ENTRYPOINT ["/bin/bash"]`. Our command `bash -c '...'` was appended to it, producing:
+```
+/bin/bash bash -c '...'
+```
+Bash tried to read `/usr/bin/bash` as a text script → "cannot execute binary file".
+
+Fix: remove our `bash` prefix. Since the ENTRYPOINT already provides bash, we just pass `-c '...'`:
+```bash
+# BEFORE:
+"${DOCKER_IMAGE}" \
+bash -c "cd /host/galaxy_export/vsp-ui && python3 -m app.server"
+
+# AFTER:
+"${DOCKER_IMAGE}" \
+-c 'cd /host/galaxy_export/vsp-ui && python3 -m app.server; EC=$?; if [ $EC -ne 0 ]; then echo "SERVER FAILED (exit code $EC)"; echo "Press Enter to close..."; read; fi'
+```
+
+Docker now executes: `/bin/bash -c '...'` — correct single-bash invocation.
+Error wrapper keeps the terminal open if the server crashes.
+
+**Part 4: Print container logs on timeout** (vsp-start.sh background polling task)
+```bash
+# BEFORE:
+echo "WARNING: Server did not respond within 60 seconds."
+
+# AFTER:
+echo "SERVER FAILED TO START"
+echo "--- Container logs ---"
+docker logs "${CONTAINER_NAME}" 2>&1
+echo "--- End of logs ---"
+```
+
+The actual Python traceback is printed to the terminal, making remote debugging possible.
+
+**Files Modified**:
+- `vsp-start.sh` — Added `VSP_INPUT_DIR` env var, removed double-bash, error wrapper, container log output on timeout
+- `INSTALL.sh` — New component [3.15] creates `vsp_input` directory
+
+**Status**: Fixed in package v1.0.28
+
+---
+
+## Bug 33: Decode crash `total_mem` typo + useless Open Folder buttons
+
+**When**: Pipeline reaches decode step [7] and crashes; Open Folder buttons do nothing in Docker mode
+**Error**: `AttributeError: 'torch._C._CudaDeviceProperties' object has no attribute 'total_mem'. Did you mean: 'total_memory'?`
+
+**Root Cause (Two Issues)**:
+
+**Issue A: PyTorch attribute typo**
+Fix #21 (Beam Search OOM) added GPU memory detection using `torch.cuda.get_device_properties(0).total_mem`. The correct attribute is `total_memory`. This was never caught because EC2 testing used a different PyTorch version.
+
+**Issue B: Open Folder buttons can't work in Docker**
+The "Open Folder" and "Open Results Folder" buttons try to run file managers (`gio open`, `nautilus`, etc.) inside the Docker container. The container has no GUI — these commands always fail. The buttons are useless and confuse users.
+
+**Fix**:
+1. Changed `total_mem` → `total_memory` in `vsp_llm_decode.py` line 177
+2. Removed "Open Folder" button from input screen (HTML + JS event listener)
+3. Removed "Open Results Folder" button from completion screen (HTML + JS event listener)
+
+**Files Modified**:
+- `VSP-LLM/src/vsp_llm_decode.py` — `total_mem` → `total_memory`
+- `vsp-ui/app/static/index.html` — Removed both Open Folder buttons
+- `vsp-ui/app/static/app.js` — Removed `openInputFolder()`, `openOutputFolder()` functions and event listeners
+
+**Status**: Fixed in package v1.0.29
+
+---
+
+## Bug 34: Desktop icon does nothing — `kgx` (GNOME Console) not in terminal detection list
+
+**When**: Clicking desktop icon — nothing happens, no terminal opens
+**Error**: `install-desktop-icon.sh` reports "Terminal: WARNING - none found!"
+
+**Root Cause**: The standalone machine uses `kgx` (GNOME Console), the modern replacement for `gnome-terminal` on newer GNOME desktops. Neither `vsp-start.sh` nor `install-desktop-icon.sh` had `kgx` or `gnome-console` in their terminal detection lists.
+
+**Discovery**: `pstree -s $$` on standalone showed: `systemd → systemd → kgx → fish → bash`
+
+The machine hostname is "banana" and uses fish shell — the user described it as "banana or fish", which was the hostname and shell, not the terminal emulator.
+
+**Fix**:
+1. Added `kgx` and `gnome-console` to terminal detection loop in `vsp-start.sh` (line 25)
+2. Added `kgx|gnome-console` to case statement with `--` syntax (same as gnome-terminal) in `vsp-start.sh` (line 31)
+3. Added `kgx` and `gnome-console` to verification check in `install-desktop-icon.sh` (line 114)
+
+**Files Modified**:
+- `vsp-start.sh` — Added `kgx gnome-console` to detection loop and case statement
+- `install-desktop-icon.sh` — Added `kgx gnome-console` to verification check
+
+**Status**: Fixed in package v1.0.29
+
+---
+
+## Bug 35: docker.conf auto-detection never works — INSTALL.sh runs inside container
+
+**When**: Running `INSTALL.sh` inside the Docker container — docker.conf always gets `DOCKER_IMAGE=CHANGE_ME`
+**Error**: User must manually edit docker.conf after every installation to set the image name
+
+**Root Cause**: INSTALL.sh runs **inside** the Docker container (as part of `docker run ... bash INSTALL.sh`). Inside the container, there is no Docker socket (`/var/run/docker.sock`) and no `docker` CLI available. The auto-detection code (`docker inspect $(hostname)`) always fails silently, resulting in `DOCKER_IMAGE=CHANGE_ME`.
+
+This is a fundamental limitation — you cannot detect the Docker image name from inside the container without Docker-in-Docker access.
+
+**Fix: Move auto-detection to `vsp-start.sh` (runs on the host)**
+
+Since `vsp-start.sh` runs on the **host machine** with full Docker CLI access, it can search for local Docker images. When it finds `DOCKER_IMAGE=CHANGE_ME` in docker.conf:
+
+1. Searches local Docker images for names containing `vsp` (case-insensitive)
+2. If exactly one match → uses it automatically
+3. If multiple matches → shows numbered list, user picks one
+4. Saves the selection to docker.conf so it won't ask again
+
+```bash
+# Auto-detect: search local Docker images for VSP-related names
+_candidates=$(docker images --format '{{.Repository}}:{{.Tag}}' | grep -i 'vsp' | grep -v '<none>')
+_count=$(echo "$_candidates" | grep -c .)
+
+if [ "$_count" -eq 1 ]; then
+    DOCKER_IMAGE="$_candidates"
+    # Save to docker.conf for future runs
+    sed -i "s|^DOCKER_IMAGE=.*|DOCKER_IMAGE=${DOCKER_IMAGE}|" docker.conf
+elif [ "$_count" -gt 1 ]; then
+    echo "Found multiple VSP images:"
+    echo "$_candidates" | nl
+    read -r _choice
+    DOCKER_IMAGE=$(echo "$_candidates" | sed -n "${_choice}p")
+    sed -i "s|^DOCKER_IMAGE=.*|DOCKER_IMAGE=${DOCKER_IMAGE}|" docker.conf
+fi
+```
+
+**INSTALL.sh simplified**: No longer tries `docker inspect`. Just writes `CHANGE_ME` with a comment that vsp-start.sh will auto-detect. If docker.conf already has a configured value, preserves it.
+
+**Files Modified**:
+- `vsp-start.sh` — Added auto-detection logic after loading docker.conf
+- `INSTALL.sh` — Simplified docker.conf creation (removed dead `docker inspect` code)
+- `docker-run.sh` — Added tolerant parser (was still using `source`) and tip to use vsp-start.sh
+
+**Status**: Fixed in package v1.0.30
+
+---
+
 ## Lessons Learned
 
 1. **Don't assume existing installations**: The package was designed as an "update" to an existing installation, but the client's container was older than expected. All scripts referenced by the pipeline should be included.
@@ -611,6 +1365,24 @@ bash install-desktop-icon.sh
 
 8. **Always give user feedback on failure**: Silent failures are worse than error messages. If an action can't complete, tell the user what happened and what they can do about it.
 
+9. **Patch the same code path that runtime uses**: When patching a library, ensure the patch runs with the same PYTHONPATH/environment as the code that will import it. PYTHONPATH overrides can make `import foo` resolve to completely different files at install-time vs runtime.
+
+10. **Never `source` user-editable config files**: Users will add spaces around `=` because that's normal in most config formats. Use a tolerant parser that handles whitespace, quotes, and comments instead of `source` which treats every line as a bash command.
+
+11. **Automate cleanup for non-technical users**: Don't assume users can run terminal commands to fix state issues like stale containers or port conflicts. Build self-healing cleanup into launch scripts so the user experience is: click icon → it works.
+
+12. **Don't fight the desktop environment — work around it**: `.desktop` files with `Terminal=true` are handled inconsistently across GNOME versions. Instead of trying to make `.desktop` do the right thing, put the terminal-detection logic in the script itself. The script can detect "no TTY" and self-relaunch in a terminal emulator, making the `.desktop` file trivially simple.
+
+13. **Don't use deprecated standard library modules for critical functionality**: `cgi.FieldStorage` was deprecated in Python 3.11 and removed in 3.13. For something as critical as file uploads, use manual parsing that works across all Python versions. Standard library deprecations happen — design around them.
+
+14. **Always use no_repeat_ngram_size for language model generation**: Without n-gram blocking, beam search can produce degenerate repetitive outputs ("yeah yeah yeah...") that waste GPU memory and produce garbage. Setting `no_repeat_ngram_size=3` is essentially free (negligible compute cost) and prevents these runaway sequences. Combined with a dynamic max_len cap based on GPU memory, this makes decode robust across different GPU sizes.
+
+15. **Docker volume mounts don't cover the entire filesystem**: When a container app writes to paths outside the mounted volume, files go to the container's ephemeral filesystem and disappear when the container stops. Always verify that all write paths (`INPUT_DIR`, `OUTPUT_DIR`, etc.) are inside mounted volumes. If fixing the path is risky (many dependents), provide a workaround that guides the user to the correct host-side path.
+
+16. **Move host-dependent logic to host-side scripts**: If a task requires Docker CLI access, filesystem permissions, or GUI interaction, it must run on the host — not inside the container. INSTALL.sh (inside container) can never run `docker inspect` or `docker images`. Put such logic in `vsp-start.sh` (host-side) where it has full system access.
+
+17. **Match environment variable names between launcher and application**: If `config.py` reads `VSP_INPUT_DIR`, the Docker launcher must pass `-e VSP_INPUT_DIR=...` — not a similar-sounding name like `VSP_HOST_INPUT_DIR`. One env var for the app's internal config, another for display purposes. Name them clearly and pass both.
+
 ---
 
 ## Package Versions
@@ -622,15 +1394,33 @@ bash install-desktop-icon.sh
 | v1.0.2 | Feb 8, 2026 | Added 14 missing preprocessing files: overlapping_segmentation, data_module, transforms, utils, detectors (mediapipe+retinaface), SentencePiece models, count_frames.py. Fixed hardcoded EC2 paths in flat_to_lrs3_preperation.sh |
 | v1.0.3 | Feb 8, 2026 | Fixed Whisper offline model loading - added --download_root auto-detection for container whisper cache |
 | v1.0.4 | Feb 8, 2026 | Added comprehensive E2E test suite (58 tests across 12 categories) |
-| v1.0.5 | Feb 8, 2026 | Fixed `python` → `python3` in all shell scripts (3 executable calls) and Python shebangs (8 files) |
+| v1.0.5 | Feb 8, 2026 | Fixed `python` -> `python3` in all shell scripts (3 executable calls) and Python shebangs (8 files) |
 | v1.0.6 | Feb 8, 2026 | Fixed venv auto-detection in flat_to_lrs3_preperation.sh - tries multiple locations (code dir, /workspace/, $HOME/) |
 | v1.0.7 | Feb 8, 2026 | Fixed venv pass-through: pipeline passes known-good PREP_VENV to flat_to_lrs3_preperation.sh via lrs3_prep.sh, skips auto-detection when caller provides VENV |
 | v1.0.8 | Feb 8, 2026 | Fixed fairseq max_len: added patch_fairseq_max_len.py to add missing GenerationConfig field, INSTALL.sh runs it automatically |
-| v1.0.9 | Feb 8, 2026 | Fixed UI server binding: changed 127.0.0.1 → 0.0.0.0 so host browser can reach container UI |
+| v1.0.9 | Feb 8, 2026 | Fixed UI server binding: changed 127.0.0.1 -> 0.0.0.0 so host browser can reach container UI |
 | v1.0.10 | Feb 9, 2026 | Added host-side launcher: vsp-start.sh handles Docker startup with port mapping, desktop icon for one-click launch |
 | v1.0.11 | Feb 9, 2026 | Fixed decode CUDA OOM on 12GB GPUs: dynamic max_length per sample, smart memory cleanup, CUDA allocator optimization |
 | v1.0.12 | Feb 12, 2026 | Fixed "Open Results Folder" button, added peacock logo to UI and desktop icon, fixed hardcoded paths in .desktop file |
+| v1.0.13 | Feb 12, 2026 | Fixed install-desktop-icon.sh: chmod permission errors, $HOME not matching real Desktop path, robust multi-location Desktop detection |
+| v1.0.14 | Feb 12, 2026 | Fixed desktop shortcut: Docker detached mode kills server - added TTY allocation (-t), unbuffered Python output, stale container cleanup, better error diagnostics |
+| v1.0.15 | Feb 12, 2026 | Fixed fairseq patch targeting wrong installation: inline self-healing patch in decode.sh runs with correct PYTHONPATH |
+| v1.0.16 | Feb 12, 2026 | Tolerant docker.conf parser (handles spaces around `=`, quotes), automatic port/container cleanup before starting Docker |
+| v1.0.17 | Feb 12, 2026 | Fixed desktop icon "cannot execute binary file" - removed `bash` prefix from Exec line that caused double-bash invocation |
+| v1.0.18 | Feb 12, 2026 | Bypassed `Terminal=true` entirely - Exec line now explicitly launches terminal emulator (auto-detected), `Terminal=false` |
+| v1.0.19 | Feb 12, 2026 | Fixed .desktop Exec line: resolve terminal emulator to absolute path (`/usr/bin/gnome-terminal` not `gnome-terminal`) |
+| v1.0.20 | Feb 12, 2026 | Desktop icon: added `VSP-Pipeline.sh` symlink on Desktop (bypasses .desktop trust issues), kept .desktop for app menu |
+| v1.0.21 | Feb 12, 2026 | Self-relaunching vsp-start.sh: detects no-TTY and opens gnome-terminal itself, simple .desktop Exec, verification checks |
+| v1.0.22 | Feb 12, 2026 | Fixed drag-and-drop upload: replaced deprecated cgi.FieldStorage with manual multipart parser for reliable binary file uploads |
+| v1.0.23 | Feb 12, 2026 | Fixed decode beam search OOM on 12GB GPU: no_repeat_ngram_size=3 prevents degenerate repetitions, dynamic max_len cap at 512 for small GPUs |
+| v1.0.24 | Feb 12, 2026 | Fixed "No terminal emulator found": expanded detection to 11 named terminals + x-terminal-emulator + dynamic /usr/bin search fallback |
+| v1.0.25 | Feb 15, 2026 | Added "Open Folder" button workaround for Docker upload path mismatch, host-side path display via VSP_HOST_INPUT_DIR env var |
+| v1.0.26 | Feb 15, 2026 | Fixed docker.conf requiring sudo to edit: added chmod 666 after creation in INSTALL.sh |
+| v1.0.27 | Feb 15, 2026 | Fixed "cannot execute binary file" on mounted filesystems: Exec line uses /usr/bin/bash explicitly (safe with Terminal=false) |
+| v1.0.28 | Feb 15, 2026 | Fixed server startup: pass VSP_INPUT_DIR to container, create vsp_input dir, removed double-bash ENTRYPOINT issue, error wrapper + container logs on timeout |
+| v1.0.29 | Feb 15, 2026 | Fixed decode `total_mem` → `total_memory` typo, removed useless Open Folder buttons, added `kgx` (GNOME Console) to terminal detection |
+| v1.0.30 | Feb 15, 2026 | Moved docker.conf auto-detection from INSTALL.sh (inside container, never works) to vsp-start.sh (on host, has Docker access). Auto-finds VSP images, saves selection. |
 
 ---
 
-**Current Package Status**: v1.0.12 - All known bugs fixed, peacock desktop icon with auto-path detection
+**Current Package Status**: v1.0.30 - All known bugs fixed

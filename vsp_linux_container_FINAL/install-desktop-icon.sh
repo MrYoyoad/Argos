@@ -15,7 +15,6 @@ set -euo pipefail
 
 # Auto-detect install directory from script location
 INSTALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DESKTOP_TEMPLATE="${INSTALL_DIR}/vsp-pipeline.desktop"
 ICON_FILE="${INSTALL_DIR}/vsp-ui/logo.png"
 LAUNCHER="${INSTALL_DIR}/vsp-start.sh"
 
@@ -31,27 +30,8 @@ if [ ! -f "$LAUNCHER" ]; then
     exit 1
 fi
 
-if [ ! -f "$ICON_FILE" ]; then
-    echo "WARNING: logo.png not found at: $ICON_FILE"
-    echo "Desktop icon will use a generic system icon."
-    ICON_FILE="video-display"
-fi
-
-# Make launcher executable (may fail on mounted filesystems - that's OK)
+# Make launcher executable
 chmod +x "$LAUNCHER" 2>/dev/null || true
-
-# Generate .desktop file with correct paths
-# Use "bash <path>" instead of just "<path>" so execute permission isn't needed
-DESKTOP_CONTENT="[Desktop Entry]
-Version=1.0
-Type=Application
-Name=VSP Pipeline
-Comment=Visual Speech Processing Pipeline - Start UI
-Exec=bash ${LAUNCHER}
-Icon=${ICON_FILE}
-Terminal=true
-Categories=AudioVideo;Video;
-StartupNotify=true"
 
 # Find the real home directory (don't trust $HOME - it may be wrong)
 REAL_HOME="$(getent passwd "$(whoami)" 2>/dev/null | cut -d: -f6)"
@@ -72,26 +52,76 @@ for candidate in \
     fi
 done
 
-# Install to applications menu
+if [ -z "$DESKTOP_DIR" ]; then
+    echo "ERROR: Could not find Desktop directory."
+    echo "Tried: ${REAL_HOME}/Desktop, ${HOME}/Desktop, /home/$(whoami)/Desktop, /home/ds/Desktop"
+    exit 1
+fi
+
+# Icon reference
+ICON_REF="${ICON_FILE}"
+if [ ! -f "$ICON_FILE" ]; then
+    ICON_REF="video-display"
+fi
+
+# The .desktop file uses /usr/bin/bash to invoke the script, because:
+# 1. The script may be on a mounted filesystem where chmod +x doesn't work
+# 2. Terminal=false means the DE does NOT wrap in an extra shell (no double-bash)
+# 3. vsp-start.sh detects "no terminal" and self-relaunches in gnome-terminal
+DESKTOP_CONTENT="[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VSP Pipeline
+Comment=Visual Speech Processing Pipeline - Start UI
+Exec=/usr/bin/bash ${LAUNCHER}
+Icon=${ICON_REF}
+Terminal=false
+Categories=AudioVideo;Video;
+StartupNotify=false"
+
+# Install to applications menu (works reliably)
 mkdir -p "${REAL_HOME}/.local/share/applications" 2>/dev/null || mkdir -p ~/.local/share/applications
 APP_DIR="${REAL_HOME}/.local/share/applications"
 [ -d "$APP_DIR" ] || APP_DIR=~/.local/share/applications
 echo "$DESKTOP_CONTENT" > "${APP_DIR}/vsp-pipeline.desktop"
-echo "Installed to applications menu."
+chmod +x "${APP_DIR}/vsp-pipeline.desktop" 2>/dev/null || true
+echo "  Installed to applications menu"
 
 # Install to Desktop
-if [ -n "$DESKTOP_DIR" ]; then
-    echo "$DESKTOP_CONTENT" > "${DESKTOP_DIR}/vsp-pipeline.desktop"
-    chmod +x "${DESKTOP_DIR}/vsp-pipeline.desktop" 2>/dev/null || true
-    # Mark as trusted on GNOME
-    gio set "${DESKTOP_DIR}/vsp-pipeline.desktop" metadata::trusted true 2>/dev/null || true
-    echo "Installed to Desktop: ${DESKTOP_DIR}/vsp-pipeline.desktop"
+echo "$DESKTOP_CONTENT" > "${DESKTOP_DIR}/vsp-pipeline.desktop"
+chmod +x "${DESKTOP_DIR}/vsp-pipeline.desktop" 2>/dev/null || true
+gio set "${DESKTOP_DIR}/vsp-pipeline.desktop" metadata::trusted true 2>/dev/null || true
+echo "  Installed to Desktop: ${DESKTOP_DIR}/vsp-pipeline.desktop"
+
+# Verify the key pieces
+echo ""
+echo "  Verifying..."
+PROBLEMS=0
+if [ -x "$LAUNCHER" ]; then
+    echo "    vsp-start.sh:  executable OK"
 else
-    echo "WARNING: Could not find Desktop directory."
-    echo "Tried: ${REAL_HOME}/Desktop, ${HOME}/Desktop, /home/$(whoami)/Desktop, /home/ds/Desktop"
-    echo ""
-    echo "To install manually, copy this to your Desktop:"
-    echo "  echo '$DESKTOP_CONTENT' > /path/to/Desktop/vsp-pipeline.desktop"
+    echo "    vsp-start.sh:  WARNING - not executable"
+    PROBLEMS=1
+fi
+if [ -f "${DESKTOP_DIR}/vsp-pipeline.desktop" ]; then
+    echo "    .desktop file: created OK"
+else
+    echo "    .desktop file: WARNING - not created"
+    PROBLEMS=1
+fi
+# Check terminal emulator exists (script needs it for self-relaunch)
+TERM_FOUND=""
+for _t in x-terminal-emulator gnome-terminal kgx gnome-console xfce4-terminal mate-terminal konsole lxterminal tilix terminator kitty alacritty xterm; do
+    if command -v "$_t" &>/dev/null; then
+        TERM_FOUND="$_t"
+        break
+    fi
+done
+if [ -n "$TERM_FOUND" ]; then
+    echo "    Terminal:      $TERM_FOUND ($(command -v "$TERM_FOUND"))"
+else
+    echo "    Terminal:      WARNING - none found!"
+    PROBLEMS=1
 fi
 
 echo ""
@@ -99,9 +129,15 @@ echo "========================================="
 echo "  Installation Complete!"
 echo "========================================="
 echo ""
-echo "  Exec:  $LAUNCHER"
-echo "  Icon:  $ICON_FILE"
-echo ""
-echo "You can now double-click 'VSP Pipeline' on your desktop"
-echo "or find it in your applications menu."
+if [ $PROBLEMS -eq 0 ]; then
+    echo "  Double-click 'VSP Pipeline' on your Desktop to launch."
+    echo ""
+    echo "  If the Desktop icon doesn't work:"
+    echo "    1. Right-click it → 'Allow Launching'"
+    echo "    2. Or search 'VSP Pipeline' in the applications menu"
+    echo "    3. Or run:  ${LAUNCHER}"
+else
+    echo "  Some checks had warnings (see above)."
+    echo "  You can always run from terminal:  ${LAUNCHER}"
+fi
 echo ""

@@ -231,34 +231,22 @@ else
     echo -e "${YELLOW}  ⚠️  Test suite not found in package${NC}"
 fi
 
-# Component 12: Docker configuration (detect image name)
+# Component 12: Docker configuration
 echo -e "${BLUE}[3.12] Generating docker.conf...${NC}"
-DETECTED_IMAGE=""
-# Try to detect Docker image name from inside the container
-if command -v docker &>/dev/null && [ -S /var/run/docker.sock ]; then
-    DETECTED_IMAGE=$(docker inspect "$(hostname)" --format '{{.Config.Image}}' 2>/dev/null) || true
-fi
-
 DOCKER_CONF="docker.conf"
-if [ -n "$DETECTED_IMAGE" ]; then
-    echo "# Docker image for VSP Pipeline" > "$DOCKER_CONF"
-    echo "# Auto-detected during installation" >> "$DOCKER_CONF"
-    echo "DOCKER_IMAGE=${DETECTED_IMAGE}" >> "$DOCKER_CONF"
-    echo -e "${GREEN}  ✅ Docker image detected: ${DETECTED_IMAGE}${NC}"
+if [ -f "$DOCKER_CONF" ] && grep -q 'DOCKER_IMAGE=' "$DOCKER_CONF" && ! grep -q 'CHANGE_ME' "$DOCKER_CONF"; then
+    echo -e "${GREEN}  ✅ docker.conf already configured (keeping existing)${NC}"
 else
     echo "# Docker image for VSP Pipeline" > "$DOCKER_CONF"
-    echo "# IMPORTANT: Set this to your Docker image name!" >> "$DOCKER_CONF"
-    echo "#" >> "$DOCKER_CONF"
-    echo "# Known images:" >> "$DOCKER_CONF"
+    echo "# vsp-start.sh will auto-detect on first launch." >> "$DOCKER_CONF"
+    echo "# You can also set it manually:" >> "$DOCKER_CONF"
     echo "#   Client:    vsp-llm-pipeline:latest" >> "$DOCKER_CONF"
     echo "#   Developer: vsp-flat-standalone:cu128-exact" >> "$DOCKER_CONF"
     echo "DOCKER_IMAGE=CHANGE_ME" >> "$DOCKER_CONF"
-    echo -e "${RED}  ⚠️  Could not detect Docker image name automatically.${NC}"
-    echo -e "${YELLOW}  Edit docker.conf and set DOCKER_IMAGE to your image name.${NC}"
-    echo -e "${YELLOW}  Known images:${NC}"
-    echo -e "${YELLOW}    Client:    vsp-llm-pipeline:latest${NC}"
-    echo -e "${YELLOW}    Developer: vsp-flat-standalone:cu128-exact${NC}"
+    echo -e "${GREEN}  ✅ docker.conf created (will auto-detect on first launch)${NC}"
 fi
+# Make docker.conf editable by host user (INSTALL runs as root inside container)
+chmod 666 "$DOCKER_CONF" 2>/dev/null || true
 
 # Component 13: Host-side launcher + desktop icon
 echo -e "${BLUE}[3.13] Installing host-side launcher + desktop icon...${NC}"
@@ -282,6 +270,27 @@ if [ -f "$SCRIPT_DIR/vsp-start.sh" ]; then
 else
     echo -e "${YELLOW}  ⚠️  Host launcher not found in package${NC}"
 fi
+
+# ====================
+# Create vsp_input directory for video uploads
+# ====================
+echo -e "${BLUE}[3.15] Creating vsp_input directory...${NC}"
+mkdir -p vsp_input 2>/dev/null || true
+chmod a+rwx vsp_input 2>/dev/null || true
+echo -e "${GREEN}  ✅ vsp_input directory created${NC}"
+
+# ====================
+# Fix file permissions for host access
+# ====================
+# INSTALL.sh runs as root inside Docker, so all copied files are owned by root.
+# On the host, the normal user can't edit or execute them without sudo.
+# Make everything accessible: scripts executable, config files writable.
+echo -e "${BLUE}[3.14] Setting file permissions for host access...${NC}"
+chmod -R a+rX . 2>/dev/null || true          # Everything readable + dirs traversable
+chmod -R a+w docker.conf 2>/dev/null || true  # Config file writable
+find . -name "*.sh" -exec chmod a+rx {} \; 2>/dev/null || true  # All scripts executable
+find . -name "*.py" -exec chmod a+r {} \; 2>/dev/null || true   # All Python readable
+echo -e "${GREEN}  ✅ File permissions set (readable/executable for all users)${NC}"
 
 echo ""
 echo -e "${GREEN}✅ All components installed${NC}"

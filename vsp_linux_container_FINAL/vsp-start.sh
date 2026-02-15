@@ -16,6 +16,39 @@
 set -euo pipefail
 
 # =====================
+# Self-relaunch in a terminal if not already in one
+# =====================
+# When launched from a .desktop file or file manager, there's no terminal.
+# Detect this and re-exec ourselves inside a terminal emulator.
+if [ ! -t 0 ] && [ ! -t 1 ] && [ "${VSP_IN_TERMINAL:-}" != "1" ]; then
+    # Find a terminal emulator (Layer 1: known terminals)
+    for _term in x-terminal-emulator gnome-terminal kgx gnome-console xfce4-terminal mate-terminal konsole lxterminal tilix terminator kitty alacritty xterm; do
+        _term_path="$(command -v "$_term" 2>/dev/null || true)"
+        if [ -n "$_term_path" ] && [ -x "$_term_path" ]; then
+            export VSP_IN_TERMINAL=1
+            # Use /usr/bin/bash so the script doesn't need +x (mounted filesystems)
+            case "$_term" in
+                gnome-terminal|kgx|gnome-console) exec "$_term_path" -- /usr/bin/bash "$0" "$@" ;;
+                *)              exec "$_term_path" -e /usr/bin/bash "$0" "$@" ;;
+            esac
+        fi
+    done
+    # Layer 2: search for any terminal-like executable in /usr/bin
+    for _candidate in /usr/bin/*terminal* /usr/bin/*-term; do
+        if [ -x "$_candidate" ] && [ -f "$_candidate" ]; then
+            export VSP_IN_TERMINAL=1
+            exec "$_candidate" -e /usr/bin/bash "$0" "$@"
+        fi
+    done
+    # No terminal found — show actionable error
+    _msg="VSP Pipeline: No terminal emulator found.\n\nOpen any terminal application and run:\n  $0"
+    notify-send "VSP Pipeline" "No terminal emulator found. Open a terminal and run: $0" 2>/dev/null || true
+    # Also try zenity for a visible dialog
+    zenity --error --title="VSP Pipeline" --text="$_msg" 2>/dev/null || true
+    exit 1
+fi
+
+# =====================
 # Configuration
 # =====================
 CONTAINER_NAME="vsp-pipeline"
@@ -26,20 +59,85 @@ URL="http://localhost:${PORT}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GALAXY_EXPORT_DIR="${GALAXY_EXPORT_DIR:-${SCRIPT_DIR}}"
 
-# Load Docker image name from docker.conf
+# Load Docker image name from docker.conf (tolerant of spaces around =)
 if [ -f "${SCRIPT_DIR}/docker.conf" ]; then
-    source "${SCRIPT_DIR}/docker.conf"
+    # Parse KEY=VALUE lines, stripping spaces around = so "KEY = VALUE" works
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Skip comments and blank lines
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "${line// /}" ]] && continue
+        # Extract key and value, stripping spaces around =
+        if [[ "$line" =~ ^[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*(.*) ]]; then
+            key="${BASH_REMATCH[1]}"
+            val="${BASH_REMATCH[2]}"
+            # Strip trailing whitespace and quotes
+            val="${val%"${val##*[![:space:]]}"}"
+            val="${val#\"}" ; val="${val%\"}"
+            val="${val#\'}" ; val="${val%\'}"
+            export "$key=$val"
+        fi
+    done < "${SCRIPT_DIR}/docker.conf"
 fi
 if [ -z "${DOCKER_IMAGE:-}" ] || [ "${DOCKER_IMAGE}" = "CHANGE_ME" ]; then
-    echo "ERROR: DOCKER_IMAGE not configured."
-    echo ""
-    echo "  Edit ${SCRIPT_DIR}/docker.conf and set DOCKER_IMAGE to your image name."
-    echo "  Known images:"
-    echo "    Client:    vsp-llm-pipeline:latest"
-    echo "    Developer: vsp-flat-standalone:cu128-exact"
-    echo ""
-    echo "  Or run directly: DOCKER_IMAGE=your-image:tag $0"
-    exit 1
+    # Auto-detect: search local Docker images for VSP-related names
+    echo "DOCKER_IMAGE not configured — searching local Docker images..."
+    _detected=""
+    if command -v docker &>/dev/null; then
+        # Look for images whose repository name contains "vsp"
+        _candidates=$(docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null \
+            | grep -i 'vsp' \
+            | grep -v '<none>' \
+            || true)
+        _count=$(echo "$_candidates" | grep -c . 2>/dev/null || echo 0)
+
+        if [ "$_count" -eq 1 ]; then
+            _detected="$_candidates"
+            echo "  Found: ${_detected}"
+        elif [ "$_count" -gt 1 ]; then
+            echo "  Found multiple VSP images:"
+            echo "$_candidates" | nl -ba -w2 -s') '
+            echo ""
+            echo -n "  Enter number to select (or press Enter for #1): "
+            read -r _choice
+            if [ -z "$_choice" ]; then _choice=1; fi
+            _detected=$(echo "$_candidates" | sed -n "${_choice}p")
+            if [ -z "$_detected" ]; then
+                echo "  Invalid choice."
+                echo "Press Enter to close..."
+                read
+                exit 1
+            fi
+            echo "  Selected: ${_detected}"
+        fi
+    fi
+
+    if [ -n "$_detected" ]; then
+        DOCKER_IMAGE="$_detected"
+        # Save to docker.conf for future runs
+        if [ -f "${SCRIPT_DIR}/docker.conf" ]; then
+            # Update existing file (replace CHANGE_ME or empty value)
+            sed -i "s|^DOCKER_IMAGE=.*|DOCKER_IMAGE=${DOCKER_IMAGE}|" "${SCRIPT_DIR}/docker.conf"
+        else
+            echo "# Docker image for VSP Pipeline (auto-detected)" > "${SCRIPT_DIR}/docker.conf"
+            echo "DOCKER_IMAGE=${DOCKER_IMAGE}" >> "${SCRIPT_DIR}/docker.conf"
+        fi
+        echo "  Saved to docker.conf (won't ask again)."
+        echo ""
+    else
+        echo ""
+        echo "ERROR: No VSP Docker image found."
+        echo ""
+        echo "  Edit ${SCRIPT_DIR}/docker.conf and set DOCKER_IMAGE to your image name."
+        echo "  Known images:"
+        echo "    Client:    vsp-llm-pipeline:latest"
+        echo "    Developer: vsp-flat-standalone:cu128-exact"
+        echo ""
+        echo "  Or run directly: DOCKER_IMAGE=your-image:tag $0"
+        echo ""
+        echo "Press Enter to close..."
+        read
+        exit 1
+    fi
 fi
 
 # =====================
@@ -111,7 +209,22 @@ do_start() {
         fi
     fi
 
-    # Free port
+    # Clean up anything that might block us
+    echo "Cleaning up previous sessions..."
+
+    # Stop and remove any container with our name (running or stopped)
+    docker stop "${CONTAINER_NAME}" 2>/dev/null || true
+    docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
+
+    # Also stop any other container using our port
+    PORT_CONTAINER=$(docker ps --filter "publish=${PORT}" --format '{{.Names}}' 2>/dev/null | head -1)
+    if [ -n "${PORT_CONTAINER}" ]; then
+        echo "  Stopping container '${PORT_CONTAINER}' (using port ${PORT})..."
+        docker stop "${PORT_CONTAINER}" 2>/dev/null || true
+        docker rm -f "${PORT_CONTAINER}" 2>/dev/null || true
+    fi
+
+    # Free port on host (in case something non-Docker is using it)
     if command -v fuser &>/dev/null; then
         fuser -k ${PORT}/tcp 2>/dev/null || true
     fi
@@ -122,54 +235,63 @@ do_start() {
     echo "  Volume: ${GALAXY_EXPORT_DIR}"
     echo "  Port:   ${PORT}"
     echo ""
+    echo "Server output will appear below."
+    echo "Close this window (or Ctrl+C) to stop the server."
+    echo ""
 
-    docker run -d \
+    # Launch background task: wait for server, then open browser
+    (
+        local_max=60
+        local_i=0
+        while [ $local_i -lt $local_max ]; do
+            if curl -s --max-time 2 "${URL}/api/status" >/dev/null 2>&1; then
+                echo ""
+                echo "========================================="
+                echo "  VSP Pipeline is ready!"
+                echo "========================================="
+                echo ""
+                echo "  UI:   ${URL}"
+                echo "  Stop: close this window or Ctrl+C"
+                echo ""
+                open_browser "${URL}"
+                exit 0
+            fi
+            sleep 1
+            local_i=$((local_i + 1))
+        done
+        echo ""
+        echo "========================================="
+        echo "  SERVER FAILED TO START"
+        echo "========================================="
+        echo ""
+        echo "Server did not respond within 60 seconds."
+        echo ""
+        echo "--- Container logs ---"
+        docker logs "${CONTAINER_NAME}" 2>&1 || echo "(could not retrieve logs)"
+        echo "--- End of logs ---"
+        echo ""
+        echo "If you see a Python error above, please report it."
+    ) &
+    BROWSER_PID=$!
+
+    # Clean up background task when this script exits
+    trap "kill ${BROWSER_PID} 2>/dev/null; exit" INT TERM EXIT
+
+    # Run Docker in foreground — this is the exact mode confirmed working
+    # VSP_INPUT_DIR: tells config.py where the input folder is INSIDE the container
+    # VSP_HOST_INPUT_DIR: tells the UI what path to show for "Open Folder" on the HOST
+    docker run --rm -it \
         --name "${CONTAINER_NAME}" \
-        --rm \
         --gpus all \
         -p ${PORT}:${PORT} \
+        -e "VSP_INPUT_DIR=/host/galaxy_export/vsp_input" \
+        -e "VSP_HOST_INPUT_DIR=${GALAXY_EXPORT_DIR}/vsp_input" \
         -v "${GALAXY_EXPORT_DIR}:/host/galaxy_export" \
         "${DOCKER_IMAGE}" \
-        bash -c "cd /host/galaxy_export/vsp-ui && python3 -m app.server"
-
-    if [ $? -ne 0 ]; then
-        echo ""
-        echo "ERROR: Failed to start container."
-        echo "  1. Is Docker running?       docker info"
-        echo "  2. Image exists?            docker images | grep ${DOCKER_IMAGE%%:*}"
-        echo "  3. Port in use?             fuser ${PORT}/tcp"
-        echo "  4. Another container?       docker ps"
-        echo ""
-        echo "Press Enter to close..."
-        read
-        exit 1
-    fi
-
-    echo "Container started."
-
-    if ! wait_for_server; then
-        echo ""
-        echo "ERROR: Server did not start in 30 seconds."
-        echo "Logs: docker logs ${CONTAINER_NAME}"
-        echo ""
-        echo "Press Enter to close..."
-        read
-        exit 1
-    fi
-
-    open_browser "${URL}"
+        -c 'cd /host/galaxy_export/vsp-ui && python3 -m app.server; EC=$?; if [ $EC -ne 0 ]; then echo ""; echo "========================================="; echo "  SERVER FAILED (exit code $EC)"; echo "========================================="; echo "  Check the error messages above."; echo "  Press Enter to close..."; read; fi'
 
     echo ""
-    echo "========================================="
-    echo "  VSP Pipeline is ready!"
-    echo "========================================="
-    echo ""
-    echo "  UI:        ${URL}"
-    echo "  Stop:      $0 stop"
-    echo "  Shell:     docker exec -it ${CONTAINER_NAME} bash"
-    echo ""
-    echo "Press Enter to close this window..."
-    read
+    echo "Server stopped."
 }
 
 do_stop() {
