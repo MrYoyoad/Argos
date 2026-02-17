@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git Commit Rules
+
+- **NEVER** include `Co-Authored-By` lines in commit messages. No Claude/AI attribution in commits.
+
 ## Overview
 
 This repository contains a visual speech processing (VSP) pipeline that combines three major components for lip-reading and visual speech recognition:
@@ -1802,4 +1806,193 @@ The following changes have been made to the EC2 version and need to be replicate
 - `/workspace/VSP-LLM/src/vsp_llm_decode.py` - Pass `max_length=cfg.generation.max_len` to model.generate() (line ~220)
   - Add parameter between `num_beams` and `length_penalty`
   - Critical: Without this, config value is ignored and model uses hardcoded default (30 tokens)
+  - **NOTE**: Superseded by fix #20 which replaces static max_len with dynamic calculation
+
+20. **Decode CUDA OOM Fix for 12GB GPUs** (Added Feb 9, 2026): Fixed memory accumulation during decode on standalone 12GB GPU
+   - **Problem**: Decode crashed with CUDA OOM at sample 18/49 on standalone computer (12GB GPU)
+   - **Root Cause**: After fix #19 increased max_new_tokens from 30 to 2048, KV caches from HuggingFace generate() accumulated across samples. With the old max=30, each leaked cache was tiny (~75 MB); with 2048, they're much larger, filling 12 GB after ~17 samples.
+   - **Impact**: Pipeline failed at decode step [7] on standalone computer; worked fine on EC2 (24GB GPU)
+
+   **The Fix (Three Parts)**:
+
+   **Part 1: Smart memory cleanup between samples** (PRIMARY fix)
+   - Add `gc.collect()` + `torch.cuda.empty_cache()` between samples
+   - `empty_cache()` runs every sample (<1ms overhead)
+   - `gc.collect()` only triggers when free GPU memory < 2 GB (avoids overhead on larger GPUs)
+   - Prevents memory accumulation across samples
+
+   **Part 2: Dynamic max_length per sample** (SECONDARY fix)
+   - Replace static `max_length=cfg.generation.max_len` (2048) with dynamic calculation
+   - Uses existing config: `min(max_len, max_len_a * src_tokens + max_len_b)`
+   - With max_len_a=3.0, max_len_b=300: typical 12s segment gets ~750 max tokens
+   - Still 10× more than needed for any transcription, but prevents runaway generation
+   - Keeps max_len=2048 as hard cap in config (unchanged)
+
+   **Part 3: CUDA allocator optimization**
+   - Add `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` in decode.sh
+   - Reduces memory fragmentation as recommended by PyTorch
+
+   **Code Changes**:
+
+   `vsp_llm_decode.py` imports (add `import gc`):
+   ```python
+   import gc
+   import numpy as np
+   import torch
+   ```
+
+   `vsp_llm_decode.py` decode loop (replace static max_length):
+   ```python
+   # Dynamic max_length: proportional to input size, capped by max_len
+   src_tokens = sample['net_input']['source']['cluster_counts'][0].shape[0]
+   dynamic_max_len = int(cfg.generation.max_len_a * src_tokens + cfg.generation.max_len_b)
+   if cfg.generation.max_len > 0:
+       dynamic_max_len = min(dynamic_max_len, cfg.generation.max_len)
+
+   best_hypo = model.generate(target_list=sample["target"],
+                              num_beams=cfg.generation.beam,
+                              max_length=dynamic_max_len,
+                              length_penalty=cfg.generation.lenpen,
+                              **sample["net_input"])
+   ```
+
+   `vsp_llm_decode.py` after inner for loop (memory cleanup):
+   ```python
+       # Free GPU memory between samples (prevents accumulation on 12GB GPUs)
+       if use_cuda:
+           torch.cuda.empty_cache()
+           free_mem = torch.cuda.mem_get_info()[0]
+           if free_mem < 2 * 1024**3:  # Less than 2 GB free
+               gc.collect()
+               torch.cuda.empty_cache()
+   ```
+
+   `decode.sh` (add before python call):
+   ```bash
+   export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+   ```
+
+**Decode OOM Fix Files Modified for Linux Container (Feb 9, 2026)**:
+- `/workspace/VSP-LLM/src/vsp_llm_decode.py` - Add `import gc`, dynamic max_length, memory cleanup
+  - Add `import gc` near other imports
+  - Replace `max_length=cfg.generation.max_len` with dynamic calculation using cluster_counts
+  - Add memory cleanup block after inner for loop (empty_cache + conditional gc.collect)
+  - Critical: Without this fix, decode OOMs on 12GB GPUs after ~17 samples
+- `/workspace/VSP-LLM/scripts/decode.sh` - Add `export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`
+  - Add before the `CUDA_VISIBLE_DEVICES=0 python` line
+  - Reduces CUDA memory fragmentation
+
+21. **Decode Beam Search OOM Fix + no_repeat_ngram** (Added Feb 12, 2026): Fixed OOM within single beam search call on 12GB GPUs
+   - **Problem**: Decode crashed with CUDA OOM during `model.generate()` on 4th sample (12GB standalone GPU)
+   - **Root Cause**: Fix #20 handled memory accumulation *between* samples, but OOM happens *within* a single beam search. With beam=20 and dynamic_max_len≈750-1050, KV cache needs ~7-10GB on top of ~6GB model weights, exceeding 12GB.
+   - **Amplifier**: Degenerate repetitive outputs ("yeah yeah yeah..." × 48) hit max_length, maximizing KV cache usage.
+   - **Impact**: Pipeline failed at decode step [7] on standalone 12GB GPU
+
+   **The Fix (Two Parts)**:
+
+   **Part 1: Enable no_repeat_ngram_size (primary fix)**
+   - Prevents degenerate repetitive n-gram outputs during beam search
+   - With `no_repeat_ngram_size=3`, model cannot repeat same 3-gram → repetitive outputs stop early
+   - Typical lip reading output: ~50 tokens for 12s segment (well within memory budget)
+   - Added config value `no_repeat_ngram_size: 3` to `s2s_decode.yaml`
+   - Passed through `vsp_llm_decode.py` → `vsp_llm.py` → HuggingFace `decoder.generate()`
+
+   **Part 2: Dynamic max_len cap for small GPUs (safety net)**
+   - Detect GPU memory after model loading
+   - If GPU < 16GB: cap `dynamic_max_len` at 512 (instead of ~750-1050)
+   - With beam=20 and 512 cap: KV cache ≈ 5.2GB + 6GB model = ~11.2GB (fits in 12GB)
+   - Beam size stays at 20 on all GPUs (no quality reduction)
+   - 24GB GPUs unaffected (no cap applied)
+
+   **Code Changes**:
+
+   `vsp_llm_decode.py` (after model loading, ~line 174):
+   ```python
+   # Detect GPU memory for adaptive generation parameters
+   gpu_mem_gb = 0
+   if use_cuda:
+       gpu_mem_gb = torch.cuda.get_device_properties(0).total_mem / (1024**3)
+       logger.info(f"GPU memory: {gpu_mem_gb:.1f} GB")
+   small_gpu = gpu_mem_gb > 0 and gpu_mem_gb < 16
+   ```
+
+   `vsp_llm_decode.py` (before generate call, ~line 228):
+   ```python
+   # Tighter max_len cap for small GPUs (keeps beam=20 feasible within 12GB)
+   if small_gpu and dynamic_max_len > 512:
+       dynamic_max_len = 512
+
+   best_hypo = model.generate(...,
+                              no_repeat_ngram_size=cfg.generation.no_repeat_ngram_size,
+                              ...)
+   ```
+
+   `vsp_llm.py` generate() method (~line 351):
+   ```python
+   def generate(self, ..., no_repeat_ngram_size=0, **kwargs):
+       ...
+       outputs = self.decoder.generate(..., no_repeat_ngram_size=no_repeat_ngram_size, ...)
+   ```
+
+   `s2s_decode.yaml`:
+   ```yaml
+   generation:
+     no_repeat_ngram_size: 3  # Prevent degenerate repetitions
+   ```
+
+**Decode Beam Search OOM Fix Files Modified for Linux Container (Feb 12, 2026)**:
+- `/workspace/VSP-LLM/src/vsp_llm_decode.py` - Add GPU memory detection + max_len cap + no_repeat_ngram_size passthrough
+  - Add GPU detection after model loading (~line 174)
+  - Add `if small_gpu and dynamic_max_len > 512: dynamic_max_len = 512` before generate
+  - Add `no_repeat_ngram_size=cfg.generation.no_repeat_ngram_size` to model.generate() call
+  - Critical: Without cap, beam=20 with 750+ tokens OOMs on 12GB GPUs
+- `/workspace/VSP-LLM/src/vsp_llm.py` - Accept and pass no_repeat_ngram_size parameter
+  - Add `no_repeat_ngram_size=0` to generate() signature
+  - Add `no_repeat_ngram_size=no_repeat_ngram_size` to self.decoder.generate() call
+  - Critical: Without this, config value is ignored and repetitions are unbounded
+- `/workspace/VSP-LLM/src/conf/s2s_decode.yaml` - Add `no_repeat_ngram_size: 3`
+  - Add after `max_len: 2048` line
+  - Critical: Without this, degenerate repetitive outputs fill KV cache and cause OOM
+
+22. **Inference Tuning — MISSION3 Revert + repetition_penalty** (Added Feb 16, 2026): Fixed "blabla" repetitive outputs
+   - **Problem**: Decode produced too many words / degenerate repeats due to generous max_len parameters and no repetition penalty
+   - **Root Cause**: max_len_a=3.0, max_len_b=300 gave 861 tokens of runway per segment, allowing repeats to fill the output
+   - **Fix**: Revert to MISSION3-recommended values (2.0, 200) and add repetition_penalty=1.2
+
+   **Files Modified**:
+   - `/workspace/VSP-LLM/src/conf/s2s_decode.yaml` — Change max_len_a: 3.0→2.0, max_len_b: 300→200, add repetition_penalty: 1.2
+   - `/workspace/VSP-LLM/fairseq/fairseq/dataclass/configs.py` — Add `repetition_penalty` field to GenerationConfig (after no_repeat_ngram_size)
+   - `/workspace/VSP-LLM/src/vsp_llm_decode.py` — Add `repetition_penalty=cfg.generation.repetition_penalty` to model.generate() call
+
+23. **Report Part Naming for Segmented Videos** (Added Feb 16, 2026): Group segments by video with "Part 1, Part 2" labels
+   - **Problem**: Reports showed raw segment IDs like `Obama_00_000000_000300`, hard to read
+   - **Fix**: Multi-segment videos labeled "Obama - Part 1", single-segment keep base name
+
+   **Files Modified**:
+   - `/workspace/VSP-LLM/scripts/make_report.py` — Add `parse_segment_id()`, `build_display_names()`, sort by video+segment, add display_name CSV column, show display name in HTML/TXT/ANSI
+   - `/workspace/VSP-LLM/scripts/make_burn.py` — Output filenames use Part naming: `Obama_Part1_with_hyp.mp4`
+
+24. **Lip Crops in Client Output** (Added Feb 16, 2026): Copy mouth-cropped videos to client deliverables
+   - **Problem**: Lip crop videos (88-96px at 25fps) only existed in preprocessing dir
+   - **Fix**: Copy lip crops to `client_outputs/lip_crops/` with Part naming
+
+   **Files Modified**:
+   - `/workspace/lib/outputs.sh` — Add lip crop copy step after burned videos (non-critical, warns on failure)
+
+25. **NEA + Weighted WER Metrics** (Added Feb 16, 2026): Semantic meaning preservation metrics using spaCy
+   - **What**: Named Entity Accuracy (NEA) measures preservation of high-value tokens (PROPN, NUM, named entities). Weighted WER penalizes entity errors 2x and function word errors 0.5x.
+   - **spaCy dependency**: Optional. Falls back to stopword-based filtering if not installed. No container rebuild needed.
+   - **Install on container** (optional): `pip install spacy && python -m spacy download en_core_web_sm`
+   - **Report outputs**: CSV adds wwer_%, nea_recall_%, nea_precision_%, nea_f1_%, missed_entities columns. HTML adds color-coded NEA Recall and WWER columns. TXT/ANSI add metrics per segment and overall summary.
+
+   **Files Modified**:
+   - `/workspace/VSP-LLM/scripts/make_report.py` — Add spaCy import with fallback, classify_tokens(), weighted_wer(), nea_metrics(), compute_all_metrics(), nea_color(), MetricsResult dataclass. Update main() to compute and display metrics in all output formats.
+
+26. **Drag-and-Drop Upload Fix** (Added Feb 16, 2026): Fixed silent upload failure for large video files
+   - **Problem**: `self.rfile.read(content_length)` read entire file at once, causing timeout/OOM on large videos
+   - **Fix**: Chunked reading (1MB chunks), 5-minute socket timeout, server-side upload logging, XHR timeout on client
+
+   **Files Modified**:
+   - `/workspace/vsp-ui/app/server.py` — Add `setup()` for socket timeout, replace single read with chunked loop, add upload logging
+   - `/workspace/vsp-ui/app/static/app.js` — Add XHR timeout (5min + 1min/100MB) and timeout event handler
 
