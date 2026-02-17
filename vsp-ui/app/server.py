@@ -2,7 +2,6 @@
 HTTP server using Python standard library only.
 Provides REST API and WebSocket-like polling for progress updates.
 """
-import cgi
 import json
 import os
 import subprocess
@@ -40,6 +39,11 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         # Set directory for static files
         super().__init__(*args, directory=str(self.STATIC_DIR), **kwargs)
+
+    def setup(self):
+        """Increase socket timeout for large file uploads."""
+        super().setup()
+        self.request.settimeout(300)  # 5 minutes
 
     def log_message(self, format, *args):
         """Suppress default logging."""
@@ -869,30 +873,102 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             self.send_error_json(f"Failed to create download: {e}", 500)
 
     def handle_upload(self):
-        """Handle file upload via multipart/form-data."""
-        try:
-            # Parse multipart form data
-            form = cgi.FieldStorage(
-                fp=self.rfile,
-                headers=self.headers,
-                environ={
-                    'REQUEST_METHOD': 'POST',
-                    'CONTENT_TYPE': self.headers['Content-Type'],
-                }
-            )
+        """Handle file upload via multipart/form-data.
 
-            # Get file field
-            if 'file' not in form:
-                self.send_error_json("No file provided", 400)
+        Uses manual multipart parsing instead of deprecated cgi.FieldStorage
+        for reliable binary file uploads across all Python versions.
+        """
+        try:
+            content_type = self.headers.get('Content-Type', '')
+            content_length = int(self.headers.get('Content-Length', 0))
+
+            if 'multipart/form-data' not in content_type:
+                self.send_error_json("Expected multipart/form-data", 400)
                 return
 
-            file_item = form['file']
+            if content_length <= 0:
+                self.send_error_json("No content received", 400)
+                return
 
-            if not file_item.filename:
+            # Extract boundary from Content-Type header
+            boundary = None
+            for part in content_type.split(';'):
+                part = part.strip()
+                if part.startswith('boundary='):
+                    boundary = part[len('boundary='):]
+                    # Remove quotes if present
+                    if boundary.startswith('"') and boundary.endswith('"'):
+                        boundary = boundary[1:-1]
+                    break
+
+            if not boundary:
+                self.send_error_json("Missing multipart boundary", 400)
+                return
+
+            # Read body in chunks (prevents timeout/OOM on large video files)
+            size_str = self._format_file_size(content_length)
+            print(f"[UPLOAD] Starting: {content_length} bytes ({size_str})")
+            CHUNK_SIZE = 1024 * 1024  # 1 MB
+            body = bytearray()
+            bytes_read = 0
+            while bytes_read < content_length:
+                to_read = min(CHUNK_SIZE, content_length - bytes_read)
+                chunk = self.rfile.read(to_read)
+                if not chunk:
+                    break
+                body.extend(chunk)
+                bytes_read += len(chunk)
+            body = bytes(body)
+            print(f"[UPLOAD] Read complete: {bytes_read} bytes")
+            boundary_bytes = boundary.encode('utf-8')
+            delimiter = b'--' + boundary_bytes
+
+            # Split body by boundary
+            parts = body.split(delimiter)
+
+            # Find the file part (skip first empty part and last closing part)
+            filename = None
+            file_data = None
+
+            for part in parts:
+                if not part or part == b'--\r\n' or part == b'--':
+                    continue
+
+                # Split headers from body (separated by \r\n\r\n)
+                header_end = part.find(b'\r\n\r\n')
+                if header_end == -1:
+                    continue
+
+                headers_raw = part[:header_end].decode('utf-8', errors='replace')
+                # File data starts after \r\n\r\n, ends before trailing \r\n
+                file_body = part[header_end + 4:]
+                if file_body.endswith(b'\r\n'):
+                    file_body = file_body[:-2]
+
+                # Parse Content-Disposition to find filename
+                if 'name="file"' in headers_raw:
+                    for header_line in headers_raw.split('\r\n'):
+                        if 'filename=' in header_line:
+                            # Extract filename from: Content-Disposition: form-data; name="file"; filename="video.mp4"
+                            fn_start = header_line.find('filename=')
+                            if fn_start != -1:
+                                fn_value = header_line[fn_start + len('filename='):]
+                                fn_value = fn_value.strip()
+                                if fn_value.startswith('"') and '"' in fn_value[1:]:
+                                    filename = fn_value[1:fn_value.index('"', 1)]
+                                else:
+                                    filename = fn_value.split(';')[0].strip()
+                    file_data = file_body
+
+            if not filename:
                 self.send_error_json("No filename provided", 400)
                 return
 
-            filename = os.path.basename(file_item.filename)
+            if file_data is None:
+                self.send_error_json("No file data received", 400)
+                return
+
+            filename = os.path.basename(filename)
 
             # Security: validate filename
             if not self._is_safe_filename(filename):
@@ -909,19 +985,12 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
 
             # Save file to input directory
             file_path = INPUT_DIR / filename
-            file_size = 0
-
             with open(file_path, 'wb') as output_file:
-                # Read and write in chunks to handle large files
-                while True:
-                    chunk = file_item.file.read(8192)
-                    if not chunk:
-                        break
-                    output_file.write(chunk)
-                    file_size += len(chunk)
+                output_file.write(file_data)
 
-            # Format file size
+            file_size = len(file_data)
             size_str = self._format_file_size(file_size)
+            print(f"[UPLOAD] Complete: {filename} ({size_str})")
 
             self.send_json({
                 "success": True,
@@ -931,6 +1000,9 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             })
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print(f"[UPLOAD] Failed: {str(e)}")
             self.send_error_json(f"Upload failed: {str(e)}", 500)
 
     def _is_safe_filename(self, filename: str) -> bool:
@@ -958,10 +1030,15 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
 
 def open_folder(path: Path) -> bool:
     """Try to open a folder in the system file manager."""
+    import time
     path_str = str(path)
 
-    # Try various methods
+    # Build environment with display variables for GUI access
+    env = os.environ.copy()
+
+    # Try various methods (gio is most reliable on modern GNOME)
     commands = [
+        ["gio", "open", path_str],
         ["xdg-open", path_str],
         ["nautilus", path_str],
         ["nemo", path_str],
@@ -972,12 +1049,18 @@ def open_folder(path: Path) -> bool:
 
     for cmd in commands:
         try:
-            subprocess.Popen(
+            proc = subprocess.Popen(
                 cmd,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
+                env=env,
             )
-            return True
+            # Wait briefly to check if command failed immediately
+            time.sleep(0.3)
+            retcode = proc.poll()
+            if retcode is None or retcode == 0:
+                return True  # Still running or exited successfully
+            # Non-zero exit - try next command
         except (FileNotFoundError, PermissionError):
             continue
 

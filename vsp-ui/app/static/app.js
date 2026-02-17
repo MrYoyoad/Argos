@@ -1277,9 +1277,10 @@ async function downloadOutput() {
 }
 
 async function openOutputFolder() {
-    await api('open-folder', 'POST', { type: 'output' });
-    // Folder will open automatically if desktop environment is available
-    // No alert needed - the path is already displayed on screen
+    const result = await api('open-folder', 'POST', { type: 'output' });
+    if (!result.success) {
+        alert(`Could not open folder automatically.\n\nYou can find the results at:\n${result.path}\n\nTry opening a file manager and navigating to that path.`);
+    }
 }
 
 async function startNew() {
@@ -1536,8 +1537,19 @@ function uploadFile(file, fileId) {
             resolve({ success: false, error: 'Upload cancelled' });
         });
 
-        // Send request
+        // Timeout event
+        xhr.addEventListener('timeout', () => {
+            if (progressSimulationInterval) {
+                clearInterval(progressSimulationInterval);
+            }
+            markUploadComplete(fileId, false);
+            const sizeMB = (fileSize / (1024 * 1024)).toFixed(0);
+            resolve({ success: false, error: `Upload timed out (${sizeMB} MB). Try a smaller file or check your connection.` });
+        });
+
+        // Send request with timeout: 5 min base + 1 min per 100MB
         xhr.open('POST', '/api/upload');
+        xhr.timeout = 300000 + Math.ceil(fileSize / (100 * 1024 * 1024)) * 60000;
         xhr.send(formData);
     });
 }
