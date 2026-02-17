@@ -70,6 +70,65 @@ run_client_outputs() {
     return 1
   }
 
+  # Copy lip crops to client output (non-critical — warn on failure, don't abort)
+  local lip_dir="${post_root}/lip_crops"
+  mkdir -p "$lip_dir"
+  echo ">>> [8] Copying lip crop videos to client outputs"
+  python3 -c "
+import json, sys
+from pathlib import Path
+
+decode_json = Path('$decode_json')
+segment_vid_dir = Path('$segment_vid_dir')
+lip_dir = Path('$lip_dir')
+
+# Load decode output to get processed segment IDs
+try:
+    data = json.loads(decode_json.read_text())
+except Exception as e:
+    print(f'[WARN] Cannot read decode JSON for lip crops: {e}')
+    sys.exit(0)
+
+utt_ids = data.get('utt_id', [])
+if not utt_ids:
+    print('[WARN] No utt_ids in decode JSON for lip crops')
+    sys.exit(0)
+
+# Parse segment IDs and build display names (same logic as make_report.py)
+def parse_segment_id(sid):
+    parts = sid.split('_')
+    if len(parts) < 4:
+        return sid, -1
+    try:
+        int(parts[-1]); int(parts[-2]); int(parts[-3])
+        return '_'.join(parts[:-3]), int(parts[-3])
+    except (ValueError, IndexError):
+        return sid, -1
+
+groups = {}
+for uid in utt_ids:
+    base, idx = parse_segment_id(uid)
+    groups.setdefault(base, []).append((idx, uid))
+
+copied = 0
+for base, entries in groups.items():
+    entries.sort()
+    is_multi = len(entries) > 1
+    for part_num, (_, uid) in enumerate(entries, 1):
+        src = segment_vid_dir / f'{uid}.mp4'
+        if not src.exists():
+            continue
+        if is_multi:
+            dst_name = f'{base}_Part{part_num}_lip_crop.mp4'
+        else:
+            dst_name = f'{base}_lip_crop.mp4'
+        import shutil
+        shutil.copy2(str(src), str(lip_dir / dst_name))
+        copied += 1
+
+print(f'[INFO] Copied {copied} lip crop(s) to {lip_dir}')
+" 2>&1 || log_warn "Lip crop copy failed (non-critical)"
+
   log_info "Client outputs complete"
   log_info "Outputs saved to: $post_root"
   return 0
