@@ -101,7 +101,7 @@ if [ "$SEGMENTATION_ENABLED" = "1" ]; then
     echo ">>> [0.1] Overlap disabled (no overlap between segments)"
   fi
 
-  python "${AUTO_AVSR}/preparation/fast_segment.py" \
+  python3 "${AUTO_AVSR}/preparation/fast_segment.py" \
     --data-dir "${RAW_DIR}" \
     --output-dir "${FAST_SEG_DIR}" \
     --seg-duration "${SEG_DURATION}" \
@@ -216,7 +216,7 @@ source "${HOME}/lib/normalization.sh"
 SKIP_NORM="${SKIP_NORM:-0}"
 MAX_DIM="${MAX_DIM:-0}"  # 0 = keep original resolution, or set to 720/1080/etc to limit
 FPS_OUT="${FPS_OUT:-25}"
-USE_GPU_NORM="${USE_GPU_NORM:-1}"
+USE_GPU_NORM="${USE_GPU_NORM:-0}"
 NORM_TIMEOUT_SEC="${NORM_TIMEOUT_SEC:-600}"
 
 echo ">>> [0.5] Normalizing segments (SKIP_NORM=${SKIP_NORM}, USE_GPU_NORM=${USE_GPU_NORM}, MAX_DIM=${MAX_DIM}, FPS=${FPS_OUT}, TIMEOUT=${NORM_TIMEOUT_SEC}s)"
@@ -279,7 +279,7 @@ if [ "$SEGMENTATION_ENABLED" = "1" ] && [ "$OVERLAP_ENABLED" = "1" ]; then
     source "$PREP_VENV/bin/activate"
     cd "$AUTO_AVSR/preparation"
 
-    python preprocess_with_overlap.py \
+    python3 preprocess_with_overlap.py \
       --data-dir "$READY_DIR" \
       --root-dir "$PREP_ROOT" \
       --dataset flat \
@@ -302,7 +302,7 @@ else
     source "$PREP_VENV/bin/activate"
     cd "$AUTO_AVSR/preparation"
 
-    python preprocess_lrs2lrs3.py \
+    python3 preprocess_lrs2lrs3.py \
       --data-dir "$READY_DIR" \
       --root-dir "$PREP_ROOT" \
       --dataset flat \

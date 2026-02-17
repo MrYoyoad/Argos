@@ -51,7 +51,6 @@ const elements = {
     progressPercent: document.getElementById('progress-percent'),
     stageName: document.getElementById('stage-name'),
     stageDescription: document.getElementById('stage-description'),
-    etaText: document.getElementById('eta-text'),
     logsContainer: document.getElementById('logs-container'),
     logsOutput: document.getElementById('logs-output'),
 
@@ -158,16 +157,6 @@ function formatDuration(seconds) {
         const mins = Math.floor((seconds % 3600) / 60);
         return `${hours}h ${mins}m`;
     }
-}
-
-function formatETA(seconds) {
-    if (seconds === null || seconds === undefined) {
-        return 'Calculating...';
-    }
-    if (seconds <= 0) {
-        return 'Almost done...';
-    }
-    return `Estimated time remaining: ${formatDuration(seconds)}`;
 }
 
 // Welcome Screen
@@ -917,18 +906,22 @@ async function deleteCurrentTranscription() {
             return;
         }
 
-        // Update validation results
-        const video = validationResult.valid_videos.find(
-            v => v.filename === currentTranscriptionFilename
-        );
-        if (video) {
-            video.has_transcription = false;
-            video.transcription_type = null;
-        }
-
-        // Refresh display and close modal
-        displayValidationResults();
+        // Close modal first
         closeTranscriptionModal();
+
+        // Refresh the current screen - check which screen we're on
+        if (currentScreen === 'segmentReview') {
+            await loadAndDisplaySegments();
+        } else if (validationResult) {
+            const video = validationResult.valid_videos.find(
+                v => v.filename === currentTranscriptionFilename
+            );
+            if (video) {
+                video.has_transcription = false;
+                video.transcription_type = null;
+            }
+            displayValidationResults();
+        }
 
     } catch (err) {
         alert(`Failed to delete: ${err.message}`);
@@ -1168,8 +1161,6 @@ async function updateProgress() {
     elements.stageDescription.textContent = progress.current_stage_description || '';
 
     // Update ETA
-    elements.etaText.textContent = formatETA(progress.eta_seconds);
-
     // Update logs if visible
     if (logsVisible) {
         await updateLogs();

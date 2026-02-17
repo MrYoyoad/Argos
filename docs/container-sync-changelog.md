@@ -1295,3 +1295,23 @@ The following changes have been made to the EC2 version and need to be replicate
    - `/workspace/vsp-ui/app/static/app.js` — Add XHR timeout (5min + 1min/100MB) and timeout event handler
 
 **Container Sync Status (Feb 17, 2026)**: Entries 22-26 have been synced to both `vsp_linux_container_FINAL_20260217/` and `vsp_docker/galaxy_export/`. All changes verified across all locations. See `BUGS_INSTALLING_CLIENT_STANDALONE.md` entries v1.0.31-v1.0.35 for details. The decode.sh fairseq auto-patch was extended to cover `repetition_penalty` in addition to `max_len` and `no_repeat_ngram_size`. spaCy install instructions documented in bug file.
+
+27. **Video Normalization Fix — NVENC Silent Corruption + Bash fd Interference** (Added Feb 17, 2026): Fixed 3 bugs causing 43% video loss during normalization
+   - **Problem**: NVENC GPU encoder (`h264_nvenc`) silently produced corrupt H.264 streams (exit code 0 but undecodable output). Additionally, bash file descriptor interference in the normalization loop caused subsequent videos to fail even with CPU encoding.
+   - **Impact**: 656/1,520 segments (43%) failed face detection because their normalized output was corrupt. Original sources and fast-segmented copies (codec copy) were fine.
+   - **Root Causes**:
+     1. NVENC hardware/driver bug producing broken NAL units silently
+     2. `while read ... done < <(find -print0)` shared fd 0 with child ffmpeg processes — ffmpeg's `>/dev/null 2>/dev/null` redirections interfered with the loop's input, corrupting filenames for subsequent iterations
+     3. `needs_tonemap()` used `local f="$1"` which could shadow the caller's loop variable `f`
+
+   **Fixes**:
+   - Default `USE_GPU_NORM=0` in pipeline script (CPU encoding via `libx264`)
+   - fd3 isolation: `while IFS= read -r -d '' f <&3; do ... done 3< <(find ... -print0)`
+   - Post-encode validation: extract 1 frame after encode, fallback to raw copy on failure
+   - Variable rename: `local _nt_file="$1"` in `needs_tonemap()`
+
+   **Files Modified**:
+   - `/workspace/lib/normalization.sh` — fd3 loop isolation, `_nt_file` rename, post-encode frame validation, `2>/dev/null` on ffmpeg stderr
+   - `/workspace/run_flat_english_pipeline.sh` — Default `USE_GPU_NORM=0` (was 1)
+
+**Container Sync Status (Feb 17, 2026)**: Entry 27 synced to both `vsp_linux_container_FINAL_20260217/` and `vsp_docker/galaxy_export/`. All 3 locations verified identical with `diff`. See `BUGS_INSTALLING_CLIENT_STANDALONE.md` entry v1.0.39 (Bug 41).

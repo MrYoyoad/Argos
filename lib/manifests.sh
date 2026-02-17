@@ -6,8 +6,8 @@
 # Works on EC2 and Linux container
 
 # Source common utilities for logging
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${MODULE_DIR}/common.sh"
 
 # Generate manifests, splits, and train.tsv
 # Parameters:
@@ -30,7 +30,7 @@ run_manifest_generation() {
   log_stage "5" "Building manifests and TSVs"
 
   # Generate simple manifest
-  python "$auto_avsr_dir/make_simple_manifest.py" \
+  python3 "$auto_avsr_dir/make_simple_manifest.py" \
     --root "$prep_root" \
     --split train \
     --out-dir "$manifest_root" || {
@@ -39,7 +39,7 @@ run_manifest_generation() {
   }
 
   # Split dataset
-  python "$avh_dir/avhubert/preparation/split_flat_dataset.py" \
+  python3 "$avh_dir/avhubert/preparation/split_flat_dataset.py" \
     --root "$prep_root" \
     --train-ratio 1.0 \
     --valid-ratio 0.0 \
@@ -50,7 +50,7 @@ run_manifest_generation() {
   }
 
   # Build train TSV
-  python "$vsp_dir/scripts/build_flat_train_tsv.py" \
+  python3 "$vsp_dir/scripts/build_flat_train_tsv.py" \
     --root "$prep_root" || {
     log_error "build_flat_train_tsv.py failed"
     return 1
@@ -60,7 +60,7 @@ run_manifest_generation() {
   if [ "$segmentation_enabled" = "1" ] && [ "$overlap_enabled" = "1" ]; then
     log_info "Generating segment timing metadata..."
 
-    python "$auto_avsr_dir/generate_segment_timing.py" \
+    python3 "$auto_avsr_dir/generate_segment_timing.py" \
       --manifest-tsv "$manifest_root/train.tsv" \
       --segment-metadata "$prep_root/segment_metadata.json" \
       --output-json "$manifest_root/segment_timing.json" || {

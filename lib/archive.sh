@@ -6,8 +6,8 @@
 # Preserves segment transcriptions for reuse
 
 # Source common utilities for logging
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${MODULE_DIR}/common.sh"
 
 # Archive previous run outputs
 # Parameters:

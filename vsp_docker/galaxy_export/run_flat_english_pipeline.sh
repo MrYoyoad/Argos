@@ -222,7 +222,7 @@ source "${SCRIPT_DIR}/lib/normalization.sh"
 SKIP_NORM="${SKIP_NORM:-0}"
 MAX_DIM="${MAX_DIM:-0}"  # 0 = keep original resolution, or set to 720/1080/etc to limit
 FPS_OUT="${FPS_OUT:-25}"
-USE_GPU_NORM="${USE_GPU_NORM:-1}"
+USE_GPU_NORM="${USE_GPU_NORM:-0}"
 NORM_TIMEOUT_SEC="${NORM_TIMEOUT_SEC:-600}"
 
 echo ">>> [0.5] Normalizing segments (SKIP_NORM=${SKIP_NORM}, USE_GPU_NORM=${USE_GPU_NORM}, MAX_DIM=${MAX_DIM}, FPS=${FPS_OUT}, TIMEOUT=${NORM_TIMEOUT_SEC}s)"

@@ -26,7 +26,6 @@ class ProgressState:
     stages_completed: int = 0
     total_stages: int = len(PIPELINE_STAGES)
     percent_complete: int = 0
-    eta_seconds: Optional[int] = None
     last_log_line: str = ""
     errors: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
@@ -47,7 +46,6 @@ class ProgressState:
             "stages_completed": self.stages_completed,
             "total_stages": self.total_stages,
             "percent_complete": self.percent_complete,
-            "eta_seconds": self.eta_seconds,
             "last_log_line": self.last_log_line,
             "errors": self.errors,
             "warnings": self.warnings,
@@ -169,33 +167,11 @@ class ProgressTracker:
 
         self.state.percent_complete = min(99, int(completed_weight))
 
-        # Estimate ETA
-        self._estimate_eta()
-
-    def _estimate_eta(self):
-        """Estimate time remaining based on elapsed time and progress."""
-        if self.state.start_time is None or self.state.percent_complete <= 0:
-            self.state.eta_seconds = None
-            return
-
-        elapsed = time.time() - self.state.start_time
-        if self.state.percent_complete >= 99:
-            self.state.eta_seconds = 0
-        else:
-            # Simple linear extrapolation
-            rate = self.state.percent_complete / elapsed
-            if rate > 0:
-                remaining_percent = 100 - self.state.percent_complete
-                self.state.eta_seconds = int(remaining_percent / rate)
-            else:
-                self.state.eta_seconds = None
-
     def _mark_complete(self):
         """Mark pipeline as completed."""
         self.state.state = PipelineState.COMPLETED
         self.state.percent_complete = 100
         self.state.stages_completed = len(PIPELINE_STAGES)
-        self.state.eta_seconds = 0
 
     def mark_failed(self, error_message: str):
         """Mark pipeline as failed with error."""

@@ -27,6 +27,16 @@ fi
 # Create input folder
 mkdir -p "${HOME}/vsp_input"
 
+# Configure VLC to not show video title overlay (obscures burned subtitles)
+mkdir -p "${HOME}/.config/vlc"
+if [ -f "${HOME}/.config/vlc/vlcrc" ]; then
+    sed -i 's/^#\?video-title-show=.*/video-title-show=0/' "${HOME}/.config/vlc/vlcrc"
+    grep -q '^video-title-show=' "${HOME}/.config/vlc/vlcrc" || echo 'video-title-show=0' >> "${HOME}/.config/vlc/vlcrc"
+else
+    echo 'video-title-show=0' > "${HOME}/.config/vlc/vlcrc"
+fi
+echo "VLC configured to hide title overlay on video playback"
+
 echo ""
 echo "Installation complete!"
 echo ""

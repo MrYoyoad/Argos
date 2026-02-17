@@ -7,8 +7,8 @@
 # Works on EC2 and Linux container
 
 # Source common utilities for logging
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${MODULE_DIR}/common.sh"
 
 # Generate client outputs (reports and burned videos)
 # Parameters:
@@ -51,8 +51,27 @@ run_client_outputs() {
 
   echo ">>> [8] Generating segment-level reports and burned videos"
 
+  # Auto-install spaCy for full NEA/WWER metrics (falls back gracefully if offline)
+  if ! python3 -c "import spacy" 2>/dev/null; then
+    echo ">>> [8] Installing spaCy for entity metrics (one-time)..."
+    # Try local wheels first (offline/standalone)
+    local wheels_dir="${MODULE_DIR}/../spacy_wheels"
+    if [ -d "$wheels_dir" ] && ls "$wheels_dir"/spacy-*.whl &>/dev/null; then
+      pip install --no-index --find-links="$wheels_dir" spacy 2>/dev/null \
+        && pip install --no-index --find-links="$wheels_dir" en_core_web_sm 2>/dev/null \
+        && echo ">>> [8] spaCy installed from local wheels" \
+        || echo ">>> [8] Local wheel install failed — trying online..."
+    fi
+    # Fallback to online install if local failed
+    if ! python3 -c "import spacy" 2>/dev/null; then
+      pip install spacy 2>/dev/null && python3 -m spacy download en_core_web_sm 2>/dev/null \
+        && echo ">>> [8] spaCy installed successfully" \
+        || echo ">>> [8] spaCy install skipped (offline?) — using fallback metrics"
+    fi
+  fi
+
   # Generate report
-  python "$vsp_dir/scripts/make_report.py" \
+  python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
     --out_dir "$report_dir" || {
     log_error "make_report.py failed"
@@ -60,7 +79,7 @@ run_client_outputs() {
   }
 
   # Generate burned videos
-  python "$vsp_dir/scripts/make_burn.py" \
+  python3 "$vsp_dir/scripts/make_burn.py" \
     --jsonl "$decode_json" \
     --video_dir "$flat_vid_dir" \
     --segment_dir "$segment_vid_dir" \

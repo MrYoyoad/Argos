@@ -6,8 +6,8 @@
 # Works on EC2 and Linux container
 
 # Source common utilities for logging
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${MODULE_DIR}/common.sh"
 
 # Helper function: Copy raw video without processing
 copy_raw() {
@@ -21,10 +21,10 @@ copy_raw() {
 
 # Helper function: Check if video needs HDR/10-bit tone mapping
 needs_tonemap() {
-  local f="$1"
+  local _nt_file="$1"
   local probe_out
 
-  probe_out=$(ffprobe -v quiet -print_format json -show_streams "$f" 2>/dev/null || echo "")
+  probe_out=$(ffprobe -v quiet -print_format json -show_streams "$_nt_file" 2>/dev/null || echo "")
 
   # Check for 10-bit pixel format (yuv420p10le, yuv420p10be, etc.)
   if echo "$probe_out" | grep -q '"pix_fmt".*10le\|10be'; then
@@ -92,8 +92,8 @@ run_normalization() {
     scale_cuda_filter="scale_cuda=${scale_w}:${scale_h},"
   fi
 
-  # Process each video file
-  while IFS= read -r -d '' f; do
+  # Process each video file (use fd 3 so ffmpeg redirects don't interfere with the loop)
+  while IFS= read -r -d '' f <&3; do
     local bn
     bn="$(basename "$f")"
     local out="${output_dir}/${bn%.*}.mp4"
@@ -183,13 +183,24 @@ run_normalization() {
     # Run ffmpeg with optional timeout
     local run_one_result=0
     if [ -n "${timeout_bin}" ]; then
-      "${timeout_bin}" -k 5 "${timeout_sec}" "${cmd[@]}" >/dev/null 2>&1 || run_one_result=$?
+      "${timeout_bin}" -k 5 "${timeout_sec}" "${cmd[@]}" >/dev/null 2>/dev/null || run_one_result=$?
     else
-      "${cmd[@]}" >/dev/null 2>&1 || run_one_result=$?
+      "${cmd[@]}" >/dev/null 2>/dev/null || run_one_result=$?
     fi
 
     if [ "$run_one_result" -eq 0 ]; then
-      norm_ok=$((norm_ok+1))
+      # Validate output is decodable (catches silent NVENC corruption)
+      if ! ffmpeg -v error -i "$out" -vframes 1 -f null - 2>/dev/null; then
+        log_warn "Corrupt output detected for ${bn}, falling back to raw copy"
+        rm -f "$out"
+        if copy_raw "$f" "${output_dir}" >/dev/null 2>&1; then
+          fallback_copy=$((fallback_copy+1))
+        else
+          norm_fail=$((norm_fail+1))
+        fi
+      else
+        norm_ok=$((norm_ok+1))
+      fi
     else
       rm -f -- "$out" || true
       if [ "$run_one_result" -eq 124 ] || [ "$run_one_result" -eq 137 ]; then
@@ -203,7 +214,7 @@ run_normalization() {
         fallback_copy=$((fallback_copy+1))
       fi
     fi
-  done < <(find "$raw_dir" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.MP4" \) -print0)
+  done 3< <(find "$raw_dir" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.MP4" \) -print0)
 
   log_info "Summary: ok=${norm_ok}, failed=${norm_fail}, timeout=${norm_timeout}, fallback_copy=${fallback_copy}"
 

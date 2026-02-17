@@ -1,7 +1,7 @@
 # Bugs Found Installing on Client's Standalone Linux Container
 
 **Date**: February 8, 2026 (last updated February 17, 2026)
-**Package**: vsp_linux_container_FINAL_20260217 v1.0.35
+**Package**: vsp_linux_container_FINAL_20260217 v1.0.39
 
 This document tracks all issues encountered during installation and testing on the client's standalone Linux container.
 
@@ -1347,6 +1347,30 @@ fi
 
 ---
 
+## Bug 36: Remove unreliable ETA timer from processing screen
+
+**When**: During pipeline processing — UI shows "Estimated time remaining" that fluctuates wildly
+**Problem**: ETA uses simple linear extrapolation from coarse stage-based progress (~10 stage transitions over the entire pipeline run). Pipeline stages vary from seconds (archiving) to hours (preprocessing, k-means), so the estimate oscillates wildly and misleads users into thinking the pipeline is broken or almost done when it isn't.
+
+**Fix**: Removed ETA display entirely from the processing screen. The progress bar and stage name/description labels remain — they provide useful feedback about which stage is running without false precision about time remaining.
+
+**Changes**:
+- HTML: Removed `<div class="eta-display">` block from processing screen
+- CSS: Removed `.eta-display` CSS rule
+- JS: Removed `formatETA()` function, `etaText` DOM element lookup, and ETA update line in `updateProgress()`. Kept `formatDuration()` (still used for video duration display elsewhere)
+- Python: Removed `eta_seconds` field from `ProgressState` dataclass, removed `_estimate_eta()` method and all calls to it
+
+**Files Modified**:
+- `vsp-ui/app/static/index.html` — Removed `<div class="eta-display">` block
+- `vsp-ui/app/static/style.css` — Removed `.eta-display` CSS rule
+- `vsp-ui/app/static/app.js` — Removed `formatETA()`, `etaText` DOM lookup, ETA update line
+- `vsp-ui/app/services/progress_tracker.py` — Removed `eta_seconds` from ProgressState, removed `_estimate_eta()` method
+- Same changes applied to `ui/` path
+
+**Status**: Fixed in package v1.0.36
+
+---
+
 ## Lessons Learned
 
 1. **Don't assume existing installations**: The package was designed as an "update" to an existing installation, but the client's container was older than expected. All scripts referenced by the pipeline should be included.
@@ -1382,6 +1406,10 @@ fi
 16. **Move host-dependent logic to host-side scripts**: If a task requires Docker CLI access, filesystem permissions, or GUI interaction, it must run on the host — not inside the container. INSTALL.sh (inside container) can never run `docker inspect` or `docker images`. Put such logic in `vsp-start.sh` (host-side) where it has full system access.
 
 17. **Match environment variable names between launcher and application**: If `config.py` reads `VSP_INPUT_DIR`, the Docker launcher must pass `-e VSP_INPUT_DIR=...` — not a similar-sounding name like `VSP_HOST_INPUT_DIR`. One env var for the app's internal config, another for display purposes. Name them clearly and pass both.
+
+18. **Never trust ffmpeg exit code 0 for encoder correctness**: GPU encoders (NVENC, VAAPI, etc.) can silently produce corrupt output while reporting success. Always validate encoder output by extracting at least one frame: `ffmpeg -v error -i output.mp4 -vframes 1 -f null -`. This costs <100ms per file and catches silent corruption before it cascades through the pipeline.
+
+19. **Isolate bash loop file descriptors from child processes**: When using `while read ... done < <(find -print0)`, child processes inside the loop (especially ffmpeg) can interfere with the loop's stdin (fd 0) through redirections. Always use a dedicated fd: `while read <&3 ... done 3< <(find ...)`. This prevents any child process output redirection from corrupting the loop input, regardless of how many redirections the child uses.
 
 ---
 
@@ -1425,6 +1453,10 @@ fi
 | v1.0.33 | Feb 17, 2026 | **Lip crops in client output**: Mouth-cropped videos (88-96px) now copied to `client_outputs/lip_crops/` with Part naming. Non-critical — warns on failure, doesn't abort pipeline. |
 | v1.0.34 | Feb 17, 2026 | **NEA + Weighted WER metrics**: Reports now include Named Entity Accuracy (NEA recall/precision/F1), Weighted WER (high-value tokens penalized 2x), and missed entities. Requires `spaCy` + `en_core_web_sm` for full POS/NER analysis — falls back to basic stopword filtering without spaCy (see install instructions below). HTML report has color-coded NEA column (green/yellow/red). |
 | v1.0.35 | Feb 17, 2026 | **Upload reliability**: Added 5-minute socket timeout (`setup()` method), chunked 1MB read for large files (replaces single `rfile.read()`), server-side `[UPLOAD]` logging, and XHR timeout on client side (5min base + 1min per 100MB). Fixes silent drag-and-drop upload failures. |
+| v1.0.36 | Feb 17, 2026 | **Remove ETA timer**: Removed unreliable "Estimated time remaining" display from processing screen. Linear extrapolation from coarse stage progress was misleading. Progress bar and stage labels remain. |
+| v1.0.37 | Feb 17, 2026 | **VLC title overlay**: Added `video-title-show=0` config to `vsp-ui/install.sh` to disable filename overlay on burned video playback. |
+| v1.0.38 | Feb 17, 2026 | **VLC fix in correct script** (`install-desktop-icon.sh`), **delete transcription screen fix** (modal on segment review), **non-segmented video fallback** (`flat_video_whole`/`flat_text_whole` dirs), **offline spaCy wheels** (40 pre-downloaded wheels, numpy/setuptools excluded for venv safety, auto-install from local then online fallback). |
+| v1.0.39 | Feb 17, 2026 | **Normalization fix**: Default `USE_GPU_NORM=0` (NVENC silently corrupted 43% of videos). Fixed bash fd interference in normalization loop (fd3 isolation). Added post-encode validation (extract 1 frame, fallback to raw copy on failure). Renamed shadowed variable in `needs_tonemap()`. |
 
 ---
 
@@ -1432,31 +1464,28 @@ fi
 
 The NEA metrics in `make_report.py` use spaCy for POS tagging and Named Entity Recognition. **Without spaCy, the report still works** — it falls back to basic stopword-based content word filtering. The report header shows which mode is active.
 
-### Option A: Container Has Internet Access
+### Automatic (v1.0.38+)
+
+**No manual installation needed.** As of v1.0.38, the pipeline auto-installs spaCy from pre-downloaded wheels during Step 8. The `spacy_wheels/` directory (40 wheels, ~83MB) is included in the package and copied by INSTALL.sh.
+
+The auto-install in `lib/outputs.sh`:
+1. Checks if spaCy is already installed (skip if so)
+2. Tries local wheels from `spacy_wheels/` directory (`pip install --no-index --find-links`)
+3. Falls back to online `pip install` if local wheels not found
+4. Falls back gracefully to basic metrics if all install methods fail
+
+**Important**: The numpy and setuptools wheels were deliberately removed from `spacy_wheels/` to prevent breaking the VSP venv. The existing numpy 1.23.5 (required by PyTorch) satisfies spaCy's `numpy>=1.19.0` requirement.
+
+### Manual (if auto-install fails)
 ```bash
-# Activate the VSP-LLM virtual environment inside the container
-source /workspace/vsp-llm-yoad-venv/bin/activate  # or wherever the venv is
-
-pip install spacy
-python3 -m spacy download en_core_web_sm
-```
-
-### Option B: Offline Container (No Internet)
-Same pattern as existing wheel installs (torch, mediapipe, etc.):
-
-1. **On a machine with internet**, download wheels:
-```bash
-pip download spacy -d ./spacy_wheels/
-pip download en_core_web_sm -d ./spacy_wheels/ \
-  --extra-index-url https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
-```
-
-2. **Copy `spacy_wheels/` folder** to the container's galaxy_export directory
-
-3. **Inside the container**, install from local wheels:
-```bash
+# Inside the container, activate the venv
 source /workspace/vsp-llm-yoad-venv/bin/activate
+
+# From local wheels (offline)
 pip install --no-index --find-links ./spacy_wheels/ spacy en_core_web_sm
+
+# Or from internet
+pip install spacy && python3 -m spacy download en_core_web_sm
 ```
 
 ### Verification
@@ -1466,13 +1495,187 @@ python3 -c "import spacy; nlp = spacy.load('en_core_web_sm'); print('spaCy OK')"
 
 ### Dependencies
 - `editdistance` — already in VSP-LLM requirements.txt (confirmed present)
-- `spaCy` + `en_core_web_sm` (~15MB total) — optional, see above
+- `spaCy` + `en_core_web_sm` (~83MB wheels) — auto-installed, see above
 
 ---
 
-**Current Package Status**: v1.0.35 - All known bugs fixed
+## Bug 36: VLC title overlay obscures burned video subtitles
 
-### Files Changed in v1.0.31-v1.0.35
+**When**: Playing burned videos on Ubuntu standalone Linux — VLC shows the filename (e.g., `Obama_Part1_with_hyp.mp4`) as a title overlay at the top of the video, obscuring the subtitle text.
+
+**Root Cause**: VLC's "Show media title on video start" is enabled by default. On the standalone machine, the title bar overlaps the burned subtitle area.
+
+**Fix**: Added VLC configuration to `install.sh` to disable the title overlay:
+```bash
+mkdir -p "${HOME}/.config/vlc"
+# Set video-title-show=0 in vlcrc (create or update)
+```
+
+This sets `video-title-show=0` in `~/.config/vlc/vlcrc`, which disables the filename overlay on video playback. The change takes effect the next time VLC opens a video.
+
+**Files Modified**:
+- `vsp-ui/install.sh` — Added VLC config block after input folder creation
+
+**Status**: Fixed in package v1.0.37
+
+**To apply on existing installations**: Re-run `bash vsp-ui/install.sh` or manually run:
+```bash
+mkdir -p ~/.config/vlc
+echo 'video-title-show=0' > ~/.config/vlc/vlcrc
+```
+
+---
+
+## Bug 37: VLC config not applied — wrong script
+
+**When**: After running INSTALL.sh, VLC still shows title overlay on burned videos.
+
+**Root Cause**: Bug 36 put the VLC config in `vsp-ui/install.sh`, which runs **inside Docker**. But `~/.config/vlc/vlcrc` must be written on the **host** (where VLC runs). Docker containers are ephemeral (`--rm`), so changes inside don't persist.
+
+**Fix**: Added VLC config to `install-desktop-icon.sh` (runs on host). Uses `$REAL_HOME` variable (already in script) for robust home directory detection. Also kept the fix in `vsp-ui/install.sh` for standalone (non-Docker) installations.
+
+**Files Modified**:
+- `install-desktop-icon.sh` — Added VLC config block (using `$REAL_HOME/.config/vlc/vlcrc`)
+
+**Status**: Fixed in package v1.0.38
+
+---
+
+## Bug 38: Delete transcription fails on segment review screen
+
+**When**: Clicking "Delete Transcription" button in the transcription modal on the segment review screen causes JavaScript error.
+
+**Root Cause**: `deleteCurrentTranscription()` always called `displayValidationResults()` which expects validation screen DOM elements. On segment review screen, those elements are null.
+
+**Fix**: Added screen check — if `currentScreen === 'segmentReview'`, call `loadAndDisplaySegments()` instead.
+
+**Files Modified**:
+- `vsp-ui/app/static/app.js` — Updated `deleteCurrentTranscription()` with screen-aware refresh
+
+**Status**: Fixed in package v1.0.38
+
+---
+
+## Bug 39: Non-segmented videos missing from segment review
+
+**When**: Videos too short for segmentation (<24s) don't appear in the UI segment review screen after processing.
+
+**Root Cause**: Server only checked `flat_video_seg12s/` and `fast_segments/` directories. Non-segmented videos go to `flat_video_whole/` which wasn't checked. Same issue with transcriptions in `flat_text_whole/`.
+
+**Fix**: Added `whole_vid_dir` and `flat_text_whole` fallback directories in `handle_get_segments()` and `_load_segment_info()`.
+
+**Files Modified**:
+- `vsp-ui/app/server.py` — Added whole video directory fallback in segment loading
+
+**Status**: Fixed in package v1.0.38
+
+---
+
+## Bug 40: spaCy metrics unavailable offline — auto-install from local wheels
+
+**When**: Pipeline Step 8 (client outputs) tries `pip install spacy` but fails on offline/air-gapped standalone machines. NEA/WWER metrics fall back to basic stopword filtering.
+
+**Root Cause**: `lib/outputs.sh` only tried online `pip install`. No mechanism to install from pre-downloaded wheels.
+
+**Fix**:
+1. Pre-downloaded 40 spaCy wheels to `spacy_wheels/` directory (~83MB)
+2. **Removed** `numpy-2.2.6` and `setuptools-82.0.0` wheels to prevent breaking the VSP venv (numpy 1.23.5 is required by PyTorch 2.5.1; spaCy only needs `numpy>=1.19.0`)
+3. Updated `lib/outputs.sh` to try local wheels first (`--no-index --find-links`), fall back to online
+4. Updated `INSTALL.sh` to copy `spacy_wheels/` during deployment (Component 3.16)
+
+**Why numpy/setuptools wheels were removed**: The VSP venv has numpy 1.23.5 (required by PyTorch 2.5.1+cu124). The downloaded spaCy wheel bundle included numpy 2.2.6 which would upgrade and **break PyTorch**. Since spaCy only requires `numpy>=1.19.0`, the existing 1.23.5 satisfies it. By removing the wheel, `pip --no-index` cannot upgrade it.
+
+**Files Modified**:
+- `lib/outputs.sh` — Offline-first spaCy auto-install (local wheels → online fallback)
+- `INSTALL.sh` — Added Component 3.16 to copy `spacy_wheels/` during deployment
+- `spacy_wheels/` — New directory with 40 pre-downloaded wheels (numpy and setuptools excluded)
+
+**Status**: Fixed in package v1.0.38
+
+---
+
+## Bug 41: Video normalization — NVENC silent corruption + bash fd interference
+
+**When**: Running pipeline Step 0.5 (video normalization) with GPU encoding enabled (`USE_GPU_NORM=1`). Observed on 1,396-video English dataset run: 656/1,520 segments (43%) failed face detection at Step 2 with "Cannot detect any frames."
+
+**Symptoms**:
+- ffmpeg exits 0 (success) but output is undecodable H.264
+- `ffprobe` on output shows broken NAL units, zero-length packets
+- Downstream mediapipe face detection fails on corrupted files
+- Original source videos and fast-segmented copies (codec copy) are fine
+- Only NVENC-encoded outputs are broken
+
+**Root Cause (3 bugs)**:
+
+1. **NVENC silent corruption**: `h264_nvenc` GPU encoder produced broken H.264 streams while reporting exit code 0. No error message, no warning — just silently corrupt output. This is a known NVIDIA driver/hardware issue on certain GPU models.
+
+2. **Bash file descriptor interference**: The normalization loop used `while IFS= read -r -d '' f; do ... done < <(find -print0)` which reads from stdin (fd 0). Inside the loop, `ffmpeg ... >/dev/null 2>/dev/null` redirected stderr but the process could still interfere with the loop's stdin. After ffmpeg ran, subsequent `read -d ''` calls got corrupted filenames, causing 15/30 test videos to silently fail even with CPU encoding.
+
+3. **Variable shadowing**: `needs_tonemap()` function used `local f="$1"` which could shadow the caller's loop variable `f` in certain bash versions.
+
+**Fix (3 parts)**:
+
+**Part 1: Default to CPU encoding** (`run_flat_english_pipeline.sh`):
+```bash
+# BEFORE:
+USE_GPU_NORM="${USE_GPU_NORM:-1}"
+# AFTER:
+USE_GPU_NORM="${USE_GPU_NORM:-0}"
+```
+Users can still opt-in to GPU with `USE_GPU_NORM=1`.
+
+**Part 2: File descriptor isolation** (`lib/normalization.sh`):
+```bash
+# BEFORE (fd 0 shared between loop and child processes):
+while IFS= read -r -d '' f; do
+  ...
+  "${cmd[@]}" >/dev/null 2>/dev/null || run_one_result=$?
+  ...
+done < <(find "$raw_dir" ... -print0)
+
+# AFTER (fd 3 isolates loop from child processes):
+while IFS= read -r -d '' f <&3; do
+  ...
+  "${cmd[@]}" >/dev/null 2>/dev/null || run_one_result=$?
+  ...
+done 3< <(find "$raw_dir" ... -print0)
+```
+Using fd 3 ensures ffmpeg/timeout redirections cannot interfere with the find loop input.
+
+**Part 3: Post-encode validation + variable rename** (`lib/normalization.sh`):
+```bash
+# Variable rename to avoid shadowing:
+needs_tonemap() {
+  local _nt_file="$1"   # Was: local f="$1" (shadows loop var)
+  ...
+
+# Post-encode validation (catches silent corruption from any encoder):
+if [ "$run_one_result" -eq 0 ]; then
+  if ! ffmpeg -v error -i "$out" -vframes 1 -f null - 2>/dev/null; then
+    log_warn "Corrupt output detected for ${bn}, falling back to raw copy"
+    rm -f "$out"
+    copy_raw "$f" "${output_dir}" ...
+  else
+    norm_ok=$((norm_ok+1))
+  fi
+fi
+```
+
+**Verification**:
+- Tested on 30 randomly sampled videos from failed set: 30/30 normalize successfully with CPU encoding
+- Post-encode validation catches any future silent corruption and falls back to raw copy
+
+**Files Modified**:
+- `lib/normalization.sh` — fd3 isolation, variable rename, post-encode validation
+- `run_flat_english_pipeline.sh` — Default `USE_GPU_NORM=0`
+
+**Status**: Fixed in package v1.0.39
+
+---
+
+**Current Package Status**: v1.0.39 - All known bugs fixed
+
+### Files Changed in v1.0.31-v1.0.39
 
 | File | Changes | Version |
 |------|---------|---------|
@@ -1486,3 +1689,20 @@ python3 -c "import spacy; nlp = spacy.load('en_core_web_sm'); print('spaCy OK')"
 | `ui/app/server.py` | setup() timeout, [UPLOAD] logging (already had chunked reads via cgi) | v1.0.35 |
 | `vsp-ui/app/static/app.js` | XHR timeout (5min + 1min/100MB) with timeout event handler | v1.0.35 |
 | `ui/app/static/app.js` | XHR timeout (5min + 1min/100MB) with timeout event handler | v1.0.35 |
+| `vsp-ui/app/static/index.html` | Removed ETA display div | v1.0.36 |
+| `vsp-ui/app/static/style.css` | Removed `.eta-display` CSS rule | v1.0.36 |
+| `vsp-ui/app/static/app.js` | Removed `formatETA()`, `etaText` DOM lookup, ETA update line | v1.0.36 |
+| `vsp-ui/app/services/progress_tracker.py` | Removed `eta_seconds`, `_estimate_eta()` | v1.0.36 |
+| `ui/app/static/index.html` | Removed ETA display div | v1.0.36 |
+| `ui/app/static/style.css` | Removed `.eta-display` CSS rule | v1.0.36 |
+| `ui/app/static/app.js` | Removed `formatETA()`, `etaText` DOM lookup, ETA update line | v1.0.36 |
+| `ui/app/services/progress_tracker.py` | Removed `eta_seconds`, `_estimate_eta()` | v1.0.36 |
+| `vsp-ui/install.sh` | Added VLC config to disable title overlay on video playback | v1.0.37 |
+| `install-desktop-icon.sh` | Added VLC config for host-side installation (correct location) | v1.0.38 |
+| `vsp-ui/app/static/app.js` | `deleteCurrentTranscription()` screen-aware refresh | v1.0.38 |
+| `vsp-ui/app/server.py` | Non-segmented video fallback (`flat_video_whole`, `flat_text_whole`) | v1.0.38 |
+| `lib/outputs.sh` | Offline-first spaCy install (local wheels → online fallback) | v1.0.38 |
+| `INSTALL.sh` | Component 3.16: copy `spacy_wheels/` during deployment | v1.0.38 |
+| `spacy_wheels/` | NEW: 40 pre-downloaded wheels (numpy/setuptools excluded) | v1.0.38 |
+| `lib/normalization.sh` | fd3 loop isolation, `_nt_file` rename, post-encode frame validation | v1.0.39 |
+| `run_flat_english_pipeline.sh` | Default `USE_GPU_NORM=0` (was 1) | v1.0.39 |

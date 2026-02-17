@@ -279,6 +279,17 @@ mkdir -p vsp_input 2>/dev/null || true
 chmod a+rwx vsp_input 2>/dev/null || true
 echo -e "${GREEN}  ✅ vsp_input directory created${NC}"
 
+# Component 16: spaCy wheels (offline entity metrics)
+echo -e "${BLUE}[3.16] Installing spaCy wheels (offline metrics)...${NC}"
+if [ -d "$SCRIPT_DIR/spacy_wheels" ]; then
+    mkdir -p spacy_wheels
+    cp "$SCRIPT_DIR/spacy_wheels/"*.whl spacy_wheels/ 2>/dev/null || true
+    WHEEL_COUNT=$(ls spacy_wheels/*.whl 2>/dev/null | wc -l)
+    echo -e "${GREEN}  ✅ Copied $WHEEL_COUNT wheel(s) to spacy_wheels/${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  spacy_wheels/ not found in package (metrics will use online install)${NC}"
+fi
+
 # ====================
 # Fix file permissions for host access
 # ====================

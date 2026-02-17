@@ -7,8 +7,8 @@
 # Works on EC2 and Linux container
 
 # Source common utilities for logging
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${MODULE_DIR}/common.sh"
 
 # Run ASR transcription on segmented videos
 # Parameters:
@@ -109,7 +109,7 @@ run_asr_transcription() {
     download_root_arg="--download_root $whisper_root"
   fi
 
-  python "$auto_avsr_dir/asr_to_words_notime.py" \
+  python3 "$auto_avsr_dir/asr_to_words_notime.py" \
     --in_videos "$segment_vid_dir" \
     --out_wrd   "$segment_wrd_tmp" \
     --model medium \

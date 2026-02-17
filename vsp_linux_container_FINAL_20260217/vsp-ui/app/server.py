@@ -279,9 +279,16 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
                 transcription_type = info.type if info else "manual"
             else:
                 # Fallback: check preprocessed text directory
-                text_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
-                transcription_file = text_dir / f"{segment_id}.txt"
-                if transcription_file.exists():
+                text_dir_seg = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
+                text_dir_whole = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / "flat_text_whole"
+
+                transcription_file = None
+                if text_dir_seg.exists():
+                    transcription_file = text_dir_seg / f"{segment_id}.txt"
+                elif text_dir_whole.exists():
+                    transcription_file = text_dir_whole / f"{segment_id}.txt"
+
+                if transcription_file and transcription_file.exists():
                     has_transcription = True
                     transcription_type = "manual"  # Preprocessed text files are manual transcriptions
 
@@ -568,12 +575,18 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         # Fallback to fully preprocessed segments
         full_seg_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_video_seg{SEGMENT_DURATION}s"
 
-        # Determine which directory to use
+        # Check for whole videos (non-segmented mode)
+        whole_vid_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / "flat_video_whole"
+
+        # Determine which directory to use (priority: fast_segments > segmented > whole)
         if fast_seg_dir.exists() and (fast_seg_dir / 'segment_metadata.json').exists():
             segment_dir = fast_seg_dir
             use_fast_segments = True
         elif full_seg_dir.exists():
             segment_dir = full_seg_dir
+            use_fast_segments = False
+        elif whole_vid_dir.exists():
+            segment_dir = whole_vid_dir
             use_fast_segments = False
         else:
             self.send_json({
@@ -610,9 +623,16 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
                 transcription_type = info.type if info else "manual"
             else:
                 # Fallback: check preprocessed text directory
-                text_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
-                transcription_file = text_dir / f"{segment_id}.txt"
-                if transcription_file.exists():
+                text_dir_seg = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
+                text_dir_whole = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / "flat_text_whole"
+
+                transcription_file = None
+                if text_dir_seg.exists():
+                    transcription_file = text_dir_seg / f"{segment_id}.txt"
+                elif text_dir_whole.exists():
+                    transcription_file = text_dir_whole / f"{segment_id}.txt"
+
+                if transcription_file and transcription_file.exists():
                     has_transcription = True
                     transcription_type = "manual"  # Preprocessed text files are manual transcriptions
                     try:

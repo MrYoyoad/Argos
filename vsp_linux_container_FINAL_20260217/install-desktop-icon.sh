@@ -124,6 +124,19 @@ else
     PROBLEMS=1
 fi
 
+# Configure VLC to not show video title overlay (obscures burned subtitles)
+echo ""
+echo "  Configuring VLC..."
+VLC_DIR="${REAL_HOME}/.config/vlc"
+mkdir -p "$VLC_DIR"
+if [ -f "$VLC_DIR/vlcrc" ]; then
+    sed -i 's/^#\?video-title-show=.*/video-title-show=0/' "$VLC_DIR/vlcrc"
+    grep -q '^video-title-show=' "$VLC_DIR/vlcrc" || echo 'video-title-show=0' >> "$VLC_DIR/vlcrc"
+else
+    echo 'video-title-show=0' > "$VLC_DIR/vlcrc"
+fi
+echo "    VLC title overlay disabled (subtitles visible)"
+
 echo ""
 echo "========================================="
 echo "  Installation Complete!"

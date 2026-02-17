@@ -51,6 +51,25 @@ run_client_outputs() {
 
   echo ">>> [8] Generating segment-level reports and burned videos"
 
+  # Auto-install spaCy for full NEA/WWER metrics (falls back gracefully if offline)
+  if ! python3 -c "import spacy" 2>/dev/null; then
+    echo ">>> [8] Installing spaCy for entity metrics (one-time)..."
+    # Try local wheels first (offline/standalone)
+    local wheels_dir="${MODULE_DIR}/../spacy_wheels"
+    if [ -d "$wheels_dir" ] && ls "$wheels_dir"/spacy-*.whl &>/dev/null; then
+      pip install --no-index --find-links="$wheels_dir" spacy 2>/dev/null \
+        && pip install --no-index --find-links="$wheels_dir" en_core_web_sm 2>/dev/null \
+        && echo ">>> [8] spaCy installed from local wheels" \
+        || echo ">>> [8] Local wheel install failed — trying online..."
+    fi
+    # Fallback to online install if local failed
+    if ! python3 -c "import spacy" 2>/dev/null; then
+      pip install spacy 2>/dev/null && python3 -m spacy download en_core_web_sm 2>/dev/null \
+        && echo ">>> [8] spaCy installed successfully" \
+        || echo ">>> [8] spaCy install skipped (offline?) — using fallback metrics"
+    fi
+  fi
+
   # Generate report
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
