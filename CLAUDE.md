@@ -1996,3 +1996,5 @@ The following changes have been made to the EC2 version and need to be replicate
    - `/workspace/vsp-ui/app/server.py` — Add `setup()` for socket timeout, replace single read with chunked loop, add upload logging
    - `/workspace/vsp-ui/app/static/app.js` — Add XHR timeout (5min + 1min/100MB) and timeout event handler
 
+**Container Sync Status (Feb 17, 2026)**: Entries 22-26 have been synced to both `vsp_linux_container_FINAL_20260217/` and `vsp_docker/galaxy_export/`. All changes verified across all locations. See `BUGS_INSTALLING_CLIENT_STANDALONE.md` entries v1.0.31-v1.0.35 for details. The decode.sh fairseq auto-patch was extended to cover `repetition_penalty` in addition to `max_len` and `no_repeat_ngram_size`. spaCy install instructions documented in bug file.
+

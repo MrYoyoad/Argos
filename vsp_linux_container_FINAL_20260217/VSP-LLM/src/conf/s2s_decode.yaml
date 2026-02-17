@@ -1,0 +1,28 @@
+common:
+  user_dir: ???
+  #fp16: true
+
+generation:
+  beam: 20
+  lenpen: 0.0            # Paper's value (Section 4.2) — do not change
+  max_len_a: 2.0          # MISSION3 value: dynamic_max_len = max_len_a * src_clusters + max_len_b
+  max_len_b: 200          # MISSION3 value: buffer for short-input segments
+  max_len: 2048           # Hard cap on dynamic_max_len (0 = use model default)
+  no_repeat_ngram_size: 3 # Prevent degenerate n-gram repetitions
+  repetition_penalty: 1.2 # Mild penalty for repeating tokens (CTRL paper, Keskar 2019). 1.0=off, range 1.1-1.5
+  lm_weight: 0
+
+common_eval:
+  results_path: ???
+  path: ???
+
+dataset:
+  max_tokens: 1000
+  gen_subset: test
+  num_workers: 0
+
+override:
+  noise_prob: 0.0
+  noise_snr: 0
+  modalities: ['video']
+  llm_ckpt_path: ???

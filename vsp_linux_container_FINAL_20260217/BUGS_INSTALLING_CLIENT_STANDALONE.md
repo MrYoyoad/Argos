@@ -1,7 +1,7 @@
 # Bugs Found Installing on Client's Standalone Linux Container
 
-**Date**: February 8, 2026
-**Package**: vsp_linux_container_FINAL v1.0.0
+**Date**: February 8, 2026 (last updated February 17, 2026)
+**Package**: vsp_linux_container_FINAL_20260217 v1.0.35
 
 This document tracks all issues encountered during installation and testing on the client's standalone Linux container.
 
@@ -1420,7 +1420,69 @@ fi
 | v1.0.28 | Feb 15, 2026 | Fixed server startup: pass VSP_INPUT_DIR to container, create vsp_input dir, removed double-bash ENTRYPOINT issue, error wrapper + container logs on timeout |
 | v1.0.29 | Feb 15, 2026 | Fixed decode `total_mem` → `total_memory` typo, removed useless Open Folder buttons, added `kgx` (GNOME Console) to terminal detection |
 | v1.0.30 | Feb 15, 2026 | Moved docker.conf auto-detection from INSTALL.sh (inside container, never works) to vsp-start.sh (on host, has Docker access). Auto-finds VSP images, saves selection. |
+| v1.0.31 | Feb 17, 2026 | **Inference tuning**: Reverted max_len_a 3.0→2.0, max_len_b 300→200 (MISSION3 values). Added `repetition_penalty: 1.2` to s2s_decode.yaml. Extended decode.sh self-healing fairseq patch to also add `repetition_penalty` field. Reduces "blabla" repetitive outputs. |
+| v1.0.32 | Feb 17, 2026 | **Part naming**: Reports and burned videos now group segments by video. Multi-segment videos show "Obama - Part 1", "Obama - Part 2". Single-segment videos show just the base name. Burned video files named `Obama_Part1_with_hyp.mp4`. |
+| v1.0.33 | Feb 17, 2026 | **Lip crops in client output**: Mouth-cropped videos (88-96px) now copied to `client_outputs/lip_crops/` with Part naming. Non-critical — warns on failure, doesn't abort pipeline. |
+| v1.0.34 | Feb 17, 2026 | **NEA + Weighted WER metrics**: Reports now include Named Entity Accuracy (NEA recall/precision/F1), Weighted WER (high-value tokens penalized 2x), and missed entities. Requires `spaCy` + `en_core_web_sm` for full POS/NER analysis — falls back to basic stopword filtering without spaCy (see install instructions below). HTML report has color-coded NEA column (green/yellow/red). |
+| v1.0.35 | Feb 17, 2026 | **Upload reliability**: Added 5-minute socket timeout (`setup()` method), chunked 1MB read for large files (replaces single `rfile.read()`), server-side `[UPLOAD]` logging, and XHR timeout on client side (5min base + 1min per 100MB). Fixes silent drag-and-drop upload failures. |
 
 ---
 
-**Current Package Status**: v1.0.30 - All known bugs fixed
+## spaCy Installation (Optional — for v1.0.34 NEA Metrics)
+
+The NEA metrics in `make_report.py` use spaCy for POS tagging and Named Entity Recognition. **Without spaCy, the report still works** — it falls back to basic stopword-based content word filtering. The report header shows which mode is active.
+
+### Option A: Container Has Internet Access
+```bash
+# Activate the VSP-LLM virtual environment inside the container
+source /workspace/vsp-llm-yoad-venv/bin/activate  # or wherever the venv is
+
+pip install spacy
+python3 -m spacy download en_core_web_sm
+```
+
+### Option B: Offline Container (No Internet)
+Same pattern as existing wheel installs (torch, mediapipe, etc.):
+
+1. **On a machine with internet**, download wheels:
+```bash
+pip download spacy -d ./spacy_wheels/
+pip download en_core_web_sm -d ./spacy_wheels/ \
+  --extra-index-url https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+```
+
+2. **Copy `spacy_wheels/` folder** to the container's galaxy_export directory
+
+3. **Inside the container**, install from local wheels:
+```bash
+source /workspace/vsp-llm-yoad-venv/bin/activate
+pip install --no-index --find-links ./spacy_wheels/ spacy en_core_web_sm
+```
+
+### Verification
+```bash
+python3 -c "import spacy; nlp = spacy.load('en_core_web_sm'); print('spaCy OK')"
+```
+
+### Dependencies
+- `editdistance` — already in VSP-LLM requirements.txt (confirmed present)
+- `spaCy` + `en_core_web_sm` (~15MB total) — optional, see above
+
+---
+
+**Current Package Status**: v1.0.35 - All known bugs fixed
+
+### Files Changed in v1.0.31-v1.0.35
+
+| File | Changes | Version |
+|------|---------|---------|
+| `VSP-LLM/src/conf/s2s_decode.yaml` | max_len_a: 2.0, max_len_b: 200, added repetition_penalty: 1.2 | v1.0.31 |
+| `VSP-LLM/scripts/decode.sh` | Extended fairseq auto-patch to add repetition_penalty field | v1.0.31 |
+| `VSP-LLM/src/vsp_llm_decode.py` | Added `repetition_penalty=cfg.generation.repetition_penalty` to generate() | v1.0.31 |
+| `VSP-LLM/scripts/make_report.py` | Part naming (v1.0.32) + NEA/WWER metrics with spaCy fallback (v1.0.34) | v1.0.32, v1.0.34 |
+| `VSP-LLM/scripts/make_burn.py` | Part naming in output filenames | v1.0.32 |
+| `lib/outputs.sh` | Added lip crop copy step (inline Python, non-critical) | v1.0.33 |
+| `vsp-ui/app/server.py` | setup() timeout, chunked upload read, [UPLOAD] logging | v1.0.35 |
+| `ui/app/server.py` | setup() timeout, [UPLOAD] logging (already had chunked reads via cgi) | v1.0.35 |
+| `vsp-ui/app/static/app.js` | XHR timeout (5min + 1min/100MB) with timeout event handler | v1.0.35 |
+| `ui/app/static/app.js` | XHR timeout (5min + 1min/100MB) with timeout event handler | v1.0.35 |
