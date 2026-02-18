@@ -7,6 +7,7 @@
 #============================ 69 ============================
 
 import ast
+from datetime import datetime
 from itertools import chain
 import logging
 import math
@@ -270,6 +271,31 @@ def _main(cfg, output_file):
     fid = fid % 1000000
     result_fn = f"{cfg.common_eval.results_path}/hypo-{fid}.json"
     json.dump(result_dict, open(result_fn, 'w'), indent=4)
+
+    # Save effective decode parameters for report documentation
+    try:
+        decode_params = {
+            "beam": int(cfg.generation.beam),
+            "length_penalty": float(cfg.generation.lenpen),
+            "max_len_a": float(cfg.generation.max_len_a),
+            "max_len_b": int(cfg.generation.max_len_b),
+            "max_len": int(cfg.generation.max_len),
+            "no_repeat_ngram_size": int(cfg.generation.no_repeat_ngram_size),
+            "repetition_penalty": float(cfg.generation.repetition_penalty),
+            "lm_weight": float(cfg.generation.lm_weight),
+            "max_tokens": int(cfg.dataset.max_tokens),
+            "gpu_mem_gb": round(gpu_mem_gb, 1),
+            "small_gpu": small_gpu,
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "model_checkpoint": str(cfg.common_eval.path),
+            "num_segments": len(result_dict["utt_id"]),
+        }
+        params_fn = f"{cfg.common_eval.results_path}/decode_params-{fid}.json"
+        json.dump(decode_params, open(params_fn, 'w'), indent=2)
+        logger.info(f"Saved decode params to {params_fn}")
+    except Exception as e:
+        logger.warning(f"Could not save decode params: {e}")
+
     if not cfg.override.eval_bleu:
         n_err, n_total = 0, 0
         assert len(result_dict['hypo']) == len(result_dict['ref'])

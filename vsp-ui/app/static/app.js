@@ -1064,7 +1064,17 @@ async function loadGoldenModels() {
             goldenSelect.innerHTML = models
                 .map(m => {
                     const sizeMB = (m.size / (1024 * 1024)).toFixed(2);
-                    return `<option value="${m.path}">${m.name} (${sizeMB} MB)</option>`;
+                    const meta = m.metadata;
+                    let label = m.name;
+                    if (meta) {
+                        const desc = meta.label || m.name;
+                        const vids = meta.dataset ? meta.dataset.input_videos : '?';
+                        const segs = meta.dataset ? meta.dataset.total_segments : '?';
+                        label = `${desc} — ${vids} vids / ${segs} segs (${sizeMB} MB)`;
+                    } else {
+                        label = `${m.name} (${sizeMB} MB)`;
+                    }
+                    return `<option value="${m.path}" title="${meta ? (meta.description || '') : ''}">${label}</option>`;
                 })
                 .join('');
             goldenSelect.disabled = false;

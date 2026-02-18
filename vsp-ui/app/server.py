@@ -309,7 +309,7 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         return segments
 
     def handle_list_golden_models(self):
-        """List all available golden k-means models."""
+        """List all available golden k-means models with metadata."""
         try:
             golden_dir = Path.home() / "VSP-LLM" / "golden_kmeans"
             models = []
@@ -317,12 +317,19 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             if golden_dir.exists():
                 for model_file in sorted(golden_dir.glob("*.bin")):
                     stat = model_file.stat()
-                    models.append({
+                    entry = {
                         "name": model_file.name,
                         "path": str(model_file),
                         "size": stat.st_size,
                         "created": stat.st_mtime
-                    })
+                    }
+                    # Load companion metadata JSON if it exists
+                    meta_file = model_file.with_suffix(".json")
+                    if meta_file.exists():
+                        import json as _json
+                        with open(meta_file) as f:
+                            entry["metadata"] = _json.load(f)
+                    models.append(entry)
 
             self.send_json({"models": models})
         except Exception as e:

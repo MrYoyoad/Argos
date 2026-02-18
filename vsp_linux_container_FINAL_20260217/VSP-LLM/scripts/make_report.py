@@ -98,9 +98,9 @@ th{background:#f5f5f5; text-align:left}
 .ok{color:#0a7a0a; font-weight:700}
 .rep{color:#b58900; font-weight:800}
 .ins{color:#b00020; font-weight:800}
-.nea-green{background:#d4edda; color:#155724; font-weight:700; text-align:center}
-.nea-yellow{background:#fff3cd; color:#856404; font-weight:700; text-align:center}
-.nea-red{background:#f8d7da; color:#721c24; font-weight:700; text-align:center}
+.m-green{background:#d4edda; color:#155724; font-weight:700; text-align:center}
+.m-yellow{background:#fff3cd; color:#856404; font-weight:700; text-align:center}
+.m-red{background:#f8d7da; color:#721c24; font-weight:700; text-align:center}
 small{color:#555}
 pre{white-space:pre-wrap; word-break:break-word; margin:0}
 .summary{background:#e9ecef; padding:12px; border-radius:6px; margin-bottom:16px}
@@ -164,13 +164,22 @@ def _classify_token_spacy(token) -> str:
     return "low"
 
 
+_NUMBER_WORDS = frozenset(
+    "zero one two three four five six seven eight nine ten eleven twelve "
+    "thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty "
+    "thirty forty fifty sixty seventy eighty ninety hundred thousand million "
+    "billion trillion first second third fourth fifth sixth seventh eighth "
+    "ninth tenth once twice double triple half quarter".split()
+)
+
+
 def _classify_token_basic(word: str) -> str:
     """Classify a word without spaCy (stopword-based fallback)."""
     w = word.lower().strip()
     if not w:
         return "low"
-    # Numbers and words starting with uppercase-like patterns → high
-    if w.isdigit() or re.match(r'^[0-9]', w):
+    # Digits, digit-prefixed tokens, and number words → high
+    if w.isdigit() or re.match(r'^[0-9]', w) or w in _NUMBER_WORDS:
         return "high"
     if w in _STOPWORDS:
         return "low"
@@ -225,6 +234,8 @@ def nea_metrics(ref: str, hyp: str) -> MetricsResult:
     Compute Named Entity Accuracy (NEA) metrics.
 
     NEA focuses on high-value tokens (proper nouns, numbers, named entities).
+    When the reference has no high-value tokens, falls back to content words
+    (nouns, verbs, adjectives, adverbs) so the metric stays meaningful.
     - Recall: how many important ref words appear in hyp
     - Precision: how much of hyp's important content is real
     - F1: harmonic mean
@@ -235,17 +246,26 @@ def nea_metrics(ref: str, hyp: str) -> MetricsResult:
     ref_high = [w for w, c in ref_classified if c == "high"]
     hyp_high = [w for w, c in hyp_classified if c == "high"]
 
-    if not ref_high and not hyp_high:
+    # When ref has no high-value tokens, fall back to content words (high + med)
+    # so we don't trivially return 100% for completely wrong outputs
+    if ref_high:
+        ref_important = ref_high
+        hyp_important = hyp_high
+    else:
+        ref_important = [w for w, c in ref_classified if c in ("high", "med")]
+        hyp_important = [w for w, c in hyp_classified if c in ("high", "med")]
+
+    if not ref_important and not hyp_important:
         return MetricsResult(0.0, 100.0, 100.0, 100.0, [], _metrics_mode())
 
-    ref_high_set = set(ref_high)
-    hyp_high_set = set(hyp_high)
+    ref_set = set(ref_important)
+    hyp_set = set(hyp_important)
 
-    matched = ref_high_set & hyp_high_set
-    missed = sorted(ref_high_set - hyp_high_set)
+    matched = ref_set & hyp_set
+    missed = sorted(ref_set - hyp_set)
 
-    recall = (len(matched) / len(ref_high_set) * 100) if ref_high_set else 100.0
-    precision = (len(matched) / len(hyp_high_set) * 100) if hyp_high_set else 100.0
+    recall = (len(matched) / len(ref_set) * 100) if ref_set else 100.0
+    precision = (len(matched) / len(hyp_set) * 100) if hyp_set else 100.0
     f1 = (2 * recall * precision / (recall + precision)) if (recall + precision) > 0 else 0.0
 
     return MetricsResult(0.0, recall, precision, f1, missed, _metrics_mode())
@@ -309,20 +329,22 @@ def compute_all_metrics(ref: str, hyp: str) -> MetricsResult:
     return nea
 
 
-def nea_color(nea_recall: float, wer: float) -> str:
-    """
-    Data-driven coloring: compare NEA recall to word accuracy.
-    Green: entities preserved at least as well as average words.
-    Yellow: slight entity loss (within 10 points).
-    Red: disproportionate entity loss (>10 points below word accuracy).
-    """
-    word_accuracy = max(0.0, 100.0 - wer)
-    if nea_recall >= word_accuracy:
+def _error_color(error_pct: float) -> str:
+    """Color for error-rate metrics (WER, WWER) — lower is better."""
+    if error_pct <= 30:
         return "green"
-    elif nea_recall >= word_accuracy - 10:
+    elif error_pct <= 60:
         return "yellow"
-    else:
-        return "red"
+    return "red"
+
+
+def _recall_color(recall_pct: float) -> str:
+    """Color for recall/accuracy metrics (NEA) — higher is better."""
+    if recall_pct >= 70:
+        return "green"
+    elif recall_pct >= 40:
+        return "yellow"
+    return "red"
 
 
 # -----------------------
@@ -498,6 +520,79 @@ def load_records(path: Path) -> List[Rec]:
 
 
 # -----------------------
+# Run parameters formatting (optional, for documentation)
+# -----------------------
+
+def _format_params_txt(params: Dict[str, Any]) -> str:
+    """Format decode parameters as a plain-text header block."""
+    lines = ["=== Run Parameters ==="]
+    lines.append(f"beam: {params.get('beam', '?')} | length_penalty: {params.get('length_penalty', '?')} | repetition_penalty: {params.get('repetition_penalty', '?')}")
+    lines.append(f"max_len: {params.get('max_len_a', '?')} * src + {params.get('max_len_b', '?')} (cap {params.get('max_len', '?')}) | no_repeat_ngram: {params.get('no_repeat_ngram_size', '?')}")
+    lines.append(f"lm_weight: {params.get('lm_weight', '?')} | max_tokens: {params.get('max_tokens', '?')} | GPU: {params.get('gpu_mem_gb', '?')} GB{' (small)' if params.get('small_gpu') else ''}")
+    ckpt = params.get('model_checkpoint', '')
+    if ckpt:
+        lines.append(f"Model: .../{Path(ckpt).name}" if '/' in ckpt else f"Model: {ckpt}")
+    ts = params.get('timestamp', '')
+    segs = params.get('num_segments', '')
+    if ts or segs:
+        parts = []
+        if ts:
+            parts.append(f"Decoded: {ts}")
+        if segs:
+            parts.append(f"Segments: {segs}")
+        lines.append(" | ".join(parts))
+    lines.append("=" * 23)
+    return "\n".join(lines)
+
+
+def _format_params_ansi(params: Dict[str, Any]) -> str:
+    """Format decode parameters as an ANSI-colored header block."""
+    dim = ANSI['dim']
+    rst = ANSI['reset']
+    txt = _format_params_txt(params)
+    # Dim the border lines, keep content normal
+    out_lines = []
+    for line in txt.split("\n"):
+        if line.startswith("="):
+            out_lines.append(f"{dim}{line}{rst}")
+        else:
+            out_lines.append(f"{dim}{line.split(':')[0]}:{rst}{':'.join(line.split(':')[1:])}" if ':' in line else line)
+    return "\n".join(out_lines)
+
+
+def _format_params_html(params: Dict[str, Any]) -> str:
+    """Format decode parameters as an HTML box."""
+    rows = []
+    rows.append(f"<b>beam:</b> {escape(str(params.get('beam', '?')))}")
+    rows.append(f"<b>length_penalty:</b> {escape(str(params.get('length_penalty', '?')))}")
+    rows.append(f"<b>repetition_penalty:</b> {escape(str(params.get('repetition_penalty', '?')))}")
+    rows.append(f"<b>max_len:</b> {escape(str(params.get('max_len_a', '?')))} &times; src + {escape(str(params.get('max_len_b', '?')))} (cap {escape(str(params.get('max_len', '?')))})")
+    rows.append(f"<b>no_repeat_ngram:</b> {escape(str(params.get('no_repeat_ngram_size', '?')))}")
+    rows.append(f"<b>lm_weight:</b> {escape(str(params.get('lm_weight', '?')))}")
+    rows.append(f"<b>max_tokens:</b> {escape(str(params.get('max_tokens', '?')))}")
+    gpu = params.get('gpu_mem_gb', '')
+    if gpu:
+        rows.append(f"<b>GPU:</b> {escape(str(gpu))} GB{' (small)' if params.get('small_gpu') else ''}")
+    ckpt = params.get('model_checkpoint', '')
+    if ckpt:
+        name = Path(ckpt).name if '/' in ckpt else ckpt
+        rows.append(f"<b>Model:</b> {escape(name)}")
+    ts = params.get('timestamp', '')
+    if ts:
+        rows.append(f"<b>Decoded:</b> {escape(ts)}")
+    segs = params.get('num_segments', '')
+    if segs:
+        rows.append(f"<b>Segments:</b> {escape(str(segs))}")
+
+    return (
+        '<div class="summary" style="font-size:0.9em">'
+        '<b>Run Parameters</b><br>'
+        + " &nbsp;|&nbsp; ".join(rows)
+        + '</div>'
+    )
+
+
+# -----------------------
 # Main
 # -----------------------
 
@@ -505,10 +600,20 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--jsonl", required=True, help="decode outputs (.jsonl OR hypo-*.json)")
     ap.add_argument("--out_dir", required=True)
+    ap.add_argument("--params", default=None, help="decode_params JSON file (optional)")
     args = ap.parse_args()
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load run parameters (optional — backward compatible)
+    run_params: Optional[Dict[str, Any]] = None
+    if args.params:
+        try:
+            run_params = json.loads(Path(args.params).read_text())
+            print(f"[INFO] Loaded run parameters from {args.params}")
+        except Exception as e:
+            print(f"[WARN] Could not load params file {args.params}: {e}")
 
     recs = load_records(Path(args.jsonl))
     if not recs:
@@ -528,6 +633,7 @@ def main() -> None:
     ansi_blocks = []
 
     # Accumulators for overall summary
+    total_wer_num = 0.0
     total_wwer_num = 0.0
     total_wwer_den = 0.0
     total_nea_recall = 0.0
@@ -544,12 +650,12 @@ def main() -> None:
         has_ref = bool(ref.strip())
         if has_ref:
             m = compute_all_metrics(ref, hyp)
-            # Compute simple WER for color comparison
+            # Compute simple WER
             r_toks = toks(ref)
             h_toks = toks(hyp)
             simple_wer = (editdistance.eval(h_toks, r_toks) / len(r_toks) * 100) if r_toks else 0.0
-            color = nea_color(m.nea_recall, simple_wer)
 
+            total_wer_num += simple_wer
             total_wwer_num += m.wwer
             total_nea_recall += m.nea_recall
             total_nea_f1 += m.nea_f1
@@ -557,48 +663,49 @@ def main() -> None:
         else:
             m = None
             simple_wer = 0.0
-            color = "green"
 
         # CSV row
         if m:
             rows_csv.append((
                 r.utt_id, dname, ref, hyp,
                 " ".join([f"{w}:{t}" for w, t in tagged]),
-                f"{m.wwer:.1f}", f"{m.nea_recall:.1f}", f"{m.nea_precision:.1f}",
+                f"{simple_wer:.1f}", f"{m.wwer:.1f}", f"{m.nea_recall:.1f}", f"{m.nea_precision:.1f}",
                 f"{m.nea_f1:.1f}", ", ".join(m.missed_entities) if m.missed_entities else ""
             ))
         else:
             rows_csv.append((
                 r.utt_id, dname, ref, hyp,
                 " ".join([f"{w}:{t}" for w, t in tagged]),
-                "", "", "", "", ""
+                "", "", "", "", "", ""
             ))
 
-        # HTML row
-        nea_cell = ""
+        # HTML row — consistent coloring on all metric cells
+        metrics_cells = ""
         if m:
-            css = f"nea-{color}"
+            wer_css = f"m-{_error_color(simple_wer)}"
+            wwer_css = f"m-{_error_color(m.wwer)}"
+            nea_css = f"m-{_recall_color(m.nea_recall)}"
             missed_tip = f' title="Missed: {escape(", ".join(m.missed_entities))}"' if m.missed_entities else ""
-            nea_cell = (
-                f'<td class="{css}"{missed_tip}>'
-                f'{m.nea_recall:.0f}%</td>'
-                f'<td style="text-align:center">{m.wwer:.1f}%</td>'
+            metrics_cells = (
+                f'<td class="{wer_css}">{simple_wer:.1f}%</td>'
+                f'<td class="{wwer_css}">{m.wwer:.1f}%</td>'
+                f'<td class="{nea_css}"{missed_tip}>{m.nea_recall:.0f}%</td>'
             )
         else:
-            nea_cell = '<td>-</td><td>-</td>'
+            metrics_cells = '<td>-</td><td>-</td><td>-</td>'
 
         html_rows.append(
             f"<tr><td><b>{escape(dname)}</b><br>"
             f"<small>{escape(r.utt_id)}</small></td>"
             f"<td><pre>{escape(ref)}</pre></td>"
             f"<td><pre>{hyp_html(tagged)}</pre></td>"
-            f"{nea_cell}</tr>"
+            f"{metrics_cells}</tr>"
         )
 
         # Plain text block
         metrics_line = ""
         if m:
-            metrics_line = f"WWER: {m.wwer:.1f}% | NEA: R={m.nea_recall:.0f}% P={m.nea_precision:.0f}% F1={m.nea_f1:.0f}%"
+            metrics_line = f"WER: {simple_wer:.1f}% | WWER: {m.wwer:.1f}% | NEA: R={m.nea_recall:.0f}% P={m.nea_precision:.0f}% F1={m.nea_f1:.0f}%"
             if m.missed_entities:
                 metrics_line += f" | Missed: [{', '.join(m.missed_entities)}]"
             metrics_line = f"\n{metrics_line}"
@@ -611,13 +718,17 @@ def main() -> None:
             f"{block_sep()}"
         )
 
-        # ANSI block
+        # ANSI block — consistent coloring on all metrics
         ansi_metrics = ""
         if m:
-            c = {"green": ANSI["ok"], "yellow": ANSI["rep"], "red": ANSI["ins"]}
+            ac = {"green": ANSI["ok"], "yellow": ANSI["rep"], "red": ANSI["ins"]}
+            wer_c = ac[_error_color(simple_wer)]
+            wwer_c = ac[_error_color(m.wwer)]
+            nea_c = ac[_recall_color(m.nea_recall)]
             ansi_metrics = (
-                f"\n{ANSI['dim']}WWER:{ANSI['reset']} {m.wwer:.1f}% | "
-                f"{c.get(color, '')}"
+                f"\n{ANSI['dim']}WER:{ANSI['reset']} {wer_c}{simple_wer:.1f}%{ANSI['reset']} | "
+                f"{ANSI['dim']}WWER:{ANSI['reset']} {wwer_c}{m.wwer:.1f}%{ANSI['reset']} | "
+                f"{nea_c}"
                 f"NEA: R={m.nea_recall:.0f}% P={m.nea_precision:.0f}% F1={m.nea_f1:.0f}%"
                 f"{ANSI['reset']}"
             )
@@ -634,44 +745,53 @@ def main() -> None:
 
     # Overall summary
     if n_with_ref > 0:
+        avg_wer = total_wer_num / n_with_ref
         avg_wwer = total_wwer_num / n_with_ref
         avg_nea_recall = total_nea_recall / n_with_ref
         avg_nea_f1 = total_nea_f1 / n_with_ref
-        summary = f"OVERALL | WWER: {avg_wwer:.1f}% | NEA Recall: {avg_nea_recall:.0f}% | NEA F1: {avg_nea_f1:.0f}% | Mode: {_metrics_mode()} | Segments: {n_with_ref}"
+        summary = f"OVERALL | WER: {avg_wer:.1f}% | WWER: {avg_wwer:.1f}% | NEA Recall: {avg_nea_recall:.0f}% | NEA F1: {avg_nea_f1:.0f}% | Mode: {_metrics_mode()} | Segments: {n_with_ref}"
     else:
         summary = "OVERALL | No reference transcriptions available for metrics"
 
-    # Write CSV
+    # Write CSV (params go to a separate JSON to keep CSV clean)
     with open(out_dir / "report.csv", "w", newline="", encoding="utf-8") as cf:
         w = csv.writer(cf)
         w.writerow(["utt_id", "display_name", "ref", "hyp", "hyp_tagged",
-                     "wwer_%", "nea_recall_%", "nea_precision_%", "nea_f1_%", "missed_entities"])
+                     "wer_%", "wwer_%", "nea_recall_%", "nea_precision_%", "nea_f1_%", "missed_entities"])
         w.writerows(rows_csv)
 
+    if run_params:
+        (out_dir / "report_params.json").write_text(
+            json.dumps(run_params, indent=2), encoding="utf-8"
+        )
+
     # Write HTML
+    html_params = _format_params_html(run_params) if run_params else ""
     html_summary = f'<div class="summary"><b>{escape(summary)}</b></div>'
     html_table = (
         '<table>\n'
         '<tr><th>ID</th><th>Reference</th><th>Hypothesis (colored)</th>'
-        '<th>NEA Recall</th><th>WWER</th></tr>\n'
+        '<th>WER</th><th>WWER</th><th>NEA Recall</th></tr>\n'
         + "\n".join(html_rows)
     )
     (out_dir / "report.html").write_text(
-        HTML_HEAD + html_summary + html_table + HTML_TAIL,
+        HTML_HEAD + html_params + html_summary + html_table + HTML_TAIL,
         encoding="utf-8"
     )
 
     # Write plain txt
+    txt_params = (_format_params_txt(run_params) + "\n") if run_params else ""
     (out_dir / "report.txt").write_text(
-        summary + "\n" + block_sep() + "\n"
+        txt_params + summary + "\n" + block_sep() + "\n"
         + "\n".join(txt_blocks) + "\n(END)\n",
         encoding="utf-8"
     )
 
     # Write ANSI txt
+    ansi_params = (_format_params_ansi(run_params) + "\n") if run_params else ""
     ansi_summary = f"{ANSI['ok']}{summary}{ANSI['reset']}"
     (out_dir / "report.ansi.txt").write_text(
-        ansi_summary + "\n" + f"{ANSI['dim']}{block_sep()}{ANSI['reset']}\n"
+        ansi_params + ansi_summary + "\n" + f"{ANSI['dim']}{block_sep()}{ANSI['reset']}\n"
         + "\n".join(ansi_blocks) + f"\n{ANSI['dim']}(END){ANSI['reset']}\n",
         encoding="utf-8"
     )
@@ -681,6 +801,8 @@ def main() -> None:
     print("Wrote:", out_dir / "report.html")
     print("Wrote:", out_dir / "report.ansi.txt")
     print("Wrote:", out_dir / "report.txt")
+    if run_params:
+        print("Wrote:", out_dir / "report_params.json")
     print("Tip: view ANSI with: less -R report.ansi.txt")
 
 

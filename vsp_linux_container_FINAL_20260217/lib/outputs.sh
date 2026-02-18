@@ -70,10 +70,19 @@ run_client_outputs() {
     fi
   fi
 
+  # Find matching decode params file (if decode wrote one)
+  local params_json="${decode_json/hypo-/decode_params-}"
+  local params_arg=""
+  if [ -f "$params_json" ]; then
+    params_arg="--params $params_json"
+    echo ">>> [8] Found decode params: $params_json"
+  fi
+
   # Generate report
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
-    --out_dir "$report_dir" || {
+    --out_dir "$report_dir" \
+    $params_arg || {
     log_error "make_report.py failed"
     return 1
   }

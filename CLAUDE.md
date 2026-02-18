@@ -14,6 +14,7 @@ This CLAUDE.md is a slim hub file. Detailed documentation lives in separate file
 - **Working on pipeline stages, data formats, or segments** → read [docs/architecture.md](docs/architecture.md) first (segment naming, directory layout, data formats)
 - **Running commands, debugging, or troubleshooting** → read [docs/development-guide.md](docs/development-guide.md) first
 - **Fixing standalone container bugs** → read the relevant bugs file in `vsp_linux_container_FINAL_20260217/`
+- **Training research, LoRA tuning, or fine-tuning strategy** → read [docs/training-research-notes.md](docs/training-research-notes.md) first
 
 Do NOT rely on memory or guessing — always read the file to get exact details.
 
@@ -196,6 +197,16 @@ This project's documentation is split across focused files for easier navigation
 | [docs/architecture.md](docs/architecture.md) | Pipeline flow, directory structure, segments, data formats, dependencies |
 | [docs/development-guide.md](docs/development-guide.md) | Commands, virtual environments, workflows, testing, troubleshooting |
 | [docs/container-sync-changelog.md](docs/container-sync-changelog.md) | Pending changes 1-26 for Linux container sync (full detail) |
+| [docs/training-research-notes.md](docs/training-research-notes.md) | Training research: length distribution, LoRA rank, angle robustness, AVSpeech fine-tuning |
+| [VSP_LLM_paper_text.txt](VSP_LLM_paper_text.txt) | VSP-LLM paper full text (Yeo et al., arXiv:2402.15151v2, May 2024) |
+
+### Experimental Results
+
+| Directory | Contents |
+|-----------|----------|
+| `english_1k_results/` | 1520 AVSpeech videos, decode reports, segment metadata |
+| `english_full_results/` | 1497 segments, WER 64.1%, WWER 61.9%, full report suite |
+| `tuning_results/` | 7 decode parameter experiments (beam, lenpen, sampling, greedy) |
 
 ### Standalone Container Bug Tracking
 
