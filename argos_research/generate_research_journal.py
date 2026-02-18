@@ -105,13 +105,25 @@ def add_styled_table(doc, headers, rows, col_widths=None):
     return table
 
 
-def add_heading(doc, text, level, color=None):
+_bookmark_counter = [0]  # mutable counter for unique bookmark IDs
+
+def add_heading(doc, text, level, color=None, bookmark_id=None):
     h = doc.add_heading(text, level=level)
     if color is None:
         color = {1: C_PRIMARY, 2: C_H2, 3: C_H3, 4: C_H4}.get(level, C_PRIMARY)
     for run in h.runs:
         run.font.color.rgb = color
         run.font.name = "Calibri"
+    # Insert a bookmark so TOC hyperlinks can target this heading
+    if bookmark_id:
+        _bookmark_counter[0] += 1
+        bm_start = OxmlElement("w:bookmarkStart")
+        bm_start.set(qn("w:id"), str(_bookmark_counter[0]))
+        bm_start.set(qn("w:name"), bookmark_id)
+        bm_end = OxmlElement("w:bookmarkEnd")
+        bm_end.set(qn("w:id"), str(_bookmark_counter[0]))
+        h._p.insert(0, bm_start)
+        h._p.append(bm_end)
     return h
 
 
@@ -380,42 +392,86 @@ def create_cover_page(doc):
 # TABLE OF CONTENTS
 # ═══════════════════════════════════════════════════
 
+def _add_toc_hyperlink(doc, bookmark_name, display_text, level=0):
+    """Add a clickable TOC entry that jumps to a bookmark."""
+    p = doc.add_paragraph()
+    p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.space_before = Pt(2)
+    p.paragraph_format.left_indent = Inches(0.3 * level)
+
+    # Build w:hyperlink element pointing to the bookmark
+    hyperlink = OxmlElement("w:hyperlink")
+    hyperlink.set(qn("w:anchor"), bookmark_name)
+    hyperlink.set(qn("w:history"), "1")
+
+    run_el = OxmlElement("w:r")
+    rPr = OxmlElement("w:rPr")
+    # Blue underline style for hyperlink
+    color_el = OxmlElement("w:color")
+    color_el.set(qn("w:val"), "1a3a5c")
+    rPr.append(color_el)
+    u_el = OxmlElement("w:u")
+    u_el.set(qn("w:val"), "single")
+    rPr.append(u_el)
+    sz = OxmlElement("w:sz")
+    sz.set(qn("w:val"), str(22 if level == 0 else 20))  # 11pt or 10pt
+    rPr.append(sz)
+    szCs = OxmlElement("w:szCs")
+    szCs.set(qn("w:val"), str(22 if level == 0 else 20))
+    rPr.append(szCs)
+    rFonts = OxmlElement("w:rFonts")
+    rFonts.set(qn("w:ascii"), "Calibri")
+    rFonts.set(qn("w:hAnsi"), "Calibri")
+    rPr.append(rFonts)
+    if level == 0:
+        b_el = OxmlElement("w:b")
+        rPr.append(b_el)
+    run_el.append(rPr)
+
+    text_el = OxmlElement("w:t")
+    text_el.set(qn("xml:space"), "preserve")
+    text_el.text = display_text
+    run_el.append(text_el)
+
+    hyperlink.append(run_el)
+    p._p.append(hyperlink)
+    return p
+
+
+# The chapter titles and their bookmark IDs — used by both TOC and chapter headings
+TOC_ENTRIES = [
+    ("ch1",  "1. Research Foundation & Literature Review"),
+    ("ch2",  "2. Environment & Infrastructure Setup"),
+    ("ch3",  "3. Building the Pipeline from Scratch"),
+    ("ch4",  "4. Video Normalization"),
+    ("ch5",  "5. Video Segmentation"),
+    ("ch6",  "6. Face Detection & Mouth Cropping"),
+    ("ch7",  "7. Reports & Burned Videos"),
+    ("ch8",  "8. Modular Code Refactoring"),
+    ("ch9",  "9. Web UI & Server"),
+    ("ch10", "10. Backend Services"),
+    ("ch11", "11. Docker Container & Deployment"),
+    ("ch12", "12. Performance Evaluation & Tuning"),
+    ("ch13", "13. Fine-Tuning & Training Infrastructure"),
+    ("ch14", "14. Executive Summary"),
+]
+
+
 def create_toc(doc):
     add_heading(doc, "Table of Contents", 1)
+
+    doc.add_paragraph()  # spacing
+
+    for bm_id, title in TOC_ENTRIES:
+        _add_toc_hyperlink(doc, bm_id, title, level=0)
+
+    doc.add_paragraph()  # spacing
     p = doc.add_paragraph()
-    p.paragraph_format.space_after = Pt(12)
-    run = p.add_run(
-        "This table of contents will update when you open the document in Microsoft Word "
-        "and press Ctrl+A then F9, or right-click and select 'Update Field'."
-    )
+    run = p.add_run("Click any chapter title above to jump directly to that section.")
     run.font.size = Pt(9)
     run.font.color.rgb = C_GRAY
     run.italic = True
     run.font.name = "Calibri"
-
-    # Insert TOC field
-    fld_char_begin = OxmlElement("w:fldChar")
-    fld_char_begin.set(qn("w:fldCharType"), "begin")
-    instr_text = OxmlElement("w:instrText")
-    instr_text.set(qn("xml:space"), "preserve")
-    instr_text.text = ' TOC \\o "1-3" \\h \\z \\u '
-    fld_char_separate = OxmlElement("w:fldChar")
-    fld_char_separate.set(qn("w:fldCharType"), "separate")
-    fld_char_end = OxmlElement("w:fldChar")
-    fld_char_end.set(qn("w:fldCharType"), "end")
-
-    p2 = doc.add_paragraph()
-    r = p2.add_run()
-    r._r.append(fld_char_begin)
-    r2 = p2.add_run()
-    r2._r.append(instr_text)
-    r3 = p2.add_run()
-    r3._r.append(fld_char_separate)
-    r4 = p2.add_run("[Table of Contents — Update in Word]")
-    r4.font.color.rgb = C_GRAY
-    r4.font.size = Pt(10)
-    r5 = p2.add_run()
-    r5._r.append(fld_char_end)
 
     doc.add_page_break()
 
@@ -425,7 +481,7 @@ def create_toc(doc):
 # ═══════════════════════════════════════════════════
 
 def chapter_1(doc):
-    add_heading(doc, "1. Research Foundation & Literature Review", 1)
+    add_heading(doc, "1. Research Foundation & Literature Review", 1, bookmark_id="ch1")
 
     # 1.1 Team
     add_heading(doc, "1.1 Team & Project Inception", 2)
@@ -662,7 +718,7 @@ def chapter_1(doc):
 # ═══════════════════════════════════════════════════
 
 def chapter_2(doc):
-    add_heading(doc, "2. Environment & Infrastructure Setup", 1)
+    add_heading(doc, "2. Environment & Infrastructure Setup", 1, bookmark_id="ch2")
 
     add_para(doc, (
         "Setting up the infrastructure for Argos was one of the most time-consuming aspects of the project. "
@@ -824,7 +880,7 @@ def chapter_2(doc):
 # ═══════════════════════════════════════════════════
 
 def chapter_3(doc):
-    add_heading(doc, "3. Building the Pipeline from Scratch", 1)
+    add_heading(doc, "3. Building the Pipeline from Scratch", 1, bookmark_id="ch3")
 
     # 3.1 The Gap
     add_heading(doc, "3.1 The Gap: No Pipeline Existed", 2)
@@ -988,7 +1044,7 @@ def chapter_3(doc):
 # ═══════════════════════════════════════════════════
 
 def chapter_4(doc):
-    add_heading(doc, "4. Video Normalization", 1)
+    add_heading(doc, "4. Video Normalization", 1, bookmark_id="ch4")
 
     add_para(doc, (
         "Real-world video files arrive in an enormous variety of formats: different codecs (H.264, H.265, VP9, AV1), "
@@ -1135,7 +1191,7 @@ def chapter_4(doc):
 
 
 def chapter_5(doc):
-    add_heading(doc, "5. Video Segmentation", 1)
+    add_heading(doc, "5. Video Segmentation", 1, bookmark_id="ch5")
 
     add_para(doc, (
         "The VSP-LLM model processes video in fixed-length windows. Input segments that are too long "
@@ -1257,7 +1313,7 @@ def chapter_5(doc):
 
 
 def chapter_6(doc):
-    add_heading(doc, "6. Face Detection & Mouth Cropping", 1)
+    add_heading(doc, "6. Face Detection & Mouth Cropping", 1, bookmark_id="ch6")
 
     add_para(doc, (
         "The VSP-LLM model requires tightly-cropped mouth region videos as input — specifically, 88x88 pixel "
@@ -1391,7 +1447,7 @@ def chapter_6(doc):
     doc.add_page_break()
 
 def chapter_7(doc):
-    add_heading(doc, "7. Reports & Burned Videos", 1)
+    add_heading(doc, "7. Reports & Burned Videos", 1, bookmark_id="ch7")
 
     add_para(doc, (
         "A key differentiator of the Argos system is its comprehensive output generation. Rather than "
@@ -1560,7 +1616,7 @@ def chapter_7(doc):
 
 
 def chapter_8(doc):
-    add_heading(doc, "8. Modular Code Refactoring", 1)
+    add_heading(doc, "8. Modular Code Refactoring", 1, bookmark_id="ch8")
 
     add_para(doc, (
         "By version 6, the pipeline script had grown to 823 lines of monolithic bash code. All stages, "
@@ -1702,7 +1758,7 @@ def chapter_8(doc):
     doc.add_page_break()
 
 def chapter_9(doc):
-    add_heading(doc, "9. Web UI & Server", 1)
+    add_heading(doc, "9. Web UI & Server", 1, bookmark_id="ch9")
 
     add_para(doc, (
         "The Argos web interface was built to make the pipeline accessible to non-technical users who need "
@@ -1875,7 +1931,7 @@ def chapter_9(doc):
 
 
 def chapter_10(doc):
-    add_heading(doc, "10. Backend Services", 1)
+    add_heading(doc, "10. Backend Services", 1, bookmark_id="ch10")
 
     add_para(doc, (
         "The web UI's backend is organized into four service modules, each handling a distinct aspect "
@@ -2030,7 +2086,7 @@ def chapter_10(doc):
 
 
 def chapter_11(doc):
-    add_heading(doc, "11. Docker Container & Deployment", 1)
+    add_heading(doc, "11. Docker Container & Deployment", 1, bookmark_id="ch11")
 
     add_para(doc, (
         "Deploying Argos to production machines required packaging the entire system — three Python repos, "
@@ -2219,7 +2275,7 @@ def chapter_11(doc):
     doc.add_page_break()
 
 def chapter_12(doc):
-    add_heading(doc, "12. Performance Evaluation & Tuning", 1)
+    add_heading(doc, "12. Performance Evaluation & Tuning", 1, bookmark_id="ch12")
 
     add_para(doc, (
         "Evaluating the Argos system's performance required processing a large dataset of real-world videos, "
@@ -2416,7 +2472,7 @@ def chapter_12(doc):
 
 
 def chapter_13(doc):
-    add_heading(doc, "13. Fine-Tuning & Training Infrastructure", 1)
+    add_heading(doc, "13. Fine-Tuning & Training Infrastructure", 1, bookmark_id="ch13")
 
     add_para(doc, (
         "Based on the evaluation results (Chapter 12), fine-tuning the model on in-domain AVSpeech data "
@@ -2563,7 +2619,7 @@ def chapter_13(doc):
 
 
 def chapter_14(doc):
-    add_heading(doc, "14. Executive Summary", 1)
+    add_heading(doc, "14. Executive Summary", 1, bookmark_id="ch14")
 
     add_para(doc, (
         "This chapter provides a high-level overview of the Argos project's scope, deliverables, "
