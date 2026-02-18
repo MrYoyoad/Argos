@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Argos R&D Research Journal — Comprehensive Word Document Generator (v2)
+Argos — The Orchard — Comprehensive R&D Document Generator (v2)
 
 Generates a detailed, chapter-based research documentation Word document
 covering ALL work done on the Argos visual speech processing project.
@@ -27,6 +27,10 @@ from docx.oxml import parse_xml, OxmlElement
 # ── Output ──
 OUTPUT_DIR = Path(__file__).parent
 OUTPUT_FILE = OUTPUT_DIR / "research_documentation.docx"
+
+# ── Logos ──
+LOGO_ORCHARD = OUTPUT_DIR / "logo.png"       # HaPardes tree logo (headers)
+LOGO_PEACOCK = OUTPUT_DIR / "peacock.png"     # Peacock mascot (cover page)
 
 # ── Colors ──
 C_PRIMARY = RGBColor(0x1a, 0x3a, 0x5c)
@@ -180,19 +184,103 @@ def add_code_block(doc, code_text, language=""):
     return p
 
 
+def _build_inline_image_xml(rId, cx, cy, pic_id=1, name="Logo"):
+    """Build the WordprocessingML XML for an inline image."""
+    inline = OxmlElement('wp:inline')
+    inline.set('distT', '0')
+    inline.set('distB', '0')
+    inline.set('distL', '0')
+    inline.set('distR', '0')
+
+    extent = OxmlElement('wp:extent')
+    extent.set('cx', str(cx))
+    extent.set('cy', str(cy))
+    inline.append(extent)
+
+    docPr = OxmlElement('wp:docPr')
+    docPr.set('id', str(pic_id))
+    docPr.set('name', name)
+    inline.append(docPr)
+
+    graphic = OxmlElement('a:graphic')
+    graphicData = OxmlElement('a:graphicData')
+    graphicData.set('uri', 'http://schemas.openxmlformats.org/drawingml/2006/picture')
+
+    pic = OxmlElement('pic:pic')
+    nvPicPr = OxmlElement('pic:nvPicPr')
+    cNvPr = OxmlElement('pic:cNvPr')
+    cNvPr.set('id', '0')
+    cNvPr.set('name', name)
+    nvPicPr.append(cNvPr)
+    cNvPicPr = OxmlElement('pic:cNvPicPr')
+    nvPicPr.append(cNvPicPr)
+    pic.append(nvPicPr)
+
+    blipFill = OxmlElement('pic:blipFill')
+    blip = OxmlElement('a:blip')
+    blip.set(qn('r:embed'), rId)
+    blipFill.append(blip)
+    stretch = OxmlElement('a:stretch')
+    fillRect = OxmlElement('a:fillRect')
+    stretch.append(fillRect)
+    blipFill.append(stretch)
+    pic.append(blipFill)
+
+    spPr = OxmlElement('pic:spPr')
+    xfrm = OxmlElement('a:xfrm')
+    off = OxmlElement('a:off')
+    off.set('x', '0')
+    off.set('y', '0')
+    xfrm.append(off)
+    ext_el = OxmlElement('a:ext')
+    ext_el.set('cx', str(cx))
+    ext_el.set('cy', str(cy))
+    xfrm.append(ext_el)
+    spPr.append(xfrm)
+    prstGeom = OxmlElement('a:prstGeom')
+    prstGeom.set('prst', 'rect')
+    spPr.append(prstGeom)
+    pic.append(spPr)
+
+    graphicData.append(pic)
+    graphic.append(graphicData)
+    inline.append(graphic)
+
+    drawing = OxmlElement('w:drawing')
+    drawing.append(inline)
+    return drawing
+
+
 def add_header_footer(doc):
+    from docx.opc.constants import RELATIONSHIP_TYPE as RT
+
     section = doc.sections[0]
     section.different_first_page_header_footer = True
 
     header = section.header
     header.is_linked_to_previous = False
     hp = header.paragraphs[0]
-    hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    run = hp.add_run("Argos R&D Research Journal  |  INTERNAL")
+
+    # Add Orchard logo to header (left side) if file exists
+    if LOGO_ORCHARD.exists():
+        # Get image part from package, relate to header part
+        image_part = doc.part.package.get_or_add_image_part(str(LOGO_ORCHARD))
+        rId = header.part.relate_to(image_part, RT.IMAGE)
+        # Logo is 300x300px square — render at 0.3 inches in header
+        size_emu = int(0.3 * 914400)  # 0.3 inches in EMU
+        logo_run = hp.add_run()
+        drawing = _build_inline_image_xml(rId, size_emu, size_emu, pic_id=10, name="Header Logo")
+        logo_run._r.append(drawing)
+        hp.add_run("  ")  # spacer
+
+    run = hp.add_run("Argos — The Orchard  |  INTERNAL")
     run.font.size = Pt(8)
     run.font.color.rgb = C_GRAY
     run.font.name = "Calibri"
     run.italic = True
+
+    # Right-align the whole header paragraph
+    hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
     footer = section.footer
     footer.is_linked_to_previous = False
@@ -219,8 +307,17 @@ def add_header_footer(doc):
 # ═══════════════════════════════════════════════════
 
 def create_cover_page(doc):
-    for _ in range(3):
+    for _ in range(2):
         doc.add_paragraph()
+
+    # Peacock mascot logo on cover
+    if LOGO_PEACOCK.exists():
+        p_logo = doc.add_paragraph()
+        p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run_logo = p_logo.add_run()
+        run_logo.add_picture(str(LOGO_PEACOCK), width=Inches(2.5))
+
+    doc.add_paragraph()
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -239,7 +336,7 @@ def create_cover_page(doc):
 
     p3 = doc.add_paragraph()
     p3.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run3 = p3.add_run("R&D Research Journal")
+    run3 = p3.add_run("The Orchard")
     run3.font.size = Pt(20)
     run3.font.color.rgb = C_H2
     run3.font.name = "Calibri"
@@ -254,7 +351,7 @@ def create_cover_page(doc):
     run4.italic = True
     run4.font.name = "Calibri"
 
-    for _ in range(3):
+    for _ in range(2):
         doc.add_paragraph()
 
     info_lines = [
@@ -2626,7 +2723,7 @@ def chapter_14(doc):
 # ═══════════════════════════════════════════════════
 
 def main():
-    print("Generating Argos R&D Research Journal (Detailed Edition v2)...")
+    print("Generating Argos — The Orchard (Detailed Edition v2)...")
     doc = Document()
 
     # Page setup
