@@ -426,10 +426,8 @@ def create_cover_page(doc):
     for _ in range(2):
         doc.add_paragraph()
     if LOGO_PEACOCK.exists():
-        p_logo = doc.add_paragraph()
-        p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run_logo = p_logo.add_run()
-        run_logo.add_picture(str(LOGO_PEACOCK), width=Inches(2.5))
+        doc.add_picture(str(LOGO_PEACOCK), width=Inches(2.5))
+        doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
     doc.add_paragraph()
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -444,6 +442,12 @@ def create_cover_page(doc):
     p3.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run3 = p3.add_run("The Orchard")
     run3.font.size = Pt(20); run3.font.color.rgb = C_H2; run3.font.name = "Calibri"
+    doc.add_paragraph()
+    p_author = doc.add_paragraph()
+    p_author.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_author = p_author.add_run("Yoad Oxman")
+    run_author.font.size = Pt(14); run_author.font.color.rgb = C_DARK
+    run_author.font.name = "Calibri"
     doc.add_paragraph()
     for label, value in [
         ("Metrics covered: ", "WER, WWER, NEA (Recall/Precision/F1), Word Alignment"),
