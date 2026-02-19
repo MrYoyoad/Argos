@@ -40,6 +40,7 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+!scripts/build/
 .pytest_cache/
 .coverage
 htmlcov/
@@ -104,12 +105,30 @@ secrets/
 
 # ---------- User-Specific Config ----------
 .bash_history
+.bash_logout
+.bashrc
+.profile
 .python_history
 .claude/
+.claude.json
+.claude.json.backup
+.copilot/
 .docker/
 .config/
+.dotnet/
+.git-credentials
+.gitconfig
+.ipython/
+.jupyter/
 .local/
 .gnupg/
+.nv/
+.sudo_as_admin_successful
+.uniface/
+.viminfo
+.vscode-server/
+.vsp-ui.log
+.vsp-ui.pid
 .wget-hsts
 .lesshst
 
@@ -186,5 +205,7 @@ yarn-error.log*
 # Exception: Small reference files
 !reference/*.pkl
 !configs/*.pkl
-.git-backup
-.git-old-backup
+
+# ---------- Git Backup Directories ----------
+.git-backup/
+.git-old-backup/

@@ -1,0 +1,6 @@
+pyzmq 26.4.0 https://github.com/zeromq/pyzmq
+bokeh 3.7.3 https://github.com/bokeh/bokeh
+autocommand 2.2.2 https://github.com/Lucretiel/autocommand
+matplotlib 3.10.3 https://github.com/matplotlib/matplotlib
+fqdn 1.5.1 https://github.com/ypcrts/fqdn
+certifi 2025.4.26 https://github.com/certifi/python-certifi

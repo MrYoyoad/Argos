@@ -15,6 +15,7 @@ This CLAUDE.md is a slim hub file. Detailed documentation lives in separate file
 - **Running commands, debugging, or troubleshooting** → read [docs/development-guide.md](docs/development-guide.md) first
 - **Fixing standalone container bugs** → read the relevant bugs file in `vsp_linux_container_FINAL_20260217/`
 - **Training research, LoRA tuning, or fine-tuning strategy** → read [docs/training-research-notes.md](docs/training-research-notes.md) first
+- **Planning future work or picking up a new mission** → read [docs/mission-backlog.md](docs/mission-backlog.md) first (Missions 4-14, prioritized with research references)
 
 Do NOT rely on memory or guessing — always read the file to get exact details.
 
@@ -189,7 +190,9 @@ When making changes, ALWAYS:
 
 ## Documentation Map
 
-This project's documentation is split across focused files for easier navigation:
+All documentation is organized under `docs/` with subdirectories for easy discovery:
+
+### Core Documentation (docs/)
 
 | Document | Contents |
 |----------|----------|
@@ -198,7 +201,46 @@ This project's documentation is split across focused files for easier navigation
 | [docs/development-guide.md](docs/development-guide.md) | Commands, virtual environments, workflows, testing, troubleshooting |
 | [docs/container-sync-changelog.md](docs/container-sync-changelog.md) | Pending changes 1-26 for Linux container sync (full detail) |
 | [docs/training-research-notes.md](docs/training-research-notes.md) | Training research: length distribution, LoRA rank, angle robustness, AVSpeech fine-tuning |
-| [VSP_LLM_paper_text.txt](VSP_LLM_paper_text.txt) | VSP-LLM paper full text (Yeo et al., arXiv:2402.15151v2, May 2024) |
+| [docs/mission-backlog.md](docs/mission-backlog.md) | Mission backlog: completed missions (1-3), prioritized future work (4-14), phased roadmap |
+| [docs/cleanup-log.md](docs/cleanup-log.md) | Feb 2026 project reorganization: what was deleted, moved, and why |
+
+### Deployment & Testing (docs/deployment/)
+
+| Document | Contents |
+|----------|----------|
+| [INSTALLATION_GUIDE.md](docs/deployment/INSTALLATION_GUIDE.md) | Setup instructions |
+| [TESTING_GUIDE.md](docs/deployment/TESTING_GUIDE.md) | Test suite and procedures |
+| [EC2_TESTING_README.md](docs/deployment/EC2_TESTING_README.md) | EC2-specific testing |
+| [CONTAINER_DEPLOYMENT_INSTRUCTIONS.md](docs/deployment/CONTAINER_DEPLOYMENT_INSTRUCTIONS.md) | Container deployment steps |
+| [PRODUCTION_DEPLOYMENT_INSTRUCTIONS.md](docs/deployment/PRODUCTION_DEPLOYMENT_INSTRUCTIONS.md) | Production deployment |
+| [CONTAINER_VALIDATION_CHECKLIST.md](docs/deployment/CONTAINER_VALIDATION_CHECKLIST.md) | Container validation |
+| [TRANSFER_INSTRUCTIONS.md](docs/deployment/TRANSFER_INSTRUCTIONS.md) | File transfer procedures |
+
+### Changelog & Fixes (docs/changelog/)
+
+| Document | Contents |
+|----------|----------|
+| [COMPLETE_CHANGELOG.md](docs/changelog/COMPLETE_CHANGELOG.md) | Full historical changelog |
+| [FIX_INVENTORY.md](docs/changelog/FIX_INVENTORY.md) | Comprehensive fix inventory |
+| [MISSION3_MAX_LEN_FIX.md](docs/changelog/MISSION3_MAX_LEN_FIX.md) | Mission 3 max_len fix details |
+| [SEGMENTED_VIDEO_NAMING_FIX.md](docs/changelog/SEGMENTED_VIDEO_NAMING_FIX.md) | Video naming fix |
+| [PATH_CORRECTION_FIX.md](docs/changelog/PATH_CORRECTION_FIX.md) | Path correction fix |
+
+### Research (docs/research/)
+
+| Document | Contents |
+|----------|----------|
+| [VSP_LLM_paper.pdf](docs/research/VSP_LLM_paper.pdf) | VSP-LLM paper (Yeo et al., arXiv:2402.15151v2, May 2024) |
+| [VSP_LLM_paper_text.txt](docs/research/VSP_LLM_paper_text.txt) | VSP-LLM paper full text |
+| [Presentation_2025.pptx](docs/research/Presentation_2025.pptx) | 2025 Project presentation |
+
+### Other docs/ subdirectories
+
+| Directory | Contents |
+|-----------|----------|
+| `docs/sessions/` | Session summaries (FINAL_SUMMARY, SESSION_SUMMARY_20260202, TEST_RESULTS_SUMMARY) |
+| `docs/licenses/` | All third-party license files (Python, Linux, NVIDIA, build-from-source) |
+| `docs/branding/` | Logo files (PNG, SVG, JPEG) |
 
 ### Experimental Results
 
@@ -218,3 +260,44 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 | [bugs-1-to-13-installation.md](vsp_linux_container_FINAL_20260217/bugs-1-to-13-installation.md) | Bugs 1-13: Installation & setup |
 | [bugs-14-to-25-deployment.md](vsp_linux_container_FINAL_20260217/bugs-14-to-25-deployment.md) | Bugs 14-25: Deployment & GPU issues |
 | [bugs-26-to-37-final.md](vsp_linux_container_FINAL_20260217/bugs-26-to-37-final.md) | Bugs 26-37: Final fixes (upload, terminal, inference, metrics) |
+
+## Project Directory Structure
+
+```
+/home/ubuntu/
+├── CLAUDE.md, README.md, requirements.txt     # Project root files
+├── run_flat_english_pipeline.sh               # MAIN PIPELINE entry point
+│
+├── VSP-LLM/              # Core: Visual Speech + LLM model
+├── auto_avsr/             # Core: Audio-Visual ASR preprocessing
+├── av_hubert/             # Core: AV-HuBERT feature extraction
+├── lib/                   # Core: 11 modular pipeline stages
+├── vsp-ui/                # Core: Web UI
+├── tests/                 # Core: Test suite
+│
+├── datasets/              # Data: Input video datasets
+├── data/                  # Data: AVSpeech dataset
+├── vsp_input/             # Data: Pipeline input (symlinks)
+├── vsp_input_tuning/      # Data: Tuning input (symlinks)
+├── flat/                  # Data: Intermediate flat format
+├── outputs/               # Data: Current pipeline outputs
+├── english_1k_results/    # Results: 1520-video experiment
+├── english_full_results/  # Results: Full dataset baseline (WER 64.1%)
+├── tuning_results/        # Results: Decode parameter experiments
+│
+├── face_alignment/        # Models: Face alignment (pipeline dependency)
+├── face_detection/        # Models: Face detection (pipeline dependency)
+├── golden_weights/        # Models: Clustering baseline weights
+├── Llama-2-7b-hf/        # Models: LLM config files
+│
+├── argos_research/        # Research: R&D journal & analysis reports
+├── docs/                  # Docs: ALL documentation (organized)
+├── scripts/               # Scripts: Utility scripts (tests, monitoring, build)
+├── logs/                  # Logs: Pipeline run logs
+├── build_assets/          # Build: Wheel caches & build venvs
+│
+├── vsp_docker/            # Deploy: Docker build dir (galaxy_export/ working copy)
+├── vsp_linux_container_FINAL_20260217/  # Deploy: Container code overlay
+│
+└── _archive/              # Archive: Old/borderline items (not actively used)
+```

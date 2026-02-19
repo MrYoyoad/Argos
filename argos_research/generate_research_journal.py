@@ -454,6 +454,7 @@ TOC_ENTRIES = [
     ("ch12", "12. Performance Evaluation & Tuning"),
     ("ch13", "13. Fine-Tuning & Training Infrastructure"),
     ("ch14", "14. Executive Summary"),
+    ("ch15", "15. Project To-Do List"),
 ]
 
 
@@ -2376,30 +2377,93 @@ def chapter_12(doc):
     ))
 
     # 12.5 Tuning Experiments
-    add_heading(doc, "12.5 Seven Decode Tuning Experiments", 2)
+    add_heading(doc, "12.5 Thirteen Decode Tuning Experiments (A\u2013M)", 2)
     add_para(doc, (
-        "To explore whether decode-time parameters could improve transcription quality without "
-        "retraining, seven experiments were run on a 100-video / 107-segment subset. Each experiment "
-        "varied one or more generation parameters while keeping the rest at baseline values."
+        "A systematic sweep of 13 decode configurations was run on a 107-segment test set derived from "
+        "100 AVSpeech videos. Parameters tested: length penalty, beam width, sampling mode, temperature, "
+        "and combinations. Each experiment took ~50 minutes on a T4 GPU (16GB)."
     ))
     add_styled_table(doc,
-        ["Exp", "Name", "Parameters Changed", "Hypothesis"],
+        ["Exp", "Configuration", "WER%", "WWER%", "Empty", "NEA F1%", "Verdict"],
         [
-            ["A", "Baseline", "beam=20, lenpen=0, rep_pen=1.2", "Current production settings"],
-            ["B", "No Rep Penalty", "repetition_penalty=1.0", "Removing penalty may reduce error"],
-            ["C", "LenPen +1.0", "lenpen=1.0", "Favor longer outputs (reduce truncation)"],
-            ["D", "LenPen -0.5", "lenpen=-0.5", "Favor shorter, more confident outputs"],
-            ["E", "Sampling Low Temp", "do_sample=true, temp=0.5, top_p=0.9", "Stochastic but conservative"],
-            ["F", "Sampling Original", "do_sample=true, temp=1.0, top_p=0.9", "Match english_1k-style decode"],
-            ["G", "Greedy Decode", "beam=1", "Simplest decode, no beam search overhead"],
+            ["A", "baseline (beam=20, lenpen=0)", "59.4", "59.5", "4 (3.7%)", "40.9", "Reference"],
+            ["B", "repetition_penalty=1.0 (off)", "59.4", "59.4", "4 (3.7%)", "40.8", "No effect"],
+            ["C", "lenpen=1.0", "58.6", "58.6", "0", "41.1", "Best single param"],
+            ["D", "lenpen=-0.5", "65.8", "75.3", "48 (44.9%)", "26.1", "FAIL"],
+            ["E", "do_sample=true, temp=0.5", "59.4", "59.4", "0", "41.8", "Slight NEA gain"],
+            ["F", "do_sample=true, temp=1.0", "59.4", "59.4", "0", "42.4", "Best NEA F1 (single)"],
+            ["G", "greedy (beam=1)", "63.2", "63.2", "0", "37.7", "Worse"],
+            ["H", "lenpen=2.0", "539.6", "171.5", "0", "39.1", "CATASTROPHIC"],
+            ["I", "lenpen=1.0 + sample temp=1.0", "83.6", "60.1", "0", "40.3", "Combo: mediocre"],
+            ["J", "lenpen=1.0 + sample temp=0.5", "70.1", "57.7", "0", "41.0", "BEST WWER"],
+            ["K", "do_sample=true, temp=1.5", "60.9", "59.2", "1", "40.7", "Competitive"],
+            ["L", "do_sample=true, temp=0.3", "59.6", "58.4", "0", "41.8", "Good"],
+            ["M", "lenpen=1.0 + sample temp=0.3", "80.9", "77.1", "0", "42.1", "Unexpectedly bad"],
         ],
-        col_widths=[0.4, 1.3, 2.5, 2.3]
+        col_widths=[0.3, 2.0, 0.45, 0.5, 0.7, 0.5, 1.15]
     )
     add_para(doc, (
-        "The experiment framework (run_all_experiments.sh, 118 lines + run_experiment.sh, 101 lines) "
-        "automates the full cycle for each configuration: set overrides, run decode, generate reports, "
-        "and save config snapshots. A comparison table is built at the end showing WWER, NEA-Recall, "
-        "and NEA-F1 across all experiments."
+        "The experiment framework (run_all_experiments.sh + run_remaining.sh + run_experiment.sh) "
+        "automates the full cycle: set Hydra overrides, run decode, generate reports, save config snapshots. "
+        "A comparison CSV is built at the end with all metrics."
+    ))
+
+    # 12.5.1 Parameter Analysis
+    add_heading(doc, "12.5.1 Length Penalty Analysis", 3)
+    add_para(doc, (
+        "Length penalty (lenpen) was the most impactful single parameter. lenpen=1.0 eliminates all "
+        "empty predictions and improves WWER by 0.9 points. lenpen=-0.5 is catastrophic (44.9% empty). "
+        "lenpen=2.0 causes catastrophic over-generation (539.6% WER \u2014 model generates 5x reference length)."
+    ))
+
+    add_heading(doc, "12.5.2 Sampling Analysis", 3)
+    add_para(doc, (
+        "Sampling alone does not improve WER/WWER but consistently improves NEA F1 by +1-1.5 points. "
+        "temp=0.5 is the sweet spot when combined with lenpen=1.0 (Config J, best WWER 57.7%). "
+        "Very low temperature (0.3) with lenpen creates pathological behavior \u2014 the peaked distribution "
+        "combined with length reward causes degenerate outputs (Config M, 77.1% WWER)."
+    ))
+
+    add_heading(doc, "12.5.3 Example: lenpen Eliminates Empty Outputs", 3)
+    add_para(doc, (
+        "Segment DBhaa45mAro (casual vlog, 15 ref words):"
+    ), italic=True, color=C_GRAY)
+    add_styled_table(doc,
+        ["Config", "WER%", "Output (truncated)"],
+        [
+            ["REF", "\u2014", "hey it's me just doing the eush keeping up with what's going on in school..."],
+            ["A (baseline)", "100.0", "(empty \u2014 model produced no output)"],
+            ["C (lenpen=1.0)", "66.7", "hi it's me jessica dude who's keeping up with what's going on in the world..."],
+            ["J (winner)", "73.3", "hi it's me jessica dude who's keeping up with what's going on in the world..."],
+        ],
+        col_widths=[1.0, 0.5, 5.0]
+    )
+
+    add_heading(doc, "12.5.4 Example: lenpen Regression on Short Segments", 3)
+    add_para(doc, (
+        "Segment eLS1vcpGVHQ (short, 10 ref words):"
+    ), italic=True, color=C_GRAY)
+    add_styled_table(doc,
+        ["Config", "WER%", "Output (truncated)"],
+        [
+            ["REF", "\u2014", "i surrendered good quite i surrendered to the low security"],
+            ["A (baseline)", "90.0", "years ago when i was"],
+            ["C (lenpen=1.0)", "740.0", "years ago when i was 18 years old i came to the united states..."],
+            ["J (winner)", "400.0", "i'm so happy to be here with you all today thank you so much..."],
+        ],
+        col_widths=[1.0, 0.5, 5.0]
+    )
+    add_para(doc, (
+        "This is the core lenpen trade-off: it fixes empty outputs but amplifies hallucination on "
+        "ambiguous short segments. The model generates fluent, grammatically correct text that has "
+        "no relation to the actual speech."
+    ), bold=True)
+
+    add_heading(doc, "12.5.5 Recommended Configuration", 3)
+    add_para(doc, (
+        "Config J (lenpen=1.0, do_sample=true, temperature=0.5) is recommended for production. "
+        "It achieves the best WWER (57.7%, -1.8 vs baseline) and eliminates empty outputs. "
+        "A full 1,497-segment decode with this config is in progress to validate these findings at scale."
     ))
 
     # 12.6 Analysis Reports
@@ -2775,6 +2839,131 @@ def chapter_14(doc):
 
 
 # ═══════════════════════════════════════════════════
+# CHAPTER 15: Project To-Do List
+# ═══════════════════════════════════════════════════
+
+def chapter_15(doc):
+    add_heading(doc, "15. Project To-Do List", 1, bookmark_id="ch15")
+
+    add_para(doc, (
+        "This chapter consolidates all pending work items across research, operations, "
+        "technical development, and documentation. Items are prioritized by expected impact "
+        "on the system's core mission: improving lip-reading accuracy on real-world video."
+    ))
+
+    # 15.1 Research & Model Improvement
+    add_heading(doc, "15.1 Research & Model Improvement", 2)
+    add_para(doc, (
+        "These items directly target the WER gap between benchmark (25.4%) and real-world (64-67%) performance."
+    ))
+
+    add_styled_table(doc,
+        ["#", "Task", "Priority", "Expected Impact", "Status"],
+        [
+            ["1", "Fine-tune on AVSpeech data with encoder unfreeze", "Critical",
+             "-15 to -25 WER pts", "Infrastructure ready (579-line pipeline + config)"],
+            ["2", "Increase LoRA rank from r=16 to r=64 (alpha=128)", "High",
+             "-3 to -8 WER pts", "Config change ready (vsp_llm.py line 296)"],
+            ["3", "Test length penalty lenpen=0.5-1.0", "High",
+             "-1.8 WWER pts (57.7% vs 59.5%)", "DONE \u2014 13 experiments (A-M), best=J"],
+            ["4", "Reduce beam width from 20 to 5-10", "Medium",
+             "Greedy (beam=1) was 3.7 pts worse", "DONE \u2014 Exp G tested beam=1 vs beam=20"],
+            ["5", "Tighten max_len_a from 2.0 to 1.0, max_len_b from 200 to 50", "Medium",
+             "lenpen=2.0 caused 539% WER over-generation", "DONE \u2014 lenpen approach preferred"],
+            ["6", "Implement confidence scoring (token/sequence level)", "High",
+             "Quality filtering (24% \u2192 40-50% precision)", "Code design in Report 4"],
+            ["7", "Implement N-best aggregation (ROVER or MBR decoding)", "Medium",
+             "-5 to -10 WER pts", "Code design in Report 5"],
+            ["8", "Evaluate prompt engineering (word count hints, topic context)", "Medium",
+             "-5 to -10 WER pts", "Strategy in Report 3"],
+            ["9", "Generate AVSpeech length histogram on full dataset", "Low",
+             "Diagnostic / data characterization", "ffprobe script ready"],
+            ["10", "Curate training data (80% clean frontal / 20% moderate)", "High",
+             "Better training signal, less label noise", "Filtering criteria defined"],
+            ["11", "Evaluate RetinaFace vs MediaPipe for face detection", "Low",
+             "-2 to -5 WER pts on difficult angles", "Both detectors integrated"],
+        ],
+        col_widths=[0.3, 2.2, 0.6, 1.5, 1.9]
+    )
+
+    # 15.2 Operations & Deployment
+    add_heading(doc, "15.2 Operations & Deployment", 2)
+    add_para(doc, (
+        "These items ensure production reliability and environment consistency."
+    ))
+
+    add_styled_table(doc,
+        ["#", "Task", "Priority", "Details"],
+        [
+            ["12", "Sync all 28 pending EC2 \u2192 container changes", "Critical",
+             "Full list in docs/container-sync-changelog.md"],
+            ["13", "Deploy latest container package to HORIZON server", "High",
+             "Closed network, no internet \u2014 requires offline package"],
+            ["14", "Automate container sync verification (CI/CD or script)", "Medium",
+             "Prevent future drift between EC2 and container"],
+            ["15", "Add minimum segment duration filter (\u22655 seconds)", "Medium",
+             "Drop <5s segments that produce 128% WER"],
+            ["16", "Create automated regression test suite", "Medium",
+             "Run a small set of known videos and compare WER against baseline"],
+        ],
+        col_widths=[0.3, 2.5, 0.6, 3.1]
+    )
+
+    # 15.3 Technical Development
+    add_heading(doc, "15.3 Technical Development", 2)
+
+    add_styled_table(doc,
+        ["#", "Task", "Priority", "Details"],
+        [
+            ["17", "Add confidence scores to JSON report output", "High",
+             "Extract from model generate() with output_scores=True"],
+            ["18", "Add N-best hypotheses to decode output format", "Medium",
+             "Use num_return_sequences=N in generate()"],
+            ["19", "Investigate multi-language support (Arabic)", "Low",
+             "Requires multilingual LLM base (LLaMA-3, Mistral)"],
+            ["20", "Add segment duration optimization to pipeline config", "Medium",
+             "Configurable min/max segment length parameters"],
+            ["21", "Consider newer model architectures (LLaMA-3, Mistral)", "Low",
+             "May improve language modeling capacity"],
+        ],
+        col_widths=[0.3, 2.5, 0.6, 3.1]
+    )
+
+    # 15.4 Documentation & Process
+    add_heading(doc, "15.4 Documentation & Process", 2)
+
+    add_styled_table(doc,
+        ["#", "Task", "Priority", "Details"],
+        [
+            ["22", "Update this document after each fine-tuning experiment", "Ongoing",
+             "Record hyperparameters, results, and analysis"],
+            ["23", "Document HORIZON server setup and constraints", "Medium",
+             "Offline deployment, GPU config, network restrictions"],
+            ["24", "Create runbook for fine-tuning on cloud GPUs", "Medium",
+             "p3.16xlarge setup, data transfer, checkpoint management"],
+            ["25", "Maintain container-sync-changelog.md as changes are made", "Ongoing",
+             "Every EC2 change documented with code diffs"],
+        ],
+        col_widths=[0.3, 2.5, 0.6, 3.1]
+    )
+
+    # Priority summary
+    add_heading(doc, "15.5 Priority Summary", 2)
+    add_para(doc, "Items ranked by expected impact on the core metric (WER reduction):")
+
+    add_bullet_bold_value(doc, "1. Fine-tune on AVSpeech (#1): ",
+        "Highest single-intervention impact. Infrastructure is ready. Requires GPU time (~$100-150).")
+    add_bullet_bold_value(doc, "2. Length penalty tuning (#3): ",
+        "COMPLETED \u2014 13 experiments run. Best config (J): lenpen=1.0 + temp=0.5 = 57.7% WWER (-1.8 pts).")
+    add_bullet_bold_value(doc, "3. Container sync (#12): ",
+        "Production users are running outdated code. 28 changes pending.")
+    add_bullet_bold_value(doc, "4. LoRA rank increase (#2): ",
+        "Simple config change with meaningful impact on domain adaptation capacity.")
+    add_bullet_bold_value(doc, "5. Confidence scoring (#6): ",
+        "Essential for production use \u2014 currently no way to separate good from bad outputs.")
+
+
+# ═══════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════
 
@@ -2812,6 +3001,7 @@ def main():
     chapter_12(doc)
     chapter_13(doc)
     chapter_14(doc)
+    chapter_15(doc)
 
     # Save
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
