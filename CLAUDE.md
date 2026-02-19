@@ -228,19 +228,17 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 ### Research (docs/research/)
 
-Contains all R&D experiments, reports, generators, and analysis. Formerly `argos_research/`.
+All R&D experiments, reports, generators, and analysis. Organized by type:
 
-| Item | Contents |
-|------|----------|
-| `exp_A_baseline/` through `exp_M_*/` | 13 decode parameter experiments with reports |
-| `full_decode_J/` | Full-scale decode experiment (lenpen=1, temp=0.5) |
-| `generate_*.py` | Report generators (research journal, metrics explainer, tuning, pairwise, summary) |
-| `research_documentation.docx` | Comprehensive R&D research journal (14 chapters, 43 tables) |
-| `metrics_explainer.docx` | Metrics explainer document |
-| `tuning_experiments.docx` | Tuning experiments analysis |
-| `project_summary.docx` | Project summary document |
-| `report_1_*.md` through `report_6_*.md` | 6 detailed analysis reports (executive, tuning, prompts, confidence, beam search, finetuning) |
+| Subfolder | Contents |
+|-----------|----------|
+| `experiments/` | 14 decode parameter experiments (exp_A through exp_M + full_decode_J), each with config, decode output, and per-experiment reports |
+| `reports/` | Published documents: research journal (docx), metrics explainer, tuning experiments, project summary, pairwise comparison (PDF), 6 analysis reports (md), plus docx/ and pdf/ format variants |
+| `generators/` | Python scripts to generate reports (research journal, metrics explainer, tuning, pairwise, summary, converter) |
 | `references/` | VSP-LLM paper (PDF + text), 2025 Presentation (PPTX) |
+| `data/` | Decode datasets, subset data, interesting cross-experiment examples |
+| `scripts/` | Experiment runner scripts (run_experiment.sh, run_all_experiments.sh, etc.) |
+| `assets/` | Logo and branding images used in reports |
 
 ### Other docs/ subdirectories
 
