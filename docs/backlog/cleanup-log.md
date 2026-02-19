@@ -293,8 +293,52 @@ These are system configuration files essential for the EC2 environment but not p
 
 ---
 
+## Round 4 — Docs Reorganization by Research Topic (same date)
+
+Restructured `docs/` from generic categories into topic-based folders that map to backlog missions.
+
+### New Topic Folders
+
+| Folder | Contains | Maps to Mission |
+|--------|----------|-----------------|
+| `evaluation/` | Report 1, R&D journal, project summary | M5: Expanded Metrics |
+| `tuning/` | Report 2, metrics explainer, 13 experiments, HTML reports | M7, M14: Hyperparams |
+| `confidence/` | Report 4 (confidence scoring) | M4: Confidence Scoring |
+| `beam-search/` | Report 5 (N-best aggregation) | M6: Beam Aggregation |
+| `prompts/` | Report 3 (prompt engineering) | M8: Prompts |
+| `finetuning/` | Report 6, training research notes | M9: Fine-Tuning |
+| `paper/` | VSP-LLM paper + presentation | — |
+| `guides/` | All deployment/installation/testing guides (was `deployment/`) | — |
+| `backlog/` | Mission backlog + cleanup log | — |
+| `_research-tools/` | Report generators, scripts, data, assets | — |
+
+### Renamed Files (for clarity)
+
+| Old Name | New Name |
+|----------|----------|
+| `research_documentation.docx` | `research-journal.docx` |
+| `project_summary.docx` | `project-summary.docx` |
+| `metrics_explainer.docx` | `metrics-explainer.docx` |
+| `tuning_experiments.docx` | `tuning-experiments.docx` |
+| `pairwise_comparison_report.pdf` | `pairwise-comparison.pdf` |
+| `comparison.csv` | `experiment-comparison.csv` |
+
+### Removed Directories
+
+| Old Directory | Replaced By |
+|---------------|-------------|
+| `docs/research/` | Split into 6 topic folders + `paper/` + `_research-tools/` |
+| `docs/deployment/` | `docs/guides/` |
+
+### New Files
+
+- `docs/tuning/html-reports/README.md` — experiment index with parameter overrides
+- `docs/tuning/html-reports/exp_*.html` — 13 experiment HTML reports for quick browsing
+
+---
+
 ## Final State
 
 **Before**: 201 root items, 816 GB used, 154 GB free
-**After**: 38 root items, 494 GB used, 476 GB free
+**After**: 37 root items, 494 GB used, 476 GB free
 **Freed**: ~322 GB, root items reduced by 81%

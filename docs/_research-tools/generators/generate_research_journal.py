@@ -285,7 +285,7 @@ def add_header_footer(doc):
         logo_run._r.append(drawing)
         hp.add_run("  ")  # spacer
 
-    run = hp.add_run("Argos — The Orchard  |  INTERNAL")
+    run = hp.add_run("Argos \u2014 The Orchard")
     run.font.size = Pt(8)
     run.font.color.rgb = C_GRAY
     run.font.name = "Calibri"

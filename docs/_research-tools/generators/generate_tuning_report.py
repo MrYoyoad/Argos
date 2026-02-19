@@ -233,7 +233,7 @@ def add_header_footer(doc):
         drawing = _build_inline_image_xml(rId, size_emu, size_emu, pic_id=10, name="Header Logo")
         logo_run._r.append(drawing)
         hp.add_run("  ")
-    run = hp.add_run("Argos \u2014 The Orchard  |  INTERNAL")
+    run = hp.add_run("Argos \u2014 The Orchard")
     run.font.size = Pt(8)
     run.font.color.rgb = C_GRAY
     run.font.name = "Calibri"

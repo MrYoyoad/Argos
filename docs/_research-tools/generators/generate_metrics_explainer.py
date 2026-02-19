@@ -17,7 +17,7 @@ from pathlib import Path
 from datetime import datetime
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT, WD_BREAK
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml, OxmlElement
@@ -27,8 +27,9 @@ OUTPUT_DIR = Path(__file__).parent
 OUTPUT_FILE = OUTPUT_DIR / "metrics_explainer.docx"
 
 # ── Logos ──
-LOGO_ORCHARD = OUTPUT_DIR / "logo.png"
-LOGO_PEACOCK = OUTPUT_DIR / "peacock.png"
+ASSETS_DIR = OUTPUT_DIR.parent / "assets"
+LOGO_ORCHARD = ASSETS_DIR / "logo.png"
+LOGO_PEACOCK = ASSETS_DIR / "peacock.png"
 
 # ── Standard Colors ──
 C_PRIMARY = RGBColor(0x1a, 0x3a, 0x5c)
@@ -254,11 +255,13 @@ def add_header_footer(doc):
         logo_run = hp.add_run()
         drawing = _build_inline_image_xml(rId, size_emu, size_emu, pic_id=10, name="Header Logo")
         logo_run._r.append(drawing)
-        hp.add_run("  ")
-    run = hp.add_run("Argos \u2014 The Orchard  |  INTERNAL")
+    # Right-tab pushes text to far edge; logo stays at left margin
+    text_width = section.page_width - section.left_margin - section.right_margin
+    hp.paragraph_format.tab_stops.add_tab_stop(text_width, WD_TAB_ALIGNMENT.RIGHT)
+    hp.add_run("\t")
+    run = hp.add_run("Argos \u2014 The Orchard")
     run.font.size = Pt(8); run.font.color.rgb = C_GRAY
     run.font.name = "Calibri"; run.italic = True
-    hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     footer = section.footer
     footer.is_linked_to_previous = False
     fp = footer.paragraphs[0]
@@ -272,6 +275,16 @@ def add_header_footer(doc):
     run._r.append(instr)
     fld2 = OxmlElement("w:fldChar"); fld2.set(qn("w:fldCharType"), "end")
     run._r.append(fld2)
+
+
+def _tight_page_break(doc):
+    """Add page break to the last paragraph instead of creating a new one.
+
+    Use after tables (which add a trailing paragraph) to avoid a visible
+    blank gap at the bottom of the page before the break.
+    """
+    last_p = doc.paragraphs[-1]
+    last_p.add_run().add_break(WD_BREAK.PAGE)
 
 
 def _add_toc_hyperlink(doc, bookmark_name, display_text, level=0):
@@ -343,10 +356,10 @@ def add_thermometer_table(doc, thresholds):
     """Colored-row interpretation scale.
     thresholds = [(range_text, bg_color, interpretation, example), ...]
     """
-    table = doc.add_table(rows=1 + len(thresholds), cols=4)
+    table = doc.add_table(rows=1 + len(thresholds), cols=3)
     table.style = "Table Grid"
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    for i, h in enumerate(["Range", "Rating", "Interpretation", "Example"]):
+    for i, h in enumerate(["Range", "Interpretation", "Example"]):
         cell = table.rows[0].cells[i]
         set_cell_shading(cell, HEADER_BG)
         set_cell_text(cell, h, bold=True, color=C_WHITE, size=Pt(9))
@@ -354,17 +367,14 @@ def add_thermometer_table(doc, thresholds):
         row = table.rows[r_idx + 1]
         set_cell_text(row.cells[0], rng, size=Pt(9), bold=True)
         set_cell_shading(row.cells[0], bg)
-        set_cell_text(row.cells[1], "\u2588\u2588\u2588", size=Pt(9))
+        set_cell_text(row.cells[1], interp, size=Pt(9))
         set_cell_shading(row.cells[1], bg)
-        set_cell_text(row.cells[2], interp, size=Pt(9))
+        set_cell_text(row.cells[2], example, size=Pt(9))
         set_cell_shading(row.cells[2], bg)
-        set_cell_text(row.cells[3], example, size=Pt(9))
-        set_cell_shading(row.cells[3], bg)
     for row in table.rows:
         row.cells[0].width = Inches(1.0)
-        row.cells[1].width = Inches(0.6)
-        row.cells[2].width = Inches(2.8)
-        row.cells[3].width = Inches(2.1)
+        row.cells[1].width = Inches(3.4)
+        row.cells[2].width = Inches(2.1)
     doc.add_paragraph()
     return table
 
@@ -574,7 +584,7 @@ def section_1(doc):
         col_widths=[0.7, 1.3, 0.8, 0.6, 0.6, 2.5],
     )
 
-    doc.add_page_break()
+    _tight_page_break(doc)
 
 
 # ═══════════════════════════════════════════════════
@@ -676,7 +686,7 @@ def section_2(doc):
         ("> 60%", RED_BG, "Poor \u2014 output is unreliable or hallucinated", "Domain mismatch: 100%"),
     ])
 
-    doc.add_page_break()
+    _tight_page_break(doc)
 
 
 # ═══════════════════════════════════════════════════
@@ -983,7 +993,7 @@ def section_4(doc):
          "Names missed: NEA 0%"),
     ])
 
-    doc.add_page_break()
+    _tight_page_break(doc)
 
 
 # ═══════════════════════════════════════════════════
@@ -1008,7 +1018,6 @@ def section_5(doc):
         ("we started looking at structure of hope and the structure of emotion "
          "and started really looking", False, C_DARK),
     ])
-    add_para(doc, "")
 
     add_styled_table(doc,
         ["Metric", "Score", "What It Sees"],
@@ -1326,6 +1335,7 @@ def section_5(doc):
     ))
 
     # ── Summary table ──
+    doc.add_page_break()
     add_heading(doc, "Summary of Disagreement Patterns", 3)
     add_para(doc, (
         "The table below collects all patterns with real pipeline examples for quick reference:"
@@ -1379,6 +1389,7 @@ def section_5(doc):
         col_widths=[2.2, 1.5, 2.8],
     )
 
+    _tight_page_break(doc)
     add_heading(doc, "5.4 Quick Reference Card", 2)
 
     add_para(doc, "Metric formulas and thresholds:", bold=True, size=Pt(10))

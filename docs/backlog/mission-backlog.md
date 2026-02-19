@@ -1,6 +1,6 @@
 # Mission Backlog
 
-Tracking completed missions and the prioritized backlog of future work for the Argos VSP pipeline. Backlog items are informed by the [6 Argos research reports](../argos_research/) and operational experience.
+Tracking completed missions and the prioritized backlog of future work for the Argos VSP pipeline. Backlog items are informed by the 6 research reports (in `docs/evaluation/`, `docs/tuning/`, `docs/prompts/`, `docs/confidence/`, `docs/beam-search/`, `docs/finetuning/`) and operational experience.
 
 **Current baseline** (english_full run, 1497 segments): WER 67.0%, Corpus WER 125.5%, NEA F1 38.8%
 
@@ -17,12 +17,12 @@ Tracking completed missions and the prioritized backlog of future work for the A
 ### Mission 2: EC2/Container Sync
 - **Status**: ONGOING
 - **Summary**: Synchronize all EC2 changes to the Linux container production environment
-- **Tracking**: [container-sync-changelog.md](container-sync-changelog.md) (28 pending items)
+- **Tracking**: [container-sync-changelog.md](../container-sync-changelog.md) (28 pending items)
 
 ### Mission 3: VSP-LLM Max Length Fix
 - **Status**: COMPLETE / EXPERIMENTAL (January 29, 2026)
 - **Summary**: Fixed early prediction cutoff by adjusting `max_len_a` (1.0 -> 2.0) and `max_len_b` (0 -> 200)
-- **Detail**: [MISSION3_MAX_LEN_FIX.md](../MISSION3_MAX_LEN_FIX.md)
+- **Detail**: [MISSION3_MAX_LEN_FIX.md](../changelog/MISSION3_MAX_LEN_FIX.md)
 
 ---
 
@@ -53,7 +53,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Enable quality filtering: discard segments below confidence threshold
 - **Expected Impact**: Sequence score correlation with WER: r = -0.4 to -0.6 (vs. current 0.17 from heuristics). Directly solves the "can we trust this output?" problem
 - **Effort**: Phase 1 (sequence-level): 2-4 hours; Phase 2 (token-level with color-coded words): 1-2 days
-- **Research**: [Report 4 - Confidence Scoring](../argos_research/report_4_confidence_scoring.md)
+- **Research**: [Report 4 - Confidence Scoring](../confidence/report_4_confidence_scoring.md)
 
 ---
 
@@ -69,7 +69,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Silence / empty-prediction rate tracking (currently 20.6% of segments are catastrophic WER >= 100%)
   - Quality tier distribution (perfect/good/fair/poor/catastrophic) as a dashboard metric
 - **Baseline**: WER 67.0%, WWER 61.9%, NEA Recall 39%, NEA F1 38.8%. Quality: 53.4% poor, 20.6% catastrophic
-- **Research**: [Report 1 - Executive Assessment](../argos_research/report_1_executive_assessment.md) (baseline analysis)
+- **Research**: [Report 1 - Executive Assessment](../evaluation/report_1_executive_assessment.md) (baseline analysis)
 
 ---
 
@@ -84,7 +84,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Confidence-weighted word selection from N-best list
 - **Expected Impact**: 5-15% relative WER reduction (conservative). MBR/ROVER well-established in ASR literature (Fiscus 1997)
 - **Dependencies**: Mission 4 (confidence scores needed for weighted voting)
-- **Research**: [Report 5 - Beam Search Aggregation](../argos_research/report_5_beam_search_aggregation.md)
+- **Research**: [Report 5 - Beam Search Aggregation](../beam-search/report_5_beam_search_aggregation.md)
 
 ---
 
@@ -99,7 +99,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Establish per-domain optimal configs
 - **Expected Impact**: WER ~55-60% (down from 67%) with hyperparameter tuning alone
 - **Effort**: Low — infrastructure already exists in `tuning_results/run_all_experiments.sh`
-- **Research**: [Report 2 - Hyperparameter Tuning](../argos_research/report_2_hyperparameter_tuning.md)
+- **Research**: [Report 2 - Hyperparameter Tuning](../tuning/report_2_hyperparameter_tuning.md)
 
 ---
 
@@ -114,7 +114,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Speaker description context
 - **Expected Impact**: -5 to -15 WER points combined (word count hints: -3 to -7, topic context: -5 to -10)
 - **Caveat**: Model was fine-tuned with specific prompt format; large deviations may break fine-tuning. Test on small subset first
-- **Research**: [Report 3 - Prompt Engineering](../argos_research/report_3_prompt_engineering.md)
+- **Research**: [Report 3 - Prompt Engineering](../prompts/report_3_prompt_engineering.md)
 
 ---
 
@@ -131,7 +131,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Data curation: filter by face detection confidence >0.9, remove extreme head pose >30 deg
 - **Expected Impact**: WER 42-52% (15-25 point improvement). The only path to sub-50% WER
 - **GPU Requirements**: T4 (16GB) very tight with encoder unfrozen; p3.16xlarge 8x GPU recommended (~$24/hr, 3-5 hours)
-- **Research**: [Report 6 - Fine-Tuning Analysis](../argos_research/report_6_finetuning_analysis.md), [Training Research Notes](training-research-notes.md)
+- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md)
 
 ---
 
@@ -171,7 +171,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Associate mouth crops with speaker identity (speaker diarization)
   - Handle overlapping speech regions (pipeline currently assumes single speaker)
   - Per-speaker output tracks in reports
-- **Research**: Known limitation noted in [Report 1](../argos_research/report_1_executive_assessment.md)
+- **Research**: Known limitation noted in [Report 1](../evaluation/report_1_executive_assessment.md)
 
 ---
 
@@ -202,7 +202,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
 ## How to Pick Up a Mission
 
 1. Read this file and the linked research reports for context
-2. Read the relevant doc files listed in [CLAUDE.md](../CLAUDE.md) Documentation Map
+2. Read the relevant doc files listed in [CLAUDE.md](../../CLAUDE.md) Documentation Map
 3. Create a `MISSION<N>_<SHORT_NAME>.md` file documenting the plan, changes, and test criteria
 4. Follow the EC2/container sync rules from CLAUDE.md for any code changes
 5. Update this backlog when the mission status changes

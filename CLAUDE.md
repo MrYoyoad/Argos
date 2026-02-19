@@ -14,8 +14,8 @@ This CLAUDE.md is a slim hub file. Detailed documentation lives in separate file
 - **Working on pipeline stages, data formats, or segments** → read [docs/architecture.md](docs/architecture.md) first (segment naming, directory layout, data formats)
 - **Running commands, debugging, or troubleshooting** → read [docs/development-guide.md](docs/development-guide.md) first
 - **Fixing standalone container bugs** → read the relevant bugs file in `vsp_linux_container_FINAL_20260217/`
-- **Training research, LoRA tuning, or fine-tuning strategy** → read [docs/training-research-notes.md](docs/training-research-notes.md) first
-- **Planning future work or picking up a new mission** → read [docs/mission-backlog.md](docs/mission-backlog.md) first (Missions 4-14, prioritized with research references)
+- **Training research, LoRA tuning, or fine-tuning strategy** → read [docs/finetuning/training-research-notes.md](docs/finetuning/training-research-notes.md) first
+- **Planning future work or picking up a new mission** → read [docs/backlog/mission-backlog.md](docs/backlog/mission-backlog.md) first (Missions 4-14, prioritized with research references)
 
 Do NOT rely on memory or guessing — always read the file to get exact details.
 
@@ -192,7 +192,7 @@ When making changes, ALWAYS:
 
 All documentation is organized under `docs/` with subdirectories for easy discovery:
 
-### Core Documentation (docs/)
+### Core References (docs/ top level)
 
 | Document | Contents |
 |----------|----------|
@@ -200,55 +200,38 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | [docs/architecture.md](docs/architecture.md) | Pipeline flow, directory structure, segments, data formats, dependencies |
 | [docs/development-guide.md](docs/development-guide.md) | Commands, virtual environments, workflows, testing, troubleshooting |
 | [docs/container-sync-changelog.md](docs/container-sync-changelog.md) | Pending changes 1-26 for Linux container sync (full detail) |
-| [docs/training-research-notes.md](docs/training-research-notes.md) | Training research: length distribution, LoRA rank, angle robustness, AVSpeech fine-tuning |
-| [docs/mission-backlog.md](docs/mission-backlog.md) | Mission backlog: completed missions (1-3), prioritized future work (4-14), phased roadmap |
-| [docs/cleanup-log.md](docs/cleanup-log.md) | Feb 2026 project reorganization: what was deleted, moved, and why |
 
-### Deployment & Testing (docs/deployment/)
+### Research by Topic (one folder per research area, maps to backlog missions)
 
-| Document | Contents |
-|----------|----------|
-| [INSTALLATION_GUIDE.md](docs/deployment/INSTALLATION_GUIDE.md) | Setup instructions |
-| [TESTING_GUIDE.md](docs/deployment/TESTING_GUIDE.md) | Test suite and procedures |
-| [EC2_TESTING_README.md](docs/deployment/EC2_TESTING_README.md) | EC2-specific testing |
-| [CONTAINER_DEPLOYMENT_INSTRUCTIONS.md](docs/deployment/CONTAINER_DEPLOYMENT_INSTRUCTIONS.md) | Container deployment steps |
-| [PRODUCTION_DEPLOYMENT_INSTRUCTIONS.md](docs/deployment/PRODUCTION_DEPLOYMENT_INSTRUCTIONS.md) | Production deployment |
-| [CONTAINER_VALIDATION_CHECKLIST.md](docs/deployment/CONTAINER_VALIDATION_CHECKLIST.md) | Container validation |
-| [TRANSFER_INSTRUCTIONS.md](docs/deployment/TRANSFER_INSTRUCTIONS.md) | File transfer procedures |
+| Folder | Contents | Backlog Mission |
+|--------|----------|-----------------|
+| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary | M5: Expanded Metrics |
+| [docs/tuning/](docs/tuning/) | Report 2 (hyperparameter tuning), metrics explainer, 13 experiments, HTML reports | M7: Hyperparams, M14: Auto-tuning |
+| [docs/confidence/](docs/confidence/) | Report 4 (confidence scoring & quality filtering) | M4: Confidence Scoring |
+| [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR) | M6: Beam Aggregation |
+| [docs/prompts/](docs/prompts/) | Report 3 (prompt engineering & context injection) | M8: Prompt Engineering |
+| [docs/finetuning/](docs/finetuning/) | Report 6 (fine-tuning analysis), training research notes | M9: AVSpeech Fine-Tuning |
+| [docs/paper/](docs/paper/) | VSP-LLM paper (PDF + text), 2025 Presentation | — |
 
-### Changelog & Fixes (docs/changelog/)
+### Operations
 
-| Document | Contents |
-|----------|----------|
-| [COMPLETE_CHANGELOG.md](docs/changelog/COMPLETE_CHANGELOG.md) | Full historical changelog |
-| [FIX_INVENTORY.md](docs/changelog/FIX_INVENTORY.md) | Comprehensive fix inventory |
-| [MISSION3_MAX_LEN_FIX.md](docs/changelog/MISSION3_MAX_LEN_FIX.md) | Mission 3 max_len fix details |
-| [SEGMENTED_VIDEO_NAMING_FIX.md](docs/changelog/SEGMENTED_VIDEO_NAMING_FIX.md) | Video naming fix |
-| [PATH_CORRECTION_FIX.md](docs/changelog/PATH_CORRECTION_FIX.md) | Path correction fix |
+| Folder | Contents |
+|--------|----------|
+| [docs/guides/](docs/guides/) | Installation, deployment, testing, container validation, transfer instructions |
+| [docs/features/](docs/features/) | Feature documentation (golden k-means, transcription, segmentation, etc.) |
+| [docs/changelog/](docs/changelog/) | Fix history (complete changelog, fix inventory, individual fix docs) |
+| [docs/backlog/](docs/backlog/) | Mission backlog (roadmap, Missions 1-14), cleanup log |
 
-### Research (docs/research/)
+### Other
 
-All R&D experiments, reports, generators, and analysis. Organized by type:
+| Folder | Contents |
+|--------|----------|
+| `docs/sessions/` | Session summaries |
+| `docs/licenses/` | Third-party license files |
+| `docs/branding/` | Logo files |
+| `docs/_research-tools/` | Report generators (Python), experiment scripts, datasets, assets |
 
-| Subfolder | Contents |
-|-----------|----------|
-| `experiments/` | 14 decode parameter experiments (exp_A through exp_M + full_decode_J), each with config, decode output, and per-experiment reports |
-| `reports/` | Published documents: research journal (docx), metrics explainer, tuning experiments, project summary, pairwise comparison (PDF), 6 analysis reports (md), plus docx/ and pdf/ format variants |
-| `generators/` | Python scripts to generate reports (research journal, metrics explainer, tuning, pairwise, summary, converter) |
-| `references/` | VSP-LLM paper (PDF + text), 2025 Presentation (PPTX) |
-| `data/` | Decode datasets, subset data, interesting cross-experiment examples |
-| `scripts/` | Experiment runner scripts (run_experiment.sh, run_all_experiments.sh, etc.) |
-| `assets/` | Logo and branding images used in reports |
-
-### Other docs/ subdirectories
-
-| Directory | Contents |
-|-----------|----------|
-| `docs/sessions/` | Session summaries (FINAL_SUMMARY, SESSION_SUMMARY_20260202, TEST_RESULTS_SUMMARY) |
-| `docs/licenses/` | All third-party license files (Python, Linux, NVIDIA, build-from-source) |
-| `docs/branding/` | Logo files (PNG, SVG, JPEG) |
-
-### Experimental Results
+### Experimental Results (root level)
 
 | Directory | Contents |
 |-----------|----------|
@@ -296,8 +279,7 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── golden_weights/        # Models: Clustering baseline weights
 ├── Llama-2-7b-hf/        # Models: LLM config files
 │
-├── docs/research/         # Research: R&D experiments, reports, generators
-├── docs/                  # Docs: ALL documentation (organized)
+├── docs/                  # Docs: ALL documentation (organized by topic)
 ├── scripts/               # Scripts: Utility scripts (tests, monitoring, build)
 ├── logs/                  # Logs: Pipeline run logs
 ├── build_assets/          # Build: Wheel caches & build venvs
