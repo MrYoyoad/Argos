@@ -1,0 +1,538 @@
+OVERALL | WER: 60.9% | WWER: 59.2% | NEA Recall: 41% | NEA F1: 41% | Mode: spaCy POS/NER | Segments: 107
+------------------------------------------------------------------------------------------------
+-r0CnHLAm2k_0__70eb4d5d
+REF: there forever and i want it to be a five star review
+HYP: forever and i wanted to be a fashion designer
+WER: 50.0% | WWER: 63.2% | NEA: R=0% P=100% F1=0% | Missed: [five]
+------------------------------------------------------------------------------------------------
+0fmc81KXbB0_0__8be49586
+REF: i don't want to say mistakes but i will say like experiments and
+HYP: i don't want to seem disrespectful
+WER: 69.2% | WWER: 78.9% | NEA: R=25% P=33% F1=29% | Missed: [experiments, mistakes, say]
+------------------------------------------------------------------------------------------------
+0v2N6w4m46s_0__964e9355 - Part 1
+REF: on today's the doctor is in the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we're going to see where ours specifically mine falls and whether or not you need to make some life decisions
+HYP: today as the doctor says the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we'll see where our specifically mine falls and whether or not you're going to make some life changes
+WER: 22.9% | WWER: 19.5% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+0v2N6w4m46s_0__964e9355 - Part 2
+REF: and whether or not you need to make some lifestyle changes dr axel
+HYP: and whether or not you're going to make some lifestyle changes not your hair
+WER: 38.5% | WWER: 47.8% | NEA: R=0% P=100% F1=0% | Missed: [axel, dr]
+------------------------------------------------------------------------------------------------
+1wZuiC0RuPM_13__dd2295eb
+REF: you can just stitch that into place and that way it won't slide out
+HYP: the tradition is that men play and that way they won't slide out
+WER: 50.0% | WWER: 60.0% | NEA: R=40% P=40% F1=40% | Missed: [just, place, stitch]
+------------------------------------------------------------------------------------------------
+1whXJLCrTjY_0__668dbcdc
+REF: running a marathon knocked her out
+HYP: when a marathon not a sprint
+WER: 66.7% | WWER: 66.7% | NEA: R=33% P=50% F1=40% | Missed: [knocked, running]
+------------------------------------------------------------------------------------------------
+2HddWQse8Mw_0__8ecb0409
+REF: james and will talk about street photography and other
+HYP: some of the things we want to talk about doing in photography and all the
+WER: 122.2% | WWER: 62.5% | NEA: R=0% P=100% F1=0% | Missed: [james]
+------------------------------------------------------------------------------------------------
+2JuBrr6TW8o_14__39750242
+REF: they have something like this for the viola
+HYP: some english for you all and
+WER: 100.0% | WWER: 90.0% | NEA: R=0% P=0% F1=0% | Missed: [have, viola]
+------------------------------------------------------------------------------------------------
+2S0wKsrQYqI_1__fbb354d6
+REF: lures all with punch out hooks that go along with it this is no bigger than a credit card guys
+HYP: it's one of the best counties in the whole state of illinois and there's no better way to get at this
+WER: 100.0% | WWER: 96.6% | NEA: R=0% P=0% F1=0% | Missed: [bigger, card, credit, go, guys, hooks, lures, no, punch]
+------------------------------------------------------------------------------------------------
+3PE65tkpaGw_0__dde8ee01
+REF: i bought a custom well not a custom this is off the shelf but it's much more expensive router bit meant to do this exact operation
+HYP: putting on a costume well our costumes of the show but it's much more expansive around being meant to do this exact operation
+WER: 50.0% | WWER: 55.0% | NEA: R=50% P=55% F1=52% | Missed: [bit, bought, custom, expensive, router, shelf]
+------------------------------------------------------------------------------------------------
+3Sd87aIMr3k_15__19014265
+REF: now let's fill in the punnet square
+HYP: to feel like the monkey square for the
+WER: 100.0% | WWER: 106.7% | NEA: R=0% P=100% F1=0% | Missed: [punnet]
+------------------------------------------------------------------------------------------------
+48mil-jr-Pk_6__7aead1f5
+REF: for example wellness programs are very popular among employers
+HYP: example wellness programs are very popular among employers
+WER: 11.1% | WWER: 6.7% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+5RJU2GoOvoM_0__d181c4ad
+REF: you've got to get back up again because we all fall we all fail
+HYP: you've got to get back up again because we all fall we all fail
+WER: 0.0% | WWER: 9.5% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+6j5IucNv9kc_8__7730cf1d
+REF: gadget mouse making company and they have this app on the app store you can pick up for free
+HYP: excited to watch me come then after that i'm going to
+WER: 100.0% | WWER: 100.0% | NEA: R=0% P=100% F1=0% | Missed: [gadget, mouse]
+------------------------------------------------------------------------------------------------
+6k4CVRuJ9tg_2__3bf717e1
+REF: again before i get into that i just want to check in with people i know that a couple people well a few people will probably hear live so feel free to go and check them out and if you're interested in learning more about the
+HYP: them the day before i get there i just want to check in with people i know that a couple of people are probably in life so i feel free to
+WER: 58.7% | WWER: 57.1% | NEA: R=50% P=71% F1=59% | Missed: [again, few, go, hear, interested, learning, live, more, so, well]
+------------------------------------------------------------------------------------------------
+8HA9Q9Ityfg_0__7a8ea09b
+REF: own rail system for a few bucks
+HYP: system for a few years now
+WER: 57.1% | WWER: 50.0% | NEA: R=40% P=40% F1=40% | Missed: [bucks, own, rail]
+------------------------------------------------------------------------------------------------
+8fk-CwhmumA_18__17792c60
+REF: as our routing and switching workbooks so that's why it's taking so long
+HYP: and it's a great honor to be here thank you very much
+WER: 100.0% | WWER: 95.2% | NEA: R=0% P=0% F1=0% | Missed: [long, routing, so, switching, taking, workbooks]
+------------------------------------------------------------------------------------------------
+8wCA1Phnc-I_0__20258a80
+REF: to have at least 10 of the active ingredient protodiocin which is one of the steroidal glycosides that is in tribulus
+HYP: at least 10 percent of the active ingredients in prototypes which in this world is considered to be a good
+WER: 76.2% | WWER: 83.3% | NEA: R=50% P=25% F1=33% | Missed: [one]
+------------------------------------------------------------------------------------------------
+91tFHYm9qso_7__03173d80
+REF: so we started looking at the structure of coping and the structure of emotion and started really looking at
+HYP: we started looking at structure of hope and the structure of emotion and started really looking
+WER: 21.1% | WWER: 20.7% | NEA: R=71% P=83% F1=77% | Missed: [coping, so]
+------------------------------------------------------------------------------------------------
+9KACXV-cW-4_0__724f88a1
+REF: now those predictions i think
+HYP: of first impressions the same author
+WER: 120.0% | WWER: 100.0% | NEA: R=0% P=0% F1=0% | Missed: [now, predictions, think]
+------------------------------------------------------------------------------------------------
+9otzlTbuNO0_7__3db3b926
+REF: it will catalog what i'm doing here for delayed pressure urticaria today's appointment
+HYP: will catalog what i'm doing for delaying breast cancer here's today's appointment
+WER: 46.2% | WWER: 66.7% | NEA: R=50% P=100% F1=67% | Missed: [urticaria]
+------------------------------------------------------------------------------------------------
+9wJY59NWNz8_16__33190f6c
+REF: we all live in our yellow submarine
+HYP: we want to live in our own private
+WER: 57.1% | WWER: 50.0% | NEA: R=33% P=25% F1=29% | Missed: [submarine, yellow]
+------------------------------------------------------------------------------------------------
+AZTouP7hMjw_0__1479eaae
+REF: some limonene hash oil some d limonene hash oil
+HYP: being an actress being a
+WER: 100.0% | WWER: 100.0% | NEA: R=0% P=100% F1=0% | Missed: [d]
+------------------------------------------------------------------------------------------------
+BVynmQr3cf8_0__0166130c
+REF: so i have two and a half of these size cups which is probably like the equivalent of
+HYP: i have two and a half of these nice cups which is probably like the equivalent of
+WER: 11.1% | WWER: 11.1% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+Cc85FcXkFBs_0__54a4c098
+REF: the pacific the new flagship model won't be a high powered beast if you're looking for 20 nanometer manufacturing and high bandwidth memory then the tonga isn't for you
+HYP: civic the new flash chip might won't be a high power piece if you're looking for 20 nanometer manufacturing and a high bandwidth with memory then the target isn't for you
+WER: 34.5% | WWER: 48.1% | NEA: R=50% P=100% F1=67% | Missed: [pacific]
+------------------------------------------------------------------------------------------------
+Cp1eBaFIRFw_1__e302e4f7
+REF: you could be using that way in here so that's basically my recipe i'm going to show you what we're going to do now
+HYP: all about owning that right here so that's basically what i'm trying to do with what i do have
+WER: 62.5% | WWER: 71.8% | NEA: R=36% P=50% F1=42% | Missed: [going, in, now, recipe, show, using, way]
+------------------------------------------------------------------------------------------------
+DBhaa45mAro_2__07d05c7a - Part 1
+REF: hey it's me just doing the eush keeping up with what's going on in school so here's the latest taylor and rob over brittany over dennis and julia totes over
+HYP: (no hyp available)
+WER: 100.0% | WWER: 100.0% | NEA: R=0% P=100% F1=0% | Missed: [dennis, julia, taylor]
+------------------------------------------------------------------------------------------------
+DBhaa45mAro_2__07d05c7a - Part 2
+REF: and julia totes over well thank god
+HYP: and julia chooses overreal the
+WER: 71.4% | WWER: 68.8% | NEA: R=50% P=100% F1=67% | Missed: [god]
+------------------------------------------------------------------------------------------------
+DUJbZV6oIds_0__55300c6c - Part 1
+REF: second thing is a circular polarizer great for obviously exterior shooting but also good for getting rid of reflections sometimes in windows and things like that
+HYP: second is i stand to the polorizer great for obviously a hate shooting but also good for getting rid of reflections sometimes in windows and things like glass
+WER: 34.6% | WWER: 24.4% | NEA: R=73% P=73% F1=73% | Missed: [circular, exterior, polarizer, thing]
+------------------------------------------------------------------------------------------------
+DUJbZV6oIds_0__55300c6c - Part 2
+REF: in windows and things like that
+HYP: in a window instead of having to
+WER: 100.0% | WWER: 87.5% | NEA: R=0% P=0% F1=0% | Missed: [things, windows]
+------------------------------------------------------------------------------------------------
+DYZKgzvPexU_0__ad4114ab
+REF: hey how's it going youtube i'm 5'6 and i'm here to
+HYP: and it's clear that viruses can be transmitted
+WER: 100.0% | WWER: 95.0% | NEA: R=0% P=100% F1=0% | Missed: [5'6]
+------------------------------------------------------------------------------------------------
+ECIwBVJ8cZQ_2__12e63349
+REF: will not have enough food for a healthy life
+HYP: we learned to have enough food for a healthy life
+WER: 33.3% | WWER: 14.3% | NEA: R=100% P=83% F1=91%
+------------------------------------------------------------------------------------------------
+EG9HNZm6qSs_1__6a00dc91
+REF: what you mean this the lapel mic i don't understand what's distracting about it
+HYP: what do you mean this is the libelous i don't understand what she's ranting about it
+WER: 50.0% | WWER: 61.9% | NEA: R=40% P=50% F1=44% | Missed: [distracting, lapel, mic]
+------------------------------------------------------------------------------------------------
+F-2k62XeAvM_20__9237e7c5
+REF: but when we first started this series i wondered if we'd actually get through it you know all great ideas
+HYP: when we first started this series i wondered if we'd actually get through it you know all great ideas
+WER: 5.0% | WWER: 10.0% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+FD9U2sgqJe8_16__9d9045c8
+REF: i'm not sure if you're aware of it but yes there has been a class action suit filed against apple for that very thing and yes technically speaking it wasn't a wine it was a beer
+HYP: i'm not sure if you're aware of it but yes there has been a class action suit filed against apple for that very thing and yes now technically speaking it wasn't sony it was apple
+WER: 13.9% | WWER: 26.9% | NEA: R=85% P=85% F1=85% | Missed: [beer, wine]
+------------------------------------------------------------------------------------------------
+GwBfUzPCiaw_0__4d2b0fdb
+REF: where is the car wo ist das auto
+HYP: where is the car full is dusty outdoors
+WER: 50.0% | WWER: 64.3% | NEA: R=0% P=100% F1=0% | Missed: [das]
+------------------------------------------------------------------------------------------------
+HhkhkWkzNP4_7__2527cbb1
+REF: we're excited about several innovations that will deliver increased nutritional benefits of the food that we eat as well and also that will help ensure
+HYP: commandant of the naval innovations center we were there to increase the nutritional benefit of the food we were eating in israel also they would help us with our
+WER: 88.0% | WWER: 100.0% | NEA: R=36% P=38% F1=37% | Missed: [as, benefits, deliver, eat, ensure, excited, increased, several, well]
+------------------------------------------------------------------------------------------------
+IQT8XQ9ODcY_11__d07f81fa
+REF: so you can update the spreadsheet from autocad
+HYP: who are going to get dated especially from other guys
+WER: 112.5% | WWER: 91.7% | NEA: R=0% P=0% F1=0% | Missed: [autocad, so, spreadsheet, update]
+------------------------------------------------------------------------------------------------
+JJRxStrOiBI_7__24d99a07
+REF: for that you will use preter because that's what happened what people did
+HYP: for that you will lose what happened or people that will
+WER: 53.8% | WWER: 52.6% | NEA: R=40% P=67% F1=50% | Missed: [did, preter, use]
+------------------------------------------------------------------------------------------------
+K0h33Ps7vz4_11__e66d3063
+REF: to this wave of artificial intelligence that is slowly taking place
+HYP: to this wave of artificial intelligence that is slowly taking place
+WER: 0.0% | WWER: 0.0% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+LGcjzM3BX-s_3__cc3e230e
+REF: they do however on again they do however hold the festival
+HYP: do you know how ever god is the one who
+WER: 90.9% | WWER: 83.3% | NEA: R=0% P=0% F1=0% | Missed: [again, do, festival, hold, however, on]
+------------------------------------------------------------------------------------------------
+MO4hiiayz3w_9__e89a45de
+REF: it's not bad you know what because it's our culture it's our culture you have to
+HYP: not a bad word but it's our culture our culture is our
+WER: 62.5% | WWER: 70.8% | NEA: R=50% P=67% F1=57% | Missed: [have, know]
+------------------------------------------------------------------------------------------------
+NGCTGBsuEg4_20__f35e3151
+REF: vi we said was zero so that goes away so vf is f delta t
+HYP: v i would say we're zero so that goes away so v i have the lead staff to tell the team
+WER: 100.0% | WWER: 62.5% | NEA: R=25% P=100% F1=40% | Missed: [delta, f, t]
+------------------------------------------------------------------------------------------------
+OxenfkPpJPY_0__0f9d64b8
+REF: if police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address
+HYP: police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address
+WER: 3.4% | WWER: 2.3% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+PSJRmPfOGYQ_13__b2afc3d9
+REF: i see twitter feeds all over the place right i see them in news stories i see them in
+HYP: see green fins all over the place so i can see them close to shore i see them in the
+WER: 47.4% | WWER: 53.6% | NEA: R=43% P=43% F1=43% | Missed: [feeds, news, stories, twitter]
+------------------------------------------------------------------------------------------------
+QvDw6m2kA6Q_0__a756b252
+REF: there are two types of teeth the first type is the anus
+HYP: you know those two times i've seen the first time is in kenya
+WER: 75.0% | WWER: 61.9% | NEA: R=100% P=50% F1=67%
+------------------------------------------------------------------------------------------------
+QzYx9bYHxKo_3__373a7e56
+REF: this book ain't just narrated by one fool tellin us what's up with the dun
+HYP: speak english as it is i write about what foods taste best with a
+WER: 93.3% | WWER: 93.8% | NEA: R=0% P=0% F1=0% | Missed: [one, tellin, us]
+------------------------------------------------------------------------------------------------
+RsPPOL9XhcM_14__da966181
+REF: goes on to say frank sachs lead author on the report said he has no idea why people think coconut oil is healthy it's almost 100 fat he says
+HYP: goes on to say france as the lead author on the report said he has no idea why people think going north is south it's almost 100 percent fat kills us
+WER: 31.0% | WWER: 33.3% | NEA: R=100% P=25% F1=40%
+------------------------------------------------------------------------------------------------
+S0ID6pdAvvY_7__e2281119
+REF: with how to reverse it okay what are the handful of things i'm gonna show you some things that might help you here in just a minute
+HYP: what is the handful of things i'm going to show you some things like my belt loop or something like that but
+WER: 66.7% | WWER: 100.0% | NEA: R=0% P=100% F1=0% | Missed: [a, just, minute]
+------------------------------------------------------------------------------------------------
+S8aXVz799Dc_7__0af934d2
+REF: another useful expression i'm afraid there's been a mistake or i'm afraid there's been a mistake
+HYP: another useful expression i'm afraid there's been a m i s duck or i m afraid there s
+WER: 62.5% | WWER: 110.7% | NEA: R=80% P=57% F1=67% | Missed: [mistake]
+------------------------------------------------------------------------------------------------
+SQONLdb1gow_3__82d6e002
+REF: in the case of exercise it's not just a matter of working or not working
+HYP: days of exercise is not just a matter of working or not working
+WER: 26.7% | WWER: 27.3% | NEA: R=80% P=80% F1=80% | Missed: [case]
+------------------------------------------------------------------------------------------------
+SmTednDfdxA_8__7fc8688e
+REF: and so what are the arguments that the individual mandate
+HYP: and so what are the arguments that the individual may take
+WER: 20.0% | WWER: 14.3% | NEA: R=75% P=75% F1=75% | Missed: [mandate]
+------------------------------------------------------------------------------------------------
+TgdqxHIF-Ec_1__b8b5e460
+REF: but i have to understand in my head what that looks like in 3d as i'm drawing it
+HYP: but i feel like this side of my head what that looks like in the real world as i'm drawing
+WER: 50.0% | WWER: 44.0% | NEA: R=50% P=43% F1=46% | Missed: [3d, have, understand]
+------------------------------------------------------------------------------------------------
+TuUiNhbMzjY_8__8b4a8fec
+REF: one really nice thing about this is
+HYP: what a brilliant idea this is
+WER: 71.4% | WWER: 84.6% | NEA: R=0% P=100% F1=0% | Missed: [one]
+------------------------------------------------------------------------------------------------
+VI-3EHJ-2pI_1__e8f492eb
+REF: do is either sit or stand the baby up on a chair
+HYP: was either standing or sitting the baby up on a chair
+WER: 33.3% | WWER: 37.5% | NEA: R=50% P=50% F1=50% | Missed: [sit, stand]
+------------------------------------------------------------------------------------------------
+VMWNq9cCXU4_12__451829a4
+REF: cartoon characters the blue and the red those things change all the time on influenza which is why we have to re evaluate
+HYP: are too tightly coupled with the rate those things change all the time influencing which is why we have to reach
+WER: 43.5% | WWER: 48.5% | NEA: R=40% P=40% F1=40% | Missed: [blue, cartoon, characters, evaluate, influenza, red]
+------------------------------------------------------------------------------------------------
+VxZ2o9MPtFA_24__390f4eae
+REF: what we call business development training in other words they taught me how to sell they taught me a little bit about the product
+HYP: what are business development training in other words that taught me how to sell they taught me a little bit about how to about the product
+WER: 25.0% | WWER: 27.8% | NEA: R=91% P=100% F1=95% | Missed: [call]
+------------------------------------------------------------------------------------------------
+WNDj1BAKi0A_0__49b21410
+REF: we will give up some of our individual choice for the sake of the community decision
+HYP: will give up some of our individual choices for the sake of the community and
+WER: 18.8% | WWER: 22.7% | NEA: R=67% P=80% F1=73% | Missed: [choice, decision]
+------------------------------------------------------------------------------------------------
+WRtKKFMhJVM_4__91456207
+REF: would give you are the 16 but the lines are straight so either lens correction was used or it's just really freaking straight or cropped or whatever but it looks great with the stands the crowd the lights look awesome
+HYP: of deforestation is that it complicates the hashtags on twitter and there's integration with google street view and facebook and instagram so we have burger king with its own hashtag to draw attention to their cause
+WER: 97.5% | WWER: 93.7% | NEA: R=0% P=0% F1=0% | Missed: [16]
+------------------------------------------------------------------------------------------------
+WyPi-INqRjc_7__cf000cbf
+REF: the concepts will be explained from two perspectives using real life experiences reflecting my living in mexico as well as visits to other spanish and french speaking countries
+HYP: to explain from two perspectives using great life experiences reflecting my living in mexico as well as visits to other spanish and french speaking countries
+WER: 21.4% | WWER: 16.4% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+ZcCviyMNsPo_9__78596d0d
+REF: but it's mostly cardiac muscle and as i said before that's the pump component of the heart
+HYP: is mostly not yet muscle and as i said before that's the pump but part of the heat
+WER: 41.2% | WWER: 42.3% | NEA: R=57% P=57% F1=57% | Missed: [cardiac, component, heart]
+------------------------------------------------------------------------------------------------
+aGULUaABMlc_0__59576e05
+REF: i felt like we could do this i felt like this is something we can overcome
+HYP: like we could do this and i felt like this is something we had to overcome
+WER: 31.2% | WWER: 30.0% | NEA: R=100% P=75% F1=86%
+------------------------------------------------------------------------------------------------
+ajEHR2Ajycw_14__39f3ce5a
+REF: mode or single player mode by the way this is also a
+HYP: mode single player mode by any way this is also
+WER: 25.0% | WWER: 16.7% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+b1-EWr3WQhI_0__324a9544
+REF: and how we should be and how we have to
+HYP: i'm going to ask you to
+WER: 90.0% | WWER: 145.5% | NEA: R=0% P=0% F1=0% | Missed: [have]
+------------------------------------------------------------------------------------------------
+bLjyV24KpeY_0__d0de0f63
+REF: what they are is 3d goggles they have two independent screens they're like 850 by
+HYP: 3 years old 8 years old
+WER: 100.0% | WWER: 100.0% | NEA: R=0% P=0% F1=0% | Missed: [850, two]
+------------------------------------------------------------------------------------------------
+bR80JEaW4LY_0__51c8b7c5
+REF: before jumping into my scheme let me just tell you that for jeevan anand
+HYP: before the pyramids came let me just tell you that for 3000 years
+WER: 42.9% | WWER: 56.0% | NEA: R=0% P=0% F1=0% | Missed: [anand, jeevan]
+------------------------------------------------------------------------------------------------
+eLS1vcpGVHQ_12__e9dd9adc
+REF: i surrendered good quite i surrendered to the low security
+HYP: is the only thing that
+WER: 100.0% | WWER: 93.8% | NEA: R=0% P=0% F1=0% | Missed: [good, low, quite, security, surrendered]
+------------------------------------------------------------------------------------------------
+gD8IlVJFk04_9__4f672fc5
+REF: connection within the cable to check that you've got continuity between both ends now of course on this length of
+HYP: connection within the cable to chat that you've got continuously between both hands now of course on this length of
+WER: 15.0% | WWER: 26.7% | NEA: R=67% P=67% F1=67% | Missed: [check, continuity, ends]
+------------------------------------------------------------------------------------------------
+h6yzdL1tN9U_9__16b0e01c
+REF: readers out there because they're everywhere and remember you want to network
+HYP: when i was 18 years old i came to the united states on a student visa to attend harvard university
+WER: 158.3% | WWER: 95.0% | NEA: R=0% P=0% F1=0% | Missed: [everywhere, network, out, readers, remember, there, want]
+------------------------------------------------------------------------------------------------
+iJxvSh6PbTc_4__12c45eac
+REF: area have been showing zygites addendum and even zygites to their class and discussing it
+HYP: i've been sharing the stage at the meetings for decades with anderson
+WER: 93.3% | WWER: 95.7% | NEA: R=0% P=0% F1=0% | Missed: [addendum, area, class, discussing, even, showing, zygites]
+------------------------------------------------------------------------------------------------
+iRtsRJhrD5Y_8__dd680175
+REF: i looked and i saw i was wrong i was lied to just as everyone else
+HYP: learned and i just thought i was wrong i was lied to just like everyone else but
+WER: 37.5% | WWER: 36.4% | NEA: R=67% P=67% F1=67% | Missed: [looked, saw]
+------------------------------------------------------------------------------------------------
+jLBAUGvLuq8_0__fdcd8f16
+REF: look at this here's two dollars and a self addressed stamped envelope first things first the bender
+HYP: look at this now you'll see instead of addressing the same time to everyone first they're better off
+WER: 82.4% | WWER: 82.9% | NEA: R=0% P=100% F1=0% | Missed: [dollars, two]
+------------------------------------------------------------------------------------------------
+kml5T4asOwQ_0__4192b704
+REF: and just scrolling down they have an option right here for fighting flights and more you can just turn
+HYP: just cool it down they have an app for that for finding flights and more you can just do
+WER: 42.1% | WWER: 43.3% | NEA: R=40% P=50% F1=44% | Missed: [fighting, here, option, right, scrolling, turn]
+------------------------------------------------------------------------------------------------
+ktMebjnZiSE_3__ebdf1351 - Part 1
+REF: said that they realize now that consumers want a bigger smartphone when in the past they said that apple's not going to do a bigger smartphone well now it looks like they are so if those rumors are correct and apple actually is going to make two different sized versions of the iphone
+HYP: that they realize now that consumers will not upgrade their smartphone but in the past they've said that apple's not going to upgrade your smartphone well now it looks like they are so if those assumptions are incorrect apple actually is going to make two different versions of the iphone 6s
+WER: 28.3% | WWER: 32.2% | NEA: R=100% P=67% F1=80%
+------------------------------------------------------------------------------------------------
+ktMebjnZiSE_3__ebdf1351 - Part 2
+REF: is going to make two different sized versions of the iphone 6 either remember to resolution
+HYP: i took two different tests versions of the hippocratic oath surgery
+WER: 68.8% | WWER: 66.7% | NEA: R=50% P=100% F1=67% | Missed: [6]
+------------------------------------------------------------------------------------------------
+l2Pykr8Fgw4_0__b212be6c
+REF: that the material we're using has the right rate and level of absorption
+HYP: material you were using has the right weight and everything
+WER: 61.5% | WWER: 52.4% | NEA: R=57% P=80% F1=67% | Missed: [absorption, level, rate]
+------------------------------------------------------------------------------------------------
+lOuEis9L8os_1__e563fbd2
+REF: her brother and they're kinda half brothers and sisters and his dad didn't do anything about it and so absalom wants to avenge tamar's rape and maybe among other things
+HYP: her brother and then her half brother and sisters and they get attacked and do anything about it and so abigail brought to a rage daniel's rape maybe among other
+WER: 46.7% | WWER: 50.9% | NEA: R=0% P=100% F1=0% | Missed: [absalom, tamar]
+------------------------------------------------------------------------------------------------
+lSogkLa9OaA_11__82e9c9c2
+REF: we're angry we're happy we're sad we're mad we're delightful we're joyous
+HYP: angry we are happy we are sad we are mad we are in love and we are joyous
+WER: 116.7% | WWER: 37.5% | NEA: R=83% P=83% F1=83% | Missed: [delightful]
+------------------------------------------------------------------------------------------------
+loMWvXEVDaI_0__0be15686
+REF: it includes almost everything we saw in the dslr kit but adds a couple of items for run and gun style booming
+HYP: lose almost everything we saw and did as a learning but as a couple of items for a running style boomerang
+WER: 54.5% | WWER: 52.9% | NEA: R=42% P=50% F1=45% | Missed: [adds, booming, dslr, gun, includes, kit, run]
+------------------------------------------------------------------------------------------------
+loebelfG9T4_10__76adce28 - Part 1
+REF: make yourself at home make yourself at home si ntase como en casa so repeat
+HYP: make yourself i still home make yourself at home take this inhale and exhale make your
+WER: 60.0% | WWER: 69.4% | NEA: R=0% P=100% F1=0% | Missed: [casa, como, en, ntase, si]
+------------------------------------------------------------------------------------------------
+loebelfG9T4_10__76adce28 - Part 2
+REF: so repeat make yourself at home
+HYP: so repeat make yourself at home
+WER: 0.0% | WWER: 0.0% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+ly6KVdbhT7w_0__896e0d2a
+REF: phone where it actually works i think it's a problem with this phone i honestly don't know
+HYP: where it actually works i don't think it's appropriate to grow marijuana
+WER: 64.7% | WWER: 74.1% | NEA: R=43% P=50% F1=46% | Missed: [honestly, know, phone, problem]
+------------------------------------------------------------------------------------------------
+msf0MSoEric_0__bda0c153
+REF: i think it was about four or five days ago they said they're going to get rid of their dly
+HYP: i think it was about four or five days ago they said they're going to get rid of their yearly now
+WER: 10.0% | WWER: 11.4% | NEA: R=100% P=67% F1=80%
+------------------------------------------------------------------------------------------------
+n7sVkiRL-14_0__5f0017b2
+REF: fingerprint scanner they put in the home button of the newly redesigned
+HYP: months later and they put the home button of the new iphone 6s and i
+WER: 75.0% | WWER: 47.4% | NEA: R=43% P=38% F1=40% | Missed: [fingerprint, newly, redesigned, scanner]
+------------------------------------------------------------------------------------------------
+nTxcgczNaQQ_11__abf12e2f
+REF: finally we beg for traveling mercies as we return home to
+HYP: we pay for traveling merchants as we return their homes to
+WER: 45.5% | WWER: 47.1% | NEA: R=33% P=40% F1=36% | Missed: [beg, finally, home, mercies]
+------------------------------------------------------------------------------------------------
+oNqGdEQMb-M_0__63f6518b
+REF: from people's stem cells that they would not reject over time and we were very near to a cure for things like aids
+HYP: from people's stem cells that they would not reject over time and we were very eager to cure for things like aids why is it
+WER: 21.7% | WWER: 35.3% | NEA: R=90% P=90% F1=90% | Missed: [near]
+------------------------------------------------------------------------------------------------
+oQAEDKVgeIw_3__4de2a6e4
+REF: something that ken talks about specifically something i wanted to bring up when we were talking about vipassana and something that i wanted to you know
+HYP: that he talked about that he talks about specifically something that he wrote about i want to talk about from his talk it's something that i wanted to
+WER: 76.9% | WWER: 79.5% | NEA: R=0% P=100% F1=0% | Missed: [ken, vipassana]
+------------------------------------------------------------------------------------------------
+oQEVi0gxmoE_16__3949b7ce
+REF: dollars of damages americans want football they love football they want to go protest on their own time no one cares
+HYP: years of taekwondo is american kids want football they love football they want to go protest in the streets
+WER: 57.1% | WWER: 51.4% | NEA: R=0% P=0% F1=0% | Missed: [americans]
+------------------------------------------------------------------------------------------------
+pOeJSxbFyto_7__ede5f642 - Part 1
+REF: fully hooked in localhost now shows and i only have one site available if this were a real website i obviously would not be seeing localhosts i'd be seeing the url much like we see right here but you get the idea
+HYP: i don't want to hear any of that you know what i'm saying if you have one side of the story you have to have the other side as well and i've even come to the conclusion that you can't even tell your own story as much as i hate to admit it but that's
+WER: 123.8% | WWER: 86.6% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+pOeJSxbFyto_7__ede5f642 - Part 2
+REF: get the idea
+HYP: life and i
+WER: 100.0% | WWER: 100.0% | NEA: R=0% P=0% F1=0% | Missed: [get, idea]
+------------------------------------------------------------------------------------------------
+qHImZGBRto8_5__fa62c87d
+REF: point being is if we had like if my k 52s started doing that i there's something's wrong it's going back to
+HYP: beings if we had like my kevin 52 i started doing that and something's wrong it's holding me back into
+WER: 54.5% | WWER: 58.3% | NEA: R=45% P=56% F1=50% | Missed: ['s, 52s, being, going, k, point]
+------------------------------------------------------------------------------------------------
+qMH2BDkT7Gg_0__d77b1054
+REF: the comments or not all the links will be in the description for the channels and then you could check for the songs if they publish it this
+HYP: element on the entire list or being in an exhibition for your canvases and then you can check for controls if they published it or
+WER: 64.3% | WWER: 72.2% | NEA: R=25% P=22% F1=24% | Missed: [channels, comments, description, links, publish, songs]
+------------------------------------------------------------------------------------------------
+sX3tgFjdSR8_0__6de380c7
+REF: you guys send in some really good stories so we are about to read them
+HYP: i don't know if i can
+WER: 100.0% | WWER: 100.0% | NEA: R=0% P=0% F1=0% | Missed: [about, good, guys, in, read, really, send, stories]
+------------------------------------------------------------------------------------------------
+sqV3pL5x8PI_0__7213a178
+REF: a function can have multiple definitions associated with the value that's given to it
+HYP: any function can have multiple definitions such as when the key value that's given to us
+WER: 42.9% | WWER: 40.9% | NEA: R=86% P=75% F1=80% | Missed: [associated]
+------------------------------------------------------------------------------------------------
+t4idjGg8fpQ_8__c564d175 - Part 1
+REF: these out of course club members you get the club discount regular price is only 12 88 and our club members only pay 10 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a club member thanks so much
+HYP: down of course club members do get the club discount regular prices are only 12 88 airline club members can save up to 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be club member thanks so much
+WER: 22.2% | WWER: 19.8% | NEA: R=60% P=100% F1=75% | Missed: [10, only]
+------------------------------------------------------------------------------------------------
+t4idjGg8fpQ_8__c564d175 - Part 2
+REF: reasons why you should be a club member thanks so much and i'll see you again soon bye bye
+HYP: is why you should be a cheerleader thanks to ralph macchio
+WER: 68.4% | WWER: 75.9% | NEA: R=11% P=25% F1=15% | Missed: [again, club, member, much, reasons, see, so, soon]
+------------------------------------------------------------------------------------------------
+tLFZomqlXIk_0__af0836dd
+REF: what's in my dock version 1 so here
+HYP: to come once he made the offer he wanted so he
+WER: 125.0% | WWER: 87.5% | NEA: R=0% P=100% F1=0% | Missed: [1]
+------------------------------------------------------------------------------------------------
+u42-Tk1ZTQo_4__30f83df3
+REF: and i'll tell you in just a second if they are
+HYP: and then i'll take you just a second of the year so
+WER: 63.6% | WWER: 53.3% | NEA: R=67% P=33% F1=44% | Missed: [tell]
+------------------------------------------------------------------------------------------------
+u6aLP61t8Lg_1__cd4aa217
+REF: even to the extent of one's personal survival
+HYP: just gives you a sense of what it's like to push your survival to the
+WER: 162.5% | WWER: 87.5% | NEA: R=0% P=100% F1=0% | Missed: [one]
+------------------------------------------------------------------------------------------------
+uYgQClEfYuI_0__fea45a8f
+REF: yes they can perform very complex computations very fast
+HYP: i don't know if you've noticed but
+WER: 100.0% | WWER: 100.0% | NEA: R=0% P=0% F1=0% | Missed: [complex, computations, fast, perform, very]
+------------------------------------------------------------------------------------------------
+uewO8zLmtpw_3__6231be93
+REF: personal belongings from me and put me in jail
+HYP: who agree with me and probably the
+WER: 77.8% | WWER: 84.6% | NEA: R=0% P=0% F1=0% | Missed: [belongings, jail, personal, put]
+------------------------------------------------------------------------------------------------
+vBBKM8WRtno_2__df85cbfd
+REF: that is something special and unique to summertech
+HYP: that is something special and unique to summer
+WER: 12.5% | WWER: 30.8% | NEA: R=0% P=100% F1=0% | Missed: [summertech]
+------------------------------------------------------------------------------------------------
+wATYm2rYLeg_0__1aa62ea2
+REF: use all those controls for any one system you use them
+HYP: i was just looking for relief where can i get some relief from this pain
+WER: 127.3% | WWER: 94.4% | NEA: R=0% P=100% F1=0% | Missed: [one]
+------------------------------------------------------------------------------------------------
+wex-7n593cI_4__34fa8b79
+REF: and that's really how we become unique and one of my friends chris ewen explained to me that a friendship is built based on two people
+HYP: and that's really how we become a community and one of my friends on instagram explained to me that a friendship is based not just on people
+WER: 30.8% | WWER: 45.8% | NEA: R=25% P=50% F1=33% | Missed: [chris, ewen, two]
+------------------------------------------------------------------------------------------------
+yHzKcA1NfmA_3__093e2c62
+REF: and like the guys that help us out you know with
+HYP: like the guys that can help us out with
+WER: 36.4% | WWER: 42.9% | NEA: R=67% P=100% F1=80% | Missed: [know]
+------------------------------------------------------------------------------------------------
+zXv8Errpg5U_0__a511ddb9
+REF: one of the complications of this disruption of breathing is that you get lower oxygen levels in your healthy tissues this is known as hypoxia
+HYP: complications of this disruption one is that you get lower arterial levels in your healthy tissues this is always high blood pressure and
+WER: 44.0% | WWER: 41.0% | NEA: R=100% P=100% F1=100%
+------------------------------------------------------------------------------------------------
+zmwgmt7wcv8_21__3cafc18a
+REF: watching the way words develop and change does suggest that wittgenstein was on to something
+HYP: the way words develop change suggests that finnish said was on to something
+WER: 40.0% | WWER: 41.7% | NEA: R=0% P=100% F1=0% | Missed: [wittgenstein]
+------------------------------------------------------------------------------------------------
+(END)

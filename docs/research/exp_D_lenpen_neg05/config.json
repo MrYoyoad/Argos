@@ -1,0 +1,7 @@
+{
+  "experiment": "exp_D_lenpen_neg05",
+  "date": "2026-02-18T15:34:44+00:00",
+  "overrides": ["generation.lenpen=-0.5"],
+  "segments": 107,
+  "hypo_json": "/home/ubuntu/tuning_results/exp_D_lenpen_neg05/decode_output/hypo-15834.json"
+}

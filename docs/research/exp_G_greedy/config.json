@@ -1,0 +1,7 @@
+{
+  "experiment": "exp_G_greedy",
+  "date": "2026-02-18T17:21:13+00:00",
+  "overrides": ["generation.beam=1"],
+  "segments": 107,
+  "hypo_json": "/home/ubuntu/tuning_results/exp_G_greedy/decode_output/hypo-84368.json"
+}

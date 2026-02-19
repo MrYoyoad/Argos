@@ -1,0 +1,7 @@
+{
+  "experiment": "exp_E_sampling_low_temp",
+  "date": "2026-02-18T16:24:05+00:00",
+  "overrides": ["generation.do_sample=true","generation.temperature=0.5","generation.top_p=0.9"],
+  "segments": 107,
+  "hypo_json": "/home/ubuntu/tuning_results/exp_E_sampling_low_temp/decode_output/hypo-154154.json"
+}

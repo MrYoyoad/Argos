@@ -1,0 +1,7 @@
+{
+  "experiment": "exp_C_lenpen_pos1",
+  "date": "2026-02-18T14:44:58+00:00",
+  "overrides": ["generation.lenpen=1.0"],
+  "segments": 107,
+  "hypo_json": "/home/ubuntu/tuning_results/exp_C_lenpen_pos1/decode_output/hypo-873203.json"
+}

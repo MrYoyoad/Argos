@@ -1,0 +1,538 @@
+[32;1mOVERALL | WER: 73.7% | WWER: 75.3% | NEA Recall: 26% | NEA F1: 26% | Mode: spaCy POS/NER | Segments: 107[0m
+[2m------------------------------------------------------------------------------------------------[0m
+-r0CnHLAm2k_0__70eb4d5d
+[2mREF:[0m there forever and i want it to be a five star review
+[2mHYP:[0m [33;1mforever[0m [33;1mand[0m [33;1mi[0m [31;1mwanted[0m [33;1mto[0m [33;1mbe[0m [31;1maround[0m [31;1mfor[0m [31;1myou[0m
+[2mWER:[0m [33;1m58.3%[0m | [2mWWER:[0m [31;1m68.4%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [five][0m
+[2m------------------------------------------------------------------------------------------------[0m
+0fmc81KXbB0_0__8be49586
+[2mREF:[0m i don't want to say mistakes but i will say like experiments and
+[2mHYP:[0m [32;1mi[0m [32;1mdon't[0m [32;1mwant[0m [32;1mto[0m [31;1mseem[0m [31;1mdisrespectful[0m
+[2mWER:[0m [31;1m69.2%[0m | [2mWWER:[0m [31;1m78.9%[0m | [31;1mNEA: R=25% P=33% F1=29%[0m | [31;1mMissed: [experiments, mistakes, say][0m
+[2m------------------------------------------------------------------------------------------------[0m
+0v2N6w4m46s_0__964e9355 - Part 1
+[2mREF:[0m on today's the doctor is in the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we're going to see where ours specifically mine falls and whether or not you need to make some life decisions
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [today][0m
+[2m------------------------------------------------------------------------------------------------[0m
+0v2N6w4m46s_0__964e9355 - Part 2
+[2mREF:[0m and whether or not you need to make some lifestyle changes dr axel
+[2mHYP:[0m [32;1mand[0m [32;1mwhether[0m [32;1mor[0m [32;1mnot[0m [31;1myou're[0m [31;1mgoing[0m [32;1mto[0m [32;1mmake[0m [32;1msome[0m [32;1mlifestyle[0m [32;1mchanges[0m [33;1mnot[0m [31;1myour[0m [31;1mhair[0m
+[2mWER:[0m [33;1m38.5%[0m | [2mWWER:[0m [33;1m47.8%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [axel, dr][0m
+[2m------------------------------------------------------------------------------------------------[0m
+1wZuiC0RuPM_13__dd2295eb
+[2mREF:[0m you can just stitch that into place and that way it won't slide out
+[2mHYP:[0m [31;1mthe[0m [31;1mtradition[0m [31;1mis[0m [33;1mthat[0m [31;1mmen[0m [31;1mplay[0m [33;1mand[0m [33;1mthat[0m [33;1mway[0m [31;1mthey[0m [33;1mwon't[0m [33;1mslide[0m [33;1mout[0m
+[2mWER:[0m [33;1m50.0%[0m | [2mWWER:[0m [33;1m60.0%[0m | [33;1mNEA: R=40% P=40% F1=40%[0m | [31;1mMissed: [just, place, stitch][0m
+[2m------------------------------------------------------------------------------------------------[0m
+1whXJLCrTjY_0__668dbcdc
+[2mREF:[0m running a marathon knocked her out
+[2mHYP:[0m [31;1mone[0m [33;1mmarathon[0m [31;1mnot[0m [31;1maround[0m
+[2mWER:[0m [31;1m83.3%[0m | [2mWWER:[0m [31;1m77.8%[0m | [31;1mNEA: R=33% P=33% F1=33%[0m | [31;1mMissed: [knocked, running][0m
+[2m------------------------------------------------------------------------------------------------[0m
+2HddWQse8Mw_0__8ecb0409
+[2mREF:[0m james and will talk about street photography and other
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [james][0m
+[2m------------------------------------------------------------------------------------------------[0m
+2JuBrr6TW8o_14__39750242
+[2mREF:[0m they have something like this for the viola
+[2mHYP:[0m [31;1msome[0m [31;1menglish[0m [33;1mfor[0m [31;1myou[0m [31;1mall[0m [31;1mand[0m
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m90.0%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [have, viola][0m
+[2m------------------------------------------------------------------------------------------------[0m
+2S0wKsrQYqI_1__fbb354d6
+[2mREF:[0m lures all with punch out hooks that go along with it this is no bigger than a credit card guys
+[2mHYP:[0m [33;1mis[0m [31;1mone[0m [31;1mof[0m [31;1mthe[0m [31;1mlargest[0m [31;1moil[0m [31;1mrigs[0m [31;1min[0m [31;1mthe[0m [31;1mgulf[0m [31;1mof[0m [31;1mmexico[0m [31;1mit's[0m [32;1mno[0m [32;1mbigger[0m [32;1mthan[0m [31;1mgrand[0m [31;1mcanyon[0m
+[2mWER:[0m [31;1m85.0%[0m | [2mWWER:[0m [31;1m162.1%[0m | [31;1mNEA: R=22% P=20% F1=21%[0m | [31;1mMissed: [card, credit, go, guys, hooks, lures, punch][0m
+[2m------------------------------------------------------------------------------------------------[0m
+3PE65tkpaGw_0__dde8ee01
+[2mREF:[0m i bought a custom well not a custom this is off the shelf but it's much more expensive router bit meant to do this exact operation
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [bit, bought, custom, do, exact, expensive, meant, more, much, operation, router, shelf][0m
+[2m------------------------------------------------------------------------------------------------[0m
+3Sd87aIMr3k_15__19014265
+[2mREF:[0m now let's fill in the punnet square
+[2mHYP:[0m [31;1mto[0m [31;1mfeel[0m [31;1mlike[0m [33;1mthe[0m [31;1mmonkey[0m [33;1msquare[0m [31;1mfor[0m [33;1mthe[0m
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m106.7%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [punnet][0m
+[2m------------------------------------------------------------------------------------------------[0m
+48mil-jr-Pk_6__7aead1f5
+[2mREF:[0m for example wellness programs are very popular among employers
+[2mHYP:[0m [33;1mexample[0m [33;1mwellness[0m [33;1mprograms[0m [33;1mare[0m [33;1mvery[0m [33;1mpopular[0m [33;1mamong[0m [33;1memployers[0m
+[2mWER:[0m [32;1m11.1%[0m | [2mWWER:[0m [32;1m6.7%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+5RJU2GoOvoM_0__d181c4ad
+[2mREF:[0m you've got to get back up again because we all fall we all fail
+[2mHYP:[0m [32;1myou've[0m [32;1mgot[0m [32;1mto[0m [32;1mget[0m [32;1mback[0m [32;1mup[0m [32;1magain[0m [32;1mbecause[0m [32;1mwe[0m [32;1mall[0m [32;1mfall[0m [32;1mwe[0m [32;1mall[0m [32;1mfail[0m
+[2mWER:[0m [32;1m0.0%[0m | [2mWWER:[0m [32;1m9.5%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+6j5IucNv9kc_8__7730cf1d
+[2mREF:[0m gadget mouse making company and they have this app on the app store you can pick up for free
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [gadget, mouse][0m
+[2m------------------------------------------------------------------------------------------------[0m
+6k4CVRuJ9tg_2__3bf717e1
+[2mREF:[0m again before i get into that i just want to check in with people i know that a couple people well a few people will probably hear live so feel free to go and check them out and if you're interested in learning more about the
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [again, check, couple, feel, few, free, get, go, hear, interested, just, know, learning, live, more, people, probably, so, want, well][0m
+[2m------------------------------------------------------------------------------------------------[0m
+8HA9Q9Ityfg_0__7a8ea09b
+[2mREF:[0m own rail system for a few bucks
+[2mHYP:[0m [33;1msystem[0m [33;1mfor[0m [33;1ma[0m [33;1mfew[0m [31;1myears[0m
+[2mWER:[0m [33;1m42.9%[0m | [2mWWER:[0m [33;1m50.0%[0m | [33;1mNEA: R=40% P=50% F1=44%[0m | [31;1mMissed: [bucks, own, rail][0m
+[2m------------------------------------------------------------------------------------------------[0m
+8fk-CwhmumA_18__17792c60
+[2mREF:[0m as our routing and switching workbooks so that's why it's taking so long
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [long, routing, so, switching, taking, workbooks][0m
+[2m------------------------------------------------------------------------------------------------[0m
+8wCA1Phnc-I_0__20258a80
+[2mREF:[0m to have at least 10 of the active ingredient protodiocin which is one of the steroidal glycosides that is in tribulus
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [10, one][0m
+[2m------------------------------------------------------------------------------------------------[0m
+91tFHYm9qso_7__03173d80
+[2mREF:[0m so we started looking at the structure of coping and the structure of emotion and started really looking at
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [coping, emotion, looking, really, so, started, structure][0m
+[2m------------------------------------------------------------------------------------------------[0m
+9KACXV-cW-4_0__724f88a1
+[2mREF:[0m now those predictions i think
+[2mHYP:[0m [31;1mof[0m [31;1mfirst[0m [31;1mimpressions[0m [31;1mby[0m [31;1mthis[0m
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [now, predictions, think][0m
+[2m------------------------------------------------------------------------------------------------[0m
+9otzlTbuNO0_7__3db3b926
+[2mREF:[0m it will catalog what i'm doing here for delayed pressure urticaria today's appointment
+[2mHYP:[0m [33;1mwill[0m [33;1mcatalog[0m [33;1mwhat[0m [33;1mi'm[0m [33;1mdoing[0m [33;1mfor[0m [31;1mdelaying[0m [31;1mbreast[0m [31;1mcancer[0m [31;1mhere's[0m [33;1mtoday's[0m [33;1mappointment[0m
+[2mWER:[0m [33;1m46.2%[0m | [2mWWER:[0m [31;1m66.7%[0m | [33;1mNEA: R=50% P=100% F1=67%[0m | [31;1mMissed: [urticaria][0m
+[2m------------------------------------------------------------------------------------------------[0m
+9wJY59NWNz8_16__33190f6c
+[2mREF:[0m we all live in our yellow submarine
+[2mHYP:[0m [32;1mwe[0m [31;1mwant[0m [31;1mto[0m [33;1mlive[0m [33;1min[0m [33;1mour[0m [31;1mown[0m [31;1mprivate[0m
+[2mWER:[0m [33;1m57.1%[0m | [2mWWER:[0m [33;1m50.0%[0m | [31;1mNEA: R=33% P=25% F1=29%[0m | [31;1mMissed: [submarine, yellow][0m
+[2m------------------------------------------------------------------------------------------------[0m
+AZTouP7hMjw_0__1479eaae
+[2mREF:[0m some limonene hash oil some d limonene hash oil
+[2mHYP:[0m [31;1mbeing[0m [31;1man[0m [31;1mactor[0m [31;1mbeing[0m [31;1man[0m [31;1mactress[0m
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [d][0m
+[2m------------------------------------------------------------------------------------------------[0m
+BVynmQr3cf8_0__0166130c
+[2mREF:[0m so i have two and a half of these size cups which is probably like the equivalent of
+[2mHYP:[0m [33;1mi[0m [33;1mhave[0m [33;1mtwo[0m [33;1mand[0m [33;1ma[0m [33;1mhalf[0m [33;1mof[0m [33;1mthese[0m [31;1mnice[0m [33;1mcups[0m [33;1mwhich[0m [33;1mis[0m [33;1mprobably[0m [33;1mlike[0m [33;1mthe[0m [33;1mequivalent[0m [33;1mof[0m
+[2mWER:[0m [32;1m11.1%[0m | [2mWWER:[0m [32;1m11.1%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+Cc85FcXkFBs_0__54a4c098
+[2mREF:[0m the pacific the new flagship model won't be a high powered beast if you're looking for 20 nanometer manufacturing and high bandwidth memory then the tonga isn't for you
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [20, pacific][0m
+[2m------------------------------------------------------------------------------------------------[0m
+Cp1eBaFIRFw_1__e302e4f7
+[2mREF:[0m you could be using that way in here so that's basically my recipe i'm going to show you what we're going to do now
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [basically, do, going, here, in, now, recipe, show, so, using, way][0m
+[2m------------------------------------------------------------------------------------------------[0m
+DBhaa45mAro_2__07d05c7a - Part 1
+[2mREF:[0m hey it's me just doing the eush keeping up with what's going on in school so here's the latest taylor and rob over brittany over dennis and julia totes over
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [dennis, julia, taylor][0m
+[2m------------------------------------------------------------------------------------------------[0m
+DBhaa45mAro_2__07d05c7a - Part 2
+[2mREF:[0m and julia totes over well thank god
+[2mHYP:[0m [33;1mjulia[0m [31;1mchild[0m [33;1mover[0m [31;1mreal[0m [31;1mthe[0m
+[2mWER:[0m [31;1m71.4%[0m | [2mWWER:[0m [31;1m68.8%[0m | [33;1mNEA: R=50% P=100% F1=67%[0m | [31;1mMissed: [god][0m
+[2m------------------------------------------------------------------------------------------------[0m
+DUJbZV6oIds_0__55300c6c - Part 1
+[2mREF:[0m second thing is a circular polarizer great for obviously exterior shooting but also good for getting rid of reflections sometimes in windows and things like that
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [also, circular, exterior, good, great, obviously, polarizer, reflections, rid, second, shooting, sometimes, thing, things, windows][0m
+[2m------------------------------------------------------------------------------------------------[0m
+DUJbZV6oIds_0__55300c6c - Part 2
+[2mREF:[0m in windows and things like that
+[2mHYP:[0m [33;1mwindows[0m [31;1minstead[0m [31;1mof[0m [31;1mglass[0m [31;1mto[0m
+[2mWER:[0m [31;1m83.3%[0m | [2mWWER:[0m [31;1m75.0%[0m | [33;1mNEA: R=50% P=33% F1=40%[0m | [31;1mMissed: [things][0m
+[2m------------------------------------------------------------------------------------------------[0m
+DYZKgzvPexU_0__ad4114ab
+[2mREF:[0m hey how's it going youtube i'm 5'6 and i'm here to
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [5'6][0m
+[2m------------------------------------------------------------------------------------------------[0m
+ECIwBVJ8cZQ_2__12e63349
+[2mREF:[0m will not have enough food for a healthy life
+[2mHYP:[0m [31;1mwe[0m [31;1mlearned[0m [31;1mto[0m [33;1mhave[0m [33;1menough[0m [33;1mfood[0m [33;1mfor[0m [33;1ma[0m [33;1mhealthy[0m [33;1mlife[0m
+[2mWER:[0m [33;1m33.3%[0m | [2mWWER:[0m [32;1m14.3%[0m | [32;1mNEA: R=100% P=83% F1=91%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+EG9HNZm6qSs_1__6a00dc91
+[2mREF:[0m what you mean this the lapel mic i don't understand what's distracting about it
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [distracting, lapel, mean, mic, understand][0m
+[2m------------------------------------------------------------------------------------------------[0m
+F-2k62XeAvM_20__9237e7c5
+[2mREF:[0m but when we first started this series i wondered if we'd actually get through it you know all great ideas
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [actually, first, get, great, ideas, know, series, started, wondered][0m
+[2m------------------------------------------------------------------------------------------------[0m
+FD9U2sgqJe8_16__9d9045c8
+[2mREF:[0m i'm not sure if you're aware of it but yes there has been a class action suit filed against apple for that very thing and yes technically speaking it wasn't a wine it was a beer
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [action, apple, aware, beer, class, filed, speaking, suit, sure, technically, thing, very, wine][0m
+[2m------------------------------------------------------------------------------------------------[0m
+GwBfUzPCiaw_0__4d2b0fdb
+[2mREF:[0m where is the car wo ist das auto
+[2mHYP:[0m [32;1mwhere[0m [32;1mis[0m [32;1mthe[0m [32;1mcar[0m [31;1mfull[0m [33;1mis[0m [31;1mdusty[0m [31;1moutside[0m
+[2mWER:[0m [33;1m50.0%[0m | [2mWWER:[0m [31;1m64.3%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [das][0m
+[2m------------------------------------------------------------------------------------------------[0m
+HhkhkWkzNP4_7__2527cbb1
+[2mREF:[0m we're excited about several innovations that will deliver increased nutritional benefits of the food that we eat as well and also that will help ensure
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [also, as, benefits, deliver, eat, ensure, excited, food, help, increased, innovations, nutritional, several, well][0m
+[2m------------------------------------------------------------------------------------------------[0m
+IQT8XQ9ODcY_11__d07f81fa
+[2mREF:[0m so you can update the spreadsheet from autocad
+[2mHYP:[0m [31;1myou're[0m [31;1mgoing[0m [31;1mto[0m [31;1mget[0m [31;1mdated[0m [31;1mespecially[0m [32;1mfrom[0m [31;1mother[0m [31;1mguys[0m
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m91.7%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [autocad, so, spreadsheet, update][0m
+[2m------------------------------------------------------------------------------------------------[0m
+JJRxStrOiBI_7__24d99a07
+[2mREF:[0m for that you will use preter because that's what happened what people did
+[2mHYP:[0m [32;1mfor[0m [32;1mthat[0m [32;1myou[0m [32;1mwill[0m [31;1mlose[0m [33;1mwhat[0m [31;1mhas[0m [33;1mhappened[0m [31;1mor[0m [33;1mpeople[0m [33;1mthat[0m [33;1mwill[0m
+[2mWER:[0m [31;1m61.5%[0m | [2mWWER:[0m [31;1m73.7%[0m | [33;1mNEA: R=40% P=67% F1=50%[0m | [31;1mMissed: [did, preter, use][0m
+[2m------------------------------------------------------------------------------------------------[0m
+K0h33Ps7vz4_11__e66d3063
+[2mREF:[0m to this wave of artificial intelligence that is slowly taking place
+[2mHYP:[0m [32;1mto[0m [32;1mthis[0m [32;1mwave[0m [32;1mof[0m [32;1martificial[0m [32;1mintelligence[0m [32;1mthat[0m [32;1mis[0m [32;1mslowly[0m [32;1mtaking[0m [32;1mplace[0m
+[2mWER:[0m [32;1m0.0%[0m | [2mWWER:[0m [32;1m0.0%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+LGcjzM3BX-s_3__cc3e230e
+[2mREF:[0m they do however on again they do however hold the festival
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [again, do, festival, hold, however, on][0m
+[2m------------------------------------------------------------------------------------------------[0m
+MO4hiiayz3w_9__e89a45de
+[2mREF:[0m it's not bad you know what because it's our culture it's our culture you have to
+[2mHYP:[0m [33;1mnot[0m [31;1ma[0m [32;1mbad[0m [31;1mword[0m [33;1mbecause[0m [33;1mit's[0m [33;1mour[0m [33;1mculture[0m [32;1mour[0m [32;1mculture[0m [31;1mis[0m [32;1mour[0m
+[2mWER:[0m [33;1m56.2%[0m | [2mWWER:[0m [31;1m66.7%[0m | [33;1mNEA: R=50% P=67% F1=57%[0m | [31;1mMissed: [have, know][0m
+[2m------------------------------------------------------------------------------------------------[0m
+NGCTGBsuEg4_20__f35e3151
+[2mREF:[0m vi we said was zero so that goes away so vf is f delta t
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [delta, f, t, zero][0m
+[2m------------------------------------------------------------------------------------------------[0m
+OxenfkPpJPY_0__0f9d64b8
+[2mREF:[0m if police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address
+[2mHYP:[0m [33;1mpolice[0m [33;1mreasonably[0m [33;1mbelieve[0m [33;1mthat[0m [33;1myou[0m [33;1mhave[0m [33;1minformation[0m [33;1mthat[0m [33;1mcould[0m [33;1massist[0m [33;1mthem[0m [33;1mwith[0m [33;1mthe[0m [33;1minvestigation[0m [33;1mof[0m [33;1ma[0m [33;1mserious[0m [33;1moffence[0m [33;1mthen[0m [33;1myou[0m [33;1mhave[0m [33;1mto[0m [33;1mgive[0m [33;1mthem[0m [33;1myour[0m [33;1mname[0m [33;1mand[0m [33;1maddress[0m
+[2mWER:[0m [32;1m3.4%[0m | [2mWWER:[0m [32;1m2.3%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+PSJRmPfOGYQ_13__b2afc3d9
+[2mREF:[0m i see twitter feeds all over the place right i see them in news stories i see them in
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [all, feeds, news, place, see, stories, twitter][0m
+[2m------------------------------------------------------------------------------------------------[0m
+QvDw6m2kA6Q_0__a756b252
+[2mREF:[0m there are two types of teeth the first type is the anus
+[2mHYP:[0m [31;1mthose[0m [33;1mtwo[0m [31;1mtimes[0m [31;1mi've[0m [31;1mseen[0m [33;1mthe[0m [33;1mfirst[0m [31;1mtime[0m [33;1mis[0m [31;1min[0m [31;1mkenya[0m
+[2mWER:[0m [31;1m66.7%[0m | [2mWWER:[0m [31;1m61.9%[0m | [32;1mNEA: R=100% P=50% F1=67%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+QzYx9bYHxKo_3__373a7e56
+[2mREF:[0m this book ain't just narrated by one fool tellin us what's up with the dun
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [one, tellin, us][0m
+[2m------------------------------------------------------------------------------------------------[0m
+RsPPOL9XhcM_14__da966181
+[2mREF:[0m goes on to say frank sachs lead author on the report said he has no idea why people think coconut oil is healthy it's almost 100 fat he says
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [100][0m
+[2m------------------------------------------------------------------------------------------------[0m
+S0ID6pdAvvY_7__e2281119
+[2mREF:[0m with how to reverse it okay what are the handful of things i'm gonna show you some things that might help you here in just a minute
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [a, just, minute][0m
+[2m------------------------------------------------------------------------------------------------[0m
+S8aXVz799Dc_7__0af934d2
+[2mREF:[0m another useful expression i'm afraid there's been a mistake or i'm afraid there's been a mistake
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: ['s, afraid, expression, mistake, useful][0m
+[2m------------------------------------------------------------------------------------------------[0m
+SQONLdb1gow_3__82d6e002
+[2mREF:[0m in the case of exercise it's not just a matter of working or not working
+[2mHYP:[0m [31;1mdays[0m [33;1mof[0m [33;1mexercise[0m [31;1mis[0m [33;1mnot[0m [33;1mjust[0m [33;1ma[0m [33;1mmatter[0m [33;1mof[0m [33;1mworking[0m [33;1mor[0m [33;1mnot[0m [33;1mworking[0m
+[2mWER:[0m [32;1m26.7%[0m | [2mWWER:[0m [32;1m27.3%[0m | [32;1mNEA: R=80% P=80% F1=80%[0m | [31;1mMissed: [case][0m
+[2m------------------------------------------------------------------------------------------------[0m
+SmTednDfdxA_8__7fc8688e
+[2mREF:[0m and so what are the arguments that the individual mandate
+[2mHYP:[0m [32;1mand[0m [32;1mso[0m [32;1mwhat[0m [32;1mare[0m [32;1mthe[0m [32;1marguments[0m [32;1mthat[0m [32;1mthe[0m [32;1mindividual[0m [31;1mmay[0m [31;1mtake[0m
+[2mWER:[0m [32;1m20.0%[0m | [2mWWER:[0m [32;1m14.3%[0m | [32;1mNEA: R=75% P=75% F1=75%[0m | [31;1mMissed: [mandate][0m
+[2m------------------------------------------------------------------------------------------------[0m
+TgdqxHIF-Ec_1__b8b5e460
+[2mREF:[0m but i have to understand in my head what that looks like in 3d as i'm drawing it
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [3d, drawing, have, head, looks, understand][0m
+[2m------------------------------------------------------------------------------------------------[0m
+TuUiNhbMzjY_8__8b4a8fec
+[2mREF:[0m one really nice thing about this is
+[2mHYP:[0m [31;1mwhat[0m [31;1ma[0m [31;1mbrilliant[0m [31;1midea[0m [33;1mthis[0m [33;1mis[0m
+[2mWER:[0m [31;1m71.4%[0m | [2mWWER:[0m [31;1m84.6%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [one][0m
+[2m------------------------------------------------------------------------------------------------[0m
+VI-3EHJ-2pI_1__e8f492eb
+[2mREF:[0m do is either sit or stand the baby up on a chair
+[2mHYP:[0m [33;1meither[0m [31;1mstanding[0m [33;1mor[0m [31;1msitting[0m [33;1mthe[0m [33;1mbaby[0m [33;1mup[0m [33;1mon[0m [33;1ma[0m [33;1mchair[0m
+[2mWER:[0m [33;1m33.3%[0m | [2mWWER:[0m [33;1m37.5%[0m | [33;1mNEA: R=50% P=50% F1=50%[0m | [31;1mMissed: [sit, stand][0m
+[2m------------------------------------------------------------------------------------------------[0m
+VMWNq9cCXU4_12__451829a4
+[2mREF:[0m cartoon characters the blue and the red those things change all the time on influenza which is why we have to re evaluate
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [blue, cartoon, change, characters, evaluate, have, influenza, red, things, time][0m
+[2m------------------------------------------------------------------------------------------------[0m
+VxZ2o9MPtFA_24__390f4eae
+[2mREF:[0m what we call business development training in other words they taught me how to sell they taught me a little bit about the product
+[2mHYP:[0m [32;1mwhat[0m [31;1mare[0m [33;1mbusiness[0m [33;1mdevelopment[0m [33;1mtraining[0m [33;1min[0m [33;1mother[0m [33;1mwords[0m [31;1mthat[0m [33;1mtaught[0m [33;1mme[0m [33;1mhow[0m [33;1mto[0m [33;1msell[0m [33;1mthey[0m [33;1mtaught[0m [33;1mme[0m [33;1ma[0m [33;1mlittle[0m [33;1mbit[0m [33;1mabout[0m [33;1mhow[0m [33;1mto[0m [33;1mabout[0m [33;1mthe[0m [33;1mproduct[0m
+[2mWER:[0m [32;1m25.0%[0m | [2mWWER:[0m [32;1m27.8%[0m | [32;1mNEA: R=91% P=100% F1=95%[0m | [31;1mMissed: [call][0m
+[2m------------------------------------------------------------------------------------------------[0m
+WNDj1BAKi0A_0__49b21410
+[2mREF:[0m we will give up some of our individual choice for the sake of the community decision
+[2mHYP:[0m [33;1mwill[0m [33;1mgive[0m [33;1mup[0m [33;1msome[0m [33;1mof[0m [33;1mour[0m [33;1mindividual[0m [31;1mchoices[0m [33;1mfor[0m [33;1mthe[0m [33;1msake[0m [33;1mof[0m [33;1mthe[0m [33;1mcommunity[0m [31;1mand[0m
+[2mWER:[0m [32;1m18.8%[0m | [2mWWER:[0m [32;1m22.7%[0m | [33;1mNEA: R=67% P=80% F1=73%[0m | [31;1mMissed: [choice, decision][0m
+[2m------------------------------------------------------------------------------------------------[0m
+WRtKKFMhJVM_4__91456207
+[2mREF:[0m would give you are the 16 but the lines are straight so either lens correction was used or it's just really freaking straight or cropped or whatever but it looks great with the stands the crowd the lights look awesome
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [16][0m
+[2m------------------------------------------------------------------------------------------------[0m
+WyPi-INqRjc_7__cf000cbf
+[2mREF:[0m the concepts will be explained from two perspectives using real life experiences reflecting my living in mexico as well as visits to other spanish and french speaking countries
+[2mHYP:[0m [33;1mto[0m [31;1mexplain[0m [33;1mfrom[0m [33;1mtwo[0m [33;1mperspectives[0m [33;1musing[0m [31;1mgreat[0m [33;1mlife[0m [33;1mexperiences[0m [33;1mreflecting[0m [33;1mmy[0m [33;1mliving[0m [33;1min[0m [33;1mmexico[0m [33;1mas[0m [33;1mwell[0m [33;1mas[0m [33;1mvisits[0m [33;1mto[0m [33;1mother[0m [33;1mspanish[0m [33;1mand[0m [33;1mfrench[0m [33;1mspeaking[0m [33;1mcountries[0m
+[2mWER:[0m [32;1m21.4%[0m | [2mWWER:[0m [32;1m16.4%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+ZcCviyMNsPo_9__78596d0d
+[2mREF:[0m but it's mostly cardiac muscle and as i said before that's the pump component of the heart
+[2mHYP:[0m [31;1mis[0m [33;1mmostly[0m [31;1mnot[0m [31;1myet[0m [32;1mmuscle[0m [32;1mand[0m [32;1mas[0m [32;1mi[0m [32;1msaid[0m [32;1mbefore[0m [32;1mthat's[0m [32;1mthe[0m [32;1mpump[0m [33;1mbut[0m [31;1mpart[0m [33;1mof[0m [33;1mthe[0m [31;1mheat[0m
+[2mWER:[0m [33;1m41.2%[0m | [2mWWER:[0m [33;1m42.3%[0m | [33;1mNEA: R=57% P=57% F1=57%[0m | [31;1mMissed: [cardiac, component, heart][0m
+[2m------------------------------------------------------------------------------------------------[0m
+aGULUaABMlc_0__59576e05
+[2mREF:[0m i felt like we could do this i felt like this is something we can overcome
+[2mHYP:[0m [33;1mlike[0m [33;1mwe[0m [33;1mcould[0m [33;1mdo[0m [33;1mthis[0m [31;1mand[0m [33;1mi[0m [33;1mfelt[0m [33;1mlike[0m [33;1mthis[0m [33;1mis[0m [33;1msomething[0m [33;1mwe[0m [31;1mhad[0m [31;1mto[0m [32;1movercome[0m
+[2mWER:[0m [33;1m31.2%[0m | [2mWWER:[0m [32;1m30.0%[0m | [32;1mNEA: R=100% P=75% F1=86%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+ajEHR2Ajycw_14__39f3ce5a
+[2mREF:[0m mode or single player mode by the way this is also a
+[2mHYP:[0m [32;1mmode[0m [33;1msingle[0m [33;1mplayer[0m [33;1mmode[0m [33;1mby[0m [31;1many[0m [33;1mway[0m [33;1mthis[0m [33;1mis[0m [33;1malso[0m
+[2mWER:[0m [32;1m25.0%[0m | [2mWWER:[0m [32;1m16.7%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+b1-EWr3WQhI_0__324a9544
+[2mREF:[0m and how we should be and how we have to
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [have][0m
+[2m------------------------------------------------------------------------------------------------[0m
+bLjyV24KpeY_0__d0de0f63
+[2mREF:[0m what they are is 3d goggles they have two independent screens they're like 850 by
+[2mHYP:[0m [31;1m3[0m [31;1myears[0m [31;1mold[0m [33;1mlike[0m [31;1mthat[0m
+[2mWER:[0m [31;1m93.3%[0m | [2mWWER:[0m [31;1m96.3%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [850, two][0m
+[2m------------------------------------------------------------------------------------------------[0m
+bR80JEaW4LY_0__51c8b7c5
+[2mREF:[0m before jumping into my scheme let me just tell you that for jeevan anand
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [anand, jeevan][0m
+[2m------------------------------------------------------------------------------------------------[0m
+eLS1vcpGVHQ_12__e9dd9adc
+[2mREF:[0m i surrendered good quite i surrendered to the low security
+[2mHYP:[0m [31;1myears[0m [31;1mago[0m [31;1mwhen[0m [33;1mi[0m
+[2mWER:[0m [31;1m90.0%[0m | [2mWWER:[0m [31;1m131.2%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [good, low, quite, security, surrendered][0m
+[2m------------------------------------------------------------------------------------------------[0m
+gD8IlVJFk04_9__4f672fc5
+[2mREF:[0m connection within the cable to check that you've got continuity between both ends now of course on this length of
+[2mHYP:[0m [32;1mconnection[0m [32;1mwithin[0m [32;1mthe[0m [32;1mcable[0m [32;1mto[0m [31;1mchat[0m [32;1mthat[0m [32;1myou've[0m [32;1mgot[0m [31;1mcontinuously[0m [32;1mbetween[0m [32;1mboth[0m [31;1mhands[0m [32;1mnow[0m [32;1mof[0m [32;1mcourse[0m [32;1mon[0m [32;1mthis[0m [32;1mlength[0m [32;1mof[0m
+[2mWER:[0m [32;1m15.0%[0m | [2mWWER:[0m [32;1m26.7%[0m | [33;1mNEA: R=67% P=67% F1=67%[0m | [31;1mMissed: [check, continuity, ends][0m
+[2m------------------------------------------------------------------------------------------------[0m
+h6yzdL1tN9U_9__16b0e01c
+[2mREF:[0m readers out there because they're everywhere and remember you want to network
+[2mHYP:[0m [31;1mwhen[0m [31;1mi[0m [31;1mwas[0m [31;1ma[0m [31;1mlittle[0m [31;1mgirl[0m [31;1mi[0m [31;1malways[0m [31;1mwanted[0m [33;1mto[0m [31;1mbe[0m [31;1ma[0m [31;1mprincess[0m
+[2mWER:[0m [31;1m108.3%[0m | [2mWWER:[0m [31;1m95.0%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [everywhere, network, out, readers, remember, there, want][0m
+[2m------------------------------------------------------------------------------------------------[0m
+iJxvSh6PbTc_4__12c45eac
+[2mREF:[0m area have been showing zygites addendum and even zygites to their class and discussing it
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [addendum, area, class, discussing, even, showing, zygites][0m
+[2m------------------------------------------------------------------------------------------------[0m
+iRtsRJhrD5Y_8__dd680175
+[2mREF:[0m i looked and i saw i was wrong i was lied to just as everyone else
+[2mHYP:[0m [31;1mlearned[0m [33;1mand[0m [33;1mi[0m [33;1mjust[0m [31;1mthought[0m [32;1mi[0m [32;1mwas[0m [32;1mwrong[0m [32;1mi[0m [32;1mwas[0m [32;1mlied[0m [32;1mto[0m [32;1mjust[0m [31;1mlike[0m [32;1meveryone[0m [32;1melse[0m [31;1mbut[0m
+[2mWER:[0m [33;1m37.5%[0m | [2mWWER:[0m [33;1m36.4%[0m | [33;1mNEA: R=67% P=67% F1=67%[0m | [31;1mMissed: [looked, saw][0m
+[2m------------------------------------------------------------------------------------------------[0m
+jLBAUGvLuq8_0__fdcd8f16
+[2mREF:[0m look at this here's two dollars and a self addressed stamped envelope first things first the bender
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [dollars, two][0m
+[2m------------------------------------------------------------------------------------------------[0m
+kml5T4asOwQ_0__4192b704
+[2mREF:[0m and just scrolling down they have an option right here for fighting flights and more you can just turn
+[2mHYP:[0m [33;1mjust[0m [31;1mgoogle[0m [31;1mit[0m [32;1mdown[0m [32;1mthey[0m [32;1mhave[0m [32;1man[0m [31;1mapp[0m [33;1mfor[0m [31;1mthat[0m [32;1mfor[0m [31;1mfinding[0m [32;1mflights[0m [32;1mand[0m [32;1mmore[0m [32;1myou[0m [32;1mcan[0m [32;1mjust[0m [31;1mdo[0m
+[2mWER:[0m [33;1m42.1%[0m | [2mWWER:[0m [33;1m43.3%[0m | [33;1mNEA: R=40% P=50% F1=44%[0m | [31;1mMissed: [fighting, here, option, right, scrolling, turn][0m
+[2m------------------------------------------------------------------------------------------------[0m
+ktMebjnZiSE_3__ebdf1351 - Part 1
+[2mREF:[0m said that they realize now that consumers want a bigger smartphone when in the past they said that apple's not going to do a bigger smartphone well now it looks like they are so if those rumors are correct and apple actually is going to make two different sized versions of the iphone
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [apple, two][0m
+[2m------------------------------------------------------------------------------------------------[0m
+ktMebjnZiSE_3__ebdf1351 - Part 2
+[2mREF:[0m is going to make two different sized versions of the iphone 6 either remember to resolution
+[2mHYP:[0m [31;1mi[0m [31;1munderwent[0m [33;1mtwo[0m [33;1mdifferent[0m [31;1mtypes[0m [33;1mof[0m [31;1msurgeries[0m [31;1moff[0m [33;1mthe[0m [31;1meye[0m [31;1mfor[0m [31;1mthis[0m
+[2mWER:[0m [31;1m81.2%[0m | [2mWWER:[0m [31;1m86.7%[0m | [33;1mNEA: R=50% P=100% F1=67%[0m | [31;1mMissed: [6][0m
+[2m------------------------------------------------------------------------------------------------[0m
+l2Pykr8Fgw4_0__b212be6c
+[2mREF:[0m that the material we're using has the right rate and level of absorption
+[2mHYP:[0m [33;1mmaterial[0m [31;1myou[0m [31;1mwere[0m [33;1musing[0m [33;1mhas[0m [33;1mthe[0m [33;1mright[0m [31;1mweight[0m [33;1mand[0m [31;1meverything[0m
+[2mWER:[0m [31;1m61.5%[0m | [2mWWER:[0m [33;1m52.4%[0m | [33;1mNEA: R=57% P=80% F1=67%[0m | [31;1mMissed: [absorption, level, rate][0m
+[2m------------------------------------------------------------------------------------------------[0m
+lOuEis9L8os_1__e563fbd2
+[2mREF:[0m her brother and they're kinda half brothers and sisters and his dad didn't do anything about it and so absalom wants to avenge tamar's rape and maybe among other things
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [absalom, tamar][0m
+[2m------------------------------------------------------------------------------------------------[0m
+lSogkLa9OaA_11__82e9c9c2
+[2mREF:[0m we're angry we're happy we're sad we're mad we're delightful we're joyous
+[2mHYP:[0m [33;1mangry[0m [31;1mwe[0m [31;1mare[0m [32;1mhappy[0m [31;1mwe[0m [31;1mare[0m [33;1msad[0m [31;1mwe[0m [31;1mare[0m [33;1mmad[0m [31;1mwe[0m [31;1mare[0m [31;1min[0m [31;1mlove[0m [31;1mand[0m [31;1mwe[0m [31;1mare[0m [33;1mjoyous[0m
+[2mWER:[0m [31;1m116.7%[0m | [2mWWER:[0m [33;1m37.5%[0m | [32;1mNEA: R=83% P=83% F1=83%[0m | [31;1mMissed: [delightful][0m
+[2m------------------------------------------------------------------------------------------------[0m
+loMWvXEVDaI_0__0be15686
+[2mREF:[0m it includes almost everything we saw in the dslr kit but adds a couple of items for run and gun style booming
+[2mHYP:[0m [31;1mlose[0m [33;1malmost[0m [33;1meverything[0m [33;1mwe[0m [33;1msaw[0m [33;1min[0m [33;1mthe[0m [31;1mdecade[0m [31;1mlong[0m [31;1mlearning[0m [32;1mbut[0m [31;1mas[0m [32;1ma[0m [32;1mcouple[0m [32;1mof[0m [32;1mitems[0m [31;1mwere[0m [31;1mrunning[0m [32;1mand[0m [33;1mstyle[0m [33;1mbooming[0m
+[2mWER:[0m [33;1m40.9%[0m | [2mWWER:[0m [33;1m41.2%[0m | [33;1mNEA: R=50% P=50% F1=50%[0m | [31;1mMissed: [adds, dslr, gun, includes, kit, run][0m
+[2m------------------------------------------------------------------------------------------------[0m
+loebelfG9T4_10__76adce28 - Part 1
+[2mREF:[0m make yourself at home make yourself at home si ntase como en casa so repeat
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [casa, como, en, ntase, si][0m
+[2m------------------------------------------------------------------------------------------------[0m
+loebelfG9T4_10__76adce28 - Part 2
+[2mREF:[0m so repeat make yourself at home
+[2mHYP:[0m [32;1mso[0m [32;1mrepeat[0m [32;1mmake[0m [32;1myourself[0m [32;1mat[0m [32;1mhome[0m
+[2mWER:[0m [32;1m0.0%[0m | [2mWWER:[0m [32;1m0.0%[0m | [32;1mNEA: R=100% P=100% F1=100%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+ly6KVdbhT7w_0__896e0d2a
+[2mREF:[0m phone where it actually works i think it's a problem with this phone i honestly don't know
+[2mHYP:[0m [33;1mwhere[0m [33;1mit[0m [33;1mactually[0m [33;1mworks[0m [33;1mi[0m [33;1mthink[0m [33;1mit's[0m [31;1mappropriate[0m [31;1mto[0m [31;1mthrow[0m [31;1mcaution[0m [31;1mto[0m [31;1mthe[0m [31;1mwind[0m
+[2mWER:[0m [33;1m58.8%[0m | [2mWWER:[0m [31;1m66.7%[0m | [33;1mNEA: R=43% P=43% F1=43%[0m | [31;1mMissed: [honestly, know, phone, problem][0m
+[2m------------------------------------------------------------------------------------------------[0m
+msf0MSoEric_0__bda0c153
+[2mREF:[0m i think it was about four or five days ago they said they're going to get rid of their dly
+[2mHYP:[0m [32;1mi[0m [32;1mthink[0m [32;1mit[0m [32;1mwas[0m [32;1mabout[0m [32;1mfour[0m [32;1mor[0m [32;1mfive[0m [32;1mdays[0m [32;1mago[0m [32;1mthey[0m [32;1msaid[0m [32;1mthey're[0m [32;1mgoing[0m [32;1mto[0m [32;1mget[0m [32;1mrid[0m [32;1mof[0m [32;1mtheir[0m [31;1myearly[0m [31;1mnow[0m
+[2mWER:[0m [32;1m10.0%[0m | [2mWWER:[0m [32;1m11.4%[0m | [32;1mNEA: R=100% P=67% F1=80%[0m
+[2m------------------------------------------------------------------------------------------------[0m
+n7sVkiRL-14_0__5f0017b2
+[2mREF:[0m fingerprint scanner they put in the home button of the newly redesigned
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [button, fingerprint, home, newly, put, redesigned, scanner][0m
+[2m------------------------------------------------------------------------------------------------[0m
+nTxcgczNaQQ_11__abf12e2f
+[2mREF:[0m finally we beg for traveling mercies as we return home to
+[2mHYP:[0m [33;1mwe[0m [31;1mpay[0m [33;1mfor[0m [33;1mtraveling[0m [31;1mmerchants[0m [33;1mas[0m [33;1mwe[0m [31;1mreach[0m [31;1mtheir[0m [31;1mhomes[0m
+[2mWER:[0m [33;1m54.5%[0m | [2mWWER:[0m [31;1m64.7%[0m | [31;1mNEA: R=17% P=20% F1=18%[0m | [31;1mMissed: [beg, finally, home, mercies, return][0m
+[2m------------------------------------------------------------------------------------------------[0m
+oNqGdEQMb-M_0__63f6518b
+[2mREF:[0m from people's stem cells that they would not reject over time and we were very near to a cure for things like aids
+[2mHYP:[0m [32;1mfrom[0m [32;1mpeople's[0m [32;1mstem[0m [32;1mcells[0m [32;1mthat[0m [32;1mthey[0m [32;1mwould[0m [32;1mnot[0m [32;1mreject[0m [32;1mover[0m [32;1mtime[0m [32;1mand[0m [32;1mwe[0m [32;1mwere[0m [32;1mvery[0m [31;1meager[0m [32;1mto[0m [33;1mcure[0m [33;1mfor[0m [33;1mthings[0m [33;1mlike[0m [33;1maids[0m [31;1mwhy[0m [31;1mis[0m [31;1mit[0m
+[2mWER:[0m [32;1m21.7%[0m | [2mWWER:[0m [33;1m35.3%[0m | [32;1mNEA: R=90% P=90% F1=90%[0m | [31;1mMissed: [near][0m
+[2m------------------------------------------------------------------------------------------------[0m
+oQAEDKVgeIw_3__4de2a6e4
+[2mREF:[0m something that ken talks about specifically something i wanted to bring up when we were talking about vipassana and something that i wanted to you know
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [ken, vipassana][0m
+[2m------------------------------------------------------------------------------------------------[0m
+oQEVi0gxmoE_16__3949b7ce
+[2mREF:[0m dollars of damages americans want football they love football they want to go protest on their own time no one cares
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [americans][0m
+[2m------------------------------------------------------------------------------------------------[0m
+pOeJSxbFyto_7__ede5f642 - Part 1
+[2mREF:[0m fully hooked in localhost now shows and i only have one site available if this were a real website i obviously would not be seeing localhosts i'd be seeing the url much like we see right here but you get the idea
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [one][0m
+[2m------------------------------------------------------------------------------------------------[0m
+pOeJSxbFyto_7__ede5f642 - Part 2
+[2mREF:[0m get the idea
+[2mHYP:[0m [31;1mlife[0m [31;1mand[0m [31;1mi[0m
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [get, idea][0m
+[2m------------------------------------------------------------------------------------------------[0m
+qHImZGBRto8_5__fa62c87d
+[2mREF:[0m point being is if we had like if my k 52s started doing that i there's something's wrong it's going back to
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: ['s, 52s, back, being, doing, going, had, k, point, started, wrong][0m
+[2m------------------------------------------------------------------------------------------------[0m
+qMH2BDkT7Gg_0__d77b1054
+[2mREF:[0m the comments or not all the links will be in the description for the channels and then you could check for the songs if they publish it this
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [channels, check, comments, description, links, publish, songs, then][0m
+[2m------------------------------------------------------------------------------------------------[0m
+sX3tgFjdSR8_0__6de380c7
+[2mREF:[0m you guys send in some really good stories so we are about to read them
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [about, good, guys, in, read, really, send, stories][0m
+[2m------------------------------------------------------------------------------------------------[0m
+sqV3pL5x8PI_0__7213a178
+[2mREF:[0m a function can have multiple definitions associated with the value that's given to it
+[2mHYP:[0m [31;1many[0m [32;1mfunction[0m [32;1mcan[0m [32;1mhave[0m [32;1mmultiple[0m [32;1mdefinitions[0m [31;1msuch[0m [31;1mas[0m [31;1mwhen[0m [33;1mthe[0m [31;1mkey[0m [33;1mvalue[0m [33;1mthat's[0m [33;1mgiven[0m [33;1mto[0m [31;1mus[0m
+[2mWER:[0m [33;1m42.9%[0m | [2mWWER:[0m [33;1m40.9%[0m | [32;1mNEA: R=86% P=75% F1=80%[0m | [31;1mMissed: [associated][0m
+[2m------------------------------------------------------------------------------------------------[0m
+t4idjGg8fpQ_8__c564d175 - Part 1
+[2mREF:[0m these out of course club members you get the club discount regular price is only 12 88 and our club members only pay 10 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a club member thanks so much
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [10, 12, 88, 95, only][0m
+[2m------------------------------------------------------------------------------------------------[0m
+t4idjGg8fpQ_8__c564d175 - Part 2
+[2mREF:[0m reasons why you should be a club member thanks so much and i'll see you again soon bye bye
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [again, club, member, much, reasons, see, so, soon, thanks][0m
+[2m------------------------------------------------------------------------------------------------[0m
+tLFZomqlXIk_0__af0836dd
+[2mREF:[0m what's in my dock version 1 so here
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [1][0m
+[2m------------------------------------------------------------------------------------------------[0m
+u42-Tk1ZTQo_4__30f83df3
+[2mREF:[0m and i'll tell you in just a second if they are
+[2mHYP:[0m [31;1mthen[0m [32;1mi'll[0m [31;1mtake[0m [32;1myou[0m [33;1mjust[0m [33;1ma[0m [33;1msecond[0m [31;1mof[0m [31;1mthe[0m [31;1myear[0m [31;1mso[0m
+[2mWER:[0m [31;1m63.6%[0m | [2mWWER:[0m [33;1m60.0%[0m | [33;1mNEA: R=67% P=33% F1=44%[0m | [31;1mMissed: [tell][0m
+[2m------------------------------------------------------------------------------------------------[0m
+u6aLP61t8Lg_1__cd4aa217
+[2mREF:[0m even to the extent of one's personal survival
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [one][0m
+[2m------------------------------------------------------------------------------------------------[0m
+uYgQClEfYuI_0__fea45a8f
+[2mREF:[0m yes they can perform very complex computations very fast
+[2mHYP:[0m [31;1m2000[0m [31;1mmiles[0m [31;1macross[0m [31;1mthe[0m [31;1munited[0m [31;1mstates[0m
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [complex, computations, fast, perform, very][0m
+[2m------------------------------------------------------------------------------------------------[0m
+uewO8zLmtpw_3__6231be93
+[2mREF:[0m personal belongings from me and put me in jail
+[2mHYP:[0m [31;1mwho[0m [31;1magree[0m [31;1mwith[0m [32;1mme[0m [32;1mand[0m [31;1mprobably[0m [31;1mthe[0m
+[2mWER:[0m [31;1m77.8%[0m | [2mWWER:[0m [31;1m84.6%[0m | [31;1mNEA: R=0% P=0% F1=0%[0m | [31;1mMissed: [belongings, jail, personal, put][0m
+[2m------------------------------------------------------------------------------------------------[0m
+vBBKM8WRtno_2__df85cbfd
+[2mREF:[0m that is something special and unique to summertech
+[2mHYP:[0m [32;1mthat[0m [32;1mis[0m [32;1msomething[0m [32;1mspecial[0m [32;1mand[0m [32;1munique[0m [32;1mto[0m [31;1msummer[0m
+[2mWER:[0m [32;1m12.5%[0m | [2mWWER:[0m [33;1m30.8%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [summertech][0m
+[2m------------------------------------------------------------------------------------------------[0m
+wATYm2rYLeg_0__1aa62ea2
+[2mREF:[0m use all those controls for any one system you use them
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [one][0m
+[2m------------------------------------------------------------------------------------------------[0m
+wex-7n593cI_4__34fa8b79
+[2mREF:[0m and that's really how we become unique and one of my friends chris ewen explained to me that a friendship is built based on two people
+[2mHYP:[0m [32;1mand[0m [32;1mthat's[0m [32;1mreally[0m [32;1mhow[0m [32;1mwe[0m [32;1mbecome[0m [33;1ma[0m [31;1mcommunity[0m [33;1mand[0m [33;1mone[0m [33;1mof[0m [33;1mmy[0m [33;1mfriends[0m [33;1mexplained[0m [33;1mto[0m [33;1mme[0m [33;1mthat[0m [33;1ma[0m [33;1mfriendship[0m [33;1mis[0m [33;1mbased[0m [31;1mnot[0m [31;1mjust[0m [32;1mon[0m [33;1mpeople[0m
+[2mWER:[0m [33;1m30.8%[0m | [2mWWER:[0m [33;1m45.8%[0m | [31;1mNEA: R=25% P=100% F1=40%[0m | [31;1mMissed: [chris, ewen, two][0m
+[2m------------------------------------------------------------------------------------------------[0m
+yHzKcA1NfmA_3__093e2c62
+[2mREF:[0m and like the guys that help us out you know with
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [guys, help, know][0m
+[2m------------------------------------------------------------------------------------------------[0m
+zXv8Errpg5U_0__a511ddb9
+[2mREF:[0m one of the complications of this disruption of breathing is that you get lower oxygen levels in your healthy tissues this is known as hypoxia
+[2mHYP:[0m (no hyp available)
+[2mWER:[0m [31;1m100.0%[0m | [2mWWER:[0m [31;1m100.0%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [one][0m
+[2m------------------------------------------------------------------------------------------------[0m
+zmwgmt7wcv8_21__3cafc18a
+[2mREF:[0m watching the way words develop and change does suggest that wittgenstein was on to something
+[2mHYP:[0m [33;1mthe[0m [33;1mway[0m [33;1mwords[0m [33;1mdevelop[0m [33;1mchange[0m [31;1msuggests[0m [33;1mthat[0m [31;1mphilistine[0m [33;1mwas[0m [33;1mon[0m [33;1mto[0m [33;1msomething[0m
+[2mWER:[0m [33;1m33.3%[0m | [2mWWER:[0m [33;1m41.7%[0m | [31;1mNEA: R=0% P=100% F1=0%[0m | [31;1mMissed: [wittgenstein][0m
+[2m------------------------------------------------------------------------------------------------[0m
+[2m(END)[0m

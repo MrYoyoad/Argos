@@ -1,0 +1,16 @@
+{
+  "beam": 20,
+  "length_penalty": 0.0,
+  "max_len_a": 2.0,
+  "max_len_b": 200,
+  "max_len": 2048,
+  "no_repeat_ngram_size": 3,
+  "repetition_penalty": 1.2,
+  "lm_weight": 0.0,
+  "max_tokens": 1000,
+  "gpu_mem_gb": 14.7,
+  "small_gpu": true,
+  "timestamp": "2026-02-18T13:01:22",
+  "model_checkpoint": "/home/ubuntu/VSP-LLM/checkpoints/checkpoint_finetune.pt",
+  "num_segments": 107
+}

@@ -1,0 +1,7 @@
+{
+  "experiment": "exp_K_sampling_temp15",
+  "date": "2026-02-19T00:18:55+00:00",
+  "overrides": ["generation.do_sample=true","generation.temperature=1.5"],
+  "segments": 107,
+  "hypo_json": "/home/ubuntu/tuning_results/exp_K_sampling_temp15/decode_output/hypo-59886.json"
+}

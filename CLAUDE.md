@@ -228,11 +228,19 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 ### Research (docs/research/)
 
-| Document | Contents |
-|----------|----------|
-| [VSP_LLM_paper.pdf](docs/research/VSP_LLM_paper.pdf) | VSP-LLM paper (Yeo et al., arXiv:2402.15151v2, May 2024) |
-| [VSP_LLM_paper_text.txt](docs/research/VSP_LLM_paper_text.txt) | VSP-LLM paper full text |
-| [Presentation_2025.pptx](docs/research/Presentation_2025.pptx) | 2025 Project presentation |
+Contains all R&D experiments, reports, generators, and analysis. Formerly `argos_research/`.
+
+| Item | Contents |
+|------|----------|
+| `exp_A_baseline/` through `exp_M_*/` | 13 decode parameter experiments with reports |
+| `full_decode_J/` | Full-scale decode experiment (lenpen=1, temp=0.5) |
+| `generate_*.py` | Report generators (research journal, metrics explainer, tuning, pairwise, summary) |
+| `research_documentation.docx` | Comprehensive R&D research journal (14 chapters, 43 tables) |
+| `metrics_explainer.docx` | Metrics explainer document |
+| `tuning_experiments.docx` | Tuning experiments analysis |
+| `project_summary.docx` | Project summary document |
+| `report_1_*.md` through `report_6_*.md` | 6 detailed analysis reports (executive, tuning, prompts, confidence, beam search, finetuning) |
+| `references/` | VSP-LLM paper (PDF + text), 2025 Presentation (PPTX) |
 
 ### Other docs/ subdirectories
 
@@ -290,7 +298,7 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── golden_weights/        # Models: Clustering baseline weights
 ├── Llama-2-7b-hf/        # Models: LLM config files
 │
-├── argos_research/        # Research: R&D journal & analysis reports
+├── docs/research/         # Research: R&D experiments, reports, generators
 ├── docs/                  # Docs: ALL documentation (organized)
 ├── scripts/               # Scripts: Utility scripts (tests, monitoring, build)
 ├── logs/                  # Logs: Pipeline run logs

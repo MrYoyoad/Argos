@@ -1,0 +1,7 @@
+{
+  "experiment": "exp_A_baseline",
+  "date": "2026-02-18T13:01:32+00:00",
+  "overrides": [],
+  "segments": 107,
+  "hypo_json": "/home/ubuntu/tuning_results/exp_A_baseline/decode_output/hypo-172610.json"
+}
