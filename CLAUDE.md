@@ -6,6 +6,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **NEVER** include `Co-Authored-By` lines in commit messages. No Claude/AI attribution in commits.
 
+## File Placement Rules
+
+When creating or moving files, **always** place them in the correct directory based on content type:
+
+| Content Type | Destination | Examples |
+|-------------|-------------|----------|
+| **Experiment results** (decode runs, configs, reports) | `docs/tuning/experiments/` | New exp_N directories |
+| **Experiment HTML reports** | `docs/tuning/html-reports/` | Copy report.html as exp_N.html |
+| **Evaluation / baseline analysis** | `docs/evaluation/` | WER analysis, quality assessments |
+| **Hyperparameter / metrics docs** | `docs/tuning/` | Metrics explainers, tuning summaries |
+| **Confidence scoring research** | `docs/confidence/` | Mission 4 work |
+| **Beam search / N-best research** | `docs/beam-search/` | Mission 6 work |
+| **Prompt engineering research** | `docs/prompts/` | Mission 8 work |
+| **Fine-tuning / training research** | `docs/finetuning/` | Mission 9 work, training notes |
+| **Academic papers / presentations** | `docs/paper/` | References |
+| **Installation / deployment / testing guides** | `docs/guides/` | How-to docs |
+| **Feature documentation** | `docs/features/` | New feature specs |
+| **Bug fixes / version history** | `docs/changelog/` | Fix docs, changelogs |
+| **Roadmap / planning / mission tracking** | `docs/backlog/` | Mission plans, cleanup logs |
+| **Report generators / Python scripts for reports** | `docs/_research-tools/generators/` | generate_*.py |
+| **Experiment runner scripts** | `docs/_research-tools/scripts/` | run_*.sh for research |
+| **Logos / branding images** | `docs/branding/` | PNG, SVG, JPEG logos |
+| **License files** | `docs/licenses/` | Third-party licenses |
+| **Utility scripts (tests, monitoring, build)** | `scripts/{tests,monitoring,build,pipeline}/` | Non-research scripts |
+| **Pipeline run logs** | `logs/` | *.log files |
+
+**Key principle**: Each research topic folder maps to a backlog mission. When a mission produces new work, it goes in that topic's folder. When in doubt, check `docs/backlog/mission-backlog.md` for the mission-to-folder mapping.
+
 ## Working with Split Documentation
 
 This CLAUDE.md is a slim hub file. Detailed documentation lives in separate files (see Documentation Map below). **Before starting any non-trivial task**, read the relevant doc file(s):
