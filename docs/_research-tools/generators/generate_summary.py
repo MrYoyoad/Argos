@@ -17,7 +17,7 @@ from pathlib import Path
 from datetime import datetime
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT, WD_BREAK
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml, OxmlElement
@@ -27,8 +27,9 @@ OUTPUT_DIR = Path(__file__).parent
 OUTPUT_FILE = OUTPUT_DIR / "project_summary.docx"
 
 # ── Logos ──
-LOGO_ORCHARD = OUTPUT_DIR / "logo.png"
-LOGO_PEACOCK = OUTPUT_DIR / "peacock.png"
+ASSETS_DIR = OUTPUT_DIR.parent / "assets"
+LOGO_ORCHARD = ASSETS_DIR / "logo.png"
+LOGO_PEACOCK = ASSETS_DIR / "peacock.png"
 
 # ── Colors ──
 C_PRIMARY = RGBColor(0x1a, 0x3a, 0x5c)
@@ -255,14 +256,14 @@ def add_header_footer(doc):
         logo_run = hp.add_run()
         drawing = _build_inline_image_xml(rId, size_emu, size_emu, pic_id=10, name="Header Logo")
         logo_run._r.append(drawing)
-        hp.add_run("  ")
-
+    text_width = section.page_width - section.left_margin - section.right_margin
+    hp.paragraph_format.tab_stops.add_tab_stop(text_width, WD_TAB_ALIGNMENT.RIGHT)
+    hp.add_run("\t")
     run = hp.add_run("Argos \u2014 The Orchard")
     run.font.size = Pt(8)
     run.font.color.rgb = C_GRAY
     run.font.name = "Calibri"
     run.italic = True
-    hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
     footer = section.footer
     footer.is_linked_to_previous = False
@@ -342,10 +343,8 @@ def create_cover_page(doc):
         doc.add_paragraph()
 
     if LOGO_PEACOCK.exists():
-        p_logo = doc.add_paragraph()
-        p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run_logo = p_logo.add_run()
-        run_logo.add_picture(str(LOGO_PEACOCK), width=Inches(2.5))
+        doc.add_picture(str(LOGO_PEACOCK), width=Inches(2.5))
+        doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     doc.add_paragraph()
 
@@ -386,9 +385,8 @@ def create_cover_page(doc):
 
     info_lines = [
         ("Project Start:", "October 18, 2024"),
-        ("Lead Engineer:", "Yoad Oxman (Solo Developer)"),
+        ("Lead Engineer:", "Yoad Oxman"),
         ("Last Updated:", LAST_UPDATED),
-        ("Classification:", "Internal R&D Documentation"),
     ]
     for label, value in info_lines:
         p = doc.add_paragraph()
@@ -411,19 +409,40 @@ def create_cover_page(doc):
 # ═══════════════════════════════════════════════════
 
 def create_toc(doc):
+    for _ in range(3):
+        p = doc.add_paragraph()
+        p.paragraph_format.space_after = Pt(0)
+
     add_heading(doc, "Table of Contents", 1)
-    doc.add_paragraph()
 
-    for bm_id, title in TOC_ENTRIES:
-        _add_toc_hyperlink(doc, bm_id, title, level=0)
+    paragraph = doc.add_paragraph()
+    run = paragraph.add_run()
+    fld_begin = OxmlElement('w:fldChar')
+    fld_begin.set(qn('w:fldCharType'), 'begin')
+    run._r.append(fld_begin)
+    instr = OxmlElement('w:instrText')
+    instr.set(qn('xml:space'), 'preserve')
+    instr.text = ' TOC \\o "1-2" \\h \\z \\u '
+    run._r.append(instr)
+    fld_sep = OxmlElement('w:fldChar')
+    fld_sep.set(qn('w:fldCharType'), 'separate')
+    run._r.append(fld_sep)
 
-    doc.add_paragraph()
-    p = doc.add_paragraph()
-    run = p.add_run("Click any section title above to jump directly to that part.")
-    run.font.size = Pt(9)
-    run.font.color.rgb = C_GRAY
-    run.italic = True
-    run.font.name = "Calibri"
+    for _bm, title in TOC_ENTRIES:
+        placeholder = paragraph.add_run(title + "\n")
+        placeholder.font.size = Pt(11)
+        placeholder.font.name = "Calibri"
+        placeholder.font.color.rgb = C_PRIMARY
+
+    fld_end_run = paragraph.add_run()
+    fld_end = OxmlElement('w:fldChar')
+    fld_end.set(qn('w:fldCharType'), 'end')
+    fld_end_run._r.append(fld_end)
+
+    settings = doc.settings.element
+    update_fields = OxmlElement('w:updateFields')
+    update_fields.set(qn('w:val'), 'true')
+    settings.append(update_fields)
 
     doc.add_page_break()
 

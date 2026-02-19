@@ -16,7 +16,7 @@ from pathlib import Path
 from datetime import datetime
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml, OxmlElement
@@ -26,8 +26,9 @@ OUTPUT_DIR = Path(__file__).parent
 OUTPUT_FILE = OUTPUT_DIR / "tuning_experiments.docx"
 
 # ── Logos ──
-LOGO_ORCHARD = OUTPUT_DIR / "logo.png"
-LOGO_PEACOCK = OUTPUT_DIR / "peacock.png"
+ASSETS_DIR = OUTPUT_DIR.parent / "assets"
+LOGO_ORCHARD = ASSETS_DIR / "logo.png"
+LOGO_PEACOCK = ASSETS_DIR / "peacock.png"
 
 # ── Colors ──
 C_PRIMARY = RGBColor(0x1a, 0x3a, 0x5c)
@@ -232,13 +233,14 @@ def add_header_footer(doc):
         logo_run = hp.add_run()
         drawing = _build_inline_image_xml(rId, size_emu, size_emu, pic_id=10, name="Header Logo")
         logo_run._r.append(drawing)
-        hp.add_run("  ")
+    text_width = section.page_width - section.left_margin - section.right_margin
+    hp.paragraph_format.tab_stops.add_tab_stop(text_width, WD_TAB_ALIGNMENT.RIGHT)
+    hp.add_run("\t")
     run = hp.add_run("Argos \u2014 The Orchard")
     run.font.size = Pt(8)
     run.font.color.rgb = C_GRAY
     run.font.name = "Calibri"
     run.italic = True
-    hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     footer = section.footer
     footer.is_linked_to_previous = False
     fp = footer.paragraphs[0]
@@ -268,10 +270,8 @@ def create_cover_page(doc):
         doc.add_paragraph()
 
     if LOGO_PEACOCK.exists():
-        p_logo = doc.add_paragraph()
-        p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run_logo = p_logo.add_run()
-        run_logo.add_picture(str(LOGO_PEACOCK), width=Inches(2.0))
+        doc.add_picture(str(LOGO_PEACOCK), width=Inches(2.0))
+        doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     doc.add_paragraph()
 
@@ -300,6 +300,13 @@ def create_cover_page(doc):
 
     for _ in range(3):
         doc.add_paragraph()
+
+    p_author = doc.add_paragraph()
+    p_author.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_author = p_author.add_run("Yoad Oxman")
+    run_author.font.size = Pt(14); run_author.font.color.rgb = C_DARK
+    run_author.font.name = "Calibri"
+    doc.add_paragraph()
 
     info_lines = [
         ("Test Set:", "107 segments from 100 AVSpeech videos"),

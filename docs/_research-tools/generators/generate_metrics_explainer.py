@@ -23,11 +23,12 @@ from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml, OxmlElement
 
 # ── Output ──
-OUTPUT_DIR = Path(__file__).parent
-OUTPUT_FILE = OUTPUT_DIR / "metrics_explainer.docx"
+SCRIPT_DIR = Path(__file__).parent
+OUTPUT_DIR = SCRIPT_DIR.resolve().parent.parent / "tuning"
+OUTPUT_FILE = OUTPUT_DIR / "metrics-explainer.docx"
 
 # ── Logos ──
-ASSETS_DIR = OUTPUT_DIR.parent / "assets"
+ASSETS_DIR = SCRIPT_DIR.parent / "assets"
 LOGO_ORCHARD = ASSETS_DIR / "logo.png"
 LOGO_PEACOCK = ASSETS_DIR / "peacock.png"
 
@@ -465,9 +466,45 @@ def create_cover_page(doc):
 
 
 def create_toc(doc):
+    # Push TOC down from top of page
+    for _ in range(3):
+        p = doc.add_paragraph()
+        p.paragraph_format.space_after = Pt(0)
+
     add_heading(doc, "Table of Contents", 1)
-    for bm, title in TOC_ENTRIES:
-        _add_toc_hyperlink(doc, bm, title, level=0)
+
+    # Standard Word TOC field — auto-populates from heading styles on open
+    paragraph = doc.add_paragraph()
+    run = paragraph.add_run()
+    fld_begin = OxmlElement('w:fldChar')
+    fld_begin.set(qn('w:fldCharType'), 'begin')
+    run._r.append(fld_begin)
+    instr = OxmlElement('w:instrText')
+    instr.set(qn('xml:space'), 'preserve')
+    instr.text = ' TOC \\o "1-2" \\h \\z \\u '
+    run._r.append(instr)
+    fld_sep = OxmlElement('w:fldChar')
+    fld_sep.set(qn('w:fldCharType'), 'separate')
+    run._r.append(fld_sep)
+
+    # Placeholder entries shown until Word updates the field
+    for _bm, title in TOC_ENTRIES:
+        placeholder = paragraph.add_run(title + "\n")
+        placeholder.font.size = Pt(11)
+        placeholder.font.name = "Calibri"
+        placeholder.font.color.rgb = C_PRIMARY
+
+    fld_end_run = paragraph.add_run()
+    fld_end = OxmlElement('w:fldChar')
+    fld_end.set(qn('w:fldCharType'), 'end')
+    fld_end_run._r.append(fld_end)
+
+    # Tell Word to update all fields (including TOC) on open
+    settings = doc.settings.element
+    update_fields = OxmlElement('w:updateFields')
+    update_fields.set(qn('w:val'), 'true')
+    settings.append(update_fields)
+
     doc.add_page_break()
 
 

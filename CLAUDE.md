@@ -44,6 +44,7 @@ This CLAUDE.md is a slim hub file. Detailed documentation lives in separate file
 - **Fixing standalone container bugs** → read the relevant bugs file in `vsp_linux_container_FINAL_20260217/`
 - **Training research, LoRA tuning, or fine-tuning strategy** → read [docs/finetuning/training-research-notes.md](docs/finetuning/training-research-notes.md) first
 - **Planning future work or picking up a new mission** → read [docs/backlog/mission-backlog.md](docs/backlog/mission-backlog.md) first (Missions 4-14, prioritized with research references)
+- **Writing or modifying a docx report generator** → read [docs/_research-tools/generators/STYLE_GUIDE.md](docs/_research-tools/generators/STYLE_GUIDE.md) first (header layout, cover page, TOC, page breaks, logo paths)
 
 Do NOT rely on memory or guessing — always read the file to get exact details.
 
