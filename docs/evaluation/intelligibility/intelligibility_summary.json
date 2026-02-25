@@ -1,0 +1,254 @@
+{
+  "source_csv": "/home/ubuntu/english_full_results/client_outputs/report/report.csv",
+  "n_segments": 1497,
+  "n_empty_hyp": 70,
+  "mean_is": 2.52,
+  "median_is": 2.538,
+  "std_is": 1.372,
+  "properly_captured_count": 597,
+  "properly_captured_pct": 39.9,
+  "tier_distribution": {
+    "5_excellent": {
+      "count": 276,
+      "pct": 18.4
+    },
+    "4_good": {
+      "count": 321,
+      "pct": 21.4
+    },
+    "3_fair": {
+      "count": 325,
+      "pct": 21.7
+    },
+    "2_poor": {
+      "count": 336,
+      "pct": 22.4
+    },
+    "1_failed": {
+      "count": 239,
+      "pct": 16.0
+    }
+  },
+  "signal_stats": {
+    "semantic_sim": {
+      "mean": 0.4366,
+      "median": 0.4124
+    },
+    "phonetic_sim": {
+      "mean": 0.552,
+      "median": 0.5882
+    },
+    "inv_wer_mean": 0.394,
+    "inv_wwer_mean": 0.3967,
+    "nea_f1_mean": 38.9413,
+    "length_ratio": {
+      "mean": 0.9247,
+      "median": 0.9474
+    }
+  },
+  "context_recoverable_count": 652,
+  "context_recoverable_pct": 43.6,
+  "context_recovery_reasons": {
+    "content_destroyed": 434,
+    "semantic_coherent": 439,
+    "insufficient_signal": 191,
+    "moderate_semantic_low_error": 35,
+    "hallucination": 112,
+    "low_wer": 112,
+    "length_mismatch": 10,
+    "high_wer_low_semantic": 28,
+    "marginal_recoverable": 66,
+    "empty_output": 70
+  },
+  "llm_context_recoverable_count": 757,
+  "llm_context_recoverable_pct": 50.6,
+  "llm_context_mean_prob": 0.551,
+  "llm_context_median_prob": 0.55,
+  "llm_context_reasons": {
+    "marginal": 302,
+    "high_semantic_good_overlap": 132,
+    "strong_structure_match": 309,
+    "phonetic_bridge_semantic": 24,
+    "unlikely_recoverable": 20,
+    "semantic_plus_phonetic": 79,
+    "good_overlap_coherent": 78,
+    "hallucination": 99,
+    "partial_overlap": 88,
+    "no_semantic_no_overlap": 132,
+    "near_perfect": 112,
+    "length_mismatch": 22,
+    "moderate_semantic_preserved_content": 13,
+    "empty": 70,
+    "insufficient_information": 2,
+    "moderate_structure_coherent": 10,
+    "entities_preserved_coherent": 5
+  },
+  "wer_thresholds": {
+    "almost_certainly_understandable": "WER <= 15%",
+    "probably_understandable": "WER 15-30%",
+    "coin_flip": "WER 30-50%",
+    "probably_not_understandable": "WER 50-70%",
+    "almost_certainly_not_understandable": "WER > 70%",
+    "guaranteed_not_understandable": "WER > 100%"
+  },
+  "weights": {
+    "semantic_sim": 0.25,
+    "phonetic_sim": 0.15,
+    "inv_wer": 0.15,
+    "inv_wwer": 0.15,
+    "nea_f1": 0.15,
+    "length_ratio": 0.15
+  },
+  "top_phonetic_confusions": [
+    {
+      "ref": "the",
+      "hyp": "to",
+      "count": 13
+    },
+    {
+      "ref": "the",
+      "hyp": "a",
+      "count": 11
+    },
+    {
+      "ref": "in",
+      "hyp": "and",
+      "count": 11
+    },
+    {
+      "ref": "and",
+      "hyp": "in",
+      "count": 11
+    },
+    {
+      "ref": "you're",
+      "hyp": "you",
+      "count": 11
+    },
+    {
+      "ref": "that",
+      "hyp": "and",
+      "count": 10
+    },
+    {
+      "ref": "gonna",
+      "hyp": "going",
+      "count": 10
+    },
+    {
+      "ref": "a",
+      "hyp": "the",
+      "count": 9
+    },
+    {
+      "ref": "a",
+      "hyp": "to",
+      "count": 9
+    },
+    {
+      "ref": "the",
+      "hyp": "you",
+      "count": 9
+    },
+    {
+      "ref": "and",
+      "hyp": "a",
+      "count": 9
+    },
+    {
+      "ref": "we're",
+      "hyp": "we",
+      "count": 9
+    },
+    {
+      "ref": "to",
+      "hyp": "into",
+      "count": 8
+    },
+    {
+      "ref": "it's",
+      "hyp": "is",
+      "count": 8
+    },
+    {
+      "ref": "i",
+      "hyp": "and",
+      "count": 7
+    },
+    {
+      "ref": "you",
+      "hyp": "you're",
+      "count": 7
+    },
+    {
+      "ref": "is",
+      "hyp": "it's",
+      "count": 7
+    },
+    {
+      "ref": "the",
+      "hyp": "this",
+      "count": 7
+    },
+    {
+      "ref": "to",
+      "hyp": "and",
+      "count": 7
+    },
+    {
+      "ref": "you",
+      "hyp": "to",
+      "count": 7
+    },
+    {
+      "ref": "i'm",
+      "hyp": "i",
+      "count": 7
+    },
+    {
+      "ref": "and",
+      "hyp": "to",
+      "count": 6
+    },
+    {
+      "ref": "this",
+      "hyp": "the",
+      "count": 6
+    },
+    {
+      "ref": "the",
+      "hyp": "in",
+      "count": 6
+    },
+    {
+      "ref": "it's",
+      "hyp": "to",
+      "count": 6
+    },
+    {
+      "ref": "don't",
+      "hyp": "don",
+      "count": 6
+    },
+    {
+      "ref": "in",
+      "hyp": "a",
+      "count": 6
+    },
+    {
+      "ref": "that's",
+      "hyp": "that",
+      "count": 6
+    },
+    {
+      "ref": "there's",
+      "hyp": "there",
+      "count": 6
+    },
+    {
+      "ref": "it's",
+      "hyp": "it",
+      "count": 6
+    }
+  ]
+}

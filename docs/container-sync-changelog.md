@@ -1327,3 +1327,19 @@ The following changes have been made to the EC2 version and need to be replicate
    - `/workspace/VSP-LLM/src/vsp_llm_decode.py` — Added `from datetime import datetime` import; after writing `hypo-{fid}.json`, writes `decode_params-{fid}.json` with effective generation parameters, GPU info, timestamp, and model checkpoint path. Wrapped in try/except so decode never fails due to params export.
    - `/workspace/VSP-LLM/scripts/make_report.py` — Added `--params` optional CLI argument. Three new helper functions (`_format_params_txt`, `_format_params_html`, `_format_params_ansi`) format params for each output. Params block prepended to HTML, TXT, and ANSI reports. A `report_params.json` is written alongside `report.csv` for machine readability. Fully backward-compatible: no params file = no params section.
    - `/workspace/lib/outputs.sh` — Derives `decode_params-{fid}.json` path from the hypo filename and passes `--params` to `make_report.py` if the file exists.
+
+---
+
+## Standalone Deployment Status (Feb 23, 2026)
+
+**Tarball rebuilt**: `vsp_linux_container_FINAL_20260217.tar.gz` repacked to include 5 files that were updated after the previous tarball was created on Feb 17 16:55:
+- `VSP-LLM/golden_kmeans/baseline_1396vid_20260218.bin` + `.json` (updated golden k-means model)
+- `VSP-LLM/scripts/make_report.py` (report decode params, entry 28)
+- `VSP-LLM/src/vsp_llm_decode.py` (report decode params, entry 28)
+- `lib/outputs.sh` (report decode params, entry 28)
+
+**Client machine status**: Running ~v1.0.32-35 (deployed ~Feb 15-17, before experiments). Missing v1.0.36-39 fixes (NVENC silent corruption, bash fd isolation) and post-v1.0.39 additions (golden k-means update, report decode params).
+
+**Standalone decode config**: Runs baseline with `do_sample=True` hardcoded (stochastic beam search). EC2 has configurable `do_sample=False` (deterministic beam search) with `temperature` and `top_p` options — to be synced in a future update along with `lenpen` tuning option.
+
+**To deploy**: Extract tarball on client, run `INSTALL.sh` inside Docker container. INSTALL.sh creates backup, installs all components, runs verification + 37 module tests.

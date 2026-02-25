@@ -18,7 +18,7 @@ set -u -o pipefail
 EC2="/home/ubuntu"
 
 # Auto-detect container directories (find the most recent dated version)
-FINAL=$(ls -d "${EC2}/vsp_linux_container_FINAL_"* 2>/dev/null | sort -r | head -1)
+FINAL=$(ls -d "${EC2}/vsp_linux_container_FINAL_"*/ 2>/dev/null | sort -r | head -1)
 GALAXY="${EC2}/vsp_docker/galaxy_export"
 
 FIX_MODE=false

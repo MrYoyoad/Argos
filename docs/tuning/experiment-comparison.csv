@@ -1,8 +1,14 @@
-exp,overrides,n,empty,empty_pct,mean_wwer,med_wwer,mean_nea_r,mean_nea_f1
-exp_A_baseline,,107,4,3.7,59.5,57.1,41.1,40.9
-exp_B_no_rep_pen,generation.repetition_penalty=1.0,107,4,3.7,59.4,57.1,41.1,40.8
-exp_C_lenpen_pos1,generation.lenpen=1.0,107,0,0.0,58.6,55.0,41.9,41.1
-exp_D_lenpen_neg05,generation.lenpen=-0.5,107,48,44.9,75.3,100.0,26.1,26.1
-exp_E_sampling_low_temp,generation.do_sample=true generation.temperature=0.5 generation.top_p=0.9,107,0,0.0,59.4,57.1,41.9,41.8
-exp_F_sampling_original,generation.do_sample=true generation.temperature=1.0 generation.top_p=0.9,107,0,0.0,59.4,57.1,42.7,42.4
-exp_G_greedy,generation.beam=1,107,0,0.0,63.2,61.9,38.4,37.7
+exp,label,overrides,n,empty,empty_pct,mean_wer,med_wer,mean_wwer,med_wwer,mean_nea_r,mean_nea_f1
+exp_A_baseline,A,,107,4,3.7,59.3,57.1,59.5,57.1,41.1,40.9
+exp_B_no_rep_pen,B,generation.repetition_penalty=1.0,107,4,3.7,59.4,56.5,59.4,57.1,41.1,40.8
+exp_C_lenpen_pos1,C,generation.lenpen=1.0,107,0,0.0,76.1,57.1,58.6,55.0,41.9,41.1
+exp_D_lenpen_neg05,D,generation.lenpen=-0.5,107,48,44.9,73.7,100.0,75.3,100.0,26.1,26.1
+exp_E_sampling_low_temp,E,generation.do_sample=true generation.temperature=0.5 generation.top_p=0.9,107,0,0.0,59.8,56.5,59.4,57.1,41.9,41.8
+exp_F_sampling_original,F,generation.do_sample=true generation.temperature=1.0 generation.top_p=0.9,107,0,0.0,59.4,57.1,59.4,57.1,42.7,42.4
+exp_G_greedy,G,generation.beam=1,107,0,0.0,64.5,62.5,63.2,61.9,38.4,37.7
+exp_H_lenpen_pos2,H,generation.lenpen=2.0,107,0,0.0,539.6,63.6,171.5,58.8,45.3,39.1
+exp_I_lenpen1_sample,I,generation.lenpen=1.0 generation.do_sample=true generation.temperature=1.0,107,0,0.0,83.6,57.9,60.1,57.5,42.4,40.3
+exp_J_lenpen1_temp05,J,generation.lenpen=1.0 generation.do_sample=true generation.temperature=0.5,107,0,0.0,70.1,58.3,57.7,55.0,41.6,41.0
+exp_K_sampling_temp15,K,generation.do_sample=true generation.temperature=1.5 generation.top_p=0.9,107,1,0.9,60.9,57.1,59.2,57.1,40.8,40.7
+exp_L_sampling_temp03,L,generation.do_sample=true generation.temperature=0.3 generation.top_p=0.9,107,0,0.0,59.6,56.5,58.4,56.0,42.0,41.8
+exp_M_lenpen1_temp03,M,generation.lenpen=1.0 generation.do_sample=true generation.temperature=0.3,107,0,0.0,80.9,58.3,77.1,55.0,42.4,42.1

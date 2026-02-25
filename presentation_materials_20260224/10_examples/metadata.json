@@ -1,0 +1,402 @@
+{
+  "description": "Curated examples from 13 hyperparameter tuning experiments (A-M) on 107 segments",
+  "date": "2026-02-19",
+  "categories": {
+    "improvements_j_vs_baseline": {
+      "description": "Segments where Config J (lenpen=1.0, temp=0.5) improved over baseline A",
+      "count": 11,
+      "examples": [
+        {
+          "segment": "DBhaa45mAro_2__07d05c7a_00_000000_000359",
+          "ref": "hey it's me just doing the eush keeping up with what's going on in school so here's the latest taylor and rob over brittany over dennis and julia totes over",
+          "baseline_wer": 100.0,
+          "config_j_wer": 73.3,
+          "improvement": 26.7,
+          "baseline_hyp": "",
+          "config_j_hyp": "hi it's me jessica dude who's keeping up with what's going on in the world so i'm going to go ahead and tell you the latest tailer from overboard overlords and julia roberts overrated",
+          "reason": "empty_eliminated"
+        },
+        {
+          "segment": "QzYx9bYHxKo_3__373a7e56_00_000000_000091",
+          "ref": "this book ain't just narrated by one fool tellin us what's up with the dun",
+          "baseline_wer": 100.0,
+          "config_j_wer": 80.0,
+          "improvement": 20.0,
+          "baseline_hyp": "speak as i see i write about what i feel not the other way around",
+          "config_j_hyp": "speak english as i say right about watermelons that's what's up with that",
+          "reason": "better_prediction"
+        },
+        {
+          "segment": "NGCTGBsuEg4_20__f35e3151_00_000000_000195",
+          "ref": "vi we said was zero so that goes away so vf is f delta t",
+          "baseline_wer": 100.0,
+          "config_j_wer": 86.7,
+          "improvement": 13.3,
+          "baseline_hyp": "v i would say we're zero so that goes away so v i have the lead staff to tell the team",
+          "config_j_hyp": "fda would say we're zero so that goes away so fda has the lead staff to tell the teen",
+          "reason": "better_prediction"
+        },
+        {
+          "segment": "0fmc81KXbB0_0__8be49586_00_000000_000099",
+          "ref": "i don't want to say mistakes but i will say like experiments and",
+          "baseline_wer": 69.2,
+          "config_j_wer": 61.5,
+          "improvement": 7.7,
+          "baseline_hyp": "i don't want to seem disrespectful",
+          "config_j_hyp": "i don't want to seem disrespectful but i will say that i guess part of this",
+          "reason": "better_prediction"
+        },
+        {
+          "segment": "sX3tgFjdSR8_0__6de380c7_00_000000_000118",
+          "ref": "you guys send in some really good stories so we are about to read them",
+          "baseline_wer": 100.0,
+          "config_j_wer": 93.3,
+          "improvement": 6.7,
+          "baseline_hyp": "when i was 18 years old and i",
+          "config_j_hyp": "i'm not sure if it's a good thing or a bad thing i don't know",
+          "reason": "better_prediction"
+        },
+        {
+          "segment": "zmwgmt7wcv8_21__3cafc18a_00_000000_000087",
+          "ref": "watching the way words develop and change does suggest that wittgenstein was on to something",
+          "baseline_wer": 26.7,
+          "config_j_wer": 20.0,
+          "improvement": 6.7,
+          "baseline_hyp": "the way words develop and change suggests that philistine was on to something",
+          "config_j_hyp": "the way words develop and change doesn't suggest that philistine was on to something",
+          "reason": "better_prediction"
+        },
+        {
+          "segment": "S8aXVz799Dc_7__0af934d2_00_000000_000204",
+          "ref": "another useful expression i'm afraid there's been a mistake or i'm afraid there's been a mistake",
+          "baseline_wer": 43.8,
+          "config_j_wer": 37.5,
+          "improvement": 6.3,
+          "baseline_hyp": "another useful expression i'm afraid there's been a mishap or i m afraid there s",
+          "config_j_hyp": "another useful expression i am afraid there's been a mishap or i'm afraid there has been a",
+          "reason": "better_prediction"
+        },
+        {
+          "segment": "jLBAUGvLuq8_0__fdcd8f16_00_000000_000183",
+          "ref": "look at this here's two dollars and a self addressed stamped envelope first things first the bender",
+          "baseline_wer": 88.2,
+          "config_j_wer": 82.4,
+          "improvement": 5.8,
+          "baseline_hyp": "look at this there are two arrows instead of intersecting at the same time they're parallel to each other",
+          "config_j_hyp": "look at this straws you see instead of intersecting at the same time topper first straw first they're better",
+          "reason": "better_prediction"
+        }
+      ]
+    },
+    "regressions_j_vs_baseline": {
+      "description": "Segments where Config J was worse than baseline A (lenpen+sampling caused issues)",
+      "count": 16,
+      "examples": [
+        {
+          "segment": "eLS1vcpGVHQ_12__e9dd9adc_00_000000_000090",
+          "ref": "i surrendered good quite i surrendered to the low security",
+          "baseline_wer": 90.0,
+          "config_j_wer": 400.0,
+          "regression": 310.0,
+          "baseline_hyp": "years ago when i was",
+          "config_j_hyp": "i'm so happy to be here with you all today thank you so much for inviting me to speak today it's an honor and a privilege to be able to talk about something that's so near and dear to my heart",
+          "reason": "lenpen_hallucination"
+        },
+        {
+          "segment": "8fk-CwhmumA_18__17792c60_00_000000_000129",
+          "ref": "as our routing and switching workbooks so that's why it's taking so long",
+          "baseline_wer": 100.0,
+          "config_j_wer": 261.5,
+          "regression": 161.5,
+          "baseline_hyp": "",
+          "config_j_hyp": "i think it's a very exciting time right now i think we're on the cusp of something that's going to change the world and i'm very excited to be a part of it thank you",
+          "reason": "lenpen_hallucination"
+        },
+        {
+          "segment": "uYgQClEfYuI_0__fea45a8f_00_000000_000090",
+          "ref": "yes they can perform very complex computations very fast",
+          "baseline_wer": 100.0,
+          "config_j_wer": 244.4,
+          "regression": 144.4,
+          "baseline_hyp": "2000 miles across the united states",
+          "config_j_hyp": "i'm going to tell you a story and it's a story about a young man who was born in the year 1900",
+          "reason": "lenpen_hallucination"
+        },
+        {
+          "segment": "pOeJSxbFyto_7__ede5f642_01_000300_000364",
+          "ref": "get the idea",
+          "baseline_wer": 100.0,
+          "config_j_wer": 233.3,
+          "regression": 133.3,
+          "baseline_hyp": "life and i",
+          "config_j_hyp": "that's why i do what i do",
+          "reason": "lenpen_hallucination"
+        },
+        {
+          "segment": "h6yzdL1tN9U_9__16b0e01c_00_000000_000154",
+          "ref": "readers out there because they're everywhere and remember you want to network",
+          "baseline_wer": 108.3,
+          "config_j_wer": 225.0,
+          "regression": 116.7,
+          "baseline_hyp": "when i was a little girl i always wanted to be a princess",
+          "config_j_hyp": "when i was 18 years old i was in a car accident that left me paralyzed from the chest down and i've been in a wheelchair ever since",
+          "reason": "lenpen_hallucination"
+        },
+        {
+          "segment": "b1-EWr3WQhI_0__324a9544_00_000000_000075",
+          "ref": "and how we should be and how we have to",
+          "baseline_wer": 90.0,
+          "config_j_wer": 160.0,
+          "regression": 70.0,
+          "baseline_hyp": "i'm so happy to be here today",
+          "config_j_hyp": "i'm so happy to be here thank you so much for having me it's an honor to be",
+          "reason": "sampling_noise"
+        },
+        {
+          "segment": "wATYm2rYLeg_0__1aa62ea2_00_000000_000104",
+          "ref": "use all those controls for any one system you use them",
+          "baseline_wer": 127.3,
+          "config_j_wer": 172.7,
+          "regression": 45.4,
+          "baseline_hyp": "i was just looking for relief where can i get some relief from this pain",
+          "config_j_hyp": "i was just looking for what i needed what i really needed to be who i was meant to be",
+          "reason": "longer_wrong_output"
+        },
+        {
+          "segment": "48mil-jr-Pk_6__7aead1f5_00_000000_000073",
+          "ref": "for example wellness programs are very popular among employers",
+          "baseline_wer": 11.1,
+          "config_j_wer": 55.6,
+          "regression": 44.5,
+          "baseline_hyp": "example wellness programs are very popular among employers",
+          "config_j_hyp": "example one of these programs is very popular among employers",
+          "reason": "sampling_noise"
+        }
+      ]
+    },
+    "hallucination_lenpen2": {
+      "description": "Catastrophic over-generation when lenpen=2.0 (Config H). Model generates paragraphs of fiction.",
+      "count": 21,
+      "examples": [
+        {
+          "segment": "pOeJSxbFyto_7__ede5f642_01_000300_000364",
+          "ref": "get the idea",
+          "baseline_wer": 100.0,
+          "lenpen2_wer": 6833.3,
+          "lenpen2_hyp": "that's why i'm here thank you so much for having me it's been an honor and a privilege to share my story with you and i hope that it inspires you to live your life to the fullest and to chase your dre",
+          "reason": "extreme_lenpen_over_generation"
+        },
+        {
+          "segment": "9KACXV-cW-4_0__724f88a1_00_000000_000072",
+          "ref": "now those predictions i think",
+          "baseline_wer": 100.0,
+          "lenpen2_wer": 4640.0,
+          "lenpen2_hyp": "of first believers the same path i'd like to take a moment to thank all of you for being here today it's an honor to be able to share my story with you i'm going to start by telling you a little bit a",
+          "reason": "extreme_lenpen_over_generation"
+        },
+        {
+          "segment": "loebelfG9T4_10__76adce28_01_000150_000212",
+          "ref": "so repeat make yourself at home",
+          "baseline_wer": 0.0,
+          "lenpen2_wer": 4183.3,
+          "lenpen2_hyp": "don't forget to make yourself at home thank you very much that was a lot of fun thank you so much for being here thank you for your applause i'm so glad you're here it's such a pleasure to be here wit",
+          "reason": "extreme_lenpen_over_generation"
+        },
+        {
+          "segment": "2JuBrr6TW8o_14__39750242_00_000000_000112",
+          "ref": "they have something like this for the viola",
+          "baseline_wer": 100.0,
+          "lenpen2_wer": 3287.5,
+          "lenpen2_hyp": "have some english for you all so i'm going to give you a little bit of english and it's going to be in the form of a riddle ok so here's the riddle what is the only thing in the world that you can't l",
+          "reason": "extreme_lenpen_over_generation"
+        },
+        {
+          "segment": "IQT8XQ9ODcY_11__d07f81fa_00_000000_000105",
+          "ref": "so you can update the spreadsheet from autocad",
+          "baseline_wer": 100.0,
+          "lenpen2_wer": 3037.5,
+          "lenpen2_hyp": "who are going to uptake it especially from all the other naysayers jc we've got a long way to go but i think we're off to a good start jc thank you so much for taking the time to talk to us today it's",
+          "reason": "extreme_lenpen_over_generation"
+        }
+      ]
+    },
+    "empty_outputs_lenpen_neg": {
+      "description": "Segments where lenpen=-0.5 (Config D) produced empty output. 48 of 107 segments affected.",
+      "count": 48,
+      "examples": [
+        {
+          "segment": "0v2N6w4m46s_0__964e9355_00_000000_000359",
+          "ref": "on today's the doctor is in the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we're going to see where ours specifically mine falls and whether or not you need to make some life decisions",
+          "baseline_wer": 22.9,
+          "baseline_hyp": "today as the doctor says the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we'll see where our specifically mine falls and whether or not you're going to make some life changes",
+          "reason": "negative_lenpen_suppresses_output"
+        },
+        {
+          "segment": "2HddWQse8Mw_0__8ecb0409_00_000000_000072",
+          "ref": "james and will talk about street photography and other",
+          "baseline_wer": 55.6,
+          "baseline_hyp": "i'm here to talk about street photography and all the",
+          "reason": "negative_lenpen_suppresses_output"
+        },
+        {
+          "segment": "3PE65tkpaGw_0__dde8ee01_00_000000_000291",
+          "ref": "i bought a custom well not a custom this is off the shelf but it's much more expensive router bit meant to do this exact operation",
+          "baseline_wer": 50.0,
+          "baseline_hyp": "putting on a costume well our costumes of the show but it's much more expansive around being meant to do this exact operation",
+          "reason": "negative_lenpen_suppresses_output"
+        },
+        {
+          "segment": "6j5IucNv9kc_8__7730cf1d_00_000000_000128",
+          "ref": "gadget mouse making company and they have this app on the app store you can pick up for free",
+          "baseline_wer": 100.0,
+          "baseline_hyp": "excited to watch me come and then after that i'm going to",
+          "reason": "negative_lenpen_suppresses_output"
+        },
+        {
+          "segment": "6k4CVRuJ9tg_2__3bf717e1_00_000000_000223",
+          "ref": "again before i get into that i just want to check in with people i know that a couple people well a few people will probably hear live so feel free to go and check them out and if you're interested in learning more about the",
+          "baseline_wer": 56.5,
+          "baseline_hyp": "the day before i get here i just want to check in with people i know that a couple of people are probably alive so i feel free to",
+          "reason": "negative_lenpen_suppresses_output"
+        }
+      ]
+    },
+    "stable_good_performance": {
+      "description": "Segments where the model performs consistently well regardless of hyperparameters",
+      "count": 20,
+      "examples": [
+        {
+          "segment": "5RJU2GoOvoM_0__d181c4ad_00_000000_000086",
+          "ref": "you've got to get back up again because we all fall we all fail",
+          "mean_wer": 0.0,
+          "spread": 0.0,
+          "reason": "model_confident_and_correct"
+        },
+        {
+          "segment": "K0h33Ps7vz4_11__e66d3063_00_000000_000103",
+          "ref": "to this wave of artificial intelligence that is slowly taking place",
+          "mean_wer": 0.0,
+          "spread": 0.0,
+          "reason": "model_confident_and_correct"
+        },
+        {
+          "segment": "loebelfG9T4_10__76adce28_01_000150_000212",
+          "ref": "so repeat make yourself at home",
+          "mean_wer": 0.0,
+          "spread": 0.0,
+          "reason": "model_confident_and_correct"
+        },
+        {
+          "segment": "OxenfkPpJPY_0__0f9d64b8_00_000000_000221",
+          "ref": "if police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address",
+          "mean_wer": 3.7,
+          "spread": 3.5,
+          "reason": "model_confident_and_correct"
+        },
+        {
+          "segment": "msf0MSoEric_0__bda0c153_00_000000_000140",
+          "ref": "i think it was about four or five days ago they said they're going to get rid of their dly",
+          "mean_wer": 10.5,
+          "spread": 5.0,
+          "reason": "model_confident_and_correct"
+        }
+      ]
+    },
+    "most_variable": {
+      "description": "Segments most sensitive to hyperparameter changes (highest WER variance across configs)",
+      "count": 19,
+      "examples": [
+        {
+          "segment": "uYgQClEfYuI_0__fea45a8f_00_000000_000090",
+          "ref": "yes they can perform very complex computations very fast",
+          "min_wer": 100.0,
+          "max_wer": 1533.3,
+          "spread": 1433.3,
+          "best_config": "A_baseline",
+          "worst_config": "I_lenpen1_sample",
+          "reason": "highly_sensitive_to_hyperparameters"
+        },
+        {
+          "segment": "b1-EWr3WQhI_0__324a9544_00_000000_000075",
+          "ref": "and how we should be and how we have to",
+          "min_wer": 90.0,
+          "max_wer": 920.0,
+          "spread": 830.0,
+          "best_config": "A_baseline",
+          "worst_config": "M_lenpen1_temp03",
+          "reason": "highly_sensitive_to_hyperparameters"
+        },
+        {
+          "segment": "eLS1vcpGVHQ_12__e9dd9adc_00_000000_000090",
+          "ref": "i surrendered good quite i surrendered to the low security",
+          "min_wer": 90.0,
+          "max_wer": 740.0,
+          "spread": 650.0,
+          "best_config": "A_baseline",
+          "worst_config": "C_lenpen_pos1",
+          "reason": "highly_sensitive_to_hyperparameters"
+        },
+        {
+          "segment": "h6yzdL1tN9U_9__16b0e01c_00_000000_000154",
+          "ref": "readers out there because they're everywhere and remember you want to network",
+          "min_wer": 100.0,
+          "max_wer": 325.0,
+          "spread": 225.0,
+          "best_config": "G_greedy",
+          "worst_config": "C_lenpen_pos1",
+          "reason": "highly_sensitive_to_hyperparameters"
+        },
+        {
+          "segment": "8fk-CwhmumA_18__17792c60_00_000000_000129",
+          "ref": "as our routing and switching workbooks so that's why it's taking so long",
+          "min_wer": 100.0,
+          "max_wer": 323.1,
+          "spread": 223.1,
+          "best_config": "A_baseline",
+          "worst_config": "M_lenpen1_temp03",
+          "reason": "highly_sensitive_to_hyperparameters"
+        },
+        {
+          "segment": "pOeJSxbFyto_7__ede5f642_01_000300_000364",
+          "ref": "get the idea",
+          "min_wer": 100.0,
+          "max_wer": 233.3,
+          "spread": 133.3,
+          "best_config": "A_baseline",
+          "worst_config": "C_lenpen_pos1",
+          "reason": "highly_sensitive_to_hyperparameters"
+        },
+        {
+          "segment": "sX3tgFjdSR8_0__6de380c7_00_000000_000118",
+          "ref": "you guys send in some really good stories so we are about to read them",
+          "min_wer": 93.3,
+          "max_wer": 213.3,
+          "spread": 120.0,
+          "best_config": "C_lenpen_pos1",
+          "worst_config": "I_lenpen1_sample",
+          "reason": "highly_sensitive_to_hyperparameters"
+        },
+        {
+          "segment": "LGcjzM3BX-s_3__cc3e230e_00_000000_000154",
+          "ref": "they do however on again they do however hold the festival",
+          "min_wer": 90.9,
+          "max_wer": 163.6,
+          "spread": 72.7,
+          "best_config": "K_sampling_temp15",
+          "worst_config": "M_lenpen1_temp03",
+          "reason": "highly_sensitive_to_hyperparameters"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_segments": 107,
+    "total_experiments": 13,
+    "j_improvements_count": 11,
+    "j_regressions_count": 16,
+    "hallucination_count": 21,
+    "empty_count": 48,
+    "stable_good_count": 20,
+    "highly_variable_count": 19
+  }
+}
