@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Argos — The Orchard — Comprehensive R&D Document Generator (v2)
+Argos — The Orchard — Comprehensive R&D Document Generator (v3)
 
 Generates a detailed, chapter-based research documentation Word document
 covering ALL work done on the Argos visual speech processing project.
 
-14 chapters, ~60 pages, content-rich with code examples and config snippets.
+16 chapters, ~70 pages, content-rich with code examples and config snippets.
+v3: Added Chapter 13 (Intelligibility Assessment), expanded Chapter 12 with
+    plots/analysis, updated numbers to full 1,497-segment dataset.
 
 Usage:
     python3 generate_research_journal.py
@@ -351,7 +353,7 @@ def create_cover_page(doc):
 
     p4 = doc.add_paragraph()
     p4.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run4 = p4.add_run("Detailed Edition v2.0")
+    run4 = p4.add_run("Detailed Edition v3.0")
     run4.font.size = Pt(14)
     run4.font.color.rgb = C_H3
     run4.italic = True
@@ -445,9 +447,10 @@ TOC_ENTRIES = [
     ("ch10", "10. Backend Services"),
     ("ch11", "11. Docker Container & Deployment"),
     ("ch12", "12. Performance Evaluation & Tuning"),
-    ("ch13", "13. Fine-Tuning & Training Infrastructure"),
-    ("ch14", "14. Executive Summary"),
-    ("ch15", "15. Project To-Do List"),
+    ("ch13", "13. Intelligibility Assessment & Metric Analysis"),
+    ("ch14", "14. Fine-Tuning & Training Infrastructure"),
+    ("ch15", "15. Executive Summary"),
+    ("ch16", "16. Project To-Do List"),
 ]
 
 
@@ -2295,14 +2298,15 @@ def chapter_12(doc):
         "Evaluating the Argos system's performance required processing a large dataset of real-world videos, "
         "establishing metrics that go beyond simple WER, running systematic parameter tuning experiments, "
         "and producing detailed analysis reports. This chapter documents the evaluation methodology, results, "
-        "seven decode tuning experiments, six analysis reports, and the key insights that emerged."
+        "thirteen decode tuning experiments, 21 analytical plots, six analysis reports, pairwise statistical "
+        "testing, and the key insights that emerged."
     ))
 
     # 12.1 Setup
     add_heading(doc, "12.1 Evaluation Setup", 2)
     add_para(doc, (
-        "The primary evaluation used approximately 1,000 YouTube videos from the AVSpeech dataset, "
-        "which were processed through the pipeline to produce 860 evaluated segments. Whisper ASR "
+        "The primary evaluation used approximately 1,500 YouTube videos from the AVSpeech dataset, "
+        "which were processed through the pipeline to produce 1,497 evaluated segments. Whisper ASR "
         "(medium model) generated ground truth transcriptions for comparison against VSP-LLM's "
         "visual-only predictions."
     ))
@@ -2310,11 +2314,11 @@ def chapter_12(doc):
         ["Parameter", "Value"],
         [
             ["Source Dataset", "AVSpeech (YouTube videos)"],
-            ["Videos Processed", "~1,000"],
-            ["Segments Evaluated", "860"],
+            ["Videos Processed", "~1,500"],
+            ["Segments Evaluated", "1,497"],
             ["Ground Truth", "Whisper ASR (medium model, English)"],
             ["Decode Config", "beam=20, lenpen=0.0, rep_pen=1.2"],
-            ["Evaluation Metrics", "WER, WWER, NEA (Recall, Precision, F1)"],
+            ["Evaluation Metrics", "WER, WWER, NEA (Recall, Precision, F1), IS"],
         ],
         col_widths=[2.0, 4.5]
     )
@@ -2498,11 +2502,105 @@ def chapter_12(doc):
         col_widths=[0.3, 2.2, 4.0]
     )
 
-    # 12.7 Metrics Assessment
-    add_heading(doc, "12.7 Metrics Assessment: Beyond WER", 2)
+    # 12.7 Analytical Plots
+    add_heading(doc, "12.7 Analytical Plots (16 Visualizations)", 2)
+    add_para(doc, (
+        "A comprehensive set of 16 analytical plots was generated to visualize performance patterns "
+        "across experiments. These plots are produced by generate_experiment_plots.py and stored in "
+        "docs/evaluation/plots/. Experiments D and H are excluded from most plots as known failures "
+        "(45% empty and catastrophic hallucination respectively)."
+    ))
+    add_styled_table(doc,
+        ["Plot", "Type", "Description", "Key Finding"],
+        [
+            ["01-04", "Binned line", "WER & WWER vs duration and ref word count (5 configs)",
+             "WER improves with longer segments; short segments (<3s) problematic"],
+            ["05-08", "Binned line", "NEA Recall & F1 vs duration and ref word count",
+             "Entity accuracy plateaus above 10 ref words"],
+            ["09", "Box plot", "WWER distribution across 11 good experiments",
+             "Median WWER tightly clustered (55-58%); large outlier spread"],
+            ["10", "Bar chart", "Empty + hallucination rates by experiment",
+             "lenpen eliminates empties but increases hallucination"],
+            ["11", "Scatter", "WER vs WWER per-segment (5 configs)",
+             "WWER tracks WER closely; diverges when entities are destroyed"],
+            ["12", "Heatmap", "Segment stability across experiments",
+             "70% of segments stable across configs; 30% volatile"],
+            ["13", "Histogram", "Duration distribution: tuning subset vs full dataset",
+             "Tuning subset representative of full dataset duration range"],
+            ["14", "Scatter", "NEA Recall vs WWER",
+             "High WWER strongly predicts low entity accuracy"],
+            ["15", "CDF", "Empirical CDF of WWER by experiment",
+             "Config J shifts CDF left (better) for mid-range segments"],
+            ["16", "Delta bar", "Per-segment improvement J vs A",
+             "J improves 40% of segments, hurts 25%, neutral 35%"],
+        ],
+        col_widths=[0.5, 0.7, 2.5, 2.8]
+    )
+
+    # 12.8 Presentation Plots
+    add_heading(doc, "12.8 Presentation Plots (5 Visualizations)", 2)
+    add_para(doc, (
+        "Five high-level plots were generated for management presentations, summarizing the "
+        "project's performance story. Produced by generate_presentation_plots.py."
+    ))
+    add_styled_table(doc,
+        ["Plot", "Description", "Key Data Point"],
+        [
+            ["P1", "Quality tier distribution (pie + horizontal bar)", "11.4% usable (WER \u226420%)"],
+            ["P2", "Paper vs reality WER comparison", "25.4% LRS3 vs 64.1% YouTube (2.5x gap)"],
+            ["P3", "WER improvement trajectory roadmap", "64% \u2192 55% \u2192 45% \u2192 42% projected"],
+            ["P4", "Length penalty sensitivity (empty vs hallucination)", "lenpen=1.0 eliminates empties"],
+            ["P5", "Before/after tuning (A vs C metrics)", "WWER: 59.5% \u2192 58.6% (-0.9 pts)"],
+        ],
+        col_widths=[0.5, 3.0, 3.0]
+    )
+
+    # 12.9 Baseline vs Config J Full-Scale Analysis
+    add_heading(doc, "12.9 Baseline vs Config J Full-Scale Analysis", 2)
+    add_para(doc, (
+        "A detailed 9-section analysis compared the baseline (Config A: beam=20, lenpen=0) against "
+        "Config J (lenpen=1.0, do_sample=true, temperature=0.5) on the full 1,497-segment dataset. "
+        "This analysis is documented in baseline_vs_J_analysis.docx and includes:"
+    ))
+    add_bullet_bold_value(doc, "Overall metrics: ",
+        "J achieves best WWER (57.7%, -1.8 vs baseline 59.5%) and eliminates all empty outputs.")
+    add_bullet_bold_value(doc, "Where J helps: ",
+        "Recovers 4 previously-empty segments, improves WWER on medium-length (10-20 word) segments.")
+    add_bullet_bold_value(doc, "Where J hurts: ",
+        "Amplifies hallucination on short/ambiguous segments. Some segments that were empty "
+        "in baseline become hallucinated with lenpen=1.0 (fluent but fabricated text).")
+    add_bullet_bold_value(doc, "Quartile analysis: ",
+        "Q1 (easiest 25% by baseline WWER) segments are stable across configs. Q4 (hardest 25%) "
+        "segments diverge most \u2014 J helps some and hurts others unpredictably.")
+    add_bullet_bold_value(doc, "Duration effect: ",
+        "5-15 second segments show most consistent improvement. Very short (<3s) segments are "
+        "problematic regardless of config. Segments >20s show diminishing returns.")
+    add_bullet_bold_value(doc, "Entity recovery: ",
+        "J recovers some entities lost by baseline (primarily function words). Content word "
+        "entities remain challenging across both configs.")
+
+    # 12.10 Pairwise Statistical Testing
+    add_heading(doc, "12.10 Pairwise Statistical Testing", 2)
+    add_para(doc, (
+        "Wilcoxon signed-rank tests were run across all 78 configuration pairs (13 choose 2) "
+        "to determine which differences are statistically significant. The analysis is documented "
+        "in pairwise-comparison.pdf (47 pages). Key findings:"
+    ))
+    add_bullet(doc,
+        "Few pairs show statistically significant differences at p<0.05, confirming that "
+        "most decode parameter changes produce marginal effects on the 107-segment tuning set.")
+    add_bullet(doc,
+        "The only consistently significant differences involve the known-failure configs "
+        "(D with lenpen=-0.5 and H with lenpen=2.0) vs. all others.")
+    add_bullet(doc,
+        "This supports the conclusion that decode-time tuning has reached diminishing returns "
+        "and domain adaptation (fine-tuning) is the only viable path to meaningful improvement.")
+
+    # 12.11 Metrics Assessment
+    add_heading(doc, "12.11 Metrics Assessment: Beyond WER", 2)
     add_para(doc, (
         "A key insight from the evaluation is that standard WER is insufficient for assessing "
-        "transcription quality in a production context. Two additional metrics were developed:"
+        "transcription quality in a production context. Three metrics were developed:"
     ))
     add_bullet_bold_value(doc, "WWER (Weighted WER): ",
         "Weights entity tokens (names, numbers, locations) at 2x importance and function words "
@@ -2510,11 +2608,16 @@ def chapter_12(doc):
         "articles is more useful than one that gets articles right but hallucates names.")
     add_bullet_bold_value(doc, "NEA F1 (Named Entity Accuracy): ",
         "Measures how well high-value tokens are preserved. At 38.8% F1, the current system "
-        "misses at least one important entity in 85% of segments — this is the primary quality "
+        "misses at least one important entity in 85% of segments \u2014 this is the primary quality "
         "gap for real-world usability.")
+    add_bullet_bold_value(doc, "Intelligibility Score (IS): ",
+        "A composite 6-signal metric (0\u20135 scale) that combines semantic similarity, phonetic "
+        "similarity, inverse WER, inverse WWER, named entity accuracy, and length ratio. "
+        "At IS 2.52/5.0 mean, only 39.9% of segments are properly captured (IS \u2265 3.0). "
+        "Full analysis in Chapter 13.")
 
-    # 12.8 Arabic Dead End
-    add_heading(doc, "12.8 Arabic Language Attempt", 2)
+    # 12.12 Arabic Dead End
+    add_heading(doc, "12.12 Arabic Language Attempt", 2)
     add_para(doc, (
         "An attempt was made to extend the system to Arabic language processing. However, this "
         "proved infeasible with the current model architecture: the LLaMA-2 tokenizer is designed "
@@ -2524,32 +2627,527 @@ def chapter_12(doc):
         "multilingual LLM base or separate Arabic-trained model weights."
     ))
 
-    # 12.9 POC Fine-Tune
-    add_heading(doc, "12.9 POC Fine-Tune to Overfit", 2)
+    # 12.13 POC Fine-Tune
+    add_heading(doc, "12.13 POC Fine-Tune to Overfit", 2)
     add_para(doc, (
         "A preliminary fine-tuning experiment was conducted as a proof-of-concept to validate "
         "that the training pipeline and infrastructure work correctly. The model was trained on "
-        "a small dataset with the goal of overfitting — achieving very low training loss regardless "
+        "a small dataset with the goal of overfitting \u2014 achieving very low training loss regardless "
         "of generalization. This experiment confirmed that the fairseq-hydra-train integration, "
         "QLoRA adapter setup, and checkpoint saving all function correctly, paving the way for "
         "the full domain adaptation fine-tuning."
     ))
 
-    # 12.10 Key Insights
-    add_heading(doc, "12.10 Key Insights", 2)
+    # 12.14 Key Insights
+    add_heading(doc, "12.14 Key Insights", 2)
     add_para(doc, "The evaluation and tuning work yielded several important conclusions:")
-    add_bullet(doc, "The domain gap (LRS3 → AVSpeech) is the primary bottleneck, not the model architecture")
+    add_bullet(doc, "The domain gap (LRS3 \u2192 AVSpeech) is the primary bottleneck, not the model architecture")
     add_bullet(doc, "Fine-tuning on in-domain AVSpeech data is expected to reduce WER by 15-25 percentage points")
     add_bullet(doc, "Decode-time parameter tuning (lenpen, beam width) can provide 5-10% relative improvement")
-    add_bullet(doc, "WER alone is insufficient — WWER and NEA F1 better capture real-world transcription utility")
+    add_bullet(doc, "WER alone is insufficient \u2014 WWER, NEA F1, and the Intelligibility Score (IS) better capture real-world utility")
     add_bullet(doc, "The 20.6% hallucination rate is the most urgent quality issue to address")
+    add_bullet(doc, "The Intelligibility Score reveals that WER overstates failure by ~3.5x (39.9% properly captured vs 11.4% by WER alone)")
     add_bullet(doc, "Expected post-fine-tuning WER: 40-50% (still above paper's 25.4% due to harder conditions)")
 
     doc.add_page_break()
 
 
+# ═══════════════════════════════════════════════════
+# CHAPTER 13: Intelligibility Assessment & Metric Analysis
+# ═══════════════════════════════════════════════════
+
 def chapter_13(doc):
-    add_heading(doc, "13. Fine-Tuning & Training Infrastructure", 1, bookmark_id="ch13")
+    add_heading(doc, "13. Intelligibility Assessment & Metric Analysis", 1, bookmark_id="ch13")
+
+    add_para(doc, (
+        "Standard WER proved insufficient for evaluating the Argos system's real-world quality. "
+        "This chapter documents the Intelligibility Score (IS), a novel 6-signal composite metric "
+        "that captures whether a transcription conveys the speaker's intended meaning \u2014 even when "
+        "individual words are wrong. The IS was computed for all 1,497 segments in the full baseline "
+        "dataset and reveals that WER overstates failure by approximately 3.5x."
+    ))
+
+    # 13.1 Why WER Isn't Enough
+    add_heading(doc, "13.1 Why WER Isn't Enough", 2)
+    add_para(doc, (
+        "WER treats all word errors equally: substituting 'the' for 'a' costs the same as "
+        "substituting 'Biden' for 'cooking'. WER also cannot distinguish between phonetically "
+        "plausible errors (natural lip-reading confusions) and complete hallucinations. Two "
+        "examples from the dataset illustrate this:"
+    ))
+    add_bullet_bold_value(doc, "Same WER, opposite meaning: ",
+        "Prediction A has 29% WER but is fully intelligible (wrong function words, correct "
+        "content). Prediction B has 33% WER but is unintelligible (correct function words, "
+        "wrong content words). WER cannot distinguish these cases.")
+    add_bullet_bold_value(doc, "Phonetic confusions are invisible to WER: ",
+        "A lip-reading system often confuses visually identical sounds (p/b/m, f/v, t/d). "
+        "These confusions may produce 'wrong' words that sound like the right words and "
+        "preserve meaning \u2014 but WER penalizes them fully.")
+
+    # 13.2 The 6-Signal Composite
+    add_heading(doc, "13.2 The 6-Signal Composite", 2)
+    add_para(doc, (
+        "The Intelligibility Score combines six independent signals, each capturing a different "
+        "dimension of transcription quality. All signals are scaled to 0\u20135 before weighting:"
+    ))
+    add_styled_table(doc,
+        ["Signal", "Weight", "What It Catches"],
+        [
+            ["Semantic Similarity", "0.25 (25%)",
+             "Overall meaning preservation (all-MiniLM-L6-v2 sentence embeddings, cosine similarity)"],
+            ["Phonetic Similarity", "0.15 (15%)",
+             "Natural lip-reading confusions (Double Metaphone encoding, match rate)"],
+            ["Inverse WER", "0.15 (15%)",
+             "Raw word-level accuracy (1 \u2212 WER/100, scaled to 0\u20135)"],
+            ["Inverse WWER", "0.15 (15%)",
+             "Content-weighted accuracy (entities 2x, content 1x, function 0.5x)"],
+            ["NEA F1", "0.15 (15%)",
+             "Named entity preservation (proper nouns, numbers, locations)"],
+            ["Length Ratio", "0.15 (15%)",
+             "Hallucination/truncation detection (hyp_len / ref_len, penalty for deviation from 1.0)"],
+        ],
+        col_widths=[1.3, 0.7, 4.5]
+    )
+    add_para(doc, (
+        "Semantic similarity receives the highest weight (25%) because meaning preservation is "
+        "the ultimate goal. The other five signals each receive 15%, providing balanced coverage "
+        "of phonetic plausibility, structural accuracy, entity preservation, and output length."
+    ))
+
+    # 13.3 Composite Formula
+    add_heading(doc, "13.3 Composite Formula & Scaling", 2)
+    add_para(doc, (
+        "IS = 0.25 \u00d7 Semantic + 0.15 \u00d7 Phonetic + 0.15 \u00d7 InvWER + "
+        "0.15 \u00d7 InvWWER + 0.15 \u00d7 NEA_F1 + 0.15 \u00d7 LengthRatio"
+    ), bold=True)
+    add_para(doc, (
+        "Each signal is independently scaled to the 0\u20135 range before weighting. The final "
+        "IS ranges from 0.0 (completely unintelligible) to 5.0 (perfect transcription). "
+        "A segment is considered 'properly captured' if IS \u2265 3.0 (Tiers 4 + 5)."
+    ))
+
+    # 13.4 Tier Classification
+    add_heading(doc, "13.4 Tier Classification", 2)
+    add_para(doc, (
+        "Each segment is classified into one of five intelligibility tiers based on its IS score:"
+    ))
+    add_styled_table(doc,
+        ["Tier", "Score Range", "Label", "Count", "%", "Interpretation"],
+        [
+            ["5", "4.0\u20135.0", "Excellent", "276", "18.4%",
+             "Human fully understands. Minor word differences only."],
+            ["4", "3.0\u20133.99", "Good", "321", "21.4%",
+             "Meaning clearly preserved. Some wrong words but recoverable."],
+            ["3", "2.0\u20132.99", "Fair", "325", "21.7%",
+             "Gist recoverable. General topic correct, details wrong."],
+            ["2", "1.0\u20131.99", "Poor", "336", "22.4%",
+             "Only fragments survive. Different message conveyed."],
+            ["1", "0.0\u20130.99", "Failed", "239", "16.0%",
+             "No meaningful connection. Completely different topic."],
+        ],
+        col_widths=[0.35, 0.7, 0.65, 0.5, 0.4, 3.9]
+    )
+    add_para(doc, (
+        "The distribution is roughly uniform across tiers, with a slight concentration in the "
+        "Poor tier (22.4%). Tiers 4+5 ('properly captured') account for 39.9% of segments \u2014 "
+        "compared to only 11.4% that would be considered usable by WER alone (WER \u2264 20%)."
+    ), bold=True)
+
+    # 13.5 Full Baseline Results
+    add_heading(doc, "13.5 Full Baseline Results (1,497 Segments)", 2)
+    add_para(doc, (
+        "The IS was computed for all 1,497 segments in the full baseline dataset (February 2026):"
+    ))
+    add_styled_table(doc,
+        ["Metric", "Value"],
+        [
+            ["Total Segments", "1,497"],
+            ["Mean IS", "2.52 / 5.0"],
+            ["Median IS", "2.538"],
+            ["Std Dev", "1.372"],
+            ["Properly Captured (IS \u2265 3.0)", "597 (39.9%)"],
+            ["Context-Recoverable (Rule-Based)", "652 (43.6%)"],
+            ["Context-Recoverable (LLM-Based)", "757 (50.6%)"],
+            ["Empty Hypotheses", "70 (4.7%)"],
+        ],
+        col_widths=[2.5, 4.0]
+    )
+    add_para(doc, (
+        "The 39.9% 'properly captured' rate is the headline metric: 4 in 10 segments convey "
+        "intelligible meaning despite a 67% mean WER. This 3.5x gap between WER assessment "
+        "and IS assessment demonstrates why WER alone is misleading for lip-reading evaluation."
+    ))
+
+    # 13.6 IS Distribution Histogram
+    add_heading(doc, "13.6 IS Distribution Histogram", 2)
+    add_para(doc, (
+        "The distribution of IS scores across 0.5-width bins shows a roughly uniform spread "
+        "with a slight concentration in the 1.0\u20131.5 range:"
+    ))
+    add_styled_table(doc,
+        ["IS Range", "Count", "% of Total", "Cumulative %"],
+        [
+            ["0.0\u20130.5", "108", "7.2%", "7.2%"],
+            ["0.5\u20131.0", "131", "8.8%", "16.0%"],
+            ["1.0\u20131.5", "186", "12.4%", "28.4%"],
+            ["1.5\u20132.0", "150", "10.0%", "38.4%"],
+            ["2.0\u20132.5", "161", "10.8%", "49.2%"],
+            ["2.5\u20133.0", "164", "11.0%", "60.1%"],
+            ["3.0\u20133.5", "165", "11.0%", "71.1%"],
+            ["3.5\u20134.0", "156", "10.4%", "81.6%"],
+            ["4.0\u20134.5", "159", "10.6%", "92.2%"],
+            ["4.5\u20135.0", "99", "6.6%", "98.8%"],
+        ],
+        col_widths=[1.0, 0.7, 0.8, 1.0]
+    )
+
+    # 13.7 Signal Statistics
+    add_heading(doc, "13.7 Signal Statistics", 2)
+    add_para(doc, (
+        "Mean and median values for each of the six component signals across all 1,497 segments:"
+    ))
+    add_styled_table(doc,
+        ["Signal", "Mean", "Median", "Interpretation"],
+        [
+            ["Semantic Similarity", "0.437", "0.412",
+             "Moderate meaning overlap on average; wide spread"],
+            ["Phonetic Similarity", "0.552", "0.588",
+             "Over half of ref words have phonetic matches in hypothesis"],
+            ["Inverse WER (1\u2212WER/100)", "0.394", "\u2014",
+             "Equivalent to ~60% mean WER; confirms challenging dataset"],
+            ["Inverse WWER (1\u2212WWER/100)", "0.397", "\u2014",
+             "Content-weighted accuracy similar to raw WER"],
+            ["NEA F1", "38.9%", "\u2014",
+             "Entities missed in majority of segments"],
+            ["Length Ratio (hyp/ref)", "0.925", "0.947",
+             "Slight truncation bias; median close to ideal 1.0"],
+        ],
+        col_widths=[1.5, 0.5, 0.5, 4.0]
+    )
+
+    # 13.8 Signal Comparison
+    add_heading(doc, "13.8 Signal Comparison: Success vs Failure", 2)
+    add_para(doc, (
+        "Comparing mean signal values between successful (IS \u2265 3.0, n=597) and failed "
+        "(IS < 3.0, n=900) segments reveals which signals differentiate success from failure:"
+    ))
+    add_styled_table(doc,
+        ["Signal", "Success Mean", "Failure Mean", "Gap", "Diagnostic Value"],
+        [
+            ["Semantic Similarity", "0.736", "0.238", "+0.50", "Highest discriminator"],
+            ["Phonetic Similarity", "0.809", "0.382", "+0.43", "Strong discriminator"],
+            ["WER", "30.2%", "86.5%", "\u221256.3 pts", "Large gap (expected)"],
+            ["WWER", "31.1%", "82.3%", "\u221251.2 pts", "Large gap (expected)"],
+            ["NEA F1", "74.0%", "15.7%", "+58.3 pts", "Strongest single discriminator"],
+            ["Length Ratio", "0.974", "0.892", "+0.08", "Modest discriminator"],
+        ],
+        col_widths=[1.2, 0.8, 0.8, 0.7, 3.0]
+    )
+    add_para(doc, (
+        "NEA F1 shows the largest gap (+58.3 points), meaning entity preservation is the "
+        "strongest predictor of intelligibility. Semantic similarity is the highest-weighted "
+        "signal and the best standalone discriminator (0.736 vs 0.238)."
+    ))
+
+    # 13.9 Failure Mode Analysis
+    add_heading(doc, "13.9 Failure Mode Analysis", 2)
+    add_para(doc, (
+        "Each non-intelligible segment (IS < 3.0, n=900) is classified into one of ten failure "
+        "modes based on its signal profile:"
+    ))
+    add_styled_table(doc,
+        ["Failure Mode", "Count", "%", "Description"],
+        [
+            ["Total Topic Drift", "143", "15.9%", "Semantic < 0.2, phonetic < 0.3 \u2014 completely unrelated output"],
+            ["Phonetically Similar but Wrong Topic", "141", "15.7%",
+             "Semantic < 0.2 but phonetic \u2265 0.3 \u2014 sounds right, means wrong"],
+            ["Accumulated Small Errors", "111", "12.3%", "Many small errors compound to destroy meaning"],
+            ["Hallucination", "111", "12.3%", "WER > 100% \u2014 model generates fluent but fabricated text"],
+            ["High Error Rate", "109", "12.1%", "WER > 70% \u2014 too many errors for recovery"],
+            ["Entity Destruction", "108", "12.0%", "Semantic \u2265 0.2 but NEA F1 < 10% \u2014 key entities lost"],
+            ["Content Word Errors", "96", "10.7%", "Semantic \u2265 0.3 but WER > 50% \u2014 content words wrong"],
+            ["Empty Output", "70", "7.8%", "Model produced no output for the segment"],
+            ["Truncation", "10", "1.1%", "Length ratio < 0.3 \u2014 output is too short"],
+            ["Over-generation", "1", "0.1%", "Length ratio > 1.8 \u2014 output is too long"],
+        ],
+        col_widths=[1.8, 0.5, 0.4, 3.8]
+    )
+    add_para(doc, "The three most actionable failure modes:")
+    add_bullet_bold_value(doc, "Topic Drift + Phonetic Wrong Topic (31.6%): ",
+        "Together account for nearly a third of failures. These occur when visual features "
+        "are ambiguous and the LLM decoder fills in plausible but incorrect text.")
+    add_bullet_bold_value(doc, "Hallucination (12.3%): ",
+        "The most dangerous mode \u2014 output is fluent and grammatically correct but fabricated. "
+        "Cannot be detected without ground truth comparison.")
+    add_bullet_bold_value(doc, "Entity Destruction (12.0%): ",
+        "Topic is roughly correct but key entities (names, numbers, places) are lost. "
+        "Unrecoverable even with context because the entities cannot be guessed.")
+
+    # 13.10 Success Pattern Analysis
+    add_heading(doc, "13.10 Success Pattern Analysis", 2)
+    add_para(doc, (
+        "Each intelligible segment (IS \u2265 3.0, n=597) is classified by its dominant success pattern:"
+    ))
+    add_styled_table(doc,
+        ["Success Pattern", "Count", "%", "Description"],
+        [
+            ["Phonetically Preserved", "248", "41.5%",
+             "Phonetic > 0.7, WER > 25% \u2014 wrong words that sound like right words"],
+            ["Minor Errors, High Semantic", "146", "24.5%",
+             "WER \u2264 25%, semantic > 0.6 \u2014 few errors, strong meaning match"],
+            ["Entities Preserved", "74", "12.4%",
+             "NEA F1 > 60%, WER > 25% \u2014 key entities survived despite word errors"],
+            ["Near-Perfect Output", "69", "11.6%",
+             "WER \u2264 10% \u2014 almost exact transcription"],
+            ["Good Semantic + Correct Length", "45", "7.5%",
+             "Semantic > 0.5, length ratio 0.7\u20131.3 \u2014 right amount of right-ish content"],
+            ["Low-Moderate WER", "13", "2.2%",
+             "WER \u2264 35% \u2014 structurally accurate"],
+            ["Combined Semantic + Phonetic Bridge", "2", "0.3%",
+             "Semantic > 0.4, phonetic > 0.5 \u2014 meaning and sound both partially match"],
+        ],
+        col_widths=[1.8, 0.5, 0.4, 3.8]
+    )
+    add_para(doc, (
+        "Phonetic preservation is the dominant success driver (41.5%). This means the lip-reading "
+        "acoustic front-end (AV-HuBERT) is doing its job \u2014 it extracts features that map to the "
+        "correct phonetic space even when the LLM decoder selects the wrong word. This finding "
+        "supports the hypothesis that fine-tuning the decoder on in-domain data will yield "
+        "significant improvements."
+    ), bold=True)
+
+    # 13.11 Context Recovery Analysis
+    add_heading(doc, "13.11 Context Recovery Analysis", 2)
+    add_para(doc, (
+        "Two approaches were used to estimate how many additional segments could be understood "
+        "if the reader had topic context (e.g., knowing the video is about cooking):"
+    ))
+    add_styled_table(doc,
+        ["Approach", "Recoverable", "%", "Method"],
+        [
+            ["Rule-Based", "652 / 1,497", "43.6%",
+             "Decision tree using semantic, WER, WWER, length ratio thresholds"],
+            ["LLM-Knowledge-Based", "757 / 1,497", "50.6%",
+             "Multi-factor analysis: content overlap, sequence preservation, phonetic "
+             "plausibility, length sanity, semantic coherence, information density"],
+        ],
+        col_widths=[1.3, 1.0, 0.5, 3.7]
+    )
+    add_para(doc, (
+        "The LLM-based approach recovers an additional 105 segments (7 percentage points) beyond "
+        "the rule-based method, primarily in the 'marginal' category where multiple weak signals "
+        "combine to make the output recoverable with context. This suggests that domain-specific "
+        "fine-tuning (which provides implicit topic context) could shift ~7-11% of segments from "
+        "'unintelligible' to 'recoverable'."
+    ))
+
+    # 13.12 WER Threshold Mapping
+    add_heading(doc, "13.12 WER Threshold Mapping to Intelligibility", 2)
+    add_para(doc, (
+        "Mapping WER ranges to intelligibility expectations provides practical rules of thumb "
+        "for interpreting raw WER scores:"
+    ))
+    add_styled_table(doc,
+        ["WER Range", "Intelligibility Expectation", "Action"],
+        [
+            ["WER \u2264 15%", "Almost certainly understandable",
+             "Use directly \u2014 minor corrections only"],
+            ["WER 15\u201330%", "Probably understandable",
+             "Review recommended; meaning likely preserved"],
+            ["WER 30\u201350%", "Coin flip",
+             "May or may not be intelligible; check IS score"],
+            ["WER 50\u201370%", "Probably not understandable",
+             "Significant errors; topic may still be recoverable with context"],
+            ["WER > 70%", "Almost certainly not understandable",
+             "Severe errors; discard or flag for manual transcription"],
+            ["WER > 100%", "Hallucinated",
+             "Model output is longer than reference and likely fabricated"],
+        ],
+        col_widths=[1.0, 2.2, 3.3]
+    )
+
+    # 13.13 Topic Analysis
+    add_heading(doc, "13.13 Topic Analysis", 2)
+    add_para(doc, (
+        "Segments were classified into 10 topic categories using keyword matching on reference "
+        "transcriptions. Performance varies significantly by topic:"
+    ))
+    add_styled_table(doc,
+        ["Topic", "N", "Mean IS", "Mean WER", "Captured %", "Ctx Recovery %"],
+        [
+            ["Business/Finance", "46", "3.08", "46.8%", "56.5%", "67.4%"],
+            ["Sports/Fitness", "31", "2.90", "52.9%", "48.4%", "61.3%"],
+            ["Education/Academic", "86", "2.84", "52.4%", "47.7%", "59.3%"],
+            ["Politics/News", "34", "2.81", "56.7%", "50.0%", "55.9%"],
+            ["Technology", "132", "2.70", "56.7%", "49.2%", "56.8%"],
+            ["Cooking/Food", "117", "2.66", "59.3%", "44.4%", "59.8%"],
+            ["Medical/Health", "39", "2.64", "56.7%", "53.8%", "53.8%"],
+            ["Religion/Spirituality", "17", "2.55", "68.7%", "35.3%", "47.1%"],
+            ["Entertainment", "69", "2.23", "67.3%", "30.4%", "47.8%"],
+            ["DIY/Home", "27", "2.13", "76.0%", "29.6%", "37.0%"],
+            ["Other (unclassified)", "899", "2.42", "68.0%", "36.2%", "46.7%"],
+        ],
+        col_widths=[1.3, 0.35, 0.5, 0.6, 0.7, 0.8]
+    )
+    add_para(doc, (
+        "Business/Finance topics perform best (IS 3.08, 56.5% captured) \u2014 likely because these "
+        "videos feature professional speakers in controlled settings. Entertainment and DIY/Home "
+        "perform worst (IS 2.1\u20132.2, ~30% captured), likely due to rapid speech, background noise, "
+        "and non-frontal camera angles common in those genres."
+    ))
+
+    # 13.14 Segment Length Analysis
+    add_heading(doc, "13.14 Segment Length Analysis", 2)
+    add_para(doc, (
+        "Metrics improve consistently with longer segments (more reference words). This analysis "
+        "suggests a minimum segment length filter could improve overall quality:"
+    ))
+    add_heading(doc, "13.14.1 Cumulative Filters", 3)
+    add_styled_table(doc,
+        ["Filter", "N", "Mean IS", "Mean WER", "Captured %", "Ctx LLM %"],
+        [
+            ["All segments", "1,497", "2.52", "64.1%", "39.9%", "50.6%"],
+            ["\u2265 5 words", "1,463", "2.55", "61.9%", "40.5%", "51.1%"],
+            ["\u2265 7 words", "1,379", "2.56", "61.1%", "40.8%", "51.6%"],
+            ["\u2265 10 words", "1,173", "2.61", "58.9%", "42.7%", "53.5%"],
+            ["\u2265 15 words", "805", "2.65", "56.5%", "46.3%", "56.5%"],
+            ["\u2265 20 words", "535", "2.68", "55.1%", "48.6%", "57.6%"],
+        ],
+        col_widths=[1.0, 0.5, 0.6, 0.6, 0.7, 0.7]
+    )
+    add_heading(doc, "13.14.2 Length Bands", 3)
+    add_styled_table(doc,
+        ["Band", "N", "Mean IS", "Mean WER", "Captured %"],
+        [
+            ["5\u201310 words", "290", "2.31", "74.2%", "31.7%"],
+            ["10\u201315 words", "368", "2.51", "64.1%", "34.8%"],
+            ["15\u201320 words", "270", "2.60", "59.4%", "41.9%"],
+            ["20+ words", "535", "2.68", "55.1%", "48.6%"],
+        ],
+        col_widths=[1.0, 0.5, 0.6, 0.6, 0.7]
+    )
+    add_para(doc, (
+        "Filtering to segments with \u2265 10 reference words drops 324 short segments (21.6%) "
+        "but improves captured rate from 39.9% to 42.7% (+2.8 pts). Filtering to \u2265 20 words "
+        "reaches 48.6% captured but retains only 535 segments (35.7% of total)."
+    ))
+
+    # 13.15 Phonetic Confusion Analysis
+    add_heading(doc, "13.15 Phonetic Confusion Analysis", 2)
+    add_para(doc, (
+        "Lip-reading inherently confuses sounds that look identical on the lips. Six homophene "
+        "groups (sounds sharing the same lip shape) drive most confusions:"
+    ))
+    add_styled_table(doc,
+        ["Lip Shape", "Sounds", "Examples"],
+        [
+            ["Both lips close", "p, b, m", "pat/bat/mat"],
+            ["Teeth on lower lip", "f, v", "fan/van"],
+            ["Tongue behind teeth", "t, d, n, s, z, l", "ten/den/den/sen"],
+            ["Back of throat", "k, g, h", "cap/gap"],
+            ["Rounded lips", "w, r", "wet/ret"],
+            ["Open mouth (vowels)", "various", "Context-dependent"],
+        ],
+        col_widths=[1.3, 1.2, 4.0]
+    )
+    add_para(doc, "The top 15 word-level confusions observed in the 1,497-segment dataset:")
+    add_styled_table(doc,
+        ["Reference", "Hypothesis", "Count", "Reference", "Hypothesis", "Count"],
+        [
+            ["the", "to", "13", "a", "the", "9"],
+            ["the", "a", "11", "a", "to", "9"],
+            ["in", "and", "11", "the", "you", "9"],
+            ["and", "in", "11", "we're", "we", "9"],
+            ["you're", "you", "11", "to", "into", "8"],
+            ["that", "and", "10", "it's", "is", "8"],
+            ["gonna", "going", "10", "i", "and", "7"],
+        ],
+        col_widths=[0.7, 0.7, 0.45, 0.7, 0.7, 0.45]
+    )
+    add_para(doc, (
+        "Most confusions involve function words (the/to/a/and/in) which carry minimal semantic "
+        "weight. The IS metric correctly discounts these via the WWER signal (function words "
+        "weighted at 0.5x) and the semantic similarity signal (which is unaffected by function "
+        "word substitutions)."
+    ))
+
+    # 13.16 Key Insights
+    add_heading(doc, "13.16 Key Insights", 2)
+    add_para(doc, "The intelligibility assessment produced several important conclusions:")
+    add_bullet(doc,
+        "WER overstates failure by ~3.5x: 39.9% of segments are properly captured (IS \u2265 3.0) "
+        "vs. only 11.4% by WER alone (WER \u2264 20%)")
+    add_bullet(doc,
+        "Phonetic preservation is the #1 success driver (41.5% of successful segments), "
+        "validating that the AV-HuBERT visual front-end extracts correct phonetic features")
+    add_bullet(doc,
+        "Entity destruction is unrecoverable: when names, numbers, and locations are lost, "
+        "no amount of context can restore them (12% of failures)")
+    add_bullet(doc,
+        "Context recovery can add +7\u201311% intelligibility, suggesting domain-specific "
+        "fine-tuning will help significantly")
+    add_bullet(doc,
+        "Topic matters: Business/Finance (56.5% captured) outperforms DIY/Home (29.6%) "
+        "by nearly 2x, driven by speaker quality and camera conditions")
+    add_bullet(doc,
+        "Longer segments perform better: \u2265 20 words reaches 48.6% captured vs 31.7% for "
+        "5\u201310 words, supporting a minimum segment length filter")
+    add_bullet(doc,
+        "Hallucination (12.3% of failures) is the most dangerous mode \u2014 fluent, correct-sounding "
+        "text that is completely fabricated and undetectable without ground truth")
+
+    # 13.17 Config J & C: Decode Parameter Variants
+    add_heading(doc, "13.17 Config J & C: Decode Variant Evaluation", 2)
+    add_para(doc, (
+        "Two alternative decode configurations were evaluated on the full 1,497-segment dataset. "
+        "Config J adds stochastic sampling (temperature=0.5) with length penalty (lenpen=1.0). "
+        "Config C is its deterministic counterpart (lenpen=1.0 only). Both share beam=20, "
+        "rep_penalty=1.2, no_repeat_ngram=3 with the baseline."
+    ))
+
+    add_styled_table(doc,
+        ["Metric", "Baseline", "Config J", "Config C"],
+        [
+            ["Mean IS", "2.52", "2.60 (+0.08)", "2.57 (+0.05)"],
+            ["Properly Captured", "597 (39.9%)", "622 (41.5%)", "594 (39.7%)"],
+            ["Empty Predictions", "70 (4.7%)", "0", "0"],
+            ["Hallucinations (WER\u2265100%)", "307 (20.5%)", "348 (23.2%)", "360 (24.0%)"],
+            ["Mean WER", "64.1%", "78.9%", "79.3%"],
+            ["Mean WWER", "61.9%", "62.8%", "63.8%"],
+            ["NEA F1", "38.9%", "43.4%", "39.7%"],
+        ],
+        col_widths=[1.8, 1.6, 1.6, 1.6]
+    )
+
+    add_para(doc, "Key findings from the J/C evaluation:", bold=True)
+    add_bullet(doc,
+        "lenpen=1.0 eliminates all 70 empty predictions. The model is forced to produce "
+        "output even with weak visual signal, trading silent failures for noisy ones.")
+    add_bullet(doc,
+        "Hallucinations more than doubled (111\u2192262 for J, 270 for C). Most former empties "
+        "became hallucinated text \u2014 fluent but fabricated content.")
+    add_bullet(doc,
+        "Config J outperforms C on every metric. Stochastic sampling at temperature=0.5 "
+        "recovers 28 more intelligible segments and +3.7pp more named entities than "
+        "deterministic decoding.")
+    add_bullet(doc,
+        "Long segments (20+ words) benefit most: +0.25 IS and +3.4pp capture rate "
+        "under Config J. Short segments (5\u201310 words) are marginally worse due to "
+        "over-generation.")
+    add_bullet(doc,
+        "The improvement is real but marginal (+0.08 IS). Decode parameter tuning has "
+        "reached diminishing returns; fine-tuning remains the only viable path to "
+        "production-grade accuracy.")
+
+    doc.add_page_break()
+
+
+# ═══════════════════════════════════════════════════
+# CHAPTER 14: Fine-Tuning & Training Infrastructure (was Chapter 13)
+# ═══════════════════════════════════════════════════
+
+def chapter_14(doc):
+    add_heading(doc, "14. Fine-Tuning & Training Infrastructure", 1, bookmark_id="ch14")
 
     add_para(doc, (
         "Based on the evaluation results (Chapter 12), fine-tuning the model on in-domain AVSpeech data "
@@ -2558,8 +3156,8 @@ def chapter_13(doc):
         "research that informed the fine-tuning strategy."
     ))
 
-    # 13.1 Training Pipeline
-    add_heading(doc, "13.1 Fine-Tuning Pipeline (579 Lines)", 2)
+    # 14.1 Training Pipeline
+    add_heading(doc, "14.1 Fine-Tuning Pipeline (579 Lines)", 2)
     add_para(doc, (
         "The run_avspeech_finetune_pipeline.sh script (579 lines) implements the complete end-to-end "
         "fine-tuning workflow. It reuses all lib/ modules from the inference pipeline for preprocessing "
@@ -2574,8 +3172,8 @@ def chapter_13(doc):
     add_bullet(doc, "Skip-preprocess option for re-training on already-preprocessed data")
     add_bullet(doc, "Training output directory management with automatic versioning")
 
-    # 13.2 Training Config
-    add_heading(doc, "13.2 Training Configuration", 2)
+    # 14.2 Training Config
+    add_heading(doc, "14.2 Training Configuration", 2)
     add_para(doc, (
         "The training configuration (vsp-llm-avspeech-finetune.yaml, 136 lines) was designed specifically "
         "for domain adaptation from LRS3 to AVSpeech. It differs from the paper's original config in "
@@ -2599,8 +3197,8 @@ def chapter_13(doc):
         col_widths=[1.6, 1.0, 1.0, 2.9]
     )
 
-    # 13.3 QLoRA
-    add_heading(doc, "13.3 QLoRA Architecture", 2)
+    # 14.3 QLoRA
+    add_heading(doc, "14.3 QLoRA Architecture", 2)
     add_para(doc, (
         "The fine-tuning uses QLoRA (Quantized Low-Rank Adaptation) to make training feasible on "
         "consumer GPUs. Instead of updating all 7 billion parameters of LLaMA-2, QLoRA adds small "
@@ -2619,8 +3217,8 @@ def chapter_13(doc):
         col_widths=[1.5, 1.2, 3.8]
     )
 
-    # 13.4 Model Architecture Detail
-    add_heading(doc, "13.4 Full Model Architecture", 2)
+    # 14.4 Model Architecture Detail
+    add_heading(doc, "14.4 Full Model Architecture", 2)
     add_code_block(doc, (
         "┌─────────────────────────────────────────────────────────┐\n"
         "│                    VSP-LLM Architecture                 │\n"
@@ -2655,8 +3253,8 @@ def chapter_13(doc):
         "└─────────────────────────────────────────────────────────┘"
     ))
 
-    # 13.5 AVSpeech Data Strategy
-    add_heading(doc, "13.5 AVSpeech Data Strategy", 2)
+    # 14.5 AVSpeech Data Strategy
+    add_heading(doc, "14.5 AVSpeech Data Strategy", 2)
     add_para(doc, (
         "The training data for domain adaptation was sourced from AVSpeech, a large-scale dataset "
         "of short video clips extracted from YouTube. Unlike LRS3 (which contains only TED talks), "
@@ -2669,8 +3267,8 @@ def chapter_13(doc):
         "prepare this raw data for training — the same stages used in the inference pipeline."
     ))
 
-    # 13.6 Research Notes
-    add_heading(doc, "13.6 Training Research Notes", 2)
+    # 14.6 Research Notes
+    add_heading(doc, "14.6 Training Research Notes", 2)
     add_para(doc, (
         "Detailed research notes (docs/training-research-notes.md, 186 lines) document the analysis "
         "that informed the fine-tuning strategy:"
@@ -2695,16 +3293,20 @@ def chapter_13(doc):
     doc.add_page_break()
 
 
-def chapter_14(doc):
-    add_heading(doc, "14. Executive Summary", 1, bookmark_id="ch14")
+# ═══════════════════════════════════════════════════
+# CHAPTER 15: Executive Summary (was Chapter 14)
+# ═══════════════════════════════════════════════════
+
+def chapter_15(doc):
+    add_heading(doc, "15. Executive Summary", 1, bookmark_id="ch15")
 
     add_para(doc, (
         "This chapter provides a high-level overview of the Argos project's scope, deliverables, "
         "and current state for management review."
     ))
 
-    # 14.1 Project Scope
-    add_heading(doc, "14.1 Project Scope & Timeline", 2)
+    # 15.1 Project Scope
+    add_heading(doc, "15.1 Project Scope & Timeline", 2)
     add_para(doc, (
         "The Argos project began on October 18, 2024, with the goal of building a production-ready "
         "visual speech processing (lip-reading) system based on the VSP-LLM research paper. All "
@@ -2717,15 +3319,16 @@ def chapter_14(doc):
         "classified, or unreliable."
     ))
 
-    # 14.2 Key Deliverables
-    add_heading(doc, "14.2 Key Deliverables", 2)
+    # 15.2 Key Deliverables
+    add_heading(doc, "15.2 Key Deliverables", 2)
     add_styled_table(doc,
         ["Deliverable", "Status", "Details"],
         [
             ["End-to-End Pipeline", "Complete (v7)", "8-stage pipeline, modular architecture (501 + 1,562 lines)"],
             ["Web UI", "Complete", "6 screens, 12 API endpoints, drag-drop upload, transcription management"],
             ["Docker Container", "5 versions deployed", "nvidia/cuda base, dual venvs, ~65GB galaxy export"],
-            ["Performance Evaluation", "Complete", "860 segments, 6 analysis reports, 7 tuning experiments"],
+            ["Performance Evaluation", "Complete", "1,497 segments, 6 analysis reports, 13 tuning experiments, 21 analytical plots"],
+            ["Intelligibility Scoring", "Complete", "6-signal composite metric (IS), tier classification, failure/success analysis"],
             ["Report Generation", "Complete", "WER, WWER, NEA metrics in 5 formats (CSV/HTML/JSON/TXT/ANSI)"],
             ["Burned Videos", "Complete", "Subtitle overlays on original videos for visual review"],
             ["Fine-Tuning Infrastructure", "Ready", "579-line pipeline, training config, QLoRA setup"],
@@ -2736,8 +3339,8 @@ def chapter_14(doc):
         col_widths=[1.8, 1.2, 3.5]
     )
 
-    # 14.3 Effort Estimate
-    add_heading(doc, "14.3 Total Effort Estimate", 2)
+    # 15.3 Effort Estimate
+    add_heading(doc, "15.3 Total Effort Estimate", 2)
     add_styled_table(doc,
         ["Phase", "Duration", "Key Activities"],
         [
@@ -2747,14 +3350,14 @@ def chapter_14(doc):
             ["Pipeline Development", "Ongoing", "7 versions, from 240 to 501+1,562 lines, 13 custom Python scripts"],
             ["Web UI Development", "Ongoing", "5,780 lines across 11 files, 4 backend services"],
             ["Container & Deployment", "Ongoing", "5 releases, 37 bugs fixed, Dockerfile, galaxy export, installation scripts"],
-            ["Evaluation & Tuning", "Ongoing", "860 segments, 7 experiments, 6 analysis reports"],
+            ["Evaluation & Tuning", "Ongoing", "1,497 segments, 13 experiments, 6 analysis reports, intelligibility scoring"],
             ["Training Infrastructure", "Ongoing", "579-line pipeline, training config, research notes"],
         ],
         col_widths=[1.5, 1.0, 4.0]
     )
 
-    # 14.4 Performance
-    add_heading(doc, "14.4 Current Performance", 2)
+    # 15.4 Performance
+    add_heading(doc, "15.4 Current Performance", 2)
     add_styled_table(doc,
         ["Metric", "Current Value", "Expected Post-Fine-Tuning"],
         [
@@ -2762,13 +3365,15 @@ def chapter_14(doc):
             ["Usable Segments (WER ≤ 20%)", "11.4%", "25-40%"],
             ["Hallucination Rate (WER ≥ 100%)", "20.6%", "<10%"],
             ["NEA F1 (Named Entity Accuracy)", "38.8%", "55-70%"],
+            ["Mean Intelligibility Score", "2.52 / 5.0", "3.5-4.0"],
+            ["Properly Captured (IS \u2265 3)", "39.9%", "55-70%"],
             ["Paper WER (LRS3 benchmark)", "25.4%", "25.4% (same model on clean data)"],
         ],
         col_widths=[2.5, 1.5, 2.5]
     )
 
-    # 14.5 Code Inventory
-    add_heading(doc, "14.5 Complete Code Inventory", 2)
+    # 15.5 Code Inventory
+    add_heading(doc, "15.5 Complete Code Inventory", 2)
     add_para(doc, (
         "The following table summarizes the complete codebase written for the Argos project. "
         "All code was developed by Yoad Oxman:"
@@ -2789,8 +3394,8 @@ def chapter_14(doc):
         col_widths=[1.5, 0.5, 0.5, 4.0]
     )
 
-    # 14.6 Infrastructure
-    add_heading(doc, "14.6 Infrastructure Summary", 2)
+    # 15.6 Infrastructure
+    add_heading(doc, "15.6 Infrastructure Summary", 2)
     add_styled_table(doc,
         ["Aspect", "Count", "Details"],
         [
@@ -2806,12 +3411,13 @@ def chapter_14(doc):
         col_widths=[1.8, 0.6, 4.1]
     )
 
-    # 14.7 Recommendations
-    add_heading(doc, "14.7 Recommendations", 2)
+    # 15.7 Recommendations
+    add_heading(doc, "15.7 Recommendations", 2)
     add_para(doc, "Based on the evaluation results and research analysis, the following next steps are recommended:")
     add_bullet_bold_value(doc, "1. Fine-Tune on AVSpeech: ",
         "Domain adaptation is the highest-impact improvement available. The training infrastructure "
-        "is ready (Chapter 13). Expected improvement: 15-25 WER points.")
+        "is ready (Chapter 14). Expected improvement: 15-25 WER points. "
+        "Intelligibility Score analysis (Chapter 13) confirms WER alone understates true accuracy by 3.5\u00d7.")
     add_bullet_bold_value(doc, "2. Evaluate RetinaFace: ",
         "Switching from MediaPipe to RetinaFace for face detection may improve mouth crop quality "
         "on difficult angles, potentially contributing 2-5 WER points improvement.")
@@ -2822,8 +3428,8 @@ def chapter_14(doc):
         "The hyperparameter tuning report identified segment duration as a high-impact data-level "
         "lever. Filtering segments to 5+ seconds and capping at 20-30 seconds may improve WER by 5-10%.")
 
-    # 14.8 Milestones
-    add_heading(doc, "14.8 Project Milestones", 2)
+    # 15.8 Milestones
+    add_heading(doc, "15.8 Project Milestones", 2)
     add_styled_table(doc,
         ["Date", "Milestone"],
         [
@@ -2835,7 +3441,8 @@ def chapter_14(doc):
             ["Jan 2026", "Web UI development (5,780 lines)"],
             ["Feb 3, 2026", "First container deployment"],
             ["Feb 3-17, 2026", "Five container releases, 37 bugs fixed"],
-            ["Feb 2026", "Performance evaluation (860 segments, 6 reports, 7 experiments)"],
+            ["Feb 2026", "Performance evaluation (1,497 segments, 6 reports, 13 experiments)"],
+            ["Feb 2026", "Intelligibility scoring framework (6-signal IS), 16 analytical plots, 5 presentation plots"],
             ["Feb 2026", "Fine-tuning infrastructure ready (579-line pipeline + config)"],
             ["Feb 2026", "HORIZON server operational (closed network, no internet)"],
         ],
@@ -2852,11 +3459,11 @@ def chapter_14(doc):
 
 
 # ═══════════════════════════════════════════════════
-# CHAPTER 15: Project To-Do List
+# CHAPTER 16: Project To-Do List
 # ═══════════════════════════════════════════════════
 
-def chapter_15(doc):
-    add_heading(doc, "15. Project To-Do List", 1, bookmark_id="ch15")
+def chapter_16(doc):
+    add_heading(doc, "16. Project To-Do List", 1, bookmark_id="ch16")
 
     add_para(doc, (
         "This chapter consolidates all pending work items across research, operations, "
@@ -2864,8 +3471,8 @@ def chapter_15(doc):
         "on the system's core mission: improving lip-reading accuracy on real-world video."
     ))
 
-    # 15.1 Research & Model Improvement
-    add_heading(doc, "15.1 Research & Model Improvement", 2)
+    # 16.1 Research & Model Improvement
+    add_heading(doc, "16.1 Research & Model Improvement", 2)
     add_para(doc, (
         "These items directly target the WER gap between benchmark (25.4%) and real-world (64-67%) performance."
     ))
@@ -2899,8 +3506,8 @@ def chapter_15(doc):
         col_widths=[0.3, 2.2, 0.6, 1.5, 1.9]
     )
 
-    # 15.2 Operations & Deployment
-    add_heading(doc, "15.2 Operations & Deployment", 2)
+    # 16.2 Operations & Deployment
+    add_heading(doc, "16.2 Operations & Deployment", 2)
     add_para(doc, (
         "These items ensure production reliability and environment consistency."
     ))
@@ -2922,8 +3529,8 @@ def chapter_15(doc):
         col_widths=[0.3, 2.5, 0.6, 3.1]
     )
 
-    # 15.3 Technical Development
-    add_heading(doc, "15.3 Technical Development", 2)
+    # 16.3 Technical Development
+    add_heading(doc, "16.3 Technical Development", 2)
 
     add_styled_table(doc,
         ["#", "Task", "Priority", "Details"],
@@ -2942,8 +3549,8 @@ def chapter_15(doc):
         col_widths=[0.3, 2.5, 0.6, 3.1]
     )
 
-    # 15.4 Documentation & Process
-    add_heading(doc, "15.4 Documentation & Process", 2)
+    # 16.4 Documentation & Process
+    add_heading(doc, "16.4 Documentation & Process", 2)
 
     add_styled_table(doc,
         ["#", "Task", "Priority", "Details"],
@@ -2961,7 +3568,7 @@ def chapter_15(doc):
     )
 
     # Priority summary
-    add_heading(doc, "15.5 Priority Summary", 2)
+    add_heading(doc, "16.5 Priority Summary", 2)
     add_para(doc, "Items ranked by expected impact on the core metric (WER reduction):")
 
     add_bullet_bold_value(doc, "1. Fine-tune on AVSpeech (#1): ",
@@ -2976,12 +3583,12 @@ def chapter_15(doc):
         "Essential for production use \u2014 currently no way to separate good from bad outputs.")
 
 
-# ═══════════════════════════════════════════════════
+# ═════════════════���═════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════
 
 def main():
-    print("Generating Argos — The Orchard (Detailed Edition v2)...")
+    print("Generating Argos — The Orchard (Detailed Edition v3)...")
     doc = Document()
 
     # Page setup
@@ -3012,9 +3619,10 @@ def main():
     chapter_10(doc)
     chapter_11(doc)
     chapter_12(doc)
-    chapter_13(doc)
-    chapter_14(doc)
-    chapter_15(doc)
+    chapter_13(doc)   # Intelligibility Assessment & Metric Analysis (NEW)
+    chapter_14(doc)   # Fine-Tuning & Training Infrastructure
+    chapter_15(doc)   # Executive Summary
+    chapter_16(doc)   # Project To-Do List
 
     # Save
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
