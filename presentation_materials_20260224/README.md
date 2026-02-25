@@ -17,19 +17,19 @@ Main presentation graphs — use directly in slides.
 
 | File | Slide | What it shows |
 |------|-------|---------------|
-| `P1_quality_tiers.png` | 5 (Reality Gap) | 5-tier quality breakdown: 11.4% usable → 20.6% hallucinated |
+| `P1_quality_tiers.png` | 5 (Reality Gap) | 5-tier WER quality breakdown: 11.4% usable → 20.6% hallucinated |
 | `P2_paper_vs_reality.png` | 4 (Benchmark) | LRS3 25.4% vs Real-world 64.1% with 2.5x annotation |
-| `P3_wer_trajectory.png` | 21 (Roadmap) | Projected improvement: 64% → 55% → 45% → 42% WER |
-| `P4_lenpen_sensitivity.png` | 10 (Limits) | Length penalty vs empty/hallucination trade-off |
-| `P5_tuning_before_after.png` | 9 (Tuning) | Baseline vs Config J paired comparison |
-| `pipeline_architecture.png` | 14 (Architecture) | 8-stage pipeline flow diagram |
-| `01_wer_vs_duration.png` | 7 (Why the Gap) | Short segments fail catastrophically |
-| `09_boxplot_wwer_all_experiments.png` | 6 (Distribution) | WWER spread across all 13 experiments |
-| `10_empty_and_hallucination_rates.png` | 9 (Tuning) | Empty vs hallucination rates per config |
+| `P3_wer_trajectory.png` | 24 (Roadmap) | Projected improvement: 64% → 55% → 45% → 42% WER |
+| `P4_lenpen_sensitivity.png` | 12 (Limits) | Length penalty vs empty/hallucination trade-off |
+| `P5_tuning_before_after.png` | 11 (Tuning) | Baseline vs Config J paired comparison |
+| `pipeline_architecture.png` | 16 (Architecture) | 8-stage pipeline flow diagram |
+| `01_wer_vs_duration.png` | 9 (Why the Gap) | Short segments fail catastrophically |
+| `09_boxplot_wwer_all_experiments.png` | 8 (Distribution) | WWER spread across all 13 experiments |
+| `10_empty_and_hallucination_rates.png` | 11 (Tuning) | Empty vs hallucination rates per config |
 | `13_duration_histogram.png` | Context | Segment duration distribution |
-| `14_nea_vs_wwer_scatter.png` | 8 (NEA) | Named entity accuracy correlation |
+| `14_nea_vs_wwer_scatter.png` | 10 (NEA) | Named entity accuracy correlation |
 | `15_cdf_wwer_curated.png` | Appendix | CDF of WWER — actionable quality thresholds |
-| `16_improvement_J_vs_A.png` | 9 (Tuning) | Per-segment improvement analysis |
+| `16_improvement_J_vs_A.png` | 11 (Tuning) | Per-segment improvement analysis |
 
 ### 02_plots_boss_deep_dive/ (4 files)
 Technical deep-dive graphs — for supervisor/boss session only.
@@ -41,7 +41,7 @@ Technical deep-dive graphs — for supervisor/boss session only.
 | `11_wer_vs_wwer_scatter.png` | The lenpen paradox: higher corpus WER but better segment WER |
 | `12_segment_stability_heatmap.png` | Which segments are always good/bad across all configs |
 
-### 03_reports_md/ (6 files)
+### 03_reports_md/ (7 files)
 Research reports in Markdown format — reference material for slide content.
 
 | File | Topic |
@@ -52,6 +52,7 @@ Research reports in Markdown format — reference material for slide content.
 | `report_4_confidence_scoring.md` | Beam scores, quality filtering, confidence extraction |
 | `report_5_beam_search_aggregation.md` | N-best ROVER/MBR, hypothesis aggregation |
 | `report_6_finetuning_analysis.md` | LoRA fine-tuning, AVSpeech domain adaptation |
+| `intelligibility_methodology.md` | **NEW**: IS metric design, 6 signals, tier examples, homophene analysis |
 
 ### 04_reports_docx/ (18 files)
 Formatted reports (Word + PDF) — printable, shareable with stakeholders.
@@ -65,20 +66,23 @@ Formatted reports (Word + PDF) — printable, shareable with stakeholders.
 - `report_6_finetuning_analysis` — Fine-tuning analysis
 
 **Supplementary Reports**:
-- `baseline_vs_J_analysis.docx` — **NEW**: Full-dataset comparison (Baseline vs Config C vs Config J, 1497 segments)
+- `baseline_vs_J_analysis.docx` — Full-dataset comparison (Baseline vs Config C vs Config J, 1497 segments)
 - `project-summary.docx` — High-level project overview
 - `research-journal.docx` — R&D development journal
 - `metrics-explainer.docx` — WER/WWER/NEA metric definitions
 - `tuning-experiments.docx` — Experiment methodology
 - `pairwise-comparison.pdf` — Segment-level comparison tables
+- `intelligibility_report.docx` — **NEW**: IS methodology, tier examples, 1497-segment scoring results
+- `intelligibility_summary.json` — **NEW**: IS aggregate stats, tier distribution, signal weights
 
-### 05_data/ (16+ files)
+### 05_data/ (18+ files)
 Raw data for reference or custom analysis.
 
 | File | Contents |
 |------|----------|
 | `experiment-comparison.csv` | All 13 experiments (A-M) with WER/WWER/NEA metrics |
 | `report.csv` | Full baseline results (1,497 segments with per-segment metrics) |
+| `intelligibility_scores.csv` | **NEW**: Per-segment IS scores, tiers, 6 signals, context recoverability (1,497 rows) |
 | `segment_metadata.json` | Segment timing, duration, source video metadata |
 | `metadata.json` | Curated interesting examples with annotations |
 | `html_reports/` | 13 interactive HTML reports (one per experiment, open in browser) |
@@ -89,12 +93,12 @@ Selected burned videos with subtitle overlays — play during presentation.
 **Opening Hook (Slide 2):**
 - `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4` — 33 words perfectly lip-read (WER 0%)
 
-**Live Demo Sequence (Slide 12) — play in this order:**
+**Live Demo Sequence (Slide 14) — play in this order:**
 1. `d8BR6hsvzoY_31__2e9546df_with_hyp.mp4` — "buy one get one free" (WER 0%, short/punchy)
 2. `-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4` — "admiral mcrae" → "animal migratory" (funny near-miss)
 3. `00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4` — hallucination: fabricates "David Irving" narrative (WER 100%)
 
-**Tuning Comparison (Slide 11):**
+**Tuning Comparison (Slide 13):**
 - `DBhaa45mAro_2__07d05c7a_Part1_with_hyp.mp4` + `Part2` — baseline empty → Config J partial transcription
 - `eLS1vcpGVHQ_12__e9dd9adc_with_hyp.mp4` — Config J generates TED talk hallucination
 - `-WQZsfHcPDM_7__5210cac1_with_hyp.mp4` — "bottle/probiotics" → "monitor/permafrost" (visual ambiguity)
@@ -145,6 +149,12 @@ Curated example data for building comparison tables.
 | Real-world mean WER | 64.1% | Report 1, 1497 segments |
 | Reality gap | 2.5x worse | Report 1 |
 | Usable segments (WER <30%) | 11.4% | Report 1, quality tiers |
+| **Properly captured (IS >= 3.0)** | **39.9%** | **Intelligibility Score, 1497 segments** |
+| **IS: WER overstatement factor** | **3.5x** | **39.9% vs 11.4%** |
+| **Mean IS** | **2.52 / 5.0** | **Intelligibility summary** |
+| **IS Excellent (4-5)** | **18.4%** | **276 segments** |
+| **IS Good (3-4)** | **21.4%** | **321 segments** |
+| **Context recoverable** | **43.6-50.6%** | **Rule-based / LLM-judged** |
 | NEA F1 (named entities) | 38.8% | Report 1 |
 | Best config WWER (J) | 57.7% | Experiment comparison, 107 segments |
 | Empty prediction rate (Baseline) | 14.0% | Experiment A |
@@ -154,6 +164,7 @@ Curated example data for building comparison tables.
 | Pipeline: lines after refactor | 393 | CLAUDE.md |
 | Test suite | 37 tests | lib/test_all_modules.sh |
 | Total experiments | 13 (A-M) | experiment-comparison.csv |
+| Research reports | 7 | Including IS methodology |
 | Segments per experiment | 107 | Tuning dataset |
 | Full dataset segments | 1,497 | english_full_results |
 | Projected WER after Phase 3 | ~42% | Mission backlog |

@@ -10,7 +10,7 @@ import matplotlib.patches as mpatches
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 import numpy as np
 
-OUTPUT = "/home/ubuntu/argos_research/plots/pipeline_architecture.png"
+OUTPUT = "/home/ubuntu/docs/evaluation/plots/pipeline_architecture.png"
 
 fig, ax = plt.subplots(figsize=(16, 9))
 ax.set_xlim(0, 16)

@@ -45,6 +45,7 @@ This CLAUDE.md is a slim hub file. Detailed documentation lives in separate file
 - **Training research, LoRA tuning, or fine-tuning strategy** → read [docs/finetuning/training-research-notes.md](docs/finetuning/training-research-notes.md) first
 - **Planning future work or picking up a new mission** → read [docs/backlog/mission-backlog.md](docs/backlog/mission-backlog.md) first (Missions 4-14, prioritized with research references)
 - **Writing or modifying a docx report generator** → read [docs/_research-tools/generators/STYLE_GUIDE.md](docs/_research-tools/generators/STYLE_GUIDE.md) first (header layout, cover page, TOC, page breaks, logo paths)
+- **Working on evaluation, metrics, or intelligibility scoring** → read [docs/evaluation/intelligibility_methodology.md](docs/evaluation/intelligibility_methodology.md) and [docs/evaluation/intelligibility/intelligibility_summary.json](docs/evaluation/intelligibility/intelligibility_summary.json) first
 
 Do NOT rely on memory or guessing — always read the file to get exact details.
 
@@ -234,7 +235,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Folder | Contents | Backlog Mission |
 |--------|----------|-----------------|
-| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary | M5: Expanded Metrics |
+| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0) | M5: Expanded Metrics |
 | [docs/tuning/](docs/tuning/) | Report 2 (hyperparameter tuning), metrics explainer, 13 experiments, HTML reports | M7: Hyperparams, M14: Auto-tuning |
 | [docs/confidence/](docs/confidence/) | Report 4 (confidence scoring & quality filtering) | M4: Confidence Scoring |
 | [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR) | M6: Beam Aggregation |
@@ -265,8 +266,35 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | Directory | Contents |
 |-----------|----------|
 | `english_1k_results/` | 1520 AVSpeech videos, decode reports, segment metadata |
-| `english_full_results/` | 1497 segments, WER 64.1%, WWER 61.9%, full report suite |
-| `tuning_results/` | 7 decode parameter experiments (beam, lenpen, sampling, greedy) |
+| `english_full_results/` | 1497 segments, WER 67.0%, WWER 59.5%, IS 2.52/5.0, full report suite |
+| `tuning_results/` | 13 decode parameter experiments (beam, lenpen, sampling, greedy) |
+
+### Baseline Evaluation Results (February 2026)
+
+**Full dataset baseline** run on 1,497 segments from diverse YouTube videos (Feb 18, 2026):
+
+| Metric | Value | Notes |
+|--------|-------|-------|
+| **Mean WER** | 67.0% | Segment-level; 2.5x worse than paper's 25.4% on LRS3 |
+| **Mean WWER** | 59.5% | Weighted WER — high-value tokens penalized 2x |
+| **Named Entity F1** | 38.8% | Entities missed in 85% of segments |
+| **Intelligibility Score** | 2.52/5.0 | Composite metric (semantic, phonetic, WER, WWER, NEA, length) |
+| **Properly Captured (IS ≥ 3)** | 597/1,497 (39.9%) | Only 4 in 10 segments convey intelligible meaning |
+| **Hallucinated (WER ≥ 100%)** | 177/860 (20.6%) | Fluent but fabricated text — most dangerous failure mode |
+
+**Intelligibility Score (IS) Tier Distribution:**
+
+| Tier | Score | Count | % |
+|------|-------|-------|-----|
+| 5 — Excellent | 4.0-5.0 | 276 | 18.4% |
+| 4 — Good | 3.0-3.99 | 321 | 21.4% |
+| 3 — Fair | 2.0-2.99 | 325 | 21.7% |
+| 2 — Poor | 1.0-1.99 | 336 | 22.4% |
+| 1 — Failed | 0.0-0.99 | 239 | 16.0% |
+
+**Hyperparameter tuning** (13 experiments on 107 segments): Baseline config (beam=20, lenpen=0, no sampling) proved most robust. No parameter combination improved WER meaningfully. See [docs/tuning/experiment-comparison.csv](docs/tuning/experiment-comparison.csv).
+
+**Key takeaway**: Domain adaptation (fine-tuning on target data) is the only viable path to production-grade accuracy. Decode parameter tuning has reached diminishing returns.
 
 ### Standalone Container Bug Tracking
 
@@ -313,6 +341,7 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── logs/                  # Logs: Pipeline run logs
 ├── build_assets/          # Build: Wheel caches & build venvs
 │
+├── presentation_materials_20260224/  # Snapshot: Frozen presentation package (Feb 24)
 ├── vsp_docker/            # Deploy: Docker build dir (galaxy_export/ working copy)
 ├── vsp_linux_container_FINAL_20260217/  # Deploy: Container code overlay
 │

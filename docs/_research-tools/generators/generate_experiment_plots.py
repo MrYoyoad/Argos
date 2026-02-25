@@ -11,7 +11,7 @@ Usage:
     python3 generate_experiment_plots.py
 
 Output:
-    argos_research/plots/*.png  (16 files)
+    docs/evaluation/plots/*.png  (16 files)
 """
 
 import os
@@ -39,7 +39,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 BASE_DIR = Path("/home/ubuntu/tuning_results")
 META_PATH = Path("/home/ubuntu/english_full_results/segment_metadata.json")
 FULL_J_PATH = BASE_DIR / "full_decode_J" / "report" / "report.csv"
-OUTPUT_DIR = Path(__file__).parent
+OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "evaluation" / "plots"
 
 PLOT_DPI = 200
 FIG_SIZE = (10, 6)

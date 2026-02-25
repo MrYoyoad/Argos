@@ -9,7 +9,7 @@ Usage:
     python3 generate_summary.py
 
 Output:
-    argos_research/project_summary.docx
+    docs/evaluation/project-summary.docx
 """
 
 import os
@@ -23,11 +23,12 @@ from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml, OxmlElement
 
 # ── Output ──
-OUTPUT_DIR = Path(__file__).parent
-OUTPUT_FILE = OUTPUT_DIR / "project_summary.docx"
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = SCRIPT_DIR.parent.parent / "evaluation"
+OUTPUT_FILE = OUTPUT_DIR / "project-summary.docx"
 
 # ── Logos ──
-ASSETS_DIR = OUTPUT_DIR.parent / "assets"
+ASSETS_DIR = SCRIPT_DIR.parent / "assets"
 LOGO_ORCHARD = ASSETS_DIR / "logo.png"
 LOGO_PEACOCK = ASSETS_DIR / "peacock.png"
 

@@ -13,11 +13,11 @@ Usage:
     python3 generate_presentation_plots.py
 
 Output:
-    argos_research/plots/P1_quality_tiers.png
-    argos_research/plots/P2_paper_vs_reality.png
-    argos_research/plots/P3_wer_trajectory.png
-    argos_research/plots/P4_lenpen_sensitivity.png
-    argos_research/plots/P5_tuning_before_after.png
+    docs/evaluation/plots/P1_quality_tiers.png
+    docs/evaluation/plots/P2_paper_vs_reality.png
+    docs/evaluation/plots/P3_wer_trajectory.png
+    docs/evaluation/plots/P4_lenpen_sensitivity.png
+    docs/evaluation/plots/P5_tuning_before_after.png
 """
 
 import os
@@ -29,7 +29,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
-OUTPUT_DIR = Path(__file__).parent
+OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "evaluation" / "plots"
 PLOT_DPI = 200
 FIG_SIZE = (10, 6)
 

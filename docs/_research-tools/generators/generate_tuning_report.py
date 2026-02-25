@@ -9,7 +9,7 @@ Usage:
     python3 generate_tuning_report.py
 
 Output:
-    argos_research/tuning_experiments.docx
+    docs/tuning/tuning-experiments.docx
 """
 
 from pathlib import Path
@@ -22,11 +22,12 @@ from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml, OxmlElement
 
 # ── Output ──
-OUTPUT_DIR = Path(__file__).parent
-OUTPUT_FILE = OUTPUT_DIR / "tuning_experiments.docx"
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = SCRIPT_DIR.parent.parent / "tuning"
+OUTPUT_FILE = OUTPUT_DIR / "tuning-experiments.docx"
 
 # ── Logos ──
-ASSETS_DIR = OUTPUT_DIR.parent / "assets"
+ASSETS_DIR = SCRIPT_DIR.parent / "assets"
 LOGO_ORCHARD = ASSETS_DIR / "logo.png"
 LOGO_PEACOCK = ASSETS_DIR / "peacock.png"
 

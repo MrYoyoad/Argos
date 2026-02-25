@@ -113,7 +113,7 @@ tar xzf galaxy_export_backup_*.tar.gz
 ### Story Arc: "From Paper to Production — Bridging the Reality Gap in Visual Speech Processing"
 
 **Audience**: Client demo + supervisor project review + potential new clients.
-**Central narrative**: Took a state-of-the-art research model, deployed on real-world data, rigorously measured a 2.5x performance gap, built production infrastructure, and identified a concrete path to close the gap.
+**Central narrative**: Took a state-of-the-art research model, deployed on real-world data, rigorously measured a 2.5x performance gap, developed the Intelligibility Score to prove WER dramatically overstates failure (40% properly captured vs 11% by WER), built production infrastructure, and identified a concrete path to close the remaining gap.
 
 ---
 
@@ -126,44 +126,56 @@ tar xzf galaxy_export_backup_*.tar.gz
 | 1 | **Title** | "Argos VSP: Research Findings and Production Roadmap" | Branding from `docs/branding/` |
 | 2 | **What is Lip Reading?** | Video of face → text. Use cases: surveillance, accessibility, noisy environments. Hook: play the 33-word perfect burned video | **Demo video**: `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4` |
 | 3 | **Model Architecture** | 3-block diagram: Video → AV-HuBERT (visual encoder) → LLaMA-2 (language model) → Text | Custom diagram |
-| 4 | **The Benchmark** | Paper: 25.4% WER on LRS3 (curated TED talks). Our question: "How does this perform on real-world video?" | **NEW graph: Paper vs Reality bar chart** |
+| 4 | **The Benchmark** | Paper: 25.4% WER on LRS3 (curated TED talks). Our question: "How does this perform on real-world video?" And: "Is WER even the right metric?" | **NEW graph: Paper vs Reality bar chart** |
 
-#### Section 2: Research Findings (18 min, 9 slides) — 40%
+#### Section 2: Research Findings (18 min, 11 slides) — 40%
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
-| 5 | **The Reality Gap** | 25.4% → 64.1% WER = 2.5x worse. Quality tier table. Headline: "9 out of 10 segments need verification" | **NEW graph: Quality tier pie/bar chart** |
-| 6 | **Performance Distribution** | The spread — most segments at 50-80% WER, long tail of catastrophic failures | Existing: `09_boxplot_wwer_all_experiments.png` |
-| 7 | **Why the Gap** | 3 root causes: domain mismatch (TED vs YouTube), hallucination, short-segment failure | Existing: `01_wer_vs_duration.png` |
-| 8 | **Named Entity Accuracy** | NEA F1: 38.8% — misses 61% of names/numbers. Matters more than WER for operational use | Existing: `14_nea_vs_wwer_scatter.png` |
-| 9 | **13 Tuning Experiments** | Parameter sweep: beam, lenpen, sampling, temperature. lenpen=1.0 eliminates empty outputs | Existing: `10_empty_and_hallucination_rates.png` + `16_improvement_J_vs_A.png` |
-| 10 | **Limits of Tuning** | Tuning = mitigation, not cure. Core domain mismatch remains | **NEW graph: Hyperparameter sensitivity tornado** |
-| 11 | **Curated Examples** | Side-by-side ref vs hyp (see examples section below) | Formatted text table |
-| 12 | **Live Demo** | Play 2-3 burned videos (see demo videos section below) | Video playback |
-| 13 | **Research Breadth** | One-liner per report (6 reports): evaluation, tuning, prompts, confidence, beam search, fine-tuning | Simple list |
+| 5 | **The Reality Gap** | 25.4% → 64.1% WER = 2.5x worse. WER quality tiers: only 11.4% "usable". Headline: "9 out of 10 segments need verification — or do they?" | **NEW graph: Quality tier pie/bar chart** |
+| 6 | **WER Is Blind** | **QUICK SETUP (30 sec)**: Two examples both ~30% WER: "work with the team" (WER 29%, IS 4.3, intelligible) vs "admiral mcrae"→"animal migratory" (WER 33%, IS 3.0, unintelligible). One line: "We've discussed this — same WER, opposite meaning. So we built a metric to fix it." → transition to next slide | Side-by-side text, 2 boxes (green/red) |
+| 7 | **The Intelligibility Score** | **KEY SLIDE**: 6-signal composite metric. Properly captured (IS >= 3.0): **39.9%** — 3.5x more than WER's 11.4%. IS tiers: 18.4% excellent, 21.4% good, 21.7% fair, 22.4% poor, 16.0% failed. This is the main research contribution. | IS tier distribution chart (new) |
+| 8 | **Performance Distribution** | The spread — most segments at 50-80% WER, long tail of catastrophic failures | Existing: `09_boxplot_wwer_all_experiments.png` |
+| 9 | **Why the Gap** | 3 root causes: domain mismatch (TED vs YouTube), hallucination, short-segment failure | Existing: `01_wer_vs_duration.png` |
+| 10 | **Named Entity Accuracy** | NEA F1: 38.8% — misses 61% of names/numbers. These are the words context can't recover | Existing: `14_nea_vs_wwer_scatter.png` |
+| 11 | **13 Tuning Experiments** | Parameter sweep: beam, lenpen, sampling, temperature. lenpen=1.0 eliminates empty outputs | Existing: `10_empty_and_hallucination_rates.png` + `16_improvement_J_vs_A.png` |
+| 12 | **Limits of Tuning** | Tuning = mitigation, not cure. Core domain mismatch remains | **NEW graph: Hyperparameter sensitivity tornado** |
+| 13 | **Curated Examples** | Side-by-side ref vs hyp with IS scores (see examples section below) | Formatted text table |
+| 14 | **Live Demo** | Play 2-3 burned videos (see demo videos section below) | Video playback |
+| 15 | **Research Breadth** | One-liner per report (7 reports): evaluation, tuning, prompts, confidence, beam search, fine-tuning, **intelligibility** | Simple list |
 
 #### Section 3: Engineering Achievements (12 min, 7 slides) — 25%
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
-| 14 | **Pipeline Architecture** | 8-stage flow: Normalize → ASR → LRS3 → Manifests → Clustering → Decode → Reports → Burns | Pipeline flow diagram |
-| 15 | **Why Engineering Was Hard** | Research code → production. 37 bugs. HDR video, GPU encoding, Cython, fairseq patching, NVENC corruption | Bug count timeline or categories |
-| 16 | **Modular Refactoring** | 823→393 lines, 11 modules, 37 tests. Before/after comparison | Side-by-side code structure |
-| 17 | **Deployed Product** | Standalone container, desktop icon, web UI, drag-and-drop. "Runs on a standalone Linux machine, no cloud" | UI screenshot |
-| 18 | **Smart Features** | Transcription reuse, golden k-means, video segmentation with overlap | Feature diagram |
-| 19 | **Evaluation Infrastructure** | 16 analytical plots, per-segment HTML reports, CSV exports, custom NEA metric | Sample report screenshot |
-| 20 | **Quality Process** | Git tags, EC2/container sync protocol, 6 research reports, comprehensive docs | Process diagram |
+| 16 | **Pipeline Architecture** | 8-stage flow: Normalize → ASR → LRS3 → Manifests → Clustering → Decode → Reports → Burns | Pipeline flow diagram |
+| 17 | **Why Engineering Was Hard** | Research code → production. 37 bugs. HDR video, GPU encoding, Cython, fairseq patching, NVENC corruption | Bug count timeline or categories |
+| 18 | **Modular Refactoring** | 823→393 lines, 11 modules, 37 tests. Before/after comparison | Side-by-side code structure |
+| 19 | **Deployed Product** | Standalone container, desktop icon, web UI, drag-and-drop. "Runs on a standalone Linux machine, no cloud" | UI screenshot |
+| 20 | **Smart Features** | Transcription reuse, golden k-means, video segmentation with overlap | Feature diagram |
+| 21 | **Evaluation Infrastructure** | 16 analytical plots, per-segment HTML reports, CSV exports, custom NEA metric, **Intelligibility Score pipeline** (6-signal composite metric, per-segment IS scoring, automated IS classification) | Sample report screenshot |
+| 22 | **Quality Process** | Git tags, EC2/container sync protocol, **7** research reports, comprehensive docs | Process diagram |
 
-#### Section 4: Future Directions (10 min, 6 slides) — 35%
+#### Section 4: Future Directions (10 min, 7 slides) — 35%
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
-| 21 | **Improvement Roadmap** | Phased table: 64% → 55% → 45% → 42% WER. "We can halve errors before any retraining" | **NEW graph: WER trajectory line chart** |
-| 22 | **Phase 1: Confidence Scoring** | Extract beam scores already computed. Quality filtering. 2-4 hours effort | Annotated pipeline showing where scores exist |
-| 23 | **Phase 2: N-Best Aggregation** | ROVER/MBR — currently discarding 19/20 beam candidates. 5-15% relative improvement | Before/after diagram |
-| 24 | **Phase 3: Fine-Tuning** | AVSpeech domain adaptation. 15-25 WER point reduction. ~$72-120 GPU cost | Training data comparison diagram |
-| 25 | **Phase 4-5: Production** | Arabic (k-means model exists), multi-speaker, streaming, auto-tuning | Feature roadmap icons |
-| 26 | **Key Takeaways** | (1) 2.5x gap rigorously measured (2) Production system built (3) Clear path to 42% WER | 3-point summary |
+| 23 | **The Starting Point Is Better Than WER Says** | **KEY TRANSITION**: WER says 11.4% usable. IS says 39.9% properly captured. Context recovery analysis: 43.6-50.6% recoverable with context. "We're not starting from 11% — we're starting from 40%." This reframes the entire roadmap. | WER tiers vs IS tiers side-by-side |
+| 24 | **Improvement Roadmap** | Phased: starting from IS 39.9% properly captured → Phase 1: confidence scoring to surface the good 40% → Phase 2: N-best to improve the fair 22% → Phase 3: fine-tuning to rescue the poor 22% | **WER trajectory line chart** |
+| 25 | **Phase 1: Confidence Scoring** | IS already proves 40% is good. Now extract beam scores to FLAG it automatically. No additional model inference. 2-4 hours effort. | Annotated pipeline showing where scores exist |
+| 26 | **Phase 2: N-Best Aggregation** | ROVER/MBR — currently discarding 19/20 beam candidates. 5-15% relative improvement. Moves "fair" tier segments up to "good". | Before/after diagram |
+| 27 | **Phase 3: Fine-Tuning** | AVSpeech domain adaptation. 15-25 WER point reduction. ~$72-120 GPU cost. Attacks the core domain mismatch. | Training data comparison diagram |
+| 28 | **Phase 4-5: Production** | Arabic (k-means model exists), multi-speaker, streaming, auto-tuning | Feature roadmap icons |
+| 29 | **Key Takeaways** | (1) 2.5x WER gap measured, but IS shows 40% is already usable (2) Production system built with novel evaluation metrics (3) Clear path: surface the good, improve the fair, rescue the poor | 3-point summary |
+
+#### Appendix / Backup Slides
+
+| # | Slide | Key Content | When to use |
+|---|-------|-------------|-------------|
+| A1 | **Homophenes: The Lip-Reading Problem** | 50-70% of English sounds invisible on lips. Groups: p/b/m identical, t/d/n/s/z/l identical. Examples: "mom"↔"bomb", "collar"↔"color", "pads"↔"pants" | If someone asks "why does it confuse those words?" |
+| A2 | **Catastrophic lenpen=2.0** | Experiment H: mean WER 171.5%, model generates paragraphs of hallucinated text | Boss deep-dive only |
+| A3 | **Segment Stability Heatmap** | Which segments are always good/bad across all 13 configs | Boss deep-dive only |
+| A4 | **Full Experiment Table** | All 13 experiments A-M with full metrics | Boss deep-dive only |
 
 ---
 
@@ -254,7 +266,7 @@ All burned videos are at: `english_full_results/client_outputs/burned_videos/`
 
 ### Graphs: What to Use, What to Generate
 
-#### Existing plots to use (from `argos_research/plots/`):
+#### Existing plots to use (from `docs/evaluation/plots/`):
 
 | Plot | Use on Slide | Why | Audience |
 |------|-------------|-----|----------|
@@ -284,7 +296,7 @@ All burned videos are at: `english_full_results/client_outputs/burned_videos/`
 | **Hyperparameter Sensitivity Tornado** | 10 (Limits) | lenpen from -0.5 to 2.0: empty rate (44.9% → 0%) vs hallucination rate (opposite) | Experiment comparison data |
 | **Before/After Tuning Paired Bars** | 9 (Tuning) | Baseline vs best config: WER, WWER, empty%, hallucination% side by side | Experiment CSV |
 
-Script to extend: `argos_research/plots/generate_experiment_plots.py` (existing 643-line generator)
+Script to extend: `docs/evaluation/plots/generate_experiment_plots.py` (existing 643-line generator)
 
 ---
 
@@ -306,8 +318,8 @@ Script to extend: `argos_research/plots/generate_experiment_plots.py` (existing 
 
 | Material | Path |
 |----------|------|
-| 16 analytical plots | `argos_research/plots/` |
-| Plot generator script | `argos_research/plots/generate_experiment_plots.py` |
+| 16 analytical plots | `docs/evaluation/plots/` |
+| Plot generator script | `docs/evaluation/plots/generate_experiment_plots.py` |
 | Experiment comparison | `docs/tuning/experiment-comparison.csv` |
 | Curated examples JSON | `tuning_results/interesting_examples/metadata.json` |
 | Full results CSV (1497 rows) | `english_full_results/client_outputs/report/report.csv` |
@@ -316,6 +328,10 @@ Script to extend: `argos_research/plots/generate_experiment_plots.py` (existing 
 | Burned videos (1497 demos) | `english_full_results/client_outputs/burned_videos/` |
 | Report 1 (evaluation) | `docs/evaluation/report_1_executive_assessment.md` |
 | Reports 3-6 | `docs/{prompts,confidence,beam-search,finetuning}/` |
+| **Intelligibility methodology** | `docs/evaluation/intelligibility_methodology.md` |
+| **Intelligibility scores (1497 rows)** | `docs/evaluation/intelligibility/intelligibility_scores.csv` |
+| **Intelligibility summary** | `docs/evaluation/intelligibility/intelligibility_summary.json` |
+| **Intelligibility report (docx)** | `docs/evaluation/intelligibility/intelligibility_report.docx` |
 | Mission backlog | `docs/backlog/mission-backlog.md` |
 | Existing 2025 pptx | `docs/paper/Presentation_2025.pptx` |
 | Branding | `docs/branding/` |

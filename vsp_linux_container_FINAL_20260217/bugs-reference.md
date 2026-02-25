@@ -89,6 +89,16 @@ DOCKER_IMAGE=vsp-flat-standalone:cu128-exact
 
 17. **Match environment variable names between launcher and application**: If `config.py` reads `VSP_INPUT_DIR`, the Docker launcher must pass `-e VSP_INPUT_DIR=...` — not a similar-sounding name like `VSP_HOST_INPUT_DIR`. One env var for the app's internal config, another for display purposes. Name them clearly and pass both.
 
+18. **WER alone is misleading for visual speech recognition**: A segment with 30% WER may be perfectly intelligible, while another at 23% WER may be nonsense. The Intelligibility Score (IS) — a weighted composite of semantic similarity, phonetic similarity, inverse WER, inverse WWER, Named Entity F1, and length ratio — better captures whether a human can understand the output. Always report IS alongside WER for meaningful evaluation.
+
+19. **Hyperparameter tuning has diminishing returns on a domain-mismatched model**: Across 13 decode configurations tested on 107 segments, the baseline (beam=20, lenpen=0, no sampling) was surprisingly robust. Most parameter changes hurt or added variance. Positive length penalty causes hallucination (lenpen=2.0 → WER 540%), negative suppresses output (lenpen=-0.5 → 48 empty outputs). The path to better accuracy is domain adaptation (fine-tuning), not decode parameters.
+
+20. **Short video segments are catastrophically bad for lip-reading**: Segments under 5 seconds produce mean WER ~128%. The model requires substantial visual context (5+ seconds) to generate anything marginally useful. Filtering to ≥5s drops mean WER from 67% to ~58%, but discards 53% of segments. This is a fundamental model limitation, not a pipeline issue.
+
+21. **Benchmark results don't transfer to real-world data**: VSP-LLM achieves 25.4% WER on LRS3 (curated TED talks), but 67.0% WER on YouTube videos. Root causes: diverse lighting, non-frontal faces, movement/occlusion, varied vocabulary, and lower video quality. Always evaluate on target domain data, never trust benchmark numbers for deployment decisions.
+
+22. **Hallucination is the most dangerous failure mode**: 20.6% of segments produce WER ≥100% — the model generates fluent but completely fabricated text (e.g., "carry strap" → "holocaust denier"). Unlike high-WER garbled output, hallucinations look plausible to human reviewers. No automatic confidence filtering works reliably (best heuristic: 24% precision). Mandatory human review is required until hallucination detection is solved.
+
 ---
 
 ## Package Versions

@@ -9,7 +9,7 @@ Usage:
     python3 generate_metrics_explainer.py
 
 Output:
-    argos_research/metrics_explainer.docx
+    docs/tuning/metrics-explainer.docx
 """
 
 import re

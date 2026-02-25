@@ -14,7 +14,7 @@ Usage:
     python3 generate_baseline_vs_J_report.py
 
 Output:
-    /home/ubuntu/argos_research/baseline_vs_J_analysis.docx
+    docs/evaluation/baseline_vs_J_analysis.docx
 """
 
 import csv
@@ -40,7 +40,7 @@ CONFIG_C_CSV = Path("/home/ubuntu/tuning_results/full_decode_C/report/report.csv
 CONFIG_J_CSV = Path("/home/ubuntu/tuning_results/full_decode_J/report/report.csv")
 SEGMENT_METADATA = Path("/home/ubuntu/english_full_results/segment_metadata.json")
 
-OUTPUT_DIR = Path("/home/ubuntu/argos_research")
+OUTPUT_DIR = Path("/home/ubuntu/docs/evaluation")
 OUTPUT_FILE = OUTPUT_DIR / "baseline_vs_J_analysis.docx"
 
 # -- Colors --
