@@ -494,6 +494,8 @@ def part_1_research(doc):
             ["Corpus WER", "\u2014", "125.5%", "\u2014"],
             ["NEA F1", "Not reported", "38.8%", "39%"],
             ["WWER", "\u2014", "\u2014", "61.9%"],
+            ["Intelligibility Score (IS)", "\u2014", "\u2014", "2.52 / 5.0"],
+            ["Properly Captured (IS \u2265 3)", "\u2014", "\u2014", "39.9%"],
             ["Usable (WER \u226420%)", "\u2014", "11.4%", "\u2014"],
             ["Hallucinated (WER \u2265100%)", "\u2014", "20.6%", "\u2014"],
         ],
@@ -503,8 +505,10 @@ def part_1_research(doc):
     add_para(doc, (
         "The model performs 2.5x worse on real-world video than the paper's benchmark. "
         "Only 11.4% of segments achieve acceptable quality (WER \u226420%), while 20.6% are catastrophically "
-        "hallucinated (the model generates fluent but completely fabricated text). Corpus WER exceeds 100%, "
-        "meaning the model inserts more error words than exist in the reference."
+        "hallucinated (the model generates fluent but completely fabricated text). However, WER alone "
+        "overstates errors by ~3.5\u00d7: the Intelligibility Score (IS) \u2014 a 6-signal composite metric "
+        "combining semantic similarity, phonetic similarity, WER, WWER, NEA, and length ratio \u2014 "
+        "shows 39.9% of segments are properly captured (IS \u2265 3.0), versus only 11.4% by WER."
     ))
 
     # 1.3 Quality Distribution
@@ -520,6 +524,30 @@ def part_1_research(doc):
         ],
         col_widths=[1.5, 1.2, 1.2, 1.2]
     )
+
+    add_para(doc, (
+        "The Intelligibility Score (IS) provides a more nuanced picture. While WER treats all errors "
+        "equally, IS considers whether meaning was preserved despite surface-level errors:"
+    ))
+
+    add_styled_table(doc,
+        ["IS Tier", "Score Range", "Segments", "% of Total"],
+        [
+            ["Excellent", "4.0\u20135.0", "276", "18.4%"],
+            ["Good", "3.0\u20133.99", "321", "21.4%"],
+            ["Fair", "2.0\u20132.99", "325", "21.7%"],
+            ["Poor", "1.0\u20131.99", "336", "22.4%"],
+            ["Failed", "0.0\u20130.99", "239", "16.0%"],
+        ],
+        col_widths=[1.5, 1.2, 1.2, 1.2]
+    )
+
+    add_para(doc, (
+        "By IS measure, 39.9% of segments convey intelligible meaning (IS \u2265 3.0) \u2014 "
+        "3.5\u00d7 more than the 11.4% identified by WER alone. The dominant success pattern is "
+        "phonetic preservation (41.5% of successes), while the most dangerous failure mode is "
+        "hallucination (12.3% of failures) \u2014 fluent text with no connection to what was spoken."
+    ))
 
     # 1.4 Root Cause
     add_heading(doc, "1.4 Root Cause: Domain Mismatch", 2)
@@ -823,6 +851,11 @@ def part_4_lessons_and_todo(doc):
     # 4.1 Key Insights
     add_heading(doc, "4.1 Key Insights", 2)
 
+    add_bullet_bold_value(doc, "WER Overstates Failure: ",
+        "WER reports only 11.4% usable output, but Intelligibility Score analysis shows 39.9% of "
+        "segments convey intelligible meaning (IS \u2265 3.0). WER treats all errors equally and misses "
+        "phonetic preservation, semantic similarity, and context recoverability.")
+
     add_bullet_bold_value(doc, "Benchmark \u2260 Reality: ",
         "Paper reports 25.4% WER on LRS3; real-world YouTube yields 64-67% WER (2.5x worse). "
         "Domain mismatch is the dominant factor, not model architecture.")
@@ -876,7 +909,8 @@ def part_4_lessons_and_todo(doc):
             ["Jan 2026", "Web UI development (5,780 lines)"],
             ["Feb 3, 2026", "First container deployment (v1.0.0)"],
             ["Feb 3-17, 2026", "Five container releases, 37 bugs fixed"],
-            ["Feb 2026", "Performance evaluation (860 segments, 6 reports)"],
+            ["Feb 2026", "Performance evaluation (1,497 segments, 13 experiments, 6 reports)"],
+            ["Feb 2026", "Intelligibility scoring framework (6-signal IS), 21 analytical plots"],
             ["Feb 2026", "Fine-tuning infrastructure ready"],
         ],
         col_widths=[1.3, 5.2]
@@ -941,9 +975,10 @@ def part_4_lessons_and_todo(doc):
     # Final note
     doc.add_paragraph()
     add_para(doc, (
-        "This summary condenses the full 60-page Argos R&D documentation into the most critical "
-        "findings, decisions, and next steps. For detailed technical analysis, code diffs, and "
-        "configuration specifics, refer to the complete research_documentation.docx."
+        "This summary condenses the full Argos R&D documentation into the most critical "
+        "findings, decisions, and next steps. For detailed technical analysis including the full "
+        "Intelligibility Score methodology, code diffs, and configuration specifics, refer to the "
+        "complete research-journal.docx."
     ), italic=True, color=C_GRAY)
 
 
