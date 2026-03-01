@@ -1,0 +1,30 @@
+{
+  "experiment": "finetune_B_r64",
+  "date": null,
+  "description": "Fine-tune with r=64 LoRA fresh init on AVSpeech data (4x more capacity)",
+  "config": "vsp-llm-avspeech-weekend",
+  "lora_rank": 64,
+  "lora_alpha": 128,
+  "lora_target_modules": ["q_proj", "v_proj", "k_proj"],
+  "max_update": 3000,
+  "lr": 0.0003,
+  "effective_batch_size": 8,
+  "encoder_frozen": true,
+  "freeze_finetune_updates": 999999,
+  "train_segments": 1273,
+  "val_segments": 224,
+  "pretrained_from": "checkpoint_finetune.pt",
+  "lora_init": "random (r=16 weights skipped due to shape mismatch)",
+  "checkpoint_best": null,
+  "checkpoint_last": null,
+  "output_dir": "/home/ubuntu/finetune_output_r64",
+  "results": {
+    "wer": null,
+    "wwer": null,
+    "nea_f1": null,
+    "intelligibility_score": null,
+    "capture_rate": null,
+    "hallucination_rate": null,
+    "status": "pending"
+  }
+}

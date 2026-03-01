@@ -3290,6 +3290,97 @@ def chapter_14(doc):
         "AVSpeech data is expected to reduce WER by 15-25 percentage points, bringing it "
         "to the 40-50% range on real-world YouTube content.")
 
+    # 14.7 Exp A Results
+    add_heading(doc, "14.7 Experiment A Results (r=16 LoRA Fine-Tuning)", 2)
+    add_para(doc, (
+        "The first fine-tuning experiment (Exp A) was completed on February 27, 2026. "
+        "Training ran for 19 epochs (3,000 updates) over 17.0 hours on a Tesla T4 GPU with FP16 "
+        "mixed precision. The dataset consisted of 1,273 training and 224 validation segments "
+        "from AVSpeech YouTube videos, stratified by Intelligibility Score tier."
+    ))
+
+    add_heading(doc, "14.7.1 Training Configuration", 3)
+    add_styled_table(doc,
+        ["Parameter", "Value"],
+        [
+            ["LoRA Rank (r)", "16 (continued from pretrained)"],
+            ["LoRA Alpha (\u03b1)", "32 (scaling factor \u03b1/r = 2.0)"],
+            ["Target Modules", "q_proj, k_proj, v_proj"],
+            ["Trainable Parameters", "12,582,912 (0.19% of 6.75B total)"],
+            ["Max Updates", "3,000"],
+            ["Learning Rate", "3e-4 (tri-stage: warmup 600, decay 2,400)"],
+            ["Effective Batch Size", "8 (update_freq=8, batch_size=1)"],
+            ["Encoder", "Frozen (freeze_finetune_updates=999,999)"],
+            ["Label Smoothing", "0.1"],
+            ["Seed", "1337"],
+        ],
+        col_widths=[2.0, 4.5]
+    )
+
+    add_heading(doc, "14.7.2 Key Results", 3)
+    add_styled_table(doc,
+        ["Metric", "Best (Epoch 2)", "Final (Epoch 19)", "Delta"],
+        [
+            ["Val Accuracy", "62.94%", "58.98%", "-3.96 pp"],
+            ["Val Loss", "2.391", "4.120", "+72%"],
+            ["Val Perplexity", "5.24", "17.39", "+232%"],
+            ["Train Accuracy", "65.00%", "95.52%", "+30.5 pp"],
+            ["Train Loss", "2.192", "0.022", "-99%"],
+            ["Train-Val Acc Gap", "2.1 pp", "36.5 pp", "+34.4 pp"],
+        ],
+        col_widths=[1.5, 1.3, 1.3, 2.4]
+    )
+
+    add_heading(doc, "14.7.3 Overfitting Analysis", 3)
+    add_para(doc, (
+        "Exp A exhibited severe overfitting starting from epoch 3. The best validation accuracy "
+        "(62.94%) was reached at epoch 2, after only 320 updates. All subsequent epochs showed "
+        "monotonic degradation in validation metrics while training metrics continued improving \u2014 "
+        "the classic signature of memorization:"
+    ))
+    add_bullet_bold_value(doc, "Train accuracy: ",
+        "Climbed from 62.7% to 95.5% \u2014 the model memorized virtually all training examples")
+    add_bullet_bold_value(doc, "Val accuracy: ",
+        "Declined from 62.9% to 59.0% \u2014 generalization worsened with continued training")
+    add_bullet_bold_value(doc, "Val perplexity: ",
+        "Exploded from 5.24 to 17.39 \u2014 the model became increasingly uncertain on unseen data")
+    add_bullet_bold_value(doc, "Gradient norms: ",
+        "Decreased from ~3.3 to ~1.0 \u2014 consistent with convergence to a sharp minimum")
+
+    add_heading(doc, "14.7.4 Root Cause Analysis", 3)
+    add_para(doc, (
+        "The overfitting has five contributing factors, ranked by likely impact:"
+    ))
+    add_bullet_bold_value(doc, "1. Small dataset: ",
+        "1,273 segments is insufficient for a 7B-parameter LLM, even with LoRA. "
+        "The model exhausts the training signal within 2 epochs.")
+    add_bullet_bold_value(doc, "2. Noisy labels: ",
+        "Training labels come from Whisper ASR at 64% WER baseline \u2014 the model learns errors.")
+    add_bullet_bold_value(doc, "3. Rank limitation: ",
+        "r=16 constrains the adaptation to a 16-dimensional subspace, "
+        "insufficient for the TED\u2192YouTube domain shift.")
+    add_bullet_bold_value(doc, "4. Minimal regularization: ",
+        "LoRA dropout 0.05 and weight decay 0.0 provide almost no overfitting protection.")
+    add_bullet_bold_value(doc, "5. Encoder frozen: ",
+        "Visual features cannot adapt to YouTube-style faces/angles, "
+        "forcing all adaptation through the LLM adapter.")
+
+    add_heading(doc, "14.7.5 Implications for Exp B", 3)
+    add_para(doc, (
+        "Based on Exp A results, the following adjustments are planned for Exp B (r=64):"
+    ))
+    add_bullet_bold_value(doc, "Increase LoRA rank: ",
+        "r=64 (alpha=128) provides 4\u00d7 adapter capacity for better domain adaptation.")
+    add_bullet_bold_value(doc, "Aggressive early stopping: ",
+        "max_update=500 with validation every 50 steps (Exp A peaked at 320 updates).")
+    add_bullet_bold_value(doc, "Data curation: ",
+        "Filter training data by face detection confidence >0.9 and head pose <30\u00b0.")
+    add_para(doc, (
+        "Decode evaluation of the Exp A best checkpoint on the full 1,497-segment test set is pending. "
+        "10 diagnostic plots documenting the full training dynamics are available in "
+        "docs/finetuning/plots/FT_01 through FT_10."
+    ), bold=True)
+
     doc.add_page_break()
 
 
@@ -3331,7 +3422,7 @@ def chapter_15(doc):
             ["Intelligibility Scoring", "Complete", "6-signal composite metric (IS), tier classification, failure/success analysis"],
             ["Report Generation", "Complete", "WER, WWER, NEA metrics in 5 formats (CSV/HTML/JSON/TXT/ANSI)"],
             ["Burned Videos", "Complete", "Subtitle overlays on original videos for visual review"],
-            ["Fine-Tuning Infrastructure", "Ready", "579-line pipeline, training config, QLoRA setup"],
+            ["Fine-Tuning Infrastructure", "Exp A Complete", "579-line pipeline; Exp A (r=16) trained 17h, best val acc 62.94%"],
             ["Testing Suite", "Complete", "37 automated tests, 5 test scripts (1,731 lines)"],
             ["Documentation", "Comprehensive", "Architecture, dev guide, sync changelog, training notes, bug tracking"],
             ["4-Environment Support", "Operational", "EC2, 2 standalone Ubuntu, HORIZON (no internet)"],
@@ -3359,17 +3450,18 @@ def chapter_15(doc):
     # 15.4 Performance
     add_heading(doc, "15.4 Current Performance", 2)
     add_styled_table(doc,
-        ["Metric", "Current Value", "Expected Post-Fine-Tuning"],
+        ["Metric", "Current Value", "Exp A (r=16)", "Expected Post-FT"],
         [
-            ["Mean WER", "67.0%", "40-50%"],
+            ["Mean WER", "67.0%", "Decode pending", "40-50%"],
             ["Usable Segments (WER ≤ 20%)", "11.4%", "25-40%"],
             ["Hallucination Rate (WER ≥ 100%)", "20.6%", "<10%"],
             ["NEA F1 (Named Entity Accuracy)", "38.8%", "55-70%"],
             ["Mean Intelligibility Score", "2.52 / 5.0", "3.5-4.0"],
             ["Properly Captured (IS \u2265 3)", "39.9%", "55-70%"],
-            ["Paper WER (LRS3 benchmark)", "25.4%", "25.4% (same model on clean data)"],
+            ["Best Val Acc (token)", "\u2014", "62.94% (ep 2)", "\u2014"],
+            ["Paper WER (LRS3)", "25.4%", "\u2014", "25.4%"],
         ],
-        col_widths=[2.5, 1.5, 2.5]
+        col_widths=[2.3, 1.1, 1.3, 1.1]
     )
 
     # 15.5 Code Inventory

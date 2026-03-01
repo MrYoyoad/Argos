@@ -606,6 +606,29 @@ def part_1_research(doc):
     add_bullet_bold_value(doc, "GPU requirement: ", "p3.16xlarge (8x V100, 128GB) \u2014 ~3-5 hours training, ~$24/hr")
     add_bullet_bold_value(doc, "Expected outcome: ", "WER from 67% \u2192 42-52%, usable segments from 11% \u2192 18-28%")
 
+    add_heading(doc, "1.6.1 Experiment A Results (r=16, Encoder Frozen)", 3)
+    add_para(doc, (
+        "The first fine-tuning experiment (Exp A) completed Feb 27, 2026 \u2014 17 hours on Tesla T4. "
+        "Training data: 1,273 segments (85%) / 224 validation (15%), stratified by IS tier."
+    ))
+    add_styled_table(doc,
+        ["Metric", "Best (Epoch 2)", "Final (Epoch 19)"],
+        [
+            ["Val Accuracy", "62.94%", "58.98%"],
+            ["Val Loss", "2.391", "4.120 (+72%)"],
+            ["Val Perplexity", "5.24", "17.39"],
+            ["Train Accuracy", "65.00%", "95.52%"],
+            ["Train-Val Gap", "2.1 pp", "36.5 pp"],
+        ],
+        col_widths=[1.5, 1.5, 1.5]
+    )
+    add_para(doc, (
+        "Key finding: Best validation accuracy reached at epoch 2 (320 updates). Severe overfitting "
+        "after that \u2014 36.5 pp train-val gap confirms r=16 is capacity-limited for the TED\u2192YouTube "
+        "domain shift. Decode evaluation with the best checkpoint is pending. "
+        "Next step: Exp B with r=64 (4\u00d7 capacity) and early stopping at ~500 updates."
+    ), bold=True)
+
     # 1.7 Hyperparameter Tuning Results
     add_heading(doc, "1.7 Hyperparameter Tuning Results (13 Experiments)", 2)
     add_para(doc, (
@@ -912,6 +935,7 @@ def part_4_lessons_and_todo(doc):
             ["Feb 2026", "Performance evaluation (1,497 segments, 13 experiments, 6 reports)"],
             ["Feb 2026", "Intelligibility scoring framework (6-signal IS), 21 analytical plots"],
             ["Feb 2026", "Fine-tuning infrastructure ready"],
+            ["Feb 2026", "Exp A fine-tuning complete (r=16, 17h T4): best val acc 62.94% at epoch 2; 10 diagnostic plots"],
         ],
         col_widths=[1.3, 5.2]
     )

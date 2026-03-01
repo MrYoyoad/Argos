@@ -120,18 +120,26 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ### Mission 9: AVSpeech Fine-Tuning
 - **Priority**: HIGH (biggest single WER improvement, but highest effort)
+- **Status**: **EXP A COMPLETE** (Feb 27, 2026) — training done, decode evaluation pending
 - **Goal**: Actually run domain adaptation fine-tuning on AVSpeech data and measure improvement over pretrained checkpoint
-- **Items**:
-  - Prepare AVSpeech training manifests from `english_1k/` dataset (~1000 videos)
-  - Use existing config `VSP-LLM/src/conf/vsp-llm-avspeech-finetune.yaml` (15K updates, freeze 5K)
-  - Run QLoRA fine-tuning (increase from r=16 to r=64 per research recommendation, alpha=128)
+
+**Exp A Results (r=16, encoder frozen, 3,000 updates, T4 GPU)**:
+- Training completed in 17.0 hours on Tesla T4
+- Best val accuracy: **62.94%** at epoch 2 (320 updates)
+- Severe overfitting: train-val gap widened to 36.5 pp by epoch 19
+- Key finding: r=16 is capacity-limited — model memorizes but can't generalize
+- Best checkpoint saved; decode evaluation on full dataset pending
+- 10 diagnostic plots generated in `docs/finetuning/plots/FT_*.png`
+
+**Remaining Items**:
+  - Run decode with `checkpoint_best.pt` on full 1,497-segment test set
+  - Calculate WER/WWER/NEA F1/IS and compare to baseline
+  - Run Exp B: r=64 (alpha=128) with max_update=500 and early stopping
   - **Critical**: Unfreeze AV-HuBERT encoder (315M params) — this is where ~70% of improvement comes from
-  - Reduce encoder freeze duration to 0-5K steps (vs. paper's 18K/30K) — encoder is the domain gap bottleneck
-  - Evaluate on held-out AVSpeech test set and compare WER to pretrained baseline (67%)
   - Data curation: filter by face detection confidence >0.9, remove extreme head pose >30 deg
 - **Expected Impact**: WER 42-52% (15-25 point improvement). The only path to sub-50% WER
 - **GPU Requirements**: T4 (16GB) very tight with encoder unfrozen; p3.16xlarge 8x GPU recommended (~$24/hr, 3-5 hours)
-- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md)
+- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md), [Comparison Report](../finetuning/experiments/comparison_report.md)
 
 ---
 

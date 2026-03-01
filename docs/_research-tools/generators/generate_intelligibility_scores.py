@@ -416,6 +416,114 @@ def estimate_llm_context_recovery(
     return 0.15, "unlikely_recoverable"
 
 
+# ── Failure Mode Classification ─────────────────────────────────────
+
+def classify_failure_mode(
+    ref_text: str, hyp_text: str,
+    wer_pct: float, semantic_sim: float, phonetic_sim: float,
+    nea_f1_pct: float, length_ratio: float,
+) -> str:
+    """
+    Classify the dominant failure mode for a non-recoverable segment.
+
+    Returns a human-readable failure mode label. Designed for segments
+    with IS < 3.0 (tiers 1-3).
+    """
+    hyp = (hyp_text or "").strip()
+    if not hyp:
+        return "Empty Output"
+    if wer_pct > 100:
+        return "Hallucination"
+    if length_ratio > 1.8:
+        return "Over-generation"
+    if length_ratio < 0.3:
+        return "Truncation"
+    if semantic_sim < 0.2 and phonetic_sim < 0.3:
+        return "Total Topic Drift"
+    if semantic_sim < 0.2 and phonetic_sim >= 0.3:
+        return "Phonetically Similar but Wrong Topic"
+    if semantic_sim >= 0.2 and nea_f1_pct < 10 and wer_pct > 60:
+        return "Entity Destruction"
+    if wer_pct > 70:
+        return "High Error Rate"
+    if semantic_sim >= 0.3 and wer_pct > 50:
+        return "Content Word Errors"
+    return "Accumulated Small Errors"
+
+
+# ── Success Pattern Classification ──────────────────────────────────
+
+def classify_success_pattern(
+    wer_pct: float, semantic_sim: float, phonetic_sim: float,
+    nea_f1_pct: float, length_ratio: float,
+) -> str:
+    """
+    Classify what makes a properly-captured segment succeed.
+
+    Returns a human-readable success pattern label. Designed for segments
+    with IS >= 3.0 (tiers 4-5).
+    """
+    if wer_pct <= 10:
+        return "Near-Perfect Output"
+    if wer_pct <= 25 and semantic_sim > 0.6:
+        return "Minor Errors, High Semantic Match"
+    if phonetic_sim > 0.7 and wer_pct > 25:
+        return "Phonetically Preserved"
+    if nea_f1_pct > 60 and wer_pct > 25:
+        return "Entities Preserved"
+    if semantic_sim > 0.5 and 0.7 <= length_ratio <= 1.3:
+        return "Good Semantic + Correct Length"
+    if wer_pct <= 35:
+        return "Low-Moderate WER"
+    if semantic_sim > 0.4 and phonetic_sim > 0.5:
+        return "Combined Semantic + Phonetic Bridge"
+    return "Multiple Partial Signals"
+
+
+# ── Topic Classification ────────────────────────────────────────────
+
+TOPIC_KEYWORDS = {
+    "Medical/Health": ["doctor", "medical", "patient", "health", "cancer", "disease",
+        "blood", "pressure", "surgery", "hospital", "diagnosis", "treatment",
+        "therapy", "medicine", "symptom", "pain", "clinical", "heart", "brain", "vitamin"],
+    "Cooking/Food": ["cook", "recipe", "food", "eat", "kitchen", "oven", "ingredient",
+        "cup", "tablespoon", "teaspoon", "bake", "fry", "boil", "sauce", "pepper",
+        "salt", "chicken", "beef", "vegetable", "meal"],
+    "Technology": ["computer", "software", "phone", "app", "internet", "digital",
+        "technology", "code", "program", "data", "website", "online", "iphone",
+        "android", "camera", "samsung", "battery", "screen"],
+    "Sports/Fitness": ["game", "team", "player", "score", "coach", "training",
+        "exercise", "workout", "football", "basketball", "soccer", "fitness",
+        "muscle", "weight", "gym", "race", "championship"],
+    "Education/Academic": ["study", "research", "university", "school", "professor",
+        "student", "learn", "education", "science", "theory", "experiment", "exam",
+        "class", "lecture", "knowledge", "course"],
+    "Business/Finance": ["business", "company", "money", "market", "invest", "stock",
+        "price", "profit", "economy", "financial", "bank", "trade", "revenue",
+        "customer", "product", "sales"],
+    "Politics/News": ["president", "government", "political", "election", "vote",
+        "congress", "law", "policy", "country", "nation", "democrat", "republican",
+        "senator", "war", "military"],
+    "Entertainment": ["movie", "music", "show", "film", "song", "star", "celebrity",
+        "dance", "concert", "comedy", "drama", "actor", "singer", "performance"],
+    "Religion/Spirituality": ["god", "church", "bible", "pray", "faith", "spiritual",
+        "soul", "worship", "jesus", "christian", "muslim", "jewish", "religion", "blessing"],
+    "DIY/Home": ["house", "build", "paint", "wood", "tool", "repair", "install",
+        "garden", "project", "material", "measure", "cut", "glue", "drill"],
+}
+
+
+def classify_topic(ref_text: str) -> str:
+    """Classify a reference sentence into a topic category by keyword matching."""
+    ref_lower = (ref_text or "").lower()
+    for topic, keywords in TOPIC_KEYWORDS.items():
+        if any(kw in ref_lower for kw in keywords):
+            return topic
+    return "Other"
+
+
+# ── Composite Intelligibility Score ──────────────────────────────────
+
 def compute_is(
     semantic_sim: float,
     phonetic_sim: float,
@@ -599,6 +707,60 @@ def main():
           f" ({n_llm_recoverable/len(rows)*100:.1f}%)")
     print(f"  Mean recovery probability: {llm_ctx_probs_arr.mean():.3f}")
 
+    # ── Failure Mode & Success Pattern Classification ──
+    print("Classifying failure modes and success patterns...")
+    failure_modes = []
+    success_patterns = []
+    for i, row in enumerate(rows):
+        score = float(is_scores[i])
+        if score < 3.0:
+            fm = classify_failure_mode(
+                ref_text=refs[i], hyp_text=hyps[i],
+                wer_pct=row["wer_%"], semantic_sim=float(sem_sims[i]),
+                phonetic_sim=float(phon_sims[i]), nea_f1_pct=row["nea_f1_%"],
+                length_ratio=float(length_ratios[i]),
+            )
+            failure_modes.append(fm)
+            success_patterns.append("")
+        else:
+            failure_modes.append("")
+            sp = classify_success_pattern(
+                wer_pct=row["wer_%"], semantic_sim=float(sem_sims[i]),
+                phonetic_sim=float(phon_sims[i]), nea_f1_pct=row["nea_f1_%"],
+                length_ratio=float(length_ratios[i]),
+            )
+            success_patterns.append(sp)
+
+    fm_counts = Counter(fm for fm in failure_modes if fm)
+    sp_counts = Counter(sp for sp in success_patterns if sp)
+    n_failed_segs = sum(1 for fm in failure_modes if fm)
+    n_success_segs = sum(1 for sp in success_patterns if sp)
+    print(f"  Failed segments: {n_failed_segs}, Success segments: {n_success_segs}")
+
+    # ── Topic Classification ──
+    print("Classifying topics...")
+    topics = [classify_topic(r) for r in refs]
+    topic_counts = Counter(topics)
+
+    # ── Signal comparison: success vs failure ──
+    success_indices = [i for i, sp in enumerate(success_patterns) if sp]
+    failure_indices = [i for i, fm in enumerate(failure_modes) if fm]
+
+    def _signal_stats(indices):
+        if not indices:
+            return {}
+        return {
+            "semantic_sim": round(float(np.mean([sem_sims[i] for i in indices])), 4),
+            "phonetic_sim": round(float(np.mean([phon_sims[i] for i in indices])), 4),
+            "wer": round(float(np.mean([rows[i]["wer_%"] for i in indices])), 2),
+            "wwer": round(float(np.mean([rows[i]["wwer_%"] for i in indices])), 2),
+            "nea_f1": round(float(np.mean([rows[i]["nea_f1_%"] for i in indices])), 2),
+            "length_ratio": round(float(np.mean([length_ratios[i] for i in indices])), 4),
+        }
+
+    success_signal_stats = _signal_stats(success_indices)
+    failure_signal_stats = _signal_stats(failure_indices)
+
     # ── Write augmented CSV ──
     csv_path = out_dir / "intelligibility_scores.csv"
     print(f"Writing {csv_path}...")
@@ -608,6 +770,8 @@ def main():
         "intelligibility_score", "intelligibility_tier", "intelligibility_label",
         "context_recoverable", "context_reason",
         "llm_context_prob", "llm_context_reason",
+        "failure_mode", "success_pattern",
+        "topic", "ref_words",
     ]
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -625,6 +789,10 @@ def main():
             row["context_reason"] = ctx_reasons[i]
             row["llm_context_prob"] = f"{llm_ctx_probs[i]:.3f}"
             row["llm_context_reason"] = llm_ctx_reasons[i]
+            row["failure_mode"] = failure_modes[i]
+            row["success_pattern"] = success_patterns[i]
+            row["topic"] = topics[i]
+            row["ref_words"] = len(toks(refs[i]))
             writer.writerow(row)
 
     # ── Compute summary stats ──
@@ -695,9 +863,82 @@ def main():
             "almost_certainly_not_understandable": "WER > 70%",
             "guaranteed_not_understandable": "WER > 100%",
         },
+        "is_histogram": {
+            f"{b:.1f}-{b+0.5:.1f}": int(np.sum((is_scores >= b) & (is_scores < b + 0.5)))
+            for b in np.arange(0.0, 5.0, 0.5)
+        },
+        "failure_mode_distribution": {
+            mode: {"count": count, "pct": round(count / max(1, n_failed_segs) * 100, 1)}
+            for mode, count in fm_counts.most_common()
+        },
+        "success_pattern_distribution": {
+            pat: {"count": count, "pct": round(count / max(1, n_success_segs) * 100, 1)}
+            for pat, count in sp_counts.most_common()
+        },
+        "signal_comparison": {
+            "success": success_signal_stats,
+            "failure": failure_signal_stats,
+        },
+        "topic_analysis": {},
+        "length_analysis": {},
         "weights": DEFAULT_WEIGHTS,
         "top_phonetic_confusions": top_confusions,
     }
+
+    # ── Topic analysis ──
+    def _group_stats(indices):
+        """Compute full stats for a subset of indices."""
+        if not indices:
+            return {}
+        grp_is = [float(is_scores[i]) for i in indices]
+        grp_cap = sum(1 for i in indices if float(is_scores[i]) >= 3.0)
+        grp_ctx = sum(1 for i in indices if ctx_recoverable[i])
+        grp_llm = sum(1 for i in indices if llm_ctx_probs[i] >= 0.5)
+        g_n = len(indices)
+        return {
+            "count": g_n,
+            "mean_is": round(np.mean(grp_is), 3),
+            "mean_wer": round(float(np.mean([rows[i]["wer_%"] for i in indices])), 1),
+            "mean_wwer": round(float(np.mean([rows[i]["wwer_%"] for i in indices])), 1),
+            "mean_nea_f1": round(float(np.mean([rows[i]["nea_f1_%"] for i in indices])), 1),
+            "mean_phonetic": round(float(np.mean([phon_sims[i] for i in indices])), 3),
+            "mean_semantic": round(float(np.mean([sem_sims[i] for i in indices])), 3),
+            "captured_count": grp_cap,
+            "captured_pct": round(grp_cap / g_n * 100, 1),
+            "ctx_rule_count": grp_ctx,
+            "ctx_rule_pct": round(grp_ctx / g_n * 100, 1),
+            "ctx_llm_count": grp_llm,
+            "ctx_llm_pct": round(grp_llm / g_n * 100, 1),
+        }
+
+    topic_indices = {}
+    for i, t in enumerate(topics):
+        topic_indices.setdefault(t, []).append(i)
+
+    for topic, indices in sorted(topic_indices.items(),
+                                 key=lambda x: -np.mean([float(is_scores[i]) for i in x[1]])):
+        if len(indices) >= 10:
+            summary["topic_analysis"][topic] = _group_stats(indices)
+
+    # ── Length-filtered analysis ──
+    ref_word_counts = [len(toks(r)) for r in refs]
+    length_filters = [
+        ("all", lambda i: True),
+        ("gte_5_words", lambda i: ref_word_counts[i] >= 5),
+        ("gte_7_words", lambda i: ref_word_counts[i] >= 7),
+        ("gte_10_words", lambda i: ref_word_counts[i] >= 10),
+        ("gte_15_words", lambda i: ref_word_counts[i] >= 15),
+        ("gte_20_words", lambda i: ref_word_counts[i] >= 20),
+        ("5_to_10_words", lambda i: 5 <= ref_word_counts[i] < 10),
+        ("10_to_15_words", lambda i: 10 <= ref_word_counts[i] < 15),
+        ("15_to_20_words", lambda i: 15 <= ref_word_counts[i] < 20),
+        ("20_plus_words", lambda i: ref_word_counts[i] >= 20),
+    ]
+
+    for label, filt_fn in length_filters:
+        indices = [i for i in range(n) if filt_fn(i)]
+        if len(indices) >= 10:
+            summary["length_analysis"][label] = _group_stats(indices)
 
     json_path = out_dir / "intelligibility_summary.json"
     print(f"Writing {json_path}...")
@@ -767,6 +1008,57 @@ def main():
     print(f"    WER > 100%: {int(np.sum(wer_vals > 100)):5d}"
           f" ({np.sum(wer_vals > 100)/n*100:5.1f}%)  -- hallucinated")
     print()
+
+    # IS Histogram
+    print("  IS HISTOGRAM (score distribution):")
+    for b in np.arange(0.0, 5.0, 0.5):
+        bucket = f"{b:.1f}-{b+0.5:.1f}"
+        count = int(np.sum((is_scores >= b) & (is_scores < b + 0.5)))
+        bar = "\u2588" * (count * 40 // n)
+        print(f"    IS {bucket}: {count:4d} ({count/n*100:5.1f}%)  {bar}")
+    print()
+
+    # Failure mode breakdown
+    print(f"  FAILURE MODE ANALYSIS ({n_failed_segs} segments with IS < 3.0):")
+    for mode, count in fm_counts.most_common():
+        bar = "\u2588" * (count * 30 // max(1, n_failed_segs))
+        print(f"    {mode:40s}: {count:4d} ({count/n_failed_segs*100:5.1f}%)  {bar}")
+    print()
+
+    # Success pattern breakdown
+    print(f"  SUCCESS PATTERN ANALYSIS ({n_success_segs} segments with IS >= 3.0):")
+    for pat, count in sp_counts.most_common():
+        bar = "\u2588" * (count * 30 // max(1, n_success_segs))
+        print(f"    {pat:40s}: {count:4d} ({count/n_success_segs*100:5.1f}%)  {bar}")
+    print()
+
+    # Signal comparison
+    print("  SIGNAL COMPARISON (Success vs Failure):")
+    print(f"    {'Signal':20s} {'Success':>10s} {'Failure':>10s} {'Gap':>10s}")
+    for sig_name in ["semantic_sim", "phonetic_sim", "wer", "wwer", "nea_f1", "length_ratio"]:
+        sv = success_signal_stats.get(sig_name, 0)
+        fv = failure_signal_stats.get(sig_name, 0)
+        print(f"    {sig_name:20s} {sv:10.2f} {fv:10.2f} {sv-fv:+10.2f}")
+    print()
+
+    # Topic analysis
+    print("  TOPIC ANALYSIS:")
+    print(f"    {'Topic':25s} {'N':>4s} {'IS':>6s} {'WER':>6s} {'Cap%':>6s} {'CtxR%':>6s} {'CtxL%':>6s}")
+    for topic, stats in summary["topic_analysis"].items():
+        print(f"    {topic:25s} {stats['count']:4d} {stats['mean_is']:6.2f} "
+              f"{stats['mean_wer']:6.1f} {stats['captured_pct']:6.1f} "
+              f"{stats['ctx_rule_pct']:6.1f} {stats['ctx_llm_pct']:6.1f}")
+    print()
+
+    # Length-filtered analysis
+    print("  LENGTH-FILTERED ANALYSIS:")
+    print(f"    {'Filter':25s} {'N':>4s} {'IS':>6s} {'WER':>6s} {'Cap%':>6s} {'CtxR%':>6s} {'CtxL%':>6s}")
+    for label, stats in summary["length_analysis"].items():
+        print(f"    {label:25s} {stats['count']:4d} {stats['mean_is']:6.2f} "
+              f"{stats['mean_wer']:6.1f} {stats['captured_pct']:6.1f} "
+              f"{stats['ctx_rule_pct']:6.1f} {stats['ctx_llm_pct']:6.1f}")
+    print()
+
     print(f"  Output: {csv_path}")
     print(f"  Summary: {json_path}")
 

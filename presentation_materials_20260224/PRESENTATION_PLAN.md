@@ -112,8 +112,10 @@ tar xzf galaxy_export_backup_*.tar.gz
 
 ### Story Arc: "From Paper to Production — Bridging the Reality Gap in Visual Speech Processing"
 
-**Audience**: Client demo + supervisor project review + potential new clients.
-**Central narrative**: Took a state-of-the-art research model, deployed on real-world data, rigorously measured a 2.5x performance gap, developed the Intelligibility Score to prove WER dramatically overstates failure (40% properly captured vs 11% by WER), built production infrastructure, and identified a concrete path to close the remaining gap.
+**Audience**: Manager / supervisor project review (internal).
+**Central narrative**: Took a state-of-the-art research model, deployed on real-world data, rigorously characterized a 2.5x performance gap, developed the Intelligibility Score showing WER dramatically overstates failure (40% properly captured vs 11% by WER), classified 10 failure modes and 7 success patterns to understand WHY segments succeed or fail, analyzed performance by topic (Business best at 57%, DIY worst at 30%) and segment length (short 32% vs long 49%), built a complete production system, and have a principled plan where each phase targets specific failure modes — with clear resource requirements.
+
+> **Client version**: See `CLIENT_ADAPTATION_GUIDE.md` for how to adapt this deck for client/external audiences.
 
 ---
 
@@ -128,139 +130,98 @@ tar xzf galaxy_export_backup_*.tar.gz
 | 3 | **Model Architecture** | 3-block diagram: Video → AV-HuBERT (visual encoder) → LLaMA-2 (language model) → Text | Custom diagram |
 | 4 | **The Benchmark** | Paper: 25.4% WER on LRS3 (curated TED talks). Our question: "How does this perform on real-world video?" And: "Is WER even the right metric?" | **NEW graph: Paper vs Reality bar chart** |
 
-#### Section 2: Research Findings (18 min, 11 slides) — 40%
+#### Section 2: Research Findings (18 min, 12 slides) — 40%
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
 | 5 | **The Reality Gap** | 25.4% → 64.1% WER = 2.5x worse. WER quality tiers: only 11.4% "usable". Headline: "9 out of 10 segments need verification — or do they?" | **NEW graph: Quality tier pie/bar chart** |
 | 6 | **WER Is Blind** | **QUICK SETUP (30 sec)**: Two examples both ~30% WER: "work with the team" (WER 29%, IS 4.3, intelligible) vs "admiral mcrae"→"animal migratory" (WER 33%, IS 3.0, unintelligible). One line: "We've discussed this — same WER, opposite meaning. So we built a metric to fix it." → transition to next slide | Side-by-side text, 2 boxes (green/red) |
-| 7 | **The Intelligibility Score** | **KEY SLIDE**: 6-signal composite metric. Properly captured (IS >= 3.0): **39.9%** — 3.5x more than WER's 11.4%. IS tiers: 18.4% excellent, 21.4% good, 21.7% fair, 22.4% poor, 16.0% failed. This is the main research contribution. | IS tier distribution chart (new) |
-| 8 | **Performance Distribution** | The spread — most segments at 50-80% WER, long tail of catastrophic failures | Existing: `09_boxplot_wwer_all_experiments.png` |
-| 9 | **Why the Gap** | 3 root causes: domain mismatch (TED vs YouTube), hallucination, short-segment failure | Existing: `01_wer_vs_duration.png` |
-| 10 | **Named Entity Accuracy** | NEA F1: 38.8% — misses 61% of names/numbers. These are the words context can't recover | Existing: `14_nea_vs_wwer_scatter.png` |
-| 11 | **13 Tuning Experiments** | Parameter sweep: beam, lenpen, sampling, temperature. lenpen=1.0 eliminates empty outputs | Existing: `10_empty_and_hallucination_rates.png` + `16_improvement_J_vs_A.png` |
-| 12 | **Limits of Tuning** | Tuning = mitigation, not cure. Core domain mismatch remains | **NEW graph: Hyperparameter sensitivity tornado** |
-| 13 | **Curated Examples** | Side-by-side ref vs hyp with IS scores (see examples section below) | Formatted text table |
-| 14 | **Live Demo** | Play 2-3 burned videos (see demo videos section below) | Video playback |
-| 15 | **Research Breadth** | One-liner per report (7 reports): evaluation, tuning, prompts, confidence, beam search, fine-tuning, **intelligibility** | Simple list |
+| 7 | **The Intelligibility Score** | **KEY SLIDE**: 6-signal composite metric. Properly captured (IS >= 3.0): **39.9%** — 3.5x more than WER's 11.4%. IS tiers: 18.4% excellent, 21.4% good, 21.7% fair, 22.4% poor, 16.0% failed. **Success patterns**: phonetic preservation #1 driver (41.5%), minor errors+high semantic (24.5%), entities preserved (12.4%), near-perfect (11.6%). **Signal comparison**: NEA F1 is largest differentiator (74% success vs 16% failure), semantic gap 0.50, phonetic gap 0.43. This is the main research contribution. | IS tier distribution chart (new) |
+| 8 | **Failure Mode Taxonomy** | **NEW**: 10 classified failure modes across 900 failed segments: Topic Drift 15.9%, Phonetically Similar but Wrong Topic 15.7%, Accumulated Small Errors 12.3%, Hallucination 12.3%, High Error Rate 12.1%, Entity Destruction 12.0%, Content Word Errors 10.7%, Empty Output 7.8%, Truncation 1.1%. **Key insight**: failures are diverse — no single fix addresses all modes. Each roadmap phase targets specific failure categories. | Failure mode bar chart (new) |
+| 9 | **Performance Distribution** | The spread — most segments at 50-80% WER, long tail of catastrophic failures | Existing: `09_boxplot_wwer_all_experiments.png` |
+| 10 | **Why the Gap** | 3 root causes: domain mismatch (TED vs YouTube), hallucination, short-segment failure. **Topic analysis**: Business/Finance best (IS 3.08, 57% captured) — formal vocabulary helps. DIY/Home worst (IS 2.13, 30% captured) — casual speech harder. **Length analysis**: 5-10 words only 32% captured, 20+ words 49% captured (+17pp). Short segments don't provide enough visual context. | Existing: `01_wer_vs_duration.png` |
+| 11 | **Named Entity Accuracy** | NEA F1: 38.8% — misses 61% of names/numbers. These are the words context can't recover. **Signal comparison confirms**: NEA F1 is the largest success/failure differentiator (74.0% vs 15.7%, gap 58.3pp) | Existing: `14_nea_vs_wwer_scatter.png` |
+| 12 | **13 Tuning Experiments** | Parameter sweep: beam, lenpen, sampling, temperature. **Full-dataset Config J results (1497 segments)**: IS 2.60 vs 2.52 baseline, 622 vs 597 captured (+25), empties 0 vs 70 baseline, but hallucinations 348 vs 307 (+41). J beats C: stochastic sampling (temp=0.5) recovers 3.7pp more named entities. do_sample=True on standalone, False on EC2 — to be unified. | Existing: `10_empty_and_hallucination_rates.png` + `16_improvement_J_vs_A.png` |
+| 13 | **Limits of Tuning** | Tuning = mitigation, not cure. **Config J trade-off**: eliminates empties but doubles hallucinations (111→262). Net IS gain only +0.08. The fundamental tradeoff is silent failures (empties) vs noisy failures (hallucinations). Core domain mismatch remains. | **NEW graph: Hyperparameter sensitivity tornado** |
+| 14 | **Curated Examples** | Side-by-side ref vs hyp with IS scores (see examples section below) | Formatted text table |
+| 15 | **Live Demo** | Play 2-3 burned videos (see demo videos section below) | Video playback |
+| 16 | **Research Breadth** | One-liner per report (7 reports): evaluation, tuning, prompts, confidence, beam search, fine-tuning, **intelligibility** | Simple list |
 
 #### Section 3: Engineering Achievements (12 min, 7 slides) — 25%
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
-| 16 | **Pipeline Architecture** | 8-stage flow: Normalize → ASR → LRS3 → Manifests → Clustering → Decode → Reports → Burns | Pipeline flow diagram |
-| 17 | **Why Engineering Was Hard** | Research code → production. 37 bugs. HDR video, GPU encoding, Cython, fairseq patching, NVENC corruption | Bug count timeline or categories |
-| 18 | **Modular Refactoring** | 823→393 lines, 11 modules, 37 tests. Before/after comparison | Side-by-side code structure |
-| 19 | **Deployed Product** | Standalone container, desktop icon, web UI, drag-and-drop. "Runs on a standalone Linux machine, no cloud" | UI screenshot |
-| 20 | **Smart Features** | Transcription reuse, golden k-means, video segmentation with overlap | Feature diagram |
-| 21 | **Evaluation Infrastructure** | 16 analytical plots, per-segment HTML reports, CSV exports, custom NEA metric, **Intelligibility Score pipeline** (6-signal composite metric, per-segment IS scoring, automated IS classification) | Sample report screenshot |
-| 22 | **Quality Process** | Git tags, EC2/container sync protocol, **7** research reports, comprehensive docs | Process diagram |
+| 17 | **Pipeline Architecture** | 8-stage flow: Normalize → ASR → LRS3 → Manifests → Clustering → Decode → Reports → Burns | Pipeline flow diagram |
+| 18 | **Why Engineering Was Hard** | Research code → production. 37 bugs. HDR video, GPU encoding, Cython, fairseq patching, NVENC corruption | Bug count timeline or categories |
+| 19 | **Modular Refactoring** | 823→393 lines, 11 modules, 37 tests. Before/after comparison | Side-by-side code structure |
+| 20 | **Deployed Product** | Standalone container, desktop icon, web UI, drag-and-drop. "Runs on a standalone Linux machine, no cloud" | UI screenshot |
+| 21 | **Smart Features** | Transcription reuse, golden k-means, video segmentation with overlap | Feature diagram |
+| 22 | **Evaluation Infrastructure** | 16 analytical plots, per-segment HTML reports, CSV exports, custom NEA metric, **Intelligibility Score pipeline** (6-signal composite metric, per-segment IS scoring, automated failure mode classification, success pattern analysis, topic/length analysis) | Sample report screenshot |
+| 23 | **Quality Process** | Git tags, EC2/container sync protocol, **7** research reports, comprehensive docs | Process diagram |
 
 #### Section 4: Future Directions (10 min, 7 slides) — 35%
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
-| 23 | **The Starting Point Is Better Than WER Says** | **KEY TRANSITION**: WER says 11.4% usable. IS says 39.9% properly captured. Context recovery analysis: 43.6-50.6% recoverable with context. "We're not starting from 11% — we're starting from 40%." This reframes the entire roadmap. | WER tiers vs IS tiers side-by-side |
-| 24 | **Improvement Roadmap** | Phased: starting from IS 39.9% properly captured → Phase 1: confidence scoring to surface the good 40% → Phase 2: N-best to improve the fair 22% → Phase 3: fine-tuning to rescue the poor 22% | **WER trajectory line chart** |
-| 25 | **Phase 1: Confidence Scoring** | IS already proves 40% is good. Now extract beam scores to FLAG it automatically. No additional model inference. 2-4 hours effort. | Annotated pipeline showing where scores exist |
-| 26 | **Phase 2: N-Best Aggregation** | ROVER/MBR — currently discarding 19/20 beam candidates. 5-15% relative improvement. Moves "fair" tier segments up to "good". | Before/after diagram |
-| 27 | **Phase 3: Fine-Tuning** | AVSpeech domain adaptation. 15-25 WER point reduction. ~$72-120 GPU cost. Attacks the core domain mismatch. | Training data comparison diagram |
-| 28 | **Phase 4-5: Production** | Arabic (k-means model exists), multi-speaker, streaming, auto-tuning | Feature roadmap icons |
-| 29 | **Key Takeaways** | (1) 2.5x WER gap measured, but IS shows 40% is already usable (2) Production system built with novel evaluation metrics (3) Clear path: surface the good, improve the fair, rescue the poor | 3-point summary |
+| 24 | **The Starting Point Is Better Than WER Says** | **KEY TRANSITION**: WER says 11.4% usable. IS says 39.9% properly captured. Context recovery: 43.6-50.6% recoverable. **Success pattern insight**: 41.5% of successes are phonetically preserved — the visual signal captures phonetic structure even when words are wrong. "We're not starting from 11% — we're starting from 40%, and we know WHY it works." | WER tiers vs IS tiers side-by-side |
+| 25 | **Improvement Roadmap** | Phased, mapped to failure modes: Phase 1: confidence scoring → surfaces the good 40% (targets all modes by flagging quality). Phase 2: N-best aggregation → addresses Accumulated Small Errors (12.3%) and Content Word Errors (10.7%) by combining hypotheses. Phase 3: fine-tuning → attacks Topic Drift (15.9%), Entity Destruction (12.0%), and domain-specific failures (DIY/Home 30% → target 50%). **Topic insight**: Business already at 57% captured, training on diverse YouTube data lifts all categories. | **WER trajectory line chart** |
+| 26 | **Phase 1: Confidence Scoring** | IS already proves 40% is good. Now extract beam scores to FLAG it automatically. No additional inference needed. 2-4 hours effort. **Priority by topic**: Business/Finance segments (57% captured) are most likely reliable — flag these first. Short segments (<10 words, 32% captured) need lower confidence thresholds. | Annotated pipeline showing where scores exist |
+| 27 | **Phase 2: N-Best Aggregation** | ROVER/MBR — currently discarding 19/20 beam candidates. 5-15% relative improvement. Targets failure modes: Accumulated Small Errors (12.3%), Content Word Errors (10.7%) — these have partial correct words across multiple hypotheses. Moves "fair" tier segments up to "good". | Before/after diagram |
+| 28 | **Phase 3: Fine-Tuning — Exp A Results** | **UPDATE (Mar 2026)**: First fine-tuning run complete. r=16 LoRA, encoder frozen, 1,273 segments, 17h on Tesla T4. Best val accuracy **62.94% at epoch 2** (320 updates). Severe overfitting after: train-val gap 36.5 pp by epoch 19. Key insight: r=16 capacity-limited for TED→YouTube shift. **Next**: Exp B with r=64 (4× capacity) + early stopping. Still targets Topic Drift (15.9%), Entity Destruction (12.0%). Decode eval pending. | `finetune/FT_01_loss_curves.png`, `finetune/FT_02_accuracy_curves.png`, `finetune/FT_10_summary_dashboard.png` |
+| 29 | **Phase 4-5: Production** | Arabic (k-means model exists), multi-speaker, streaming, auto-tuning. **Topic-specific tuning**: target lowest-performing categories (DIY 30%, Entertainment 30%) with domain-specific data. | Feature roadmap icons |
+| 30 | **Key Takeaways** | (1) Rigorous assessment: 2.5x WER gap on 1,497 segments, novel IS metric reveals 40% properly captured, 10 classified failure modes, topic/length analysis. (2) Production system: standalone container, 37 bugs fixed, 8-stage pipeline, 37 tests, 7 research reports. (3) Clear path: each phase targets specific failure modes — surface the good (confidence), improve the fair (N-best), rescue the poor (fine-tuning). | 3-point summary |
 
 #### Appendix / Backup Slides
 
 | # | Slide | Key Content | When to use |
 |---|-------|-------------|-------------|
 | A1 | **Homophenes: The Lip-Reading Problem** | 50-70% of English sounds invisible on lips. Groups: p/b/m identical, t/d/n/s/z/l identical. Examples: "mom"↔"bomb", "collar"↔"color", "pads"↔"pants" | If someone asks "why does it confuse those words?" |
-| A2 | **Catastrophic lenpen=2.0** | Experiment H: mean WER 171.5%, model generates paragraphs of hallucinated text | Boss deep-dive only |
+| A2 | **Exp A Fine-Tuning Deep Dive** | Full training dynamics: LR schedule (FT_04), gradient norms (FT_05), perplexity explosion (FT_06), data distribution (FT_07), granular loss with checkpoints (FT_08), wall-clock time (FT_09). Root causes: small dataset, noisy labels, rank limitation, encoder frozen. Recommendation: r=64 + early stopping + data curation | Boss deep-dive only |
+| A3 | **Catastrophic lenpen=2.0** | Experiment H: mean WER 171.5%, model generates paragraphs of hallucinated text | Boss deep-dive only |
 | A3 | **Segment Stability Heatmap** | Which segments are always good/bad across all 13 configs | Boss deep-dive only |
 | A4 | **Full Experiment Table** | All 13 experiments A-M with full metrics | Boss deep-dive only |
+| A5 | **Topic Analysis Detail** | Full 11-topic table: Business/Finance (IS 3.08, 57% captured) → DIY/Home (IS 2.13, 30%). LLM context recovery adds 5-15% over rule-based per topic | If asked about domain-specific performance |
+| A6 | **Signal Comparison: Success vs Failure** | Full signal table: semantic 0.74 vs 0.24, phonetic 0.81 vs 0.38, NEA F1 74% vs 16%, WER 30% vs 87%. Length ratio NOT a strong differentiator (0.97 vs 0.89) | If asked about what makes IS work |
+| A7 | **Config J Full-Dataset Comparison** | Baseline vs Config J vs Config C on 1,497 segments: IS 2.52→2.60, empties 70→0, hallucinations 307→348. Trade-off: silent failures vs noisy failures. J wins by +0.08 IS, +25 captured segments. Long segments benefit most (+0.25 IS for 20+ words) | If asked about tuning details |
 
 ---
 
 ### Examples: What to Show and Why
 
-The examples are the emotional core of the presentation. Each one should make a specific point.
+Each example demonstrates a specific point about the system's behavior.
 
-#### For the main presentation (slides 2, 11, 12):
+**1. Perfect transcription — open with this (Slide 2)**
+- `IEa7qEkMvfQ_3__c5447488` — 33 words about insurance policies (WER 0%, IS 5.0)
+- Shows the technology fundamentally works on complex domain-specific content.
 
-**1. "When it works, it's magic" — open with this**
-- `IEa7qEkMvfQ_3__c5447488` — 33 words perfectly lip-read about insurance policies (WER 0%)
-- **Why this one**: It's the longest perfect transcription. It includes domain-specific terms ("insurance company", "out of pocket expense"). It proves the technology fundamentally works. Open the presentation by playing this burned video — let the audience see it before explaining anything.
+**2. Hallucination — the core failure mode (Slide 13)**
+- `00MUdHQ7GGY_8__b1480c7a` — REF: "carry strap" → HYP: "holocaust denier" (WER 100%, IS 0.7)
+- The model fabricates coherent but fictional text. Shows why confidence scoring matters — the output reads fluently but is entirely fabricated.
 
-**2. "The hallucination problem" — the core research finding**
-- `00MUdHQ7GGY_8__b1480c7a` — REF: "it doesn't have a carry strap..." → HYP: "this is david irving he's a holocaust denier..." (WER 100%)
-- **Why this one**: It's the most dramatic example of hallucination. The model fabricates a coherent but completely fictional narrative. It shows the audience WHY this problem is hard — the output LOOKS correct, reads fluently, but is entirely made up. This is the slide that makes executives understand why confidence scoring matters.
+**3. Phonetic near-misses — demonstrates why lip reading is hard (Slide 13)**
+- `-POZpyVCN8k_9__c7b26ea8` — "admiral mcrae" → "animal migratory" (WER 33%, IS 3.0)
+- `-WQZsfHcPDM_7__5210cac1` — "bottle/probiotics" → "monitor/permafrost" (WER 58%, IS 2.7)
+- Lip shapes for "admiral/animal" are genuinely similar. These are NOT model errors — they're inherent visual ambiguities.
 
-**3. "Entertaining near-misses" — show visual ambiguity is real**
-- `-POZpyVCN8k_9__c7b26ea8` — "admiral mcrae" → "animal migratory" (WER 33.3%)
-- `-WQZsfHcPDM_7__5210cac1` — "each bottle contains 1 billion cfus of probiotics" → "each monitor has 1 million cfus of permafrost" (WER 57.9%)
-- **Why these**: They're funny, memorable, and scientifically important. They show that lip shapes for "admiral/animal" and "bottle/monitor" are genuinely similar visually. This makes the audience appreciate that lip reading is inherently ambiguous — it's not just a bad model, it's a hard problem. The humor makes the point stick.
-
-**4. "Tuning helps but has limits" — show the trade-off**
-- `DBhaa45mAro_2__07d05c7a` — Baseline: EMPTY output (WER 100%) → Config J: partial transcription (WER 73.3%)
-- `eLS1vcpGVHQ_12__e9dd9adc` — Baseline: "years ago when i was" (WER 90%) → Config J: 40-word TED talk hallucination (WER 400%)
-- **Why these two together**: They're the yin and yang of hyperparameter tuning. Same config change fixes one segment and destroys another. This is the slide that makes technical bosses understand why there's no simple knob to turn — and why the roadmap matters.
-
-#### What NOT to show in the main presentation (save for bosses):
-
-- The catastrophic lenpen=2.0 examples (6833% WER) — too extreme, might make the audience question the entire approach
-- The full experiment comparison table with 13 rows — too much data, use the summary instead
-- The segment stability heatmap — fascinating for researchers but dense for mixed audience
-- NEA vs WWER scatter plot in detail — mention the number (38.8% F1), don't dwell on the metric definition
-
-#### For a separate boss deep-dive (technical session):
-
-Your bosses will want to see the full picture. Prepare these as backup slides or a separate 20-minute session:
-
-**Graphs for bosses (very technical):**
-1. `09_boxplot_wwer_all_experiments.png` — full experiment comparison, they'll want to see all 13 configs
-2. `12_segment_stability_heatmap.png` — which segments are consistently good/bad across configs (shows there's a stable core of ~11% always-good segments)
-3. `01_wer_vs_duration.png` + `03_wwer_vs_duration.png` — the duration effect in detail
-4. `11_wer_vs_wwer_scatter.png` — the lenpen paradox (higher corpus WER but lower segment WER)
-5. `16_improvement_J_vs_A.png` — per-segment improvement analysis
-6. Full experiment comparison table from `docs/tuning/experiment-comparison.csv`
-7. The catastrophic lenpen=2.0 examples — they'll appreciate the systematic exploration
-8. Report 6 fine-tuning analysis details — LoRA rank analysis, unfreezing strategy
-
-**What bosses care about that clients don't:**
-- Methodology rigor (did you explore the space systematically?)
-- Reproducibility (can you reproduce these results?)
-- The `do_sample=True` vs `False` difference and what it means
-- Why you chose beam=20 over alternatives
-- The exact mechanism of hallucination (LLM prior overwhelming visual signal)
-
-#### For clients (results-driven):
-
-**Graphs for clients:**
-1. **Quality tier pie chart** (NEW) — immediately shows "11.4% usable" — they understand this
-2. **CDF WWER** (`15_cdf_wwer_curated.png`) — "X% of segments are below Y% error" = actionable threshold
-3. **Empty and hallucination rates** (`10_empty_and_hallucination_rates.png`) — shows failure modes
-4. **WER trajectory roadmap** (NEW) — "here's where we are, here's where we're going"
-5. Duration histogram (`13_duration_histogram.png`) — context on what the data looks like
-
-**What clients care about that bosses don't:**
-- "Can I trust the output?" — confidence scoring pitch
-- "Does it work on MY videos?" — domain relevance
-- "What do I get for my money?" — roadmap with cost/benefit per phase
-- The UI demo — they want to see themselves using it
-- Burned video demos — seeing is believing
+**4. Tuning trade-off — shows why hyperparameters aren't enough (Slide 13)**
+- `DBhaa45mAro_2__07d05c7a` — Baseline: EMPTY → Config J: partial transcription (WER 73%)
+- `eLS1vcpGVHQ_12__e9dd9adc` — Baseline: partial → Config J: 40-word hallucination (WER 400%)
+- Same config change fixes one segment and destroys another. No simple knob to turn.
 
 ---
 
-### Demo Video Selection
+### Demo Video Sequence
 
-**For Slide 2 (opening hook):** Play `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4` — the 33-word perfect transcription. Start with the video, let the audience read along, THEN explain what they just saw. Maximum impact.
+**Slide 2 (opening):** Play `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4` — 33-word perfect transcription. Play first, explain after.
 
-**For Slide 12 (live demo):** Play 3 videos in sequence:
-1. `d8BR6hsvzoY_31__2e9546df_with_hyp.mp4` — "buy one get one free" (WER 0%, commercial-style, short, punchy)
-2. `-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4` — "admiral mcrae" → "animal migratory" (funny near-miss, audience will laugh)
-3. `00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4` — the David Irving hallucination (dramatic failure, audience gasps)
+**Slide 15 (demo):** Three videos in sequence:
+1. `d8BR6hsvzoY_31__2e9546df_with_hyp.mp4` — "buy one get one free" (WER 0%, short)
+2. `-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4` — "admiral mcrae" → "animal migratory" (near-miss)
+3. `00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4` — David Irving hallucination (total fabrication)
 
-**Why this sequence**: Good → Funny → Bad. You start by reinforcing that the system works, make the audience laugh with a relatable error, then hit them with the hallucination problem. By the time you show the hallucination, they're engaged enough to understand why it matters. End with: "This is why our roadmap focuses on confidence scoring — knowing WHEN to trust the output."
+Sequence: Good → Funny → Failure. Transition: "This is why confidence scoring is the immediate next step."
 
-All burned videos are at: `english_full_results/client_outputs/burned_videos/`
+All burned videos: `english_full_results/client_outputs/burned_videos/`
 
 ---
 
@@ -270,11 +231,11 @@ All burned videos are at: `english_full_results/client_outputs/burned_videos/`
 
 | Plot | Use on Slide | Why | Audience |
 |------|-------------|-----|----------|
-| `01_wer_vs_duration.png` | 7 (Why the Gap) | Shows short segments fail catastrophically — the most actionable finding | Both |
-| `09_boxplot_wwer_all_experiments.png` | 6 (Distribution) | Shows the spread across experiments — bosses want this, clients get the headline | Both (simplified for clients) |
-| `10_empty_and_hallucination_rates.png` | 9 (Tuning) | Empty vs hallucination trade-off per config — intuitive failure mode comparison | Both |
-| `14_nea_vs_wwer_scatter.png` | 8 (NEA) | Shows entity accuracy correlation — technical validation of NEA metric | Bosses |
-| `16_improvement_J_vs_A.png` | 9 (Tuning) | Per-segment improvement from best config — shows tuning is real but limited | Both |
+| `01_wer_vs_duration.png` | 10 (Why the Gap) | Shows short segments fail catastrophically — the most actionable finding | Both |
+| `09_boxplot_wwer_all_experiments.png` | 9 (Distribution) | Shows the spread across experiments — bosses want this, clients get the headline | Both (simplified for clients) |
+| `10_empty_and_hallucination_rates.png` | 12 (Tuning) | Empty vs hallucination trade-off per config — intuitive failure mode comparison | Both |
+| `14_nea_vs_wwer_scatter.png` | 11 (NEA) | Shows entity accuracy correlation — technical validation of NEA metric | Bosses |
+| `16_improvement_J_vs_A.png` | 12 (Tuning) | Per-segment improvement from best config — shows tuning is real but limited | Both |
 | `15_cdf_wwer_curated.png` | Appendix | "X% of segments below Y% WER" — actionable for quality thresholds | Clients |
 
 #### Existing plots for boss-only deep dive:
@@ -292,27 +253,24 @@ All burned videos are at: `english_full_results/client_outputs/burned_videos/`
 |-------|-------------|---------------|-------------|
 | **Quality Tier Pie/Bar Chart** | 5 (Reality Gap) | 5 colored tiers: 11.4% usable / 17.4% marginal / 17.8% poor / 32.8% unusable / 20.6% hallucinated | Report 1 data |
 | **Paper vs Reality Bar Chart** | 4 (Benchmark) | Two bars: LRS3 25.4% vs Real-world 64.1%, with "2.5x" annotation | Report 1 data |
-| **WER Trajectory Line Chart** | 21 (Roadmap) | Line: Current 64% → Phase 1: 55% → Phase 2: 45% → Phase 3: 42%, with mission labels | `docs/backlog/mission-backlog.md` |
-| **Hyperparameter Sensitivity Tornado** | 10 (Limits) | lenpen from -0.5 to 2.0: empty rate (44.9% → 0%) vs hallucination rate (opposite) | Experiment comparison data |
-| **Before/After Tuning Paired Bars** | 9 (Tuning) | Baseline vs best config: WER, WWER, empty%, hallucination% side by side | Experiment CSV |
+| **Failure Mode Bar Chart** | 8 (Failure Modes) | 10 modes: Topic Drift 15.9% → Over-generation 0.1%, color-coded | IS failure_mode_distribution |
+| **WER Trajectory Line Chart** | 25 (Roadmap) | Line: Current 64% → Phase 1: 55% → Phase 2: 45% → Phase 3: 42%, with mission labels | `docs/backlog/mission-backlog.md` |
+| **Hyperparameter Sensitivity Tornado** | 13 (Limits) | lenpen from -0.5 to 2.0: empty rate (44.9% → 0%) vs hallucination rate (opposite) | Experiment comparison data |
+| **Before/After Tuning Paired Bars** | 12 (Tuning) | Baseline vs Config J (full 1497 segments): IS, captured%, empty%, hallucination% | IS Config J comparison |
 
 Script to extend: `docs/evaluation/plots/generate_experiment_plots.py` (existing 643-line generator)
 
 ---
 
-### Dual-Audience Strategy
+### Manager Audience: What They Want to See
 
-**Structure each slide as a newspaper**: Headline tells the story for execs/clients, body provides evidence for technical team.
-
-| Aspect | Clients / Potential Clients | Technical Bosses |
-|--------|----------------------------|-----------------|
-| **What they want to know** | Does it work? Can I trust it? What do I get next? | Is the methodology sound? What are the limits? What resources do you need? |
-| **Language** | "The model makes up text" not "hallucination" | Full technical vocabulary OK |
-| **Metrics** | Quality tiers (% usable), burned video demos | WER/WWER/NEA with statistical context |
-| **Graphs** | Pie charts, bar charts, roadmap trajectory | Scatter plots, heatmaps, boxplots, CDFs |
-| **Examples** | Good → Funny → Bad sequence | Full experiment table + catastrophic edge cases |
-| **Roadmap framing** | "Investment → return" (cost per phase → improvement) | "Research agenda" (what's novel, what's engineering) |
-| **Key takeaway** | "This works today, and here's how it gets better" | "We've systematically characterized the gap and have a principled plan" |
+- **Methodology rigor**: Did you explore the space systematically? (13 experiments, 1497-segment evaluation, 10 failure modes classified, topic/length analysis)
+- **Reproducibility**: Can these results be reproduced? (golden k-means, fixed configs, version-tagged code)
+- **Novel contributions**: IS metric, failure mode taxonomy, success pattern analysis, topic-specific performance — explain why this goes beyond standard WER
+- **Technical details**: do_sample divergence, beam=20 rationale, hallucination mechanism, Config J full-dataset trade-offs, phonetic preservation as #1 success driver
+- **Actionable insights**: Business/Finance already at 57% captured → confidence scoring most impactful there. Short segments (<10 words) drag down metrics → minimum length filter. Each roadmap phase targets specific failure modes.
+- **Resource needs**: What do you need to continue? (GPU budget for fine-tuning, time allocation per phase)
+- **Key takeaway**: "We've systematically characterized the gap at every level — per-segment, per-topic, per-length, per-failure-mode — built the infrastructure, and have a principled plan where each phase targets specific failure categories"
 
 ### Key Materials Reference
 
@@ -328,6 +286,9 @@ Script to extend: `docs/evaluation/plots/generate_experiment_plots.py` (existing
 | Burned videos (1497 demos) | `english_full_results/client_outputs/burned_videos/` |
 | Report 1 (evaluation) | `docs/evaluation/report_1_executive_assessment.md` |
 | Reports 3-6 | `docs/{prompts,confidence,beam-search,finetuning}/` |
+| **Exp A training plots (10)** | `docs/finetuning/plots/FT_*.png` |
+| **Exp A comparison report** | `docs/finetuning/experiments/comparison_report.md` |
+| **Exp A training research** | `docs/finetuning/training-research-notes.md` (Section 6) |
 | **Intelligibility methodology** | `docs/evaluation/intelligibility_methodology.md` |
 | **Intelligibility scores (1497 rows)** | `docs/evaluation/intelligibility/intelligibility_scores.csv` |
 | **Intelligibility summary** | `docs/evaluation/intelligibility/intelligibility_summary.json` |

@@ -1,37 +1,41 @@
 # Presentation Materials — Argos VSP
 **Date**: February 24, 2026
 **Duration**: 45-60 minutes
-**Audience**: Client demo + Supervisor review + Potential new clients
+**Audience**: Manager / supervisor project review (see `CLIENT_ADAPTATION_GUIDE.md` for client version)
 
 ---
 
 ## Folder Index
 
 ### PRESENTATION_PLAN.md
-The full presentation plan with 27-slide structure, example selection rationale, dual-audience strategy, demo video sequencing, and speaker notes. **Read this first.**
+The full presentation plan with 30-slide structure, example selection rationale, demo video sequencing, and speaker notes. **Read this first.**
 
 ---
 
-### 01_plots_for_slides/ (13 files)
+### 01_plots_for_slides/ (17 files)
 Main presentation graphs — use directly in slides.
 
 | File | Slide | What it shows |
 |------|-------|---------------|
 | `P1_quality_tiers.png` | 5 (Reality Gap) | 5-tier WER quality breakdown: 11.4% usable → 20.6% hallucinated |
 | `P2_paper_vs_reality.png` | 4 (Benchmark) | LRS3 25.4% vs Real-world 64.1% with 2.5x annotation |
-| `P3_wer_trajectory.png` | 24 (Roadmap) | Projected improvement: 64% → 55% → 45% → 42% WER |
-| `P4_lenpen_sensitivity.png` | 12 (Limits) | Length penalty vs empty/hallucination trade-off |
-| `P5_tuning_before_after.png` | 11 (Tuning) | Baseline vs Config J paired comparison |
-| `pipeline_architecture.png` | 16 (Architecture) | 8-stage pipeline flow diagram |
-| `01_wer_vs_duration.png` | 9 (Why the Gap) | Short segments fail catastrophically |
-| `09_boxplot_wwer_all_experiments.png` | 8 (Distribution) | WWER spread across all 13 experiments |
-| `10_empty_and_hallucination_rates.png` | 11 (Tuning) | Empty vs hallucination rates per config |
+| `P3_wer_trajectory.png` | 25 (Roadmap) | Projected improvement: 64% → 55% → 45% → 42% WER |
+| `P4_lenpen_sensitivity.png` | 13 (Limits) | Length penalty vs empty/hallucination trade-off |
+| `P5_tuning_before_after.png` | 12 (Tuning) | Baseline vs Config J paired comparison |
+| `pipeline_architecture.png` | 17 (Architecture) | 8-stage pipeline flow diagram |
+| `01_wer_vs_duration.png` | 10 (Why the Gap) | Short segments fail catastrophically |
+| `09_boxplot_wwer_all_experiments.png` | 9 (Distribution) | WWER spread across all 13 experiments |
+| `10_empty_and_hallucination_rates.png` | 12 (Tuning) | Empty vs hallucination rates per config |
 | `13_duration_histogram.png` | Context | Segment duration distribution |
-| `14_nea_vs_wwer_scatter.png` | 10 (NEA) | Named entity accuracy correlation |
+| `14_nea_vs_wwer_scatter.png` | 11 (NEA) | Named entity accuracy correlation |
 | `15_cdf_wwer_curated.png` | Appendix | CDF of WWER — actionable quality thresholds |
-| `16_improvement_J_vs_A.png` | 11 (Tuning) | Per-segment improvement analysis |
+| `16_improvement_J_vs_A.png` | 12 (Tuning) | Per-segment improvement analysis |
+| `finetune/FT_01_loss_curves.png` | 28 (Fine-Tuning) | **NEW**: Train vs val loss — divergence after epoch 2 |
+| `finetune/FT_02_accuracy_curves.png` | 28 (Fine-Tuning) | **NEW**: Train vs val accuracy — 36.5 pp gap |
+| `finetune/FT_03_overfitting_gap.png` | 28 (Fine-Tuning) | **NEW**: Overfitting progression diagnostic |
+| `finetune/FT_10_summary_dashboard.png` | 28 (Fine-Tuning) | **NEW**: 6-panel summary dashboard |
 
-### 02_plots_boss_deep_dive/ (4 files)
+### 02_plots_boss_deep_dive/ (14 files)
 Technical deep-dive graphs — for supervisor/boss session only.
 
 | File | What it shows |
@@ -40,8 +44,18 @@ Technical deep-dive graphs — for supervisor/boss session only.
 | `05_nea_recall_vs_duration.png` | Named entity recall drops with short segments |
 | `11_wer_vs_wwer_scatter.png` | The lenpen paradox: higher corpus WER but better segment WER |
 | `12_segment_stability_heatmap.png` | Which segments are always good/bad across all configs |
+| `FT_01_loss_curves.png` | **NEW**: Exp A train vs val loss curves |
+| `FT_02_accuracy_curves.png` | **NEW**: Exp A train vs val accuracy (overfitting gap) |
+| `FT_03_overfitting_gap.png` | **NEW**: Dual-axis overfitting progression |
+| `FT_04_lr_schedule.png` | **NEW**: Tri-stage learning rate schedule |
+| `FT_05_gradient_norm.png` | **NEW**: Gradient norm trajectory with trend |
+| `FT_06_perplexity.png` | **NEW**: Train vs val perplexity (log scale) |
+| `FT_07_data_distribution.png` | **NEW**: Training data IS tier distribution |
+| `FT_08_granular_loss.png` | **NEW**: 50-update loss with checkpoint markers |
+| `FT_09_wall_clock.png` | **NEW**: Per-epoch training time |
+| `FT_10_summary_dashboard.png` | **NEW**: 6-panel training summary dashboard |
 
-### 03_reports_md/ (7 files)
+### 03_reports_md/ (8 files)
 Research reports in Markdown format — reference material for slide content.
 
 | File | Topic |
@@ -52,7 +66,8 @@ Research reports in Markdown format — reference material for slide content.
 | `report_4_confidence_scoring.md` | Beam scores, quality filtering, confidence extraction |
 | `report_5_beam_search_aggregation.md` | N-best ROVER/MBR, hypothesis aggregation |
 | `report_6_finetuning_analysis.md` | LoRA fine-tuning, AVSpeech domain adaptation |
-| `intelligibility_methodology.md` | **NEW**: IS metric design, 6 signals, tier examples, homophene analysis |
+| `intelligibility_methodology.md` | IS metric design, 6 signals, tier examples, failure modes (10), success patterns (7), topic analysis (11 categories) |
+| `finetune_A_comparison_report.md` | **NEW**: Exp A (r=16) training results, overfitting analysis, 10 diagnostic plots, recommendations for Exp B |
 
 ### 04_reports_docx/ (18 files)
 Formatted reports (Word + PDF) — printable, shareable with stakeholders.
@@ -73,7 +88,7 @@ Formatted reports (Word + PDF) — printable, shareable with stakeholders.
 - `tuning-experiments.docx` — Experiment methodology
 - `pairwise-comparison.pdf` — Segment-level comparison tables
 - `intelligibility_report.docx` — **NEW**: IS methodology, tier examples, 1497-segment scoring results
-- `intelligibility_summary.json` — **NEW**: IS aggregate stats, tier distribution, signal weights
+- `intelligibility_summary.json` — **NEW**: IS aggregate stats, tier distribution, signal weights, failure mode distribution, success pattern distribution, signal comparison, topic analysis (11 categories), length analysis
 
 ### 05_data/ (18+ files)
 Raw data for reference or custom analysis.
@@ -135,7 +150,7 @@ Curated example data for building comparison tables.
 
 ## Quick Start Guide
 
-1. **Read `PRESENTATION_PLAN.md`** for the full 27-slide structure and speaker notes
+1. **Read `PRESENTATION_PLAN.md`** for the full 30-slide structure and speaker notes
 2. **Start with `01_plots_for_slides/`** — these map directly to slides in the plan
 3. **Open `06_demo_videos/IEa7qEkMvfQ_3__c5447488_with_hyp.mp4`** for the opening hook
 4. **Use `04_reports_docx/`** for any content you want to hand out or reference
@@ -155,7 +170,17 @@ Curated example data for building comparison tables.
 | **IS Excellent (4-5)** | **18.4%** | **276 segments** |
 | **IS Good (3-4)** | **21.4%** | **321 segments** |
 | **Context recoverable** | **43.6-50.6%** | **Rule-based / LLM-judged** |
+| **Failure modes classified** | **10 modes** | **900 failed segments** |
+| **#1 failure: Topic Drift** | **15.9%** | **143 segments** |
+| **#1 success: Phonetic Preservation** | **41.5%** | **248 of 597 successes** |
+| **Best topic: Business/Finance** | **IS 3.08, 57% captured** | **46 segments** |
+| **Worst topic: DIY/Home** | **IS 2.13, 30% captured** | **27 segments** |
+| **Short segments (5-10 words)** | **32% captured, 74% WER** | **290 segments** |
+| **Long segments (20+ words)** | **49% captured, 55% WER** | **535 segments** |
+| **Config J IS (full dataset)** | **2.60 vs 2.52 baseline** | **1,497 segments** |
+| **Config J captured** | **622 vs 597 (+25)** | **Empties 0 vs 70** |
 | NEA F1 (named entities) | 38.8% | Report 1 |
+| **NEA F1: largest differentiator** | **74% success vs 16% failure** | **Signal comparison** |
 | Best config WWER (J) | 57.7% | Experiment comparison, 107 segments |
 | Empty prediction rate (Baseline) | 14.0% | Experiment A |
 | Empty prediction rate (Config J) | 0.0% | Experiment J |
@@ -168,3 +193,8 @@ Curated example data for building comparison tables.
 | Segments per experiment | 107 | Tuning dataset |
 | Full dataset segments | 1,497 | english_full_results |
 | Projected WER after Phase 3 | ~42% | Mission backlog |
+| **Exp A: Best val accuracy** | **62.94% (epoch 2)** | **Fine-tuning r=16, 320 updates** |
+| **Exp A: Final val accuracy** | **58.98% (epoch 19)** | **Overfitting: 36.5 pp gap** |
+| **Exp A: Training time** | **17.0 hours** | **Tesla T4, FP16** |
+| **Exp A: Trainable params** | **12.6M (0.19%)** | **LoRA r=16, alpha=32** |
+| **Exp A: Training data** | **1,273 train / 224 val** | **Stratified by IS tier** |
