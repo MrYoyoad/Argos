@@ -1454,12 +1454,17 @@ def slide_21(prs):
         ("Smart Segmentation",
          "Configurable overlap for context preservation across segment "
          "boundaries.", LGRAY),
+        ("Claude-as-Judge",
+         "LLM-designed evaluation: Claude crafted the IS rubric, selected "
+         "6 signals and weights, defined tier boundaries and failure modes "
+         "— then distilled into deterministic, reproducible metrics. "
+         "No LLM called per sample.", GREEN),
     ]
 
-    cw = Inches(3.6)
+    cw = Inches(2.7)
     ch = Inches(4.0)
-    gap = Inches(0.5)
-    total = 3 * cw + 2 * gap
+    gap = Inches(0.35)
+    total = 4 * cw + 3 * gap
     cx = (SL_W - total) / 2
     cy = CT + Inches(0.2)
 
@@ -1468,20 +1473,22 @@ def slide_21(prs):
         x = cx + i * (cw + gap)
         r = add_rect(slide, x, cy, cw, ch, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, title, x + Inches(0.25), cy + Inches(0.3),
-                 cw - Inches(0.5), Inches(0.5),
-                 size=Pt(18), color=color, bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, desc, x + Inches(0.25), cy + Inches(1.0),
-                 cw - Inches(0.5), Inches(2.5),
-                 size=Pt(14), color=WHITE)
+        add_text(slide, title, x + Inches(0.15), cy + Inches(0.3),
+                 cw - Inches(0.3), Inches(0.5),
+                 size=Pt(16), color=color, bold=True, align=PP_ALIGN.CENTER)
+        add_text(slide, desc, x + Inches(0.15), cy + Inches(0.95),
+                 cw - Inches(0.3), Inches(2.7),
+                 size=Pt(12), color=WHITE)
         card_shapes.append(r)
 
     _finish(slide, 21,
-        "Three intelligent features. Transcription reuse: if you manually "
-        "correct a segment's transcription, it persists across all future "
-        "runs. Golden k-means: a 1,396-video baseline model ensures "
-        "consistent clustering. Smart segmentation: configurable overlap "
-        "ensures context isn't lost at boundaries.",
+        "Four intelligent features. Transcription reuse: manual corrections "
+        "persist across runs. Golden k-means: consistent clustering baseline. "
+        "Smart segmentation: configurable overlap. Claude-as-Judge: the entire "
+        "Intelligibility Score framework was designed by Claude — rubric, signal "
+        "selection, weights, tier definitions, failure mode taxonomy — then "
+        "distilled into deterministic metrics. No LLM is called per sample at "
+        "runtime; Claude's expert judgment is baked into the formulas.",
         [card_shapes])
 
 # ═══════════════════════════════════════════════════════════════════════
