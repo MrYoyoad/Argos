@@ -1,0 +1,308 @@
+% ============================================================
+% APPENDIX: BACKUP SLIDES (A1–A10)
+% ============================================================
+
+\section*{Appendix}
+
+% ----------------------------------------------------------
+% A1: Homophenes
+% ----------------------------------------------------------
+\begin{frame}{A1: Homophenes --- The Lip-Reading Problem}
+  \twocol{0.52}{
+    {\small 50--70\% of English sounds are \alert{invisible} on lips.\\
+    Multiple sounds produce identical mouth shapes:}
+
+    \vspace{6pt}
+
+    \begin{tabular}{@{}ll@{}}
+      \toprule
+      \textbf{Viseme Group} & \textbf{Sounds} \\
+      \midrule
+      Bilabial & p, b, m \\
+      Alveolar & t, d, n, s, z, l \\
+      Velar & k, g, ng \\
+      Labiodental & f, v \\
+      \bottomrule
+    \end{tabular}
+
+    \vspace{6pt}
+    \notetext{``Viseme'' = visual phoneme. One viseme maps\\to multiple phonemes.}
+  }{0.45}{
+    {\small\textbf{Confusable word pairs:}}
+
+    \vspace{4pt}
+
+    \begin{tabular}{@{}l@{$\;\leftrightarrow\;$}l@{}}
+      \toprule
+      \multicolumn{2}{c}{\textbf{Identical on Lips}} \\
+      \midrule
+      mom & bomb \\
+      pat & bat \\
+      collar & color \\
+      pads & pants \\
+      admiral & animal \\
+      probiotics & permafrost \\
+      \bottomrule
+    \end{tabular}
+
+    \vspace{6pt}
+    \notetext{Context is the ONLY disambiguation signal.\\This is why the LLM component matters.}
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% A2: Exp A Fine-Tuning Deep Dive
+% ----------------------------------------------------------
+\begin{frame}{A2: Exp A Fine-Tuning Deep Dive}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{FT_04_lr_schedule.png}\\[2pt]
+      \notetext{Tri-stage learning rate schedule}
+
+      \vspace{4pt}
+
+      \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{FT_06_perplexity.png}\\[2pt]
+      \notetext{Train vs validation perplexity (log scale)}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{FT_05_gradient_norm.png}\\[2pt]
+      \notetext{Gradient norm trajectory with trend}
+
+      \vspace{4pt}
+
+      \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{FT_07_data_distribution.png}\\[2pt]
+      \notetext{Training data IS tier distribution}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ----------------------------------------------------------
+% A3: Catastrophic lenpen=2.0
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A3: Catastrophic lenpen=2.0 (Config H)}
+  {\small Config H forces the model to generate longer text. Mean WER: \alert{539.6\%}\\
+  The model generates \alert{paragraphs of hallucinated text}:}
+
+  \vspace{4pt}
+
+  {\scriptsize
+  \begin{tabular}{@{}p{2.5cm}p{3.5cm}p{5.5cm}r@{}}
+    \toprule
+    \textbf{Segment} & \textbf{Reference} & \textbf{Config H Output} & \textbf{WER} \\
+    \midrule
+    \cellcolor{TierFailedBg} pOeJSxbFyto &
+    ``get the idea'' &
+    ``that's why I'm here thank you so much for having me it's been an honor and a privilege to share my story with you\ldots'' &
+    \werbad{6,833\%} \\[3pt]
+    \cellcolor{TierFailedBg} 9KACXV-cW-4 &
+    ``now those predictions I think'' &
+    ``of first believers the same path I'd like to take a moment to thank all of you for being here today\ldots'' &
+    \werbad{4,640\%} \\[3pt]
+    \cellcolor{TierFailedBg} loebelfG9T4 &
+    ``so repeat make yourself at home'' &
+    ``don't forget to make yourself at home thank you very much that was a lot of fun\ldots'' &
+    \werbad{4,183\%} \\
+    \bottomrule
+  \end{tabular}}
+
+  \vspace{4pt}
+  \notetext{lenpen=2.0 removes the generation length brake, letting the LLM prior run unchecked.}
+\end{frame}
+
+% ----------------------------------------------------------
+% A4: Segment Stability Heatmap
+% ----------------------------------------------------------
+\begin{frame}{A4: Segment Stability Across Configurations}
+  \fullwidthfig{12_segment_stability_heatmap.png}
+                {Per-segment WWER across 13 configs. ``Hard'' and ``easy'' segments are consistent --- the visual encoder is the bottleneck.}
+\end{frame}
+
+% ----------------------------------------------------------
+% A5: Full Experiment Table
+% ----------------------------------------------------------
+\begin{frame}{A5: Full Experiment Table (13 Configurations)}
+  \input{tables/experiment_comparison.tex}
+\end{frame}
+
+% ----------------------------------------------------------
+% A6: Topic Analysis Detail
+% ----------------------------------------------------------
+\begin{frame}{A6: Topic Analysis --- 11 Categories}
+  \input{tables/topic_analysis.tex}
+\end{frame}
+
+% ----------------------------------------------------------
+% A7: Signal Comparison
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{A7: Signal Comparison --- Success vs Failure}
+  \vspace{2pt}
+  {\small Mean signal values for segments with IS $\geq$ 3.0 (success) vs IS $<$ 3.0 (failure):}
+
+  \vspace{6pt}
+
+  \centering
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Signal} & \textbf{Success} & \textbf{Failure} & \textbf{Gap} & \textbf{IS Weight} \\
+    \midrule
+    Semantic Similarity & \tiergood{0.74} & \tierfailed{0.24} & 0.50 & 25\% \\
+    Phonetic Similarity & \tiergood{0.81} & \tierfailed{0.38} & 0.43 & 20\% \\
+    Inverse WER & \tiergood{0.70} & \tierfailed{0.13} & 0.57 & 15\% \\
+    Inverse WWER & \tiergood{0.68} & \tierfailed{0.15} & 0.53 & 10\% \\
+    NEA F1 & \tiergood{0.74} & \tierfailed{0.16} & \textbf{0.58} & 15\% \\
+    Length Ratio & \tiergood{0.97} & \tierfair{0.89} & 0.08 & 15\% \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \notetext{NEA F1 has the largest gap (58.3pp) --- names and numbers are the hardest signals to get right.\\
+  Length Ratio is NOT a strong differentiator (both groups produce roughly correct-length output).}
+\end{frame}
+
+% ----------------------------------------------------------
+% A8: IS Correlation & Cross-Config Analysis
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A8: IS Component Correlation}
+  \vspace{2pt}
+  {\small The 6 IS signals collapse into \keyword{3 independent dimensions}:}
+
+  \vspace{6pt}
+
+  \centering
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    \textbf{Dimension} & \textbf{Signals} & \textbf{Variance} & \textbf{Inter-signal r} \\
+    \midrule
+    \cellcolor{ArgosTeal!10} Word Accuracy & WER, WWER, Phonetic & 60.0\% & $>$ 0.79 \\
+    \cellcolor{ArgosOrange!10} Meaning Preservation & Semantic & 28.5\% & independent \\
+    \cellcolor{ArgosGray!10} Output Sanity & Length Ratio & 9.1\% & independent \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Cross-Config Stability (16 configs)}
+        \begin{tabular}{@{}lcc@{}}
+          \scriptsize\textbf{Signal} & \scriptsize\textbf{Stability} & \scriptsize\textbf{Std} \\
+          \scriptsize Semantic & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.017 \\
+          \scriptsize Phonetic & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.023 \\
+          \scriptsize NEA & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.056 \\
+          \scriptsize WER & \scriptsize\textcolor{ArgosRed}{Volatile} & \scriptsize 0.165 \\
+          \scriptsize Length & \scriptsize\textcolor{ArgosRed}{Volatile} & \scriptsize 0.142 \\
+        \end{tabular}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small LLM Judge Validation}
+        \begin{tabular}{@{}ll@{}}
+          \scriptsize Mean r & \scriptsize\keyword{0.925} (std 0.015) \\
+          \scriptsize Agreement & \scriptsize 88.6\% \\
+          \scriptsize Cohen's $\kappa$ & \scriptsize 0.773 \\
+          \scriptsize Recall (IS$\geq$3) & \scriptsize 97.6--100\% \\
+          \scriptsize Config range & \scriptsize $\kappa$ 0.62--0.86 \\
+        \end{tabular}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ----------------------------------------------------------
+% A9: Config J Full-Dataset Comparison
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{A9: Config J Full-Dataset Comparison}
+  {\small Three configurations compared on all 1,497 segments:}
+
+  \vspace{6pt}
+
+  \centering
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    \textbf{Metric} & \textbf{Baseline (A)} & \textbf{Config C} & \textbf{Config J} \\
+    \midrule
+    Mean IS & 2.52 & 2.56 & \keyword{2.60} \\
+    Captured (IS$\geq$3) & 597 & 608 & \keyword{622} \\
+    Captured \% & 39.9\% & 40.6\% & \keyword{41.5\%} \\
+    Mean WER & 67.0\% & 79.8\% & 73.2\% \\
+    Empties & 70 & 0 & \keyword{0} \\
+    Hallucinations & 307 & 330 & \alert{348} \\
+    \midrule
+    \multicolumn{4}{l}{\scriptsize\textbf{Trade-off}: J eliminates empties (+25 captured) but increases hallucinations (+41)} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small By Segment Length}
+        {\scriptsize Long segments (20+ words) benefit most:\\
+        +0.25 IS gain with Config J}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Interpretation}
+        {\scriptsize Silent failures (empties) $\rightarrow$ noisy failures\\
+        (hallucinations). Net +0.08 IS.}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ----------------------------------------------------------
+% A10: LLM Upgrade Analysis Deep Dive
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A10: LLM Upgrade Analysis Deep Dive}
+  \twocol{0.48}{
+    \begin{block}{\small Tier 1: Drop-in Models}
+      {\scriptsize
+      \begin{tabular}{@{}lcc@{}}
+        \textbf{Model} & \textbf{Hidden} & \textbf{Swap} \\
+        \midrule
+        Llama 3.1 8B & 4096 & Trivial \\
+        Llama 3.2 3B & 3072 & Proj retrain \\
+        Qwen 2.5 7B & 3584 & Proj retrain \\
+        Mistral 7B & 4096 & Trivial \\
+      \end{tabular}}
+    \end{block}
+
+    \vspace{2pt}
+
+    \begin{block}{\small Data Scaling Projections}
+      {\scriptsize
+      \begin{tabular}{@{}lccc@{}}
+        \textbf{Segs} & \textbf{Llama-2} & \textbf{3.1 8B} & \textbf{VALLR} \\
+        \midrule
+        1.3K & 67\% & --- & --- \\
+        5K & 55--60\% & 50--55\% & --- \\
+        20K & 45--50\% & 40--45\% & 30--35\% \\
+        50K & 40--45\% & 35--40\% & 25--30\% \\
+        100K & 38--42\% & 32--37\% & 22--27\% \\
+      \end{tabular}}
+    \end{block}
+  }{0.49}{
+    \begin{exampleblock}{\small Improvement Waterfall (Detailed)}
+      {\scriptsize
+      \begin{tabular}{@{}lr@{}}
+        Current WER & 67\% \\
+        \midrule
+        \textcolor{ArgosTeal}{Swap to Llama 3.1 8B} & $-$3 to $-$8pp \\
+        \textcolor{ArgosTeal}{Topic context prompts} & $-$5 to $-$10pp \\
+        \textcolor{ArgosTeal}{Anti-hallucination} & $-$2 to $-$5pp \\
+        \textcolor{ArgosOrange}{Scale to 20K segments} & $-$10 to $-$15pp \\
+        \textcolor{ArgosOrange}{Clean labels + IS filter} & $-$2 to $-$5pp \\
+        \textcolor{ChartPurple}{N-best GER} & $-$8 to $-$15pp \\
+        \midrule
+        \textbf{Combined target} & \keyword{27--42\%} \\
+      \end{tabular}}
+    \end{exampleblock}
+
+    \vspace{4pt}
+
+    \begin{block}{\small VALLR Reference (ICCV 2025)}
+      {\scriptsize 18.7\% WER on LRS3 with 3B model.\\
+      Proves: architecture innovation $>$ model size.}
+    \end{block}
+  }
+\end{frame}

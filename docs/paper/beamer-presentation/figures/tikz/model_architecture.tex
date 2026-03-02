@@ -1,0 +1,47 @@
+% TikZ model architecture diagram: Video → AV-HuBERT → Projection → LLaMA-2
+\begin{tikzpicture}[
+  box/.style={
+    draw=#1, fill=#1!8, thick, rounded corners=3pt,
+    minimum height=1.4cm, minimum width=2.8cm,
+    text=ArgosNavy, font=\small\bfseries, align=center
+  },
+  arrow/.style={-{Stealth[length=3mm]}, thick, ArgosGray},
+  label/.style={font=\tiny, ArgosGray, align=center},
+  node distance=1.2cm
+]
+
+  % Input
+  \node[box=ArgosGray] (input) {Video\\Frames};
+
+  % AV-HuBERT
+  \node[box=ArgosTeal, right=of input] (hubert) {AV-HuBERT\\{\tiny Visual Encoder}};
+
+  % Projection
+  \node[box=ArgosOrange, right=of hubert] (proj) {Linear\\{\tiny Projection}};
+
+  % LLaMA
+  \node[box=ArgosDarkBlue, right=of proj] (llama) {LLaMA-2-7B\\{\tiny Language Model}};
+
+  % Output
+  \node[box=ArgosGreen, right=of llama] (output) {Text\\Output};
+
+  % Arrows
+  \draw[arrow] (input) -- (hubert);
+  \draw[arrow] (hubert) -- (proj);
+  \draw[arrow] (proj) -- (llama);
+  \draw[arrow] (llama) -- (output);
+
+  % Dimension labels
+  \node[label, above=0.15cm of hubert] {1024-dim};
+  \node[label, above=0.15cm of proj] {1024$\rightarrow$4096};
+  \node[label, above=0.15cm of llama] {4096-dim};
+
+  % Status badges
+  \node[font=\tiny, fill=ArgosLightGray, rounded corners=1pt, inner sep=1.5pt,
+        below=0.15cm of hubert] {\textcolor{ArgosGray}{Frozen}};
+  \node[font=\tiny, fill=ArgosOrange!15, rounded corners=1pt, inner sep=1.5pt,
+        below=0.15cm of proj] {\textcolor{ArgosOrange}{Trained}};
+  \node[font=\tiny, fill=ArgosDarkBlue!10, rounded corners=1pt, inner sep=1.5pt,
+        below=0.15cm of llama] {\textcolor{ArgosDarkBlue}{QLoRA r=16}};
+
+\end{tikzpicture}

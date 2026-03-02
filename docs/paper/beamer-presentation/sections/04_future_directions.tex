@@ -1,0 +1,381 @@
+% ============================================================
+% SECTION 4: FUTURE DIRECTIONS (Slides 24–30)
+% ============================================================
+
+\section{Future Directions}
+
+% ----------------------------------------------------------
+% Slide 24: Starting Point Is Better Than WER Says
+% ----------------------------------------------------------
+\begin{frame}{The Starting Point Is Better Than WER Says}
+  \vspace{2pt}
+  \begin{columns}[c]
+    \begin{column}{0.35\textwidth}
+      \alertmetric{11.4\%}{WER says ``usable''}
+
+      \vspace{8pt}
+
+      \successmetric{39.9\%}{IS says ``properly captured''}
+
+      \vspace{8pt}
+
+      \centering
+      {\Large\textcolor{ArgosTeal}{\textbf{3.5$\times$}}}\\[2pt]
+      {\small IS reveals more preserved\\meaning than WER admits}
+    \end{column}
+    \begin{column}{0.60\textwidth}
+      \halfwidthfig{P1_quality_tiers.png}
+
+      \vspace{2pt}
+
+      \begin{block}{\small Why IS Is Trustworthy}
+        \begin{itemize}\scriptsize
+          \item Validated across \keyword{16 decode configurations}
+          \item Stable signals: Semantic (r=0.914), Phonetic, NEA
+          \item LLM judge: r = 0.925, recall 97.6--100\%
+          \item Config J: highest IS (2.571) despite \alert{+14.8pp WER}
+          \item \keyword{Phonetic preservation} = \#1 success driver (r=0.943)
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \note{
+    KEY TRANSITION SLIDE.
+    WER says 11.4\% usable. IS says 39.9\%.
+    IS validated across 16 configs --- not cherry-picked.
+    Config J: highest IS despite highest WER --- more words = more errors but MORE meaning.
+    Phonetic preservation is \#1 correlate.
+    ``40\% works. IS is validated. We know WHY --- phonetic preservation.''
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 25: Improvement Roadmap
+% ----------------------------------------------------------
+\begin{frame}{Improvement Roadmap}
+  \twocol{0.40}{
+    {\small\textbf{Phased approach}, mapped to failure modes:}
+
+    \vspace{4pt}
+
+    \begin{enumerate}\small
+      \item \textbf{Confidence Scoring}\\
+            {\scriptsize Flag the good 40\%}
+      \item \textbf{N-Best Aggregation}\\
+            {\scriptsize ROVER/MBR from beam}
+      \item \textbf{LLM Swap}\\
+            {\scriptsize Llama 3.1 8B (drop-in)}
+      \item \textbf{Data Scaling}\\
+            {\scriptsize 20K--50K segments}
+      \item \textbf{GER Post-Processing}\\
+            {\scriptsize N-best + correction LLM}
+    \end{enumerate}
+
+    \vspace{4pt}
+
+    \begin{exampleblock}{\small Realistic Target}
+      \centering
+      {\large\keyword{27--42\% WER}}\\
+      {\scriptsize from current 67\%}
+    \end{exampleblock}
+  }{0.57}{
+    \halfwidthfig{P3_wer_trajectory.png}
+
+    \vspace{2pt}
+    \notetext{Multiplicative scaling law (ICLR 2024): LLM + data improvements compound.}
+  }
+
+  \note{
+    5 phases, each targeting specific failure modes.
+    Multiplicative scaling: stronger LLM extracts more from same data.
+    Combined target: 27--42\% WER (from 67\%).
+    Each phase is independently valuable --- gains stack.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 26: Phase 1 — Confidence Scoring
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Phase 1: Confidence Scoring}
+  \twocol{0.52}{
+    \phasebox{Phase 1}{Confidence Scoring}{%
+      IS already proves 40\% is good.\\
+      Now extract \keyword{beam scores} to flag it automatically.\\[3pt]
+      No additional inference needed --- scores already exist\\
+      inside the decode process.
+    }{2--4 hours effort}
+
+    \vspace{6pt}
+
+    \begin{exampleblock}{\small Priority by Topic}
+      \begin{tabular}{@{}lcc@{}}
+        \scriptsize\textbf{Topic} & \scriptsize\textbf{Captured} & \scriptsize\textbf{Priority} \\
+        \scriptsize Business/Finance & \scriptsize 57\% & \scriptsize \textcolor{ArgosGreen}{\textbf{Highest}} \\
+        \scriptsize Education & \scriptsize 43\% & \scriptsize Medium \\
+        \scriptsize Short ($<$10 words) & \scriptsize 32\% & \scriptsize Lower threshold \\
+      \end{tabular}
+    \end{exampleblock}
+  }{0.45}{
+    \begin{center}
+    \begin{tikzpicture}[
+      stage/.style={draw=ArgosTeal!60, fill=ArgosTeal!8, thick,
+                    rounded corners=2pt, minimum height=0.8cm,
+                    minimum width=3.2cm, font=\scriptsize, align=center},
+      highlight/.style={draw=ArgosOrange, fill=ArgosOrange!12, thick,
+                    rounded corners=2pt, minimum height=0.8cm,
+                    minimum width=3.2cm, font=\scriptsize\bfseries, align=center},
+      arr/.style={-{Stealth[length=2mm]}, ArgosGray, thick},
+      node distance=0.5cm
+    ]
+      \node[stage] (enc) {Visual Encoder};
+      \node[stage, below=of enc] (dec) {Beam Search\\Decode};
+      \node[highlight, below=of dec] (conf) {\textcolor{ArgosOrange}{Extract Beam}\\
+        \textcolor{ArgosOrange}{Scores Here}};
+      \node[stage, below=of conf] (out) {Output Text +\\Confidence};
+
+      \draw[arr] (enc) -- (dec);
+      \draw[arr] (dec) -- (conf);
+      \draw[arr] (conf) -- (out);
+    \end{tikzpicture}
+    \end{center}
+  }
+
+  \note{
+    Lowest-hanging fruit: 2--4 hours effort.
+    Beam scores already computed during decode --- just need to extract them.
+    Business/Finance segments most likely reliable --- flag these first.
+    Short segments need lower confidence thresholds.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 27: Phase 2 — N-Best Aggregation
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Phase 2: N-Best Aggregation}
+  \twocol{0.52}{
+    \phasebox{Phase 2}{N-Best Aggregation}{%
+      Currently discarding \alert{19 of 20} beam candidates.\\
+      ROVER/MBR combines hypotheses for consensus.\\[3pt]
+      Targets: \textbf{Accumulated Small Errors} (12.3\%)\\
+      and \textbf{Content Word Errors} (10.7\%).
+    }{5--15\% relative improvement}
+
+    \vspace{6pt}
+
+    \begin{block}{\small How It Works}
+      \begin{enumerate}\scriptsize
+        \item Beam search produces 20 hypotheses
+        \item \keyword{ROVER}: align and vote word-by-word
+        \item \keyword{MBR}: select hypothesis with minimum expected error
+        \item Consensus output is more robust
+      \end{enumerate}
+    \end{block}
+  }{0.45}{
+    \begin{center}
+    \begin{tikzpicture}[
+      hyp/.style={draw=ArgosGray!60, fill=ArgosLightGray,
+                  rounded corners=1pt, font=\tiny,
+                  minimum width=3cm, minimum height=0.45cm, align=left},
+      result/.style={draw=ArgosGreen, fill=ArgosGreen!10, thick,
+                  rounded corners=2pt, font=\tiny\bfseries,
+                  minimum width=3cm, minimum height=0.5cm, align=left},
+      arr/.style={-{Stealth[length=2mm]}, ArgosGray},
+      node distance=0.3cm
+    ]
+      \node[hyp] (h1) {``buy one get one free''};
+      \node[hyp, below=of h1] (h2) {``buy one get \alert{won} free''};
+      \node[hyp, below=of h2] (h3) {``buy one get one \alert{three}''};
+      \node[below=0.15cm of h3, font=\tiny, ArgosGray] (dots) {$\vdots$ (17 more)};
+      \node[result, below=0.4cm of dots] (out) {\textcolor{ArgosGreen}{``buy one get one free''}};
+
+      \node[left=0.3cm of h2, font=\tiny, ArgosGray, rotate=90, anchor=south] {20 beams};
+
+      \draw[arr] (h1.south east) -- (out.north east);
+      \draw[arr] (h2.south east) -- (out.north east);
+      \draw[arr] (h3.south east) -- (out.north east);
+
+      \node[right=0.2cm of out, font=\tiny, ArgosGreen] {ROVER};
+    \end{tikzpicture}
+    \end{center}
+
+    \vspace{6pt}
+    \notetext{Moves ``fair'' tier segments up to ``good''.\\
+    Partial correct words across hypotheses are recovered.}
+  }
+
+  \note{
+    Currently throwing away 19/20 beam candidates.
+    ROVER: align hypotheses, vote word-by-word.
+    MBR: select hypothesis with minimum expected error.
+    Targets accumulated small errors and content word errors.
+    5--15\% relative improvement expected.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 28: Fine-Tuning + Data Scaling
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{Phase 3--4: Fine-Tuning + Data Scaling}
+  \twocol{0.48}{
+    \begin{alertblock}{\small Experiment A Results}
+      \begin{tabular}{@{}ll@{}}
+        \scriptsize LoRA rank & \scriptsize r=16 (12.6M params) \\
+        \scriptsize Training data & \scriptsize 1,273 train / 224 val \\
+        \scriptsize Best val accuracy & \scriptsize \keyword{62.94\%} (epoch 2) \\
+        \scriptsize Final val accuracy & \scriptsize 58.98\% (epoch 19) \\
+        \scriptsize Overfitting gap & \scriptsize \alert{36.5 pp} \\
+        \scriptsize Training time & \scriptsize 17h (Tesla T4, FP16) \\
+      \end{tabular}
+    \end{alertblock}
+
+    \vspace{3pt}
+
+    \begin{block}{\small Key Finding}
+      {\small r=64 performed \alert{3.1pp worse}\\
+      $\rightarrow$ 4$\times$ params = faster overfitting on tiny data\\[3pt]
+      \keyword{1,273 segments is below the $\sim$1K minimum}\\
+      for LoRA generalization (ICLR 2024)}
+    \end{block}
+  }{0.49}{
+    \includegraphics[width=\linewidth, height=0.50\textheight, keepaspectratio]{finetune/FT_10_summary_dashboard.png}
+
+    \vspace{3pt}
+
+    \begin{exampleblock}{\small Data Scaling Projections}
+      {\scriptsize
+      \begin{tabular}{@{}lcc@{}}
+        \textbf{Segments} & \textbf{Llama-2-7B} & \textbf{Llama 3.1 8B} \\
+        \midrule
+        5K & 55--60\% & 50--55\% \\
+        20K & 45--50\% & \keyword{40--45\%} \\
+        50K & 40--45\% & \keyword{35--40\%} \\
+      \end{tabular}\\[3pt]
+      AVSpeech has \textbf{290K videos} available.}
+    \end{exampleblock}
+  }
+
+  \note{
+    Exp A: best val 62.94\% at epoch 2, then severe overfitting.
+    Exp B (r=64) was WORSE --- proves data scarcity is the bottleneck, not model capacity.
+    1,273 segments is below the minimum for LoRA generalization.
+    Data scaling: 20K segments with Llama 3.1 could reach 40--45\%.
+    AVSpeech has 290K videos --- data is available, just needs processing.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 29: LLM Upgrade + Advanced Capabilities
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{Phase 5: LLM Upgrade + Advanced Capabilities}
+  \twocol{0.52}{
+    \begin{block}{\small LLM Swap: Llama 3.1 8B}
+      \begin{itemize}\scriptsize
+        \item \keyword{Drop-in replacement} (same hidden\_size 4096)
+        \item $\approx$ Llama-2 70B quality
+        \item 128K vocab (4$\times$), 128K context (32$\times$)
+        \item Setup: \textbf{1--2 hours}
+      \end{itemize}
+    \end{block}
+
+    \vspace{3pt}
+
+    \begin{block}{\small 7 Prompt Strategies (Force Multiplier)}
+      \begin{enumerate}\tiny
+        \item Topic context injection ($-$5 to $-$10pp)
+        \item Word count hints
+        \item Vocabulary lists
+        \item Anti-hallucination guards
+        \item Phonetic context
+        \item Self-correction chains
+        \item \keyword{N-best GER} ($-$8 to $-$15pp, SOTA)
+      \end{enumerate}
+    \end{block}
+  }{0.45}{
+    \begin{exampleblock}{\small Improvement Waterfall}
+      {\scriptsize
+      \begin{tabular}{@{}lr@{}}
+        \textbf{Current WER} & \textbf{67\%} \\
+        \midrule
+        Swap LLM & $-$3 to $-$8pp \\
+        Smart prompts & $-$5 to $-$10pp \\
+        Data scaling & $-$10 to $-$15pp \\
+        GER post-processing & $-$5 to $-$10pp \\
+        \midrule
+        \textbf{Combined target} & \keyword{27--42\%} \\
+      \end{tabular}}
+    \end{exampleblock}
+
+    \vspace{6pt}
+
+    \begin{block}{\small GER: No Retraining Needed}
+      {\scriptsize Two-stage: visual pipeline generates\\
+      N-best $\rightarrow$ correction LLM picks \& corrects.\\
+      Can use external API (Claude/GPT-4).}
+    \end{block}
+
+    \vspace{3pt}
+    \notetext{Multiplicative scaling law:\\stronger LLM extracts more from same data.}
+  }
+
+  \note{
+    Llama 3.1 8B is a drop-in swap --- same hidden dimension.
+    7 prompt strategies: force multiplier for stronger LLMs.
+    Stronger models unlock more strategies: Llama-2 +5--10pp, Llama 3.1 +12--20pp.
+    GER: N-best + correction LLM, no retraining, can use external API.
+    VALLR (ICCV 2025): 18.7\% WER on LRS3 with only 3B params --- architecture matters.
+    Combined target: 27--42\% WER from current 67\%.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 30: Key Takeaways
+% ----------------------------------------------------------
+\begin{frame}{Key Takeaways}
+  \vspace{4pt}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \takeawaybox{1}{Rigorous Assessment}{%
+        2.5$\times$ WER gap on 1,497 segments.\\
+        Novel IS metric reveals \textbf{40\% properly captured}.\\
+        10 failure modes, topic/length analysis.
+      }
+
+      \vspace{6pt}
+
+      \takeawaybox{2}{Production System Delivered}{%
+        Standalone container, 37 bugs fixed,\\
+        8-stage pipeline, 37 tests,\\
+        8 research reports.
+      }
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \takeawaybox{3}{Data Is the Bottleneck}{%
+        Exp A/B proved 1,273 segments too small.\\
+        20K--50K segments is the critical enabler.\\
+        Multiplicative scaling with stronger LLM.
+      }
+
+      \vspace{6pt}
+
+      \takeawaybox{4}{Actionable Roadmap to 27--42\%}{%
+        LLM swap (hours), smart prompts (days),\\
+        data scaling (weeks), GER (no retraining).\\
+        Each addresses a different bottleneck.
+      }
+    \end{column}
+  \end{columns}
+
+  \vspace{8pt}
+  \centering
+  {\large\textcolor{ArgosTeal}{\textbf{Thank you}} \textcolor{ArgosGray}{--- Questions?}}
+
+  \note{
+    Four key findings:
+    1. Rigorous characterization at every level (segment, topic, length, failure mode).
+    2. Complete production system --- not just research.
+    3. Data scarcity is THE bottleneck --- not model or parameters.
+    4. Principled roadmap where each phase targets different bottleneck.
+    ``We've systematically characterized the gap and have a clear plan.''
+  }
+\end{frame}

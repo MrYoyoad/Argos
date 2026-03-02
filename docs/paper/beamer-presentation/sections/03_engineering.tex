@@ -1,0 +1,295 @@
+% ============================================================
+% SECTION 3: ENGINEERING ACHIEVEMENTS (Slides 17–23)
+% ============================================================
+
+\section{Engineering}
+
+% ----------------------------------------------------------
+% Slide 17: Pipeline Architecture
+% ----------------------------------------------------------
+\begin{frame}{Pipeline Architecture --- 8 Stages}
+  \fullwidthfig{pipeline_architecture.png}
+                {Modular pipeline: Normalize $\rightarrow$ ASR $\rightarrow$ LRS3 $\rightarrow$ Manifests $\rightarrow$ Clustering $\rightarrow$ Decode $\rightarrow$ Reports $\rightarrow$ Burns}
+
+  \note{
+    8-stage pipeline, 11 modules under lib/.
+    AV-HuBERT + LLaMA-2 + fairseq.
+    Environment-aware: automatic EC2 vs container detection.
+    Each stage can run independently or be composed.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 18: Why Engineering Was Hard
+% ----------------------------------------------------------
+\begin{frame}{Why Engineering Was Hard}
+  \twocol{0.50}{
+    \alertmetric{37}{Bugs Fixed}
+
+    \vspace{4pt}
+
+    {\small\textbf{Research code $\rightarrow$ production:}}
+    \begin{itemize}
+      \item Installation \& setup: 13 bugs\\
+            {\scriptsize fairseq build, CUDA paths, spaCy wheels}
+      \item Deployment \& GPU: 12 bugs\\
+            {\scriptsize NVENC encoding, Docker GPU pass-through}
+      \item Runtime \& inference: 12 bugs\\
+            {\scriptsize Upload handling, terminal state, metrics}
+    \end{itemize}
+  }{0.47}{
+    \begin{alertblock}{\small Critical Bug: NVENC Corruption}
+      GPU video encoder silently destroyed\\
+      \alert{43\% of output videos}\\[3pt]
+      {\scriptsize Root cause: bash file descriptors leaked\\
+      into FFmpeg subprocess, corrupting stream.\\
+      Fix: FD isolation + CPU fallback path.}
+    \end{alertblock}
+
+    \vspace{4pt}
+
+    \begin{exampleblock}{\scriptsize Other Challenges}
+      {\scriptsize HDR tone mapping, Cython builds,\\
+      fairseq patches, venv isolation}
+    \end{exampleblock}
+  }
+
+  \note{
+    37 bugs across 3 categories: install, deploy, runtime.
+    NVENC corruption is the headline: 43\% of videos destroyed silently.
+    Root cause was bash file descriptors leaking into FFmpeg subprocess.
+    This is why engineering effort was substantial --- research code is not production code.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 19: Modular Refactoring
+% ----------------------------------------------------------
+\begin{frame}{Modular Refactoring}
+  \twocol{0.47}{
+    \begin{alertblock}{\small Before: Monolithic Script}
+      {\large\textbf{823 lines}}\\[3pt]
+      {\small Single \texttt{run\_flat\_english\_pipeline.sh}}\\
+      {\scriptsize All logic inline, no reusability,\\
+      difficult to test or debug}
+    \end{alertblock}
+  }{0.47}{
+    \begin{exampleblock}{\small After: 11 Modules}
+      {\large\textbf{393 lines}} {\small(52\% reduction)}\\[3pt]
+      {\small Reusable modules under \texttt{lib/}}\\
+      {\scriptsize\texttt{common.sh}, \texttt{config.sh}, \texttt{asr.sh},\\
+      \texttt{normalization.sh}, \texttt{manifests.sh},\\
+      \texttt{clustering.sh}, \texttt{decode.sh}, \texttt{outputs.sh},\\
+      \texttt{archive.sh}, \texttt{lrs3\_prep.sh}, \texttt{venv\_utils.sh}}
+    \end{exampleblock}
+  }
+
+  \vspace{6pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.30\textwidth}
+      \centering
+      \metricbox{52\%}{Line Reduction}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \centering
+      \metricbox{11}{Reusable Modules}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \centering
+      \successmetric{37}{Tests Passing}
+    \end{column}
+  \end{columns}
+
+  \note{
+    Refactored from 823 to 393 lines (52\% reduction).
+    11 modules under lib/, each independently testable.
+    37 tests validate module exports, functionality, integration.
+    Environment-aware: automatic EC2 vs container detection.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 20: Deployed Product
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Deployed Product}
+  \twocol{0.50}{
+    {\large\keyword{Standalone Linux Container}}
+
+    \vspace{6pt}
+
+    \begin{itemize}
+      \item \faIcon{desktop}~Desktop icon launcher
+      \item \faIcon{globe}~Web UI with drag-and-drop
+      \item \faIcon{lock}~Runs on client machine --- no cloud
+      \item \faIcon{sync}~Automated install with verification
+            {\scriptsize\begin{itemize}
+              \item 13 integrity checks
+              \item 37 module tests
+              \item Automatic backup + rollback
+            \end{itemize}}
+    \end{itemize}
+
+    \vspace{4pt}
+    \notetext{Docker container with GPU pass-through (NVIDIA Tesla T4)}
+  }{0.47}{
+    \begin{block}{\small Deployment Workflow}
+      \begin{enumerate}\small
+        \item Extract tarball
+        \item Run \texttt{INSTALL.sh}
+        \item Automatic: backup $\rightarrow$ install $\rightarrow$ verify $\rightarrow$ test
+        \item Double-click desktop icon to use
+      \end{enumerate}
+    \end{block}
+
+    \vspace{3pt}
+
+    \begin{block}{\scriptsize User Interface}
+      {\scriptsize Drag-and-drop video upload,\\
+      automatic processing, browser results,\\
+      downloadable reports + burned videos}
+    \end{block}
+  }
+
+  \note{
+    Standalone container: runs on a Linux machine, no cloud dependency.
+    Desktop icon launcher --- non-technical users can operate.
+    INSTALL.sh: creates backup, installs, verifies, runs 37 tests.
+    Rollback available if anything goes wrong.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 21: Smart Features
+% ----------------------------------------------------------
+\begin{frame}{Smart Features}
+  \vspace{2pt}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{\small \faIcon{redo}~Transcription Reuse}
+        {\scriptsize Manual transcriptions persist\\
+        across pipeline runs.\\[3pt]
+        Whisper skips matched segments,\\
+        saving hours of processing.\\[3pt]
+        \texttt{.transcriptions/} directory\\
+        preserves all corrections.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{\small \faIcon{bullseye}~Golden K-Means}
+        {\scriptsize Pre-computed cluster centroids\\
+        from 1,396-video baseline.\\[3pt]
+        Ensures consistent clustering\\
+        across all pipeline runs.\\[3pt]
+        Eliminates randomness in\\
+        feature quantization.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{\small \faIcon{cut}~Video Segmentation}
+        {\scriptsize Automatic splitting for\\
+        long videos ($>$30s).\\[3pt]
+        Overlap handling between\\
+        adjacent segments.\\[3pt]
+        Preserves sentence boundaries\\
+        where possible.}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \note{
+    Three production features beyond basic pipeline:
+    1. Transcription reuse: manual corrections persist, Whisper skips.
+    2. Golden k-means: consistent baseline from 1,396-video model.
+    3. Segmentation: handles long videos with overlap.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 22: Evaluation Infrastructure
+% ----------------------------------------------------------
+\begin{frame}{Evaluation Infrastructure}
+  \twocol{0.50}{
+    {\small\textbf{Built from scratch:}}
+
+    \begin{itemize}\small
+      \item \keyword{16} analytical plots, \keyword{13} HTML reports
+      \item Per-segment CSV exports (1,497 rows)
+      \item Custom \keyword{NEA} metric
+      \item \keyword{IS pipeline}: 6 signals, per-segment scoring,\\
+            cross-config validation (16 configs)
+      \item Failure mode classification (10 modes)
+      \item Topic analysis (11 categories)
+      \item Fine-tuning diagnostics (10 plots)
+    \end{itemize}
+  }{0.47}{
+    \halfwidthfig{15_cdf_wwer_curated.png}
+
+    \vspace{4pt}
+    \notetext{CDF of WWER with quality thresholds ---\\actionable for confidence filtering.}
+  }
+
+  \note{
+    Entire evaluation infrastructure built from scratch.
+    16 plots, 13 interactive HTML reports, per-segment CSV.
+    IS pipeline: Claude-designed rubric encoded into deterministic metrics.
+    10 failure modes and 7 success patterns classified automatically.
+    Topic and length analysis across 11 categories.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 23: Quality Process
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Quality Process}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Version Control}
+        \begin{itemize}\small
+          \item Git tags: \texttt{refactor-v1.0},\\
+                \texttt{ec2-v1.1}, \texttt{container-v1.1}
+          \item EC2/container sync protocol
+          \item 26 documented sync items
+        \end{itemize}
+      \end{block}
+
+      \vspace{4pt}
+
+      \begin{block}{\small Documentation}
+        \begin{itemize}\small
+          \item \keyword{8} research reports (DOCX + PDF)
+          \item Architecture doc, development guide
+          \item Bug tracking (37 bugs, 3 categories)
+          \item Comprehensive CLAUDE.md
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Testing}
+        \begin{itemize}\small
+          \item 37 module tests
+          \item 13 container integrity checks
+          \item Automatic verification on install
+        \end{itemize}
+      \end{block}
+
+      \vspace{4pt}
+
+      \begin{block}{\small Reproducibility}
+        \begin{itemize}\small
+          \item Golden k-means (fixed baseline)
+          \item All experiment configs saved
+          \item Segment metadata preserved
+          \item Results archived with parameters
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \note{
+    Git tags for version tracking, EC2/container dual-environment sync.
+    8 research reports cover the entire investigation space.
+    37 tests + 13 integrity checks for deployment validation.
+    Golden k-means ensures reproducible clustering across runs.
+  }
+\end{frame}

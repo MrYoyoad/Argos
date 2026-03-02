@@ -1,0 +1,405 @@
+% beamer-argos-theme.sty — Custom Beamer theme for Argos VSP
+% Academic presentation with Metropolis base + branded colors
+\ProvidesPackage{beamer-argos-theme}[2026/03/02 Argos VSP Beamer Theme]
+
+% ============================================================
+% THEME BASE
+% ============================================================
+\usetheme[progressbar=frametitle, numbering=fraction, block=fill]{metropolis}
+
+% ============================================================
+% COLOR PALETTE
+% ============================================================
+
+% --- Primary branding ---
+\definecolor{ArgosNavy}{HTML}{1B2A4A}
+\definecolor{ArgosDarkBlue}{HTML}{243B6A}
+\definecolor{ArgosTeal}{HTML}{2E7D8C}
+\definecolor{ArgosOrange}{HTML}{D4722C}
+\definecolor{ArgosGreen}{HTML}{3A8647}
+\definecolor{ArgosRed}{HTML}{C0392B}
+\definecolor{ArgosGray}{HTML}{5D6D7E}
+\definecolor{ArgosLightGray}{HTML}{ECF0F1}
+\definecolor{ArgosWarmWhite}{HTML}{FAFAFA}
+
+% --- Intelligibility Score tiers ---
+\definecolor{TierExcellent}{HTML}{1B5E20}
+\definecolor{TierGood}{HTML}{388E3C}
+\definecolor{TierFair}{HTML}{F57F17}
+\definecolor{TierPoor}{HTML}{E64A19}
+\definecolor{TierFailed}{HTML}{B71C1C}
+
+% --- Lighter tier variants for table cell backgrounds ---
+\definecolor{TierExcellentBg}{HTML}{E8F5E9}
+\definecolor{TierGoodBg}{HTML}{F1F8E9}
+\definecolor{TierFairBg}{HTML}{FFFDE7}
+\definecolor{TierPoorBg}{HTML}{FBE9E7}
+\definecolor{TierFailedBg}{HTML}{FFEBEE}
+
+% --- Chart accents ---
+\definecolor{ChartBlue}{HTML}{1565C0}
+\definecolor{ChartCyan}{HTML}{00838F}
+\definecolor{ChartPurple}{HTML}{6A1B9A}
+
+% ============================================================
+% APPLY COLORS TO METROPOLIS
+% ============================================================
+
+\setbeamercolor{normal text}{fg=ArgosNavy, bg=white}
+\setbeamercolor{alerted text}{fg=ArgosOrange}
+\setbeamercolor{example text}{fg=ArgosGreen}
+
+% Frame titles: deep navy bar
+\setbeamercolor{frametitle}{fg=white, bg=ArgosNavy}
+\setbeamercolor{framesubtitle}{fg=ArgosGray}
+
+% Progress bar: teal accent
+\setbeamercolor{progress bar}{fg=ArgosTeal, bg=ArgosLightGray}
+
+% Section pages: navy background
+\setbeamercolor{palette primary}{bg=ArgosNavy, fg=white}
+
+% Blocks
+\setbeamercolor{block title}{fg=white, bg=ArgosTeal}
+\setbeamercolor{block body}{fg=ArgosNavy, bg=ArgosTeal!8}
+\setbeamercolor{block title alerted}{fg=white, bg=ArgosRed}
+\setbeamercolor{block body alerted}{fg=ArgosNavy, bg=ArgosRed!8}
+\setbeamercolor{block title example}{fg=white, bg=ArgosGreen}
+\setbeamercolor{block body example}{fg=ArgosNavy, bg=ArgosGreen!8}
+
+% Footer and navigation
+\setbeamercolor{footline}{fg=ArgosGray}
+\setbeamercolor{page number in head/foot}{fg=ArgosGray}
+
+% ============================================================
+% TYPOGRAPHY
+% ============================================================
+
+% Metropolis uses Fira Sans by default; fallback to CM Sans if unavailable
+\setbeamerfont{title}{size=\Large, series=\bfseries}
+\setbeamerfont{subtitle}{size=\normalsize, series=\mdseries}
+\setbeamerfont{author}{size=\small}
+\setbeamerfont{date}{size=\small}
+\setbeamerfont{institute}{size=\small}
+\setbeamerfont{frametitle}{size=\large, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\small, series=\mdseries}
+\setbeamerfont{section title}{size=\Large, series=\bfseries}
+\setbeamerfont{footnote}{size=\tiny}
+
+% ============================================================
+% LAYOUT ADJUSTMENTS
+% ============================================================
+
+% Wider margins for content-dense slides
+\setbeamersize{text margin left=8mm, text margin right=8mm}
+
+% Footer with logo
+\setbeamertemplate{frame footer}{}
+
+% Logo in corner (small, unobtrusive)
+\logo{\includegraphics[height=0.55cm]{figures/branding/BlackLogo300x300-W-BG.png}\hspace{2mm}}
+
+% Remove navigation symbols (Metropolis default, but be explicit)
+\setbeamertemplate{navigation symbols}{}
+
+% Itemize styling
+\setbeamertemplate{itemize item}{\textcolor{ArgosTeal}{\raisebox{0.12ex}{\small\textbullet}}}
+\setbeamertemplate{itemize subitem}{\textcolor{ArgosTeal}{\raisebox{0.08ex}{\scriptsize\textendash}}}
+\setbeamertemplate{itemize subsubitem}{\textcolor{ArgosGray}{\raisebox{0.08ex}{\scriptsize\textbullet}}}
+
+% Enumeration styling
+\setbeamertemplate{enumerate item}{\textcolor{ArgosTeal}{\insertenumlabel.}}
+
+% ============================================================
+% CUSTOM COMMANDS — METRICS & CALLOUTS
+% ============================================================
+
+\RequirePackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, backgrounds, fit, shadows.blur}
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+% --- Metric highlight box (single key number) ---
+% Usage: \metricbox{39.9\%}{Properly Captured (IS $\geq$ 3.0)}
+\newcommand{\metricbox}[2]{%
+  \begin{tcolorbox}[
+    colback=ArgosTeal!8,
+    colframe=ArgosTeal,
+    boxrule=0.8pt,
+    arc=3pt,
+    left=4pt, right=4pt, top=3pt, bottom=3pt,
+    fontupper=\centering
+  ]
+    {\LARGE\bfseries\textcolor{ArgosTeal}{#1}}\\[2pt]
+    {\small #2}
+  \end{tcolorbox}%
+}
+
+% --- Alert metric box (red, for problems) ---
+\newcommand{\alertmetric}[2]{%
+  \begin{tcolorbox}[
+    colback=ArgosRed!6,
+    colframe=ArgosRed,
+    boxrule=0.8pt,
+    arc=3pt,
+    left=4pt, right=4pt, top=3pt, bottom=3pt,
+    fontupper=\centering
+  ]
+    {\LARGE\bfseries\textcolor{ArgosRed}{#1}}\\[2pt]
+    {\small #2}
+  \end{tcolorbox}%
+}
+
+% --- Success metric box (green) ---
+\newcommand{\successmetric}[2]{%
+  \begin{tcolorbox}[
+    colback=ArgosGreen!6,
+    colframe=ArgosGreen,
+    boxrule=0.8pt,
+    arc=3pt,
+    left=4pt, right=4pt, top=3pt, bottom=3pt,
+    fontupper=\centering
+  ]
+    {\LARGE\bfseries\textcolor{ArgosGreen}{#1}}\\[2pt]
+    {\small #2}
+  \end{tcolorbox}%
+}
+
+% --- Comparison box (side-by-side green/red) ---
+% Usage: \comparisonbox{green title}{green content}{red title}{red content}
+\newcommand{\comparisonbox}[4]{%
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[
+        colback=ArgosGreen!6,
+        colframe=ArgosGreen,
+        title={\small\bfseries #1},
+        coltitle=white,
+        colbacktitle=ArgosGreen,
+        boxrule=0.6pt, arc=3pt,
+        left=3pt, right=3pt, top=2pt, bottom=2pt
+      ]
+        {\small #2}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[
+        colback=ArgosRed!6,
+        colframe=ArgosRed,
+        title={\small\bfseries #3},
+        coltitle=white,
+        colbacktitle=ArgosRed,
+        boxrule=0.6pt, arc=3pt,
+        left=3pt, right=3pt, top=2pt, bottom=2pt
+      ]
+        {\small #4}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}%
+}
+
+% --- Phase box (for roadmap slides) ---
+% Usage: \phasebox{Phase 1}{Confidence Scoring}{description}{2--4 hours}
+\newcommand{\phasebox}[4]{%
+  \begin{tcolorbox}[
+    colback=ArgosTeal!5,
+    colframe=ArgosTeal!60,
+    title={\small\bfseries #1: #2},
+    coltitle=white,
+    colbacktitle=ArgosTeal,
+    boxrule=0.5pt, arc=2pt,
+    left=3pt, right=3pt, top=2pt, bottom=2pt
+  ]
+    {\small #3}\\[2pt]
+    {\scriptsize\textcolor{ArgosGray}{\faIcon{clock}~#4}}
+  \end{tcolorbox}%
+}
+
+% --- Takeaway numbered box ---
+% Usage: \takeawaybox{1}{Title}{Description}
+\newcommand{\takeawaybox}[3]{%
+  \begin{tcolorbox}[
+    colback=white,
+    colframe=ArgosTeal,
+    boxrule=0.6pt, arc=2pt,
+    left=3pt, right=3pt, top=2pt, bottom=2pt,
+    overlay={\node[circle, fill=ArgosTeal, text=white, font=\bfseries\small,
+      minimum size=5mm, inner sep=0pt] at ([xshift=4mm, yshift=-4mm]frame.north west) {#1};}
+  ]
+    \hspace{5mm}{\small\bfseries #2}\\[1pt]
+    \hspace{5mm}{\scriptsize #3}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% CUSTOM COMMANDS — VIDEO THUMBNAILS
+% ============================================================
+
+\RequirePackage{multimedia}
+
+% Video thumbnail with play button overlay for pdfpc
+% Usage: \videothumb{width}{thumbnail_path}{video_path}
+\newcommand{\videothumb}[3]{%
+  \movie[poster, showcontrols]{%
+    \begin{tikzpicture}
+      \node[inner sep=0pt] (img) {\includegraphics[width=#1]{#2}};
+      % Semi-transparent circle
+      \node[circle, fill=white, fill opacity=0.85,
+            minimum size=1cm, inner sep=0pt] at (img.center) {};
+      % Play triangle
+      \node[isosceles triangle, fill=ArgosTeal, fill opacity=0.9,
+            minimum size=0.45cm, shape border rotate=90,
+            inner sep=0pt] at ([xshift=0.5mm]img.center) {};
+      % Thin border ring
+      \draw[ArgosTeal, line width=0.6pt, opacity=0.7]
+            (img.center) circle (0.55cm);
+    \end{tikzpicture}%
+  }{#3}%
+}
+
+% Video thumbnail with caption below
+% Usage: \videocaptioned{width}{thumbnail}{video}{caption}
+\newcommand{\videocaptioned}[4]{%
+  \begin{minipage}[t]{#1}
+    \centering
+    \videothumb{#1}{#2}{#3}\\[2pt]
+    {\scriptsize\textcolor{ArgosGray}{#4}}
+  \end{minipage}%
+}
+
+% ============================================================
+% CUSTOM COMMANDS — TEXT HELPERS
+% ============================================================
+
+% Highlight a key term inline
+\newcommand{\keyword}[1]{\textcolor{ArgosTeal}{\textbf{#1}}}
+
+% Subdued note text
+\newcommand{\notetext}[1]{{\scriptsize\textcolor{ArgosGray}{#1}}}
+
+% Reference text (paper/source)
+\newcommand{\srcref}[1]{{\tiny\textcolor{ArgosGray}{[#1]}}}
+
+% WER value formatting (color-coded)
+\newcommand{\wergood}[1]{\textcolor{ArgosGreen}{\textbf{#1}}}
+\newcommand{\werbad}[1]{\textcolor{ArgosRed}{\textbf{#1}}}
+\newcommand{\werneutral}[1]{\textcolor{ArgosGray}{\textbf{#1}}}
+
+% IS tier coloring
+\newcommand{\tierexcellent}[1]{\textcolor{TierExcellent}{\textbf{#1}}}
+\newcommand{\tiergood}[1]{\textcolor{TierGood}{\textbf{#1}}}
+\newcommand{\tierfair}[1]{\textcolor{TierFair}{\textbf{#1}}}
+\newcommand{\tierpoor}[1]{\textcolor{TierPoor}{\textbf{#1}}}
+\newcommand{\tierfailed}[1]{\textcolor{TierFailed}{\textbf{#1}}}
+
+% ============================================================
+% CUSTOM COMMANDS — LAYOUT HELPERS
+% ============================================================
+
+% Two-column with specific widths
+% Usage: \twocol{0.55}{left content}{0.42}{right content}
+\newcommand{\twocol}[4]{%
+  \begin{columns}[T]
+    \begin{column}{#1\textwidth}#2\end{column}
+    \begin{column}{#3\textwidth}#4\end{column}
+  \end{columns}%
+}
+
+% Full-width figure
+% Usage: \fullwidthfig{path}{caption}
+\newcommand{\fullwidthfig}[2]{%
+  \begin{center}
+    \includegraphics[width=\textwidth, height=0.78\textheight, keepaspectratio]{#1}\\[1pt]
+    \notetext{#2}
+  \end{center}%
+}
+
+% Half-width figure (for use inside column)
+% Usage: \halfwidthfig{path}
+\newcommand{\halfwidthfig}[1]{%
+  \includegraphics[width=\linewidth, height=0.72\textheight, keepaspectratio]{#1}%
+}
+
+% ============================================================
+% SECTION TITLE PAGE CUSTOMIZATION
+% ============================================================
+
+% Override section page to include a subtle divider line
+\setbeamertemplate{section page}{
+  \centering
+  \begin{minipage}{0.8\textwidth}
+    \raggedright
+    \usebeamercolor[fg]{section title}
+    \usebeamerfont{section title}
+    \insertsectionhead\\[-0.2ex]
+    {\color{ArgosTeal}\rule{0.4\textwidth}{1pt}}
+  \end{minipage}
+}
+
+% ============================================================
+% TITLE PAGE CUSTOMIZATION
+% ============================================================
+
+\setbeamertemplate{title page}{
+  \vfill
+  \centering
+  % Logo
+  \includegraphics[height=2.2cm]{figures/branding/BlackLogo300x300-W-BG.png}
+
+  \vspace{12pt}
+  % Title
+  \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle
+
+  \vspace{6pt}
+  % Subtitle
+  \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle
+
+  \vspace{3pt}
+  {\scriptsize\textcolor{ArgosGray}{From Paper to Production --- Bridging the Reality Gap in Visual Speech Processing}}
+
+  \vspace{4pt}
+  % Divider
+  {\color{ArgosTeal}\rule{0.3\textwidth}{0.8pt}}
+
+  \vspace{8pt}
+  % Author & date
+  \usebeamerfont{author}\insertauthor
+
+  \vspace{3pt}
+  \usebeamerfont{date}\insertdate
+  \vfill
+}
+
+% ============================================================
+% PACKAGES (loaded here so sections don't need to)
+% ============================================================
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx}
+\RequirePackage{booktabs}
+\RequirePackage{colortbl}
+\RequirePackage{multirow}
+\RequirePackage{tabularx}
+\RequirePackage{siunitx}
+\RequirePackage{fontawesome5}
+\RequirePackage{listings}
+\RequirePackage{appendixnumberbeamer}
+\RequirePackage{adjustbox}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\RequirePackage{hyperref}
+
+% Listings style for code
+\lstset{
+  basicstyle=\ttfamily\tiny,
+  keywordstyle=\color{ArgosTeal}\bfseries,
+  commentstyle=\color{ArgosGray}\itshape,
+  stringstyle=\color{ArgosOrange},
+  backgroundcolor=\color{ArgosLightGray},
+  frame=none,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false
+}

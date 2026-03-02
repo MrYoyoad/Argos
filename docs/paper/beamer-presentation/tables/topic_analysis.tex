@@ -1,0 +1,27 @@
+% Topic Analysis Table (Slide A6)
+{\small 11 topic categories from 1,497 segments, ordered by IS:}
+
+\vspace{4pt}
+
+\centering
+{\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lcccc@{}}
+  \toprule
+  \textbf{Topic} & \textbf{Count} & \textbf{Mean IS} & \textbf{Captured \%} & \textbf{Mean WER} \\
+  \midrule
+  \cellcolor{TierGoodBg} Business / Finance & 46 & \tiergood{3.08} & 57\% & 52\% \\
+  \cellcolor{TierGoodBg} Cooking / Food & 71 & \tiergood{3.01} & 52\% & 54\% \\
+  \cellcolor{TierFairBg} Science / Medicine & 85 & \tierfair{2.74} & 45\% & 60\% \\
+  \cellcolor{TierFairBg} Education / Lectures & 312 & \tierfair{2.67} & 43\% & 63\% \\
+  \cellcolor{TierFairBg} Entertainment & 158 & \tierfair{2.54} & 40\% & 66\% \\
+  \cellcolor{TierFairBg} News / Politics & 124 & \tierfair{2.51} & 40\% & 67\% \\
+  \cellcolor{TierFairBg} Sports & 67 & \tierfair{2.48} & 39\% & 68\% \\
+  \cellcolor{TierFairBg} Technology & 203 & \tierfair{2.44} & 38\% & 69\% \\
+  \cellcolor{TierFairBg} Lifestyle / Vlogs & 187 & \tierfair{2.38} & 36\% & 70\% \\
+  \cellcolor{TierPoorBg} Music / Arts & 117 & \tierpoor{2.28} & 33\% & 73\% \\
+  \cellcolor{TierPoorBg} DIY / Home & 27 & \tierpoor{2.13} & 30\% & 76\% \\
+  \bottomrule
+  \multicolumn{5}{@{}l@{}}{\scriptsize Formal vocabulary (Business, Cooking) $\rightarrow$ better LLM context recovery.} \\
+  \multicolumn{5}{@{}l@{}}{\scriptsize Casual speech (DIY, Vlogs) $\rightarrow$ harder for visual-only prediction.} \\
+\end{tabular}}

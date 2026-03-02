@@ -1,0 +1,109 @@
+% ============================================================
+% SECTION 1: OPENING & CONTEXT (Slides 1–4)
+% ============================================================
+
+\section{Context}
+
+% ----------------------------------------------------------
+% Slide 2: What Is Lip Reading?
+% ----------------------------------------------------------
+\begin{frame}{What Is Lip Reading?}
+  \twocol{0.55}{
+    \begin{itemize}
+      \item Speech recognition from \keyword{visual input only}
+      \item No audio signal --- mouth movements $\rightarrow$ text
+      \item 50--70\% of English sounds are \alert{invisible} on lips
+            \notetext{(p/b/m identical, t/d/n/s/z/l identical)}
+      \item Applications: surveillance, accessibility, noisy environments
+    \end{itemize}
+    \vspace{6pt}
+    \notetext{Video: 33-word insurance policy perfectly transcribed (WER 0\%)}
+  }{0.42}{
+    \centering
+    \videocaptioned{\linewidth}%
+      {IEa7qEkMvfQ_3__c5447488_thumb.png}%
+      {videos/source/IEa7qEkMvfQ_3__c5447488_with_hyp.mp4}%
+      {Perfect transcription --- WER 0\%, IS 5.0}
+  }
+
+  \note{
+    Play the video FIRST, explain after.
+    33 words about insurance policies, perfectly lip-read.
+    Shows the technology fundamentally works on complex domain-specific content.
+    ``This is what it looks like when it works. Now let's see what happens on real-world data.''
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 3: Model Architecture
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Model Architecture}
+  \begin{center}
+    \input{figures/tikz/model_architecture.tex}
+  \end{center}
+
+  \vspace{2pt}
+  \begin{columns}[T]
+    \begin{column}{0.32\textwidth}
+      \centering
+      {\small\keyword{Visual Encoder}}\\
+      {\scriptsize AV-HuBERT (frozen)\\1024-dim features}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \centering
+      {\small\keyword{Projection}}\\
+      {\scriptsize Linear 1024$\rightarrow$4096\\Trainable bridge}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \centering
+      {\small\keyword{Language Model}}\\
+      {\scriptsize LLaMA-2-7B (4-bit QLoRA)\\r=16, 12.6M params (0.19\%)}
+    \end{column}
+  \end{columns}
+
+  \vspace{4pt}
+  \notetext{LLM is swappable --- Llama 3.1 8B has same hidden\_size (4096). Only LoRA adapters + projection are trained.}
+
+  \note{
+    Three blocks: frozen visual encoder, trainable projection, quantized LLM.
+    Key point: visual encoder is FROZEN --- all learning happens in projection + LoRA.
+    LLM swap is trivial: same hidden dimension, 1--2 hours setup.
+    Only 0.19\% of parameters are trained --- very parameter-efficient.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 4: The Benchmark
+% ----------------------------------------------------------
+\begin{frame}{The Benchmark}
+  \twocol{0.50}{
+    \begin{block}{Published Result}
+      \keyword{25.4\% WER} on LRS3\\[2pt]
+      {\small Curated TED talks, controlled lighting,\\
+      frontal face, professional speakers}
+    \end{block}
+
+    \vspace{6pt}
+
+    \begin{alertblock}{Our Questions}
+      \begin{enumerate}
+        \item How does this perform on\\
+              \alert{real-world video}?
+        \item Is \alert{WER even the right metric}?
+      \end{enumerate}
+    \end{alertblock}
+
+    \vspace{4pt}
+    \notetext{1,497 segments from diverse YouTube videos}
+  }{0.47}{
+    \halfwidthfig{P2_paper_vs_reality.png}
+  }
+
+  \note{
+    Paper reports 25.4\% WER on LRS3 benchmark (curated TED talks).
+    Our two questions frame the entire presentation:
+    1. Real-world performance (spoiler: 2.5x worse)
+    2. WER as a metric (spoiler: dramatically overstates failure)
+    1,497 segments from diverse YouTube videos --- not curated, not controlled.
+  }
+\end{frame}
