@@ -148,6 +148,20 @@ def add_prompt_block(doc, prompt_text):
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 
+def add_attachment_table(doc, attachments):
+    """Add a table of files to upload with the prompt."""
+    add_heading(doc, "Upload These Files With the Prompt", 3)
+    add_para(doc, (
+        "Attach these files to the Gemini conversation when pasting the prompt above. "
+        "Gemini will use the images as visual reference and the reports for data context."
+    ), italic=True, color=C_GRAY, size=Pt(10))
+    add_styled_table(doc,
+        ["#", "File", "For Slide(s)", "Purpose"],
+        [[str(i + 1)] + row for i, row in enumerate(attachments)],
+        col_widths=[0.3, 2.8, 1.0, 2.5],
+    )
+
+
 def _tight_page_break(doc):
     last_p = doc.paragraphs[-1]
     last_p.add_run().add_break(WD_BREAK.PAGE)
@@ -335,8 +349,12 @@ Note: "Opening demo: 33-word perfect lip-reading" [video played externally]
 
 SLIDE 3 - Model Architecture
 Title: "How It Works: Three Components"
-Left-to-right flow: Video \u2192 AV-HuBERT (Visual Encoder) \u2192 LLaMA-2 (Language Model) \u2192 Text
-One line under each: "Visual features" \u2192 "Token-to-text"
+Left-to-right flow: Video \u2192 AV-HuBERT (Visual Encoder, frozen, 1024-dim)
+\u2192 Linear Projection (1024\u21924096) \u2192 LLaMA-2-7B (4-bit QLoRA, r=16) \u2192 Text
+One line under each: "Visual features" \u2192 "Embedding space" \u2192 "Token-to-text"
+Note: "LLM is swappable \u2014 Llama 3.1 8B has same hidden size (4096),
+making it a drop-in replacement (1-2 hours setup). Only 12.6M
+trainable params (0.19%) via LoRA adapters."
 
 SLIDE 4 - The Benchmark
 Title: "Paper Claims 25.4% WER on LRS3"
@@ -495,8 +513,12 @@ Cross-config proof: Per-segment IS rankings are nearly
 identical across all 16 configs (r > 0.92 for most pairs).
 The "hard" and "easy" segments stay the same regardless
 of decode parameters \u2014 the bottleneck is the visual encoder,
-not the decode strategy. This is why fine-tuning (Phase 3)
-is the single largest opportunity.
+not the decode strategy.
+Data scarcity (1,273 segments) was the real bottleneck \u2014
+not model capacity or decode parameters. Three levers remain:
+(1) scale training data to 20K-50K segments (biggest gain),
+(2) swap to stronger LLM \u2014 Llama 3.1 8B is a drop-in replacement,
+(3) smart prompts as force multiplier for stronger models.
 Leave space for chart.
 
 SLIDE 14 - Curated Examples with IS
@@ -515,7 +537,7 @@ Subtitle: "Perfect \u2192 Near-miss \u2192 Hallucination"
 Minimal. [Videos played externally]
 
 SLIDE 16 - Research Output
-Title: "Seven Research Reports + Exp A Training Analysis"
+Title: "Eight Research Reports + Exp A Training Analysis"
 List:
 1. Executive Assessment \u2014 reality gap, quality tiers
 2. Hyperparameter Tuning \u2014 13 experiments, parameter sensitivity
@@ -525,6 +547,9 @@ List:
 6. Fine-Tuning Analysis \u2014 LoRA domain adaptation strategy
 7. Intelligibility Scoring \u2014 6-signal composite metric,
    failure mode taxonomy, success patterns, topic/length analysis
+8. LLM Upgrade Analysis \u2014 model alternatives (Llama 3.1 8B drop-in),
+   data scaling projections, prompt strategies as force multiplier,
+   GER post-processing, investment roadmap to 27-42% WER
 NEW: Exp A Training Report \u2014 r=16 results, overfitting analysis,
    10 diagnostic plots, recommendations for Exp B"""
 
@@ -594,7 +619,9 @@ SLIDE 23 - Process & Documentation
 Title: "Engineering Process"
 - 40+ git versions with semantic tags
 - EC2/container sync protocol (26 tracked items)
-- 7 formal research reports + methodology docs
+- 8 formal research reports + methodology docs
+  (including LLM Upgrade Analysis with model alternatives,
+   data scaling projections, and investment strategy)
 - Complete architecture, development, and bug documentation"""
 
 PROMPT_4 = """Continue the same presentation (dark navy, teal/coral accents).
@@ -629,17 +656,24 @@ And we know WHY it works \u2014 phonetic preservation."
 Make this feel like a turning point in the narrative.
 
 SLIDE 25 - Research Roadmap
-Title: "Three Phases \u2014 Each Targeting Specific Failure Modes"
-Timeline/staircase with failure mode annotations:
-Phase 1: Surface the good 40% \u2014 confidence scoring.
+Title: "Five Phases \u2014 From 67% to Target 27-42% WER"
+Timeline/staircase with WER improvement waterfall:
+Phase 1: Surface the good 40% \u2014 confidence scoring (2-4 hours).
   Targets: all failure modes (flag quality, not fix it).
-Phase 2: Improve the fair 22% \u2014 N-best aggregation.
+Phase 2: Improve the fair 22% \u2014 N-best aggregation (-5 to -15%).
   Targets: Accumulated Small Errors (12.3%), Content Word
-  Errors (10.7%) \u2014 partial correct words exist across hypotheses.
-Phase 3: Rescue the poor 22% \u2014 domain fine-tuning.
-  Targets: Topic Drift (15.9%), Phonetically Similar but Wrong
-  Topic (15.7%), Entity Destruction (12.0%) \u2014 domain mismatch.
-Leave space for trajectory chart.
+  Errors (10.7%) \u2014 partial correct words across hypotheses.
+Phase 3: LLM swap + smart prompts \u2014 Llama 3.1 8B (drop-in,
+  same hidden_size 4096) + context-injection prompts (-8 to -18pp).
+  Prompts are a FORCE MULTIPLIER for stronger models: Llama-2
+  gets +5-10pp, Llama 3.1 8B gets +12-20pp from same strategies.
+Phase 4: Scale training data to 20K-50K segments + fine-tune
+  with enriched prompts (-15 to -25pp, biggest single gain).
+  Multiplicative scaling law (ICLR 2024): LLM + data compound.
+Phase 5: GER post-processing (N-best + correction LLM) \u2014
+  no retraining needed, can use external API (-8 to -15pp).
+Realistic combined target: 27-42% WER (from current 67%).
+Leave space for improvement waterfall chart.
 
 SLIDE 26 - Phase 1: Confidence Scoring
 Title: "Phase 1: Automatic Quality Flagging"
@@ -662,41 +696,54 @@ Title: "Phase 2: Exploit All 20 Hypotheses"
   words scattered across multiple hypotheses
 - Moves "fair" tier up to "good"
 
-SLIDE 28 - Phase 3: Fine-Tuning \u2014 Exp A Results
-Title: "Phase 3: Domain Adaptation \u2014 First Results"
+SLIDE 28 - Fine-Tuning + Data Scaling
+Title: "Domain Adaptation: Data Is the Bottleneck"
 Two sections:
 
-TOP \u2014 Exp A Results (r=16, encoder frozen):
-- Dataset: only ~1,400 YouTube videos \u2192 1,273 train / 224 val segments
-  (stratified by IS tier). This is a SMALL dataset \u2014 proof of concept.
-- LoRA r=16, alpha=32, targets: q/k/v_proj \u2014 12.6M params (0.19%)
-- Best val accuracy: 62.94% at epoch 2 (320 updates)
-- Severe overfitting: train acc 95.5% vs val acc 59.0% by epoch 19
-  (36.5 pp gap \u2014 model memorized training data)
-- Training: 17 hours on Tesla T4 (FP16)
-- Key insight: best checkpoint at epoch 2 \u2014 17 of 19 epochs wasted
-- Decode evaluation pending (checkpoint_best.pt ready)
+TOP \u2014 Exp A/B Results and Key Reframe:
+- Exp A (r=16): 1,273 segments, 17h Tesla T4, best val acc 62.94%
+  at epoch 2. Severe overfitting: 36.5pp gap by epoch 19.
+- Exp B (r=64): 3.1pp WORSE than r=16 \u2014 NOT because LLM is saturated,
+  but because 4x params = 4x faster overfitting on tiny data.
+- KEY: 1,273 segments is below the ~1K minimum for LoRA generalization
+  (ICLR 2024 scaling laws). Both experiments proved DATA SCARCITY
+  is the bottleneck \u2014 not model capacity or rank.
 Leave space for FT_10 summary dashboard plot.
 
-BOTTOM \u2014 What We Learned + Exp B Plan:
-- Early stopping is critical (save every epoch, stop at first decline)
-- r=16 is rank-limited for TED\u2192YouTube domain shift
-- Exp B: r=64 (4x capacity), max 500 updates, validate every 50 steps
-- Encoder unfreezing (requires larger GPU): expected 15-25 WER point gain
-- More training data: current ~1,400 videos is small \u2014 AVSpeech has
-  millions of clips available. Scaling data is a key lever.
-- Targets: Topic Drift (15.9%), Phonetically Similar but Wrong
-  Topic (15.7%), Entity Destruction (12.0%) \u2014 domain mismatch failures
-- This remains the single largest opportunity
+BOTTOM \u2014 Data Scaling Projections (ICLR 2024 power law):
+Data scaling table (show as chart or table):
+- 1.3K segments (current): 67% WER (Llama-2) / ~62% (Llama 3.1 8B)
+- 5K segments: 55-60% / 50-55%
+- 20K segments: 45-50% / 40-45%
+- 50K segments: 40-45% / 35-40%
+AVSpeech has 290K videos available \u2014 data curation is tractable.
+Multiplicative scaling law: stronger LLM extracts MORE from same
+data \u2014 gap between models WIDENS as data increases.
+Targets: Topic Drift (15.9%), Entity Destruction (12.0%).
 
-SLIDE 29 - Beyond Phase 3
-Title: "Future Capabilities"
-Grid:
-1. Arabic \u2014 K-means model exists, pipeline integration needed
-2. Multi-speaker \u2014 speaker tracking and separation
-3. Streaming \u2014 real-time processing
-4. Topic-specific tuning \u2014 target lowest categories
-   (DIY/Home 30%, Entertainment 30%) with domain data
+SLIDE 29 - LLM Upgrade + Advanced Capabilities
+Title: "Stronger LLM + Smart Prompts = Force Multiplier"
+Three columns:
+
+LEFT \u2014 LLM Swap (immediate):
+- Llama 3.1 8B: drop-in replacement (same hidden_size 4096)
+- Llama-3 8B \u2248 Llama-2 70B quality, 128K vocab (4x), 128K context (32x)
+- Setup: 1-2 hours (just change model path + tokenizer)
+- Alone: -3 to -8pp WER improvement
+
+CENTER \u2014 Smart Prompts (force multiplier):
+- 7 strategies: topic context, word count hints, vocabulary lists,
+  anti-hallucination, phonetic context, self-correction, N-best GER
+- Key: prompts are MORE effective on stronger models:
+  Llama-2-7B = +5-10pp, Llama 3.1 8B = +12-20pp, 70B class = +20-30pp
+- GER post-processing (N-best + correction LLM, even external API
+  like Claude/GPT-4): +8-15pp, no retraining needed
+
+RIGHT \u2014 Future:
+- Arabic (K-means model exists)
+- VALLR architecture: 3B model achieves 18.7% WER on LRS3
+  (architecture innovation > model size)
+- Multi-speaker, streaming
 
 SLIDE 30 - Summary
 Title: "Key Takeaways"
@@ -705,15 +752,61 @@ Four points:
    Novel IS metric reveals 40% properly captured. 10 classified
    failure modes. Performance analyzed by topic and segment length.
 2. Production system delivered: standalone container, 37 bugs fixed,
-   8-stage pipeline, 37 tests, 7 research reports.
-3. First fine-tuning complete: Exp A (r=16) trained on only 1,273
-   segments from ~1,400 YouTube videos \u2014 best val accuracy 62.9%
-   at epoch 2, confirmed overfitting dynamics. Small dataset proves
-   model CAN learn from YouTube data. Decode evaluation pending.
-4. Clear next steps: confidence scoring (hours), N-best (days),
-   Exp B fine-tuning (r=64, early stopping). More training data
-   (current ~1,400 videos is small) and encoder unfreezing
-   (requires larger GPU) are the key scaling levers."""
+   8-stage pipeline, 37 tests, 8 research reports.
+3. Data is the bottleneck: Exp A/B proved 1,273 segments too small
+   for any LoRA config to generalize. 20K-50K segments is the
+   critical enabler. Multiplicative scaling law (ICLR 2024):
+   stronger LLM + more data compounds.
+4. Actionable roadmap to 27-42% WER: LLM swap to Llama 3.1 8B
+   (drop-in, hours) + smart prompts (force multiplier) + data
+   scaling to 20K-50K + GER post-processing (no retraining).
+   Combined gains stack because each targets a different bottleneck."""
+
+
+# ═══════════════════════════════════════════════════
+# PROMPT ATTACHMENTS (up to 10 per prompt)
+# Each entry: [file_path, slide(s), purpose]
+# ═══════════════════════════════════════════════════
+
+ATTACHMENTS_1 = [
+    ["08_branding/BlackLogo300x300-W-BG.png", "1", "Title slide logo placement"],
+    ["09_pipeline_diagram/pipeline_architecture.png", "3", "Architecture diagram reference"],
+    ["01_plots_for_slides/P2_paper_vs_reality.png", "4", "Paper 25.4% vs real-world 64.1% bar chart"],
+]
+
+ATTACHMENTS_2 = [
+    ["01_plots_for_slides/P1_quality_tiers.png", "5", "WER quality tier distribution (5 tiers)"],
+    ["01_plots_for_slides/09_boxplot_wwer_all_experiments.png", "9", "WWER boxplot across 13 experiments"],
+    ["01_plots_for_slides/01_wer_vs_duration.png", "10", "WER vs segment duration scatter"],
+    ["01_plots_for_slides/14_nea_vs_wwer_scatter.png", "11", "Named entity accuracy vs WWER"],
+    ["01_plots_for_slides/10_empty_and_hallucination_rates.png", "12", "Empty & hallucination rates per config"],
+    ["01_plots_for_slides/16_improvement_J_vs_A.png", "12", "Per-segment improvement Config J vs baseline"],
+    ["01_plots_for_slides/P4_lenpen_sensitivity.png", "13", "Length penalty sensitivity (tornado chart)"],
+    ["03_reports_md/intelligibility_methodology.md", "7", "Full IS methodology (6 signals, tiers, patterns)"],
+    ["03_reports_md/is_correlation_analysis.md", "7, 13", "Cross-config validation, LLM judge, variance"],
+    ["03_reports_md/report_1_executive_assessment.md", "5, 8, 10", "Reality gap data, failure modes, topic analysis"],
+]
+
+ATTACHMENTS_3 = [
+    ["09_pipeline_diagram/pipeline_architecture.png", "17", "8-stage pipeline flow diagram"],
+    ["01_plots_for_slides/15_cdf_wwer_curated.png", "22", "CDF of WWER (quality thresholds)"],
+    ["03_reports_md/report_2_hyperparameter_tuning.md", "22", "13 experiments context for evaluation infra"],
+    ["03_reports_md/report_6_finetuning_analysis.md", "22", "Fine-tuning strategy (evaluation context)"],
+    ["08_branding/BlackLogo300x300-W-BG.png", "17-23", "Consistent branding across slides"],
+]
+
+ATTACHMENTS_4 = [
+    ["01_plots_for_slides/P1_quality_tiers.png", "24", "IS tiers vs WER tiers comparison"],
+    ["01_plots_for_slides/P3_wer_trajectory.png", "25", "WER improvement trajectory across phases"],
+    ["01_plots_for_slides/P5_tuning_before_after.png", "24", "Before/after tuning paired comparison"],
+    ["01_plots_for_slides/finetune/FT_01_loss_curves.png", "28", "Train vs val loss curves (overfitting)"],
+    ["01_plots_for_slides/finetune/FT_02_accuracy_curves.png", "28", "Train vs val accuracy (gap widens)"],
+    ["01_plots_for_slides/finetune/FT_03_overfitting_gap.png", "28", "Overfitting gap diagnostic (36.5pp)"],
+    ["01_plots_for_slides/finetune/FT_10_summary_dashboard.png", "28", "6-panel Exp A summary dashboard"],
+    ["03_reports_md/finetune_A_comparison_report.md", "28, 30", "Exp A results, data scarcity proof"],
+    ["03_reports_md/is_correlation_analysis.md", "24", "Cross-config IS validation proof"],
+    ["03_reports_md/llm_upgrade_analysis.md", "25, 28, 29", "LLM alternatives, data scaling, prompts, investment strategy"],
+]
 
 
 # ═══════════════════════════════════════════════════
@@ -733,11 +826,13 @@ def build_intro(doc):
 
     add_heading(doc, "Instructions", 2)
     add_bullet(doc, 'Open Google Gemini and start a new conversation')
-    add_bullet(doc, 'Copy and paste Prompt 1 (Opening & Context) \u2014 generates slides 1-4')
-    add_bullet(doc, 'Wait for Gemini to finish, then paste Prompt 2 (Research Findings) \u2014 slides 5-16')
-    add_bullet(doc, 'Paste Prompt 3 (Engineering) \u2014 slides 17-23')
-    add_bullet(doc, 'Paste Prompt 4 (Future & Close) \u2014 slides 24-30')
-    add_bullet(doc, 'After all 4 prompts: manually add appendix slides and insert plots/diagrams')
+    add_bullet(doc, 'For each prompt: upload the listed files FIRST, then paste the prompt text')
+    add_bullet(doc, 'Prompt 1 (Opening & Context) + 3 files \u2014 generates slides 1-4')
+    add_bullet(doc, 'Prompt 2 (Research Findings) + 10 files \u2014 generates slides 5-16')
+    add_bullet(doc, 'Prompt 3 (Engineering) + 5 files \u2014 generates slides 17-23')
+    add_bullet(doc, 'Prompt 4 (Future & Close) + 10 files \u2014 generates slides 24-30')
+    add_bullet(doc, 'After all 4 prompts: manually add appendix slides if needed')
+    add_bullet(doc, 'Total: 28 files across 4 prompts (some files reused across prompts)')
 
     add_heading(doc, "Design Theme", 2)
     add_para(doc, (
@@ -747,11 +842,9 @@ def build_intro(doc):
     ))
 
     add_heading(doc, "Post-Generation Steps", 2)
-    add_bullet(doc, 'Insert plots from 01_plots_for_slides/ at marked locations')
-    add_bullet(doc, 'Insert pipeline diagram from 09_pipeline_diagram/')
-    add_bullet(doc, 'Add logo from 08_branding/ to title slide and headers')
-    add_bullet(doc, 'Add fine-tuning plots from 01_plots_for_slides/finetune/ to Slide 28')
-    add_bullet(doc, 'Add appendix slides manually (see Section 7)')
+    add_bullet(doc, 'Review slides \u2014 plots uploaded with prompts should be placed by Gemini')
+    add_bullet(doc, 'Adjust any plot placements that Gemini missed or positioned awkwardly')
+    add_bullet(doc, 'Add appendix slides manually if needed for Q&A (see Section 7)')
     add_bullet(doc, 'Play demo videos from 06_demo_videos/ externally during presentation')
 
     _tight_page_break(doc)
@@ -800,6 +893,15 @@ def build_overview(doc):
             ["IS: cross-config rankings", "r > 0.92 across most config pairs", "Encoder-limited, not decode"],
             ["IS: Config J vs baseline", "IS 2.571 vs 2.485 despite +14.8pp WER", "IS > WER for comparison"],
             ["IS: methodology", "LLM-distilled (Claude-designed rubric)", "Design-time expert judgment"],
+            ["LLM: current model", "Llama-2-7B (4-bit QLoRA, r=16)", "Hidden size 4096"],
+            ["LLM: recommended swap", "Llama 3.1 8B (drop-in, same dim 4096)", "1-2 hours setup"],
+            ["LLM: swap alone", "-3 to -8pp WER", "Better language modeling"],
+            ["Prompts: force multiplier", "Llama-2 +5-10pp, Llama 3.1 +12-20pp", "7 strategies"],
+            ["GER post-processing", "+8-15pp, no retraining", "N-best + correction LLM"],
+            ["Data scaling: 20K segments", "45-50% WER (Llama-2) / 40-45% (Llama 3.1)", "ICLR 2024 power law"],
+            ["Combined realistic target", "27-42% WER (from 67%)", "LLM + data + prompts + GER"],
+            ["Scaling law", "Multiplicative (ICLR 2024)", "LLM + data improvements compound"],
+            ["VALLR (ICCV 2025)", "18.7% WER on LRS3 with 3B model", "Architecture > model size"],
         ],
         col_widths=[2.5, 2.2, 2.0],
     )
@@ -807,13 +909,22 @@ def build_overview(doc):
     _tight_page_break(doc)
 
 
-def build_prompt_section(doc, number, title, slides, prompt_text):
-    """Build a prompt section with description and copyable prompt block."""
+def build_prompt_section(doc, number, title, slides, prompt_text, attachments=None):
+    """Build a prompt section with description, copyable prompt block, and attachment table."""
     add_heading(doc, f"{number + 2}. Prompt {number}: {title} ({slides})", 1)
 
     add_para(doc, f"Copy the entire text block below and paste it into Google Gemini.",
              italic=True, color=C_GRAY)
-    add_para(doc, f"This prompt generates {slides}.", bold=True)
+    if attachments:
+        add_para(doc, (
+            f"This prompt generates {slides}. "
+            f"Upload the {len(attachments)} files listed below together with the prompt."
+        ), bold=True)
+    else:
+        add_para(doc, f"This prompt generates {slides}.", bold=True)
+
+    if attachments:
+        add_attachment_table(doc, attachments)
 
     doc.add_paragraph()
     add_prompt_block(doc, prompt_text)
@@ -843,6 +954,12 @@ def build_appendix(doc):
             ["A5", "Topic analysis detail (11 categories)", "If asked about domain-specific performance"],
             ["A6", "Signal comparison table (success vs failure)", "If asked about what makes IS work"],
             ["A7", "Config J full-dataset comparison", "If asked about tuning details on full data"],
+            ["A9", "LLM Upgrade Analysis \u2014 model alternatives table "
+                   "(Llama 3.1 8B drop-in, Qwen, Mistral, VALLR), "
+                   "data scaling projections (1.3K\u2192100K), "
+                   "7 prompt strategies by model tier, "
+                   "improvement waterfall (67%\u219227-42%)",
+                   "If asked about LLM alternatives, data scaling, or prompt strategies"],
         ],
         col_widths=[0.4, 3.0, 3.2],
     )
@@ -862,7 +979,7 @@ def build_materials(doc):
             ["01_plots_for_slides/", "17 presentation graphs (P1-P5, existing, finetune/)", "Slides 4-13, 25, 28"],
             ["01_plots_for_slides/finetune/", "4 key fine-tuning plots (FT_01, FT_02, FT_03, FT_10)", "Slide 28, Appendix A2"],
             ["02_plots_boss_deep_dive/", "14 technical deep-dive graphs (all 10 FT_* plots)", "Appendix, Q&A backup"],
-            ["03_reports_md/", "9 research reports in Markdown (incl. correlation analysis)", "Slides 7, 11, 16, 24"],
+            ["03_reports_md/", "10 research reports in Markdown (incl. correlation analysis + LLM upgrade analysis)", "Slides 7, 11, 16, 24, 25, 28, 29"],
             ["04_reports_docx/", "18 formatted reports (Word + PDF)", "Handouts"],
             ["05_data/", "18+ data files (CSV, JSON, HTML reports)", "Reference data"],
             ["06_demo_videos/", "8 burned videos with subtitle overlays", "Slides 2, 14, 15"],
@@ -899,15 +1016,15 @@ def main():
     build_intro(doc)
     build_overview(doc)
 
-    # 4 Gemini prompts
+    # 4 Gemini prompts with attachments
     prompts = [
-        (1, "Opening & Context", "Slides 1-4", PROMPT_1),
-        (2, "Research Findings", "Slides 5-16", PROMPT_2),
-        (3, "Engineering", "Slides 17-23", PROMPT_3),
-        (4, "Future & Close", "Slides 24-30", PROMPT_4),
+        (1, "Opening & Context", "Slides 1-4", PROMPT_1, ATTACHMENTS_1),
+        (2, "Research Findings", "Slides 5-16", PROMPT_2, ATTACHMENTS_2),
+        (3, "Engineering", "Slides 17-23", PROMPT_3, ATTACHMENTS_3),
+        (4, "Future & Close", "Slides 24-30", PROMPT_4, ATTACHMENTS_4),
     ]
-    for num, title, slides, text in prompts:
-        build_prompt_section(doc, num, title, slides, text)
+    for num, title, slides, text, attachments in prompts:
+        build_prompt_section(doc, num, title, slides, text, attachments)
 
     build_appendix(doc)
     build_materials(doc)

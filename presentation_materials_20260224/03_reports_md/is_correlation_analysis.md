@@ -144,6 +144,61 @@ The `llm_context_prob` field is a **heuristic approximation** of how an expert L
 
 The LLM heuristic correlates most strongly with IS itself (r=0.93) and with Semantic Sim and Phonetic Sim — the two signals that best capture "can a human understand this?"
 
+### 7.2a LLM Judge vs Components — Cross-Configuration (16 Configs)
+
+*(Added 2026-03-02. LLM context recovery computed from scratch for all 16 decode configs.)*
+
+**Per-config Pearson r of `llm_context_prob` vs each signal:**
+
+| Config | N | vs IS | vs Sem | vs Pho | vs WER | vs WWER | vs NEA | vs LR |
+|--------|---|-------|--------|--------|--------|---------|--------|-------|
+| baseline_full | 1497 | 0.937 | 0.891 | 0.904 | -0.810 | -0.820 | 0.761 | 0.179 |
+| full_decode_C | 1497 | 0.933 | 0.879 | 0.867 | -0.547 | -0.638 | 0.749 | -0.300 |
+| full_decode_J | 1497 | 0.934 | 0.876 | 0.861 | -0.505 | -0.649 | 0.784 | -0.268 |
+| exp_A_baseline | 107 | 0.917 | 0.892 | 0.894 | -0.822 | -0.804 | 0.679 | 0.331 |
+| exp_B_no_rep_pen | 107 | 0.926 | 0.898 | 0.894 | -0.830 | -0.825 | 0.706 | 0.312 |
+| exp_C_lenpen_pos1 | 107 | 0.911 | 0.887 | 0.878 | -0.552 | -0.799 | 0.667 | -0.305 |
+| exp_D_lenpen_neg05 | 107 | 0.973 | 0.958 | 0.967 | -0.925 | -0.915 | 0.863 | 0.814 |
+| exp_E_sampling_low_temp | 107 | 0.910 | 0.872 | 0.874 | -0.828 | -0.809 | 0.648 | 0.044 |
+| exp_F_sampling_original | 107 | 0.916 | 0.898 | 0.876 | -0.830 | -0.804 | 0.665 | 0.120 |
+| exp_G_greedy | 107 | 0.911 | 0.898 | 0.858 | -0.807 | -0.672 | 0.675 | -0.064 |
+| exp_H_lenpen_pos2 | 107 | 0.932 | 0.899 | 0.638 | -0.573 | -0.287 | 0.755 | -0.560 |
+| exp_I_lenpen1_sample | 107 | 0.927 | 0.868 | 0.886 | -0.401 | -0.784 | 0.725 | -0.245 |
+| exp_J_lenpen1_temp05 | 107 | 0.912 | 0.880 | 0.881 | -0.697 | -0.837 | 0.680 | -0.335 |
+| exp_K_sampling_temp15 | 107 | 0.922 | 0.895 | 0.884 | -0.805 | -0.853 | 0.719 | 0.154 |
+| exp_L_sampling_temp03 | 107 | 0.920 | 0.891 | 0.873 | -0.834 | -0.839 | 0.668 | 0.070 |
+| exp_M_lenpen1_temp03 | 107 | 0.917 | 0.871 | 0.863 | -0.524 | -0.310 | 0.647 | -0.309 |
+
+**Stability summary across all 16 configs:**
+
+| Component | Mean r | Std | Min | Max | Stable? |
+|-----------|--------|-----|-----|-----|---------|
+| **IS Score** | **0.925** | 0.015 | 0.910 | 0.973 | Yes |
+| **Semantic** | **0.891** | 0.020 | 0.868 | 0.958 | Yes |
+| Phonetic | 0.869 | 0.065 | 0.638 | 0.967 | Moderate |
+| NEA F1 | 0.712 | 0.057 | 0.647 | 0.863 | Moderate |
+| WER | -0.706 | 0.156 | -0.925 | -0.401 | No |
+| WWER | -0.728 | 0.178 | -0.915 | -0.287 | No |
+| Length Ratio | -0.023 | 0.333 | -0.560 | 0.814 | No |
+
+**Key finding:** The LLM judge's correlation with IS and with Semantic Similarity is **rock-solid** across all 16 configs (std < 0.02). WER and Length Ratio are the same volatile signals seen in the IS analysis (Section 10.2), confirming that these instabilities are properties of the signals themselves, not of the LLM heuristic.
+
+### 7.2b LLM Judge Agreement (κ) — Cross-Configuration
+
+| Config | N | Agreement | Cohen's κ | Precision | Recall | F1 |
+|--------|---|-----------|----------|-----------|--------|-----|
+| baseline_full | 1497 | 88.3% | 0.765 | 77.4% | 98.6% | 86.7% |
+| full_decode_J | 1497 | **89.6%** | **0.791** | 80.2% | 98.5% | 88.4% |
+| full_decode_C | 1497 | 87.6% | 0.752 | 76.0% | 99.1% | 86.0% |
+| exp_D_lenpen_neg05 | 107 | **94.4%** | **0.862** | 81.8% | 100.0% | 90.0% |
+| exp_G_greedy | 107 | 86.9% | 0.738 | 73.6% | 100.0% | 84.8% |
+| exp_K_sampling_temp15 | 107 | 86.0% | 0.722 | 72.7% | 100.0% | 84.2% |
+| exp_A_baseline (subset) | 107 | 83.2% | 0.670 | 70.7% | 97.6% | 82.0% |
+
+*(Selected configs shown; full table in computation logs. Mean κ across all 16 configs: ~0.72, range 0.62-0.86.)*
+
+**Recall is near-perfect across all configs** (97.6-100.0%) — the LLM heuristic almost never misses a segment that IS scores as captured. Precision varies more (65-82%), reflecting the heuristic's intentionally optimistic design. Config J achieves the best agreement at scale (κ=0.791).
+
 ### 7.3 Agreement with IS ≥ 3.0 Threshold
 
 Confusion matrix comparing `llm_context_prob ≥ 0.5` vs `IS ≥ 3.0`:
@@ -272,10 +327,91 @@ If we additionally called Claude per-segment at evaluation time, the primary val
 
 ---
 
-## 10. Methodology Notes
+## 10. Cross-Configuration Analysis (16 Configs)
+
+*(Added 2026-03-02. IS scores computed from ref/hyp text for all 16 experiment configurations.)*
+
+IS components (semantic_sim, phonetic_sim, length_ratio) were computed from scratch for all configs using the same pipeline as the baseline. Validation: recomputed baseline IS correlates at r=0.999 with the original scores (MAE=0.05 — rounding/float differences only).
+
+### 10.1 Datasets
+
+| Dataset | Segments | Configs |
+|---------|----------|---------|
+| Tuning subset | 107 (same segments across configs) | 13 configs: exp_A (baseline), exp_B-M (parameter variants) |
+| Full decode | 1,497 | 3 configs: baseline_full, full_decode_C (lenpen=1), full_decode_J (lenpen=1+sampling) |
+
+### 10.2 IS vs Component Correlation Stability
+
+How stable are IS-component correlations across different decode configurations?
+
+| Component | Mean r | Std r | Min r | Max r | Range | Verdict |
+|-----------|--------|-------|-------|-------|-------|---------|
+| **Semantic** | **0.914** | 0.017 | 0.890 | 0.967 | 0.076 | Very stable |
+| **Phonetic** | **0.914** | 0.059 | 0.698 | 0.981 | 0.283 | Stable except exp_H (lenpen=2) |
+| **NEA F1** | **0.851** | 0.023 | 0.820 | 0.908 | 0.088 | Very stable |
+| WER | -0.764 | 0.163 | -0.949 | -0.453 | 0.495 | Unstable — lenpen configs disrupt WER-IS relationship |
+| WWER | -0.804 | 0.203 | -0.944 | -0.276 | 0.668 | Unstable — same configs affected |
+| Length Ratio | -0.021 | 0.368 | -0.559 | 0.857 | 1.416 | Highly unstable — sign flips across configs |
+
+**Key finding:** Semantic, Phonetic, and NEA F1 are **robust signals** — their correlation with IS is stable regardless of decode parameters. WER and WWER become unreliable when length penalty is applied (lenpen > 0 causes longer outputs that inflate WER while IS stays similar). Length Ratio is the most volatile signal, flipping sign depending on whether the config tends to over-generate or truncate.
+
+### 10.3 Full Decode Comparison (1,497 segments)
+
+| Config | Mean IS | Captured (IS>=3) | Mean WER | Mean Semantic | Mean Phonetic |
+|--------|---------|-----------------|----------|---------------|---------------|
+| baseline_full | 2.485 | 38.7% | 64.1% | 0.437 | 0.505 |
+| full_decode_C (lenpen=1) | 2.535 | 38.5% | 79.3% | 0.444 | 0.545 |
+| full_decode_J (lenpen=1+sampling) | **2.571** | **40.5%** | 78.9% | 0.443 | 0.543 |
+
+Config J has the highest IS (+0.086 over baseline) and capture rate (+1.8pp) despite having significantly higher WER (+14.8pp). This demonstrates IS's advantage over WER: the longer outputs from lenpen=1 contain more errors by WER's count but preserve more meaning (higher semantic and phonetic similarity).
+
+### 10.4 Inter-Config IS Correlation (Same 107 Segments)
+
+How much does changing decode parameters change the per-segment IS ranking?
+
+| Config Pair | r | Interpretation |
+|-------------|---|----------------|
+| exp_A ↔ exp_B (drop rep_penalty) | **0.998** | Virtually identical |
+| exp_A ↔ exp_L (sampling temp=0.3) | **0.969** | Very similar |
+| exp_A ↔ exp_G (greedy) | **0.924** | Similar |
+| exp_A ↔ exp_H (lenpen=2) | **0.872** | Moderate divergence |
+| exp_A ↔ exp_D (lenpen=-0.5) | **0.603** | Significant divergence — truncation changes segment rankings |
+| baseline_full ↔ full_decode_C | **0.940** | Stable at scale |
+| baseline_full ↔ full_decode_J | **0.932** | Stable at scale |
+| full_decode_C ↔ full_decode_J | **0.984** | Nearly identical (sampling adds minimal noise) |
+
+**Most configs produce nearly identical per-segment IS rankings** (r > 0.92). The exceptions are extreme parameter choices: negative length penalty (exp_D, r=0.60) causes truncation that reorders segments, and lenpen=2 (exp_H, r=0.87) over-generates enough to shift rankings.
+
+### 10.5 Variance Contribution Stability
+
+Does the relative importance of each signal change across configs?
+
+| Config | Sem% | Pho% | WER% | WWER% | NEA% | LR% |
+|--------|------|------|------|-------|------|-----|
+| **Mean (16 configs)** | **29.1%** | **13.8%** | **16.3%** | **15.5%** | **17.4%** | **7.9%** |
+| Std | 0.9% | 1.6% | 0.7% | 0.7% | 0.9% | 3.2% |
+| **baseline_full** | 28.4% | 14.6% | 15.7% | 15.1% | 17.3% | 9.0% |
+| exp_D (lenpen=-0.5) | 27.1% | 15.3% | 14.0% | 13.8% | 14.3% | **16.6%** |
+| exp_H (lenpen=2) | 28.2% | **8.3%** | 16.3% | 14.5% | 17.2% | **16.4%** |
+
+Semantic (29%), NEA (17%), WER (16%), WWER (16%) are **stable across all configs** (std < 1%). Phonetic varies slightly (std=1.6%). **Length Ratio is the only volatile contributor** — it jumps from 5% to 17% for configs that cause extreme over-generation (lenpen=2) or truncation (lenpen=-0.5), where length anomalies become a dominant signal.
+
+### 10.6 Implications
+
+1. **Semantic similarity and NEA F1 are the most reliable IS components** — stable across all 16 configs, insensitive to decode parameter choices.
+2. **WER is misleading across configs** — configs with lenpen > 0 inflate WER without degrading IS, because longer outputs contain more word errors but also more semantic content. This validates the motivation for creating IS over raw WER.
+3. **Length Ratio is a confound, not a signal** — its contribution and even its sign depend entirely on the decode config. In future IS versions, reducing its weight or making it config-aware could improve robustness.
+4. **Most decode parameters don't change segment rankings** — r > 0.92 across most pairs means the "hard" and "easy" segments are consistent regardless of config. The bottleneck is the visual encoder, not the decode strategy.
+
+---
+
+## 11. Methodology Notes
 
 - **Pearson r** measures linear correlation; **Spearman ρ** measures monotonic (rank) correlation
 - Where Spearman >> Pearson (e.g., WER), the relationship is monotonic but nonlinear — extreme values compress the linear fit
 - **Variance contribution** uses covariance decomposition: % = Cov(IS, weighted_component) / Var(IS)
 - **Per-tier correlations** have reduced sample sizes (239-336 per tier) and narrower ranges, so absolute r values are lower than the global correlations
-- All correlations are computed on the full 1,497-segment baseline dataset (February 2026)
+- Sections 1-9 computed on the full 1,497-segment baseline dataset (February 2026)
+- Section 10 computed across 16 experiment configurations (13 × 107-segment tuning subset + 3 × 1,497-segment full decodes)
+- IS recomputation validated against original scores: r=0.999, MAE=0.05 (floating-point rounding only)
+- Finetuning evaluation (Exp A r=16, Exp B r=64) decode is in progress — correlation analysis will be updated when results are available

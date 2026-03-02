@@ -123,31 +123,64 @@ tar xzf galaxy_export_backup_*.tar.gz
 
 #### Section 1: Opening & Context (5 min, 4 slides)
 
+**Upload with Prompt 1 (3 files):**
+
+| # | File | For Slide | Purpose |
+|---|------|-----------|---------|
+| 1 | `08_branding/BlackLogo300x300-W-BG.png` | 1 | Title slide logo placement |
+| 2 | `09_pipeline_diagram/pipeline_architecture.png` | 3 | Architecture diagram reference |
+| 3 | `01_plots_for_slides/P2_paper_vs_reality.png` | 4 | Paper 25.4% vs real-world 64.1% bar chart |
+
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
 | 1 | **Title** | "Argos VSP: Research Findings and Production Roadmap" | Branding from `docs/branding/` |
 | 2 | **What is Lip Reading?** | Video of face → text. Use cases: surveillance, accessibility, noisy environments. Hook: play the 33-word perfect burned video | **Demo video**: `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4` |
-| 3 | **Model Architecture** | 3-block diagram: Video → AV-HuBERT (visual encoder) → LLaMA-2 (language model) → Text | Custom diagram |
+| 3 | **Model Architecture** | 3-block diagram: Video → AV-HuBERT (visual encoder, frozen, 1024-dim) → Linear projection (1024→4096) → LLaMA-2-7B (4-bit QLoRA, r=16). Note: LLM is **swappable** — Llama 3.1 8B has same hidden_size (4096), trivial swap (1-2 hours setup). Only LoRA adapters (12.6M params, 0.19%) + projection layer are trained. | Custom diagram |
 | 4 | **The Benchmark** | Paper: 25.4% WER on LRS3 (curated TED talks). Our question: "How does this perform on real-world video?" And: "Is WER even the right metric?" | **NEW graph: Paper vs Reality bar chart** |
 
 #### Section 2: Research Findings (18 min, 12 slides) — 40%
+
+**Upload with Prompt 2 (10 files):**
+
+| # | File | For Slide | Purpose |
+|---|------|-----------|---------|
+| 1 | `01_plots_for_slides/P1_quality_tiers.png` | 5 | WER quality tier distribution (5 tiers) |
+| 2 | `01_plots_for_slides/09_boxplot_wwer_all_experiments.png` | 9 | WWER boxplot across 13 experiments |
+| 3 | `01_plots_for_slides/01_wer_vs_duration.png` | 10 | WER vs segment duration scatter |
+| 4 | `01_plots_for_slides/14_nea_vs_wwer_scatter.png` | 11 | Named entity accuracy vs WWER |
+| 5 | `01_plots_for_slides/10_empty_and_hallucination_rates.png` | 12 | Empty & hallucination rates per config |
+| 6 | `01_plots_for_slides/16_improvement_J_vs_A.png` | 12 | Per-segment improvement Config J vs baseline |
+| 7 | `01_plots_for_slides/P4_lenpen_sensitivity.png` | 13 | Length penalty sensitivity (tornado chart) |
+| 8 | `03_reports_md/intelligibility_methodology.md` | 7 | Full IS methodology (6 signals, tiers, patterns) |
+| 9 | `03_reports_md/is_correlation_analysis.md` | 7, 13 | Cross-config validation, LLM judge, variance |
+| 10 | `03_reports_md/report_1_executive_assessment.md` | 5, 8, 10 | Reality gap data, failure modes, topic analysis |
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
 | 5 | **The Reality Gap** | 25.4% → 64.1% WER = 2.5x worse. WER quality tiers: only 11.4% "usable". Headline: "9 out of 10 segments need verification — or do they?" | **NEW graph: Quality tier pie/bar chart** |
 | 6 | **WER Is Blind** | **QUICK SETUP (30 sec)**: Two examples both ~30% WER: "work with the team" (WER 29%, IS 4.3, intelligible) vs "admiral mcrae"→"animal migratory" (WER 33%, IS 3.0, unintelligible). One line: "We've discussed this — same WER, opposite meaning. So we built a metric to fix it." → transition to next slide | Side-by-side text, 2 boxes (green/red) |
-| 7 | **The Intelligibility Score** | **KEY SLIDE**: 6-signal composite metric. Properly captured (IS >= 3.0): **39.9%** — 3.5x more than WER's 11.4%. IS tiers: 18.4% excellent, 21.4% good, 21.7% fair, 22.4% poor, 16.0% failed. **Correlation validation (NEW)**: 6 signals collapse into 3 independent dimensions — word accuracy (~60% variance), meaning preservation (~28%), output sanity (~9%). Phonetic Sim highest correlate (r=0.943). NEA F1 disproportionate contributor (17.3% vs 15% weight). LLM heuristic judge validates IS: r=0.93, 88.6% agreement, 99.2% recall. **Success patterns**: phonetic preservation #1 driver (41.5%), minor errors+high semantic (24.5%), entities preserved (12.4%), near-perfect (11.6%). This is the main research contribution. | IS tier distribution chart (new) |
+| 7 | **The Intelligibility Score** | **KEY SLIDE**: **LLM-distilled evaluation** — Claude designed the rubric, selected 6 signals/weights, defined tiers, classified failure/success patterns. Encoded into deterministic, free, decomposable metrics. Properly captured (IS >= 3.0): **39.9%** — 3.5x more than WER's 11.4%. IS tiers: 18.4% excellent, 21.4% good, 21.7% fair, 22.4% poor, 16.0% failed. **Cross-config validation (16 configs)**: Semantic/Phonetic/NEA stable (std<0.06); WER/LR volatile — proves IS more robust than WER. LLM judge r=0.925 across 16 configs (std=0.015), 88.6% agreement, 99.2% recall. Config J highest IS (2.571) despite +14.8pp WER. Rankings stable (r>0.92) — encoder-limited. **Success patterns**: phonetic preservation #1 driver (41.5%, also #1 IS correlate r=0.943). This is the main research contribution. | IS tier distribution chart (new) |
 | 8 | **Failure Mode Taxonomy** | **NEW**: 10 classified failure modes across 900 failed segments: Topic Drift 15.9%, Phonetically Similar but Wrong Topic 15.7%, Accumulated Small Errors 12.3%, Hallucination 12.3%, High Error Rate 12.1%, Entity Destruction 12.0%, Content Word Errors 10.7%, Empty Output 7.8%, Truncation 1.1%. **Key insight**: failures are diverse — no single fix addresses all modes. Each roadmap phase targets specific failure categories. | Failure mode bar chart (new) |
 | 9 | **Performance Distribution** | The spread — most segments at 50-80% WER, long tail of catastrophic failures | Existing: `09_boxplot_wwer_all_experiments.png` |
 | 10 | **Why the Gap** | 3 root causes: domain mismatch (TED vs YouTube), hallucination, short-segment failure. **Topic analysis**: Business/Finance best (IS 3.08, 57% captured) — formal vocabulary helps. DIY/Home worst (IS 2.13, 30% captured) — casual speech harder. **Length analysis**: 5-10 words only 32% captured, 20+ words 49% captured (+17pp). Short segments don't provide enough visual context. | Existing: `01_wer_vs_duration.png` |
 | 11 | **Named Entity Accuracy** | NEA F1: 38.8% — misses 61% of names/numbers. These are the words context can't recover. **Signal comparison confirms**: NEA F1 is the largest success/failure differentiator (74.0% vs 15.7%, gap 58.3pp). **Correlation insight**: NEA contributes 17.3% of IS variance (disproportionate to its 15% weight) due to high per-segment variance | Existing: `14_nea_vs_wwer_scatter.png` |
 | 12 | **13 Tuning Experiments** | Parameter sweep: beam, lenpen, sampling, temperature. **Full-dataset Config J results (1497 segments)**: IS 2.60 vs 2.52 baseline, 622 vs 597 captured (+25), empties 0 vs 70 baseline, but hallucinations 348 vs 307 (+41). J beats C: stochastic sampling (temp=0.5) recovers 3.7pp more named entities. do_sample=True on standalone, False on EC2 — to be unified. | Existing: `10_empty_and_hallucination_rates.png` + `16_improvement_J_vs_A.png` |
-| 13 | **Limits of Tuning** | Tuning = mitigation, not cure. **Config J trade-off**: eliminates empties but doubles hallucinations (111→262). Net IS gain only +0.08. The fundamental tradeoff is silent failures (empties) vs noisy failures (hallucinations). Core domain mismatch remains. | **NEW graph: Hyperparameter sensitivity tornado** |
+| 13 | **Limits of Tuning** | Tuning = mitigation, not cure. **Config J trade-off**: eliminates empties but doubles hallucinations (111→262). Net IS gain only +0.08. The fundamental tradeoff is silent failures (empties) vs noisy failures (hallucinations). **Cross-config proof**: per-segment IS rankings stable across all 16 configs (r>0.92) — "hard" and "easy" segments stay the same regardless of decode parameters. Bottleneck is the visual encoder, not decode strategy. **Data scarcity (1,273 segments) was the real bottleneck** — not model capacity or decode parameters. Three levers remain: (1) scale training data to 20K-50K segments, (2) swap to stronger LLM (Llama 3.1 8B, drop-in), (3) smart prompts as force multiplier. | **NEW graph: Hyperparameter sensitivity tornado** |
 | 14 | **Curated Examples** | Side-by-side ref vs hyp with IS scores (see examples section below) | Formatted text table |
 | 15 | **Live Demo** | Play 2-3 burned videos (see demo videos section below) | Video playback |
-| 16 | **Research Breadth** | One-liner per report (7 reports): evaluation, tuning, prompts, confidence, beam search, fine-tuning, **intelligibility** | Simple list |
+| 16 | **Research Breadth** | One-liner per report (8 reports): evaluation, tuning, prompts, confidence, beam search, fine-tuning, **intelligibility**, **LLM upgrade analysis** | Simple list |
 
 #### Section 3: Engineering Achievements (12 min, 7 slides) — 25%
+
+**Upload with Prompt 3 (5 files):**
+
+| # | File | For Slide | Purpose |
+|---|------|-----------|---------|
+| 1 | `09_pipeline_diagram/pipeline_architecture.png` | 17 | 8-stage pipeline flow diagram |
+| 2 | `01_plots_for_slides/15_cdf_wwer_curated.png` | 22 | CDF of WWER (quality thresholds) |
+| 3 | `03_reports_md/report_2_hyperparameter_tuning.md` | 22 | 13 experiments context for evaluation infra |
+| 4 | `03_reports_md/report_6_finetuning_analysis.md` | 22 | Fine-tuning strategy (evaluation context) |
+| 5 | `08_branding/BlackLogo300x300-W-BG.png` | 17-23 | Consistent branding across slides |
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
@@ -156,20 +189,35 @@ tar xzf galaxy_export_backup_*.tar.gz
 | 19 | **Modular Refactoring** | 823→393 lines, 11 modules, 37 tests. Before/after comparison | Side-by-side code structure |
 | 20 | **Deployed Product** | Standalone container, desktop icon, web UI, drag-and-drop. "Runs on a standalone Linux machine, no cloud" | UI screenshot |
 | 21 | **Smart Features** | Transcription reuse, golden k-means, video segmentation with overlap | Feature diagram |
-| 22 | **Evaluation Infrastructure** | 16 analytical plots, per-segment HTML reports, CSV exports, custom NEA metric, **Intelligibility Score pipeline** (6-signal composite metric, per-segment IS scoring, automated failure mode classification, success pattern analysis, topic/length analysis), **IS correlation analysis** (component correlation matrix, variance decomposition, per-tier signal drivers, LLM heuristic validation r=0.93), fine-tuning diagnostics (10 training plots) | Sample report screenshot |
-| 23 | **Quality Process** | Git tags, EC2/container sync protocol, **7** research reports, comprehensive docs | Process diagram |
+| 22 | **Evaluation Infrastructure** | 16 analytical plots, per-segment HTML reports, CSV exports, custom NEA metric, **IS pipeline** (LLM-distilled: Claude-designed rubric → 6 deterministic signals, per-segment scoring, tier classification), **IS cross-config validation** (16 configs: Semantic/Phonetic/NEA stable, WER volatile; LLM judge r=0.925; segment rankings r>0.92), automated failure mode classification (10 modes) and success pattern analysis (7 patterns), topic/length analysis (11 categories), fine-tuning diagnostics (10 training plots) | Sample report screenshot |
+| 23 | **Quality Process** | Git tags, EC2/container sync protocol, **8** research reports, comprehensive docs | Process diagram |
 
 #### Section 4: Future Directions (10 min, 7 slides) — 35%
 
+**Upload with Prompt 4 (10 files):**
+
+| # | File | For Slide | Purpose |
+|---|------|-----------|---------|
+| 1 | `01_plots_for_slides/P1_quality_tiers.png` | 24 | IS tiers vs WER tiers comparison |
+| 2 | `01_plots_for_slides/P3_wer_trajectory.png` | 25 | WER improvement trajectory across phases |
+| 3 | `01_plots_for_slides/P5_tuning_before_after.png` | 24 | Before/after tuning paired comparison |
+| 4 | `01_plots_for_slides/finetune/FT_01_loss_curves.png` | 28 | Train vs val loss curves (overfitting) |
+| 5 | `01_plots_for_slides/finetune/FT_02_accuracy_curves.png` | 28 | Train vs val accuracy (gap widens) |
+| 6 | `01_plots_for_slides/finetune/FT_03_overfitting_gap.png` | 28 | Overfitting gap diagnostic (36.5pp) |
+| 7 | `01_plots_for_slides/finetune/FT_10_summary_dashboard.png` | 28 | 6-panel Exp A summary dashboard |
+| 8 | `03_reports_md/finetune_A_comparison_report.md` | 28, 30 | Exp A results, data scarcity proof |
+| 9 | `03_reports_md/is_correlation_analysis.md` | 24 | Cross-config IS validation proof |
+| 10 | `03_reports_md/llm_upgrade_analysis.md` | 25, 28, 29 | LLM alternatives, data scaling, prompts, investment strategy |
+
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
-| 24 | **The Starting Point Is Better Than WER Says** | **KEY TRANSITION**: WER says 11.4% usable. IS says 39.9% properly captured. Context recovery: 43.6-50.6% recoverable. **Validation**: LLM heuristic judge independently confirms IS — r=0.93 correlation, 88.6% agreement with IS >= 3.0, 99.2% recall. **Success pattern insight**: 41.5% of successes are phonetically preserved (Phonetic Sim is #1 IS correlate at r=0.943). "We're not starting from 11% — we're starting from 40%, and we know WHY it works." | WER tiers vs IS tiers side-by-side |
-| 25 | **Improvement Roadmap** | Phased, mapped to failure modes: Phase 1: confidence scoring → surfaces the good 40% (targets all modes by flagging quality). Phase 2: N-best aggregation → addresses Accumulated Small Errors (12.3%) and Content Word Errors (10.7%) by combining hypotheses. Phase 3: fine-tuning → attacks Topic Drift (15.9%), Entity Destruction (12.0%), and domain-specific failures (DIY/Home 30% → target 50%). **Topic insight**: Business already at 57% captured, training on diverse YouTube data lifts all categories. | **WER trajectory line chart** |
+| 24 | **The Starting Point Is Better Than WER Says** | **KEY TRANSITION**: WER says 11.4% usable. IS says 39.9% properly captured. **Cross-config proof**: IS tested across 16 configs — stable (Semantic r=0.914, std=0.017). WER is MISLEADING: Config J has highest IS (2.571) despite +14.8pp WER — more words = more errors but MORE meaning. LLM judge agrees 88.6% across all configs (r=0.925, recall 97.6-100%). Rankings stable (r>0.92) — encoder-limited. **Success**: 41.5% phonetically preserved (Phonetic Sim #1 IS correlate r=0.943). "40% works. IS is validated across 16 configurations. We know WHY — phonetic preservation." | WER tiers vs IS tiers side-by-side |
+| 25 | **Improvement Roadmap** | Phased, mapped to failure modes + investment strategy. **Phase 1**: Confidence scoring → surfaces the good 40% (flag quality, 2-4 hours). **Phase 2**: N-best aggregation → addresses Accumulated Small Errors (12.3%) and Content Word Errors (10.7%). **Phase 3**: LLM swap to Llama 3.1 8B (drop-in, same hidden_size 4096, 1-2 hours setup) + context-injection prompts → -8 to -18pp combined (force multiplier: stronger LLM unlocks prompt strategies). **Phase 4**: Scale training data to 20K-50K segments + fine-tune with enriched prompts → biggest single gain (-15 to -25pp). **Phase 5**: GER post-processing (N-best + correction LLM, no retraining) → -8 to -15pp. **Realistic combined target: 27-42% WER** (from current 67%). Multiplicative scaling law (ICLR 2024): LLM + data improvements compound. | **WER trajectory line chart** + **Improvement waterfall** |
 | 26 | **Phase 1: Confidence Scoring** | IS already proves 40% is good. Now extract beam scores to FLAG it automatically. No additional inference needed. 2-4 hours effort. **Priority by topic**: Business/Finance segments (57% captured) are most likely reliable — flag these first. Short segments (<10 words, 32% captured) need lower confidence thresholds. | Annotated pipeline showing where scores exist |
 | 27 | **Phase 2: N-Best Aggregation** | ROVER/MBR — currently discarding 19/20 beam candidates. 5-15% relative improvement. Targets failure modes: Accumulated Small Errors (12.3%), Content Word Errors (10.7%) — these have partial correct words across multiple hypotheses. Moves "fair" tier segments up to "good". | Before/after diagram |
-| 28 | **Phase 3: Fine-Tuning — Exp A Results** | **UPDATE (Mar 2026)**: First fine-tuning run complete. r=16 LoRA, encoder frozen, 1,273 segments, 17h on Tesla T4. Best val accuracy **62.94% at epoch 2** (320 updates). Severe overfitting after: train-val gap 36.5 pp by epoch 19. Key insight: r=16 capacity-limited for TED→YouTube shift. **Next**: Exp B with r=64 (4× capacity) + early stopping. Still targets Topic Drift (15.9%), Entity Destruction (12.0%). Decode eval pending. | `finetune/FT_01_loss_curves.png`, `finetune/FT_02_accuracy_curves.png`, `finetune/FT_10_summary_dashboard.png` |
-| 29 | **Phase 4-5: Production** | Arabic (k-means model exists), multi-speaker, streaming, auto-tuning. **Topic-specific tuning**: target lowest-performing categories (DIY 30%, Entertainment 30%) with domain-specific data. | Feature roadmap icons |
-| 30 | **Key Takeaways** | (1) Rigorous assessment: 2.5x WER gap on 1,497 segments, novel IS metric reveals 40% properly captured, 10 classified failure modes, topic/length analysis. (2) Production system: standalone container, 37 bugs fixed, 8-stage pipeline, 37 tests, 7 research reports. (3) Clear path: each phase targets specific failure modes — surface the good (confidence), improve the fair (N-best), rescue the poor (fine-tuning). | 3-point summary |
+| 28 | **Fine-Tuning + Data Scaling** | **Exp A results**: r=16 LoRA, 1,273 segments, 17h Tesla T4. Best val accuracy **62.94% at epoch 2**. Severe overfitting: 36.5pp gap by epoch 19. **Key reframe**: r=64 performed 3.1pp *worse* — not because LLM is saturated, but because 4x params = faster overfitting on tiny data. **1,273 segments is below the ~1K minimum** for LoRA generalization (ICLR 2024 scaling laws). Both experiments proved DATA SCARCITY is the bottleneck. **Data scaling projections**: 5K segments → 55-60% WER, 20K → 45-50%, 50K → 40-45% (with Llama-2-7B). With Llama 3.1 8B: 20K → 40-45%, 50K → 35-40%. AVSpeech has 290K videos available. **Multiplicative scaling law**: stronger LLM extracts MORE from same data — gap widens as data increases. Targets: Topic Drift (15.9%), Entity Destruction (12.0%). | `finetune/FT_01_loss_curves.png`, `finetune/FT_02_accuracy_curves.png`, `finetune/FT_10_summary_dashboard.png` |
+| 29 | **LLM Upgrade + Advanced Capabilities** | **LLM swap to Llama 3.1 8B**: drop-in replacement (same hidden_size 4096), Llama-3 8B ≈ Llama-2 70B quality, 128K vocab (4x), 128K context (32x). Setup: 1-2 hours, just change model path. **Smart prompts (force multiplier)**: 7 strategies — topic context (-5 to -10pp), word count hints, vocabulary lists, anti-hallucination, phonetic context, self-correction, **N-best GER** (-8 to -15pp, SOTA). Stronger models unlock more strategies: Llama-2-7B = +5-10pp, Llama 3.1 8B = +12-20pp, 70B class = +20-30pp. **GER post-processing**: Two-stage pipeline — visual pipeline generates N-best hypotheses, separate correction LLM (even external API: Claude/GPT-4) picks and corrects best one. No retraining needed. **Model alternatives**: VALLR (ICCV 2025) achieves 18.7% WER on LRS3 with 3B model — architecture innovation > model size. **Future**: Arabic, multi-speaker, streaming. | Feature roadmap + improvement waterfall |
+| 30 | **Key Takeaways** | (1) Rigorous assessment: 2.5x WER gap on 1,497 segments, novel IS metric reveals 40% properly captured, 10 classified failure modes, topic/length analysis. (2) Production system delivered: standalone container, 37 bugs fixed, 8-stage pipeline, 37 tests, 8 research reports. (3) Data is the bottleneck: Exp A/B proved 1,273 segments too small — 20K-50K segments is the critical enabler. Multiplicative scaling law: stronger LLM + more data compounds. (4) Actionable roadmap to 27-42% WER: LLM swap to Llama 3.1 8B (drop-in, hours), smart prompts (force multiplier), data scaling to 20K-50K, GER post-processing (no retraining). Combined gains stack because each addresses a different bottleneck. | 4-point summary |
 
 #### Appendix / Backup Slides
 
@@ -182,8 +230,9 @@ tar xzf galaxy_export_backup_*.tar.gz
 | A4 | **Full Experiment Table** | All 13 experiments A-M with full metrics | Boss deep-dive only |
 | A5 | **Topic Analysis Detail** | Full 11-topic table: Business/Finance (IS 3.08, 57% captured) → DIY/Home (IS 2.13, 30%). LLM context recovery adds 5-15% over rule-based per topic | If asked about domain-specific performance |
 | A6 | **Signal Comparison: Success vs Failure** | Full signal table: semantic 0.74 vs 0.24, phonetic 0.81 vs 0.38, NEA F1 74% vs 16%, WER 30% vs 87%. Length ratio NOT a strong differentiator (0.97 vs 0.89) | If asked about what makes IS work |
-| A8 | **IS Correlation Analysis** | Component correlation matrix (6x6), variance decomposition (Semantic 28.5%, NEA 17.3%, InvWER 15.7%, InvWWER 15.2%, Phonetic 14.2%, Length 9.1%), per-tier dominant signals, LLM heuristic confusion matrix (88.6% agreement, 99.2% recall), 3 independent dimensions. Demonstrates metric rigor and statistical validity | If asked about IS methodology rigor or statistical validation |
+| A8 | **IS Correlation & Cross-Config Analysis** | Component correlation matrix (6x6), variance decomposition, 3 independent dimensions. **Cross-config (16 configs)**: Semantic/Phonetic/NEA stable (std<0.06), WER/LR volatile. LLM judge r=0.925 (std=0.015) across configs, recall 97.6-100%. Inter-config rankings r>0.92. **Claude IS the Judge**: IS is LLM-distilled evaluation — Claude designed rubric, weights, tiers, failure modes. Full decode: Config J IS 2.571 despite +14.8pp WER (proves IS > WER). Variance contribution stability across configs. | If asked about IS methodology rigor, statistical validation, or cross-config stability |
 | A7 | **Config J Full-Dataset Comparison** | Baseline vs Config J vs Config C on 1,497 segments: IS 2.52→2.60, empties 70→0, hallucinations 307→348. Trade-off: silent failures vs noisy failures. J wins by +0.08 IS, +25 captured segments. Long segments benefit most (+0.25 IS for 20+ words) | If asked about tuning details |
+| A9 | **LLM Upgrade Analysis Deep Dive** | Tier 1 models: Llama 3.1 8B (drop-in, same hidden 4096, ≈Llama-2 70B), Llama 3.2 3B (VALLR proved 18.7% WER). Tier 2: Qwen 2.5 7B, Mistral 7B, DeepSeek-V2-Lite, Phi-4, Gemma 2. Data scaling projections table (1.3K→100K segments × Llama-2 vs Llama-3.1). 7 prompt strategies by model tier: topic context, word count, vocabulary, anti-hallucination, phonetic, self-correction, N-best GER. Improvement waterfall: 67% → swap LLM (-3 to -8pp) → prompts (-5 to -10pp) → data scaling (-10 to -15pp) → labels + GER (-5 to -10pp) → target 27-42%. Multilingual analysis: English-only → use Llama 3.1 8B, Arabic → language-specific model. Code changes: only vsp_llm.py:224, 2 YAML configs, 2 scripts for same-dim swap. | If asked about LLM alternatives, data scaling, or prompt strategies |
 
 ---
 

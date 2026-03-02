@@ -55,7 +55,7 @@ Technical deep-dive graphs — for supervisor/boss session only.
 | `FT_09_wall_clock.png` | **NEW**: Per-epoch training time |
 | `FT_10_summary_dashboard.png` | **NEW**: 6-panel training summary dashboard |
 
-### 03_reports_md/ (9 files)
+### 03_reports_md/ (10 files)
 Research reports in Markdown format — reference material for slide content.
 
 | File | Topic |
@@ -67,8 +67,9 @@ Research reports in Markdown format — reference material for slide content.
 | `report_5_beam_search_aggregation.md` | N-best ROVER/MBR, hypothesis aggregation |
 | `report_6_finetuning_analysis.md` | LoRA fine-tuning, AVSpeech domain adaptation |
 | `intelligibility_methodology.md` | IS metric design, 6 signals, tier examples, failure modes (10), success patterns (7), topic analysis (11 categories) |
-| `is_correlation_analysis.md` | **NEW**: IS component correlation matrix, variance decomposition, 3 independent dimensions, per-tier signal drivers, LLM heuristic validation (r=0.93, 88.6% agreement) |
+| `is_correlation_analysis.md` | IS component correlation matrix, variance decomposition, 3 independent dimensions, per-tier signal drivers, LLM heuristic validation (r=0.93, 88.6% agreement), cross-config stability (16 configs) |
 | `finetune_A_comparison_report.md` | Exp A (r=16) training results, overfitting analysis, 10 diagnostic plots, recommendations for Exp B |
+| `llm_upgrade_analysis.md` | **NEW**: Comprehensive LLM upgrade analysis — model alternatives (Llama 3.1 8B drop-in, Qwen, Mistral, VALLR), data scaling projections (1.3K→100K segments), 7 prompt strategies by model tier, GER post-processing, multilingual analysis, improvement waterfall (67%→27-42% WER), investment strategy |
 
 ### 04_reports_docx/ (18 files)
 Formatted reports (Word + PDF) — printable, shareable with stakeholders.
@@ -190,10 +191,10 @@ Curated example data for building comparison tables.
 | Pipeline: lines after refactor | 393 | CLAUDE.md |
 | Test suite | 37 tests | lib/test_all_modules.sh |
 | Total experiments | 13 (A-M) | experiment-comparison.csv |
-| Research reports | 7 | Including IS methodology |
+| Research reports | 8 | Including IS methodology + LLM upgrade |
 | Segments per experiment | 107 | Tuning dataset |
 | Full dataset segments | 1,497 | english_full_results |
-| Projected WER after Phase 3 | ~42% | Mission backlog |
+| Projected WER (combined phases) | 27-42% | LLM upgrade analysis |
 | **Exp A: Best val accuracy** | **62.94% (epoch 2)** | **Fine-tuning r=16, 320 updates** |
 | **Exp A: Final val accuracy** | **58.98% (epoch 19)** | **Overfitting: 36.5 pp gap** |
 | **Exp A: Training time** | **17.0 hours** | **Tesla T4, FP16** |
@@ -201,6 +202,18 @@ Curated example data for building comparison tables.
 | **Exp A: Training data** | **1,273 train / 224 val** | **Stratified by IS tier** |
 | **IS: top signal correlate** | **Phonetic Sim r=0.943** | **Correlation analysis** |
 | **IS: 3 independent dimensions** | **Word acc 60%, Meaning 28%, Sanity 9%** | **Variance decomposition** |
-| **IS: LLM judge agreement** | **88.6% (r=0.93, recall 99.2%)** | **llm_context_prob validation** |
-| **IS: Semantic variance share** | **28.5% (highest, due to 0.25 weight)** | **Covariance decomposition** |
-| **IS: NEA variance share** | **17.3% (disproportionate to 15% weight)** | **High per-segment variance** |
+| **IS: LLM judge (16 configs)** | **r=0.925 mean (std=0.015)** | **Cross-config validation** |
+| **IS: LLM judge agreement** | **88.6%, kappa=0.77, recall 99.2%** | **Baseline confusion matrix** |
+| **IS: stable signals (16 configs)** | **Semantic, Phonetic, NEA (std<0.06)** | **WER/LR volatile** |
+| **IS: cross-config rankings** | **r > 0.92 across most config pairs** | **Encoder-limited, not decode** |
+| **IS: Config J vs baseline** | **IS 2.571 vs 2.485 despite +14.8pp WER** | **IS captures meaning WER misses** |
+| **IS: methodology** | **LLM-distilled (Claude-designed rubric)** | **Design-time expert judgment** |
+| **LLM: current model** | **Llama-2-7B (4-bit QLoRA, r=16)** | **Hidden size 4096** |
+| **LLM: recommended swap** | **Llama 3.1 8B (drop-in, same dim)** | **1-2 hours setup** |
+| **LLM swap alone** | **-3 to -8pp WER** | **Better language modeling** |
+| **Prompts: force multiplier** | **Llama-2 +5-10pp / Llama 3.1 +12-20pp** | **7 strategies** |
+| **GER post-processing** | **+8-15pp, no retraining** | **N-best + correction LLM** |
+| **Data scaling: 20K segments** | **45-50% (Llama-2) / 40-45% (Llama 3.1)** | **ICLR 2024 power law** |
+| **Combined realistic target** | **27-42% WER (from 67%)** | **LLM + data + prompts + GER** |
+| **Multiplicative scaling law** | **LLM + data improvements compound** | **ICLR 2024** |
+| **VALLR (ICCV 2025)** | **18.7% WER on LRS3 with 3B model** | **Architecture > model size** |
