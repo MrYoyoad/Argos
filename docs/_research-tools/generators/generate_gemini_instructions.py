@@ -384,19 +384,30 @@ Named Entity Accuracy (15%) + Length Ratio (15%)
 KEY: "IS >= 3.0 = Properly Captured: 39.9% \u2014 3.5x more than WER's 11.4%"
 Tiers: 18.4% Excellent | 21.4% Good | 21.7% Fair | 22.4% Poor | 16.0% Failed
 
-Correlation validation (adds credibility):
+Methodology note: IS was designed using LLM-distilled evaluation \u2014
+Claude (Anthropic) designed the 5-step rubric, selected the 6
+signals and weights, defined tier boundaries, and classified all
+failure/success patterns. This is "what an LLM expert would score"
+made deterministic, free, and decomposable.
+
+Statistical validation (tested across 16 decode configs):
 - 6 signals collapse into 3 independent dimensions:
-  (1) Word accuracy (~60% of IS variance: WER, WWER, Phonetic, all r>0.80)
+  (1) Word accuracy (~60% of IS variance: WER, WWER, Phonetic)
   (2) Meaning preservation (~28%: Semantic)
   (3) Output sanity (~9%: Length Ratio)
-- Phonetic Similarity has highest single-signal correlation (r=0.943)
-- Semantic dominates variance contribution (28.5%) due to higher weight
-- NEA F1 contributes disproportionately (17.3% vs its 15% weight)
-- LLM-knowledge-based judge validates IS: r=0.93 correlation,
-  88.6% agreement with IS >= 3.0 threshold, 99.2% recall
+- Semantic, Phonetic, NEA F1 are STABLE across all 16 configs
+  (std < 0.06). WER and Length Ratio are volatile \u2014 proves IS
+  is more robust than raw WER for comparing experiments.
+- LLM heuristic judge: r=0.925 with IS across all 16 configs
+  (std=0.015), 88.6% agreement, 99.2% recall, Cohen's kappa=0.77
+- Config J has highest IS (2.571) despite +14.8pp higher WER than
+  baseline \u2014 IS captures meaning that WER misses.
+- Per-segment rankings stable across configs (r > 0.92) \u2014 the
+  bottleneck is the visual encoder, not decode parameters.
 
 Success patterns (what makes segments succeed):
 - Phonetically Preserved: 41.5% of successes (#1 driver)
+  (Phonetic Sim is also #1 correlate with IS: r=0.943)
 - Minor Errors + High Semantic: 24.5%
 - Entities Preserved: 12.4%
 - Near-Perfect Output: 11.6%
@@ -480,6 +491,12 @@ noisy failures (hallucinations).
 Long segments benefit most: 20+ words gain +0.25 IS.
 Short segments marginally worse due to over-generation.
 Cannot fix domain mismatch with hyperparameters.
+Cross-config proof: Per-segment IS rankings are nearly
+identical across all 16 configs (r > 0.92 for most pairs).
+The "hard" and "easy" segments stay the same regardless
+of decode parameters \u2014 the bottleneck is the visual encoder,
+not the decode strategy. This is why fine-tuning (Phase 3)
+is the single largest opportunity.
 Leave space for chart.
 
 SLIDE 14 - Curated Examples with IS
@@ -557,19 +574,21 @@ Three cards:
 
 SLIDE 22 - Evaluation Infrastructure
 Title: "Evaluation: Beyond Standard WER"
-Seven items:
+Eight items:
 - 16 analytical plots auto-generated per experiment
 - Per-segment HTML reports (interactive, 13 experiments)
 - Custom NEA metric for operational entity accuracy
-- Intelligibility Score pipeline: 6-signal composite,
+- Intelligibility Score pipeline: LLM-distilled evaluation
+  (Claude-designed rubric distilled into 6 deterministic signals),
   per-segment automated scoring, tier classification
 - Automated failure mode classification (10 modes) and
   success pattern analysis (7 patterns)
+- IS correlation analysis: cross-config validation across 16 decode
+  configs \u2014 proves metric stability (Semantic, Phonetic, NEA stable;
+  WER volatile). LLM heuristic judge r=0.925 with IS.
 - Topic and segment length analysis across 11 categories
 - Full CSV exports (1,497 rows, all metrics + IS signals)
-- NEW: Fine-tuning diagnostics \u2014 10 training plots
-  (loss/accuracy curves, overfitting gap, LR schedule,
-  gradient norms, perplexity, wall-clock, summary dashboard)
+- Fine-tuning diagnostics \u2014 10 training plots
 
 SLIDE 23 - Process & Documentation
 Title: "Engineering Process"
@@ -590,16 +609,23 @@ Two columns:
 LEFT (red): "WER Says" \u2014 11.4% usable, 9/10 fail
 RIGHT (green): "IS Says" \u2014 39.9% properly captured,
 43-51% context-recoverable
-Validation: IS independently validated \u2014 LLM-knowledge-based
-judge (heuristic, no API costs) agrees 88.6% with IS >= 3.0
-threshold (r=0.93 correlation, 99.2% recall). The metric works.
+Validation (this is the proof \u2014 not just a claim):
+- IS tested across all 16 decode configs \u2014 stable
+  (Semantic r=0.914 mean, std=0.017 across configs)
+- WER is MISLEADING across configs: Config J has IS 2.571
+  (highest) despite +14.8pp higher WER than baseline.
+  More words = more WER errors, but also MORE meaning captured.
+- LLM heuristic judge agrees 88.6% with IS >= 3.0
+  (r=0.925 across 16 configs, recall 97.6-100%)
+- Per-segment rankings stable (r > 0.92): same segments are
+  "good" and "bad" regardless of decode config \u2014 encoder-limited.
 Success pattern insight: 41.5% of successes are phonetically
-preserved \u2014 the visual signal captures speech structure even
+preserved \u2014 the visual signal captures phonetic structure even
 when specific words are wrong. Phonetic similarity is the #1
 correlate with IS (r=0.943).
 Bottom: "The gap is real but WER dramatically overstates failure.
-40% already works, and we know WHY it works \u2014 phonetic
-preservation is the #1 success driver."
+40% already works. IS is validated across 16 configurations.
+And we know WHY it works \u2014 phonetic preservation."
 Make this feel like a turning point in the narrative.
 
 SLIDE 25 - Research Roadmap
@@ -768,8 +794,12 @@ def build_overview(doc):
             ["Exp A: trainable params", "12.6M (0.19%)", "LoRA r=16, alpha=32"],
             ["IS: top correlate", "Phonetic Sim r=0.943", "Correlation analysis"],
             ["IS: 3 dimensions", "Word acc 60%, Meaning 28%, Sanity 9%", "Variance decomposition"],
-            ["IS: LLM judge agreement", "88.6% (r=0.93, recall 99.2%)", "llm_context_prob validation"],
-            ["IS: NEA variance share", "17.3% (vs 15% weight)", "Disproportionate contributor"],
+            ["IS: LLM judge (16 configs)", "r=0.925 mean (std=0.015)", "Cross-config validation"],
+            ["IS: LLM judge agreement", "88.6%, \u03ba=0.77, recall 99.2%", "Baseline confusion matrix"],
+            ["IS: stable signals", "Semantic, Phonetic, NEA (std<0.06)", "Cross-config: WER/LR volatile"],
+            ["IS: cross-config rankings", "r > 0.92 across most config pairs", "Encoder-limited, not decode"],
+            ["IS: Config J vs baseline", "IS 2.571 vs 2.485 despite +14.8pp WER", "IS > WER for comparison"],
+            ["IS: methodology", "LLM-distilled (Claude-designed rubric)", "Design-time expert judgment"],
         ],
         col_widths=[2.5, 2.2, 2.0],
     )

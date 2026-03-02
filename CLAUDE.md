@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Always Do After Analysis
+
+- After completing any research, analysis, or investigation, **always** update all relevant files (docs, summaries, JSON data, markdown) with findings — keep updates succinct and factual.
+- After making significant or multi-file changes, **always** git commit with a clear message describing what changed and why.
+
 ## Git Commit Rules
 
 - **NEVER** include `Co-Authored-By` lines in commit messages. No Claude/AI attribution in commits.
@@ -292,7 +297,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | 2 — Poor | 1.0-1.99 | 336 | 22.4% |
 | 1 — Failed | 0.0-0.99 | 239 | 16.0% |
 
-**IS Component Correlation Analysis** (March 2026): The 6 IS signals collapse into 3 independent dimensions — word accuracy (WER/WWER/Phonetic, r > 0.79 with each other, ~60% of IS weight), meaning preservation (Semantic, 28.5% of variance), and output sanity (Length Ratio, 9.1% of variance). The entire IS framework was designed by Claude (Anthropic) as an LLM-as-a-Judge — Claude's expert judgment was distilled into deterministic, reproducible metrics at design time rather than calling an LLM per sample. The Claude-designed `llm_context_prob` heuristic correlates at r=0.93 with IS (88.6% agreement with IS ≥ 3.0, Cohen's κ = 0.773). Full analysis: [docs/evaluation/is_correlation_analysis.md](docs/evaluation/is_correlation_analysis.md).
+**IS Component Correlation Analysis** (March 2026): The 6 IS signals collapse into 3 independent dimensions — word accuracy (WER/WWER/Phonetic, r > 0.79 with each other, ~60% of IS weight), meaning preservation (Semantic, 28.5% of variance), and output sanity (Length Ratio, 9.1% of variance). The entire IS framework was designed by Claude (Anthropic) as an LLM-as-a-Judge — Claude's expert judgment was distilled into deterministic, reproducible metrics at design time rather than calling an LLM per sample. The Claude-designed `llm_context_prob` heuristic correlates at r=0.93 with IS (88.6% agreement with IS ≥ 3.0, Cohen's κ = 0.773). Cross-config stability validated across 16 decode configurations: mean r=0.925 (std=0.015), κ range 0.62–0.86, recall 97.6–100%. Full analysis: [docs/evaluation/is_correlation_analysis.md](docs/evaluation/is_correlation_analysis.md).
 
 **Hyperparameter tuning** (13 experiments on 107 segments): Baseline config (beam=20, lenpen=0, no sampling) proved most robust. No parameter combination improved WER meaningfully. See [docs/tuning/experiment-comparison.csv](docs/tuning/experiment-comparison.csv).
 

@@ -554,7 +554,19 @@
       "cohens_kappa": 0.773,
       "precision": 0.782,
       "recall": 0.992,
-      "f1": 0.874
+      "f1": 0.874,
+      "cross_config_stability": {
+        "n_configs": 16,
+        "mean_r_with_is": {"mean": 0.925, "std": 0.015, "verdict": "very_stable"},
+        "mean_r_with_semantic": {"mean": 0.891, "std": 0.020, "verdict": "very_stable"},
+        "mean_r_with_phonetic": {"mean": 0.869, "std": 0.065, "verdict": "moderate"},
+        "mean_r_with_nea_f1": {"mean": 0.712, "std": 0.057, "verdict": "moderate"},
+        "mean_r_with_wer": {"mean": -0.706, "std": 0.156, "verdict": "unstable"},
+        "mean_r_with_length_ratio": {"mean": -0.023, "std": 0.333, "verdict": "unstable"},
+        "mean_kappa_across_configs": 0.72,
+        "kappa_range": "0.62-0.86",
+        "recall_range": "97.6-100.0%"
+      }
     },
     "redundancy_clusters": {
       "word_accuracy": {
@@ -571,6 +583,24 @@
         "signals": ["length_ratio"],
         "cross_cluster_r": "0.10-0.36",
         "is_weight_share": 0.15
+      }
+    },
+    "cross_config_stability": {
+      "n_configs": 16,
+      "configs": "13 tuning (107 segs) + 3 full decode (1497 segs)",
+      "mean_r_with_is_across_configs": {
+        "semantic_sim": {"mean": 0.914, "std": 0.017, "verdict": "very_stable"},
+        "phonetic_sim": {"mean": 0.914, "std": 0.059, "verdict": "stable"},
+        "nea_f1": {"mean": 0.851, "std": 0.023, "verdict": "very_stable"},
+        "wer": {"mean": -0.764, "std": 0.163, "verdict": "unstable_with_lenpen"},
+        "wwer": {"mean": -0.804, "std": 0.203, "verdict": "unstable_with_lenpen"},
+        "length_ratio": {"mean": -0.021, "std": 0.368, "verdict": "highly_unstable"}
+      },
+      "inter_config_is_correlation": {
+        "most_pairs_r_above": 0.92,
+        "baseline_vs_full_decode_C": 0.940,
+        "baseline_vs_full_decode_J": 0.932,
+        "outlier_config": "exp_D_lenpen_neg05 (r=0.60 vs baseline)"
       }
     }
   },
