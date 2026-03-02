@@ -1302,28 +1302,78 @@ def slide_15(prs):
         "(complete hallucination). Click each video to play.")
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 16 — RESEARCH OUTPUT
+# SLIDE 16 — IS VALIDATION: CLAUDE-AS-JUDGE
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_16(prs):
-    build_bullets(prs, 16,
-        "Eight Research Reports + Training Analysis",
-        [
-            "Executive Assessment — reality gap, quality tiers, 1,497 segments",
-            "Hyperparameter Tuning — 13 experiments, parameter sensitivity",
-            "Prompt Engineering — context injection, 7 prompt strategies",
-            "Confidence Scoring — beam score extraction, quality filtering",
-            "N-Best Aggregation — ROVER/MBR hypothesis combination",
-            "Fine-Tuning Analysis — LoRA domain adaptation strategy",
-            "Intelligibility Scoring — 6-signal composite metric, failure taxonomy",
-            "LLM Upgrade Analysis — Llama 3.1 8B drop-in, data scaling, GER",
-            ("+ Exp A Training Report — overfitting analysis, 10 diagnostic plots",
-             {"color": TEAL}),
-        ],
-        "Eight formal research reports plus the Exp A training analysis. Each "
-        "report is a deep dive with methodology, results, and recommendations. "
-        "The Intelligibility Score report is the main methodological "
-        "contribution. The LLM Upgrade Analysis maps the path forward.")
+    slide = new_slide(prs)
+    add_title(slide, "IS Validation: Claude-as-Judge Methodology")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left: How IS works
+    lt = add_text(slide, "How the IS Was Built", MX, CT, col_w, Inches(0.35),
+                  size=Pt(17), color=TEAL, bold=True)
+    lb = add_bullets(slide, [
+        "Claude (Anthropic) designed the full evaluation framework",
+        "Selected 6 signals: Semantic (25%), Phonetic (15%), "
+        "inv. WER (15%), inv. WWER (15%), NEA F1 (15%), Length (15%)",
+        "Defined 5 tiers, 10 failure modes, 7 success patterns",
+        ("Distilled into deterministic formulas — no LLM per sample",
+         {"bold": True}),
+        "Result: reproducible, free, decomposable scoring",
+    ], MX, CT + Inches(0.45), col_w, Inches(3.0), size=Pt(13))
+
+    # Right: Correlation analysis + validation
+    rx = MX + col_w + gap
+    rt = add_text(slide, "Correlation Analysis (PCA)", rx, CT, col_w,
+                  Inches(0.35), size=Pt(17), color=CORAL, bold=True)
+
+    # Three dimensions
+    dims = [
+        ("Word Accuracy", "WER + WWER + Phonetic (r > 0.79)", "~60% of IS", TEAL),
+        ("Meaning Preservation", "Semantic similarity", "28.5%", GREEN),
+        ("Output Sanity", "Length ratio", "9.1%", LGRAY),
+    ]
+    dim_y = CT + Inches(0.5)
+    for i, (name, signals, pct, color) in enumerate(dims):
+        y = dim_y + i * Inches(0.75)
+        add_text(slide, name, rx, y, col_w, Inches(0.3),
+                 size=Pt(14), color=color, bold=True)
+        add_text(slide, f"{signals} — {pct} of variance",
+                 rx + Inches(0.15), y + Inches(0.3), col_w - Inches(0.15),
+                 Inches(0.3), size=Pt(11), color=LGRAY)
+
+    # Cross-config validation stats
+    add_text(slide, "Cross-Config Validation (16 configs)",
+             rx, CT + Inches(2.9), col_w, Inches(0.3),
+             size=Pt(15), color=TEAL, bold=True)
+
+    headers = ["Metric", "Value"]
+    rows = [
+        ["LLM heuristic vs IS", "r = 0.925"],
+        ["Agreement (IS ≥ 3.0)", "88.6%"],
+        ["Recall (IS ≥ 3.0)", "97.6–100%"],
+        ["Cohen's κ", "0.773"],
+        ["Segment ranking stability", "r > 0.92"],
+    ]
+    add_table(slide, headers, rows, rx, CT + Inches(3.3), col_w,
+              row_height=Inches(0.32),
+              col_widths=[Inches(3.0), Inches(2.5)],
+              text_size=Pt(11))
+
+    _finish(slide, 16,
+        "How the IS was built: Claude designed the entire framework at design "
+        "time — rubric, 6 signals with weights, tier boundaries, failure mode "
+        "taxonomy, success patterns. These were then encoded into deterministic "
+        "formulas. No LLM is called per sample at runtime. PCA shows the 6 "
+        "signals collapse into 3 independent dimensions: word accuracy "
+        "(WER/WWER/Phonetic, ~60%), meaning preservation (Semantic, 28.5%), "
+        "and output sanity (Length, 9.1%). Cross-config validation across 16 "
+        "decode configs confirms robustness: r=0.925, 88.6% agreement, "
+        "Cohen's kappa 0.773, recall 97.6-100%.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 17 — PIPELINE ARCHITECTURE
