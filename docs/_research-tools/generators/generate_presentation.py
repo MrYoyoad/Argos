@@ -48,6 +48,8 @@ IMG = {
     "empty_halluc": PLOTS / "10_empty_and_hallucination_rates.png",
     "cdf_wwer": PLOTS / "15_cdf_wwer_curated.png",
     "ft_dashboard": PLOTS / "finetune" / "FT_10_summary_dashboard.png",
+    "tuning_ba": PLOTS / "P5_tuning_before_after.png",
+    "improve_ja": PLOTS / "16_improvement_J_vs_A.png",
 }
 
 VID = {
@@ -727,8 +729,11 @@ def build_full_image(prs, num, title, image_key, notes, subtitle=None,
                  size=Pt(16), color=LGRAY, italic=True)
         top += Inches(0.4)
 
-    # Cap image height to avoid overlapping bottom text
-    img_h = Inches(4.5) if bottom_text else None
+    # Cap image height to avoid overlapping bottom text or going off-screen
+    if bottom_text:
+        img_h = Inches(4.5)
+    else:
+        img_h = SL_H - top - Inches(0.2)  # stay within slide bounds
     img = add_image(slide, image_key, MX, top, width=CW, height=img_h)
 
     if bottom_text:
@@ -877,14 +882,14 @@ def slide_04(prs):
         num_label="WER on LRS3 (TED Talks)",
         bullets=[
             "Curated data, controlled conditions",
-            ("Real-world YouTube: 64.1% WER — 2.5× worse", {"color": CORAL}),
+            ("Real-world YouTube: 67.0% WER — 2.6× worse", {"color": CORAL}),
         ],
         bottom_text="Two questions: How does this hold on real-world video? "
                     "And is WER even the right metric?",
         notes="The paper claims 25.4% Word Error Rate on LRS3 — a curated dataset "
               "of TED talks with clear speech, frontal faces, good lighting. Our "
               "question: what happens on real-world YouTube video? The chart on the "
-              "right previews the answer: 64.1% WER, 2.5x worse. And more "
+              "right previews the answer: 67.0% WER, 2.6x worse. And more "
               "importantly — is WER even the right way to measure this?")
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -893,7 +898,7 @@ def slide_04(prs):
 
 def slide_05(prs):
     build_split(prs, 5, "The Reality Gap", "P1_quality",
-        big_num="64.1%", num_color=CORAL,
+        big_num="67.0%", num_color=CORAL,
         num_label="Mean WER across 1,497 real-world segments",
         bullets=[
             ("11.4% Usable (<30%)", {"bullet": "●", "bullet_color": GREEN}),
@@ -903,7 +908,7 @@ def slide_05(prs):
             ("20.6% Hallucinated (>100%)", {"bullet": "●", "bullet_color": DRED}),
         ],
         bottom_text="But WER overstates failure — see next slide.",
-        notes="1,497 diverse YouTube segments. 64.1% mean WER — 2.5x worse than "
+        notes="1,497 diverse YouTube segments. 67.0% mean WER — 2.6x worse than "
               "the paper's 25.4%. Only 11.4% usable by WER standards. And 20.6% "
               "are hallucinations — fluent text that's completely fabricated. This "
               "is the most dangerous failure mode. But WER is misleading — it "
@@ -997,9 +1002,10 @@ def slide_07(prs):
 
     # Key callout
     callout = add_text(slide,
-        "IS ≥ 3.0 = Properly Captured: 39.9% — 3.5× more than WER's 11.4%",
-        MX, by + bh + Inches(0.3), CW, Inches(0.4),
-        size=Pt(16), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+        "IS ≥ 3.0 = Properly Captured: 39.9% — 3.5× more than WER's 11.4%\n"
+        "Phonetic similarity: 41.5% mean, r=0.943 with IS (strongest single signal)",
+        MX, by + bh + Inches(0.2), CW, Inches(0.55),
+        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     # 5 tier bars
     tiers = [
@@ -1009,7 +1015,7 @@ def slide_07(prs):
         ("22.4% Poor", 22.4, ORANGE),
         ("16.0% Failed", 16.0, RED),
     ]
-    bar_y = by + bh + Inches(1.0)
+    bar_y = by + bh + Inches(1.05)
     bar_h = Inches(0.38)
     bar_gap = Inches(0.12)
     max_w = Inches(8.0)
@@ -1186,8 +1192,8 @@ def slide_12(prs):
         ("Hallucinations: 348 vs 307 (+41 more)", {"color": CORAL}),
     ], rx, CT + Inches(0.45), col_w, Inches(2.0))
 
-    # Right image — placed below bullets with clearance
-    img = add_image(slide, "empty_halluc", rx, CT + Inches(2.6), width=col_w,
+    # Right image — before/after tuning comparison
+    img = add_image(slide, "tuning_ba", rx, CT + Inches(2.6), width=col_w,
                     height=Inches(3.0))
 
     _finish(slide, 12,
@@ -1210,15 +1216,19 @@ def slide_13(prs):
             "Cross-config proof: per-segment rankings identical (r > 0.92)",
             ('"Hard" and "easy" segments stay the same — '
              "bottleneck is the visual encoder", {"bold": True}),
-            ("Three levers remain: more data, stronger LLM, smart prompts",
-             {"color": TEAL}),
+            ("Data is the real constraint: 1,273 training segments is "
+             "below the ~1K LoRA minimum", {"color": CORAL}),
+            ("Three levers remain: scale data (20K+), swap LLM "
+             "(Llama 3.1 8B), smart prompts", {"color": TEAL}),
         ],
         notes="Tuning is mitigation, not a cure. Config J's fundamental "
               "trade-off: silent failures (empties) vs noisy failures "
               "(hallucinations). Cross-config analysis proves: per-segment "
               "IS rankings are nearly identical across all 16 configs "
-              "(r > 0.92). The bottleneck is the visual encoder. Three "
-              "levers: (1) scale data, (2) swap LLM, (3) smart prompts.")
+              "(r > 0.92). The bottleneck is the visual encoder AND data "
+              "scarcity — 1,273 training segments is below the ~1K minimum "
+              "for LoRA generalization. Three levers: (1) scale data to "
+              "20K-50K, (2) swap LLM to Llama 3.1 8B, (3) smart prompts.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 14 — CURATED EXAMPLES (TABLE)
@@ -1613,8 +1623,9 @@ def slide_24(prs):
     add_bullets(slide, [
         "11.4% usable",
         "9 out of 10 segments fail",
+        "Ignores phonetic preservation (41.5%)",
     ], MX + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
-       Inches(1.2), size=Pt(14), bullet_color=CORAL)
+       Inches(1.2), size=Pt(13), bullet_color=CORAL)
 
     # Middle column — IS Says (teal)
     mx2 = MX + col_w + gap
@@ -1624,8 +1635,9 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
-        ("39.9% properly captured", {"bold": True}),
-        "43-51% context-recoverable",
+        ("39.9% properly captured (IS ≥ 3.0)", {"bold": True}),
+        ("50.9% with LLM salvage (165 recoverable segments)",
+         {"color": GREEN}),
         "Validated across 16 decode configs",
         "LLM judge: 88.6% agreement, r=0.925",
     ], mx2 + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
@@ -1638,15 +1650,15 @@ def slide_24(prs):
     # Bottom
     add_text(slide,
              "The gap is real — but WER dramatically overstates failure. "
-             "40% already works.",
+             "40% works, 51% with LLM salvage.",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 24,
         "This is the turning point. WER says 11.4% usable. Our "
         "Intelligibility Score says 39.9% properly captured — 3.5x more. "
-        "And 43-51% is context-recoverable. This isn't wishful thinking: "
-        "IS is validated across all 16 decode configs.",
+        "LLM salvage analysis identified 165 additional recoverable segments, "
+        "raising effective capture to 50.9%. Validated across 16 configs.",
         [[r1], [r2, img]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1859,9 +1871,9 @@ def slide_30(prs):
     add_accent_line(slide)
 
     takeaways = [
-        ("1", "Rigorous assessment: 2.5× WER gap on 1,497 segments. "
-              "Novel IS metric reveals 40% properly captured. "
-              "10 classified failure modes."),
+        ("1", "Rigorous assessment: 2.6× WER gap on 1,497 segments. "
+              "Novel IS metric reveals 40% properly captured, 51% with "
+              "LLM salvage. 10 classified failure modes."),
         ("2", "Production system delivered: standalone container, 37 bugs "
               "fixed, 8-stage pipeline, 37 tests, 8 research reports."),
         ("3", "Data is the bottleneck: Exp A/B proved 1,273 segments too "
