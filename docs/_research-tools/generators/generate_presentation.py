@@ -13,6 +13,7 @@ Output:
     presentation_materials_20260224/Argos_VSP_Project_Review.pptx
 """
 
+import subprocess
 from pathlib import Path
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
@@ -55,6 +56,8 @@ VID = {
     "nearmiss": VIDEOS / "-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4",
     "halluc": VIDEOS / "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4",
 }
+
+POSTER_DIR = MATERIALS / ".poster_frames"
 
 # ═══════════════════════════════════════════════════════════════════════
 # DESIGN CONSTANTS
@@ -328,6 +331,36 @@ def add_play_button(slide, left, top, size=Inches(1.8)):
         pass
     return circle
 
+
+def _extract_poster(vid_path, poster_path):
+    """Extract first frame from video as a poster image for embedding."""
+    poster_path.parent.mkdir(parents=True, exist_ok=True)
+    if poster_path.exists():
+        return poster_path
+    try:
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", str(vid_path), "-vframes", "1",
+             "-q:v", "2", str(poster_path)],
+            capture_output=True, timeout=10, check=True)
+        if poster_path.exists() and poster_path.stat().st_size > 0:
+            return poster_path
+    except Exception:
+        pass
+    return None
+
+
+def add_video(slide, vid_key, left, top, width, height):
+    """Embed an MP4 video with poster frame. Click to play in PowerPoint."""
+    vid_path = VID.get(vid_key)
+    if not vid_path or not vid_path.exists():
+        return add_play_button(slide, left, top, size=min(width, height))
+    poster = _extract_poster(vid_path, POSTER_DIR / f"{vid_key}.jpg")
+    poster_arg = str(poster) if poster else None
+    return slide.shapes.add_movie(
+        str(vid_path), left, top, width, height,
+        poster_frame_image=poster_arg, mime_type="video/mp4")
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # HELPERS — TABLES
 # ═══════════════════════════════════════════════════════════════════════
@@ -422,28 +455,31 @@ def add_fade_transition(slide, speed='med'):
     etree.SubElement(transition, qn('p:fade'))
 
 
-def add_animations(slide, groups):
+def add_animations(slide, groups, click_reveal=False):
     """
-    Add entrance fade animations triggered by clicks.
+    Add entrance fade animations.
 
     groups: list of lists of shape objects.
-        Each inner list = one click group.
-        Shapes within a group stagger by 300ms.
+        Each inner list = one animation group.
+
+    click_reveal=False (default): All groups auto-play on slide entry
+        with 400ms delay between groups.  No clicks needed.
+    click_reveal=True: First group auto-plays, subsequent groups
+        require a click (use for comparison slides where you want
+        to reveal left, then right).
     """
     if not groups:
         return
-    # Flatten empty groups
     groups = [g for g in groups if g]
     if not groups:
         return
 
     sld = slide._element
-    # Remove existing timing
     for child in list(sld):
         if child.tag.endswith('timing'):
             sld.remove(child)
 
-    _id = [1]  # mutable counter
+    _id = [1]
 
     def nid():
         v = _id[0]
@@ -462,7 +498,6 @@ def add_animations(slide, groups):
 
     childTnLst_root = etree.SubElement(cTn_root, qn('p:childTnLst'))
 
-    # Main sequence
     seq = etree.SubElement(childTnLst_root, qn('p:seq'))
     seq.set('concurrent', '1')
     seq.set('nextAc', 'seek')
@@ -474,8 +509,11 @@ def add_animations(slide, groups):
 
     childTnLst_seq = etree.SubElement(cTn_seq, qn('p:childTnLst'))
 
+    # Cumulative delay for auto-play mode
+    cumulative_ms = 0
+    GROUP_GAP_MS = 400
+
     for gi, group in enumerate(groups):
-        # Click group container
         par_click = etree.SubElement(childTnLst_seq, qn('p:par'))
         cTn_click = etree.SubElement(par_click, qn('p:cTn'))
         cTn_click.set('id', nid())
@@ -484,11 +522,12 @@ def add_animations(slide, groups):
         stCondLst = etree.SubElement(cTn_click, qn('p:stCondLst'))
         cond = etree.SubElement(stCondLst, qn('p:cond'))
         if gi == 0:
-            # First group: auto-play on slide entry
             cond.set('delay', '0')
-        else:
-            # Subsequent groups: on click
+        elif click_reveal:
             cond.set('delay', 'indefinite')
+        else:
+            # Auto-play: delay after previous group
+            cond.set('delay', str(cumulative_ms))
 
         childTnLst_click = etree.SubElement(cTn_click, qn('p:childTnLst'))
 
@@ -500,7 +539,7 @@ def add_animations(slide, groups):
             except AttributeError:
                 continue
 
-            delay_ms = si * 300  # stagger within group
+            delay_ms = si * 150  # subtle stagger within group
 
             # Animation container
             par_anim = etree.SubElement(childTnLst_click, qn('p:par'))
@@ -551,6 +590,10 @@ def add_animations(slide, groups):
             sp_f = etree.SubElement(tgt_f, qn('p:spTgt'))
             sp_f.set('spid', spid)
 
+        # Update cumulative delay for auto-play mode
+        n_shapes = len([s for s in group if s is not None])
+        cumulative_ms += n_shapes * 150 + GROUP_GAP_MS
+
     # Sequence navigation
     prev_cl = etree.SubElement(seq, qn('p:prevCondLst'))
     prev_c = etree.SubElement(prev_cl, qn('p:cond'))
@@ -570,14 +613,19 @@ def add_animations(slide, groups):
 # REUSABLE SLIDE BUILDERS
 # ═══════════════════════════════════════════════════════════════════════
 
-def _finish(slide, num, notes, anim_groups=None):
-    """Add logo, slide number, transition, animations, and notes."""
+def _finish(slide, num, notes, anim_groups=None, click_reveal=False):
+    """Add logo, slide number, transition, animations, and notes.
+
+    click_reveal: if True, animation groups require a click to advance
+        (use for comparison slides like WER-vs-IS).  Default False =
+        all groups auto-play on slide entry with subtle delays.
+    """
     add_logo(slide)
     add_slide_num(slide, num)
     add_fade_transition(slide)
     if anim_groups:
         try:
-            add_animations(slide, anim_groups)
+            add_animations(slide, anim_groups, click_reveal=click_reveal)
         except Exception:
             pass  # Graceful fallback — slides still render
     set_notes(slide, notes)
@@ -607,12 +655,13 @@ def build_split(prs, num, title, image_key, notes, big_num=None,
             top += Inches(0.55)
 
     if bullets:
-        s = add_bullets(slide, bullets, MX, top, SLW,
-                        CH - (top - CT) - Inches(0.3))
+        # Cap bullet height so it doesn't overlap bottom_text at y=6.4
+        max_h = Inches(6.1) - top if bottom_text else CH - (top - CT) - Inches(0.3)
+        s = add_bullets(slide, bullets, MX, top, SLW, max_h)
         left_shapes.append(s)
 
     if bottom_text:
-        s = add_text(slide, bottom_text, MX, Inches(6.4), CW, Inches(0.5),
+        s = add_text(slide, bottom_text, MX, Inches(6.45), CW, Inches(0.5),
                      size=Pt(13), color=LGRAY, italic=True)
         left_shapes.append(s)
 
@@ -678,7 +727,9 @@ def build_full_image(prs, num, title, image_key, notes, subtitle=None,
                  size=Pt(16), color=LGRAY, italic=True)
         top += Inches(0.4)
 
-    img = add_image(slide, image_key, MX, top, width=CW)
+    # Cap image height to avoid overlapping bottom text
+    img_h = Inches(4.5) if bottom_text else None
+    img = add_image(slide, image_key, MX, top, width=CW, height=img_h)
 
     if bottom_text:
         add_text(slide, bottom_text, MX, Inches(6.3), CW, Inches(0.5),
@@ -739,18 +790,19 @@ def slide_02(prs):
     add_accent_line(slide)
 
     add_text(slide, "A system that reads lips from video — no audio needed.",
-             MX, Inches(1.8), CW, Inches(0.5),
+             MX, Inches(1.55), CW, Inches(0.4),
              size=Pt(20), color=LGRAY, align=PP_ALIGN.CENTER)
 
-    pb = add_play_button(slide,
-                         SL_W / 2 - Inches(0.9), Inches(2.8), Inches(1.8))
+    # Embedded video — click to play directly in PowerPoint
+    vid_w = Inches(8.5)
+    vid_h = Inches(4.3)
+    vid_x = (SL_W - vid_w) // 2
+    add_video(slide, "perfect", vid_x, Inches(2.1), vid_w, vid_h)
 
-    add_text(slide, "Opening Demo: 33-Word Perfect Lip Reading",
-             MX, Inches(5.0), CW, Inches(0.4),
-             size=Pt(16), color=TEAL, align=PP_ALIGN.CENTER)
-    add_text(slide, "▸ IEa7qEkMvfQ_3__c5447488_with_hyp.mp4",
-             MX, Inches(5.5), CW, Inches(0.3),
-             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER)
+    add_text(slide, "33 words about health insurance — WER 0%, IS 5.0. "
+             "Click the video to play.",
+             MX, Inches(6.6), CW, Inches(0.4),
+             size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 2,
         "PLAY VIDEO: IEa7qEkMvfQ_3__c5447488_with_hyp.mp4 — 33 words about "
@@ -767,8 +819,8 @@ def slide_03(prs):
     add_title(slide, "How It Works: Three Components")
     add_accent_line(slide)
 
-    # Pipeline architecture image
-    img = add_image(slide, "pipeline", MX, CT, width=CW)
+    # Pipeline architecture image — height-constrained to avoid covering blocks below
+    img = add_image(slide, "pipeline", MX, CT, width=CW, height=Inches(3.6))
 
     # Three component blocks
     bw = Inches(3.5)
@@ -906,7 +958,7 @@ def slide_06(prs):
         "fully preserved. Right: a name destroyed — 'admiral mcrae' becomes "
         "'animal migratory.' WER sees ~30% error in both. But one is usable "
         "and the other is garbage. This motivated our Intelligibility Score.",
-        [[r1], [r2]])
+        [[r1], [r2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 7 — THE INTELLIGIBILITY SCORE
@@ -1132,10 +1184,11 @@ def slide_12(prs):
         ("Captured: 622 vs 597 (+25 segments)", {"color": GREEN}),
         ("Empties: 0 vs 70 (eliminated)", {"color": GREEN}),
         ("Hallucinations: 348 vs 307 (+41 more)", {"color": CORAL}),
-    ], rx, CT + Inches(0.45), col_w, Inches(3.0))
+    ], rx, CT + Inches(0.45), col_w, Inches(2.0))
 
-    # Right image
-    img = add_image(slide, "empty_halluc", rx, CT + Inches(2.8), width=col_w)
+    # Right image — placed below bullets with clearance
+    img = add_image(slide, "empty_halluc", rx, CT + Inches(2.6), width=col_w,
+                    height=Inches(3.0))
 
     _finish(slide, 12,
         "13 systematic experiments across beam size, length penalty, "
@@ -1211,34 +1264,42 @@ def slide_14(prs):
 
 def slide_15(prs):
     slide = new_slide(prs)
-    add_title(slide, "Demo: Three Videos")
+    add_title(slide, "Demo: Good → Near-miss → Hallucination")
     add_accent_line(slide)
 
-    add_text(slide, "Perfect  →  Near-miss  →  Hallucination",
-             MX, Inches(1.6), CW, Inches(0.4),
-             size=Pt(20), color=TEAL, align=PP_ALIGN.CENTER)
+    # Three embedded videos side by side — click each to play
+    vid_w = Inches(3.6)
+    vid_h = Inches(2.7)
+    gap = Inches(0.4)
+    total = 3 * vid_w + 2 * gap
+    start_x = (SL_W - total) / 2
+    vid_y = CT + Inches(0.1)
 
-    pb = add_play_button(slide,
-                         SL_W / 2 - Inches(0.9), Inches(2.5), Inches(1.8))
-
-    add_text(slide, "Three demonstrations played from external files.",
-             MX, Inches(4.8), CW, Inches(0.3),
-             size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER)
-
-    # Video file list
     vids = [
-        "1. d8BR6hsvzoY — 'buy one get one free' (WER 0%)",
-        "2. -POZpyVCN8k — 'admiral mcrae' → 'animal migratory'",
-        "3. 00MUdHQ7GGY — hallucination: fabricates narrative (WER 100%)",
+        ("bogo", '"buy one get one free"', "WER 0%", GREEN),
+        ("nearmiss", '"admiral mcrae" → "animal migratory"', "WER 33%", YELLOW),
+        ("halluc", '"carry strap" → "holocaust denier"', "WER 100%", RED),
     ]
-    add_bullets(slide, vids, MX + Inches(2), Inches(5.2), CW - Inches(4),
-                Inches(1.5), size=Pt(12), color=LGRAY, bullet_color=MGRAY)
+
+    for i, (key, desc, wer, color) in enumerate(vids):
+        x = start_x + i * (vid_w + gap)
+        add_video(slide, key, x, vid_y, vid_w, vid_h)
+        add_text(slide, wer, x, vid_y + vid_h + Inches(0.05), vid_w,
+                 Inches(0.3), size=Pt(14), color=color, bold=True,
+                 align=PP_ALIGN.CENTER)
+        add_text(slide, desc, x, vid_y + vid_h + Inches(0.35), vid_w,
+                 Inches(0.6), size=Pt(11), color=LGRAY,
+                 align=PP_ALIGN.CENTER)
+
+    add_text(slide, "Click each video to play.",
+             MX, Inches(6.6), CW, Inches(0.3),
+             size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 15,
-        "PLAY VIDEOS in order: (1) d8BR6hsvzoY_31 — 'buy one get one free' "
-        "(WER 0%, short and punchy). (2) -POZpyVCN8k_9 — 'admiral mcrae' "
-        "becomes 'animal migratory' (funny near-miss). (3) 00MUdHQ7GGY_8 — "
-        "hallucination: fabricates 'David Irving' narrative (WER 100%).")
+        "Three demos side by side. Left: 'buy one get one free' (WER 0%). "
+        "Center: 'admiral mcrae' becomes 'animal migratory' (phonetic "
+        "near-miss). Right: 'carry strap' becomes 'holocaust denier' "
+        "(complete hallucination). Click each video to play.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 16 — RESEARCH OUTPUT
@@ -1353,7 +1414,7 @@ def slide_19(prs):
         "into a 393-line orchestrator calling 11 reusable modules. 37 "
         "automated tests validate every module. Environment-aware: "
         "automatically detects EC2 development vs Docker container.",
-        [[r1], [r2]])
+        [[r1], [r2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 20 — DEPLOYED PRODUCT
@@ -1519,7 +1580,7 @@ def slide_24(prs):
         "Intelligibility Score says 39.9% properly captured — 3.5x more. "
         "And 43-51% is context-recoverable. This isn't wishful thinking: "
         "IS is validated across all 16 decode configs.",
-        [[r1], [r2, img]])
+        [[r1], [r2, img]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 25 — RESEARCH ROADMAP (STAIRCASE)
