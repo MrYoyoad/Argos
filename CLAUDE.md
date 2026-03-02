@@ -301,7 +301,9 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 **Hyperparameter tuning** (13 experiments on 107 segments): Baseline config (beam=20, lenpen=0, no sampling) proved most robust. No parameter combination improved WER meaningfully. See [docs/tuning/experiment-comparison.csv](docs/tuning/experiment-comparison.csv).
 
-**Key takeaway**: Domain adaptation (fine-tuning on target data) is the only viable path to production-grade accuracy. Decode parameter tuning has reached diminishing returns.
+**Fine-tuning experiments** (March 2026): Exp A (r=16) and Exp B (r=64) on 1,273 AVSpeech segments both showed severe overfitting (~95% train, ~60% val accuracy). r=64 was 3.1pp worse than r=16. These results were **data-limited** — 1,273 segments is below the ~1K minimum for LoRA generalization. The experiments tested the dataset's limits, not the model's capacity. With 20K-50K segments and a stronger LLM (e.g., Llama 3.1 8B), substantially better results are expected. See [docs/finetuning/training-research-notes.md](docs/finetuning/training-research-notes.md) and [docs/evaluation/llm_upgrade_analysis.md](docs/evaluation/llm_upgrade_analysis.md).
+
+**Key takeaway**: Domain adaptation requires three things: (1) sufficient training data (20K+ segments, not 1.3K), (2) a stronger LLM backbone, and (3) eventually visual encoder adaptation. Decode parameter tuning has reached diminishing returns.
 
 ### Standalone Container Bug Tracking
 

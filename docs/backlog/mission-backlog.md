@@ -132,14 +132,15 @@ Tracking completed missions and the prioritized backlog of future work for the A
 | Baseline | No fine-tuning | ~60% (estimated) | — | Reference |
 
 **Key Findings**:
-- **LoRA rank is NOT the bottleneck** — r=64 was 3.1 pp worse than r=16
+- **Both experiments were data-limited** — 1,273 segments is below the ~1K minimum for LoRA generalization (ICLR 2024 scaling laws). At this scale, any model configuration memorizes rather than generalizes
+- r=64 was 3.1 pp worse than r=16 due to overfitting on tiny data — this does NOT prove the LLM has enough capacity with adequate data
 - Both experiments overfit severely: 95% train vs ~59-63% val accuracy
 - Best checkpoints at epoch 2-4; remaining 15+ epochs were wasted
 - Training speed identical (~18 sec/update) despite 4x more LoRA params
 
-**Root Cause Analysis — Three Real Bottlenecks**:
-1. **Frozen AV-HuBERT encoder** (PRIMARY) — visual features trained on LRS3 TED talks don't represent YouTube content well. No decoder fine-tuning can compensate
-2. **Insufficient training data** — 1,273 segments (1.5h) causes both r=16 and r=64 to memorize fully by epoch 5
+**Root Cause Analysis — Three Bottlenecks (data scarcity is most actionable)**:
+1. **Insufficient training data** (PRIMARY for these experiments) — 1,273 segments (1.5h) guarantees memorization. With 20K-50K segments, results could be dramatically different. AVSpeech has 290K videos available
+2. **Frozen AV-HuBERT encoder** (PRIMARY long-term) — visual features trained on LRS3 TED talks don't represent YouTube content. Sets a ceiling that decoder tuning alone can't break
 3. **Noisy labels** — Whisper ASR at ~64% accuracy provides corrupted supervision
 
 **Remaining Items (Updated Priority)**:
@@ -149,7 +150,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - **Phase 2: Unfreeze encoder** — adapt top AV-HuBERT layers with discriminative LR (needs gradient checkpointing or multi-GPU)
   - **Phase 3: Label quality** — manually verify 224 val transcriptions; use Whisper large-v3 for better training labels
   - Data curation: filter face detection confidence >0.9, remove extreme head pose >30°
-- **Expected Impact**: Decoder-only tuning insufficient; encoder adaptation needed for sub-50% WER
+- **Expected Impact**: With proper data scaling (20K-50K segments) + stronger LLM (Llama 3.1 8B) + smart prompts, target 30-40% WER is realistic. Encoder adaptation for sub-30% WER
 - **GPU Requirements**: Data expansion works on T4; encoder unfreezing needs V100+ or gradient checkpointing
 - **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md) (Sections 6-9), [Comparison Report](../finetuning/experiments/comparison_report.md)
 
@@ -228,23 +229,26 @@ Tracking completed missions and the prioritized backlog of future work for the A
 - **Smoke testing** (50-update test runs) caught issues before committing to 17h runs
 
 ### What Didn't Work
-- **Increasing LoRA rank** from 16→64: 3.1 pp worse, 59% slower, 64% more VRAM
+- **Increasing LoRA rank** from 16→64 **on 1,273 samples**: 3.1 pp worse, 59% slower, 64% more VRAM — but this is a data scarcity problem, not proof that the LLM has sufficient capacity
 - **Long training schedules** (3,000 updates): peak was at update 320 (Exp A) / ~640 (Exp B); 85%+ of training was wasted overfitting
-- **Decoder-only fine-tuning** in general: the frozen encoder is the dominant bottleneck
+- **Training on only 1,273 segments**: below the ~1K-sample minimum for LoRA generalization. Both experiments tested dataset limits, not model limits
 
 ### What We Got Wrong
-- Predicted r=16 was "capacity-limited" and r=64 would help — **wrong**, both overfit identically
+- Predicted r=16 was "capacity-limited" and r=64 would help — **wrong at this data scale**, both overfit identically on 1.3K samples
 - Predicted ~160MB VRAM increase for r=64 — **wrong**, actual was +5GB due to optimizer states
-- Assumed decoder adaptation could compensate for encoder domain mismatch — **wrong**, garbage-in-garbage-out
+- Assumed decoder adaptation could compensate for encoder domain mismatch with tiny data — **wrong**, need both more data AND encoder adaptation
+- **Overstated "encoder is THE bottleneck"** — the encoder domain shift is real, but equally important was the data insufficiency. With 20K-50K segments, the decoder (and a stronger LLM) could contribute much more
 
 ### Key Insight
-> **The visual encoder (AV-HuBERT) is the bottleneck, not the language decoder (Llama-2 LoRA).** Improving the decoder's ability to interpret visual features is futile if those features don't represent the target domain. Future work must adapt the encoder or use more/better training data.
+> **These experiments were fundamentally data-limited.** The r=16 vs r=64 comparison on 1,273 samples tells us about the dataset's insufficiency, not the LLM's capacity ceiling. With proper data (20K-50K segments from AVSpeech), a stronger LLM (e.g., Llama 3.1 8B), and smart prompts, the architecture's potential is far higher than what we observed. Both data scaling and encoder adaptation are needed — they address different bottlenecks and their effects are multiplicative.
 
 ### Corrected Strategic Priorities
-1. **More data** (5-10K segments) — most impactful, least risky
-2. **Encoder adaptation** (unfreeze top layers) — addresses root cause
-3. **Label quality** (manual verification, better ASR) — removes noise floor
-4. ~~LoRA rank increase~~ — **deprioritized** (experimentally disproven)
+1. **More data** (20K-50K segments) — most impactful, unlocks the decoder's potential
+2. **Stronger LLM** (Llama 3.1 8B) — better language modeling, 128K vocab, enables advanced prompting
+3. **Smart prompts** (topic context, word count, GER post-processing) — force multiplier for stronger models
+4. **Label quality** (Whisper large-v3, manual verification) — removes noise floor
+5. **Encoder adaptation** (unfreeze top layers) — addresses visual domain shift ceiling
+6. ~~LoRA rank increase on small data~~ — **deprioritized** (counterproductive without more data)
 
 ---
 

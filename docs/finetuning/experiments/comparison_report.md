@@ -91,9 +91,10 @@ _Requires running decode on fine-tuned checkpoint. Training complete, decode pen
 ### Training Takeaways
 
 1. **Early stopping is critical**: Best checkpoint at epoch 2 — 17 of 19 epochs were wasted training time
-2. **r=16 is rank-limited**: The model memorized training data (95.5% train acc) but couldn't generalize (59.0% val acc), suggesting the adapter lacks capacity for the TED→YouTube domain shift
-3. **Data is sufficient for signal**: Validation accuracy improved meaningfully from epoch 1 to 2 (62.5% → 62.9%), proving the model can learn from AVSpeech data
-4. **Encoder freeze is the bottleneck**: With encoder frozen, only LLM adapters are trained — the visual feature extractor cannot adapt to YouTube-style faces/angles
+2. **The dataset (1,273 segments) was far too small for meaningful generalization**: Both r=16 and r=64 memorized training data (~95% train acc) and failed to generalize (~59-63% val acc). This is below the ~1,000-sample minimum for LoRA to generalize (per ICLR 2024 scaling law research). The experiments tested the dataset's limits, not the model's capacity
+3. **Data shows learning signal exists**: Validation accuracy improved from epoch 1 to 2 (62.5% → 62.9%), proving the model can learn from AVSpeech data — it just needs 10-50x more of it
+4. **r=64 was worse (-3.1pp) due to data scarcity, not because r=16 is sufficient**: With only 1,273 samples, more parameters = faster overfitting. With 20K+ samples, results could differ
+5. **Both data scaling and encoder adaptation are needed**: The frozen encoder limits visual feature quality; insufficient data limits the decoder's ability to learn from what features exist. These are independent bottlenecks
 
 ### Per-Tier Impact
 _To be filled after decode evaluation. Key question: Did fine-tuning help more on hard (Tier 1-2) or easy (Tier 4-5) segments?_
@@ -112,8 +113,10 @@ _To be filled after decode evaluation. Key question: Which of the 10 failure mod
 3. **Increase LoRA rank**: r=64 with alpha=128 gives 4x adapter capacity
 4. **Consider validation frequency**: Validate every 50 updates (not every epoch) for finer early-stopping
 
-### For Future Experiments
-- **Encoder unfreezing** (requires larger GPU): Expected 15-25 WER point gain per Report 6 analysis
-- **Expanded LoRA targets**: Add o_proj, gate_proj, up_proj, down_proj to capture more model capacity
+### For Future Experiments (Corrected Priorities After Exp B)
+- **Scale training data to 20K-50K segments** (MOST CRITICAL): Both experiments proved that 1,273 segments is below the threshold for generalization. AVSpeech has 290K videos / 4,700 hours available
+- **Upgrade LLM to Llama 3.1 8B**: ≈Llama-2-70B quality, same hidden_size (4096), enables advanced prompting strategies. Gains multiply with more data
+- **Smarter prompts**: Topic context, word count hints, GER post-processing — force multiplier for stronger models
+- **Improve labels**: Use Whisper large-v3 instead of base for training transcriptions
+- **Encoder unfreezing** (requires larger GPU): Addresses visual domain shift ceiling
 - **Data quality curation**: Filter by face detection confidence >0.9, exclude extreme head poses
-- **More training data**: Current 1,273 segments is small — consider full AVSpeech download

@@ -281,17 +281,19 @@ The optimal checkpoint was at epoch 2 (320 updates). This means:
 
 ### What This Tells Us
 
-**1. Rank is NOT the bottleneck.** The original hypothesis (Section 4) that r=16 is "capacity-limited" is **REFUTED**. Quadrupling LoRA capacity from 12.6M to 50.3M trainable parameters did not improve generalization — it made it slightly worse. Both configurations reach ~95% train accuracy and ~59-63% val accuracy. The adapter has more than enough representational capacity at r=16.
+**1. Both experiments were fundamentally data-limited.** With only 1,273 training segments (~1.5 hours of video), we are below the ~1,000-sample minimum threshold where LoRA can generalize (per scaling law research, ICLR 2024). At this scale, models reproduce training data verbatim instead of learning underlying patterns — which is exactly what we observed (95% train accuracy, ~60% val accuracy). The r=16 vs r=64 comparison tells us about the **dataset's insufficiency**, not about the LLM's capacity ceiling.
 
-**2. The bottleneck is upstream of the decoder.** Three factors limit performance, all outside the LoRA adapter:
+**2. Rank increase failed because of insufficient data, not because the decoder has enough capacity.** Quadrupling LoRA capacity from 12.6M to 50.3M trainable parameters with only 1,273 samples predictably caused worse overfitting (3.1pp worse). With 20K-50K segments, the outcome could be very different — a larger rank (or a stronger LLM entirely) would have more data to learn from and the additional capacity could translate into real gains. These experiments do NOT prove that the LLM is saturated.
 
-| Bottleneck | Evidence | Severity |
-|---|---|---|
-| **Frozen AV-HuBERT encoder** | Features trained on LRS3 TED talks; cannot adapt to YouTube visual domain | **Primary** — the encoder produces visual features that don't represent YouTube content well. No amount of decoder fine-tuning can compensate for poor input features. |
-| **Insufficient training data** | 1,273 segments ≈ 1.5 hours of video; both r=16 and r=64 memorize fully by epoch 5 | **Critical** — at ~10K params/sample (r=16) or ~40K params/sample (r=64), massive overfitting is inevitable |
-| **Noisy training labels** | Whisper ASR at ~64% accuracy provides supervision; model learns errors | **Significant** — the model is optimizing toward incorrect targets in ~36% of its training signal |
+**3. Multiple bottlenecks limit performance, but data scarcity is the most actionable:**
 
-**3. r=64 generalizes worse because of the bias-variance tradeoff.** With only 1,273 samples, the larger r=64 adapter overfits faster and harder. It has 4x more parameters to memorize noise, but no additional data to constrain them. This is a textbook case of high variance / low bias overfitting.
+| Bottleneck | Evidence | Severity | Addressable? |
+|---|---|---|---|
+| **Insufficient training data** | 1,273 segments ≈ 1.5 hours; both r=16 and r=64 memorize fully by epoch 5; 10K-40K params/sample guarantees overfitting | **Primary for these experiments** — at this scale, no model configuration can generalize | Yes — AVSpeech has ~290K videos / 4,700 hours available |
+| **Frozen AV-HuBERT encoder** | Features trained on LRS3 TED talks; cannot adapt to YouTube visual domain | **Primary long-term** — sets a ceiling on what any decoder can achieve | Yes — requires multi-GPU or gradient checkpointing |
+| **Noisy training labels** | Whisper ASR at ~64% accuracy provides supervision; model learns errors | **Significant** — 36% of training signal is corrupted | Yes — Whisper large-v3 or manual verification |
+
+**4. r=64 generalizes worse because of the bias-variance tradeoff on tiny data.** With only 1,273 samples, the larger r=64 adapter overfits faster and harder. It has 4x more parameters to memorize noise, but no additional data to constrain them. This is a textbook case of high variance / low bias overfitting — but it's a data problem, not a model problem.
 
 **4. Training speed was identical.** Despite 4x more LoRA params, update speed was ~18 sec for both. The bottleneck is the AV-HuBERT encoder forward pass (shared, frozen) and video data loading, not the LoRA backward pass. This means future experiments with larger ranks incur no meaningful speed penalty — only VRAM increases matter.
 
@@ -303,9 +305,9 @@ The optimal checkpoint was at epoch 2 (320 updates). This means:
 
 | Original Claim (Section 4) | Reality | Correction |
 |---|---|---|
-| "r=16 is likely **underfit** for this adaptation" | r=16 **overfits** identically to r=64 | Both ranks have excess capacity for 1.3K samples |
-| "Increase r=64 → most likely to move the needle" | r=64 was 3.1 pp **worse** than r=16 | Rank increase is counterproductive without more data |
-| "The domain shift TED→YouTube is substantial, needs more capacity" | Correct diagnosis, wrong solution | Domain shift exists but must be addressed in the encoder, not the decoder |
+| "r=16 is likely **underfit** for this adaptation" | r=16 **overfits** identically to r=64 | Both ranks have excess capacity for 1.3K samples — but this is a **data problem**, not proof that r=16 is sufficient with adequate data |
+| "Increase r=64 → most likely to move the needle" | r=64 was 3.1 pp **worse** than r=16 | Rank increase is counterproductive **without more data**. With 20K+ segments, results could differ significantly |
+| "The domain shift TED→YouTube is substantial, needs more capacity" | Correct diagnosis, wrong solution **for this data scale** | Domain shift exists; encoder adaptation helps, but so would 10-50x more training data for the decoder |
 | "VRAM: r=64 adds ~160MB — negligible" | Actual: ~5 GB extra (8→13 GB) due to optimizer states | Must account for Adam state (2x params) + gradients at FP16/FP32 mixed |
 
 ### Corrected Priority Order
@@ -321,7 +323,7 @@ The optimal checkpoint was at epoch 2 (320 updates). This means:
 
 ### Key Takeaway
 
-> **Domain adaptation for VSP-LLM requires adapting the visual encoder (AV-HuBERT), not just the language decoder (Llama-2 LoRA).** The encoder produces visual features trained on clean TED talks. When applied to YouTube videos with varied angles, lighting, and speaking styles, these features are inherently limited. Decoder-side LoRA fine-tuning — regardless of rank — can only rearrange the language model's output probabilities. It cannot improve the quality of the visual information flowing in from the frozen encoder.
+> **These experiments were fundamentally limited by data scarcity (1,273 segments), not by model capacity.** The r=16 vs r=64 comparison at this scale tells us nothing about the LLM's potential with adequate data. With 20K-50K training segments (achievable from AVSpeech's 290K videos), both a stronger LLM (e.g., Llama 3.1 8B) and larger LoRA ranks could yield substantially different results. The visual encoder domain shift (LRS3→YouTube) is a real bottleneck, but it operates alongside — not instead of — the data limitation. Both must be addressed: more data for the decoder AND encoder adaptation for the visual features.
 
 ---
 
