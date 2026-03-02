@@ -123,37 +123,34 @@ tar xzf galaxy_export_backup_*.tar.gz
 
 #### Section 1: Opening & Context (5 min, 4 slides)
 
-**Upload with Prompt 1 (3 files):**
+**Upload 3 images with Prompt 1** (prompts reference each file by name for insertion):
 
-| # | File | For Slide | Purpose |
-|---|------|-----------|---------|
-| 1 | `08_branding/BlackLogo300x300-W-BG.png` | 1 | Title slide logo placement |
-| 2 | `09_pipeline_diagram/pipeline_architecture.png` | 3 | Architecture diagram reference |
-| 3 | `01_plots_for_slides/P2_paper_vs_reality.png` | 4 | Paper 25.4% vs real-world 64.1% bar chart |
+| # | File | Slide | Placement |
+|---|------|-------|-----------|
+| 1 | `08_branding/BlackLogo300x300-W-BG.png` | 1 | Top-right logo |
+| 2 | `09_pipeline_diagram/pipeline_architecture.png` | 3 | Full-width architecture diagram |
+| 3 | `01_plots_for_slides/P2_paper_vs_reality.png` | 4 | Right half bar chart |
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
 | 1 | **Title** | "Argos VSP: Research Findings and Production Roadmap" | Branding from `docs/branding/` |
-| 2 | **What is Lip Reading?** | Video of face → text. Use cases: surveillance, accessibility, noisy environments. Hook: play the 33-word perfect burned video | **Demo video**: `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4` |
+| 2 | **What is Lip Reading?** | Video of face → text, no audio needed. Hook: play the 33-word perfect burned video | **Demo video**: `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4` |
 | 3 | **Model Architecture** | 3-block diagram: Video → AV-HuBERT (visual encoder, frozen, 1024-dim) → Linear projection (1024→4096) → LLaMA-2-7B (4-bit QLoRA, r=16). Note: LLM is **swappable** — Llama 3.1 8B has same hidden_size (4096), trivial swap (1-2 hours setup). Only LoRA adapters (12.6M params, 0.19%) + projection layer are trained. | Custom diagram |
 | 4 | **The Benchmark** | Paper: 25.4% WER on LRS3 (curated TED talks). Our question: "How does this perform on real-world video?" And: "Is WER even the right metric?" | **NEW graph: Paper vs Reality bar chart** |
 
 #### Section 2: Research Findings (18 min, 12 slides) — 40%
 
-**Upload with Prompt 2 (10 files):**
+**Upload 7 images with Prompt 2** (images only — .md reports are in supplementary/ for reference):
 
-| # | File | For Slide | Purpose |
-|---|------|-----------|---------|
-| 1 | `01_plots_for_slides/P1_quality_tiers.png` | 5 | WER quality tier distribution (5 tiers) |
-| 2 | `01_plots_for_slides/09_boxplot_wwer_all_experiments.png` | 9 | WWER boxplot across 13 experiments |
-| 3 | `01_plots_for_slides/01_wer_vs_duration.png` | 10 | WER vs segment duration scatter |
-| 4 | `01_plots_for_slides/14_nea_vs_wwer_scatter.png` | 11 | Named entity accuracy vs WWER |
-| 5 | `01_plots_for_slides/10_empty_and_hallucination_rates.png` | 12 | Empty & hallucination rates per config |
-| 6 | `01_plots_for_slides/16_improvement_J_vs_A.png` | 12 | Per-segment improvement Config J vs baseline |
-| 7 | `01_plots_for_slides/P4_lenpen_sensitivity.png` | 13 | Length penalty sensitivity (tornado chart) |
-| 8 | `03_reports_md/intelligibility_methodology.md` | 7 | Full IS methodology (6 signals, tiers, patterns) |
-| 9 | `03_reports_md/is_correlation_analysis.md` | 7, 13 | Cross-config validation, LLM judge, variance |
-| 10 | `03_reports_md/report_1_executive_assessment.md` | 5, 8, 10 | Reality gap data, failure modes, topic analysis |
+| # | File | Slide | Placement |
+|---|------|-------|-----------|
+| 1 | `01_plots_for_slides/P1_quality_tiers.png` | 5 | Right half — quality tiers |
+| 2 | `01_plots_for_slides/09_boxplot_wwer_all_experiments.png` | 9 | Center — WWER boxplot |
+| 3 | `01_plots_for_slides/01_wer_vs_duration.png` | 10 | Right half — WER vs duration |
+| 4 | `01_plots_for_slides/14_nea_vs_wwer_scatter.png` | 11 | Right half — NEA scatter |
+| 5 | `01_plots_for_slides/10_empty_and_hallucination_rates.png` | 12 | Right half — empty/halluc rates |
+| 6 | `01_plots_for_slides/P4_lenpen_sensitivity.png` | 13 | Right half — lenpen sensitivity |
+| 7 | `01_plots_for_slides/P5_tuning_before_after.png` | 12 | Left half — baseline vs Config J |
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
@@ -172,15 +169,12 @@ tar xzf galaxy_export_backup_*.tar.gz
 
 #### Section 3: Engineering Achievements (12 min, 7 slides) — 25%
 
-**Upload with Prompt 3 (5 files):**
+**Upload 2 images with Prompt 3** (images only):
 
-| # | File | For Slide | Purpose |
-|---|------|-----------|---------|
-| 1 | `09_pipeline_diagram/pipeline_architecture.png` | 17 | 8-stage pipeline flow diagram |
-| 2 | `01_plots_for_slides/15_cdf_wwer_curated.png` | 22 | CDF of WWER (quality thresholds) |
-| 3 | `03_reports_md/report_2_hyperparameter_tuning.md` | 22 | 13 experiments context for evaluation infra |
-| 4 | `03_reports_md/report_6_finetuning_analysis.md` | 22 | Fine-tuning strategy (evaluation context) |
-| 5 | `08_branding/BlackLogo300x300-W-BG.png` | 17-23 | Consistent branding across slides |
+| # | File | Slide | Placement |
+|---|------|-------|-----------|
+| 1 | `09_pipeline_diagram/pipeline_architecture.png` | 17 | Full width — pipeline diagram |
+| 2 | `01_plots_for_slides/15_cdf_wwer_curated.png` | 22 | Right half — CDF thresholds |
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|
@@ -194,20 +188,16 @@ tar xzf galaxy_export_backup_*.tar.gz
 
 #### Section 4: Future Directions (10 min, 7 slides) — 35%
 
-**Upload with Prompt 4 (10 files):**
+**Upload 6 images with Prompt 4** (images only):
 
-| # | File | For Slide | Purpose |
-|---|------|-----------|---------|
-| 1 | `01_plots_for_slides/P1_quality_tiers.png` | 24 | IS tiers vs WER tiers comparison |
-| 2 | `01_plots_for_slides/P3_wer_trajectory.png` | 25 | WER improvement trajectory across phases |
-| 3 | `01_plots_for_slides/P5_tuning_before_after.png` | 24 | Before/after tuning paired comparison |
-| 4 | `01_plots_for_slides/finetune/FT_01_loss_curves.png` | 28 | Train vs val loss curves (overfitting) |
-| 5 | `01_plots_for_slides/finetune/FT_02_accuracy_curves.png` | 28 | Train vs val accuracy (gap widens) |
-| 6 | `01_plots_for_slides/finetune/FT_03_overfitting_gap.png` | 28 | Overfitting gap diagnostic (36.5pp) |
-| 7 | `01_plots_for_slides/finetune/FT_10_summary_dashboard.png` | 28 | 6-panel Exp A summary dashboard |
-| 8 | `03_reports_md/finetune_A_comparison_report.md` | 28, 30 | Exp A results, data scarcity proof |
-| 9 | `03_reports_md/is_correlation_analysis.md` | 24 | Cross-config IS validation proof |
-| 10 | `03_reports_md/llm_upgrade_analysis.md` | 25, 28, 29 | LLM alternatives, data scaling, prompts, investment strategy |
+| # | File | Slide | Placement |
+|---|------|-------|-----------|
+| 1 | `01_plots_for_slides/P1_quality_tiers.png` | 24 | Right half — IS vs WER tiers |
+| 2 | `01_plots_for_slides/P3_wer_trajectory.png` | 25 | Right half — WER trajectory |
+| 3 | `01_plots_for_slides/finetune/FT_10_summary_dashboard.png` | 28 | Top half — Exp A dashboard |
+| 4 | `01_plots_for_slides/finetune/FT_01_loss_curves.png` | 28 | Backup (speaker notes ref) |
+| 5 | `01_plots_for_slides/finetune/FT_02_accuracy_curves.png` | 28 | Backup (speaker notes ref) |
+| 6 | `01_plots_for_slides/finetune/FT_03_overfitting_gap.png` | 28 | Backup (speaker notes ref) |
 
 | # | Slide | Key Content | Graph/Visual |
 |---|-------|-------------|-------------|

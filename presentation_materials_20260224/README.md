@@ -55,8 +55,9 @@ Technical deep-dive graphs — for supervisor/boss session only.
 | `FT_09_wall_clock.png` | **NEW**: Per-epoch training time |
 | `FT_10_summary_dashboard.png` | **NEW**: 6-panel training summary dashboard |
 
-### 03_reports_md/ (10 files)
-Research reports in Markdown format — reference material for slide content.
+### 03_reports_md/supplementary/ (10 files)
+Research reports in Markdown format — **presenter reference only, NOT uploaded to Gemini**.
+These are supplementary materials for understanding the data behind each slide.
 
 | File | Topic |
 |------|-------|
@@ -152,11 +153,11 @@ Curated example data for building comparison tables.
 
 ## Quick Start Guide
 
-1. **Read `PRESENTATION_PLAN.md`** for the full 30-slide structure and speaker notes
-2. **Start with `01_plots_for_slides/`** — these map directly to slides in the plan
-3. **Open `06_demo_videos/IEa7qEkMvfQ_3__c5447488_with_hyp.mp4`** for the opening hook
-4. **Use `04_reports_docx/`** for any content you want to hand out or reference
-5. **Browse `05_data/html_reports/`** in a browser for interactive per-experiment details
+1. **Open `gemini_presentation_instructions.docx`** — contains all 4 Gemini prompts with image upload lists
+2. **Upload images, paste prompts** — 18 images total across 4 prompts (Gemini inserts them by name)
+3. **Apply animations** — use the Animation Checklist in the docx (~10-15 min)
+4. **Insert demo videos** — slides 2 and 15 have placeholders; play from `06_demo_videos/`
+5. **Reference `03_reports_md/supplementary/`** for detailed data behind each slide (NOT uploaded to Gemini)
 
 ## Key Numbers for Reference
 

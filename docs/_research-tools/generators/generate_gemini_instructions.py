@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 """
-Argos — The Orchard — Gemini Presentation Maker Instructions
+Argos — The Orchard — Gemini Presentation Maker Instructions (v2)
 
 Generates a branded .docx with 4 sequential Gemini prompts for creating
 the Argos VSP project review presentation (30 slides).
+
+v2 changes:
+- Structured slide format: LAYOUT / IMAGE / SPEAKER NOTES / [ANIMATION]
+- Explicit image insertion directives (no more "leave space for chart")
+- Video slides marked [MANUAL: VIDEO] — presenter inserts externally
+- Animation checklist section + embedded animation tags in speaker notes
+- Image-only Gemini uploads (markdown reports are supplementary reference)
 
 Usage:
     python3 generate_gemini_instructions.py
@@ -150,15 +157,16 @@ def add_prompt_block(doc, prompt_text):
 
 def add_attachment_table(doc, attachments):
     """Add a table of files to upload with the prompt."""
-    add_heading(doc, "Upload These Files With the Prompt", 3)
+    add_heading(doc, "Upload These Image Files With the Prompt", 3)
     add_para(doc, (
-        "Attach these files to the Gemini conversation when pasting the prompt above. "
-        "Gemini will use the images as visual reference and the reports for data context."
+        "Attach these image files to the Gemini conversation when pasting the prompt. "
+        "The prompt references each file by name and tells Gemini where to place it. "
+        "Do NOT upload the supplementary .md reports \u2014 those are for your reference only."
     ), italic=True, color=C_GRAY, size=Pt(10))
     add_styled_table(doc,
-        ["#", "File", "For Slide(s)", "Purpose"],
+        ["#", "File", "For Slide(s)", "Placement"],
         [[str(i + 1)] + row for i, row in enumerate(attachments)],
-        col_widths=[0.3, 2.8, 1.0, 2.5],
+        col_widths=[0.3, 2.8, 0.8, 2.7],
     )
 
 
@@ -254,7 +262,7 @@ def build_cover(doc):
 
     for label, value in [
         ("Author: ", "Yoad Oxman"),
-        ("Target Tool: ", "Google Gemini (Slides Generation)"),
+        ("Target Tool: ", "Google Gemini 3.1 Pro (Slides Generation)"),
         ("Slides: ", "30 slides + appendix"),
         ("Audience: ", "Technical managers and supervisors"),
         ("Last Updated: ", LAST_UPDATED),
@@ -301,7 +309,9 @@ def build_toc(doc):
         "5. Prompt 3: Engineering (Slides 17-23)",
         "6. Prompt 4: Future & Close (Slides 24-30)",
         "7. Appendix Slides",
-        "8. Material References",
+        "8. Animation & Transition Checklist",
+        "9. Post-Generation Manual Steps",
+        "10. Material References",
     ]
     for title in toc_entries:
         placeholder = paragraph.add_run(title + "\n")
@@ -322,490 +332,513 @@ def build_toc(doc):
 
 
 # ═══════════════════════════════════════════════════
-# PROMPTS
+# PROMPTS (v2 — structured format)
 # ═══════════════════════════════════════════════════
 
-PROMPT_1 = """Create a professional presentation with a dark modern theme
-(deep navy background, white text, teal and coral accents).
+PROMPT_1 = """Create a presentation in Google Slides with a dark modern theme:
+- Background: deep navy (#0D1B2A)
+- Text: white (#FFFFFF)
+- Accents: teal (#00B4D8) for highlights, coral (#E06C75) for warnings/negatives
+- Font: clean sans-serif (Montserrat or similar)
+- All slides: consistent style, professional, minimal clutter
 
 This is PART 1 of 4 for an internal project review called
 "Argos VSP: Research Findings and Production Roadmap"
 about a Visual Speech Processing (lip reading) system.
 Audience: Technical managers and supervisors.
+Create exactly 4 slides with speaker notes for each.
 
-Create exactly 4 slides:
+---
 
-SLIDE 1 - Title Slide
+SLIDE 1 - Title
+LAYOUT: Title slide, clean and minimal
+IMAGE: Insert the uploaded file "BlackLogo300x300-W-BG.png" in the top-right corner, sized ~1 inch.
 Title: "Argos VSP: Research Findings and Production Roadmap"
 Subtitle: "Visual Speech Processing \u2014 Project Review"
-Date: February 2026
-Clean, minimal. Leave space for a logo in the top-right.
+Bottom-right: "February 2026"
+SPEAKER NOTES: "Welcome. This presentation covers 3 months of research and engineering on a visual speech processing system \u2014 reading lips from video, no audio. We\u2019ll cover what we found, what we built, and where we go next. [ANIMATION: Title fades in, subtitle follows 0.5s later. Transition: None.]"
 
-SLIDE 2 - Quick Context
+---
+
+SLIDE 2 - What is Visual Speech Processing? [MANUAL: VIDEO]
+LAYOUT: Minimal center text with a large play button icon
 Title: "What is Visual Speech Processing?"
-A system that reads lips from video \u2014 no audio.
-Three use cases: Surveillance | Accessibility | Noisy Environments
-Note: "Opening demo: 33-word perfect lip-reading" [video played externally]
+Center text: "A system that reads lips from video \u2014 no audio needed."
+Below center: Large triangular play button icon with caption "Opening Demo: 33-Word Perfect Lip Reading"
+Do NOT embed any video. Create a placeholder with the play icon only.
+SPEAKER NOTES: "PLAY VIDEO: IEa7qEkMvfQ_3__c5447488_with_hyp.mp4 \u2014 33 words about health insurance, WER 0%. Play the video first, then explain: this is the best case. The system perfectly reads 33 consecutive words from lip movement alone. Now let\u2019s see how it works. [ANIMATION: Text appears, play icon pulses. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 3 - Model Architecture
+LAYOUT: Full-width image with text annotations below
+IMAGE: Insert the uploaded file "pipeline_architecture.png" centered, filling ~80% of slide width.
 Title: "How It Works: Three Components"
-Left-to-right flow: Video \u2192 AV-HuBERT (Visual Encoder, frozen, 1024-dim)
-\u2192 Linear Projection (1024\u21924096) \u2192 LLaMA-2-7B (4-bit QLoRA, r=16) \u2192 Text
-One line under each: "Visual features" \u2192 "Embedding space" \u2192 "Token-to-text"
-Note: "LLM is swappable \u2014 Llama 3.1 8B has same hidden size (4096),
-making it a drop-in replacement (1-2 hours setup). Only 12.6M
-trainable params (0.19%) via LoRA adapters."
+Below the image, three labeled blocks left-to-right:
+"AV-HuBERT (Visual Encoder, frozen, 1024-dim)" \u2192 "Linear Projection (1024\u21924096)" \u2192 "LLaMA-2-7B (4-bit QLoRA, r=16)"
+Bottom note in smaller text: "Only 12.6M trainable params (0.19%). LLM is swappable \u2014 Llama 3.1 8B is a drop-in replacement (same 4096 hidden size)."
+SPEAKER NOTES: "Three components. Visual encoder (AV-HuBERT) is frozen \u2014 pre-trained on LRS3 lip-reading data. It outputs 1024-dim features per frame. A linear projection maps to 4096-dim (LLM input space). Then LLaMA-2-7B generates text. Key: only the LoRA adapters and projection layer are trained \u2014 12.6M of 7B parameters. And the LLM is swappable: Llama 3.1 8B has the same hidden dimension, making it a trivial 1-2 hour swap. [ANIMATION: Three component blocks fly in left-to-right sequentially. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 4 - The Benchmark
-Title: "Paper Claims 25.4% WER on LRS3"
-Large "25.4%" displayed.
-Text: "Curated TED talks, controlled conditions."
-Below: "Two questions: How does this hold on real-world video?
-And is WER even the right way to measure?"
-Leave space for a chart."""
+LAYOUT: Split \u2014 large number on the left, chart on the right
+IMAGE: Insert the uploaded file "P2_paper_vs_reality.png" on the right half, filling the available space.
+Left side: Large "25.4%" in teal accent color, with "WER on LRS3 (TED Talks)" below in white.
+Below the number: "Curated data, controlled conditions."
+Bottom spanning full width: "Two questions: How does this hold on real-world video? And is WER even the right metric?"
+SPEAKER NOTES: "The paper claims 25.4% Word Error Rate on LRS3 \u2014 a curated dataset of TED talks with clear speech, frontal faces, good lighting. Our question: what happens on real-world YouTube video? The chart on the right previews the answer: 64.1% WER, 2.5x worse. And more importantly \u2014 is WER even the right way to measure this? [ANIMATION: Large number appears first, then chart fades in on right. Transition: Fade 0.5s.]"
+"""
 
-PROMPT_2 = """Continue the same presentation (dark navy, teal/coral accents).
-Audience: Technical managers. Full depth OK.
+PROMPT_2 = """Continue the same presentation (dark navy #0D1B2A, white text, teal/coral accents).
+This is PART 2 of 4: Research Findings. Create exactly 12 slides with speaker notes.
 
-This is PART 2 of 4: Research Findings. Create exactly 12 slides:
+---
 
 SLIDE 5 - The Reality Gap
-Title: "Real-World: 64.1% WER \u2014 2.5x Worse"
-Large: "64.1% mean WER across 1,497 segments"
-WER-based quality tiers:
-- 11.4% Usable (<30%) \u2014 green
-- 17.4% Marginal (30-50%) \u2014 yellow
-- 17.8% Poor (50-75%) \u2014 orange
-- 32.8% Unusable (75-100%) \u2014 red
-- 20.6% Hallucinated (>100%) \u2014 dark red
+LAYOUT: Split \u2014 large metric left, chart right
+IMAGE: Insert the uploaded file "P1_quality_tiers.png" on the right half.
+Left side: Large "64.1%" in coral, with "Mean WER across 1,497 real-world segments" below.
+Below, five quality tier bullets with colored dots:
+\u2022 11.4% Usable (<30%) \u2014 green dot
+\u2022 17.4% Marginal (30-50%) \u2014 yellow dot
+\u2022 17.8% Poor (50-75%) \u2014 orange dot
+\u2022 32.8% Unusable (75-100%) \u2014 red dot
+\u2022 20.6% Hallucinated (>100%) \u2014 dark red dot
 Bottom: "But WER overstates failure \u2014 see next slide."
-Leave space for chart.
+SPEAKER NOTES: "1,497 diverse YouTube segments. 64.1% mean WER \u2014 2.5x worse than the paper\u2019s 25.4%. Only 11.4% usable by WER standards. And 20.6% are hallucinations \u2014 fluent text that\u2019s completely fabricated. This is the most dangerous failure mode. But WER is misleading \u2014 it treats all errors equally. [ANIMATION: Tier bars build top-to-bottom, 0.3s each. Transition: Fade 0.5s.]"
 
-SLIDE 6 - WER Is Blind (30-second slide)
-Title: "Same WER, Opposite Meaning"
-Two boxes side by side:
-GREEN box \u2014 "WER 29%, IS 4.3 \u2014 Fully Intelligible":
-Ref: "allow you to work with the team in a more"
-Hyp: "allow you to work with a team and more"
-RED box \u2014 "WER 33%, IS 3.0 \u2014 Unintelligible":
-Ref: "today i'm talking with admiral mcrae"
-Hyp: "today i'm talking with animal migratory"
-Bottom: "WER says equal. Meaning says opposite. So we built a
-metric to capture this."
+---
+
+SLIDE 6 - WER Is Blind
+LAYOUT: Two boxes side by side
+Left box (green border): "WER 29%, IS 4.3 \u2014 Fully Intelligible"
+  Ref: "allow you to work with the team in a more"
+  Hyp: "allow you to work with a team and more"
+Right box (red border): "WER 33%, IS 3.0 \u2014 Unintelligible"
+  Ref: "today i\u2019m talking with admiral mcrae"
+  Hyp: "today i\u2019m talking with animal migratory"
+Bottom: "WER says equal. Meaning says opposite. So we built a metric to capture this."
+SPEAKER NOTES: "Same WER, opposite meaning. Left: minor grammatical change, meaning fully preserved. Right: a name destroyed \u2014 \u2018admiral mcrae\u2019 becomes \u2018animal migratory.\u2019 WER sees ~30% error in both. But one is usable and the other is garbage. This motivated our Intelligibility Score. [ANIMATION: Left box appears, then right box appears. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 7 - The Intelligibility Score
+LAYOUT: Top section with 6 blocks in a row, bottom section with tier bars
 Title: "Intelligibility Score: 39.9% Properly Captured"
-Show 6 signal blocks:
-Semantic Similarity (25%) + Phonetic Similarity (15%) +
-Inverse WER (15%) + Inverse WWER (15%) +
-Named Entity Accuracy (15%) + Length Ratio (15%)
-KEY: "IS >= 3.0 = Properly Captured: 39.9% \u2014 3.5x more than WER's 11.4%"
-Tiers: 18.4% Excellent | 21.4% Good | 21.7% Fair | 22.4% Poor | 16.0% Failed
+Six signal blocks in a row (colored blocks with labels):
+  Semantic Sim (25%) | Phonetic Sim (15%) | Inv. WER (15%) | Inv. WWER (15%) | NEA F1 (15%) | Length Ratio (15%)
+Key callout in teal: "IS >= 3.0 = Properly Captured: 39.9% \u2014 3.5x more than WER\u2019s 11.4%"
+Five tier bars: 18.4% Excellent | 21.4% Good | 21.7% Fair | 22.4% Poor | 16.0% Failed
+SPEAKER NOTES: "The Intelligibility Score combines 6 signals into a 0-5 composite. Key insight: 39.9% of segments are properly captured (IS >= 3.0) \u2014 3.5x more than WER\u2019s 11.4% \u2018usable.\u2019 WER dramatically overstates failure. Methodology: LLM-distilled evaluation \u2014 Claude designed the rubric, selected signals and weights, defined tier boundaries. This is \u2018what an expert would score\u2019 made deterministic and free. Validated across 16 decode configs: LLM heuristic judge r=0.925 with IS, 88.6% agreement. Phonetic Similarity is the #1 correlate (r=0.943). Six signals collapse into 3 independent dimensions: word accuracy (~60%), meaning preservation (~28%), output sanity (~9%). [ANIMATION: Six signal blocks build one at a time. Tier bars appear below. Transition: Fade 0.5s.]"
 
-Methodology note: IS was designed using LLM-distilled evaluation \u2014
-Claude (Anthropic) designed the 5-step rubric, selected the 6
-signals and weights, defined tier boundaries, and classified all
-failure/success patterns. This is "what an LLM expert would score"
-made deterministic, free, and decomposable.
-
-Statistical validation (tested across 16 decode configs):
-- 6 signals collapse into 3 independent dimensions:
-  (1) Word accuracy (~60% of IS variance: WER, WWER, Phonetic)
-  (2) Meaning preservation (~28%: Semantic)
-  (3) Output sanity (~9%: Length Ratio)
-- Semantic, Phonetic, NEA F1 are STABLE across all 16 configs
-  (std < 0.06). WER and Length Ratio are volatile \u2014 proves IS
-  is more robust than raw WER for comparing experiments.
-- LLM heuristic judge: r=0.925 with IS across all 16 configs
-  (std=0.015), 88.6% agreement, 99.2% recall, Cohen's kappa=0.77
-- Config J has highest IS (2.571) despite +14.8pp higher WER than
-  baseline \u2014 IS captures meaning that WER misses.
-- Per-segment rankings stable across configs (r > 0.92) \u2014 the
-  bottleneck is the visual encoder, not decode parameters.
-
-Success patterns (what makes segments succeed):
-- Phonetically Preserved: 41.5% of successes (#1 driver)
-  (Phonetic Sim is also #1 correlate with IS: r=0.943)
-- Minor Errors + High Semantic: 24.5%
-- Entities Preserved: 12.4%
-- Near-Perfect Output: 11.6%
-Context recovery: 43.6% rule-based, 50.6% LLM-judged
-This is the main methodological contribution.
+---
 
 SLIDE 8 - Failure Mode Taxonomy
+LAYOUT: Horizontal bar chart (Gemini-generated)
 Title: "10 Classified Failure Modes (900 failed segments)"
-Horizontal bar chart data (sorted by frequency):
-- Total Topic Drift: 15.9% (143) \u2014 no connection to reference
-- Phonetically Similar but Wrong Topic: 15.7% (141)
-- Accumulated Small Errors: 12.3% (111) \u2014 death by 1000 cuts
-- Hallucination: 12.3% (111) \u2014 fluent fabrication
-- High Error Rate: 12.1% (109)
-- Entity Destruction: 12.0% (108) \u2014 names/numbers lost
-- Content Word Errors: 10.7% (96) \u2014 structure OK, key words wrong
-- Empty Output: 7.8% (70) \u2014 model produced nothing
-- Truncation: 1.1% (10)
-- Over-generation: 0.1% (1)
-Bottom: "Failures are diverse \u2014 no single fix addresses all modes.
-Each roadmap phase targets specific failure categories."
-Color-code: red for hallucination/topic drift, orange for errors,
-yellow for partial failures, gray for empty/truncation.
+Create a horizontal bar chart with these values (sorted by frequency, largest at top):
+  Total Topic Drift: 15.9% (143) \u2014 dark red
+  Phonetically Similar Wrong Topic: 15.7% (141) \u2014 red
+  Accumulated Small Errors: 12.3% (111) \u2014 orange
+  Hallucination: 12.3% (111) \u2014 dark red
+  High Error Rate: 12.1% (109) \u2014 orange
+  Entity Destruction: 12.0% (108) \u2014 red
+  Content Word Errors: 10.7% (96) \u2014 yellow
+  Empty Output: 7.8% (70) \u2014 gray
+  Truncation: 1.1% (10) \u2014 gray
+  Over-generation: 0.1% (1) \u2014 gray
+Bottom: "Failures are diverse \u2014 no single fix. Each roadmap phase targets specific modes."
+SPEAKER NOTES: "900 failed segments classified into 10 failure modes. The top two \u2014 topic drift and phonetically-similar-wrong-topic \u2014 account for 31.6%. Hallucination (12.3%) is the most dangerous: fluent, confident, completely fabricated. Entity destruction (12.0%) loses names and numbers. This taxonomy maps directly to our roadmap: N-best aggregation targets accumulated small errors, confidence scoring flags hallucinations, data scaling reduces topic drift. [ANIMATION: Bars build top-to-bottom, wipe left. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 9 - Performance Distribution
+LAYOUT: Full-width chart, minimal text
+IMAGE: Insert the uploaded file "09_boxplot_wwer_all_experiments.png" centered, filling ~70% of slide width.
 Title: "Distribution Across 13 Experiments"
-Text: Most segments 50-80% WER. Long tail of failures.
-Stable core of ~11% always-good segments across all configs.
-Leave space for boxplot.
+Below chart: "Most segments: 50-80% WER. Stable core of ~11% always-good segments across all configs."
+SPEAKER NOTES: "This boxplot shows WWER distribution across all 13 decode experiments. The box is consistently in the 50-80% range. Important: about 11% of segments are always good regardless of parameters, and about 16% are always bad. The bottleneck is the visual encoder, not decode strategy \u2014 proved by cross-config analysis showing r > 0.92 per-segment ranking stability. [ANIMATION: No build. Transition: Fade 0.5s.]"
 
-SLIDE 10 - Why the Gap: Root Causes + Topic/Length Analysis
+---
+
+SLIDE 10 - Why the Gap: Root Causes
+LAYOUT: Three columns with data
+IMAGE: Insert the uploaded file "01_wer_vs_duration.png" on the right half.
 Title: "Three Root Causes \u2014 With Data"
-Three columns:
-1. Domain Mismatch \u2014 Business/Finance best (IS 3.08, 57% captured,
-   formal vocabulary). DIY/Home worst (IS 2.13, 30% captured,
-   casual/technical speech). Entertainment 30% captured.
-2. Short Segments \u2014 5-10 words: only 32% captured, 74% WER.
-   20+ words: 49% captured, 55% WER. Gap: +17pp captured.
-   Short segments lack enough visual context for the model.
-3. Hallucination \u2014 LLM prior overwhelms weak visual signal.
-   12.3% of failures are pure hallucination, 15.9% total topic drift.
-Leave space for scatter plot.
+Three columns (left two-thirds):
+  1. Domain Mismatch \u2014 Business/Finance: IS 3.08, 57% captured (best). DIY/Home: IS 2.13, 30% captured (worst).
+  2. Short Segments \u2014 5-10 words: 32% captured, 74% WER. 20+ words: 49% captured, 55% WER.
+  3. Hallucination \u2014 LLM prior overwhelms weak visual signal. 15.9% topic drift, 12.3% hallucination.
+SPEAKER NOTES: "Three root causes. Domain mismatch: the model was trained on formal TED talks, so business/finance content works best (57% captured). DIY/home improvement is worst (30%). Short segments fail catastrophically \u2014 under 10 words gives only 32% capture rate because there\u2019s not enough visual context. And hallucination: when the visual signal is weak, the LLM\u2019s language prior takes over and generates fluent but fabricated text. The scatter plot shows the duration effect clearly. [ANIMATION: Three columns appear one at a time. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 11 - Named Entity Accuracy
-Title: "NEA F1: 38.8% \u2014 The Largest Success/Failure Differentiator"
-Text: Names, numbers, proper nouns \u2014 exactly what context
-cannot recover. You can guess a missing "the" but not "McRae."
-Signal comparison (success vs failure):
-- NEA F1: 74.0% vs 15.7% (gap: 58.3pp \u2014 LARGEST)
-- Semantic: 0.74 vs 0.24 (gap: 0.50)
-- Phonetic: 0.81 vs 0.38 (gap: 0.43)
-- WER: 30% vs 87%
-Correlation insight: NEA F1 contributes 17.3% of IS variance \u2014
-disproportionately more than its 15% weight, because entity
-accuracy has the highest variance among signals (some segments
-nail all names, others miss every one).
-Leave space for chart.
+LAYOUT: Split \u2014 text left, chart right
+IMAGE: Insert the uploaded file "14_nea_vs_wwer_scatter.png" on the right half.
+Title: "NEA F1: 38.8% \u2014 The Largest Differentiator"
+Left side text:
+  "Names, numbers, proper nouns \u2014 what context cannot recover."
+  Signal gap (success vs failure):
+  \u2022 NEA F1: 74% vs 16% (gap: 58pp \u2014 LARGEST)
+  \u2022 Semantic: 0.74 vs 0.24
+  \u2022 Phonetic: 0.81 vs 0.38
+SPEAKER NOTES: "Named Entity Accuracy is the single largest differentiator between success and failure: 74% vs 16%, a 58 percentage point gap. You can guess a missing \u2018the\u2019 from context, but you cannot recover \u2018Admiral McRae\u2019 if the model says \u2018animal migratory.\u2019 NEA contributes 17.3% of IS variance \u2014 disproportionate to its 15% weight because entity accuracy has the highest variance among signals. [ANIMATION: Text appears, then chart fades in. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 12 - 13 Tuning Experiments
+LAYOUT: Two columns
+IMAGE: Insert the uploaded file "10_empty_and_hallucination_rates.png" on the right half.
 Title: "Systematic Parameter Search: 13 Configurations"
-Two columns:
-Left \u2014 Parameters tested: beam size, length penalty (-0.5 to 2.0),
-temperature (0.3 to 1.5), sampling strategy, repetition penalty
-Right \u2014 Full-dataset Config J results (1,497 segments):
-- IS: 2.60 vs 2.52 baseline (+0.08)
-- Captured (IS >= 3): 622 vs 597 (+25 segments)
-- Empties: 0 vs 70 baseline (eliminated)
-- Hallucinations: 348 vs 307 (+41 more)
-- NEA F1: 43.4% vs 38.9% (+3.7pp)
-- J beats C: stochastic sampling finds more entities
-Note: do_sample=True on standalone (stochastic), False on EC2
-(deterministic) \u2014 to be unified.
-Leave space for charts.
+Left column \u2014 "Parameters Tested":
+  \u2022 Beam size (5-50)
+  \u2022 Length penalty (-0.5 to 2.0)
+  \u2022 Temperature (0.3-1.5)
+  \u2022 Sampling strategy
+  \u2022 Repetition penalty
+Right column header: "Best Config (J) \u2014 Full Dataset (1,497 segments)"
+  \u2022 IS: 2.60 vs 2.52 baseline (+0.08)
+  \u2022 Captured: 622 vs 597 (+25 segments)
+  \u2022 Empties: 0 vs 70 (eliminated)
+  \u2022 Hallucinations: 348 vs 307 (+41 more)
+SPEAKER NOTES: "13 systematic experiments across beam size, length penalty, temperature, and sampling. Config J (beam=20, lenpen=0, temperature=1.0, do_sample=True) achieved the best IS. Key trade-off: eliminated all 70 empty outputs but added 41 hallucinations. Net IS gain: only +0.08. Note: standalone container uses do_sample=True (stochastic), EC2 uses False (deterministic) \u2014 to be unified. The chart shows the empty-vs-hallucination trade-off across configs. [ANIMATION: Left column appears, then right column. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 13 - Limits of Tuning
+LAYOUT: Split \u2014 text left, chart right
+IMAGE: Insert the uploaded file "P4_lenpen_sensitivity.png" on the right half.
 Title: "Tuning Is Mitigation, Not a Cure"
-Text: Config J trade-off: eliminates empties but doubles
-hallucinations (111 \u2192 262). Net IS gain only +0.08.
-The fundamental tradeoff: silent failures (empties) vs
-noisy failures (hallucinations).
-Long segments benefit most: 20+ words gain +0.25 IS.
-Short segments marginally worse due to over-generation.
-Cannot fix domain mismatch with hyperparameters.
-Cross-config proof: Per-segment IS rankings are nearly
-identical across all 16 configs (r > 0.92 for most pairs).
-The "hard" and "easy" segments stay the same regardless
-of decode parameters \u2014 the bottleneck is the visual encoder,
-not the decode strategy.
-Data scarcity (1,273 segments) was the real bottleneck \u2014
-not model capacity or decode parameters. Three levers remain:
-(1) scale training data to 20K-50K segments (biggest gain),
-(2) swap to stronger LLM \u2014 Llama 3.1 8B is a drop-in replacement,
-(3) smart prompts as force multiplier for stronger models.
-Leave space for chart.
+Left text:
+  \u2022 Config J: eliminates empties but doubles hallucinations
+  \u2022 Net IS gain: only +0.08 across 1,497 segments
+  \u2022 Cross-config proof: per-segment rankings identical (r > 0.92)
+  \u2022 "Hard" and "easy" segments stay the same \u2014 bottleneck is the visual encoder
+  \u2022 Three levers remain: more data, stronger LLM, smart prompts
+SPEAKER NOTES: "Tuning is mitigation, not a cure. Config J\u2019s fundamental trade-off: silent failures (empties) vs noisy failures (hallucinations). The length penalty chart shows the sensitivity \u2014 small changes cause wild swings. Cross-config analysis proves: per-segment IS rankings are nearly identical across all 16 configs (r > 0.92 for most pairs). The bottleneck is the visual encoder, not decode parameters. Data scarcity (1,273 training segments) is the real problem. Three levers: (1) scale data to 20K-50K segments, (2) swap to Llama 3.1 8B (drop-in), (3) smart prompts as force multiplier. [ANIMATION: Text appears, chart fades in. Transition: Fade 0.5s.]"
 
-SLIDE 14 - Curated Examples with IS
+---
+
+SLIDE 14 - Curated Examples
+LAYOUT: Table with color-coded IS column
 Title: "Representative Examples"
-Table with IS scores:
-| Category | Reference | Hypothesis | WER | IS |
-| Perfect | "health insurance company they pay..." | [match] | 0% | 5.0 |
-| WER misleads | "work with the team" | "work with a team" | 29% | 4.3 |
-| Entity destroyed | "admiral mcrae" | "animal migratory" | 33% | 3.0 |
-| Hallucinated | "carry strap" | "holocaust denier" | 100% | 0.7 |
-Color IS column green\u2192red.
+Create a table with columns: Category | Reference | Hypothesis | WER | IS
+Row 1 (green IS): Perfect | "health insurance company they pay..." | [exact match] | 0% | 5.0
+Row 2 (green IS): WER Misleads | "work with the team in a more" | "work with a team and more" | 29% | 4.3
+Row 3 (yellow IS): Entity Lost | "talking with admiral mcrae" | "talking with animal migratory" | 33% | 3.0
+Row 4 (red IS): Hallucinated | "carry strap" | "holocaust denier" | 100% | 0.7
+Color the IS column: 5.0 and 4.3 in green, 3.0 in yellow, 0.7 in red.
+SPEAKER NOTES: "Four examples spanning the quality range. Row 1: perfect lip-reading. Row 2: WER says 29% error but the meaning is fully preserved \u2014 IS 4.3. Row 3: same WER range but a name destroyed, meaning lost. Row 4: complete hallucination \u2014 \u2018carry strap\u2019 becomes \u2018holocaust denier.\u2019 This is why WER alone is insufficient. [ANIMATION: Table rows build one at a time, top to bottom. Transition: Fade 0.5s.]"
 
-SLIDE 15 - Live Demo
+---
+
+SLIDE 15 - Live Demo [MANUAL: VIDEO]
+LAYOUT: Minimal dark slide with play button icon
 Title: "Demo: Three Videos"
 Subtitle: "Perfect \u2192 Near-miss \u2192 Hallucination"
-Minimal. [Videos played externally]
+Center: Large triangular play button icon
+Below: "Three demonstrations played from external files."
+Do NOT embed any video. Create a placeholder only.
+SPEAKER NOTES: "PLAY VIDEOS in order: (1) d8BR6hsvzoY_31__2e9546df_with_hyp.mp4 \u2014 \u2018buy one get one free\u2019 (WER 0%, short and punchy). (2) -POZpyVCN8k_9__c7b26ea8_with_hyp.mp4 \u2014 \u2018admiral mcrae\u2019 becomes \u2018animal migratory\u2019 (funny near-miss). (3) 00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4 \u2014 hallucination: fabricates \u2018David Irving\u2019 narrative (WER 100%). [ANIMATION: No build. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 16 - Research Output
-Title: "Eight Research Reports + Exp A Training Analysis"
-List:
-1. Executive Assessment \u2014 reality gap, quality tiers
-2. Hyperparameter Tuning \u2014 13 experiments, parameter sensitivity
-3. Prompt Engineering \u2014 context injection strategies
-4. Confidence Scoring \u2014 beam score extraction, quality filtering
-5. N-Best Aggregation \u2014 ROVER/MBR hypothesis combination
-6. Fine-Tuning Analysis \u2014 LoRA domain adaptation strategy
-7. Intelligibility Scoring \u2014 6-signal composite metric,
-   failure mode taxonomy, success patterns, topic/length analysis
-8. LLM Upgrade Analysis \u2014 model alternatives (Llama 3.1 8B drop-in),
-   data scaling projections, prompt strategies as force multiplier,
-   GER post-processing, investment roadmap to 27-42% WER
-NEW: Exp A Training Report \u2014 r=16 results, overfitting analysis,
-   10 diagnostic plots, recommendations for Exp B"""
+LAYOUT: Numbered list with brief descriptions
+Title: "Eight Research Reports + Training Analysis"
+Numbered list:
+  1. Executive Assessment \u2014 reality gap, quality tiers, 1,497 segments
+  2. Hyperparameter Tuning \u2014 13 experiments, parameter sensitivity
+  3. Prompt Engineering \u2014 context injection, 7 prompt strategies
+  4. Confidence Scoring \u2014 beam score extraction, quality filtering
+  5. N-Best Aggregation \u2014 ROVER/MBR hypothesis combination
+  6. Fine-Tuning Analysis \u2014 LoRA domain adaptation strategy
+  7. Intelligibility Scoring \u2014 6-signal composite metric, failure taxonomy
+  8. LLM Upgrade Analysis \u2014 Llama 3.1 8B drop-in, data scaling, GER
+  + Exp A Training Report \u2014 overfitting analysis, 10 diagnostic plots
+SPEAKER NOTES: "Eight formal research reports plus the Exp A training analysis. Each report is a deep dive with methodology, results, and recommendations. The Intelligibility Score report is the main methodological contribution. The LLM Upgrade Analysis maps the path forward: model alternatives, data scaling projections, prompt strategies, and investment roadmap targeting 27-42% WER. [ANIMATION: List items build one at a time. Transition: Fade 0.5s.]"
+"""
 
-PROMPT_3 = """Continue the same presentation (dark navy, teal/coral accents).
-Audience: Technical managers.
+PROMPT_3 = """Continue the same presentation (dark navy #0D1B2A, white text, teal/coral accents).
+This is PART 3 of 4: Engineering Achievements. Create exactly 7 slides with speaker notes.
 
-This is PART 3 of 4: Engineering Achievements. Create exactly 7 slides:
+---
 
 SLIDE 17 - Pipeline Architecture
+LAYOUT: Full-width image with title
+IMAGE: Insert the uploaded file "pipeline_architecture.png" centered, filling the full slide width below the title.
 Title: "8-Stage Automated Pipeline"
 Subtitle: "3 research repos \u2192 single orchestrated system"
-Leave mostly empty \u2014 I will insert a pipeline diagram.
+SPEAKER NOTES: "The pipeline orchestrates three separate research codebases into a single automated system. Eight stages: video normalization, ASR transcription, mouth cropping, LRS3 format conversion, manifest generation, feature clustering, LLM decode, and output generation. Each stage is a separate module in lib/ with its own tests. [ANIMATION: Pipeline diagram fades in. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 18 - Engineering Challenges
+LAYOUT: Two columns
 Title: "37 Bugs Fixed: Research Code \u2192 Production"
-Two columns:
-Left: HDR tone-mapping, NVENC silent corruption (destroyed 43% of
-videos), Cython compilation, fairseq patching, spaCy offline,
-Docker networking, Python venv conflicts
-Right: Handles any format (MP4/MKV/AVI/MOV), any resolution,
-any codec. GPU detection with CPU fallback. All 37 bugs
-documented with root cause analysis.
+Left column \u2014 "Critical Fixes":
+  \u2022 NVENC silent corruption (destroyed 43% of videos)
+  \u2022 HDR/10-bit tone mapping
+  \u2022 Cython extension compilation
+  \u2022 fairseq patching
+  \u2022 spaCy offline installation
+  \u2022 Docker networking
+  \u2022 Python venv conflicts
+Right column \u2014 "Result":
+  \u2022 Any format: MP4, MKV, AVI, MOV
+  \u2022 Any resolution, any codec
+  \u2022 GPU detection with CPU fallback
+  \u2022 All 37 bugs documented with root cause
+SPEAKER NOTES: "37 bugs found and fixed turning research code into production. The most critical: NVENC silent video corruption that destroyed 43% of processed videos without any error message. Also HDR tone-mapping failures, Cython compilation issues across architectures, fairseq compatibility patches. Every bug documented with root cause analysis. The system now handles any input format, resolution, and codec with automatic GPU/CPU detection. [ANIMATION: Left column appears, then right column. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 19 - Modular Refactoring
+LAYOUT: Before/after comparison
 Title: "52% Code Reduction: 823 \u2192 393 Lines"
-Before/after:
-BEFORE: Monolithic 823-line script. Fragile.
-AFTER: 393-line orchestrator + 11 modules in lib/.
-37 automated tests. Each stage independently testable.
-Environment-aware (auto-detects EC2 vs container).
+Left (coral background): "BEFORE" \u2014 "Monolithic 823-line script. Fragile. Untestable."
+Right (teal background): "AFTER" \u2014 "393-line orchestrator + 11 modules in lib/. 37 automated tests. Each stage independently testable. Auto-detects EC2 vs container."
+SPEAKER NOTES: "The original pipeline was a single 823-line bash script. Refactored into a 393-line orchestrator calling 11 reusable modules. 37 automated tests validate every module. Environment-aware: automatically detects EC2 development vs Docker container deployment. This is Mission 1 in our research backlog \u2014 foundation for everything that followed. [ANIMATION: Before block appears left, then After block appears right. Transition: Morph.]"
+
+---
 
 SLIDE 20 - Deployed Product
-Title: "Standalone Container \u2014 No Cloud"
-- Docker container with web UI on Linux machine
-- Drag-and-drop video upload
-- Automatic end-to-end processing
-- INSTALL.sh overlay with backup and verification
-- Currently deployed at client site
+LAYOUT: Feature list with icon placeholders
+Title: "Standalone Container \u2014 No Cloud Required"
+Five feature items:
+  \u2022 Docker container with web UI on Linux machine
+  \u2022 Drag-and-drop video upload
+  \u2022 Automatic end-to-end processing
+  \u2022 INSTALL.sh overlay with backup and verification
+  \u2022 Currently deployed at client site
+SPEAKER NOTES: "The system runs as a standalone Docker container \u2014 no cloud, no internet required. Web UI for drag-and-drop video upload. INSTALL.sh handles deployment with automatic backup and 13-point verification. Currently deployed and running at the client site. [ANIMATION: Feature items build one at a time. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 21 - Intelligent Features
+LAYOUT: Three cards in a row
 Title: "Pipeline Intelligence"
-Three cards:
-1. Transcription Reuse \u2014 manual corrections persist,
-   Whisper skips matched segments (saves hours)
-2. Golden K-means \u2014 1,396-video baseline model
-3. Smart Segmentation \u2014 configurable overlap for context
+Card 1: "Transcription Reuse" \u2014 "Manual corrections persist across runs. Whisper skips matched segments, saving hours."
+Card 2: "Golden K-means" \u2014 "1,396-video baseline clustering model for consistent feature extraction."
+Card 3: "Smart Segmentation" \u2014 "Configurable overlap for context preservation across segment boundaries."
+SPEAKER NOTES: "Three intelligent features. Transcription reuse: if you manually correct a segment\u2019s transcription, it persists across all future pipeline runs. Whisper automatically skips matched segments. Golden k-means: a 1,396-video baseline model ensures consistent clustering. Smart segmentation: configurable overlap ensures context isn\u2019t lost at segment boundaries. [ANIMATION: Three cards fly in from bottom, one at a time. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 22 - Evaluation Infrastructure
+LAYOUT: Two-column list
+IMAGE: Insert the uploaded file "15_cdf_wwer_curated.png" on the right half.
 Title: "Evaluation: Beyond Standard WER"
-Eight items:
-- 16 analytical plots auto-generated per experiment
-- Per-segment HTML reports (interactive, 13 experiments)
-- Custom NEA metric for operational entity accuracy
-- Intelligibility Score pipeline: LLM-distilled evaluation
-  (Claude-designed rubric distilled into 6 deterministic signals),
-  per-segment automated scoring, tier classification
-- Automated failure mode classification (10 modes) and
-  success pattern analysis (7 patterns)
-- IS correlation analysis: cross-config validation across 16 decode
-  configs \u2014 proves metric stability (Semantic, Phonetic, NEA stable;
-  WER volatile). LLM heuristic judge r=0.925 with IS.
-- Topic and segment length analysis across 11 categories
-- Full CSV exports (1,497 rows, all metrics + IS signals)
-- Fine-tuning diagnostics \u2014 10 training plots
+Left list:
+  \u2022 16 analytical plots per experiment (auto-generated)
+  \u2022 Per-segment HTML reports (13 interactive)
+  \u2022 Custom NEA metric for entity accuracy
+  \u2022 Intelligibility Score pipeline (LLM-distilled, 6 signals)
+  \u2022 IS correlation analysis (16 configs, r=0.925)
+  \u2022 Failure mode classification (10 modes)
+  \u2022 Topic/length analysis (11 categories)
+  \u2022 Fine-tuning diagnostics (10 training plots)
+SPEAKER NOTES: "Evaluation infrastructure goes far beyond standard WER. 16 plots auto-generated per experiment. Interactive HTML reports. Custom Named Entity Accuracy metric. The full Intelligibility Score pipeline with 6 signals, validated across 16 decode configs (LLM judge r=0.925). Automated failure mode classification into 10 categories. Topic and segment length analysis across 11 content categories. Plus 10 fine-tuning diagnostic plots for training analysis. The CDF chart shows actionable quality thresholds. [ANIMATION: List items build one at a time. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 23 - Process & Documentation
+LAYOUT: Bullet list
 Title: "Engineering Process"
-- 40+ git versions with semantic tags
-- EC2/container sync protocol (26 tracked items)
-- 8 formal research reports + methodology docs
-  (including LLM Upgrade Analysis with model alternatives,
-   data scaling projections, and investment strategy)
-- Complete architecture, development, and bug documentation"""
+  \u2022 40+ git versions with semantic tags
+  \u2022 EC2/container sync protocol (26 tracked items)
+  \u2022 8 formal research reports + methodology docs
+  \u2022 Complete architecture, development, and bug documentation
+  \u2022 Automated test suite and verification
+SPEAKER NOTES: "Rigorous engineering process. Over 40 git versions with semantic tagging. EC2-to-container synchronization protocol tracking 26 items. Eight formal research reports including the LLM Upgrade Analysis with model alternatives, data scaling projections, and investment strategy. Full architecture and development documentation. Automated test suite and deployment verification. [ANIMATION: No build. Transition: Fade 0.5s.]"
+"""
 
-PROMPT_4 = """Continue the same presentation (dark navy, teal/coral accents).
-Audience: Technical managers. Frame roadmap as research agenda
-and resource needs, not sales pitch.
+PROMPT_4 = """Continue the same presentation (dark navy #0D1B2A, white text, teal/coral accents).
+This is PART 4 of 4: Future Directions & Close. Create exactly 7 slides with speaker notes.
+Frame the roadmap as a research agenda and resource needs, not a sales pitch.
 
-This is PART 4 of 4: Future Directions. Create exactly 7 slides:
+---
 
 SLIDE 24 - Reframing the Starting Point
+LAYOUT: Two columns \u2014 red left, green right
+IMAGE: Insert the uploaded file "P1_quality_tiers.png" on the right half as visual context.
 Title: "Starting from 40%, Not 11%"
-Two columns:
-LEFT (red): "WER Says" \u2014 11.4% usable, 9/10 fail
-RIGHT (green): "IS Says" \u2014 39.9% properly captured,
-43-51% context-recoverable
-Validation (this is the proof \u2014 not just a claim):
-- IS tested across all 16 decode configs \u2014 stable
-  (Semantic r=0.914 mean, std=0.017 across configs)
-- WER is MISLEADING across configs: Config J has IS 2.571
-  (highest) despite +14.8pp higher WER than baseline.
-  More words = more WER errors, but also MORE meaning captured.
-- LLM heuristic judge agrees 88.6% with IS >= 3.0
-  (r=0.925 across 16 configs, recall 97.6-100%)
-- Per-segment rankings stable (r > 0.92): same segments are
-  "good" and "bad" regardless of decode config \u2014 encoder-limited.
-Success pattern insight: 41.5% of successes are phonetically
-preserved \u2014 the visual signal captures phonetic structure even
-when specific words are wrong. Phonetic similarity is the #1
-correlate with IS (r=0.943).
-Bottom: "The gap is real but WER dramatically overstates failure.
-40% already works. IS is validated across 16 configurations.
-And we know WHY it works \u2014 phonetic preservation."
-Make this feel like a turning point in the narrative.
+LEFT column (coral/red tint): "WER Says"
+  \u2022 11.4% usable
+  \u2022 9 out of 10 segments fail
+RIGHT column (teal/green tint): "IS Says"
+  \u2022 39.9% properly captured
+  \u2022 43-51% context-recoverable
+  \u2022 Validated across 16 decode configs
+  \u2022 LLM judge: 88.6% agreement, r=0.925
+Bottom: "The gap is real \u2014 but WER dramatically overstates failure. 40% already works."
+SPEAKER NOTES: "This is the turning point. WER says 11.4% usable. Our Intelligibility Score says 39.9% properly captured \u2014 3.5x more. And 43-51% is context-recoverable. This isn\u2019t wishful thinking: IS is validated across all 16 decode configs (LLM judge r=0.925, 88.6% agreement, recall 99.2%). Config J has the highest IS (2.571) despite +14.8pp higher WER than baseline \u2014 IS captures meaning that WER misses. We know WHY it works: 41.5% of successes are phonetically preserved (r=0.943 with IS). Per-segment rankings stable across configs (r > 0.92) \u2014 the bottleneck is the encoder, not decode. [ANIMATION: Left (red) column appears, then right (green) column. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 25 - Research Roadmap
+LAYOUT: Staircase/waterfall descending from 67% to 27-42%
+IMAGE: Insert the uploaded file "P3_wer_trajectory.png" on the right half.
 Title: "Five Phases \u2014 From 67% to Target 27-42% WER"
-Timeline/staircase with WER improvement waterfall:
-Phase 1: Surface the good 40% \u2014 confidence scoring (2-4 hours).
-  Targets: all failure modes (flag quality, not fix it).
-Phase 2: Improve the fair 22% \u2014 N-best aggregation (-5 to -15%).
-  Targets: Accumulated Small Errors (12.3%), Content Word
-  Errors (10.7%) \u2014 partial correct words across hypotheses.
-Phase 3: LLM swap + smart prompts \u2014 Llama 3.1 8B (drop-in,
-  same hidden_size 4096) + context-injection prompts (-8 to -18pp).
-  Prompts are a FORCE MULTIPLIER for stronger models: Llama-2
-  gets +5-10pp, Llama 3.1 8B gets +12-20pp from same strategies.
-Phase 4: Scale training data to 20K-50K segments + fine-tune
-  with enriched prompts (-15 to -25pp, biggest single gain).
-  Multiplicative scaling law (ICLR 2024): LLM + data compound.
-Phase 5: GER post-processing (N-best + correction LLM) \u2014
-  no retraining needed, can use external API (-8 to -15pp).
-Realistic combined target: 27-42% WER (from current 67%).
-Leave space for improvement waterfall chart.
+Five phases as descending steps (left side):
+  Phase 1: Surface the good 40% \u2014 confidence scoring (2-4 hours)
+  Phase 2: Improve the fair 22% \u2014 N-best aggregation (-5 to -15%)
+  Phase 3: LLM swap + smart prompts \u2014 Llama 3.1 8B + prompts (-8 to -18pp)
+  Phase 4: Scale data to 20K-50K segments + fine-tune (-15 to -25pp)
+  Phase 5: GER post-processing \u2014 no retraining needed (-8 to -15pp)
+Bottom: "Combined target: 27-42% WER. Multiplicative scaling law (ICLR 2024)."
+SPEAKER NOTES: "Five phases, each targeting different bottlenecks. Phase 1 is immediate: confidence scoring to surface the 40% that\u2019s already good (2-4 hours). Phase 2: N-best aggregation exploiting all 20 beam hypotheses. Phase 3: swap LLM to Llama 3.1 8B (drop-in, 1-2 hours) plus smart prompts as force multiplier. Phase 4: the biggest gain \u2014 scale training data from 1.3K to 20K-50K segments. Phase 5: GER post-processing using an external correction LLM. Key: ICLR 2024 shows these gains are multiplicative \u2014 stronger LLM extracts MORE from the same data. [ANIMATION: Five phases build as descending staircase, one at a time. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 26 - Phase 1: Confidence Scoring
+LAYOUT: Feature description with bullet points
 Title: "Phase 1: Automatic Quality Flagging"
-- IS proves 40% is good; beam scores can flag it at decode time
-- No additional inference needed \u2014 scores already computed
-- Effort: 2-4 hours implementation
-- Output: every segment gets a confidence label
-- Priority: Business/Finance segments (57% captured) are most
-  likely reliable. Short segments (<10 words, 32%) need lower
-  confidence thresholds.
-- This is the immediate next step
+  \u2022 IS proves 40% is good \u2014 beam scores can flag it at decode time
+  \u2022 No additional inference needed \u2014 scores already computed
+  \u2022 Effort: 2-4 hours implementation
+  \u2022 Priority: Business/Finance segments (57% captured) most reliable
+  \u2022 Short segments (<10 words, 32%) need lower confidence thresholds
+  \u2022 This is the immediate next step
+SPEAKER NOTES: "Phase 1 is the quick win. We know 40% is already good; beam scores computed during decode can flag quality automatically. Business/Finance content (57% captured) should get highest confidence. Short segments need lower thresholds. 2-4 hours of implementation. [ANIMATION: Bullet items build one at a time. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 27 - Phase 2: N-Best Aggregation
+LAYOUT: Feature description with key numbers
 Title: "Phase 2: Exploit All 20 Hypotheses"
-- Currently discarding 19 of 20 beam candidates
-- ROVER/MBR \u2014 established technique, consistent gains
-- Expected: 5-15% relative improvement
-- Targets: Accumulated Small Errors (12.3% of failures) and
-  Content Word Errors (10.7%) \u2014 these have partial correct
-  words scattered across multiple hypotheses
-- Moves "fair" tier up to "good"
+  \u2022 Currently discarding 19 of 20 beam candidates
+  \u2022 ROVER/MBR \u2014 established technique, consistent gains
+  \u2022 Expected: 5-15% relative improvement
+  \u2022 Targets: Accumulated Small Errors (12.3%) and Content Word Errors (10.7%)
+  \u2022 Moves "fair" tier segments up to "good"
+SPEAKER NOTES: "We\u2019re currently throwing away 19 of 20 hypotheses. N-best aggregation (ROVER/MBR) is an established technique that combines multiple hypotheses to reduce errors. Targets the \u2018death by 1000 cuts\u2019 failure mode \u2014 accumulated small errors (12.3%) and content word errors (10.7%). These segments have the right words scattered across multiple hypotheses. [ANIMATION: Bullet items build one at a time. Transition: Fade 0.5s.]"
+
+---
 
 SLIDE 28 - Fine-Tuning + Data Scaling
+LAYOUT: Split \u2014 results top, projections bottom
+IMAGE: Insert the uploaded file "FT_10_summary_dashboard.png" filling the top half of the slide.
 Title: "Domain Adaptation: Data Is the Bottleneck"
-Two sections:
+Below the dashboard image, two columns:
+Left \u2014 "Exp A/B Results":
+  \u2022 Exp A (r=16): best val acc 62.94% at epoch 2, severe overfitting
+  \u2022 Exp B (r=64): 3.1pp WORSE \u2014 more params = faster overfitting
+  \u2022 KEY: 1,273 segments too small for LoRA generalization
+Right \u2014 "Data Scaling (ICLR 2024)":
+  \u2022 5K segments: 55-60% WER
+  \u2022 20K segments: 45-50% / 40-45% (Llama 3.1)
+  \u2022 50K segments: 40-45% / 35-40%
+  \u2022 AVSpeech: 290K videos available
+SPEAKER NOTES: "Exp A: 1,273 segments, 17 hours on Tesla T4. Best validation accuracy 62.94% at epoch 2 out of 19 \u2014 severe overfitting. 36.5pp gap between train (95.5%) and val (59.0%) by end. Exp B with r=64: 3.1pp WORSE, not better. More parameters = faster overfitting on tiny data. This is NOT a model capacity problem. 1,273 segments is below the ~1K minimum for LoRA generalization (ICLR 2024 scaling laws). Data scaling projections: 20K segments brings WER to 45-50% with Llama-2, or 40-45% with Llama 3.1 8B. AVSpeech has 290K videos \u2014 data curation is tractable. Key: multiplicative scaling law means stronger LLM extracts MORE from same data. [ANIMATION: Dashboard fades in top, then columns appear below. Transition: Fade 0.5s.]"
 
-TOP \u2014 Exp A/B Results and Key Reframe:
-- Exp A (r=16): 1,273 segments, 17h Tesla T4, best val acc 62.94%
-  at epoch 2. Severe overfitting: 36.5pp gap by epoch 19.
-- Exp B (r=64): 3.1pp WORSE than r=16 \u2014 NOT because LLM is saturated,
-  but because 4x params = 4x faster overfitting on tiny data.
-- KEY: 1,273 segments is below the ~1K minimum for LoRA generalization
-  (ICLR 2024 scaling laws). Both experiments proved DATA SCARCITY
-  is the bottleneck \u2014 not model capacity or rank.
-Leave space for FT_10 summary dashboard plot.
-
-BOTTOM \u2014 Data Scaling Projections (ICLR 2024 power law):
-Data scaling table (show as chart or table):
-- 1.3K segments (current): 67% WER (Llama-2) / ~62% (Llama 3.1 8B)
-- 5K segments: 55-60% / 50-55%
-- 20K segments: 45-50% / 40-45%
-- 50K segments: 40-45% / 35-40%
-AVSpeech has 290K videos available \u2014 data curation is tractable.
-Multiplicative scaling law: stronger LLM extracts MORE from same
-data \u2014 gap between models WIDENS as data increases.
-Targets: Topic Drift (15.9%), Entity Destruction (12.0%).
+---
 
 SLIDE 29 - LLM Upgrade + Advanced Capabilities
+LAYOUT: Three columns
 Title: "Stronger LLM + Smart Prompts = Force Multiplier"
-Three columns:
+Column 1 \u2014 "LLM Swap (immediate)":
+  \u2022 Llama 3.1 8B: drop-in (same hidden_size 4096)
+  \u2022 Quality \u2248 Llama-2 70B, 128K vocab, 128K context
+  \u2022 Setup: 1-2 hours
+  \u2022 Alone: -3 to -8pp WER
+Column 2 \u2014 "Smart Prompts (force multiplier)":
+  \u2022 7 strategies: topic context, word count, anti-hallucination, GER
+  \u2022 Llama-2: +5-10pp | Llama 3.1: +12-20pp
+  \u2022 GER post-processing: +8-15pp, no retraining
+Column 3 \u2014 "Future":
+  \u2022 Arabic (K-means model exists)
+  \u2022 VALLR: 18.7% WER with 3B model
+  \u2022 Multi-speaker, streaming
+SPEAKER NOTES: "Three columns of future capability. Left: LLM swap to Llama 3.1 8B is trivial \u2014 same hidden dimension, 1-2 hours of setup. Alone it gives -3 to -8pp WER. Llama-3 8B quality is comparable to Llama-2 70B but with 4x vocabulary and 32x context window. Center: 7 prompt strategies are a force multiplier \u2014 more effective on stronger models. Llama-2 gets +5-10pp, Llama 3.1 gets +12-20pp from the same strategies. GER (Generative Error Correction) uses N-best hypotheses + a correction LLM (even an external API like Claude) for +8-15pp with no retraining. Right: Arabic support exists (k-means model trained), VALLR achieves 18.7% WER on LRS3 with a 3B model \u2014 architecture innovation matters more than model size. [ANIMATION: Three columns appear one at a time, left to right. Transition: Fade 0.5s.]"
 
-LEFT \u2014 LLM Swap (immediate):
-- Llama 3.1 8B: drop-in replacement (same hidden_size 4096)
-- Llama-3 8B \u2248 Llama-2 70B quality, 128K vocab (4x), 128K context (32x)
-- Setup: 1-2 hours (just change model path + tokenizer)
-- Alone: -3 to -8pp WER improvement
-
-CENTER \u2014 Smart Prompts (force multiplier):
-- 7 strategies: topic context, word count hints, vocabulary lists,
-  anti-hallucination, phonetic context, self-correction, N-best GER
-- Key: prompts are MORE effective on stronger models:
-  Llama-2-7B = +5-10pp, Llama 3.1 8B = +12-20pp, 70B class = +20-30pp
-- GER post-processing (N-best + correction LLM, even external API
-  like Claude/GPT-4): +8-15pp, no retraining needed
-
-RIGHT \u2014 Future:
-- Arabic (K-means model exists)
-- VALLR architecture: 3B model achieves 18.7% WER on LRS3
-  (architecture innovation > model size)
-- Multi-speaker, streaming
+---
 
 SLIDE 30 - Summary
+LAYOUT: Four numbered points
 Title: "Key Takeaways"
-Four points:
-1. Rigorous assessment: 2.5x WER gap on 1,497 segments.
-   Novel IS metric reveals 40% properly captured. 10 classified
-   failure modes. Performance analyzed by topic and segment length.
-2. Production system delivered: standalone container, 37 bugs fixed,
-   8-stage pipeline, 37 tests, 8 research reports.
-3. Data is the bottleneck: Exp A/B proved 1,273 segments too small
-   for any LoRA config to generalize. 20K-50K segments is the
-   critical enabler. Multiplicative scaling law (ICLR 2024):
-   stronger LLM + more data compounds.
-4. Actionable roadmap to 27-42% WER: LLM swap to Llama 3.1 8B
-   (drop-in, hours) + smart prompts (force multiplier) + data
-   scaling to 20K-50K + GER post-processing (no retraining).
-   Combined gains stack because each targets a different bottleneck."""
+Four points (teal numbers):
+  1. Rigorous assessment: 2.5x WER gap on 1,497 segments. Novel IS metric reveals 40% properly captured. 10 classified failure modes.
+  2. Production system delivered: standalone container, 37 bugs fixed, 8-stage pipeline, 37 tests, 8 research reports.
+  3. Data is the bottleneck: Exp A/B proved 1,273 segments too small. Multiplicative scaling law: stronger LLM + more data compounds.
+  4. Actionable roadmap to 27-42% WER: LLM swap + smart prompts + data scaling + GER. Each targets a different bottleneck.
+SPEAKER NOTES: "Four takeaways. One: we know exactly where we stand \u2014 rigorous assessment with a novel metric that reveals the true picture. Two: production system delivered and deployed. Three: data, not model capacity, is the bottleneck \u2014 and we know the scaling law. Four: clear roadmap from 67% to 27-42% WER, with each phase targeting a different bottleneck and gains that compound multiplicatively. [ANIMATION: Four points build one at a time. Transition: Fade 0.5s.]"
+"""
 
 
 # ═══════════════════════════════════════════════════
-# PROMPT ATTACHMENTS (up to 10 per prompt)
-# Each entry: [file_path, slide(s), purpose]
+# PROMPT ATTACHMENTS (images only — .md reports are
+# supplementary reference, NOT uploaded to Gemini)
 # ═══════════════════════════════════════════════════
 
 ATTACHMENTS_1 = [
-    ["08_branding/BlackLogo300x300-W-BG.png", "1", "Title slide logo placement"],
-    ["09_pipeline_diagram/pipeline_architecture.png", "3", "Architecture diagram reference"],
-    ["01_plots_for_slides/P2_paper_vs_reality.png", "4", "Paper 25.4% vs real-world 64.1% bar chart"],
+    ["08_branding/BlackLogo300x300-W-BG.png", "1", "Top-right logo placement"],
+    ["09_pipeline_diagram/pipeline_architecture.png", "3", "Full-width architecture diagram"],
+    ["01_plots_for_slides/P2_paper_vs_reality.png", "4", "Right half \u2014 paper vs reality bar chart"],
 ]
 
 ATTACHMENTS_2 = [
-    ["01_plots_for_slides/P1_quality_tiers.png", "5", "WER quality tier distribution (5 tiers)"],
-    ["01_plots_for_slides/09_boxplot_wwer_all_experiments.png", "9", "WWER boxplot across 13 experiments"],
-    ["01_plots_for_slides/01_wer_vs_duration.png", "10", "WER vs segment duration scatter"],
-    ["01_plots_for_slides/14_nea_vs_wwer_scatter.png", "11", "Named entity accuracy vs WWER"],
-    ["01_plots_for_slides/10_empty_and_hallucination_rates.png", "12", "Empty & hallucination rates per config"],
-    ["01_plots_for_slides/16_improvement_J_vs_A.png", "12", "Per-segment improvement Config J vs baseline"],
-    ["01_plots_for_slides/P4_lenpen_sensitivity.png", "13", "Length penalty sensitivity (tornado chart)"],
-    ["03_reports_md/intelligibility_methodology.md", "7", "Full IS methodology (6 signals, tiers, patterns)"],
-    ["03_reports_md/is_correlation_analysis.md", "7, 13", "Cross-config validation, LLM judge, variance"],
-    ["03_reports_md/report_1_executive_assessment.md", "5, 8, 10", "Reality gap data, failure modes, topic analysis"],
+    ["01_plots_for_slides/P1_quality_tiers.png", "5", "Right half \u2014 WER quality tiers"],
+    ["01_plots_for_slides/09_boxplot_wwer_all_experiments.png", "9", "Center \u2014 WWER boxplot"],
+    ["01_plots_for_slides/01_wer_vs_duration.png", "10", "Right half \u2014 WER vs duration scatter"],
+    ["01_plots_for_slides/14_nea_vs_wwer_scatter.png", "11", "Right half \u2014 NEA vs WWER scatter"],
+    ["01_plots_for_slides/10_empty_and_hallucination_rates.png", "12", "Right half \u2014 empty/hallucination rates"],
+    ["01_plots_for_slides/P4_lenpen_sensitivity.png", "13", "Right half \u2014 length penalty sensitivity"],
+    ["01_plots_for_slides/P5_tuning_before_after.png", "12", "Left half \u2014 baseline vs Config J comparison"],
 ]
 
 ATTACHMENTS_3 = [
-    ["09_pipeline_diagram/pipeline_architecture.png", "17", "8-stage pipeline flow diagram"],
-    ["01_plots_for_slides/15_cdf_wwer_curated.png", "22", "CDF of WWER (quality thresholds)"],
-    ["03_reports_md/report_2_hyperparameter_tuning.md", "22", "13 experiments context for evaluation infra"],
-    ["03_reports_md/report_6_finetuning_analysis.md", "22", "Fine-tuning strategy (evaluation context)"],
-    ["08_branding/BlackLogo300x300-W-BG.png", "17-23", "Consistent branding across slides"],
+    ["09_pipeline_diagram/pipeline_architecture.png", "17", "Full width \u2014 8-stage pipeline flow"],
+    ["01_plots_for_slides/15_cdf_wwer_curated.png", "22", "Right half \u2014 CDF quality thresholds"],
 ]
 
 ATTACHMENTS_4 = [
-    ["01_plots_for_slides/P1_quality_tiers.png", "24", "IS tiers vs WER tiers comparison"],
-    ["01_plots_for_slides/P3_wer_trajectory.png", "25", "WER improvement trajectory across phases"],
-    ["01_plots_for_slides/P5_tuning_before_after.png", "24", "Before/after tuning paired comparison"],
-    ["01_plots_for_slides/finetune/FT_01_loss_curves.png", "28", "Train vs val loss curves (overfitting)"],
-    ["01_plots_for_slides/finetune/FT_02_accuracy_curves.png", "28", "Train vs val accuracy (gap widens)"],
-    ["01_plots_for_slides/finetune/FT_03_overfitting_gap.png", "28", "Overfitting gap diagnostic (36.5pp)"],
-    ["01_plots_for_slides/finetune/FT_10_summary_dashboard.png", "28", "6-panel Exp A summary dashboard"],
-    ["03_reports_md/finetune_A_comparison_report.md", "28, 30", "Exp A results, data scarcity proof"],
-    ["03_reports_md/is_correlation_analysis.md", "24", "Cross-config IS validation proof"],
-    ["03_reports_md/llm_upgrade_analysis.md", "25, 28, 29", "LLM alternatives, data scaling, prompts, investment strategy"],
+    ["01_plots_for_slides/P1_quality_tiers.png", "24", "Right half \u2014 IS vs WER tier comparison"],
+    ["01_plots_for_slides/P3_wer_trajectory.png", "25", "Right half \u2014 WER improvement trajectory"],
+    ["01_plots_for_slides/finetune/FT_10_summary_dashboard.png", "28", "Top half \u2014 6-panel Exp A dashboard"],
+    ["01_plots_for_slides/finetune/FT_01_loss_curves.png", "28", "Backup \u2014 loss curves (speaker notes ref)"],
+    ["01_plots_for_slides/finetune/FT_02_accuracy_curves.png", "28", "Backup \u2014 accuracy curves (speaker notes ref)"],
+    ["01_plots_for_slides/finetune/FT_03_overfitting_gap.png", "28", "Backup \u2014 overfitting gap (speaker notes ref)"],
+]
+
+
+# ═══════════════════════════════════════════════════
+# ANIMATION CHECKLIST DATA
+# ═══════════════════════════════════════════════════
+
+ANIMATION_CHECKLIST = [
+    ["1", "Title, subtitle", "Fade in sequence (0.5s delay)", "None (first slide)"],
+    ["2", "Text, play icon", "Appear", "Fade 0.5s"],
+    ["3", "Three component blocks", "Fly in left-to-right", "Fade 0.5s"],
+    ["4", "Number, chart", "Number appears, chart fades in", "Fade 0.5s"],
+    ["5", "5 quality tier bars", "Build top-to-bottom (0.3s each)", "Fade 0.5s"],
+    ["6", "Left/right comparison boxes", "Left appears, then right", "Fade 0.5s"],
+    ["7", "6 IS signal blocks + tier bars", "Blocks build one at a time", "Fade 0.5s"],
+    ["8", "10 failure mode bars", "Wipe left, top-to-bottom", "Fade 0.5s"],
+    ["9", "Chart", "No build animation", "Fade 0.5s"],
+    ["10", "Three root cause columns", "Columns appear one at a time", "Fade 0.5s"],
+    ["11", "Text, chart", "Text appears, chart fades in", "Fade 0.5s"],
+    ["12", "Left/right columns", "Left appears, then right", "Fade 0.5s"],
+    ["13", "Text, chart", "Text appears, chart fades in", "Fade 0.5s"],
+    ["14", "Table rows", "Build one row at a time", "Fade 0.5s"],
+    ["15", "Play icon", "No build animation", "Fade 0.5s"],
+    ["16", "List items", "Build one at a time", "Fade 0.5s"],
+    ["17", "Pipeline diagram", "Fade in", "Fade 0.5s"],
+    ["18", "Left/right columns", "Left appears, then right", "Fade 0.5s"],
+    ["19", "Before/after blocks", "Left appears, then right", "Morph"],
+    ["20", "Feature items", "Build one at a time", "Fade 0.5s"],
+    ["21", "Three cards", "Fly in from bottom, one at a time", "Fade 0.5s"],
+    ["22", "List items, chart", "List builds, chart fades in", "Fade 0.5s"],
+    ["23", "Bullet list", "No build animation", "Fade 0.5s"],
+    ["24", "Red/green columns", "Left (red) appears, then right (green)", "Fade 0.5s"],
+    ["25", "5 roadmap phases", "Staircase build, one at a time", "Fade 0.5s"],
+    ["26", "Bullet items", "Build one at a time", "Fade 0.5s"],
+    ["27", "Bullet items", "Build one at a time", "Fade 0.5s"],
+    ["28", "Dashboard, columns", "Dashboard fades in, columns appear below", "Fade 0.5s"],
+    ["29", "Three columns", "Appear one at a time, left to right", "Fade 0.5s"],
+    ["30", "Four takeaway points", "Build one at a time", "Fade 0.5s"],
 ]
 
 
@@ -818,34 +851,51 @@ def build_intro(doc):
     add_heading(doc, "1. How to Use This Document", 1)
 
     add_para(doc, (
-        "This document contains 4 sequential prompts for Google Gemini "
+        "This document contains 4 sequential prompts for Google Gemini 3.1 Pro "
         "to generate the Argos VSP project review presentation (30 slides). "
-        "Feed each prompt one at a time, in order. Gemini will build up the "
-        "presentation incrementally across the 4 prompts."
+        "Each prompt references uploaded images by filename and tells Gemini "
+        "exactly where to place them. Animations are specified in speaker notes."
     ))
 
     add_heading(doc, "Instructions", 2)
-    add_bullet(doc, 'Open Google Gemini and start a new conversation')
-    add_bullet(doc, 'For each prompt: upload the listed files FIRST, then paste the prompt text')
-    add_bullet(doc, 'Prompt 1 (Opening & Context) + 3 files \u2014 generates slides 1-4')
-    add_bullet(doc, 'Prompt 2 (Research Findings) + 10 files \u2014 generates slides 5-16')
-    add_bullet(doc, 'Prompt 3 (Engineering) + 5 files \u2014 generates slides 17-23')
-    add_bullet(doc, 'Prompt 4 (Future & Close) + 10 files \u2014 generates slides 24-30')
-    add_bullet(doc, 'After all 4 prompts: manually add appendix slides if needed')
-    add_bullet(doc, 'Total: 28 files across 4 prompts (some files reused across prompts)')
+    add_bullet(doc, 'Open Google Gemini (gemini.google.com) and start a new conversation')
+    add_bullet(doc, 'For each prompt: upload the listed IMAGE files FIRST, then paste the prompt text')
+    add_bullet(doc, 'Prompt 1 (Opening & Context) + 3 images \u2014 generates slides 1-4')
+    add_bullet(doc, 'Prompt 2 (Research Findings) + 7 images \u2014 generates slides 5-16')
+    add_bullet(doc, 'Prompt 3 (Engineering) + 2 images \u2014 generates slides 17-23')
+    add_bullet(doc, 'Prompt 4 (Future & Close) + 6 images \u2014 generates slides 24-30')
+    add_bullet(doc, 'Total: 18 image files across 4 prompts')
+    add_bullet(doc, 'Do NOT upload the .md reports in 03_reports_md/supplementary/ \u2014 those are for your reference')
+
+    add_heading(doc, "How Images Work", 2)
+    add_para(doc, (
+        "Each prompt uses IMAGE directives like: "
+        'IMAGE: Insert the uploaded file "P1_quality_tiers.png" on the right half. '
+        "Gemini will attempt to place the uploaded image on the specified slide. "
+        "Review all placements after generation and resize/reposition as needed."
+    ))
+
+    add_heading(doc, "How Animations Work", 2)
+    add_para(doc, (
+        "Each slide\u2019s speaker notes contain an [ANIMATION: ...] tag describing "
+        "the recommended animation. Gemini cannot add animations programmatically, "
+        "so apply them manually after generation using the Animation Checklist "
+        "(Section 8). Estimated time: 10-15 minutes."
+    ))
+
+    add_heading(doc, "Video Slides", 2)
+    add_para(doc, (
+        "Slides 2 and 15 are marked [MANUAL: VIDEO]. Gemini creates placeholder "
+        "slides with play button icons. You play the demo videos from "
+        "06_demo_videos/ externally during the presentation."
+    ))
 
     add_heading(doc, "Design Theme", 2)
     add_para(doc, (
-        "All prompts specify the same visual theme: dark navy background, "
-        "white text, teal and coral accents. This creates a cohesive, "
-        "professional look across all 30 slides."
+        "All prompts specify: dark navy background (#0D1B2A), white text (#FFFFFF), "
+        "teal accents (#00B4D8), coral accents (#E06C75). "
+        "Prompt 1 sets the full theme; subsequent prompts reference it briefly."
     ))
-
-    add_heading(doc, "Post-Generation Steps", 2)
-    add_bullet(doc, 'Review slides \u2014 plots uploaded with prompts should be placed by Gemini')
-    add_bullet(doc, 'Adjust any plot placements that Gemini missed or positioned awkwardly')
-    add_bullet(doc, 'Add appendix slides manually if needed for Q&A (see Section 7)')
-    add_bullet(doc, 'Play demo videos from 06_demo_videos/ externally during presentation')
 
     _tight_page_break(doc)
 
@@ -855,14 +905,14 @@ def build_overview(doc):
     add_heading(doc, "2. Presentation Overview", 1)
 
     add_styled_table(doc,
-        ["Section", "Prompt", "Slides", "Duration", "Content"],
+        ["Section", "Prompt", "Slides", "Duration", "Images"],
         [
-            ["Opening & Context", "Prompt 1", "1-4", "~5 min", "Title, what is VSP, architecture, benchmark"],
-            ["Research Findings", "Prompt 2", "5-16", "~20 min", "Reality gap, IS metric, failure modes, tuning, examples, demo"],
-            ["Engineering", "Prompt 3", "17-23", "~10 min", "Pipeline, bugs, refactoring, deployment, evaluation"],
-            ["Future & Close", "Prompt 4", "24-30", "~15 min", "Reframing, roadmap, Exp A results, next steps"],
+            ["Opening & Context", "Prompt 1", "1-4", "~5 min", "3"],
+            ["Research Findings", "Prompt 2", "5-16", "~20 min", "7"],
+            ["Engineering", "Prompt 3", "17-23", "~10 min", "2"],
+            ["Future & Close", "Prompt 4", "24-30", "~15 min", "6"],
         ],
-        col_widths=[1.3, 0.8, 0.7, 0.8, 3.0],
+        col_widths=[1.3, 0.8, 0.7, 0.8, 0.6],
     )
 
     add_heading(doc, "Key Numbers", 2)
@@ -880,28 +930,15 @@ def build_overview(doc):
             ["Bugs fixed", "37", "Bug tracking docs"],
             ["Pipeline: lines before \u2192 after", "823 \u2192 393", "52% reduction"],
             ["Total experiments", "13 (A-M)", "Tuning dataset"],
-            ["Exp A: training data", "~1,400 videos \u2192 1,273 train / 224 val", "AVSpeech YouTube"],
             ["Exp A: best val accuracy", "62.94% at epoch 2", "r=16, 320 updates"],
-            ["Exp A: overfitting gap", "36.5 pp (train 95.5% vs val 59.0%)", "Epoch 19"],
-            ["Exp A: training time", "17.0 hours", "Tesla T4, FP16"],
-            ["Exp A: trainable params", "12.6M (0.19%)", "LoRA r=16, alpha=32"],
+            ["Exp A: overfitting gap", "36.5 pp", "Train 95.5% vs val 59.0%"],
             ["IS: top correlate", "Phonetic Sim r=0.943", "Correlation analysis"],
-            ["IS: 3 dimensions", "Word acc 60%, Meaning 28%, Sanity 9%", "Variance decomposition"],
-            ["IS: LLM judge (16 configs)", "r=0.925 mean (std=0.015)", "Cross-config validation"],
-            ["IS: LLM judge agreement", "88.6%, \u03ba=0.77, recall 99.2%", "Baseline confusion matrix"],
-            ["IS: stable signals", "Semantic, Phonetic, NEA (std<0.06)", "Cross-config: WER/LR volatile"],
-            ["IS: cross-config rankings", "r > 0.92 across most config pairs", "Encoder-limited, not decode"],
-            ["IS: Config J vs baseline", "IS 2.571 vs 2.485 despite +14.8pp WER", "IS > WER for comparison"],
-            ["IS: methodology", "LLM-distilled (Claude-designed rubric)", "Design-time expert judgment"],
-            ["LLM: current model", "Llama-2-7B (4-bit QLoRA, r=16)", "Hidden size 4096"],
-            ["LLM: recommended swap", "Llama 3.1 8B (drop-in, same dim 4096)", "1-2 hours setup"],
-            ["LLM: swap alone", "-3 to -8pp WER", "Better language modeling"],
-            ["Prompts: force multiplier", "Llama-2 +5-10pp, Llama 3.1 +12-20pp", "7 strategies"],
+            ["IS: LLM judge (16 configs)", "r=0.925, 88.6% agreement", "Cross-config validation"],
+            ["LLM: current model", "Llama-2-7B (4-bit QLoRA)", "Hidden size 4096"],
+            ["LLM: recommended swap", "Llama 3.1 8B (drop-in)", "1-2 hours setup"],
+            ["Prompts: force multiplier", "Llama-2 +5-10pp / 3.1 +12-20pp", "7 strategies"],
             ["GER post-processing", "+8-15pp, no retraining", "N-best + correction LLM"],
-            ["Data scaling: 20K segments", "45-50% WER (Llama-2) / 40-45% (Llama 3.1)", "ICLR 2024 power law"],
-            ["Combined realistic target", "27-42% WER (from 67%)", "LLM + data + prompts + GER"],
-            ["Scaling law", "Multiplicative (ICLR 2024)", "LLM + data improvements compound"],
-            ["VALLR (ICCV 2025)", "18.7% WER on LRS3 with 3B model", "Architecture > model size"],
+            ["Combined target", "27-42% WER (from 67%)", "LLM + data + prompts + GER"],
         ],
         col_widths=[2.5, 2.2, 2.0],
     )
@@ -910,23 +947,19 @@ def build_overview(doc):
 
 
 def build_prompt_section(doc, number, title, slides, prompt_text, attachments=None):
-    """Build a prompt section with description, copyable prompt block, and attachment table."""
+    """Build a prompt section with description, attachment table, and copyable prompt block."""
     add_heading(doc, f"{number + 2}. Prompt {number}: {title} ({slides})", 1)
 
-    add_para(doc, f"Copy the entire text block below and paste it into Google Gemini.",
-             italic=True, color=C_GRAY)
     if attachments:
         add_para(doc, (
-            f"This prompt generates {slides}. "
-            f"Upload the {len(attachments)} files listed below together with the prompt."
+            f"Upload {len(attachments)} image files, then paste the prompt below. "
+            f"This prompt generates {slides}."
         ), bold=True)
+        add_attachment_table(doc, attachments)
     else:
         add_para(doc, f"This prompt generates {slides}.", bold=True)
 
-    if attachments:
-        add_attachment_table(doc, attachments)
-
-    doc.add_paragraph()
+    add_heading(doc, "Prompt Text (copy and paste into Gemini)", 2)
     add_prompt_block(doc, prompt_text)
     _tight_page_break(doc)
 
@@ -943,23 +976,21 @@ def build_appendix(doc):
     add_styled_table(doc,
         ["#", "Slide", "When to Use"],
         [
-            ["A1", "Homophenes table", "If someone asks about visual confusion patterns"],
-            ["A2", "Exp A Fine-Tuning Deep Dive \u2014 6-panel summary dashboard "
-                   "(FT_10), loss/accuracy curves (FT_01/02), overfitting gap (FT_03). "
-                   "Key: trained on only ~1,400 YouTube videos (1,273 train segments), "
-                   "17h on Tesla T4, best at epoch 2/19",
+            ["A1", "Homophenes table", "If asked about visual confusion patterns"],
+            ["A2", "Exp A Fine-Tuning Deep Dive \u2014 6-panel dashboard (FT_10), "
+                   "loss/accuracy curves, overfitting gap. Key: 1,273 train segments, "
+                   "17h Tesla T4, best at epoch 2/19",
                    "If asked for training details or overfitting analysis"],
             ["A3", "Catastrophic lenpen=2.0 (WER 171%)", "If asked about parameter space boundaries"],
             ["A4", "CDF WWER chart", "If asked about quality thresholds"],
             ["A5", "Topic analysis detail (11 categories)", "If asked about domain-specific performance"],
             ["A6", "Signal comparison table (success vs failure)", "If asked about what makes IS work"],
             ["A7", "Config J full-dataset comparison", "If asked about tuning details on full data"],
-            ["A9", "LLM Upgrade Analysis \u2014 model alternatives table "
-                   "(Llama 3.1 8B drop-in, Qwen, Mistral, VALLR), "
+            ["A8", "IS Correlation & Cross-Config Analysis", "If asked about IS validation methodology"],
+            ["A9", "LLM Upgrade Analysis \u2014 model alternatives, "
                    "data scaling projections (1.3K\u2192100K), "
-                   "7 prompt strategies by model tier, "
-                   "improvement waterfall (67%\u219227-42%)",
-                   "If asked about LLM alternatives, data scaling, or prompt strategies"],
+                   "7 prompt strategies, improvement waterfall (67%\u219227-42%)",
+                   "If asked about LLM alternatives or investment strategy"],
         ],
         col_widths=[0.4, 3.0, 3.2],
     )
@@ -967,26 +998,103 @@ def build_appendix(doc):
     _tight_page_break(doc)
 
 
-def build_materials(doc):
-    """Section 8: Material References."""
-    add_heading(doc, "8. Material References", 1)
+def build_animation_checklist(doc):
+    """Section 8: Animation & Transition Checklist."""
+    add_heading(doc, "8. Animation & Transition Checklist", 1)
 
-    add_para(doc, "All materials referenced in the prompts are in the presentation_materials_20260224/ folder:")
+    add_para(doc, (
+        "Gemini cannot add animations programmatically. Apply these manually after "
+        "generating the slides. Each slide\u2019s speaker notes also contain an "
+        "[ANIMATION: ...] tag as a reminder. Estimated time: 10-15 minutes."
+    ))
+
+    add_para(doc, (
+        "In Google Slides: select elements \u2192 Insert \u2192 Animation \u2192 choose effect. "
+        "For transitions: Slide \u2192 Transition \u2192 Fade (0.5s) for all slides."
+    ), italic=True, color=C_GRAY, size=Pt(10))
+
+    add_styled_table(doc,
+        ["Slide", "Elements", "Animation", "Transition"],
+        ANIMATION_CHECKLIST,
+        col_widths=[0.5, 2.0, 2.5, 1.5],
+    )
+
+    _tight_page_break(doc)
+
+
+def build_manual_steps(doc):
+    """Section 9: Post-Generation Manual Steps."""
+    add_heading(doc, "9. Post-Generation Manual Steps", 1)
+
+    add_para(doc, (
+        "After all 4 prompts are complete, do these steps to finalize the deck:"
+    ))
+
+    steps = [
+        ("Check image placements", (
+            "Gemini should have inserted uploaded images on the correct slides. "
+            "Review each slide and resize/reposition any images that are misplaced or awkwardly sized."
+        )),
+        ("Apply animations", (
+            "Use the Animation Checklist (Section 8) to apply animations and transitions. "
+            "Default transition: Fade 0.5s for all slides. Build animations for data-heavy slides."
+        )),
+        ("Insert demo videos", (
+            "Slides 2 and 15 have play button placeholders. Either: "
+            "(a) link video files if presenting from Google Slides, or "
+            "(b) play from external media player during presentation (recommended). "
+            "Video files are in 06_demo_videos/."
+        )),
+        ("Add logo to slide master", (
+            "If Gemini didn\u2019t carry the logo through all slides, add it to the slide master "
+            "layout (View \u2192 Theme builder) for consistent branding."
+        )),
+        ("Add appendix slides", (
+            "Add appendix slides (A1-A9) manually as needed for Q&A backup. "
+            "See Section 7 for the list and when to use each."
+        )),
+        ("Review speaker notes", (
+            "Each slide has detailed speaker notes generated by Gemini. "
+            "Review for accuracy and add any personal notes or talking points."
+        )),
+    ]
+
+    for i, (title, description) in enumerate(steps, 1):
+        add_para(doc, f"{i}. {title}", bold=True, size=Pt(11))
+        add_para(doc, description, size=Pt(10), color=C_GRAY)
+
+
+def build_materials(doc):
+    """Section 10: Material References."""
+    add_heading(doc, "10. Material References", 1)
+
+    add_para(doc, "All materials are in the presentation_materials_20260224/ folder:")
 
     add_styled_table(doc,
         ["Folder", "Contents", "Used In"],
         [
-            ["01_plots_for_slides/", "17 presentation graphs (P1-P5, existing, finetune/)", "Slides 4-13, 25, 28"],
-            ["01_plots_for_slides/finetune/", "4 key fine-tuning plots (FT_01, FT_02, FT_03, FT_10)", "Slide 28, Appendix A2"],
-            ["02_plots_boss_deep_dive/", "14 technical deep-dive graphs (all 10 FT_* plots)", "Appendix, Q&A backup"],
-            ["03_reports_md/", "10 research reports in Markdown (incl. correlation analysis + LLM upgrade analysis)", "Slides 7, 11, 16, 24, 25, 28, 29"],
-            ["04_reports_docx/", "18 formatted reports (Word + PDF)", "Handouts"],
-            ["05_data/", "18+ data files (CSV, JSON, HTML reports)", "Reference data"],
-            ["06_demo_videos/", "8 burned videos with subtitle overlays", "Slides 2, 14, 15"],
-            ["07_paper/", "VSP-LLM paper + 2025 presentation", "Slide 3-4 reference"],
-            ["08_branding/", "3 logo files", "Title slide, headers"],
-            ["09_pipeline_diagram/", "8-stage pipeline flow diagram", "Slide 17"],
-            ["10_examples/", "Curated example data", "Slide 14 content"],
+            ["01_plots_for_slides/", "17 presentation graphs (P1-P5, existing, finetune/)",
+             "Gemini uploads for slides 4-13, 22, 24-28"],
+            ["01_plots_for_slides/finetune/", "4 key fine-tuning plots (FT_01, FT_02, FT_03, FT_10)",
+             "Gemini upload for slide 28"],
+            ["02_plots_boss_deep_dive/", "14 technical deep-dive graphs",
+             "Appendix, Q&A backup (not uploaded)"],
+            ["03_reports_md/supplementary/", "10 research reports in Markdown",
+             "Presenter reference only (NOT uploaded to Gemini)"],
+            ["04_reports_docx/", "18 formatted reports (Word + PDF)",
+             "Handouts (not uploaded)"],
+            ["05_data/", "18+ data files (CSV, JSON, HTML reports)",
+             "Reference data (not uploaded)"],
+            ["06_demo_videos/", "8 burned videos with subtitle overlays",
+             "Manual: play on slides 2, 15"],
+            ["07_paper/", "VSP-LLM paper + 2025 presentation",
+             "Background reference (not uploaded)"],
+            ["08_branding/", "3 logo files",
+             "Gemini upload for slide 1"],
+            ["09_pipeline_diagram/", "8-stage pipeline flow diagram",
+             "Gemini upload for slides 3, 17"],
+            ["10_examples/", "Curated example data",
+             "Content source for slide 14 (not uploaded)"],
         ],
         col_widths=[1.8, 2.8, 2.0],
     )
@@ -1016,7 +1124,7 @@ def main():
     build_intro(doc)
     build_overview(doc)
 
-    # 4 Gemini prompts with attachments
+    # 4 Gemini prompts with image attachments
     prompts = [
         (1, "Opening & Context", "Slides 1-4", PROMPT_1, ATTACHMENTS_1),
         (2, "Research Findings", "Slides 5-16", PROMPT_2, ATTACHMENTS_2),
@@ -1027,6 +1135,8 @@ def main():
         build_prompt_section(doc, num, title, slides, text, attachments)
 
     build_appendix(doc)
+    build_animation_checklist(doc)
+    build_manual_steps(doc)
     build_materials(doc)
 
     # Save
