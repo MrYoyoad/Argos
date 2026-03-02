@@ -20,6 +20,8 @@
 
 Config J = stochastic decode with length penalty. Config C = deterministic version of J (isolates effect of lenpen without sampling noise).
 
+*See also: [IS Component Correlation Analysis](is_correlation_analysis.md) for inter-signal redundancy and variance decomposition across the baseline dataset.*
+
 ---
 
 ## 1. Headline Metrics

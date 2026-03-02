@@ -371,6 +371,68 @@ The largest differentiators are NEA F1 (entity preservation), WER, and semantic 
 
 ---
 
+## 10a. Inter-Signal Correlation & Variance Contribution
+
+*(Added 2026-03-02. Full statistical analysis: [is_correlation_analysis.md](is_correlation_analysis.md))*
+
+### Component Correlation with IS (N=1,497)
+
+| Component | Pearson r | Spearman ρ | R² | Weight |
+|-----------|----------|------------|-----|--------|
+| Phonetic Sim | **0.943** | 0.943 | 0.888 | 0.15 |
+| WWER (inverted) | **0.950** | 0.953 | 0.903 | 0.15 |
+| WER (inverted) | **0.944** | 0.948 | 0.891 | 0.15 |
+| Semantic Sim | **0.921** | 0.925 | 0.848 | 0.25 |
+| NEA F1 | **0.864** | 0.864 | 0.747 | 0.15 |
+| Length Ratio | 0.650 | 0.611 | 0.423 | 0.15 |
+
+All top-5 signals are strongly correlated (|r| > 0.86). Length Ratio is the weakest predictor.
+
+### Variance Contribution (Covariance Decomposition)
+
+| Weighted Component | % of IS Variance |
+|-------------------|-----------------|
+| Semantic (0.25×) | **28.5%** |
+| NEA F1 (0.15×) | 17.3% |
+| Inv-WER (0.15×) | 15.7% |
+| Inv-WWER (0.15×) | 15.2% |
+| Phonetic (0.15×) | 14.2% |
+| Length Ratio (0.15×) | 9.1% |
+
+Semantic dominates variance (28.5%) due to its higher weight and substantial spread. NEA F1 contributes disproportionately (17.3%) because it has the highest variance among the 0.15-weight signals.
+
+### Inter-Component Redundancy
+
+|  | Semantic | Phonetic | WER | WWER | NEA F1 | Length |
+|--|----------|----------|-----|------|--------|--------|
+| **Semantic** | 1.00 | 0.82 | -0.73 | -0.76 | 0.75 | 0.19 |
+| **Phonetic** | 0.82 | 1.00 | -0.79 | -0.85 | 0.75 | 0.36 |
+| **WER** | -0.73 | -0.79 | 1.00 | 0.81 | -0.69 | 0.22 |
+| **WWER** | -0.76 | -0.85 | 0.81 | 1.00 | -0.75 | -0.10 |
+| **NEA F1** | 0.75 | 0.75 | -0.69 | -0.75 | 1.00 | 0.13 |
+| **Length** | 0.19 | 0.36 | 0.22 | -0.10 | 0.13 | 1.00 |
+
+**Three independent dimensions emerge:**
+1. **Word accuracy** (WER, WWER, Phonetic — all r > 0.79 with each other) → ~60% of IS weight
+2. **Meaning preservation** (Semantic — partially redundant with word accuracy at r=0.82) → ~25% of IS weight
+3. **Output sanity** (Length Ratio — largely independent, r ≤ 0.36) → ~15% of IS weight
+
+### Per-Tier Dominant Signals
+
+| Tier | N | Dominant Correlate with IS | Interpretation |
+|------|---|---------------------------|----------------|
+| Failed (0-1) | 239 | **Phonetic (0.79)** | At the bottom, phonetic similarity differentiates "totally wrong" from "plausible sounds" |
+| Poor (1-2) | 336 | Phonetic (0.52), Semantic (0.51) | Multiple signals contribute equally |
+| Fair (2-3) | 325 | **WER (0.55)** | Traditional error rates separate "almost good" from "mediocre" |
+| Good (3-4) | 321 | WWER (0.51), WER (0.51) | Balanced — all content signals matter |
+| Excellent (4-5) | 276 | **WER (0.83)** | Small WER differences dominate ranking at the top |
+
+### Claude as LLM-as-a-Judge
+
+The entire IS framework — the 5-step assessment rubric (Section 4), the 6 signal weights, the tier boundaries, the failure/success classifications, and the `llm_context_prob` heuristic — was designed by Claude (Anthropic) acting as an expert LLM judge. This is a form of **LLM-distilled evaluation**: Claude's judgment was elicited at design time and encoded into deterministic, reproducible metrics rather than calling an LLM per sample at runtime. The `llm_context_prob` heuristic correlates at **r=0.934** (ρ=0.952) with IS. Agreement with the IS ≥ 3.0 threshold: 88.6% (Cohen's κ = 0.773). See [is_correlation_analysis.md](is_correlation_analysis.md) Section 8 for full analysis of the LLM-as-a-Judge relationship.
+
+---
+
 ## 11. Context Recovery Estimation
 
 Two independent approaches estimate whether a viewer with topic context could understand each segment:

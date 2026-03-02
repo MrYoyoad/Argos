@@ -235,7 +235,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Folder | Contents | Backlog Mission |
 |--------|----------|-----------------|
-| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0) | M5: Expanded Metrics |
+| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0), IS correlation analysis | M5: Expanded Metrics |
 | [docs/tuning/](docs/tuning/) | Report 2 (hyperparameter tuning), metrics explainer, 13 experiments, HTML reports | M7: Hyperparams, M14: Auto-tuning |
 | [docs/confidence/](docs/confidence/) | Report 4 (confidence scoring & quality filtering) | M4: Confidence Scoring |
 | [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR) | M6: Beam Aggregation |
@@ -291,6 +291,8 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | 3 — Fair | 2.0-2.99 | 325 | 21.7% |
 | 2 — Poor | 1.0-1.99 | 336 | 22.4% |
 | 1 — Failed | 0.0-0.99 | 239 | 16.0% |
+
+**IS Component Correlation Analysis** (March 2026): The 6 IS signals collapse into 3 independent dimensions — word accuracy (WER/WWER/Phonetic, r > 0.79 with each other, ~60% of IS weight), meaning preservation (Semantic, 28.5% of variance), and output sanity (Length Ratio, 9.1% of variance). The entire IS framework was designed by Claude (Anthropic) as an LLM-as-a-Judge — Claude's expert judgment was distilled into deterministic, reproducible metrics at design time rather than calling an LLM per sample. The Claude-designed `llm_context_prob` heuristic correlates at r=0.93 with IS (88.6% agreement with IS ≥ 3.0, Cohen's κ = 0.773). Full analysis: [docs/evaluation/is_correlation_analysis.md](docs/evaluation/is_correlation_analysis.md).
 
 **Hyperparameter tuning** (13 experiments on 107 segments): Baseline config (beam=20, lenpen=0, no sampling) proved most robust. No parameter combination improved WER meaningfully. See [docs/tuning/experiment-comparison.csv](docs/tuning/experiment-comparison.csv).
 

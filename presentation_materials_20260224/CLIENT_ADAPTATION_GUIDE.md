@@ -134,7 +134,7 @@ Both versions use the **same plots, same data, same folder**. No new materials n
 | Hallucination | "The LLM prior overwhelms the visual signal" | "Sometimes the system generates incorrect text — our next update will flag these automatically" |
 | 64.1% WER | "2.5x worse than benchmark, as expected for domain mismatch" | "Real-world video is harder than lab conditions — our IS metric shows 40% is already usable" |
 | Bugs | "37 bugs fixed — here's the NVENC corruption story" | Don't mention. The system works. |
-| Fine-tuning | "Needs GPU budget — $72-120, biggest ROI" | "An upcoming improvement that will significantly increase accuracy" |
+| Fine-tuning | "Exp A complete on ~1,400 videos — proved the model learns from YouTube data. Overfitting at r=16 tells us we need higher rank + more data. Exp B next." | "We've started training on real-world data and the initial results are promising — next iteration will bring significant accuracy gains" |
 | do_sample | Explain the divergence and plans to unify | Don't mention |
 | IS metric | Full formula, 6 signals, methodology | "We developed a smarter way to measure quality — it shows 40% is already reliable" |
 | Failure modes | "10 classified modes — Topic Drift 15.9%, each phase targets specific categories" | Don't mention. Simplify to "we know exactly where to improve" |

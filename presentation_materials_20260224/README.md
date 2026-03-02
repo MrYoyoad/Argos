@@ -55,7 +55,7 @@ Technical deep-dive graphs — for supervisor/boss session only.
 | `FT_09_wall_clock.png` | **NEW**: Per-epoch training time |
 | `FT_10_summary_dashboard.png` | **NEW**: 6-panel training summary dashboard |
 
-### 03_reports_md/ (8 files)
+### 03_reports_md/ (9 files)
 Research reports in Markdown format — reference material for slide content.
 
 | File | Topic |
@@ -67,7 +67,8 @@ Research reports in Markdown format — reference material for slide content.
 | `report_5_beam_search_aggregation.md` | N-best ROVER/MBR, hypothesis aggregation |
 | `report_6_finetuning_analysis.md` | LoRA fine-tuning, AVSpeech domain adaptation |
 | `intelligibility_methodology.md` | IS metric design, 6 signals, tier examples, failure modes (10), success patterns (7), topic analysis (11 categories) |
-| `finetune_A_comparison_report.md` | **NEW**: Exp A (r=16) training results, overfitting analysis, 10 diagnostic plots, recommendations for Exp B |
+| `is_correlation_analysis.md` | **NEW**: IS component correlation matrix, variance decomposition, 3 independent dimensions, per-tier signal drivers, LLM heuristic validation (r=0.93, 88.6% agreement) |
+| `finetune_A_comparison_report.md` | Exp A (r=16) training results, overfitting analysis, 10 diagnostic plots, recommendations for Exp B |
 
 ### 04_reports_docx/ (18 files)
 Formatted reports (Word + PDF) — printable, shareable with stakeholders.
@@ -198,3 +199,8 @@ Curated example data for building comparison tables.
 | **Exp A: Training time** | **17.0 hours** | **Tesla T4, FP16** |
 | **Exp A: Trainable params** | **12.6M (0.19%)** | **LoRA r=16, alpha=32** |
 | **Exp A: Training data** | **1,273 train / 224 val** | **Stratified by IS tier** |
+| **IS: top signal correlate** | **Phonetic Sim r=0.943** | **Correlation analysis** |
+| **IS: 3 independent dimensions** | **Word acc 60%, Meaning 28%, Sanity 9%** | **Variance decomposition** |
+| **IS: LLM judge agreement** | **88.6% (r=0.93, recall 99.2%)** | **llm_context_prob validation** |
+| **IS: Semantic variance share** | **28.5% (highest, due to 0.25 weight)** | **Covariance decomposition** |
+| **IS: NEA variance share** | **17.3% (disproportionate to 15% weight)** | **High per-segment variance** |
