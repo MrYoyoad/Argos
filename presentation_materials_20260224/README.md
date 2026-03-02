@@ -69,6 +69,7 @@ These are supplementary materials for understanding the data behind each slide.
 | `report_6_finetuning_analysis.md` | LoRA fine-tuning, AVSpeech domain adaptation |
 | `intelligibility_methodology.md` | IS metric design, 6 signals, tier examples, failure modes (10), success patterns (7), topic analysis (11 categories) |
 | `is_correlation_analysis.md` | IS component correlation matrix, variance decomposition, 3 independent dimensions, per-tier signal drivers, LLM heuristic validation (r=0.93, 88.6% agreement), cross-config stability (16 configs) |
+| `llm_salvage_analysis.md` | **NEW**: 165 segments where Claude's LLM heuristic identifies recoverable predictions that metrics undercount — raises effective capture from 39.9% to 50.9%, 6 recovery categories with curated examples |
 | `finetune_A_comparison_report.md` | Exp A (r=16) training results, overfitting analysis, 10 diagnostic plots, recommendations for Exp B |
 | `llm_upgrade_analysis.md` | **NEW**: Comprehensive LLM upgrade analysis — model alternatives (Llama 3.1 8B drop-in, Qwen, Mistral, VALLR), data scaling projections (1.3K→100K segments), 7 prompt strategies by model tier, GER post-processing, multilingual analysis, improvement waterfall (67%→27-42% WER), investment strategy |
 
@@ -84,6 +85,7 @@ Formatted reports (Word + PDF) — printable, shareable with stakeholders.
 - `report_6_finetuning_analysis` — Fine-tuning analysis
 
 **Supplementary Reports**:
+- `llm_salvage_analysis.docx` — **NEW**: LLM salvage analysis — 165 recoverable segments, 6 categories, curated examples
 - `baseline_vs_J_analysis.docx` — Full-dataset comparison (Baseline vs Config C vs Config J, 1497 segments)
 - `project-summary.docx` — High-level project overview
 - `research-journal.docx` — R&D development journal
@@ -101,6 +103,7 @@ Raw data for reference or custom analysis.
 | `experiment-comparison.csv` | All 13 experiments (A-M) with WER/WWER/NEA metrics |
 | `report.csv` | Full baseline results (1,497 segments with per-segment metrics) |
 | `intelligibility_scores.csv` | **NEW**: Per-segment IS scores, tiers, 6 signals, context recoverability (1,497 rows) |
+| `llm_salvage_segments.json` | **NEW**: 165 LLM-salvageable segments with full metrics, category tags, curated for presentation |
 | `segment_metadata.json` | Segment timing, duration, source video metadata |
 | `metadata.json` | Curated interesting examples with annotations |
 | `html_reports/` | 13 interactive HTML reports (one per experiment, open in browser) |
@@ -173,6 +176,8 @@ Curated example data for building comparison tables.
 | **IS Excellent (4-5)** | **18.4%** | **276 segments** |
 | **IS Good (3-4)** | **21.4%** | **321 segments** |
 | **Context recoverable** | **43.6-50.6%** | **Rule-based / LLM-judged** |
+| **LLM-salvageable (IS<3 but recoverable)** | **165 / 900 (18.3%)** | **LLM salvage analysis** |
+| **Effective capture (IS + salvage)** | **762 / 1,497 (50.9%)** | **Up from 39.9%** |
 | **Failure modes classified** | **10 modes** | **900 failed segments** |
 | **#1 failure: Topic Drift** | **15.9%** | **143 segments** |
 | **#1 success: Phonetic Preservation** | **41.5%** | **248 of 597 successes** |
@@ -218,3 +223,20 @@ Curated example data for building comparison tables.
 | **Combined realistic target** | **27-42% WER (from 67%)** | **LLM + data + prompts + GER** |
 | **Multiplicative scaling law** | **LLM + data improvements compound** | **ICLR 2024** |
 | **VALLR (ICCV 2025)** | **18.7% WER on LRS3 with 3B model** | **Architecture > model size** |
+
+---
+
+## PENDING: Presentation Update Required
+
+**Task**: The presentation slides (generated via Gemini) need updating to incorporate the **LLM Salvage Analysis** results (March 2, 2026). This analysis shows that 165 metric-failed segments are actually recoverable, raising the effective capture rate from 39.9% to 50.9%.
+
+**What to add to the presentation:**
+1. A new slide (or addition to the IS section) showing the "hidden value" — 50.9% effective capture vs 39.9% metric-only
+2. Update the "Key Findings" slide to reflect the revised capture rate
+3. Consider adding 1-2 curated examples from `llm_salvage_analysis.md` showing dramatic WER-vs-meaning gaps (e.g., WER 74% but semantically preserved content)
+4. The `llm_salvage_analysis.docx` in `04_reports_docx/` and `llm_salvage_segments.json` in `05_data/` are ready for use
+
+**Files available:**
+- `03_reports_md/supplementary/llm_salvage_analysis.md` — Full analysis
+- `04_reports_docx/llm_salvage_analysis.docx` — Formatted report
+- `05_data/llm_salvage_segments.json` — 165 segments with all metrics

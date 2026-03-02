@@ -64,6 +64,23 @@
   "llm_context_recoverable_pct": 50.6,
   "llm_context_mean_prob": 0.551,
   "llm_context_median_prob": 0.55,
+  "llm_salvage_analysis": {
+    "description": "Segments where LLM heuristic says recoverable (prob >= 0.5) but IS < 3.0",
+    "divergent_count": 165,
+    "divergent_pct_of_failures": 18.3,
+    "effective_capture_with_salvage": 762,
+    "effective_capture_pct": 50.9,
+    "categories": {
+      "hidden_gems": {"count": 54, "filter": "llm_prob >= 0.8 AND WER >= 50%"},
+      "semantic_preservation": {"count": 57, "filter": "semantic_sim >= 0.5 AND WER >= 50%"},
+      "phonetic_bridge": {"count": 93, "filter": "phonetic_sim >= 0.6 AND WER >= 40%"},
+      "entity_preserved": {"count": 44, "filter": "NEA F1 >= 50% AND WER >= 40%"},
+      "structure_match": {"count": 74, "filter": "strong/moderate structure match"},
+      "wer_over_punishment": {"count": 27, "filter": "WER - WWER >= 10pp AND WER >= 50%"}
+    },
+    "detail_file": "docs/evaluation/llm_salvage/llm_salvage_analysis.md",
+    "data_file": "docs/evaluation/llm_salvage/llm_salvage_segments.json"
+  },
   "llm_context_reasons": {
     "marginal": 302,
     "high_semantic_good_overlap": 132,
@@ -519,6 +536,90 @@
     "inv_wwer": 0.15,
     "nea_f1": 0.15,
     "length_ratio": 0.15
+  },
+  "component_correlations": {
+    "analysis_date": "2026-03-02",
+    "detail_file": "docs/evaluation/is_correlation_analysis.md",
+    "pearson_r_with_is": {
+      "semantic_sim": 0.9211,
+      "phonetic_sim": 0.9425,
+      "wer_pct": -0.8493,
+      "wwer_pct": -0.8808,
+      "nea_f1_pct": 0.8642,
+      "length_ratio": 0.2255
+    },
+    "spearman_rho_with_is": {
+      "semantic_sim": 0.9254,
+      "phonetic_sim": 0.9432,
+      "wer_pct": -0.9427,
+      "wwer_pct": -0.9483,
+      "nea_f1_pct": 0.8644,
+      "length_ratio": 0.2534
+    },
+    "variance_contribution_pct": {
+      "semantic_sim": 28.5,
+      "nea_f1": 17.3,
+      "inv_wer": 15.7,
+      "inv_wwer": 15.2,
+      "phonetic_sim": 14.2,
+      "length_ratio": 9.1
+    },
+    "llm_context_prob_correlation": {
+      "pearson_r_with_is": 0.9336,
+      "spearman_rho_with_is": 0.9524,
+      "agreement_with_is_gte3": 0.886,
+      "cohens_kappa": 0.773,
+      "precision": 0.782,
+      "recall": 0.992,
+      "f1": 0.874,
+      "cross_config_stability": {
+        "n_configs": 16,
+        "mean_r_with_is": {"mean": 0.925, "std": 0.015, "verdict": "very_stable"},
+        "mean_r_with_semantic": {"mean": 0.891, "std": 0.020, "verdict": "very_stable"},
+        "mean_r_with_phonetic": {"mean": 0.869, "std": 0.065, "verdict": "moderate"},
+        "mean_r_with_nea_f1": {"mean": 0.712, "std": 0.057, "verdict": "moderate"},
+        "mean_r_with_wer": {"mean": -0.706, "std": 0.156, "verdict": "unstable"},
+        "mean_r_with_length_ratio": {"mean": -0.023, "std": 0.333, "verdict": "unstable"},
+        "mean_kappa_across_configs": 0.72,
+        "kappa_range": "0.62-0.86",
+        "recall_range": "97.6-100.0%"
+      }
+    },
+    "redundancy_clusters": {
+      "word_accuracy": {
+        "signals": ["phonetic_sim", "wer", "wwer"],
+        "inter_r_range": "0.79-0.85",
+        "is_weight_share": 0.45
+      },
+      "meaning_preservation": {
+        "signals": ["semantic_sim"],
+        "cross_cluster_r": "0.73-0.82",
+        "is_weight_share": 0.25
+      },
+      "output_sanity": {
+        "signals": ["length_ratio"],
+        "cross_cluster_r": "0.10-0.36",
+        "is_weight_share": 0.15
+      }
+    },
+    "cross_config_stability": {
+      "n_configs": 16,
+      "configs": "13 tuning (107 segs) + 3 full decode (1497 segs)",
+      "mean_r_with_is_across_configs": {
+        "semantic_sim": {"mean": 0.914, "std": 0.017, "verdict": "very_stable"},
+        "phonetic_sim": {"mean": 0.914, "std": 0.059, "verdict": "stable"},
+        "nea_f1": {"mean": 0.851, "std": 0.023, "verdict": "very_stable"},
+        "wer": {"mean": -0.764, "std": 0.163, "verdict": "unstable_with_lenpen"},
+        "wwer": {"mean": -0.804, "std": 0.203, "verdict": "unstable_with_lenpen"},
+        "length_ratio": {"mean": -0.021, "std": 0.368, "verdict": "highly_unstable"}
+      },
+      "inter_config_is_correlation": {
+        "most_pairs_r_above": 0.92,
+        "baseline_vs_full_decode_C": 0.940,
+        "baseline_vs_full_decode_J": 0.932,
+        "outlier_config": "exp_D_lenpen_neg05 (r=0.60 vs baseline)"
+      }
+    }
   },
   "top_phonetic_confusions": [
     {

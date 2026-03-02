@@ -405,7 +405,25 @@ Semantic (29%), NEA (17%), WER (16%), WWER (16%) are **stable across all configs
 
 ---
 
-## 11. Methodology Notes
+## 11. LLM Salvage Analysis: Recoverable Predictions That Metrics Undercount
+
+The LLM heuristic's high recall (99.2%) and intentional optimism (precision 78.2%) identifies **165 segments** where `llm_context_prob >= 0.5` but `IS < 3.0`. These represent cases where a domain-aware viewer would understand the lip-reading output despite metric-level failure.
+
+| Metric | Value |
+|--------|-------|
+| Divergent segments (LLM >= 0.5, IS < 3.0) | 165 / 900 failed (18.3%) |
+| Effective capture rate (IS + salvage) | 762 / 1,497 (50.9%) vs 597 (39.9%) |
+| Uplift | +11.0 percentage points (+27.6% relative) |
+
+The 165 segments break down into 6 recovery categories: hidden gems (54), semantic preservation (57), phonetic bridge (93), entity-preserved (44), structure match (74), WER over-punishment (27). Categories overlap as segments can exhibit multiple recovery signals simultaneously.
+
+This validates the LLM heuristic's design philosophy: it is intentionally generous because context recovery is real — a viewer watching a cooking tutorial will mentally correct "flour" → "flower" automatically.
+
+Full analysis with curated examples: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md)
+
+---
+
+## 12. Methodology Notes
 
 - **Pearson r** measures linear correlation; **Spearman ρ** measures monotonic (rank) correlation
 - Where Spearman >> Pearson (e.g., WER), the relationship is monotonic but nonlinear — extreme values compress the linear fit

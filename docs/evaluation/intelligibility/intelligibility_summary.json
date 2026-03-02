@@ -64,6 +64,23 @@
   "llm_context_recoverable_pct": 50.6,
   "llm_context_mean_prob": 0.551,
   "llm_context_median_prob": 0.55,
+  "llm_salvage_analysis": {
+    "description": "Segments where LLM heuristic says recoverable (prob >= 0.5) but IS < 3.0",
+    "divergent_count": 165,
+    "divergent_pct_of_failures": 18.3,
+    "effective_capture_with_salvage": 762,
+    "effective_capture_pct": 50.9,
+    "categories": {
+      "hidden_gems": {"count": 54, "filter": "llm_prob >= 0.8 AND WER >= 50%"},
+      "semantic_preservation": {"count": 57, "filter": "semantic_sim >= 0.5 AND WER >= 50%"},
+      "phonetic_bridge": {"count": 93, "filter": "phonetic_sim >= 0.6 AND WER >= 40%"},
+      "entity_preserved": {"count": 44, "filter": "NEA F1 >= 50% AND WER >= 40%"},
+      "structure_match": {"count": 74, "filter": "strong/moderate structure match"},
+      "wer_over_punishment": {"count": 27, "filter": "WER - WWER >= 10pp AND WER >= 50%"}
+    },
+    "detail_file": "docs/evaluation/llm_salvage/llm_salvage_analysis.md",
+    "data_file": "docs/evaluation/llm_salvage/llm_salvage_segments.json"
+  },
   "llm_context_reasons": {
     "marginal": 302,
     "high_semantic_good_overlap": 132,

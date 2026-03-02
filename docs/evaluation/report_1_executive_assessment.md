@@ -217,6 +217,20 @@ A critical practical question: if we deploy this model, can we automatically ide
 
 **Conclusion:** No available production signal reliably separates good from bad predictions. The best heuristic achieves only 24% precision — meaning **3 out of 4 segments flagged as "good" are actually wrong**. The model does not currently expose confidence scores that might improve this.
 
+### 6.3 LLM Salvage Analysis (March 2026 Update)
+
+Subsequent analysis using the Claude-designed Intelligibility Score (IS) framework and LLM heuristic (`llm_context_prob`) revealed that traditional metrics systematically undercount the system's useful output. Of 900 segments classified as failures (IS < 3.0), **165 segments (18.3%)** have recoverable meaning that a domain-aware viewer would understand — identified by `llm_context_prob >= 0.5`.
+
+| Assessment Method | Segments Useful | Rate |
+|-------------------|-----------------|------|
+| WER-only (WER ≤ 20%) | ~98 | 11.4% |
+| IS (IS ≥ 3.0) | 597 | 39.9% |
+| **IS + LLM salvage** | **762** | **50.9%** |
+
+The 165 salvageable segments include cases where high phonetic similarity (natural lip-reading confusions), preserved semantic meaning, or intact named entities make the output usable despite high WER. This raises the effective capture rate from 39.9% to 50.9% — roughly 1 in 2 segments rather than 2 in 5.
+
+Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md)
+
 ---
 
 ## 7. Comparison with Paper Expectations

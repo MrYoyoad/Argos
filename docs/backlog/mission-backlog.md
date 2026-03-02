@@ -69,6 +69,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Silence / empty-prediction rate tracking (currently 20.6% of segments are catastrophic WER >= 100%)
   - Quality tier distribution (perfect/good/fair/poor/catastrophic) as a dashboard metric
 - **Baseline**: WER 67.0%, WWER 61.9%, NEA Recall 39%, NEA F1 38.8%. Quality: 53.4% poor, 20.6% catastrophic
+- **LLM Salvage Finding** (March 2026): 165 of 900 metric-failed segments (18.3%) are LLM-salvageable — effective capture rate is 50.9% (not 39.9%). See [LLM Salvage Analysis](../evaluation/llm_salvage/llm_salvage_analysis.md)
 - **Research**: [Report 1 - Executive Assessment](../evaluation/report_1_executive_assessment.md) (baseline analysis)
 
 ---

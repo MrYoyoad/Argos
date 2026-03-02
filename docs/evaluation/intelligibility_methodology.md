@@ -717,3 +717,36 @@ These are complementary — Config J's lenpen=1.0 could be combined with word co
 3. **Use noisy/approximate word counts during training** to prevent brittleness. At inference, use Whisper's word count estimate from the ASR step that already runs in the pipeline.
 
 4. **Pair with confidence scoring (Mission 4).** Word count conditioning improves beam search calibration, which improves confidence score reliability. Word count reduces hallucination rate; confidence scoring detects the remaining hallucinations. The two features are complementary.
+
+---
+
+## 16. LLM Salvage Analysis: Hidden Value in Metric-Failed Segments
+
+*(Added 2026-03-02. Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md))*
+
+Traditional metrics classify 900 of 1,497 segments as failures (IS < 3.0). However, the LLM heuristic (`llm_context_prob`) identifies **165 of these 900 segments (18.3%)** as having recoverable meaning — cases where a viewer with domain context would understand the lip-reading output despite poor error metrics.
+
+### Impact on System Assessment
+
+| Assessment | Segments Useful | Capture Rate |
+|------------|-----------------|--------------|
+| IS only (IS >= 3.0) | 597 | 39.9% |
+| **IS + LLM salvage** | **762** | **50.9%** |
+| Uplift | +165 | +11.0pp |
+
+### 6 Recovery Categories
+
+| Category | Count | What Makes It Salvageable |
+|----------|-------|---------------------------|
+| **Phonetic Bridge** | 93 | Errors are natural lip-reading confusions (similar mouth shapes), not hallucinations |
+| **Structure Match** | 74 | Word order and grammatical structure closely mirror reference |
+| **Semantic Preservation** | 57 | Core meaning preserved despite word-level errors (semantic_sim >= 0.5) |
+| **Hidden Gems** | 54 | LLM assigns prob >= 0.80 despite WER >= 50% and IS < 3.0 |
+| **Entity-Preserved** | 44 | Key names, numbers, and entities survive (NEA F1 >= 50%) |
+| **WER Over-Punishment** | 27 | WER inflated 10+ pp over WWER — mostly function word errors |
+
+### Why This Matters
+
+The salvage analysis demonstrates that WER and even IS systematically undercount the system's real-world value. A domain-aware viewer watching a cooking tutorial will mentally correct "flour" → "flower" — the phonetic similarity bridges the gap. This context recovery is real and measurable: the LLM heuristic captures it with r=0.934 correlation to IS and 99.2% recall on properly captured segments.
+
+The effective message shifts from "only 2 in 5 segments are useful" to "roughly 1 in 2 segments delivers value" — a meaningful difference for stakeholders evaluating the system.
