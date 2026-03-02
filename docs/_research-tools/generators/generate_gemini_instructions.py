@@ -156,17 +156,17 @@ def add_prompt_block(doc, prompt_text):
 
 
 def add_attachment_table(doc, attachments):
-    """Add a table of files to upload with the prompt."""
-    add_heading(doc, "Upload These Image Files With the Prompt", 3)
+    """Add a table of images to insert manually after export to Google Slides."""
+    add_heading(doc, "Images to Insert After Export", 3)
     add_para(doc, (
-        "Attach these image files to the Gemini conversation when pasting the prompt. "
-        "The prompt references each file by name and tells Gemini where to place it. "
-        "Do NOT upload the supplementary .md reports \u2014 those are for your reference only."
+        "After exporting the Gemini presentation to Google Slides, replace each gray "
+        "placeholder rectangle with the corresponding image from the table below. "
+        "Do NOT upload these images to Gemini \u2014 Gemini cannot reliably insert uploaded images."
     ), italic=True, color=C_GRAY, size=Pt(10))
     add_styled_table(doc,
-        ["#", "File", "For Slide(s)", "Placement"],
+        ["#", "File", "Slide", "Replace Placeholder"],
         [[str(i + 1)] + row for i, row in enumerate(attachments)],
-        col_widths=[0.3, 2.8, 0.8, 2.7],
+        col_widths=[0.3, 2.8, 0.6, 2.9],
     )
 
 
@@ -342,6 +342,11 @@ PROMPT_1 = """Create a presentation in Google Slides with a dark modern theme:
 - Font: clean sans-serif (Montserrat or similar)
 - All slides: consistent style, professional, minimal clutter
 
+CRITICAL IMAGE RULES:
+- Do NOT search the internet for images. Do NOT use stock photos. Do NOT add image source slides.
+- Where I specify IMAGE PLACEHOLDER, create a dark gray rounded rectangle with the placeholder label in white text inside it. I will replace these with my own images after export.
+- Every image placeholder should be a visible, labeled box \u2014 not an empty space.
+
 This is PART 1 of 4 for an internal project review called
 "Argos VSP: Research Findings and Production Roadmap"
 about a Visual Speech Processing (lip reading) system.
@@ -352,7 +357,7 @@ Create exactly 4 slides with speaker notes for each.
 
 SLIDE 1 - Title
 LAYOUT: Title slide, clean and minimal
-IMAGE: Insert the uploaded file "BlackLogo300x300-W-BG.png" in the top-right corner, sized ~1 inch.
+Top-right corner: IMAGE PLACEHOLDER labeled "[Logo]" (small, ~1 inch square, dark gray box)
 Title: "Argos VSP: Research Findings and Production Roadmap"
 Subtitle: "Visual Speech Processing \u2014 Project Review"
 Bottom-right: "February 2026"
@@ -360,21 +365,21 @@ SPEAKER NOTES: "Welcome. This presentation covers 3 months of research and engin
 
 ---
 
-SLIDE 2 - What is Visual Speech Processing? [MANUAL: VIDEO]
+SLIDE 2 - What is Visual Speech Processing? [VIDEO PLACEHOLDER]
 LAYOUT: Minimal center text with a large play button icon
 Title: "What is Visual Speech Processing?"
 Center text: "A system that reads lips from video \u2014 no audio needed."
-Below center: Large triangular play button icon with caption "Opening Demo: 33-Word Perfect Lip Reading"
-Do NOT embed any video. Create a placeholder with the play icon only.
+Below center: Large triangular play button icon (white outline on dark background) with caption "Opening Demo: 33-Word Perfect Lip Reading"
+Do NOT embed any video or search for video images. Just create the play icon as a shape.
 SPEAKER NOTES: "PLAY VIDEO: IEa7qEkMvfQ_3__c5447488_with_hyp.mp4 \u2014 33 words about health insurance, WER 0%. Play the video first, then explain: this is the best case. The system perfectly reads 33 consecutive words from lip movement alone. Now let\u2019s see how it works. [ANIMATION: Text appears, play icon pulses. Transition: Fade 0.5s.]"
 
 ---
 
 SLIDE 3 - Model Architecture
-LAYOUT: Full-width image with text annotations below
-IMAGE: Insert the uploaded file "pipeline_architecture.png" centered, filling ~80% of slide width.
+LAYOUT: Full-width placeholder with text annotations below
+Top area: IMAGE PLACEHOLDER labeled "[pipeline_architecture.png]" (large, ~80% slide width, centered)
 Title: "How It Works: Three Components"
-Below the image, three labeled blocks left-to-right:
+Below the placeholder, three labeled blocks left-to-right:
 "AV-HuBERT (Visual Encoder, frozen, 1024-dim)" \u2192 "Linear Projection (1024\u21924096)" \u2192 "LLaMA-2-7B (4-bit QLoRA, r=16)"
 Bottom note in smaller text: "Only 12.6M trainable params (0.19%). LLM is swappable \u2014 Llama 3.1 8B is a drop-in replacement (same 4096 hidden size)."
 SPEAKER NOTES: "Three components. Visual encoder (AV-HuBERT) is frozen \u2014 pre-trained on LRS3 lip-reading data. It outputs 1024-dim features per frame. A linear projection maps to 4096-dim (LLM input space). Then LLaMA-2-7B generates text. Key: only the LoRA adapters and projection layer are trained \u2014 12.6M of 7B parameters. And the LLM is swappable: Llama 3.1 8B has the same hidden dimension, making it a trivial 1-2 hour swap. [ANIMATION: Three component blocks fly in left-to-right sequentially. Transition: Fade 0.5s.]"
@@ -383,7 +388,7 @@ SPEAKER NOTES: "Three components. Visual encoder (AV-HuBERT) is frozen \u2014 pr
 
 SLIDE 4 - The Benchmark
 LAYOUT: Split \u2014 large number on the left, chart on the right
-IMAGE: Insert the uploaded file "P2_paper_vs_reality.png" on the right half, filling the available space.
+Right half: IMAGE PLACEHOLDER labeled "[P2_paper_vs_reality.png]" (fills the right half of the slide)
 Left side: Large "25.4%" in teal accent color, with "WER on LRS3 (TED Talks)" below in white.
 Below the number: "Curated data, controlled conditions."
 Bottom spanning full width: "Two questions: How does this hold on real-world video? And is WER even the right metric?"
@@ -393,11 +398,13 @@ SPEAKER NOTES: "The paper claims 25.4% Word Error Rate on LRS3 \u2014 a curated 
 PROMPT_2 = """Continue the same presentation (dark navy #0D1B2A, white text, teal/coral accents).
 This is PART 2 of 4: Research Findings. Create exactly 12 slides with speaker notes.
 
+REMINDER: Do NOT search the internet for images. Do NOT use stock photos. Where I specify IMAGE PLACEHOLDER, create a dark gray rounded rectangle with the label text in white inside it. I will replace these with my own charts after export.
+
 ---
 
 SLIDE 5 - The Reality Gap
 LAYOUT: Split \u2014 large metric left, chart right
-IMAGE: Insert the uploaded file "P1_quality_tiers.png" on the right half.
+Right half: IMAGE PLACEHOLDER labeled "[P1_quality_tiers.png]"
 Left side: Large "64.1%" in coral, with "Mean WER across 1,497 real-world segments" below.
 Below, five quality tier bullets with colored dots:
 \u2022 11.4% Usable (<30%) \u2014 green dot
@@ -435,7 +442,7 @@ SPEAKER NOTES: "The Intelligibility Score combines 6 signals into a 0-5 composit
 ---
 
 SLIDE 8 - Failure Mode Taxonomy
-LAYOUT: Horizontal bar chart (Gemini-generated)
+LAYOUT: Horizontal bar chart (create this chart directly from the data below \u2014 do NOT use an image)
 Title: "10 Classified Failure Modes (900 failed segments)"
 Create a horizontal bar chart with these values (sorted by frequency, largest at top):
   Total Topic Drift: 15.9% (143) \u2014 dark red
@@ -454,17 +461,17 @@ SPEAKER NOTES: "900 failed segments classified into 10 failure modes. The top tw
 ---
 
 SLIDE 9 - Performance Distribution
-LAYOUT: Full-width chart, minimal text
-IMAGE: Insert the uploaded file "09_boxplot_wwer_all_experiments.png" centered, filling ~70% of slide width.
+LAYOUT: Full-width placeholder, minimal text
+Center: IMAGE PLACEHOLDER labeled "[09_boxplot_wwer_all_experiments.png]" (large, ~70% slide width)
 Title: "Distribution Across 13 Experiments"
-Below chart: "Most segments: 50-80% WER. Stable core of ~11% always-good segments across all configs."
+Below placeholder: "Most segments: 50-80% WER. Stable core of ~11% always-good segments across all configs."
 SPEAKER NOTES: "This boxplot shows WWER distribution across all 13 decode experiments. The box is consistently in the 50-80% range. Important: about 11% of segments are always good regardless of parameters, and about 16% are always bad. The bottleneck is the visual encoder, not decode strategy \u2014 proved by cross-config analysis showing r > 0.92 per-segment ranking stability. [ANIMATION: No build. Transition: Fade 0.5s.]"
 
 ---
 
 SLIDE 10 - Why the Gap: Root Causes
-LAYOUT: Three columns with data
-IMAGE: Insert the uploaded file "01_wer_vs_duration.png" on the right half.
+LAYOUT: Three columns with data, chart on right
+Right half: IMAGE PLACEHOLDER labeled "[01_wer_vs_duration.png]"
 Title: "Three Root Causes \u2014 With Data"
 Three columns (left two-thirds):
   1. Domain Mismatch \u2014 Business/Finance: IS 3.08, 57% captured (best). DIY/Home: IS 2.13, 30% captured (worst).
@@ -476,7 +483,7 @@ SPEAKER NOTES: "Three root causes. Domain mismatch: the model was trained on for
 
 SLIDE 11 - Named Entity Accuracy
 LAYOUT: Split \u2014 text left, chart right
-IMAGE: Insert the uploaded file "14_nea_vs_wwer_scatter.png" on the right half.
+Right half: IMAGE PLACEHOLDER labeled "[14_nea_vs_wwer_scatter.png]"
 Title: "NEA F1: 38.8% \u2014 The Largest Differentiator"
 Left side text:
   "Names, numbers, proper nouns \u2014 what context cannot recover."
@@ -490,7 +497,7 @@ SPEAKER NOTES: "Named Entity Accuracy is the single largest differentiator betwe
 
 SLIDE 12 - 13 Tuning Experiments
 LAYOUT: Two columns
-IMAGE: Insert the uploaded file "10_empty_and_hallucination_rates.png" on the right half.
+Right half: IMAGE PLACEHOLDER labeled "[10_empty_and_hallucination_rates.png]"
 Title: "Systematic Parameter Search: 13 Configurations"
 Left column \u2014 "Parameters Tested":
   \u2022 Beam size (5-50)
@@ -509,7 +516,7 @@ SPEAKER NOTES: "13 systematic experiments across beam size, length penalty, temp
 
 SLIDE 13 - Limits of Tuning
 LAYOUT: Split \u2014 text left, chart right
-IMAGE: Insert the uploaded file "P4_lenpen_sensitivity.png" on the right half.
+Right half: IMAGE PLACEHOLDER labeled "[P4_lenpen_sensitivity.png]"
 Title: "Tuning Is Mitigation, Not a Cure"
 Left text:
   \u2022 Config J: eliminates empties but doubles hallucinations
@@ -534,13 +541,13 @@ SPEAKER NOTES: "Four examples spanning the quality range. Row 1: perfect lip-rea
 
 ---
 
-SLIDE 15 - Live Demo [MANUAL: VIDEO]
+SLIDE 15 - Live Demo [VIDEO PLACEHOLDER]
 LAYOUT: Minimal dark slide with play button icon
 Title: "Demo: Three Videos"
 Subtitle: "Perfect \u2192 Near-miss \u2192 Hallucination"
-Center: Large triangular play button icon
+Center: Large triangular play button icon (white outline shape on dark background)
 Below: "Three demonstrations played from external files."
-Do NOT embed any video. Create a placeholder only.
+Do NOT embed any video or search for images. Just create the play icon as a shape.
 SPEAKER NOTES: "PLAY VIDEOS in order: (1) d8BR6hsvzoY_31__2e9546df_with_hyp.mp4 \u2014 \u2018buy one get one free\u2019 (WER 0%, short and punchy). (2) -POZpyVCN8k_9__c7b26ea8_with_hyp.mp4 \u2014 \u2018admiral mcrae\u2019 becomes \u2018animal migratory\u2019 (funny near-miss). (3) 00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4 \u2014 hallucination: fabricates \u2018David Irving\u2019 narrative (WER 100%). [ANIMATION: No build. Transition: Fade 0.5s.]"
 
 ---
@@ -564,11 +571,13 @@ SPEAKER NOTES: "Eight formal research reports plus the Exp A training analysis. 
 PROMPT_3 = """Continue the same presentation (dark navy #0D1B2A, white text, teal/coral accents).
 This is PART 3 of 4: Engineering Achievements. Create exactly 7 slides with speaker notes.
 
+REMINDER: Do NOT search the internet for images. Do NOT use stock photos. Where I specify IMAGE PLACEHOLDER, create a dark gray rounded rectangle with the label text in white inside it. I will replace these with my own diagrams after export.
+
 ---
 
 SLIDE 17 - Pipeline Architecture
-LAYOUT: Full-width image with title
-IMAGE: Insert the uploaded file "pipeline_architecture.png" centered, filling the full slide width below the title.
+LAYOUT: Full-width placeholder with title
+Center: IMAGE PLACEHOLDER labeled "[pipeline_architecture.png]" (large, filling the full slide width below the title)
 Title: "8-Stage Automated Pipeline"
 Subtitle: "3 research repos \u2192 single orchestrated system"
 SPEAKER NOTES: "The pipeline orchestrates three separate research codebases into a single automated system. Eight stages: video normalization, ASR transcription, mouth cropping, LRS3 format conversion, manifest generation, feature clustering, LLM decode, and output generation. Each stage is a separate module in lib/ with its own tests. [ANIMATION: Pipeline diagram fades in. Transition: Fade 0.5s.]"
@@ -628,8 +637,8 @@ SPEAKER NOTES: "Three intelligent features. Transcription reuse: if you manually
 ---
 
 SLIDE 22 - Evaluation Infrastructure
-LAYOUT: Two-column list
-IMAGE: Insert the uploaded file "15_cdf_wwer_curated.png" on the right half.
+LAYOUT: Two-column list with chart placeholder on right
+Right half: IMAGE PLACEHOLDER labeled "[15_cdf_wwer_curated.png]"
 Title: "Evaluation: Beyond Standard WER"
 Left list:
   \u2022 16 analytical plots per experiment (auto-generated)
@@ -659,11 +668,13 @@ PROMPT_4 = """Continue the same presentation (dark navy #0D1B2A, white text, tea
 This is PART 4 of 4: Future Directions & Close. Create exactly 7 slides with speaker notes.
 Frame the roadmap as a research agenda and resource needs, not a sales pitch.
 
+REMINDER: Do NOT search the internet for images. Do NOT use stock photos. Where I specify IMAGE PLACEHOLDER, create a dark gray rounded rectangle with the label text in white inside it. I will replace these with my own charts after export.
+
 ---
 
 SLIDE 24 - Reframing the Starting Point
 LAYOUT: Two columns \u2014 red left, green right
-IMAGE: Insert the uploaded file "P1_quality_tiers.png" on the right half as visual context.
+Right half: IMAGE PLACEHOLDER labeled "[P1_quality_tiers.png]" (as visual context)
 Title: "Starting from 40%, Not 11%"
 LEFT column (coral/red tint): "WER Says"
   \u2022 11.4% usable
@@ -680,7 +691,7 @@ SPEAKER NOTES: "This is the turning point. WER says 11.4% usable. Our Intelligib
 
 SLIDE 25 - Research Roadmap
 LAYOUT: Staircase/waterfall descending from 67% to 27-42%
-IMAGE: Insert the uploaded file "P3_wer_trajectory.png" on the right half.
+Right half: IMAGE PLACEHOLDER labeled "[P3_wer_trajectory.png]"
 Title: "Five Phases \u2014 From 67% to Target 27-42% WER"
 Five phases as descending steps (left side):
   Phase 1: Surface the good 40% \u2014 confidence scoring (2-4 hours)
@@ -719,10 +730,10 @@ SPEAKER NOTES: "We\u2019re currently throwing away 19 of 20 hypotheses. N-best a
 ---
 
 SLIDE 28 - Fine-Tuning + Data Scaling
-LAYOUT: Split \u2014 results top, projections bottom
-IMAGE: Insert the uploaded file "FT_10_summary_dashboard.png" filling the top half of the slide.
+LAYOUT: Split \u2014 dashboard top, projections bottom
+Top half: IMAGE PLACEHOLDER labeled "[FT_10_summary_dashboard.png]" (large, filling top half of slide)
 Title: "Domain Adaptation: Data Is the Bottleneck"
-Below the dashboard image, two columns:
+Below the placeholder, two columns:
 Left \u2014 "Exp A/B Results":
   \u2022 Exp A (r=16): best val acc 62.94% at epoch 2, severe overfitting
   \u2022 Exp B (r=64): 3.1pp WORSE \u2014 more params = faster overfitting
@@ -769,38 +780,38 @@ SPEAKER NOTES: "Four takeaways. One: we know exactly where we stand \u2014 rigor
 
 
 # ═══════════════════════════════════════════════════
-# PROMPT ATTACHMENTS (images only — .md reports are
-# supplementary reference, NOT uploaded to Gemini)
+# IMAGE INSERTION TABLES (insert manually in Google
+# Slides after exporting from Gemini — NOT uploaded)
 # ═══════════════════════════════════════════════════
 
 ATTACHMENTS_1 = [
-    ["08_branding/BlackLogo300x300-W-BG.png", "1", "Top-right logo placement"],
-    ["09_pipeline_diagram/pipeline_architecture.png", "3", "Full-width architecture diagram"],
-    ["01_plots_for_slides/P2_paper_vs_reality.png", "4", "Right half \u2014 paper vs reality bar chart"],
+    ["08_branding/BlackLogo300x300-W-BG.png", "1", "Replace [Logo] placeholder, top-right ~1 inch"],
+    ["09_pipeline_diagram/pipeline_architecture.png", "3", "Replace [pipeline_architecture.png] placeholder, full width"],
+    ["01_plots_for_slides/P2_paper_vs_reality.png", "4", "Replace [P2_paper_vs_reality.png] placeholder, right half"],
 ]
 
 ATTACHMENTS_2 = [
-    ["01_plots_for_slides/P1_quality_tiers.png", "5", "Right half \u2014 WER quality tiers"],
-    ["01_plots_for_slides/09_boxplot_wwer_all_experiments.png", "9", "Center \u2014 WWER boxplot"],
-    ["01_plots_for_slides/01_wer_vs_duration.png", "10", "Right half \u2014 WER vs duration scatter"],
-    ["01_plots_for_slides/14_nea_vs_wwer_scatter.png", "11", "Right half \u2014 NEA vs WWER scatter"],
-    ["01_plots_for_slides/10_empty_and_hallucination_rates.png", "12", "Right half \u2014 empty/hallucination rates"],
-    ["01_plots_for_slides/P4_lenpen_sensitivity.png", "13", "Right half \u2014 length penalty sensitivity"],
-    ["01_plots_for_slides/P5_tuning_before_after.png", "12", "Left half \u2014 baseline vs Config J comparison"],
+    ["01_plots_for_slides/P1_quality_tiers.png", "5", "Replace [P1_quality_tiers.png] placeholder, right half"],
+    ["01_plots_for_slides/09_boxplot_wwer_all_experiments.png", "9", "Replace [09_boxplot_wwer...] placeholder, center ~70% width"],
+    ["01_plots_for_slides/01_wer_vs_duration.png", "10", "Replace [01_wer_vs_duration.png] placeholder, right half"],
+    ["01_plots_for_slides/14_nea_vs_wwer_scatter.png", "11", "Replace [14_nea_vs_wwer_scatter.png] placeholder, right half"],
+    ["01_plots_for_slides/10_empty_and_hallucination_rates.png", "12", "Replace [10_empty_and_hallucination...] placeholder, right half"],
+    ["01_plots_for_slides/P4_lenpen_sensitivity.png", "13", "Replace [P4_lenpen_sensitivity.png] placeholder, right half"],
+    ["01_plots_for_slides/P5_tuning_before_after.png", "12", "Optional: add to left half or keep as speaker notes backup"],
 ]
 
 ATTACHMENTS_3 = [
-    ["09_pipeline_diagram/pipeline_architecture.png", "17", "Full width \u2014 8-stage pipeline flow"],
-    ["01_plots_for_slides/15_cdf_wwer_curated.png", "22", "Right half \u2014 CDF quality thresholds"],
+    ["09_pipeline_diagram/pipeline_architecture.png", "17", "Replace [pipeline_architecture.png] placeholder, full width"],
+    ["01_plots_for_slides/15_cdf_wwer_curated.png", "22", "Replace [15_cdf_wwer_curated.png] placeholder, right half"],
 ]
 
 ATTACHMENTS_4 = [
-    ["01_plots_for_slides/P1_quality_tiers.png", "24", "Right half \u2014 IS vs WER tier comparison"],
-    ["01_plots_for_slides/P3_wer_trajectory.png", "25", "Right half \u2014 WER improvement trajectory"],
-    ["01_plots_for_slides/finetune/FT_10_summary_dashboard.png", "28", "Top half \u2014 6-panel Exp A dashboard"],
-    ["01_plots_for_slides/finetune/FT_01_loss_curves.png", "28", "Backup \u2014 loss curves (speaker notes ref)"],
-    ["01_plots_for_slides/finetune/FT_02_accuracy_curves.png", "28", "Backup \u2014 accuracy curves (speaker notes ref)"],
-    ["01_plots_for_slides/finetune/FT_03_overfitting_gap.png", "28", "Backup \u2014 overfitting gap (speaker notes ref)"],
+    ["01_plots_for_slides/P1_quality_tiers.png", "24", "Replace [P1_quality_tiers.png] placeholder, right half"],
+    ["01_plots_for_slides/P3_wer_trajectory.png", "25", "Replace [P3_wer_trajectory.png] placeholder, right half"],
+    ["01_plots_for_slides/finetune/FT_10_summary_dashboard.png", "28", "Replace [FT_10_summary_dashboard.png] placeholder, top half"],
+    ["01_plots_for_slides/finetune/FT_01_loss_curves.png", "28", "Appendix backup \u2014 loss curves (speaker notes ref)"],
+    ["01_plots_for_slides/finetune/FT_02_accuracy_curves.png", "28", "Appendix backup \u2014 accuracy curves (speaker notes ref)"],
+    ["01_plots_for_slides/finetune/FT_03_overfitting_gap.png", "28", "Appendix backup \u2014 overfitting gap (speaker notes ref)"],
 ]
 
 
@@ -853,26 +864,26 @@ def build_intro(doc):
     add_para(doc, (
         "This document contains 4 sequential prompts for Google Gemini 3.1 Pro "
         "to generate the Argos VSP project review presentation (30 slides). "
-        "Each prompt references uploaded images by filename and tells Gemini "
-        "exactly where to place them. Animations are specified in speaker notes."
+        "Gemini creates the slide structure, text, layout, and speaker notes. "
+        "You then insert images and apply animations manually after export."
     ))
 
-    add_heading(doc, "Instructions", 2)
+    add_heading(doc, "Step-by-Step Workflow", 2)
     add_bullet(doc, 'Open Google Gemini (gemini.google.com) and start a new conversation')
-    add_bullet(doc, 'For each prompt: upload the listed IMAGE files FIRST, then paste the prompt text')
-    add_bullet(doc, 'Prompt 1 (Opening & Context) + 3 images \u2014 generates slides 1-4')
-    add_bullet(doc, 'Prompt 2 (Research Findings) + 7 images \u2014 generates slides 5-16')
-    add_bullet(doc, 'Prompt 3 (Engineering) + 2 images \u2014 generates slides 17-23')
-    add_bullet(doc, 'Prompt 4 (Future & Close) + 6 images \u2014 generates slides 24-30')
-    add_bullet(doc, 'Total: 18 image files across 4 prompts')
-    add_bullet(doc, 'Do NOT upload the .md reports in 03_reports_md/supplementary/ \u2014 those are for your reference')
+    add_bullet(doc, 'Paste Prompt 1 (NO image uploads needed \u2014 Gemini creates placeholders)')
+    add_bullet(doc, 'In the SAME conversation, paste Prompts 2, 3, and 4 sequentially')
+    add_bullet(doc, 'Export the presentation to Google Slides (Gemini offers this option)')
+    add_bullet(doc, 'In Google Slides: replace each gray placeholder box with the real image (see tables below each prompt)')
+    add_bullet(doc, 'Apply animations using the Animation Checklist (Section 8) \u2014 ~10-15 min')
+    add_bullet(doc, 'Insert demo videos on slides 2 and 15 from 06_demo_videos/')
 
-    add_heading(doc, "How Images Work", 2)
+    add_heading(doc, "Why Not Upload Images to Gemini?", 2)
     add_para(doc, (
-        "Each prompt uses IMAGE directives like: "
-        'IMAGE: Insert the uploaded file "P1_quality_tiers.png" on the right half. '
-        "Gemini will attempt to place the uploaded image on the specified slide. "
-        "Review all placements after generation and resize/reposition as needed."
+        "Gemini\u2019s presentation generator does not reliably insert uploaded images. "
+        "When told to use uploaded files, it either ignores them, fetches stock photos "
+        "from the internet, or creates broken image placeholders. Instead, the prompts "
+        "tell Gemini to create labeled dark gray placeholder rectangles (e.g., "
+        "\"[pipeline_architecture.png]\"). You replace these in Google Slides after export."
     ))
 
     add_heading(doc, "How Animations Work", 2)
@@ -885,7 +896,7 @@ def build_intro(doc):
 
     add_heading(doc, "Video Slides", 2)
     add_para(doc, (
-        "Slides 2 and 15 are marked [MANUAL: VIDEO]. Gemini creates placeholder "
+        "Slides 2 and 15 are marked [VIDEO PLACEHOLDER]. Gemini creates "
         "slides with play button icons. You play the demo videos from "
         "06_demo_videos/ externally during the presentation."
     ))
@@ -905,14 +916,14 @@ def build_overview(doc):
     add_heading(doc, "2. Presentation Overview", 1)
 
     add_styled_table(doc,
-        ["Section", "Prompt", "Slides", "Duration", "Images"],
+        ["Section", "Prompt", "Slides", "Duration", "Images to Insert After"],
         [
             ["Opening & Context", "Prompt 1", "1-4", "~5 min", "3"],
             ["Research Findings", "Prompt 2", "5-16", "~20 min", "7"],
             ["Engineering", "Prompt 3", "17-23", "~10 min", "2"],
             ["Future & Close", "Prompt 4", "24-30", "~15 min", "6"],
         ],
-        col_widths=[1.3, 0.8, 0.7, 0.8, 0.6],
+        col_widths=[1.3, 0.8, 0.7, 0.8, 1.0],
     )
 
     add_heading(doc, "Key Numbers", 2)
@@ -947,20 +958,20 @@ def build_overview(doc):
 
 
 def build_prompt_section(doc, number, title, slides, prompt_text, attachments=None):
-    """Build a prompt section with description, attachment table, and copyable prompt block."""
+    """Build a prompt section with description, image table, and copyable prompt block."""
     add_heading(doc, f"{number + 2}. Prompt {number}: {title} ({slides})", 1)
 
-    if attachments:
-        add_para(doc, (
-            f"Upload {len(attachments)} image files, then paste the prompt below. "
-            f"This prompt generates {slides}."
-        ), bold=True)
-        add_attachment_table(doc, attachments)
-    else:
-        add_para(doc, f"This prompt generates {slides}.", bold=True)
+    add_para(doc, (
+        f"Paste this prompt into Gemini (no file uploads needed). "
+        f"This prompt generates {slides}."
+    ), bold=True)
 
     add_heading(doc, "Prompt Text (copy and paste into Gemini)", 2)
     add_prompt_block(doc, prompt_text)
+
+    if attachments:
+        add_attachment_table(doc, attachments)
+
     _tight_page_break(doc)
 
 
@@ -1031,9 +1042,10 @@ def build_manual_steps(doc):
     ))
 
     steps = [
-        ("Check image placements", (
-            "Gemini should have inserted uploaded images on the correct slides. "
-            "Review each slide and resize/reposition any images that are misplaced or awkwardly sized."
+        ("Replace image placeholders", (
+            "Each slide with a chart or diagram has a labeled gray placeholder rectangle. "
+            "In Google Slides: click the placeholder \u2192 delete it \u2192 Insert \u2192 Image \u2192 Upload from computer. "
+            "Use the image tables below each prompt (Sections 3-6) to find the correct file and placement."
         )),
         ("Apply animations", (
             "Use the Animation Checklist (Section 8) to apply animations and transitions. "
@@ -1074,27 +1086,27 @@ def build_materials(doc):
         ["Folder", "Contents", "Used In"],
         [
             ["01_plots_for_slides/", "17 presentation graphs (P1-P5, existing, finetune/)",
-             "Gemini uploads for slides 4-13, 22, 24-28"],
+             "Insert into slides 4-13, 22, 24-28 (replace placeholders)"],
             ["01_plots_for_slides/finetune/", "4 key fine-tuning plots (FT_01, FT_02, FT_03, FT_10)",
-             "Gemini upload for slide 28"],
+             "Insert into slide 28 (replace placeholder)"],
             ["02_plots_boss_deep_dive/", "14 technical deep-dive graphs",
-             "Appendix, Q&A backup (not uploaded)"],
+             "Appendix, Q&A backup"],
             ["03_reports_md/supplementary/", "10 research reports in Markdown",
-             "Presenter reference only (NOT uploaded to Gemini)"],
+             "Presenter reference only"],
             ["04_reports_docx/", "18 formatted reports (Word + PDF)",
-             "Handouts (not uploaded)"],
+             "Handouts"],
             ["05_data/", "18+ data files (CSV, JSON, HTML reports)",
-             "Reference data (not uploaded)"],
+             "Reference data"],
             ["06_demo_videos/", "8 burned videos with subtitle overlays",
-             "Manual: play on slides 2, 15"],
+             "Play externally on slides 2, 15"],
             ["07_paper/", "VSP-LLM paper + 2025 presentation",
-             "Background reference (not uploaded)"],
+             "Background reference"],
             ["08_branding/", "3 logo files",
-             "Gemini upload for slide 1"],
+             "Insert into slide 1 (replace placeholder)"],
             ["09_pipeline_diagram/", "8-stage pipeline flow diagram",
-             "Gemini upload for slides 3, 17"],
+             "Insert into slides 3, 17 (replace placeholders)"],
             ["10_examples/", "Curated example data",
-             "Content source for slide 14 (not uploaded)"],
+             "Content source for slide 14"],
         ],
         col_widths=[1.8, 2.8, 2.0],
     )
