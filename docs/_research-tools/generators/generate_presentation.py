@@ -1455,9 +1455,11 @@ def slide_21(prs):
          "Configurable overlap for context preservation across segment "
          "boundaries.", LGRAY),
         ("Claude-as-Judge",
-         "LLM-designed evaluation: Claude crafted the IS rubric, selected "
-         "6 signals and weights, defined tier boundaries and failure modes "
-         "— then distilled into deterministic, reproducible metrics. "
+         "IS = 0-5 composite of 6 signals (semantic, phonetic, WER, WWER, "
+         "NEA, length ratio). Claude designed the rubric, weights, tiers, "
+         "and failure taxonomy — distilled into deterministic metrics. "
+         "Validated: r=0.925 across 16 configs, 88.6% agreement. "
+         "6 signals collapse into 3 independent dimensions (PCA). "
          "No LLM called per sample.", GREEN),
     ]
 
@@ -1484,11 +1486,19 @@ def slide_21(prs):
     _finish(slide, 21,
         "Four intelligent features. Transcription reuse: manual corrections "
         "persist across runs. Golden k-means: consistent clustering baseline. "
-        "Smart segmentation: configurable overlap. Claude-as-Judge: the entire "
-        "Intelligibility Score framework was designed by Claude — rubric, signal "
-        "selection, weights, tier definitions, failure mode taxonomy — then "
-        "distilled into deterministic metrics. No LLM is called per sample at "
-        "runtime; Claude's expert judgment is baked into the formulas.",
+        "Smart segmentation: configurable overlap. Claude-as-Judge: the IS is "
+        "a 0-5 composite score combining 6 signals — semantic similarity (25%), "
+        "phonetic similarity (15%), inverse WER (15%), inverse WWER (15%), "
+        "Named Entity Accuracy F1 (15%), and length ratio (15%). Claude "
+        "(Anthropic) designed the entire framework: the rubric, signal selection "
+        "and weights, tier boundaries (Excellent/Good/Fair/Poor/Failed), 10 "
+        "failure modes, and 7 success patterns. These were then distilled into "
+        "deterministic formulas — no LLM is called per sample at runtime. "
+        "Correlation analysis shows the 6 signals collapse into 3 independent "
+        "dimensions: word accuracy (WER/WWER/Phonetic, r>0.79, ~60% of IS), "
+        "meaning preservation (Semantic, 28.5%), and output sanity (Length, "
+        "9.1%). Cross-config validation across 16 decode configs: r=0.925, "
+        "88.6% agreement, Cohen's kappa 0.773.",
         [card_shapes])
 
 # ═══════════════════════════════════════════════════════════════════════
