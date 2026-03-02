@@ -247,3 +247,103 @@ The optimal checkpoint was at epoch 2 (320 updates). This means:
 - FT_08: Granular loss with checkpoint markers
 - FT_09: Wall-clock time (~48 min/epoch)
 - FT_10: Summary dashboard (6-panel overview)
+
+---
+
+## 7. Exp B Results: r=64 Does NOT Improve Over r=16
+
+**Training completed**: Mar 2, 2026 (~27 hours, Tesla T4 FP16)
+**Config**: r=64, alpha=128, targets=[q,k,v]_proj, encoder frozen, 3,000 updates, fresh LoRA init
+**Data**: Same 1,273 train / 224 val segments as Exp A
+**Trainable params**: 50,331,648 (0.74% of total) — 4x more than Exp A's 12.6M (0.19%)
+
+### Training Outcome Summary
+
+| Metric | Best | Final (Epoch 19+) |
+|---|---|---|
+| Val Accuracy | **59.8%** | ~56.3% |
+| Train Accuracy | ~65% (early) | 95.4% |
+| Best checkpoint | Epoch ~4 (saved 23:01 UTC) | — |
+| Update speed | ~18 sec/update (same as r=16) | — |
+| VRAM usage | 13.1 GB / 14.7 GB (89%) | — |
+
+### Head-to-Head Comparison
+
+| Metric | Exp A (r=16) | Exp B (r=64) | Delta |
+|---|---|---|---|
+| Best val accuracy | **62.94%** | 59.80% | **-3.1 pp (r=16 wins)** |
+| Trainable params | 12.6M (0.19%) | 50.3M (0.74%) | +4x |
+| Best epoch | 2 | ~4 | Later peak |
+| Final train accuracy | 95.5% | 95.4% | Same (both overfit fully) |
+| Final val accuracy | 59.0% | 56.3% | -2.7 pp |
+| Training time | 17h | 27h | +59% slower |
+| VRAM usage | ~8 GB | 13.1 GB | +64% |
+
+### What This Tells Us
+
+**1. Rank is NOT the bottleneck.** The original hypothesis (Section 4) that r=16 is "capacity-limited" is **REFUTED**. Quadrupling LoRA capacity from 12.6M to 50.3M trainable parameters did not improve generalization — it made it slightly worse. Both configurations reach ~95% train accuracy and ~59-63% val accuracy. The adapter has more than enough representational capacity at r=16.
+
+**2. The bottleneck is upstream of the decoder.** Three factors limit performance, all outside the LoRA adapter:
+
+| Bottleneck | Evidence | Severity |
+|---|---|---|
+| **Frozen AV-HuBERT encoder** | Features trained on LRS3 TED talks; cannot adapt to YouTube visual domain | **Primary** — the encoder produces visual features that don't represent YouTube content well. No amount of decoder fine-tuning can compensate for poor input features. |
+| **Insufficient training data** | 1,273 segments ≈ 1.5 hours of video; both r=16 and r=64 memorize fully by epoch 5 | **Critical** — at ~10K params/sample (r=16) or ~40K params/sample (r=64), massive overfitting is inevitable |
+| **Noisy training labels** | Whisper ASR at ~64% accuracy provides supervision; model learns errors | **Significant** — the model is optimizing toward incorrect targets in ~36% of its training signal |
+
+**3. r=64 generalizes worse because of the bias-variance tradeoff.** With only 1,273 samples, the larger r=64 adapter overfits faster and harder. It has 4x more parameters to memorize noise, but no additional data to constrain them. This is a textbook case of high variance / low bias overfitting.
+
+**4. Training speed was identical.** Despite 4x more LoRA params, update speed was ~18 sec for both. The bottleneck is the AV-HuBERT encoder forward pass (shared, frozen) and video data loading, not the LoRA backward pass. This means future experiments with larger ranks incur no meaningful speed penalty — only VRAM increases matter.
+
+---
+
+## 8. Lessons Learned & Corrected Recommendations
+
+### What Was Wrong in Our Original Analysis
+
+| Original Claim (Section 4) | Reality | Correction |
+|---|---|---|
+| "r=16 is likely **underfit** for this adaptation" | r=16 **overfits** identically to r=64 | Both ranks have excess capacity for 1.3K samples |
+| "Increase r=64 → most likely to move the needle" | r=64 was 3.1 pp **worse** than r=16 | Rank increase is counterproductive without more data |
+| "The domain shift TED→YouTube is substantial, needs more capacity" | Correct diagnosis, wrong solution | Domain shift exists but must be addressed in the encoder, not the decoder |
+| "VRAM: r=64 adds ~160MB — negligible" | Actual: ~5 GB extra (8→13 GB) due to optimizer states | Must account for Adam state (2x params) + gradients at FP16/FP32 mixed |
+
+### Corrected Priority Order
+
+| Priority | Action | Rationale | Effort |
+|---|---|---|---|
+| **1** | **More training data** (5-10K+ segments) | Both experiments hit data ceiling by epoch 2-4; 10x more data would extend useful training | Medium — AVSpeech has ~290K videos available |
+| **2** | **Unfreeze encoder top layers** | The encoder is the primary bottleneck; visual features don't represent YouTube content | High — needs multi-GPU or gradient checkpointing on T4 |
+| **3** | **Manual transcription of val set** | Whisper labels at 64% WER corrupt both training and evaluation | Medium — 224 segments × 5 sec = ~20 min of audio to verify |
+| **4** | **Data quality filtering** | Remove low-confidence face detections, extreme poses, noisy labels | Low — scripted pipeline, no GPU needed |
+| **5** | **Early stopping at epoch 2-4** | Confirmed by both experiments: all training after epoch 4 is pure overfitting | Already implemented (checkpoint_best.pt) |
+| ~~6~~ | ~~Increase LoRA rank~~ | **Deprioritized** — r=16 is sufficient; r=64 was worse | — |
+
+### Key Takeaway
+
+> **Domain adaptation for VSP-LLM requires adapting the visual encoder (AV-HuBERT), not just the language decoder (Llama-2 LoRA).** The encoder produces visual features trained on clean TED talks. When applied to YouTube videos with varied angles, lighting, and speaking styles, these features are inherently limited. Decoder-side LoRA fine-tuning — regardless of rank — can only rearrange the language model's output probabilities. It cannot improve the quality of the visual information flowing in from the frozen encoder.
+
+---
+
+## 9. Next Steps for Mission 9
+
+### Phase 1: Data Expansion (No New Training Required)
+- [ ] Download 5,000-10,000 additional AVSpeech segments
+- [ ] Run pipeline preprocessing (face detection, mouth crops, clustering)
+- [ ] Filter by face detection confidence > 0.9
+- [ ] Remove segments with extreme head pose > 30°
+- [ ] Create larger train/val split (85/15, stratified)
+- [ ] Re-train r=16 with 10x more data (same config, just more data)
+
+### Phase 2: Encoder Adaptation (Requires More VRAM or Multi-GPU)
+- [ ] Unfreeze top 4 layers of AV-HuBERT encoder
+- [ ] Use lower LR for encoder (1e-5) vs decoder (3e-4) — discriminative fine-tuning
+- [ ] Implement gradient checkpointing to fit on T4 (trades compute for memory)
+- [ ] If T4 insufficient: use p3.2xlarge (V100 16GB) or p3.8xlarge (4x V100)
+- [ ] Two-stage schedule: warm up encoder gradually (freeze_finetune_updates=200)
+
+### Phase 3: Label Quality (Manual Effort)
+- [ ] Manually verify/correct transcriptions for the 224 validation segments
+- [ ] Use corrected val set to measure true model accuracy (not Whisper-corrupted)
+- [ ] Identify worst Whisper errors in training set and correct top 100
+- [ ] Consider using a stronger ASR (Whisper large-v3) for initial labels

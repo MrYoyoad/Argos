@@ -120,26 +120,38 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ### Mission 9: AVSpeech Fine-Tuning
 - **Priority**: HIGH (biggest single WER improvement, but highest effort)
-- **Status**: **EXP A COMPLETE** (Feb 27, 2026) — training done, decode evaluation pending
-- **Goal**: Actually run domain adaptation fine-tuning on AVSpeech data and measure improvement over pretrained checkpoint
+- **Status**: **EXP A+B COMPLETE** (Mar 2, 2026) — both LoRA-only experiments done, decode sweep in progress
+- **Goal**: Domain adaptation fine-tuning on AVSpeech data to improve over pretrained checkpoint
 
-**Exp A Results (r=16, encoder frozen, 3,000 updates, T4 GPU)**:
-- Training completed in 17.0 hours on Tesla T4
-- Best val accuracy: **62.94%** at epoch 2 (320 updates)
-- Severe overfitting: train-val gap widened to 36.5 pp by epoch 19
-- Key finding: r=16 is capacity-limited — model memorizes but can't generalize
-- Best checkpoint saved; decode evaluation on full dataset pending
-- 10 diagnostic plots generated in `docs/finetuning/plots/FT_*.png`
+**Experiment Results Summary**:
 
-**Remaining Items**:
-  - Run decode with `checkpoint_best.pt` on full 1,497-segment test set
-  - Calculate WER/WWER/NEA F1/IS and compare to baseline
-  - Run Exp B: r=64 (alpha=128) with max_update=500 and early stopping
-  - **Critical**: Unfreeze AV-HuBERT encoder (315M params) — this is where ~70% of improvement comes from
-  - Data curation: filter by face detection confidence >0.9, remove extreme head pose >30 deg
-- **Expected Impact**: WER 42-52% (15-25 point improvement). The only path to sub-50% WER
-- **GPU Requirements**: T4 (16GB) very tight with encoder unfrozen; p3.16xlarge 8x GPU recommended (~$24/hr, 3-5 hours)
-- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md), [Comparison Report](../finetuning/experiments/comparison_report.md)
+| Experiment | Config | Best Val Acc | Train Time | Verdict |
+|---|---|---|---|---|
+| **Exp A** (r=16) | Existing LoRA, encoder frozen | **62.94%** | 17h | Best result |
+| **Exp B** (r=64) | Fresh LoRA 4x larger, encoder frozen | 59.80% | 27h | Worse (-3.1 pp) |
+| Baseline | No fine-tuning | ~60% (estimated) | — | Reference |
+
+**Key Findings**:
+- **LoRA rank is NOT the bottleneck** — r=64 was 3.1 pp worse than r=16
+- Both experiments overfit severely: 95% train vs ~59-63% val accuracy
+- Best checkpoints at epoch 2-4; remaining 15+ epochs were wasted
+- Training speed identical (~18 sec/update) despite 4x more LoRA params
+
+**Root Cause Analysis — Three Real Bottlenecks**:
+1. **Frozen AV-HuBERT encoder** (PRIMARY) — visual features trained on LRS3 TED talks don't represent YouTube content well. No decoder fine-tuning can compensate
+2. **Insufficient training data** — 1,273 segments (1.5h) causes both r=16 and r=64 to memorize fully by epoch 5
+3. **Noisy labels** — Whisper ASR at ~64% accuracy provides corrupted supervision
+
+**Remaining Items (Updated Priority)**:
+  - ~~Increase LoRA rank~~ DEPRIORITIZED — experimentally disproven
+  - Run decode evaluation sweep on Exp A/B/Baseline with 6 hyperparameter configs (automated, in progress)
+  - **Phase 1: More data** — expand from 1.3K to 5-10K segments from AVSpeech (most impactful, lowest risk)
+  - **Phase 2: Unfreeze encoder** — adapt top AV-HuBERT layers with discriminative LR (needs gradient checkpointing or multi-GPU)
+  - **Phase 3: Label quality** — manually verify 224 val transcriptions; use Whisper large-v3 for better training labels
+  - Data curation: filter face detection confidence >0.9, remove extreme head pose >30°
+- **Expected Impact**: Decoder-only tuning insufficient; encoder adaptation needed for sub-50% WER
+- **GPU Requirements**: Data expansion works on T4; encoder unfreezing needs V100+ or gradient checkpointing
+- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md) (Sections 6-9), [Comparison Report](../finetuning/experiments/comparison_report.md)
 
 ---
 
@@ -204,6 +216,35 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Auto-select best config per-language or per-domain
   - Integrate winning config back into pipeline defaults
 - **Dependencies**: Mission 7 (manual optimization provides search space bounds)
+
+---
+
+## Lessons Learned (March 2026 Training Weekend)
+
+### What Worked
+- **Stratified train/val split** by IS tier gave representative validation
+- **Early checkpoint saving** (checkpoint_best.pt) captured the only useful training window
+- **Automated eval pipeline** (eval_finetune.sh → make_report.py → IS scoring) — ready to run on any checkpoint with any decode params
+- **Smoke testing** (50-update test runs) caught issues before committing to 17h runs
+
+### What Didn't Work
+- **Increasing LoRA rank** from 16→64: 3.1 pp worse, 59% slower, 64% more VRAM
+- **Long training schedules** (3,000 updates): peak was at update 320 (Exp A) / ~640 (Exp B); 85%+ of training was wasted overfitting
+- **Decoder-only fine-tuning** in general: the frozen encoder is the dominant bottleneck
+
+### What We Got Wrong
+- Predicted r=16 was "capacity-limited" and r=64 would help — **wrong**, both overfit identically
+- Predicted ~160MB VRAM increase for r=64 — **wrong**, actual was +5GB due to optimizer states
+- Assumed decoder adaptation could compensate for encoder domain mismatch — **wrong**, garbage-in-garbage-out
+
+### Key Insight
+> **The visual encoder (AV-HuBERT) is the bottleneck, not the language decoder (Llama-2 LoRA).** Improving the decoder's ability to interpret visual features is futile if those features don't represent the target domain. Future work must adapt the encoder or use more/better training data.
+
+### Corrected Strategic Priorities
+1. **More data** (5-10K segments) — most impactful, least risky
+2. **Encoder adaptation** (unfreeze top layers) — addresses root cause
+3. **Label quality** (manual verification, better ASR) — removes noise floor
+4. ~~LoRA rank increase~~ — **deprioritized** (experimentally disproven)
 
 ---
 
