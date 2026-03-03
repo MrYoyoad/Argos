@@ -256,9 +256,9 @@ The LLM heuristic produces only **15 discrete probability values** (from a decis
 
 ## 8. Relationship to "LLM-as-a-Judge" (Academic Paradigm)
 
-### 8.1 Claude IS the Judge
+### 8.1 Claude Designed the Judge (at Design Time — Not at Runtime)
 
-The IS metric was not designed independently from LLM judgment — **Claude (Anthropic) was the LLM-as-a-Judge throughout this project**. Specifically:
+The IS metric was not designed independently from LLM judgment — **Claude (Anthropic) acted as the expert judge at design time to create the evaluation framework**. However, Claude is **never called per-sample at evaluation time** — the resulting metrics are fully deterministic code with zero API calls. Specifically:
 
 1. **Claude designed the 5-step assessment rubric** (Section 4 of the methodology): Phonetic Bridge Test, Context Recovery Test, Semantic Equivalence Test, Harmful Hallucination Check, and Final Score assignment. This rubric was developed by Claude evaluating real ref/hyp pairs from the pipeline output.
 
@@ -271,6 +271,8 @@ The IS metric was not designed independently from LLM judgment — **Claude (Ant
 5. **Claude classified failure modes and success patterns** — the 10 failure categories and 7 success categories were defined by Claude analyzing real pipeline outputs.
 
 This is a form of **LLM-distilled evaluation**: rather than calling an LLM per sample at runtime, the LLM's expert judgment was elicited once and encoded into deterministic, reproducible metrics. The IS metric is effectively "what Claude would score" — made computable, free, and deterministic.
+
+> **Important distinction**: The term "LLM-as-a-Judge" in the academic literature (Zheng et al., 2023) typically means calling an LLM per sample at inference time to score each output. **We do NOT do this.** Claude was consulted once during metric design — the resulting `generate_intelligibility_scores.py` contains zero LLM API calls. It is pure Python math (`difflib.SequenceMatcher`, weighted sums, threshold comparisons). Running the IS pipeline on 1,497 segments takes seconds of local computation and costs $0.
 
 ### 8.2 How This Maps to the Academic LLM-as-a-Judge Literature
 
@@ -304,7 +306,7 @@ If we additionally called Claude per-segment at evaluation time, the primary val
 
 ### 8.4 Why Distilled Judgment Is Sufficient
 
-1. **The judge IS Claude** — the IS metric already encodes Claude's evaluation framework. Per-sample calls would apply the same underlying judgment, just more granularly.
+1. **Claude is the source of the judge, not the runtime judge** — the IS metric encodes Claude's evaluation framework, designed once at design time. No LLM is invoked when computing scores. Per-sample LLM calls would apply similar underlying judgment, just more granularly and at significant cost.
 2. **Reproducibility** — deterministic metrics enable experiment comparison (Exp A vs B vs baseline) without noise from stochastic LLM outputs.
 3. **Speed** — local computation in seconds vs 30-60 minutes of API calls.
 4. **Decomposability** — every IS score can be traced to exactly which signal(s) drove it up or down, enabling targeted improvement. LLM reasoning is opaque.
