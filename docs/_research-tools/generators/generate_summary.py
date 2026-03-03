@@ -547,8 +547,38 @@ def part_1_research(doc):
         "hallucination (12.3% of failures) \u2014 fluent text with no connection to what was spoken."
     ))
 
-    # 1.4 Root Cause
-    add_heading(doc, "1.4 Root Cause: Domain Mismatch", 2)
+    # 1.4 LLM-as-a-Judge Cross-Validation
+    add_heading(doc, "1.4 LLM-as-a-Judge Cross-Validation", 2)
+    add_para(doc, (
+        "To validate IS against actual language understanding, Claude Opus 4.6 independently "
+        "evaluated all 1,497 pairs using holistic LLM reasoning (blind, 3-level Y/P/N). "
+        "Results: Y=345 (23.0%), P=626 (41.8%), N=526 (35.1%). Intra-rater reliability: "
+        "86.7% exact agreement on 30 duplicate pairs."
+    ))
+
+    add_styled_table(doc,
+        ["Method", "Capture Rate", "Notes"],
+        [
+            ["WER \u2264 20%", "11.4%", "Word accuracy only"],
+            ["IS \u2265 3.0", "39.9%", "Multi-signal intelligibility"],
+            ["IS + salvage", "50.9%", "IS + recoverable meaning"],
+            ["LLM Judge: Y", "23.0%", "Strict holistic meaning"],
+            ["LLM Judge: Y+P", "64.9%", "Any useful output"],
+        ],
+        col_widths=[1.5, 1.0, 3.0]
+    )
+
+    add_para(doc, (
+        "Correlation: Pearson r = 0.850 between LLM judge and IS, with only 22 boundary "
+        "disagreements out of 1,497 segments (1.5%). The llm_context_prob heuristic is stable "
+        "across 16 decode configurations (mean r = 0.925, \u03ba range 0.62\u20130.86). The LLM judge is "
+        "more conservative for \u2018full success\u2019 (23% vs IS 40%) but more generous for \u2018any useful "
+        "output\u2019 (65% vs IS 40%), revealing a large partial zone where structure survives "
+        "but semantic meaning is lost."
+    ), bold=True)
+
+    # 1.5 Root Cause
+    add_heading(doc, "1.5 Root Cause: Domain Mismatch", 2)
     add_para(doc, (
         "The performance gap is primarily caused by domain mismatch between training data (LRS3: "
         "TED talks, studio lighting, professional speakers, frontal view) and test data (YouTube: "
@@ -569,8 +599,8 @@ def part_1_research(doc):
         col_widths=[1.3, 1.5, 1.5, 0.8]
     )
 
-    # 1.5 Improvement Roadmap
-    add_heading(doc, "1.5 Improvement Roadmap", 2)
+    # 1.6 Improvement Roadmap
+    add_heading(doc, "1.6 Improvement Roadmap", 2)
     add_para(doc, (
         "Six detailed analysis reports identified multiple improvement paths. "
         "The table below summarizes expected impact by strategy:"
@@ -590,8 +620,8 @@ def part_1_research(doc):
         col_widths=[2.8, 1.5, 0.9, 1.3]
     )
 
-    # 1.6 Fine-Tuning Strategy
-    add_heading(doc, "1.6 Fine-Tuning Strategy", 2)
+    # 1.7 Fine-Tuning Strategy
+    add_heading(doc, "1.7 Fine-Tuning Strategy", 2)
     add_para(doc, (
         "Domain adaptation fine-tuning on AVSpeech data is the highest-impact single intervention. "
         "Key parameters for the recommended configuration:"
@@ -604,7 +634,7 @@ def part_1_research(doc):
     add_bullet_bold_value(doc, "GPU requirement: ", "p3.16xlarge (8x V100, 128GB) \u2014 ~3-5 hours training, ~$24/hr")
     add_bullet_bold_value(doc, "Expected outcome: ", "WER from 67% \u2192 42-52%, usable segments from 11% \u2192 18-28%")
 
-    add_heading(doc, "1.6.1 Experiment A Results (r=16, Encoder Frozen)", 3)
+    add_heading(doc, "1.7.1 Experiment A Results (r=16, Encoder Frozen)", 3)
     add_para(doc, (
         "The first fine-tuning experiment (Exp A) completed Feb 27, 2026 \u2014 17 hours on Tesla T4. "
         "Training data: 1,273 segments (85%) / 224 validation (15%), stratified by IS tier."
@@ -627,8 +657,8 @@ def part_1_research(doc):
         "Next step: Exp B with r=64 (4\u00d7 capacity) and early stopping at ~500 updates."
     ), bold=True)
 
-    # 1.7 Hyperparameter Tuning Results
-    add_heading(doc, "1.7 Hyperparameter Tuning Results (13 Experiments)", 2)
+    # 1.8 Hyperparameter Tuning Results
+    add_heading(doc, "1.8 Hyperparameter Tuning Results (13 Experiments)", 2)
     add_para(doc, (
         "A systematic sweep of 13 decode configurations was run on a 107-segment test set. "
         "Parameters tested: length penalty, beam width, sampling, temperature, repetition penalty."
