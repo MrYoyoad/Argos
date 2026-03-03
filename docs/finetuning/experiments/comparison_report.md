@@ -12,11 +12,13 @@
 | **Mean IS (0-5)** | 2.5 | 2.3 | 2.0 | Baseline (default) |
 | **Median IS** | 2.4 | 2.3 | 2.0 | Baseline (default) |
 | **Properly Captured (%)** | 39.7% | 38.8% | 33.0% | Baseline (default) |
-| **WER (%)** | _pending_ | _pending_ | _pending_ | N/A |
-| **WWER (%)** | _pending_ | _pending_ | _pending_ | N/A |
-| **NEA F1 (%)** | _pending_ | _pending_ | _pending_ | N/A |
+| **WER (%)** | N/A¹ | N/A¹ | N/A¹ | — |
+| **WWER (%)** | N/A¹ | N/A¹ | N/A¹ | — |
+| **NEA F1 (%)** | N/A¹ | N/A¹ | N/A¹ | — |
 | **Hallucination Rate (%)** | 0.0% | 0.0% | 0.0% | Baseline (default) |
 | **Empty Output (%)** | 6.7% | 11.6% | 25.4% | Baseline (default) |
+
+¹ WER/WWER/NEA not computed for this eval — finetune comparison used IS and LLM judge only.
 
 ## IS Tier Distribution (Default Decode)
 
@@ -34,34 +36,34 @@
 
 | Config | Mean IS | Properly Captured | WER | WWER | NEA F1 | Hallucination | Empty |
 |--------|---------|-------------------|-----|------|--------|---------------|-------|
-| beam5 | 2.6 | 40.6% | _pending_ | _pending_ | _pending_ | 0.0% | 2.2% |
-| default | 2.5 | 39.7% | _pending_ | _pending_ | _pending_ | 0.0% | 6.7% |
-| greedy | 2.5 | 36.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
-| lenpen1 | 2.6 | 40.2% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
-| sample_low | 2.6 | 39.7% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
-| sample_med | 2.6 | 40.2% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
+| beam5 | 2.6 | 40.6% | N/A | N/A | N/A | 0.0% | 2.2% |
+| default | 2.5 | 39.7% | N/A | N/A | N/A | 0.0% | 6.7% |
+| greedy | 2.5 | 36.6% | N/A | N/A | N/A | 0.0% | 0.0% |
+| lenpen1 | 2.6 | 40.2% | N/A | N/A | N/A | 0.0% | 0.0% |
+| sample_low | 2.6 | 39.7% | N/A | N/A | N/A | 0.0% | 0.9% |
+| sample_med | 2.6 | 40.2% | N/A | N/A | N/A | 0.0% | 0.9% |
 
 ### ExpA_r16
 
 | Config | Mean IS | Properly Captured | WER | WWER | NEA F1 | Hallucination | Empty |
 |--------|---------|-------------------|-----|------|--------|---------------|-------|
-| beam5 | 2.5 | 41.1% | _pending_ | _pending_ | _pending_ | 0.0% | 6.7% |
-| default | 2.3 | 38.8% | _pending_ | _pending_ | _pending_ | 0.0% | 11.6% |
-| greedy | 2.5 | 35.7% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
-| lenpen1 | 2.6 | 41.5% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
-| sample_low | 2.5 | 40.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
-| sample_med | 2.5 | 41.5% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
+| beam5 | 2.5 | 41.1% | N/A | N/A | N/A | 0.0% | 6.7% |
+| default | 2.3 | 38.8% | N/A | N/A | N/A | 0.0% | 11.6% |
+| greedy | 2.5 | 35.7% | N/A | N/A | N/A | 0.0% | 0.0% |
+| lenpen1 | 2.6 | 41.5% | N/A | N/A | N/A | 0.0% | 0.0% |
+| sample_low | 2.5 | 40.6% | N/A | N/A | N/A | 0.0% | 0.9% |
+| sample_med | 2.5 | 41.5% | N/A | N/A | N/A | 0.0% | 0.9% |
 
 ### ExpB_r64
 
 | Config | Mean IS | Properly Captured | WER | WWER | NEA F1 | Hallucination | Empty |
 |--------|---------|-------------------|-----|------|--------|---------------|-------|
-| beam5 | 2.4 | 36.6% | _pending_ | _pending_ | _pending_ | 0.0% | 4.5% |
-| default | 2.0 | 33.0% | _pending_ | _pending_ | _pending_ | 0.0% | 25.4% |
-| greedy | 2.4 | 32.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
-| lenpen1 | 2.4 | 36.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
-| sample_low | 2.4 | 37.9% | _pending_ | _pending_ | _pending_ | 0.0% | 1.3% |
-| sample_med | 2.4 | 37.5% | _pending_ | _pending_ | _pending_ | 0.0% | 1.8% |
+| beam5 | 2.4 | 36.6% | N/A | N/A | N/A | 0.0% | 4.5% |
+| default | 2.0 | 33.0% | N/A | N/A | N/A | 0.0% | 25.4% |
+| greedy | 2.4 | 32.6% | N/A | N/A | N/A | 0.0% | 0.0% |
+| lenpen1 | 2.4 | 36.6% | N/A | N/A | N/A | 0.0% | 0.0% |
+| sample_low | 2.4 | 37.9% | N/A | N/A | N/A | 0.0% | 1.3% |
+| sample_med | 2.4 | 37.5% | N/A | N/A | N/A | 0.0% | 1.8% |
 
 ## Analysis
 
