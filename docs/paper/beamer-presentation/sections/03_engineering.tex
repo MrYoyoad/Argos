@@ -1,5 +1,5 @@
 % ============================================================
-% SECTION 3: ENGINEERING ACHIEVEMENTS (Slides 17–23)
+% SECTION 3: ENGINEERING ACHIEVEMENTS (Slides 17–22)
 % ============================================================
 
 \section{Engineering}
@@ -22,145 +22,107 @@
 % ----------------------------------------------------------
 % Slide 18: Why Engineering Was Hard
 % ----------------------------------------------------------
-\begin{frame}{Why Engineering Was Hard}
+\begin{frame}[shrink=8]{Why Engineering Was Hard}
   \twocol{0.50}{
-    \alertmetric{37}{Bugs Fixed}
+    \alertmetric{85+}{Engineering Challenges}
 
-    \vspace{4pt}
+    \vspace{2pt}
 
-    {\small\textbf{Research code $\rightarrow$ production:}}
-    \begin{itemize}
-      \item Installation \& setup: 13 bugs\\
-            {\scriptsize fairseq build, CUDA paths, spaCy wheels}
-      \item Deployment \& GPU: 12 bugs\\
-            {\scriptsize NVENC encoding, Docker GPU pass-through}
-      \item Runtime \& inference: 12 bugs\\
-            {\scriptsize Upload handling, terminal state, metrics}
+    {\scriptsize\textbf{Research code $\rightarrow$ production:}}
+    \begin{itemize}\scriptsize
+      \item Container bugs: 37\\
+            {\tiny Installation, deployment, GPU, runtime}
+      \item EC2$\leftrightarrow$container sync: 26 items\\
+            {\tiny Hardcoded paths, venv mismatches, mounted FS}
+      \item Pipeline stages broken: 6/8\\
+            {\tiny Missing files, wrong venvs, offline failures}
+      \item Critical infra fixes: 12\\
+            {\tiny NVENC corruption, CUDA OOM, desktop launcher}
     \end{itemize}
   }{0.47}{
     \begin{alertblock}{\small Critical Bug: NVENC Corruption}
-      GPU video encoder silently destroyed\\
-      \alert{43\% of output videos}\\[3pt]
-      {\scriptsize Root cause: bash file descriptors leaked\\
+      {\scriptsize GPU video encoder silently destroyed\\
+      \alert{43\% of output videos}\\[2pt]
+      {\tiny Root cause: bash file descriptors leaked\\
       into FFmpeg subprocess, corrupting stream.\\
-      Fix: FD isolation + CPU fallback path.}
+      Fix: FD isolation + CPU fallback path.}}
     \end{alertblock}
 
-    \vspace{4pt}
+    \vspace{2pt}
 
-    \begin{exampleblock}{\scriptsize Other Challenges}
-      {\scriptsize HDR tone mapping, Cython builds,\\
-      fairseq patches, venv isolation}
+    \begin{exampleblock}{\scriptsize Container Pain Points}
+      {\tiny No internet (Whisper fails), 12GB vs 24GB GPU,\\
+      \texttt{/home/ubuntu} vs \texttt{/workspace} paths,\\
+      5 desktop launcher rewrites, venv conflicts}
     \end{exampleblock}
   }
 
   \note{
-    37 bugs across 3 categories: install, deploy, runtime.
-    NVENC corruption is the headline: 43\% of videos destroyed silently.
-    Root cause was bash file descriptors leaking into FFmpeg subprocess.
-    This is why engineering effort was substantial --- research code is not production code.
+    85+ total engineering challenges, not just 37 bugs.
+    Pipeline was broken at 6 of 8 stages when containerized.
+    26 pending EC2-to-container sync items.
+    Container had no internet, different GPU, different paths, mounted FS restrictions.
+    Desktop launcher alone needed 5 separate fixes to work.
+    NVENC corruption: 43\% of videos destroyed silently.
   }
 \end{frame}
 
 % ----------------------------------------------------------
 % Slide 19: Modular Refactoring
 % ----------------------------------------------------------
-\begin{frame}{Modular Refactoring}
+\begin{frame}[shrink=5]{Modular Refactoring}
   \twocol{0.47}{
-    \begin{alertblock}{\small Before: Monolithic Script}
+    \begin{alertblock}{\small Before: Broken Monolith}
       {\large\textbf{823 lines}}\\[3pt]
-      {\small Single \texttt{run\_flat\_english\_pipeline.sh}}\\
-      {\scriptsize All logic inline, no reusability,\\
-      difficult to test or debug}
+      {\scriptsize Single \texttt{run\_flat\_english\_pipeline.sh}\\
+      Hardcoded EC2 paths throughout\\
+      6/8 stages broken in container\\
+      No tests, no error handling\\
+      3+ venvs with conflicts}
     \end{alertblock}
   }{0.47}{
     \begin{exampleblock}{\small After: 11 Modules}
       {\large\textbf{393 lines}} {\small(52\% reduction)}\\[3pt]
-      {\small Reusable modules under \texttt{lib/}}\\
-      {\scriptsize\texttt{common.sh}, \texttt{config.sh}, \texttt{asr.sh},\\
-      \texttt{normalization.sh}, \texttt{manifests.sh},\\
-      \texttt{clustering.sh}, \texttt{decode.sh}, \texttt{outputs.sh},\\
-      \texttt{archive.sh}, \texttt{lrs3\_prep.sh}, \texttt{venv\_utils.sh}}
+      {\scriptsize Reusable modules under \texttt{lib/}\\
+      Environment-aware (EC2/container)\\
+      Automatic venv management\\
+      Standardized logging \& error handling\\
+      Each module independently testable}
     \end{exampleblock}
   }
 
-  \vspace{6pt}
+  \vspace{4pt}
 
   \begin{columns}[T]
-    \begin{column}{0.30\textwidth}
+    \begin{column}{0.23\textwidth}
       \centering
       \metricbox{52\%}{Line Reduction}
     \end{column}
-    \begin{column}{0.30\textwidth}
+    \begin{column}{0.23\textwidth}
       \centering
-      \metricbox{11}{Reusable Modules}
+      \metricbox{11}{Modules}
     \end{column}
-    \begin{column}{0.30\textwidth}
+    \begin{column}{0.23\textwidth}
       \centering
-      \successmetric{37}{Tests Passing}
+      \successmetric{37}{Tests}
+    \end{column}
+    \begin{column}{0.23\textwidth}
+      \centering
+      \metricbox{2}{Environments}
     \end{column}
   \end{columns}
 
   \note{
-    Refactored from 823 to 393 lines (52\% reduction).
-    11 modules under lib/, each independently testable.
-    37 tests validate module exports, functionality, integration.
-    Environment-aware: automatic EC2 vs container detection.
+    Pipeline was fundamentally broken in the container environment.
+    6 of 8 stages had blocking bugs: missing files, wrong venvs, hardcoded paths.
+    Refactored from 823 to 393 lines with environment-aware modules.
+    37 tests validate both EC2 and container configurations.
+    Automatic EC2 vs container detection eliminates path issues.
   }
 \end{frame}
 
 % ----------------------------------------------------------
-% Slide 20: Deployed Product
-% ----------------------------------------------------------
-\begin{frame}[shrink=5]{Deployed Product}
-  \twocol{0.50}{
-    {\large\keyword{Standalone Linux Container}}
-
-    \vspace{6pt}
-
-    \begin{itemize}
-      \item \faIcon{desktop}~Desktop icon launcher
-      \item \faIcon{globe}~Web UI with drag-and-drop
-      \item \faIcon{lock}~Runs on client machine --- no cloud
-      \item \faIcon{sync}~Automated install with verification
-            {\scriptsize\begin{itemize}
-              \item 13 integrity checks
-              \item 37 module tests
-              \item Automatic backup + rollback
-            \end{itemize}}
-    \end{itemize}
-
-    \vspace{4pt}
-    \notetext{Docker container with GPU pass-through (NVIDIA Tesla T4)}
-  }{0.47}{
-    \begin{block}{\small Deployment Workflow}
-      \begin{enumerate}\small
-        \item Extract tarball
-        \item Run \texttt{INSTALL.sh}
-        \item Automatic: backup $\rightarrow$ install $\rightarrow$ verify $\rightarrow$ test
-        \item Double-click desktop icon to use
-      \end{enumerate}
-    \end{block}
-
-    \vspace{3pt}
-
-    \begin{block}{\scriptsize User Interface}
-      {\scriptsize Drag-and-drop video upload,\\
-      automatic processing, browser results,\\
-      downloadable reports + burned videos}
-    \end{block}
-  }
-
-  \note{
-    Standalone container: runs on a Linux machine, no cloud dependency.
-    Desktop icon launcher --- non-technical users can operate.
-    INSTALL.sh: creates backup, installs, verifies, runs 37 tests.
-    Rollback available if anything goes wrong.
-  }
-\end{frame}
-
-% ----------------------------------------------------------
-% Slide 21: Smart Features
+% Slide 20: Smart Features
 % ----------------------------------------------------------
 \begin{frame}{Smart Features}
   \vspace{2pt}
@@ -187,12 +149,12 @@
     \end{column}
     \begin{column}{0.31\textwidth}
       \begin{block}{\small \faIcon{cut}~Video Segmentation}
-        {\scriptsize Automatic splitting for\\
-        long videos ($>$30s).\\[3pt]
-        Overlap handling between\\
+        {\scriptsize Automatic splitting into\\
+        12-second segments.\\[3pt]
+        2-second overlap between\\
         adjacent segments.\\[3pt]
-        Preserves sentence boundaries\\
-        where possible.}
+        Handles long videos\\
+        of any duration.}
       \end{block}
     \end{column}
   \end{columns}
@@ -208,7 +170,7 @@
 % ----------------------------------------------------------
 % Slide 22: Evaluation Infrastructure
 % ----------------------------------------------------------
-\begin{frame}{Evaluation Infrastructure}
+\begin{frame}[shrink=5]{Evaluation Infrastructure}
   \twocol{0.50}{
     {\small\textbf{Built from scratch:}}
 
@@ -259,7 +221,7 @@
         \begin{itemize}\small
           \item \keyword{8} research reports (DOCX + PDF)
           \item Architecture doc, development guide
-          \item Bug tracking (37 bugs, 3 categories)
+          \item Bug tracking (85+ challenges documented)
           \item Comprehensive CLAUDE.md
         \end{itemize}
       \end{block}

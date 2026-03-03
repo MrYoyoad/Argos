@@ -53,7 +53,7 @@
 % ----------------------------------------------------------
 % A2: Exp A Fine-Tuning Deep Dive
 % ----------------------------------------------------------
-\begin{frame}{A2: Exp A Fine-Tuning Deep Dive}
+\begin{frame}[shrink=5]{A2: Exp A Fine-Tuning Deep Dive}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
       \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{FT_04_lr_schedule.png}\\[2pt]
@@ -120,14 +120,14 @@
 % ----------------------------------------------------------
 % A5: Full Experiment Table
 % ----------------------------------------------------------
-\begin{frame}{A5: Full Experiment Table (13 Configurations)}
+\begin{frame}[shrink=10]{A5: Full Experiment Table (13 Configurations)}
   \input{tables/experiment_comparison.tex}
 \end{frame}
 
 % ----------------------------------------------------------
 % A6: Topic Analysis Detail
 % ----------------------------------------------------------
-\begin{frame}{A6: Topic Analysis --- 11 Categories}
+\begin{frame}[shrink=10]{A6: Topic Analysis --- 11 Categories}
   \input{tables/topic_analysis.tex}
 \end{frame}
 
@@ -146,9 +146,9 @@
     \textbf{Signal} & \textbf{Success} & \textbf{Failure} & \textbf{Gap} & \textbf{IS Weight} \\
     \midrule
     Semantic Similarity & \tiergood{0.74} & \tierfailed{0.24} & 0.50 & 25\% \\
-    Phonetic Similarity & \tiergood{0.81} & \tierfailed{0.38} & 0.43 & 20\% \\
+    Phonetic Similarity & \tiergood{0.81} & \tierfailed{0.38} & 0.43 & 15\% \\
     Inverse WER & \tiergood{0.70} & \tierfailed{0.13} & 0.57 & 15\% \\
-    Inverse WWER & \tiergood{0.68} & \tierfailed{0.15} & 0.53 & 10\% \\
+    Inverse WWER & \tiergood{0.68} & \tierfailed{0.15} & 0.53 & 15\% \\
     NEA F1 & \tiergood{0.74} & \tierfailed{0.16} & \textbf{0.58} & 15\% \\
     Length Ratio & \tiergood{0.97} & \tierfair{0.89} & 0.08 & 15\% \\
     \bottomrule

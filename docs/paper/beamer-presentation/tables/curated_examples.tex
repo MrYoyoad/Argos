@@ -1,33 +1,33 @@
 % Curated Examples Table (Slide 14)
 \centering
 {\scriptsize
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{@{}p{1.6cm}p{3.8cm}p{4.2cm}rr@{}}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{1.4cm}p{3.5cm}p{4.5cm}cc@{}}
   \toprule
   \textbf{Category} & \textbf{Reference} & \textbf{Hypothesis} & \textbf{WER} & \textbf{IS} \\
   \midrule
   \cellcolor{TierExcellentBg}
   {\tierexcellent{Perfect}} &
-  ``\ldots keeping up with what's going on in school so here's the latest taylor and rob\ldots'' &
-  33 words about insurance policies, \textbf{every word correct} &
+  {\tiny ``\ldots keeping up with what's going on in school so here's the latest\ldots''} &
+  {\tiny 33 words about insurance policies, \textbf{every word correct}} &
   \wergood{0\%} & \tierexcellent{5.0} \\
 
   \cellcolor{TierGoodBg}
   {\tiergood{Near-Miss}} &
-  ``admiral mcrae visited the fleet'' &
-  ``\textbf{animal migratory} visited the fleet'' &
+  {\tiny ``admiral mcrae visited the fleet''} &
+  {\tiny ``\textbf{animal migratory} visited the fleet''} &
   \werneutral{33\%} & \tiergood{3.0} \\
 
   \cellcolor{TierFailedBg}
-  {\tierfailed{Hallucination}} &
-  ``carry strap'' &
-  ``I'm so happy to be here with you all today thank you so much for inviting me\ldots'' &
+  {\tierfailed{Hallucin.}} &
+  {\tiny ``carry strap''} &
+  {\tiny ``I'm so happy to be here with you all today thank you so much\ldots''} &
   \werbad{100\%} & \tierfailed{0.7} \\
 
   \cellcolor{TierFairBg}
   {\tierfair{Tuning Fix}} &
-  ``hey it's me just doing the eush\ldots'' &
-  \textbf{Baseline}: \textit{(empty)} $\rightarrow$ \textbf{Config J}: ``hi it's me jessica dude who's keeping up\ldots'' &
+  {\tiny ``hey it's me just doing the eush\ldots''} &
+  {\tiny \textbf{Baseline}: \textit{(empty)} $\rightarrow$ \textbf{J}: ``hi it's me jessica\ldots''} &
   \werneutral{73\%} & \tierfair{1.8} \\
 
   \bottomrule

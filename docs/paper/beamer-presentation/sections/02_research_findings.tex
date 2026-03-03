@@ -82,15 +82,17 @@
         \item \keyword{3.5$\times$} more than WER's 11.4\%
         \item 6 deterministic signals:\\
               {\scriptsize Semantic, Phonetic, WER, WWER, NEA, Length}
-        \item LLM-distilled design
+        \item \textbf{Claude-as-a-Judge} design:\\
+              {\scriptsize LLM expert judgment distilled into\\
+              deterministic, reproducible metrics}
       \end{itemize}
 
       \vspace{2pt}
 
-      \begin{block}{\scriptsize Cross-Config (16 configs)}
-        {\scriptsize LLM judge: \keyword{r = 0.925}, $\kappa$ = 0.77\\
-        Stable: Semantic, Phonetic, NEA\\
-        Volatile: WER, Length Ratio}
+      \begin{block}{\scriptsize Cross-Config Validation (16 configs)}
+        {\scriptsize Claude judge: \keyword{r = 0.925}, $\kappa$ = 0.77\\
+        Recall: 97.6--100\% across configs\\
+        Stable: Semantic, Phonetic, NEA}
       \end{block}
     \end{column}
     \begin{column}{0.57\textwidth}
@@ -101,10 +103,70 @@
   \note{
     THIS IS THE MAIN RESEARCH CONTRIBUTION.
     IS reveals 39.9\% properly captured vs 11.4\% by WER --- 3.5x more.
-    Claude designed the rubric, selected weights, defined tiers.
-    Encoded into deterministic, free, decomposable metrics.
-    Cross-config: stable across 16 decode configurations.
+    Claude (Anthropic) used as an LLM judge: designed the rubric, selected signal weights,
+    defined tier boundaries. Then distilled into deterministic, reproducible metrics ---
+    no LLM call needed at inference time. Free, decomposable, stable.
+    Cross-config: r=0.925 across 16 decode configurations, recall 97.6--100\%.
     Phonetic preservation is \#1 IS correlate (r=0.943).
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 7b: IS Deep Dive — Correlations & Methodology
+% ----------------------------------------------------------
+\begin{frame}[shrink=15]{IS Deep Dive: What Drives Quality?}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small 6 Signals $\rightarrow$ 3 Independent Dimensions}
+        {\scriptsize
+        \begin{tabular}{@{}lcc@{}}
+          \textbf{Signal} & \textbf{r with IS} & \textbf{Variance} \\
+          \midrule
+          Phonetic Sim & \keyword{0.943} & 14.2\% \\
+          Semantic Sim & 0.921 & 28.5\% \\
+          WWER & $-$0.881 & 15.2\% \\
+          NEA F1 & 0.864 & 17.3\% \\
+          WER & $-$0.849 & 15.7\% \\
+          Length Ratio & 0.226 & 9.1\% \\
+        \end{tabular}\\[4pt]
+        \textbf{Dimensions:}\\
+        1. \keyword{Word accuracy} (WER, WWER, Phonetic) --- 60\%\\
+        2. \keyword{Meaning} (Semantic) --- 28\%\\
+        3. \keyword{Output sanity} (Length Ratio) --- 9\%}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Claude-as-a-Judge Methodology}
+        {\scriptsize
+        \textbf{Design time:} Claude (Anthropic) acted as\\
+        expert judge to design the IS framework:\\[2pt]
+        \begin{itemize}\scriptsize
+          \item Selected 6 linguistic signals
+          \item Assigned weights (semantic 0.25, rest 0.15)
+          \item Defined 5-tier quality boundaries
+          \item Validated against human intuition
+        \end{itemize}
+        \vspace{2pt}
+        \textbf{Run time:} Fully deterministic ---\\
+        no LLM calls needed per sample.\\[2pt]
+        \textbf{Validation:} \keyword{r = 0.925} across 16 configs,\\
+        $\kappa$ = 0.77, recall 97.6--100\%.\\
+        Strictly additive: $R^2 = 1.000$.}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \vspace{4pt}
+  \centering
+  {\scriptsize\textbf{Formula:} IS = 0.25$\times$Semantic + 0.15$\times$(Phonetic + InvWER + InvWWER + NEA + LengthRatio)}
+
+  \note{
+    6 signals collapse into 3 dimensions via correlation analysis.
+    Phonetic similarity is \#1 correlate (r=0.943) despite equal weight to others.
+    Claude designed the entire framework at design time: weights, tiers, signals.
+    At run time it's fully deterministic --- no LLM API calls, free, reproducible.
+    R-squared = 1.0 confirms strictly additive, no hidden interactions.
+    Cross-config stable: r=0.925 mean across 16 decode configs.
   }
 \end{frame}
 
@@ -322,7 +384,7 @@
 % ----------------------------------------------------------
 % Slide 13: Limits of Tuning
 % ----------------------------------------------------------
-\begin{frame}{Limits of Tuning}
+\begin{frame}[shrink=5]{Limits of Tuning}
   \twocol{0.48}{
     {\large\keyword{Tuning = mitigation, not cure}}
 
@@ -363,7 +425,7 @@
 % ----------------------------------------------------------
 % Slide 14: Curated Examples
 % ----------------------------------------------------------
-\begin{frame}[shrink=15]{Curated Examples}
+\begin{frame}[shrink=20]{Curated Examples}
   \input{tables/curated_examples.tex}
 
   \note{
