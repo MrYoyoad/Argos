@@ -78,7 +78,7 @@
     \begin{exampleblock}{\small Realistic Target}
       \centering
       {\large\keyword{27--42\% WER}}\\
-      {\scriptsize from current 67\%}
+      {\scriptsize from current 64\%}
     \end{exampleblock}
   }{0.57}{
     \halfwidthfig{P3_wer_trajectory.png}
@@ -90,7 +90,7 @@
   \note{
     5 phases, each targeting specific failure modes.
     Multiplicative scaling: stronger LLM extracts more from same data.
-    Combined target: 27--42\% WER (from 67\%).
+    Combined target: 27--42\% WER (from 64\%).
     Each phase is independently valuable --- gains stack.
   }
 \end{frame}
@@ -296,7 +296,7 @@
     \begin{exampleblock}{\small Improvement Waterfall}
       {\scriptsize
       \begin{tabular}{@{}lr@{}}
-        \textbf{Current WER} & \textbf{67\%} \\
+        \textbf{Current WER} & \textbf{64\%} \\
         \midrule
         Swap LLM & $-$3 to $-$8pp \\
         Smart prompts & $-$5 to $-$10pp \\
@@ -325,7 +325,7 @@
     Stronger models unlock more strategies: Llama-2 +5--10pp, Llama 3.1 +12--20pp.
     GER: N-best + correction LLM, no retraining, can use external API.
     VALLR (ICCV 2025): 18.7\% WER on LRS3 with only 3B params --- architecture matters.
-    Combined target: 27--42\% WER from current 67\%.
+    Combined target: 27--42\% WER from current 64\%.
   }
 \end{frame}
 
