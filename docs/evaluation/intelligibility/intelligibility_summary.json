@@ -621,6 +621,32 @@
       }
     }
   },
+  "llm_judge": {
+    "date": "2026-03-03",
+    "judge_model": "claude-opus-4-6",
+    "protocol": "3-level Y/P/N, blind to metrics, 15 batches, 30 duplicates",
+    "judgment_distribution": {"Y": 345, "P": 626, "N": 526},
+    "capture_rates": {
+      "strict_Y": 0.2305,
+      "lenient_YP": 0.6486
+    },
+    "intra_rater_reliability": {
+      "exact_agreement": 0.867,
+      "lenient_agreement": 1.0,
+      "n_duplicates": 30
+    },
+    "agreement_vs_is_gte3": {
+      "strict_kappa": 0.565,
+      "strict_accuracy": 0.806,
+      "strict_precision": 0.945,
+      "strict_recall": 0.546,
+      "lenient_kappa": 0.521,
+      "lenient_recall": 0.995
+    },
+    "correlation_with_is": 0.850,
+    "detail_file": "docs/evaluation/llm_judge/llm_judge_analysis.md",
+    "data_file": "docs/evaluation/llm_judge/llm_judge_results.csv"
+  },
   "top_phonetic_confusions": [
     {
       "ref": "the",

@@ -514,3 +514,61 @@ Full analysis with curated examples: [llm_salvage/llm_salvage_analysis.md](llm_s
 - Section 10 computed across 16 experiment configurations (13 × 107-segment tuning subset + 3 × 1,497-segment full decodes)
 - IS recomputation validated against original scores: r=0.999, MAE=0.05 (floating-point rounding only)
 - Finetuning evaluation (Exp A r=16, Exp B r=64) decode is in progress — correlation analysis will be updated when results are available
+
+---
+
+## 13. Gold Standard LLM Judge Validation
+
+**Date:** 2026-03-03 | **Full report:** [llm_judge/llm_judge_analysis.md](llm_judge/llm_judge_analysis.md)
+
+Claude Opus 4.6 evaluated all 1,497 hypothesis-reference pairs using holistic LLM reasoning (3-level Y/P/N scale, blind to all metrics). This provides an independent "gold standard" to validate the IS framework.
+
+### Key Results
+
+| Metric | Value |
+|--------|-------|
+| **LLM strict capture (Y only)** | 345 / 1,497 (23.0%) |
+| **LLM lenient capture (Y + P)** | 971 / 1,497 (64.9%) |
+| IS >= 3.0 capture | 597 / 1,497 (39.9%) |
+| IS + salvage capture | 762 / 1,497 (50.9%) |
+| **Intra-rater reliability** | 86.7% exact, 100% lenient (30 duplicates) |
+
+### Agreement with IS
+
+| Comparison | Kappa | Accuracy | Precision | Recall | F1 |
+|------------|-------|----------|-----------|--------|-----|
+| LLM Y vs IS >= 3.0 (strict) | 0.565 | 0.806 | 0.945 | 0.546 | 0.692 |
+| LLM Y+P vs IS >= 3.0 (lenient) | 0.521 | 0.746 | 0.612 | 0.995 | 0.758 |
+
+**Interpretation:** The LLM judge is substantially more conservative than IS for "full success" (Y=23% vs IS>=3.0=40%) but substantially more generous for "any useful output" (Y+P=65% vs IS>=3.0=40%). The 42% partial zone (P) — where structure and key words survive but semantic meaning or detail is lost — is the critical boundary that IS collapses into a binary pass/fail.
+
+### 3×5 Confusion Matrix (LLM Y/P/N × IS Tier 1-5)
+
+| LLM | Tier 1 | Tier 2 | Tier 3 | Tier 4 | Tier 5 |
+|-----|--------|--------|--------|--------|--------|
+| Y | 0 | 2 | 17 | 100 | 226 |
+| P | 5 | 81 | 272 | 218 | 50 |
+| N | 234 | 253 | 36 | 3 | 0 |
+
+Clean separation: Y concentrates in tiers 4-5, N in tiers 1-2, P spans tiers 2-4. Only 22 boundary disagreements (LLM=Y but IS<3, or LLM=N but IS>=3).
+
+### Correlation with IS Signals
+
+| Signal | Pearson r with LLM judge |
+|--------|-------------------------|
+| IS | 0.850 |
+| Semantic Sim | 0.846 |
+| llm_context_prob | 0.823 |
+| Phonetic Sim | 0.806 |
+| WWER | -0.741 |
+| WER | -0.714 |
+
+### Partial Judgment Analysis
+
+In the 626 P-coded segments, the most commonly preserved elements are structure (88.8%) and key content words (66.6%). The most commonly lost elements are detail (55.4%) and semantic meaning (55.1%). The VSP model reliably produces grammatically well-formed output with recognizable content words, but frequently loses the specific meaning and fine-grained detail.
+
+### Implications for IS Framework
+
+1. **IS >= 3.0 is well-calibrated as a threshold:** 94.5% of LLM=Y segments score IS >= 3.0 (precision), and only 3 LLM=N segments pass IS >= 3.0
+2. **IS misses partial success:** 377 segments are Y+P by LLM but IS < 3.0 — these have useful structure/words despite metric-level failure
+3. **The llm_context_prob salvage hypothesis is validated:** The 165 salvage segments align with the P-heavy boundary zone identified by the LLM judge

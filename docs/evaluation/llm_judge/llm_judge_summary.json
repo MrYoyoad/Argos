@@ -1,0 +1,120 @@
+{
+  "metadata": {
+    "model": "baseline",
+    "n_segments": 1497,
+    "date": "2026-03-03",
+    "judge": "claude-opus-4-6"
+  },
+  "auto_classified": {
+    "empty_N": 70,
+    "trivial_N": 456
+  },
+  "judgment_distribution": {
+    "Y": 345,
+    "P": 626,
+    "N": 526,
+    "Y_pct": 23.0,
+    "P_pct": 41.8,
+    "N_pct": 35.1
+  },
+  "capture_rates": {
+    "strict_Y": 0.2305,
+    "lenient_YP": 0.6486,
+    "is_gte3": 0.3988,
+    "salvage": 0.509
+  },
+  "agreement_vs_is": {
+    "strict_kappa": 0.5651,
+    "strict_accuracy": 0.8063,
+    "strict_precision": 0.9449,
+    "strict_recall": 0.5461,
+    "strict_f1": 0.6921,
+    "lenient_kappa": 0.5211,
+    "lenient_accuracy": 0.7462,
+    "lenient_precision": 0.6117,
+    "lenient_recall": 0.995,
+    "lenient_f1": 0.7577
+  },
+  "agreement_vs_heuristic": {
+    "strict_kappa": 0.4476,
+    "strict_accuracy": 0.7221
+  },
+  "correlations": {
+    "intelligibility_score": 0.8495,
+    "semantic_sim": 0.8459,
+    "phonetic_sim": 0.8057,
+    "wer_%": -0.7143,
+    "wwer_%": -0.7408,
+    "llm_context_prob": 0.8225
+  },
+  "intra_rater": {
+    "n_duplicates": 30,
+    "exact_agreement": 0.867,
+    "lenient_agreement": 1.0,
+    "exact_count": 26,
+    "lenient_count": 30
+  },
+  "confusion_3x5": [
+    [
+      0,
+      2,
+      17,
+      100,
+      226
+    ],
+    [
+      5,
+      81,
+      272,
+      218,
+      50
+    ],
+    [
+      234,
+      253,
+      36,
+      3,
+      0
+    ]
+  ],
+  "disagreements": {
+    "llm_y_is_fail": 19,
+    "llm_n_is_pass": 3
+  },
+  "tag_analysis": {
+    "total_p": 626,
+    "preserved_frequency": {
+      "struct": 556,
+      "key": 417,
+      "sem": 163,
+      "phon": 104,
+      "topic": 40,
+      "names": 4
+    },
+    "lost_frequency": {
+      "detail": 347,
+      "sem": 345,
+      "key": 160,
+      "names": 129,
+      "topic": 19,
+      "struct": 4
+    },
+    "top_profiles": {
+      "P:key+struct/detail-sem": 84,
+      "P:key+sem+struct/detail": 80,
+      "P:key+struct/sem": 47,
+      "P:key+struct/detail": 41,
+      "P:struct/key-sem": 33,
+      "P:phon+struct/key-sem": 32,
+      "P:key+struct/names-sem": 25,
+      "P:key+sem+struct/names": 17,
+      "P:key/detail-sem": 14,
+      "P:struct/key-names-sem": 13,
+      "P:sem+struct/key": 12,
+      "P:key+struct/detail-names": 12,
+      "P:struct/key-sem-topic": 10,
+      "P:struct/detail-key-sem": 10,
+      "P:sem+struct/detail-key": 9
+    }
+  }
+}
