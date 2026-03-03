@@ -484,22 +484,20 @@ def part_1_research(doc):
     # 1.2 Real-World Evaluation
     add_heading(doc, "1.2 Real-World Evaluation Results", 2)
     add_para(doc, (
-        "We evaluated the model on real-world YouTube content across two datasets:"
+        "We evaluated the model on real-world YouTube content (1,497 segments from 1,396 diverse videos):"
     ))
 
     add_styled_table(doc,
-        ["Metric", "Paper (LRS3)", "english_1k (860 seg)", "english_full (1,497 seg)"],
+        ["Metric", "Paper (LRS3)", "english_full (1,497 seg)"],
         [
-            ["Mean WER", "~25-30%", "67.0%", "64.1%"],
-            ["Corpus WER", "\u2014", "125.5%", "\u2014"],
-            ["NEA F1", "Not reported", "38.8%", "39%"],
-            ["WWER", "\u2014", "\u2014", "61.9%"],
-            ["Intelligibility Score (IS)", "\u2014", "\u2014", "2.52 / 5.0"],
-            ["Properly Captured (IS \u2265 3)", "\u2014", "\u2014", "39.9%"],
-            ["Usable (WER \u226420%)", "\u2014", "11.4%", "\u2014"],
-            ["Hallucinated (WER \u2265100%)", "\u2014", "20.6%", "\u2014"],
+            ["Mean WER", "~25-30%", "67.0%"],
+            ["WWER", "\u2014", "59.5%"],
+            ["NEA F1", "Not reported", "38.8%"],
+            ["Intelligibility Score (IS)", "\u2014", "2.52 / 5.0"],
+            ["Properly Captured (IS \u2265 3)", "\u2014", "39.9%"],
+            ["Hallucinated (WER \u2265100%)", "\u2014", "20.6%"],
         ],
-        col_widths=[1.8, 1.3, 1.7, 1.7]
+        col_widths=[2.2, 1.5, 2.0]
     )
 
     add_para(doc, (

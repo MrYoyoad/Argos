@@ -3,7 +3,7 @@
 **Document Classification:** Technical Research Report
 **Date:** February 17, 2026
 **Scope:** Analysis of how hyperparameter changes could affect VSP-LLM performance on real-world data
-**Current Performance Baseline:** Mean WER 67.0%, Corpus WER 125.5% on english_1k (860 segments)
+**Current Performance Baseline:** Mean WER 67.0%, WWER 59.5%, IS 2.52/5.0 on english_full (1,497 segments)
 
 ---
 
@@ -296,7 +296,7 @@ These require retraining or fine-tuning the model:
 
 ### 4.1 Phase 1: Quick Wins (No Retraining)
 
-Run the following configurations on the full english_1k dataset and compare:
+Run the following configurations on the full english_full dataset and compare:
 
 | Experiment | beam | lenpen | rep_pen | max_len_a | max_len_b | Expected Effect |
 |-----------|------|--------|---------|-----------|-----------|----------------|
@@ -407,7 +407,7 @@ for lenpen in 0.0 0.5 1.0; do
 done
 ```
 
-Note: Each full decode run on 860 segments takes approximately 2-4 hours on a single GPU. A 6-experiment sweep requires 12-24 hours of GPU time.
+Note: Each full decode run on 1,497 segments takes approximately 2-4 hours on a single GPU. A 6-experiment sweep requires 12-24 hours of GPU time.
 
 ---
 

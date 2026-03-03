@@ -270,7 +270,6 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Directory | Contents |
 |-----------|----------|
-| `english_1k_results/` | 1520 AVSpeech videos, decode reports, segment metadata |
 | `english_full_results/` | 1497 segments, WER 67.0%, WWER 59.5%, IS 2.52/5.0, full report suite |
 | `tuning_results/` | 13 decode parameter experiments (beam, lenpen, sampling, greedy) |
 
@@ -338,8 +337,7 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── vsp_input_tuning/      # Data: Tuning input (symlinks)
 ├── flat/                  # Data: Intermediate flat format
 ├── outputs/               # Data: Current pipeline outputs
-├── english_1k_results/    # Results: 1520-video experiment
-├── english_full_results/  # Results: Full dataset baseline (WER 64.1%)
+├── english_full_results/  # Results: Full dataset baseline (WER 67.0%)
 ├── tuning_results/        # Results: Decode parameter experiments
 │
 ├── face_alignment/        # Models: Face alignment (pipeline dependency)

@@ -9,10 +9,9 @@ Research thoughts on improving VSP-LLM for domain-specific AVSpeech fine-tuning.
 | Resource | Location | Description |
 |----------|----------|-------------|
 | VSP-LLM paper | `VSP_LLM_paper.pdf`, `VSP_LLM_paper_text.txt` | Yeo et al., arXiv:2402.15151v2, May 2024 |
-| english_1k results | `english_1k_results/decode_output/en/report.{txt,csv,html}` | 1520 AVSpeech videos, segment-level decode reports |
-| english_full results | `english_full_results/client_outputs/report/report.{txt,csv,html}` | 1497 segments, WER 64.1%, full report with NEA metrics |
+| english_full results | `english_full_results/client_outputs/report/report.{txt,csv,html}` | 1497 segments, WER 67.0%, full report with NEA/IS metrics |
 | Tuning experiments | `tuning_results/run_all_experiments.sh` | 7 decode param experiments (A-G) on 107-segment subset |
-| AVSpeech data | `english_1k/` | ~1000 AVSpeech videos, 3-10s clips |
+| AVSpeech data | `data/` | AVSpeech videos, 3-10s clips |
 | Model architecture | `VSP-LLM/src/vsp_llm.py` (lines 287-308) | QLoRA config: r=16, alpha=32, targets=[q,k,v]_proj |
 | Training configs | `VSP-LLM/src/conf/vsp-llm-433h-finetune.yaml` | 30K updates, freeze 18K, lr=5e-4 |
 | AVSpeech config | `VSP-LLM/src/conf/vsp-llm-avspeech-finetune.yaml` | 15K updates, freeze 5K, domain adaptation schedule |
@@ -35,7 +34,7 @@ VSP-LLM was pretrained on LRS3 (mostly 2-8s utterances from TED talks). At infer
 
 VSP-LLM **improves with longer videos** — the opposite of prior methods. The LLM's context window is an advantage, not a limitation.
 
-### Measured AVSpeech Clip Durations (from english_1k/)
+### Measured AVSpeech Clip Durations (from AVSpeech dataset)
 Probed with ffprobe: 3.0s, 3.0s, 3.0s, 3.4s, 3.5s, 3.6s, 4.2s, 4.4s, 4.7s, 5.7s, 6.4s, 7.3s, 7.5s, 7.6s, 9.1s. Most clips cluster in 3-9 seconds.
 
 ### Conclusion

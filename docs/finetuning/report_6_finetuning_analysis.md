@@ -3,7 +3,7 @@
 **Document Classification:** Technical Research Report
 **Date:** February 18, 2026
 **Scope:** Whether and how fine-tuning/QLoRA on diverse YouTube-like data (AVSpeech) would improve the model's real-world performance
-**Current Performance Baseline:** Mean WER 67.0%, Corpus WER 125.5% on english_1k (860 segments)
+**Current Performance Baseline:** Mean WER 67.0%, WWER 59.5%, IS 2.52/5.0 on english_full (1,497 segments)
 
 ---
 
@@ -40,9 +40,9 @@ All components were trained on **LRS3** (Afouras et al., 2018):
 
 ### 2.3 The Domain Gap
 
-The english_1k test data (YouTube) differs from LRS3 (TED) in every dimension:
+The english_full test data (YouTube) differs from LRS3 (TED) in every dimension:
 
-| Dimension | LRS3 (Training) | english_1k (Test) | Impact on WER |
+| Dimension | LRS3 (Training) | english_full (Test) | Impact on WER |
 |-----------|-----------------|-------------------|---------------|
 | Head pose | Frontal, static | Variable, moving | High — encoder never learned non-frontal features |
 | Lighting | Professional studio | Variable, often poor | High — encoder features degrade |
@@ -323,7 +323,7 @@ These can be combined with fine-tuning for cumulative improvement:
 
 ### Phase 3: Evaluation (This T4 instance, ~2-4 hours)
 1. Transfer fine-tuned checkpoint back
-2. Re-run decode on english_1k with new checkpoint
+2. Re-run decode on english_full with new checkpoint
 3. Generate report, compare WER/NEA against baseline
 4. If improvement is sufficient, deploy; otherwise iterate
 

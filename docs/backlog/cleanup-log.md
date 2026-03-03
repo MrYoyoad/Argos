@@ -30,7 +30,7 @@
 | `VSP-LLM_old/` | 176 GB | Old repo (Sept 2025), different git remote (leibovit/Argos), 5 months behind current VSP-LLM/. All checkpoints and code exist in current version. |
 | `galaxy_export/` (root) | 64 GB | Outdated extracted container copy (Nov 2025). Active working copy is at `vsp_docker/galaxy_export/` (Feb 2026). |
 | `vsp_docker/galaxy_export_20260201.tar.gz` | 44 GB | Outdated tarball (Feb 1). Working copy at `vsp_docker/galaxy_export/` has Feb 17 updates. |
-| `VSP-LLMoutputs/` | 7.7 GB | Old raw decode outputs. Final results saved in `english_1k_results/` and `english_full_results/`. |
+| `VSP-LLMoutputs/` | 7.7 GB | Old raw decode outputs. Final results saved in `english_full_results/`. |
 | `old_fix_packages_pre_FINAL/` | 2.2 GB | Superseded container build packages. Final version is `vsp_linux_container_FINAL_20260217/`. |
 | `face_detection_broken_lfs_OLD/` | 170 MB | Broken Git LFS face detection models. Working versions at `face_detection/` and `face_alignment/`. |
 | `home/` | 44 MB | Accidental home directory snapshot. Not part of pipeline. |
@@ -342,3 +342,33 @@ Restructured `docs/` from generic categories into topic-based folders that map t
 **Before**: 201 root items, 816 GB used, 154 GB free
 **After**: 37 root items, 494 GB used, 476 GB free
 **Freed**: ~322 GB, root items reduced by 81%
+
+---
+
+## Round 5 — Remove english_1k_results (March 3, 2026)
+
+**Reason**: The `english_1k_results/` directory contained the first systematic pipeline run (860 evaluated segments from 1,520 split segments). This was a preliminary trial run before the full `english_full` baseline (1,497 segments, Feb 18 2026). The 1k results are completely superseded by the full baseline and add no value — same pipeline, same model, just an incomplete earlier run on fewer videos with no additional analysis beyond what the full run covers.
+
+### Deleted
+
+| Item | Size | Reason |
+|------|------|--------|
+| `english_1k_results/` | 2.6 GB | Preliminary 860-segment trial run, entirely superseded by `english_full_results/` (1,497 segments). Same model, same pipeline, same config — just fewer videos. All metrics, analysis, and reporting reference the full baseline. |
+| `scripts/monitoring/watch_and_analyze.sh` | <1 KB | Monitoring script that only referenced the 1k pipeline run and `english_1k_results` directory. Obsolete. |
+
+### Updated References (22+ files)
+
+All references to `english_1k`, `english_1k_results/`, and "860 segments" updated across:
+- **CLAUDE.md**: Removed from directory structure and experimental results table
+- **Reports 2-6** (docs/): Baseline references updated from "english_1k (860 segments)" to "english_full (1,497 segments)"
+- **Report 1** (docs/evaluation/): Added SUPERSEDED notice — retained as historical reference only
+- **generate_summary.py**: Removed english_1k column from comparison table
+- **run_all_experiments.sh** (2 copies): Removed "english_1k" from experiment comments
+- **training-research-notes.md**: Removed english_1k references from key references table
+- **golden_weights README.json**: Updated description
+- **cleanup-log.md**: Updated VSP-LLMoutputs reference
+- **run_avspeech_finetune_pipeline.sh**: Removed english_1k from next-steps echo
+
+**Presentation materials** (`presentation_materials_20260224/`) left untouched — frozen Feb 24 snapshot, historical artifact.
+
+**Freed**: ~2.6 GB

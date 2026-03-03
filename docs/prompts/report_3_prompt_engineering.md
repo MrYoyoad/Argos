@@ -3,7 +3,7 @@
 **Document Classification:** Technical Research Report
 **Date:** February 17, 2026
 **Scope:** How modifying the instruction prompt can improve VSP-LLM accuracy on real-world data
-**Current Performance Baseline:** Mean WER 67.0% on english_1k (860 segments)
+**Current Performance Baseline:** Mean WER 67.0%, WWER 59.5%, IS 2.52/5.0 on english_full (1,497 segments)
 
 ---
 

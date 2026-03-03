@@ -1,0 +1,63 @@
+{
+  "name": "baseline_20260218",
+  "label": "Golden Baseline — Full 1,396-video English run",
+  "date": "2026-02-18",
+  "description": "Full pipeline run with correct CPU normalization (no NVENC corruption). 1,396 input videos → 1,497 decoded segments (english_full). These k-means weights are the baseline for all tuning experiments.",
+
+  "pipeline": {
+    "input_videos": 1396,
+    "segments_after_split": 1520,
+    "segments_decoded": 1497,
+    "empty_predictions": 70,
+    "empty_rate_pct": 4.7,
+    "total_runtime_hours": 14.5,
+    "normalization": "CPU (libx264, USE_GPU_NORM=0)",
+    "segmentation": "12s max, 2.0s overlap"
+  },
+
+  "kmeans": {
+    "file": "flat_kmeans_200.bin",
+    "n_clusters": 200,
+    "n_utterances": 1497,
+    "n_frames": 228264,
+    "feature_dim": 1024,
+    "seed": 0,
+    "init": "k-means++",
+    "max_iter": 100,
+    "percent_data": 1.0,
+    "hubert_model": "large_vox_iter5.pt",
+    "hubert_layer": 12
+  },
+
+  "decode_hyperparams": {
+    "beam": 20,
+    "length_penalty": 0.0,
+    "max_len_a": 2.0,
+    "max_len_b": 200,
+    "max_len": 2048,
+    "no_repeat_ngram_size": 3,
+    "repetition_penalty": 1.2,
+    "do_sample": false,
+    "temperature": 1.0,
+    "top_p": 0.9,
+    "lm_weight": 0.0,
+    "max_tokens": 1000,
+    "model_checkpoint": "checkpoint_finetune.pt",
+    "llm": "Llama-2-7b-hf"
+  },
+
+  "files": {
+    "flat_kmeans_200.bin": "Trained k-means model (200 clusters, sklearn MiniBatchKMeans)",
+    "train.cluster_counts": "Per-segment cluster count vectors (train split)",
+    "test.cluster_counts": "Per-segment cluster count vectors (test split)",
+    "train_0_1.len": "HuBERT feature lengths per utterance",
+    "decode_params-172610.json": "Runtime decode parameters snapshot"
+  },
+
+  "checksums": {
+    "flat_kmeans_200.bin": "b88545e95babfec2d2a7767c64e0044c",
+    "train.cluster_counts": "9bb76229305d91b6ac8482e01f33ae04",
+    "test.cluster_counts": "9bb76229305d91b6ac8482e01f33ae04",
+    "train_0_1.len": "6aaa924ab70b3caa1fdc7f588eecab22"
+  }
+}

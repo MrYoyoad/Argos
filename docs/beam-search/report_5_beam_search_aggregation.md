@@ -450,7 +450,7 @@ Expected correlation with WER: **r = 0.4-0.6** (stronger than any currently avai
 
 ### 6.1 Estimated WER Improvements
 
-Applying the aggregation strategies to our english_1k results:
+Applying the aggregation strategies to our english_full results:
 
 | Metric | Current (Top-1) | MBR (est.) | ROVER (est.) | Combined Best (est.) |
 |--------|-----------------|------------|-------------|---------------------|
@@ -495,7 +495,7 @@ Aggregation cannot fix the **fundamental domain gap**. If the visual encoder fai
 1. Implement MBR decode function (pure Python, no dependencies)
 2. Implement simplified ROVER (word-level voting)
 3. Add as post-processing step in decode or report pipeline
-4. Run on full english_1k dataset
+4. Run on full english_full dataset
 5. Compare WER: top-1 vs. MBR vs. ROVER
 
 ### Phase 3: Integrate with Reports (1 day)
