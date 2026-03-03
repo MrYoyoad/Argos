@@ -53,10 +53,20 @@ IMG = {
 }
 
 VID = {
-    "perfect": VIDEOS / "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4",
-    "bogo": VIDEOS / "d8BR6hsvzoY_31__2e9546df_with_hyp.mp4",
-    "nearmiss": VIDEOS / "-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4",
-    "halluc": VIDEOS / "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4",
+    # Curated examples (Slide 14)
+    "perfect":        VIDEOS / "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4",
+    "bogo":           VIDEOS / "d8BR6hsvzoY_31__2e9546df_with_hyp.mp4",
+    "nearmiss":       VIDEOS / "-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4",
+    "halluc":         VIDEOS / "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4",
+    "tuning_fix":     VIDEOS / "DBhaa45mAro_2__07d05c7a_Part1_with_hyp.mp4",
+    "topic_drift":    VIDEOS / "vBCnI4kf3-E_0__d2216cbf_Part1_with_hyp.mp4",
+    "salvage":        VIDEOS / "Q8aPjew1aUU_5__621126f2_with_hyp.mp4",
+    # Failure modes / salvage (A11b, A13)
+    "extreme_halluc": VIDEOS / "BmmJujNQvXw_0__5d6e5798_with_hyp.mp4",
+    "phonetic_bridge":VIDEOS / "cT6aHJmM4cA_2__a0c6120f_with_hyp.mp4",
+    "wer_broken":     VIDEOS / "0FUlRjBcGGE_21__8fc418e2_with_hyp.mp4",
+    "entity_success": VIDEOS / "BS4kTgaiydQ_0__10c532bb_with_hyp.mp4",
+    "entity_destroy": VIDEOS / "EMfcKvHA5Uc_0__b74dba61_with_hyp.mp4",
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"
@@ -2310,6 +2320,141 @@ def slide_a13(prs):
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# SLIDE 14b — CURATED EXAMPLES VIDEO GALLERY
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_14b(prs):
+    """14b: 2×4 clickable video grid matching Slide 14 curated examples."""
+    slide = new_slide(prs)
+    add_title(slide, "Curated Examples — Video Gallery")
+    add_accent_line(slide)
+
+    add_text(slide, "Click any thumbnail to play (PowerPoint / compatible viewer):",
+             MX, CT, CW, Inches(0.35), size=Pt(13), color=LGRAY)
+
+    # Grid layout: 4 cols × 2 rows
+    vid_w  = Inches(2.82)
+    vid_h  = Inches(1.58)   # 16:9
+    gap_x  = Inches(0.23)
+    gap_y  = Inches(0.55)   # space for label below each video
+    row_y  = [CT + Inches(0.45), CT + Inches(0.45) + vid_h + gap_y]
+    start_x = MX
+
+    rows = [
+        [("perfect",      "Perfect",     "0%",   GREEN),
+         ("nearmiss",     "Near-Miss",   "33%",  YELLOW),
+         ("halluc",       "Hallucin.",   "100%", RED),
+         ("tuning_fix",   "Tuning Fix",  "73%",  ORANGE)],
+        [("topic_drift",  "Topic Drift", "97%",  RED),
+         ("salvage",      "Salvage",     "74%",  YELLOW),
+         ("entity_success","Entity OK",  "31%",  GREEN),
+         ("entity_destroy","Entity Lost","100%", RED)],
+    ]
+
+    for r, row in enumerate(rows):
+        for c, (key, label, wer, color) in enumerate(row):
+            x = start_x + c * (vid_w + gap_x)
+            y = row_y[r]
+            add_video(slide, key, x, y, vid_w, vid_h)
+            # WER badge
+            add_text(slide, f"{label}  WER {wer}",
+                     x, y + vid_h + Inches(0.04), vid_w, Inches(0.32),
+                     size=Pt(9), color=color, bold=False,
+                     align=PP_ALIGN.CENTER)
+
+    _finish(slide, "14b",
+        "8 videos matching the curated examples on Slide 14. "
+        "Row 1: Perfect transcription, homophene confusion (admiral→animal), "
+        "full hallucination, Config J tuning fix (empty→output). "
+        "Row 2: Topic drift (#1 failure), salvage hidden gem, entity preserved "
+        "despite wrong numbers, entity completely destroyed. Click each to play.")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE A15 — VIDEO GALLERY MAP
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_a15(prs):
+    """A15: Reference table of all 34 example segments across the presentation."""
+    slide = new_slide(prs)
+    add_title(slide, "A15: Video Gallery — All Example Segments")
+    add_accent_line(slide)
+
+    add_text(slide, "★ = video embedded on a slide   ─ = available in burned_videos/ only",
+             MX, CT, CW, Inches(0.32), size=Pt(11), color=LGRAY, italic=True)
+
+    col_w = [Inches(2.1), Inches(1.7), Inches(0.8), Inches(0.7), Inches(0.5)]
+    headers = ["Segment ID", "Category", "Slide", "WER", ""]
+
+    left_rows = [
+        # Curated Examples
+        ["IEa7qEkMvfQ_3",  "Perfect",         "14",    "0%",   "★"],
+        ["-POZpyVCN8k_9",  "Near-Miss",       "14",    "33%",  "★"],
+        ["00MUdHQ7GGY_8",  "Hallucination",   "14",    "100%", "★"],
+        ["DBhaa45mAro_2",  "Tuning Fix",      "14",    "73%",  "★"],
+        ["vBCnI4kf3-E_0",  "Topic Drift",     "14/A13","97%",  "★"],
+        ["Q8aPjew1aUU_5",  "Salvage",         "14/A11b","74%", "★"],
+        ["d8BR6hsvzoY_31", "Perfect Short",   "15",    "0%",   "★"],
+        # LLM Salvage
+        ["WTSIAfzvYUU_0",  "Semantic Pres.",  "A11b",  "72%",  "─"],
+        ["cT6aHJmM4cA_2",  "Phonetic Bridge", "A11b",  "89%",  "★"],
+        ["cECxDMkqVcs_0",  "Entity-Pres.",    "A11b",  "57%",  "─"],
+        ["IZcKDz911X8_0",  "Structure Match", "A11b",  "39%",  "─"],
+        ["0FUlRjBcGGE_21", "WER Over-Pun.",   "A11b",  "150%", "★"],
+        # Success Patterns
+        ["FLRU5qzb6hc_9",  "Near-Perfect",    "A12",   "0%",   "─"],
+        ["BVynmQr3cf8_0",  "Minor Errors",    "A12",   "11%",  "─"],
+        ["LiYzBldkxMc_2",  "Phonetic Pres.",  "A12",   "27%",  "─"],
+        ["epuNSCr7qpA_16", "Good Sem+Len",    "A12",   "15%",  "─"],
+        ["BS4kTgaiydQ_0",  "Entity Preserved","A12",   "31%",  "★"],
+    ]
+
+    right_rows = [
+        ["HecEY5bF-xs_5",  "Low-Mod WER",     "A12",   "15%",  "─"],
+        ["c6eBrYor21I_10",  "Sem+Phonetic",    "A12",   "52%",  "─"],
+        # Failure Modes
+        ["1RkFwRhhcWQ_0",  "Empty Output",    "A13",   "100%", "─"],
+        ["BmmJujNQvXw_0",  "Extreme Halluc.", "A13",   "200%", "★"],
+        ["0fmc81KXbB0_0",  "Truncation",      "A13",   "69%",  "─"],
+        ["EMfcKvHA5Uc_0",  "Entity Destruct.","A13",   "100%", "★"],
+        ["2JuBrr6TW8o_14", "Phonetic Wrong",  "A13",   "100%", "─"],
+        ["ZnoJxsXKULY_0",  "High Error Rate", "A13",   "100%", "─"],
+        ["49qxSMt4Xe0_0",  "Accum. Errors",   "A13",   "68%",  "─"],
+        ["xITCbZxwLn4_0",  "Content Errors",  "A13",   "60%",  "─"],
+        ["KcDqXon7I3c_0",  "Over-generation", "A13",   "100%", "─"],
+        # Metric Mismatch
+        ["10xhJGx6-kc_0",  "WER>>WWER",       "A14b",  "71%",  "─"],
+        ["-WqvFSuRYo0_12", "WWER>>WER",       "A14b",  "27%",  "─"],
+        ["1whXJLCrTjY_0",  "Hi Sem+Hi WER",   "A14b",  "67%",  "─"],
+        ["ZB21bsGO0KA_7",  "Lo Sem+Lo WER",   "A14b",  "40%",  "─"],
+        ["2T-C7vQJBis_0",  "Hi NEA+WWER",     "A14b",  "42%",  "─"],
+        ["0PQonSiGkVE_0",  "LR>1.5+WER",      "A14b",  "140%", "─"],
+    ]
+
+    half = Inches(5.9)
+    gap  = Inches(0.33)
+
+    tbl_l = add_table(slide, headers, left_rows,
+                      MX, CT + Inches(0.38), half,
+                      row_height=Inches(0.28), text_size=Pt(8),
+                      col_widths=[Inches(1.85), Inches(1.5), Inches(0.7),
+                                  Inches(0.6), Inches(0.45)])
+
+    tbl_r = add_table(slide, headers, right_rows,
+                      MX + half + gap, CT + Inches(0.38), half,
+                      row_height=Inches(0.28), text_size=Pt(8),
+                      col_widths=[Inches(1.85), Inches(1.5), Inches(0.7),
+                                  Inches(0.6), Inches(0.45)])
+
+    _finish(slide, "A15",
+        "Reference map of all 34 unique example segments used across the "
+        "presentation. 12 are embedded as clickable videos on Slides 14b and A11b. "
+        "All 1,497 burned videos are available at "
+        "english_full_results/client_outputs/burned_videos/. "
+        "Segment IDs map directly to filenames: {id}_with_hyp.mp4.")
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -2323,13 +2468,14 @@ def main():
     builders = [
         slide_01, slide_02, slide_03, slide_04, slide_05,
         slide_06, slide_07, slide_08, slide_09, slide_10,
-        slide_11, slide_12, slide_13, slide_14, slide_15,
+        slide_11, slide_12, slide_13, slide_14, slide_14b, slide_15,
         slide_16, slide_17, slide_18, slide_19, slide_20,
         slide_21, slide_22, slide_23, slide_24, slide_25,
         slide_26, slide_27, slide_28, slide_29, slide_30,
         slide_31,
         # Appendix / backup slides
         slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b, slide_a13,
+        slide_a15,
     ]
     total = len(builders)
 

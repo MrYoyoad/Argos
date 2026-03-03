@@ -580,6 +580,80 @@
 \end{frame}
 
 % ----------------------------------------------------------
+% Slide 14b: Video Examples
+% ----------------------------------------------------------
+\begin{frame}{Curated Examples --- Video Gallery}
+  {\small Click any thumbnail to play (requires pdfpc or Adobe Acrobat):}
+
+  \vspace{4pt}
+
+  % Row 1: Perfect, Near-Miss, Hallucination, Tuning Fix
+  \begin{columns}[c]
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {IEa7qEkMvfQ_3__c5447488_thumb.png}%
+        {videos/source/IEa7qEkMvfQ_3__c5447488_with_hyp.mp4}%
+        {\tierexcellent{Perfect} 0\%}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {-POZpyVCN8k_9__c7b26ea8_thumb.png}%
+        {videos/source/-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4}%
+        {\tierfair{Near-Miss} 33\%}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {00MUdHQ7GGY_8__b1480c7a_thumb.png}%
+        {videos/source/00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4}%
+        {\tierfailed{Hallucin.} 100\%}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {DBhaa45mAro_2__07d05c7a_Part1_thumb.png}%
+        {videos/source/DBhaa45mAro_2__07d05c7a_Part1_with_hyp.mp4}%
+        {\tierpoor{Tuning Fix} 73\%}
+    \end{column}
+  \end{columns}
+
+  \vspace{6pt}
+
+  % Row 2: Topic Drift, Salvage, Entity Preserved, Entity Destroyed
+  \begin{columns}[c]
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {vBCnI4kf3-E_0__d2216cbf_Part1_thumb.png}%
+        {videos/source/vBCnI4kf3-E_0__d2216cbf_Part1_with_hyp.mp4}%
+        {\tierfailed{Topic Drift} 97\%}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {Q8aPjew1aUU_5__621126f2_thumb.png}%
+        {videos/source/Q8aPjew1aUU_5__621126f2_with_hyp.mp4}%
+        {\tierfair{Salvage} 74\%}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {BS4kTgaiydQ_0__10c532bb_thumb.png}%
+        {videos/source/BS4kTgaiydQ_0__10c532bb_with_hyp.mp4}%
+        {\tiergood{Entity OK} 31\%}
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      \videocaptioned{\linewidth}%
+        {EMfcKvHA5Uc_0__b74dba61_thumb.png}%
+        {videos/source/EMfcKvHA5Uc_0__b74dba61_with_hyp.mp4}%
+        {\tierfailed{Entity Lost} 100\%}
+    \end{column}
+  \end{columns}
+
+  \note{
+    8 embedded videos matching the curated examples on Slide 14.
+    Row 1: Perfect, homophene confusion, hallucination, Config J recovery.
+    Row 2: Topic drift (\#1 failure), salvage (most novel finding), entity preserved vs destroyed.
+    Each video has hypothesis text burned in. Click to play.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Slide 15: Live Demo
 % ----------------------------------------------------------
 \begin{frame}{Live Demo}

@@ -472,7 +472,26 @@
     \bottomrule
   \end{tabular}}
 
-  \vspace{4pt}
+  \vspace{2pt}
+
+  % Video supplements: Phonetic Bridge + WER Over-Punishment
+  \begin{columns}[c]
+    \begin{column}{0.35\textwidth}
+      \videocaptioned{\linewidth}%
+        {cT6aHJmM4cA_2__a0c6120f_thumb.png}%
+        {videos/source/cT6aHJmM4cA_2__a0c6120f_with_hyp.mp4}%
+        {Phonetic Bridge: expresses $\rightarrow$ suppresses}
+    \end{column}
+    \hfill
+    \begin{column}{0.35\textwidth}
+      \videocaptioned{\linewidth}%
+        {0FUlRjBcGGE_21__8fc418e2_thumb.png}%
+        {videos/source/0FUlRjBcGGE_21__8fc418e2_with_hyp.mp4}%
+        {WER Over-Punish.: ``so um'' $\rightarrow$ 150\%}
+    \end{column}
+  \end{columns}
+
+  \vspace{2pt}
   \notetext{All examples: IS $<$ 3.0 (metrics say ``failed'') but LLM heuristic says recoverable.\\
   Categories overlap: segments can exhibit multiple recovery signals.}
 
@@ -481,6 +500,7 @@
     Each row: metrics say ``failed'' (IS $<$ 3.0) but the LLM heuristic says a viewer would understand.
     Hidden Gem: ``reasoning and logic'' --- nearly perfect content despite 74\% WER from function word errors.
     WER Over-Punishment: ``so um'' $\rightarrow$ ``so i kind of'' --- 150\% WER for a trivial filler substitution.
+    Two embedded videos below the table for live demonstration.
   }
 \end{frame}
 
@@ -708,5 +728,88 @@
     Admiral/animal (row 5): Phonetic 0.83 but Semantic 0.16 --- classic homophene confusion.
     ``so um'' $\rightarrow$ ``so i kind of'' (row 7): LR 1.60, WER 140\% for trivial filler expansion.
     All sourced from 1,497-segment baseline, verifiable in report.csv.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% A15: Video Gallery --- All Example Segments
+% ----------------------------------------------------------
+\begin{frame}[shrink=15]{A15: Video Gallery --- All Example Segments}
+  {\small 34 unique segments across all example slides. $\star$ = video embedded on slide, --- = video in \texttt{burned\_videos/} only.}
+
+  \vspace{4pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      {\tiny
+      \begin{tabular}{@{}p{2cm}p{1.5cm}lcl@{}}
+        \toprule
+        \textbf{Segment} & \textbf{Category} & \textbf{Slide} & \textbf{WER} & \\
+        \midrule
+        \multicolumn{5}{@{}l}{\scriptsize\textbf{Curated Examples (Slide 14)}} \\
+        IEa7qEkMvfQ\_3 & Perfect & 14 & 0\% & $\star$ \\
+        -POZpyVCN8k\_9 & Near-Miss & 14 & 33\% & $\star$ \\
+        00MUdHQ7GGY\_8 & Hallucination & 14 & 100\% & $\star$ \\
+        DBhaa45mAro\_2 & Tuning Fix & 14 & 73\% & $\star$ \\
+        vBCnI4kf3-E\_0 & Topic Drift & 14 & 97\% & $\star$ \\
+        Q8aPjew1aUU\_5 & Salvage & 14 & 74\% & $\star$ \\
+        d8BR6hsvzoY\_31 & Perfect Short & 15 & 0\% & $\star$ \\
+        \midrule
+        \multicolumn{5}{@{}l}{\scriptsize\textbf{LLM Salvage (A11b)}} \\
+        WTSIAfzvYUU\_0 & Semantic Pres. & A11b & 72\% & --- \\
+        cT6aHJmM4cA\_2 & Phonetic Bridge & A11b & 89\% & $\star$ \\
+        cECxDMkqVcs\_0 & Entity-Pres. & A11b & 57\% & --- \\
+        IZcKDz911X8\_0 & Structure Match & A11b & 39\% & --- \\
+        0FUlRjBcGGE\_21 & WER Over-Pun. & A11b & 150\% & $\star$ \\
+        \midrule
+        \multicolumn{5}{@{}l}{\scriptsize\textbf{Success Patterns (A12)}} \\
+        FLRU5qzb6hc\_9 & Near-Perfect & A12 & 0\% & --- \\
+        BVynmQr3cf8\_0 & Minor Errors & A12 & 11\% & --- \\
+        LiYzBldkxMc\_2 & Phonetic Pres. & A12 & 27\% & --- \\
+        epuNSCr7qpA\_16 & Good Sem+Len & A12 & 15\% & --- \\
+        BS4kTgaiydQ\_0 & Entity Pres. & A12 & 31\% & $\star$ \\
+      \end{tabular}}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      {\tiny
+      \begin{tabular}{@{}p{2cm}p{1.5cm}lcl@{}}
+        \toprule
+        \textbf{Segment} & \textbf{Category} & \textbf{Slide} & \textbf{WER} & \\
+        \midrule
+        \multicolumn{5}{@{}l}{\scriptsize\textbf{Success Patterns (A12, cont.)}} \\
+        HecEY5bF-xs\_5 & Low-Mod WER & A12 & 15\% & --- \\
+        c6eBrYor21I\_10 & Sem+Phonetic & A12 & 52\% & --- \\
+        \midrule
+        \multicolumn{5}{@{}l}{\scriptsize\textbf{Failure Modes (A13)}} \\
+        1RkFwRhhcWQ\_0 & Empty Output & A13 & 100\% & --- \\
+        BmmJujNQvXw\_0 & Extreme Halluc. & A13 & 200\% & $\star$ \\
+        0fmc81KXbB0\_0 & Truncation & A13 & 69\% & --- \\
+        EMfcKvHA5Uc\_0 & Entity Destruct. & A13 & 100\% & $\star$ \\
+        2JuBrr6TW8o\_14 & Phonetic Wrong & A13 & 100\% & --- \\
+        ZnoJxsXKULY\_0 & High Error Rate & A13 & 100\% & --- \\
+        49qxSMt4Xe0\_0 & Accum.\ Errors & A13 & 68\% & --- \\
+        xITCbZxwLn4\_0 & Content Errors & A13 & 60\% & --- \\
+        KcDqXon7I3c\_0 & Over-generation & A13 & 100\% & --- \\
+        \midrule
+        \multicolumn{5}{@{}l}{\scriptsize\textbf{Metric Mismatch (A14b)}} \\
+        10xhJGx6-kc\_0 & WER$\gg$WWER & A14b & 71\% & --- \\
+        -WqvFSuRYo0\_12 & WWER$\gg$WER & A14b & 27\% & --- \\
+        1whXJLCrTjY\_0 & Hi Sem+Hi WER & A14b & 67\% & --- \\
+        ZB21bsGO0KA\_7 & Lo Sem+Lo WER & A14b & 40\% & --- \\
+        2T-C7vQJBis\_0 & Hi NEA+WWER & A14b & 42\% & --- \\
+        0PQonSiGkVE\_0 & LR$>$1.5+WER & A14b & 140\% & --- \\
+      \end{tabular}}
+    \end{column}
+  \end{columns}
+
+  \vspace{2pt}
+  \notetext{All 1,497 burned videos available at \texttt{english\_full\_results/client\_outputs/burned\_videos/}.
+  $\star$ segments embedded on Slides 14b/A11b. Gallery segments viewable from burned\_videos directory.}
+
+  \note{
+    Q\&A video lookup reference. 34 unique segments used across all example slides.
+    12 videos embedded directly in the presentation (marked with star).
+    Remaining 22 available in the burned\_videos output directory.
+    All segment IDs map to files: \{segment\_id\}\_with\_hyp.mp4.
   }
 \end{frame}
