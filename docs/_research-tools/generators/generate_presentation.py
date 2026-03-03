@@ -38,6 +38,7 @@ OUTPUT = MATERIALS / "Argos_VSP_Project_Review.pptx"
 IMG = {
     "logo": BRANDING / "BlackLogo300x300-W-BG.png",
     "pipeline": PLOTS / "pipeline_architecture.png",
+    "model_arch": PLOTS / "model_architecture.png",
     "P1_quality": PLOTS / "P1_quality_tiers.png",
     "P2_paper": PLOTS / "P2_paper_vs_reality.png",
     "P3_trajectory": PLOTS / "P3_wer_trajectory.png",
@@ -834,8 +835,8 @@ def slide_03(prs):
     add_title(slide, "How It Works: Three Components")
     add_accent_line(slide)
 
-    # Pipeline architecture image — height-constrained to avoid covering blocks below
-    img = add_image(slide, "pipeline", MX, CT, width=CW, height=Inches(3.6))
+    # Model architecture diagram (AV-HuBERT → Projection → LLaMA-2-7B flow)
+    img = add_image(slide, "model_arch", MX, CT, width=CW, height=Inches(3.6))
 
     # Three component blocks
     bw = Inches(3.5)

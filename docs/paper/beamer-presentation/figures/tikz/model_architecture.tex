@@ -1,47 +1,90 @@
-% TikZ model architecture diagram: Video → AV-HuBERT → Projection → LLaMA-2
+% Model architecture diagram: Video Frames → AV-HuBERT → Projection → LLaMA-2-7B → Text
+% Redesigned for clarity: distinct shapes, white text on color, visible badges
 \begin{tikzpicture}[
-  box/.style={
-    draw=#1, fill=#1!8, thick, rounded corners=3pt,
-    minimum height=1.4cm, minimum width=2.8cm,
-    text=ArgosNavy, font=\small\bfseries, align=center
+  % ── Data nodes (input/output) ────────────────────────────────────────
+  data/.style={
+    draw=ArgosGray, fill=ArgosGray!15, line width=1pt,
+    rounded corners=3pt,
+    minimum height=1.1cm, minimum width=1.7cm,
+    align=center, inner sep=5pt, text=ArgosNavy,
+    font=\small\bfseries
   },
-  arrow/.style={-{Stealth[length=3mm]}, thick, ArgosGray},
-  label/.style={font=\tiny, ArgosGray, align=center},
-  node distance=1.2cm
+  % ── Processing component boxes ────────────────────────────────────────
+  frozen/.style={
+    draw=ArgosTeal, fill=ArgosTeal, line width=1.2pt,
+    rounded corners=6pt,
+    minimum height=1.4cm, minimum width=2.6cm,
+    align=center, inner sep=6pt, text=white,
+    font=\small\bfseries
+  },
+  bridge/.style={
+    draw=ArgosGray!60, fill=ArgosGray!20, line width=1pt,
+    rounded corners=4pt,
+    minimum height=1.0cm, minimum width=1.4cm,
+    align=center, inner sep=4pt, text=ArgosNavy,
+    font=\scriptsize\bfseries
+  },
+  llm/.style={
+    draw=ArgosDarkBlue, fill=ArgosDarkBlue, line width=1.2pt,
+    rounded corners=6pt,
+    minimum height=1.4cm, minimum width=2.6cm,
+    align=center, inner sep=6pt, text=white,
+    font=\small\bfseries
+  },
+  % ── Status pill badge ────────────────────────────────────────────────
+  pill/.style={
+    rounded corners=3pt, inner sep=2.5pt,
+    font=\tiny\bfseries, text=white, fill=#1
+  },
+  % ── Dimension annotation ─────────────────────────────────────────────
+  dim/.style={font=\tiny, ArgosGray, align=center},
+  % ── Arrow ────────────────────────────────────────────────────────────
+  arr/.style={-{Stealth[length=3mm,width=2mm]}, line width=1pt, ArgosGray},
+  node distance=0.55cm
 ]
 
-  % Input
-  \node[box=ArgosGray] (input) {Video\\Frames};
+% ── Nodes ────────────────────────────────────────────────────────────
 
-  % AV-HuBERT
-  \node[box=ArgosTeal, right=of input] (hubert) {AV-HuBERT\\{\tiny Visual Encoder}};
+\node[data] (input) {Video\\Frames};
 
-  % Projection
-  \node[box=ArgosOrange, right=of hubert] (proj) {Linear\\{\tiny Projection}};
+\node[frozen, right=0.6cm of input] (hubert)
+  {AV-HuBERT\\[2pt]{\scriptsize Visual Encoder}};
 
-  % LLaMA
-  \node[box=ArgosDarkBlue, right=of proj] (llama) {LLaMA-2-7B\\{\tiny Language Model}};
+\node[bridge, right=0.5cm of hubert] (proj)
+  {Linear\\Proj.};
 
-  % Output
-  \node[box=ArgosGreen, right=of llama] (output) {Text\\Output};
+\node[llm, right=0.5cm of proj] (llama)
+  {LLaMA-2-7B\\[2pt]{\scriptsize Language Model}};
 
-  % Arrows
-  \draw[arrow] (input) -- (hubert);
-  \draw[arrow] (hubert) -- (proj);
-  \draw[arrow] (proj) -- (llama);
-  \draw[arrow] (llama) -- (output);
+\node[data, right=0.6cm of llama] (output) {Text\\Output};
 
-  % Dimension labels
-  \node[label, above=0.15cm of hubert] {1024-dim};
-  \node[label, above=0.15cm of proj] {1024$\rightarrow$4096};
-  \node[label, above=0.15cm of llama] {4096-dim};
+% ── Arrows ───────────────────────────────────────────────────────────
 
-  % Status badges
-  \node[font=\tiny, fill=ArgosLightGray, rounded corners=1pt, inner sep=1.5pt,
-        below=0.15cm of hubert] {\textcolor{ArgosGray}{Frozen}};
-  \node[font=\tiny, fill=ArgosOrange!15, rounded corners=1pt, inner sep=1.5pt,
-        below=0.15cm of proj] {\textcolor{ArgosOrange}{Trained}};
-  \node[font=\tiny, fill=ArgosDarkBlue!10, rounded corners=1pt, inner sep=1.5pt,
-        below=0.15cm of llama] {\textcolor{ArgosDarkBlue}{QLoRA r=16}};
+\draw[arr] (input.east)  -- (hubert.west);
+\draw[arr] (hubert.east) -- (proj.west);
+\draw[arr] (proj.east)   -- (llama.west);
+\draw[arr] (llama.east)  -- (output.west);
+
+% ── Dimension labels (above arrows) ──────────────────────────────────
+
+\node[dim] at ($(hubert.east)!0.5!(proj.west)+(0,0.52)$)
+  {1024-dim};
+\node[dim] at ($(proj.east)!0.5!(llama.west)+(0,0.52)$)
+  {1024{\scriptsize$\to$}4096};
+\node[dim] at ($(llama.east)!0.5!(output.west)+(0,0.52)$)
+  {4096-dim};
+
+% ── Status badges (below each component) ─────────────────────────────
+
+\node[pill=ArgosGray!70, below=3pt of hubert]
+  {\faIcon{lock}~Frozen};
+
+\node[pill=ArgosOrange, below=3pt of proj]
+  {Trained};
+
+\node[pill=ArgosGray!70, below=3pt of llama]
+  {\faIcon{lock}~Frozen};
+\node[pill=ArgosDarkBlue!80, below=14pt of llama]
+  {QLoRA r=16};
 
 \end{tikzpicture}

@@ -8,8 +8,13 @@
 % Slide 17: Pipeline Architecture
 % ----------------------------------------------------------
 \begin{frame}{Pipeline Architecture --- 8 Stages}
-  \fullwidthfig{pipeline_architecture.png}
-                {Modular pipeline: Normalize $\rightarrow$ ASR $\rightarrow$ LRS3 $\rightarrow$ Manifests $\rightarrow$ Clustering $\rightarrow$ Decode $\rightarrow$ Reports $\rightarrow$ Burns}
+  \begin{center}
+    \resizebox{0.96\textwidth}{!}{%
+      \input{figures/tikz/pipeline_architecture.tex}%
+    }
+  \end{center}
+  \vspace{-4pt}
+  \notetext{Modular pipeline: 11 modules under \texttt{lib/}, environment-aware (EC2/container), 37 tests}
 
   \note{
     8-stage pipeline, 11 modules under lib/.
