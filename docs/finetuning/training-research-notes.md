@@ -326,7 +326,68 @@ The optimal checkpoint was at epoch 2 (320 updates). This means:
 
 ---
 
-## 9. Next Steps for Mission 9
+## 9. Evaluation Sweep & Claude-as-Judge Results (March 3, 2026)
+
+### 9.1 Full Hyperparameter Sweep (18 Evals)
+
+Evaluated all 3 experiments (Baseline, Exp A r=16, Exp B r=64) across 6 decode configs on 224 val segments:
+
+| Config | Baseline | Exp A (r=16) | Exp B (r=64) |
+|--------|:---:|:---:|:---:|
+| default (beam=20, lenpen=0) | **2.487** | 2.312 | 2.023 |
+| lenpen1 (beam=20, lenpen=1) | 2.568 | **2.575** | 2.427 |
+| beam5 (beam=5, lenpen=0) | **2.551** | 2.481 | 2.400 |
+| greedy (beam=1) | **2.498** | 2.458 | 2.399 |
+| sample_low (temp=0.3) | **2.587** | 2.465 | 2.435 |
+| sample_med (temp=0.7) | **2.559** | 2.490 | 2.426 |
+
+**Key findings**:
+- Baseline wins 5/6 configs; Exp A ties/wins only on lenpen1 (2.575 vs 2.568)
+- Exp B (r=64) loses every config — overfitting hurts across all decode strategies
+- lenpen=1 and sample_low=0.3 boost all experiments slightly — these help regardless of model
+- The best single config is Baseline + sample_low (IS 2.587)
+
+### 9.2 Claude-as-Judge Evaluation
+
+Claude Opus 4.6 evaluated all 224 val segments per experiment using the same Y/P/N protocol as the baseline 1,497-segment study. Empty/trivially short outputs auto-classified as N.
+
+| Experiment | Total | Y | P | N | Y% | P% | N% | Y+P% | Auto-N |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Baseline | 224 | 40 | 76 | 108 | 17.9 | 33.9 | 48.2 | 51.8 | 16 |
+| Exp A (r=16) | 224 | 41 | 74 | 109 | 18.3 | 33.0 | 48.7 | 51.3 | 28 |
+| Exp B (r=64) | 224 | 32 | 88 | 104 | 14.3 | 39.3 | 46.4 | 53.6 | 60 |
+
+**Agreement between experiments** (same 224 segments):
+
+| Pair | Exact | Lenient (Y+P vs N) |
+|------|:---:|:---:|
+| Baseline vs Exp A | 80.8% | 87.9% |
+| Baseline vs Exp B | 69.6% | 78.6% |
+| Exp A vs Exp B | 71.0% | 79.9% |
+
+**Transition analysis** (Baseline → Exp B):
+- 25 segments improved N→P (11.2%) — overfitting produces *something* where baseline was blank
+- 19 degraded P→N (8.5%) and 13 degraded Y→P (5.8%)
+- Net movement: -2 (essentially no change)
+
+**The auto-N count is the clearest overfitting signal**: Baseline=16 (7.1%), Exp A=28 (12.5%), Exp B=60 (26.8%). More LoRA parameters → more training memorization → more segments where the model outputs nothing or gibberish.
+
+### 9.3 IS vs LLM Judge Comparison
+
+IS scores decrease monotonically (Baseline 2.487 > Exp A 2.312 > Exp B 2.023), but LLM Y+P% is flat (~51-54%). The discrepancy exists because:
+1. IS heavily penalizes empty outputs (IS=0) which drag down the mean
+2. The LLM judge confirms that when text IS produced, fine-tuned models are about as useful as baseline
+3. Exp B's higher P% (39.3% vs 33.9%) at the cost of lower Y% (14.3% vs 17.9%) reflects a shift toward "fluent-sounding but slightly wrong" outputs — characteristic of an overfitted decoder that produces plausible text without grounding
+
+### 9.4 Conclusion
+
+Both IS and Claude-as-Judge converge on the same conclusion: **fine-tuning on 1,273 segments produced no meaningful improvement**. The Baseline (paper checkpoint) remains the recommended model. Future work should focus on expanding the training dataset (Priority 1 in Section 8) before attempting further fine-tuning.
+
+Full comparison report: `docs/finetuning/llm_judge/finetune_llm_judge_comparison.md`
+
+---
+
+## 10. Next Steps for Mission 9
 
 ### Phase 1: Data Expansion (No New Training Required)
 - [ ] Download 5,000-10,000 additional AVSpeech segments
