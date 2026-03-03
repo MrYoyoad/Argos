@@ -258,14 +258,16 @@ All 1,497 pairs were re-evaluated in context-aware mode. The judgment instructio
 
 ### 11.2 Key Finding: Context Mode Is Stricter, Not More Lenient
 
-| Judgment | Blind (1,497) | Context (1,456 batch) | Delta |
-|----------|---------------|----------------------|-------|
-| **Y (full success)** | 345 (23.0%) | 229 (15.7%) | **−7.3pp** |
-| **P (partial)** | 626 (41.8%) | 720 (49.5%) | **+7.7pp** |
-| **N (failure)** | 526 (35.1%) | 507 (34.8%) | −0.3pp |
-| **Y+P** | 971 (64.9%) | 949 (65.2%) | **+0.3pp** |
+| Judgment | Blind (1,497) | Context (1,497) | Delta |
+|----------|---------------|-----------------|-------|
+| **Y (full success)** | 345 (23.0%) | 225 (15.0%) | **−8.0pp** |
+| **P (partial)** | 626 (41.8%) | 705 (47.1%) | **+5.3pp** |
+| **N (failure)** | 526 (35.1%) | 567 (37.9%) | +2.8pp |
+| **Y+P** | 971 (64.9%) | 930 (62.1%) | **−2.7pp** |
 
-Context awareness made the judge **more conservative** — applying domain knowledge raised the bar for what counts as "full success". A hypothesis that seemed adequate without domain context often revealed vocabulary mismatches when the judge knew the subject. Critically, **Y+P is unchanged (+0.3pp)**: context redistributes Y into P but does not alter how many segments are useful overall.
+Context awareness made the judge **more conservative** — applying domain knowledge raised the bar for what counts as "full success". A hypothesis that seemed adequate without domain context often revealed vocabulary mismatches when the judge knew the subject.
+
+**Net transitions:** 230 downgrades vs 68 upgrades → net −162 (−10.8%). 80.1% of pairs received the same judgment in both conditions.
 
 ### 11.3 Transition Matrix
 
@@ -310,4 +312,4 @@ The 30 duplicate pairs yielded **80.0% cross-condition agreement** (blind vs con
 
 3. **Context does not rescue complete failures.** Only 1 N→Y transition occurred across 1,497 pairs. Segments with total topic drift or hallucination are not recoverable by contextual reasoning alone.
 
-4. **Effective capture rate revision:** Using blind as the primary standard (conservative, domain-agnostic), the gold standard capture rates remain Y=23.0%, Y+P=64.9%. Context-aware figures (Y=15.7%, Y+P=65.2%) represent a more stringent domain-expert benchmark — stricter on full success, essentially identical overall pass rate. Both are valid reference points for different use cases.
+4. **Effective capture rate revision:** Using blind as the primary standard (conservative, domain-agnostic), the gold standard capture rates remain Y=23.0%, Y+P=64.9%. Context-aware figures (Y=15.0%, Y+P=62.1%) represent a more stringent domain-expert benchmark. Both are valid reference points for different use cases.

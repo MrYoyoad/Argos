@@ -22,70 +22,84 @@ All 1,497 hypothesis-reference pairs from the baseline VSP-LLM evaluation were r
 
 ## Final Results
 
-### Distribution (1,456 batch entries including 30 duplicates)
+### De-duplicated Distribution (1,497 unique pairs)
 
 | Judgment | Count | Rate |
 |----------|-------|------|
-| **Y (full success)** | 229 | 15.7% |
-| **P (partial)** | 720 | 49.5% |
-| **N (failure — LLM-judged)** | 507 | 34.8% |
-| **N (auto — empty hypothesis)** | 71 | — |
+| **Y (full success)** | 225 | 15.0% |
+| **P (partial)** | 705 | 47.1% |
+| **N (failure)** | 567 | 37.9% |
 
 ### Comparison vs Blind Evaluation
 
-| Judgment | Blind (1,497) | Context (1,456 batch) | Delta |
-|----------|---------------|----------------------|-------|
-| **Y** | 345 (23.0%) | 229 (15.7%) | **−7.3pp** |
-| **P** | 626 (41.8%) | 720 (49.5%) | **+7.7pp** |
-| **N** | 526 (35.1%) | 507 (34.8%) | −0.3pp |
-| **Y+P** | 971 (64.9%) | 949 (65.2%) | **+0.3pp** |
+| Judgment | Blind (1,497) | Context (1,497) | Delta |
+|----------|---------------|-----------------|-------|
+| **Y** | 345 (23.0%) | 225 (15.0%) | **−8.0pp** |
+| **P** | 626 (41.8%) | 705 (47.1%) | **+5.3pp** |
+| **N** | 526 (35.1%) | 567 (37.9%) | +2.8pp |
+| **Y+P** | 971 (64.9%) | 930 (62.1%) | **−2.7pp** |
 
-**Key finding: the overall pass rate (Y+P) is unchanged at ~65%.** Context awareness does not change how many segments are useful — it only raises the bar for "full success", shifting 7pp from Y into P.
+**Key finding:** Context awareness makes the judge **stricter overall** — Y+P drops by 2.7pp (from 64.9% to 62.1%). The dominant shift is Y→P (−8pp Y, +5.3pp P): domain knowledge reveals vocabulary mismatches in segments that appeared adequate without context. N also increases slightly (+2.8pp) as some previously-partial segments are revealed to be more fundamentally wrong.
 
 ---
 
-## Main Findings
+## Transition Matrix (Blind → Context)
 
-### 1. Context Is Stricter, Not More Lenient
+| Blind→Context | →Y | →P | →N |
+|---|---|---|---|
+| **Y** | 207 | **138** | 0 |
+| **P** | 17 | 517 | **92** |
+| **N** | 1 | 50 | 475 |
 
-Adding topic/domain context made the judge more conservative about "full success". A hypothesis that looked adequate in a blind comparison often revealed vocabulary mismatches when evaluated against the inferred domain. This is the dominant effect: **Y→P downgrades (estimated ~138 transitions)** vastly outnumber Y→N.
+- **230 downgrades** vs **68 upgrades** → net −162 (−10.8%)
+- **80.1% stable** (1,199 pairs received same judgment)
+- Dominant transition: **Y→P (138 cases)** — hypothesis seemed complete without domain context, but domain knowledge revealed vocabulary failures
+- **P→N (92 cases)** — partial successes revealed to be deeper failures under domain scrutiny
+- **N→Y: 1 case only** — context essentially never rescues complete failures
 
-The aggregate capture rate (Y+P) is unchanged: 64.9% blind vs 65.2% context. Context mode is a **quality discriminator**, not a rescue mechanism.
+---
 
-### 2. N Is Stable
+## Per-Topic Analysis
 
-N rate barely moves (35.1% → 34.8%). Context provides little additional information for segments that already failed — genuinely bad transcriptions are already identifiable without domain knowledge.
+| Topic | n | Blind Y+P | Context Y+P | Delta |
+|-------|---|-----------|-------------|-------|
+| Sports/Fitness | 31 | 74.2% | 77.4% | **+3.2pp** |
+| DIY/Home | 27 | 48.1% | 55.6% | **+7.4pp** |
+| Religion/Spirituality | 17 | 52.9% | 58.8% | **+5.9pp** |
+| Politics/News | 34 | 73.5% | 76.5% | +2.9pp |
+| Business/Finance | 46 | 76.1% | 76.1% | 0.0pp |
+| Technology | 132 | 72.0% | 68.9% | −3.0pp |
+| Cooking/Food | 117 | 70.1% | 65.0% | −5.1pp |
+| Education/Academic | 86 | 76.7% | 72.1% | −4.7pp |
+| Medical/Health | 39 | 66.7% | 61.5% | −5.1pp |
+| Entertainment | 69 | 60.9% | 56.5% | −4.3pp |
+| Other | 899 | 61.7% | 58.7% | −3.0pp |
 
-### 3. Per-Topic Patterns
+DIY/Home (+7.4pp), Religion/Spirituality (+5.9pp), and Sports/Fitness (+3.2pp) benefit from context — these are domains where knowing the topic helps accept phonetically-approximate but topically-valid hypotheses. Technology, Cooking, Medical, and Education show declines because domain knowledge raises terminology expectations.
 
-Some domains benefit from context (context helps accept phonetically-approximate but topically-valid hypotheses):
+---
 
-| Topic | Blind Y+P | Context Y+P | Delta |
-|-------|-----------|-------------|-------|
-| DIY/Home | 48% | ~56% | +8pp |
-| Religion/Spirituality | 53% | ~59% | +6pp |
-| Sports/Fitness | 74% | ~77% | +3pp |
-| Politics/News | 74% | 76% | +2pp |
-| Business/Finance | 76% | 76% | 0pp |
-| Technology | 72% | ~69% | −3pp |
-| Cooking/Food | 70% | ~65% | −5pp |
-| Education/Academic | 77% | ~72% | −5pp |
+## Cross-Condition Reliability
 
-Note: per-topic context deltas are estimated from the preliminary batch analysis. DIY/Home (+8pp) benefits most — a visually-grounded domain where approximate vocabulary can still convey meaning if the topic is known. Technology and Education decline slightly — domain knowledge raises terminology expectations.
+The 30 duplicate pairs yielded **80.0% cross-condition agreement** between blind and context evaluations of the same pair. This is below the blind intra-rater rate of 86.7%, confirming that context-aware evaluation applies a meaningfully different (stricter) standard. The 6.7pp gap reflects genuine mode effect, not noise.
 
-### 4. Cross-Condition Reliability
+---
 
-The 30 duplicate pairs yielded **80.0% cross-condition agreement** between blind and context evaluations of the same pair. This is slightly below the blind intra-rater rate of 86.7%, confirming that context-aware evaluation applies a meaningfully different standard. The 6.7pp gap reflects genuine mode effect, not noise.
+## Hallucination Detection
+
+Hallucinated segments (WER ≥ 100%) were already caught at a very high blind rate (91.9% N). Context improved this only marginally: **4 additional hallucinations caught** that blind evaluation missed. Total hallucinated N-rate in context mode: 89.3%.
 
 ---
 
 ## Implications
 
-**For gold standard calibration:** The blind evaluation remains the primary benchmark (conservative, domain-agnostic, consistent). The context-aware figures (Y=15.7%, Y+P=65.2%) represent a stricter domain-expert standard and are more appropriate when evaluating whether a system would satisfy a subject-matter expert viewer.
+1. **Context-aware evaluation is a quality tool, not a rescue tool.** It reveals hidden vocabulary failures in segments that appear adequate at first glance. The primary effect is downgrading shallow "close enough" blind Y calls to P — making the gold standard stricter.
 
-**For system improvement:** Context injection at decode time is most likely to help DIY/Home, Sports, and Religious content — the three domains where topic knowledge improved the pass rate. These are also the domains where the deterministic `llm_context_prob` heuristic (the 15-rule decision tree) already struggles because visual grounding is harder to detect from text alone.
+2. **Domain-visual content benefits most.** DIY/Home (+7.4pp), Religion/Spirituality (+5.9pp), and Sports/Fitness (+3.2pp) show improved Y+P rates, suggesting that when topic knowledge lets the judge correctly accept phonetically-approximate but semantically-adequate hypotheses, it helps.
 
-**Context does not rescue failures.** Only ~1 N→Y transition occurred across the full evaluation. Segments that completely failed in blind mode remain failures with context.
+3. **Context does not rescue complete failures.** Only 1 N→Y transition occurred across 1,497 pairs. Segments with total topic drift or hallucination are not recoverable by contextual reasoning alone.
+
+4. **Effective capture rate revision:** Using blind as the primary standard (conservative, domain-agnostic), the gold standard capture rates remain Y=23.0%, Y+P=64.9%. Context-aware figures (Y=15.0%, Y+P=62.1%) represent a more stringent domain-expert benchmark. Both are valid reference points for different use cases.
 
 ---
 
