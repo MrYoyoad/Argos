@@ -83,15 +83,15 @@
         \item \keyword{3.5$\times$} more than WER's 11.4\%
         \item 6 deterministic signals:\\
               {\scriptsize Semantic, Phonetic, WER, WWER, NEA, Length}
-        \item \textbf{Claude-as-a-Judge} design:\\
-              {\scriptsize LLM expert judgment distilled into\\
-              deterministic, reproducible metrics}
+        \item \textbf{Claude-distilled} design:\\
+              {\scriptsize Claude designed the rubric at design time;\\
+              no LLM called per sample at runtime}
       \end{itemize}
 
       \vspace{2pt}
 
       \begin{block}{\scriptsize Cross-Config Validation (16 configs)}
-        {\scriptsize Claude judge: \keyword{r = 0.925}, $\kappa$ = 0.77\\
+        {\scriptsize Claude-designed heuristic: \keyword{r = 0.925}, $\kappa$ = 0.77\\
         Recall: 97.6--100\% across configs\\
         Stable: Semantic, Phonetic, NEA}
       \end{block}
@@ -104,9 +104,10 @@
   \note{
     THIS IS THE MAIN RESEARCH CONTRIBUTION.
     IS reveals 39.9\% properly captured vs 11.4\% by WER --- 3.5x more.
-    Claude (Anthropic) used as an LLM judge: designed the rubric, selected signal weights,
-    defined tier boundaries. Then distilled into deterministic, reproducible metrics ---
-    no LLM call needed at inference time. Free, decomposable, stable.
+    Claude (Anthropic) used as the evaluation designer (at design time only): designed the
+    rubric, selected signal weights, defined tier boundaries. Then distilled into
+    deterministic, reproducible code --- NO LLM is called per sample at evaluation time.
+    The IS pipeline is pure Python math. Free, decomposable, stable.
     Cross-config: r=0.925 across 16 decode configurations, recall 97.6--100\%.
     Phonetic preservation is \#1 IS correlate (r=0.943).
     See A11 for LLM Salvage analysis (165 recoverable segments raise effective capture to 50.9\%).
@@ -139,9 +140,9 @@
       \end{block}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{block}{\small Claude-as-a-Judge Methodology}
+      \begin{block}{\small Claude-Distilled Evaluation}
         {\scriptsize
-        \textbf{Design time:} Claude (Anthropic) acted as\\
+        \textbf{Design time (one-off):} Claude (Anthropic) acted as\\
         expert judge to design the IS framework:\\[2pt]
         \begin{itemize}\scriptsize
           \item Selected 6 linguistic signals

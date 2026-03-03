@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-Traditional metrics (WER, WWER, IS) classify 900 of 1,497 segments as failures (IS < 3.0). However, Claude's LLM-calibrated heuristic identifies **165 of these 900 segments** as having recoverable meaning — cases where a viewer with domain context would understand the lip-reading output despite high word error rates.
+Traditional metrics (WER, WWER, IS) classify 900 of 1,497 segments as failures (IS < 3.0). However, the `llm_context_prob` heuristic — a deterministic 15-rule decision tree designed by Claude at design time (no LLM API calls at runtime) — identifies **165 of these 900 segments** as having recoverable meaning. These are cases where a viewer with domain context would understand the lip-reading output despite high word error rates.
 
 This represents an **18.3% recovery rate** among segments that metrics mark as failed. If we include these, the effective intelligibility rate rises from 39.9% to **50.9%** of all segments.
 
@@ -17,7 +17,7 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | Total segments | 1497 | 100% |
 | IS >= 3.0 (metrics say captured) | 597 | 39.9% |
 | IS < 3.0 (metrics say failed) | 900 | 60.1% |
-| LLM prob >= 0.5 (Claude says recoverable) | 757 | 50.6% |
+| LLM prob >= 0.5 (Claude-designed heuristic says recoverable) | 757 | 50.6% |
 | **Divergent: LLM salvages from IS failures** | **165** | **18.3% of failures** |
 | **Effective capture rate (IS + LLM salvage)** | **762** | **50.9%** |
 

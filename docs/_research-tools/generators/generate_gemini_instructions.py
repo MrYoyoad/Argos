@@ -437,7 +437,7 @@ Six signal blocks in a row (colored blocks with labels):
   Semantic Sim (25%) | Phonetic Sim (15%) | Inv. WER (15%) | Inv. WWER (15%) | NEA F1 (15%) | Length Ratio (15%)
 Key callout in teal: "IS >= 3.0 = Properly Captured: 39.9% \u2014 3.5x more than WER\u2019s 11.4%"
 Five tier bars: 18.4% Excellent | 21.4% Good | 21.7% Fair | 22.4% Poor | 16.0% Failed
-SPEAKER NOTES: "The Intelligibility Score combines 6 signals into a 0-5 composite. Key insight: 39.9% of segments are properly captured (IS >= 3.0) \u2014 3.5x more than WER\u2019s 11.4% \u2018usable.\u2019 WER dramatically overstates failure. Methodology: LLM-distilled evaluation \u2014 Claude designed the rubric, selected signals and weights, defined tier boundaries. This is \u2018what an expert would score\u2019 made deterministic and free. Validated across 16 decode configs: LLM heuristic judge r=0.925 with IS, 88.6% agreement. Phonetic Similarity is the #1 correlate (r=0.943). Six signals collapse into 3 independent dimensions: word accuracy (~60%), meaning preservation (~28%), output sanity (~9%). [ANIMATION: Six signal blocks build one at a time. Tier bars appear below. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "The Intelligibility Score combines 6 signals into a 0-5 composite. Key insight: 39.9% of segments are properly captured (IS >= 3.0) \u2014 3.5x more than WER\u2019s 11.4% \u2018usable.\u2019 WER dramatically overstates failure. Methodology: LLM-distilled evaluation \u2014 Claude designed the rubric, selected signals and weights, defined tier boundaries. This is \u2018what an expert would score\u2019 made deterministic and free. Validated across 16 decode configs: Claude-designed heuristic (deterministic, no runtime LLM calls) r=0.925 with IS, 88.6% agreement. Phonetic Similarity is the #1 correlate (r=0.943). Six signals collapse into 3 independent dimensions: word accuracy (~60%), meaning preservation (~28%), output sanity (~9%). [ANIMATION: Six signal blocks build one at a time. Tier bars appear below. Transition: Fade 0.5s.]"
 
 ---
 
@@ -649,7 +649,7 @@ Left list:
   \u2022 Failure mode classification (10 modes)
   \u2022 Topic/length analysis (11 categories)
   \u2022 Fine-tuning diagnostics (10 training plots)
-SPEAKER NOTES: "Evaluation infrastructure goes far beyond standard WER. 16 plots auto-generated per experiment. Interactive HTML reports. Custom Named Entity Accuracy metric. The full Intelligibility Score pipeline with 6 signals, validated across 16 decode configs (LLM judge r=0.925). Automated failure mode classification into 10 categories. Topic and segment length analysis across 11 content categories. Plus 10 fine-tuning diagnostic plots for training analysis. The CDF chart shows actionable quality thresholds. [ANIMATION: List items build one at a time. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "Evaluation infrastructure goes far beyond standard WER. 16 plots auto-generated per experiment. Interactive HTML reports. Custom Named Entity Accuracy metric. The full Intelligibility Score pipeline with 6 signals, validated across 16 decode configs (Claude-designed heuristic r=0.925 (no runtime LLM calls)). Automated failure mode classification into 10 categories. Topic and segment length analysis across 11 content categories. Plus 10 fine-tuning diagnostic plots for training analysis. The CDF chart shows actionable quality thresholds. [ANIMATION: List items build one at a time. Transition: Fade 0.5s.]"
 
 ---
 
@@ -683,9 +683,9 @@ RIGHT column (teal/green tint): "IS Says"
   \u2022 39.9% properly captured
   \u2022 43-51% context-recoverable
   \u2022 Validated across 16 decode configs
-  \u2022 LLM judge: 88.6% agreement, r=0.925
+  \u2022 Claude-designed heuristic (no runtime LLM): 88.6% agreement, r=0.925
 Bottom: "The gap is real \u2014 but WER dramatically overstates failure. 40% already works."
-SPEAKER NOTES: "This is the turning point. WER says 11.4% usable. Our Intelligibility Score says 39.9% properly captured \u2014 3.5x more. And 43-51% is context-recoverable. This isn\u2019t wishful thinking: IS is validated across all 16 decode configs (LLM judge r=0.925, 88.6% agreement, recall 99.2%). Config J has the highest IS (2.571) despite +14.8pp higher WER than baseline \u2014 IS captures meaning that WER misses. We know WHY it works: 41.5% of successes are phonetically preserved (r=0.943 with IS). Per-segment rankings stable across configs (r > 0.92) \u2014 the bottleneck is the encoder, not decode. [ANIMATION: Left (red) column appears, then right (green) column. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "This is the turning point. WER says 11.4% usable. Our Intelligibility Score says 39.9% properly captured \u2014 3.5x more. And 43-51% is context-recoverable. This isn\u2019t wishful thinking: IS is validated across all 16 decode configs (Claude-designed heuristic r=0.925 (no runtime LLM calls), 88.6% agreement, recall 99.2%). Config J has the highest IS (2.571) despite +14.8pp higher WER than baseline \u2014 IS captures meaning that WER misses. We know WHY it works: 41.5% of successes are phonetically preserved (r=0.943 with IS). Per-segment rankings stable across configs (r > 0.92) \u2014 the bottleneck is the encoder, not decode. [ANIMATION: Left (red) column appears, then right (green) column. Transition: Fade 0.5s.]"
 
 ---
 
@@ -944,7 +944,7 @@ def build_overview(doc):
             ["Exp A: best val accuracy", "62.94% at epoch 2", "r=16, 320 updates"],
             ["Exp A: overfitting gap", "36.5 pp", "Train 95.5% vs val 59.0%"],
             ["IS: top correlate", "Phonetic Sim r=0.943", "Correlation analysis"],
-            ["IS: LLM judge (16 configs)", "r=0.925, 88.6% agreement", "Cross-config validation"],
+            ["IS: Claude-designed heuristic (16 configs)", "r=0.925, 88.6% agreement", "No runtime LLM calls"],
             ["LLM: current model", "Llama-2-7B (4-bit QLoRA)", "Hidden size 4096"],
             ["LLM: recommended swap", "Llama 3.1 8B (drop-in)", "1-2 hours setup"],
             ["Prompts: force multiplier", "Llama-2 +5-10pp / 3.1 +12-20pp", "7 strategies"],

@@ -115,7 +115,9 @@ Homophenes are words that look identical on a person's lips. A lip-reading syste
 
 ---
 
-## 4. Claude's Assessment Process
+## 4. Claude's Assessment Process (Design-Time Only)
+
+> **Clarification**: The 5-step process below describes how Claude (Anthropic) **designed** the evaluation rubric — not a per-sample runtime process. Claude analyzed real ref/hyp pairs during metric design to determine what signals matter and how to weight them. The resulting IS formula and `llm_context_prob` decision tree are **fully deterministic Python code with zero LLM API calls**. Evaluating all 1,497 segments takes seconds of local computation and costs $0.
 
 When acting as an "LLM judge" for each ref/hyp pair, the assessment follows five steps:
 

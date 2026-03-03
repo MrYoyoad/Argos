@@ -208,8 +208,8 @@ Curated example data for building comparison tables.
 | **Exp A: Training data** | **1,273 train / 224 val** | **Stratified by IS tier** |
 | **IS: top signal correlate** | **Phonetic Sim r=0.943** | **Correlation analysis** |
 | **IS: 3 independent dimensions** | **Word acc 60%, Meaning 28%, Sanity 9%** | **Variance decomposition** |
-| **IS: LLM judge (16 configs)** | **r=0.925 mean (std=0.015)** | **Cross-config validation** |
-| **IS: LLM judge agreement** | **88.6%, kappa=0.77, recall 99.2%** | **Baseline confusion matrix** |
+| **IS: Claude-designed heuristic (16 configs)** | **r=0.925 mean (std=0.015)** | **No runtime LLM calls** |
+| **IS: heuristic agreement** | **88.6%, kappa=0.77, recall 99.2%** | **Baseline confusion matrix** |
 | **IS: stable signals (16 configs)** | **Semantic, Phonetic, NEA (std<0.06)** | **WER/LR volatile** |
 | **IS: cross-config rankings** | **r > 0.92 across most config pairs** | **Encoder-limited, not decode** |
 | **IS: Config J vs baseline** | **IS 2.571 vs 2.485 despite +14.8pp WER** | **IS captures meaning WER misses** |

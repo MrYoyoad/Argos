@@ -115,7 +115,9 @@ Homophenes are words that look identical on a person's lips. A lip-reading syste
 
 ---
 
-## 4. Claude's Assessment Process
+## 4. Claude's Assessment Process (Design-Time Only)
+
+> **Clarification**: The 5-step process below describes how Claude (Anthropic) **designed** the evaluation rubric — not a per-sample runtime process. Claude analyzed real ref/hyp pairs during metric design to determine what signals matter and how to weight them. The resulting IS formula and `llm_context_prob` decision tree are **fully deterministic Python code with zero LLM API calls**. Evaluating all 1,497 segments takes seconds of local computation and costs $0.
 
 When acting as an "LLM judge" for each ref/hyp pair, the assessment follows five steps:
 
@@ -635,11 +637,11 @@ Semantic dominates variance (28.5%) due to its higher weight and substantial spr
 
 IS component correlations were validated across 16 decode configurations (13 tuning experiments + 3 full decodes). **Semantic (mean r=0.91), Phonetic (mean r=0.91), and NEA F1 (mean r=0.85) are stable across all configs** (std < 0.06). WER and WWER become unreliable when length penalty is applied (lenpen > 0 inflates WER without degrading IS). Length Ratio is the most volatile signal (sign flips across configs). Most configs produce near-identical per-segment IS rankings (r > 0.92), confirming the visual encoder — not decode parameters — is the performance bottleneck. See [is_correlation_analysis.md](is_correlation_analysis.md) Section 10 for full multi-config analysis.
 
-### Claude as LLM-as-a-Judge
+### Claude-Distilled Evaluation (Design-Time LLM, No Runtime LLM Calls)
 
-The entire IS framework — the 5-step assessment rubric (Section 4), the 6 signal weights, the tier boundaries, the failure/success classifications, and the `llm_context_prob` heuristic — was designed by Claude (Anthropic) acting as an expert LLM judge. This is a form of **LLM-distilled evaluation**: Claude's judgment was elicited at design time and encoded into deterministic, reproducible metrics rather than calling an LLM per sample at runtime. The `llm_context_prob` heuristic correlates at **r=0.934** (ρ=0.952) with IS on the baseline. Agreement with the IS ≥ 3.0 threshold: 88.6% (Cohen's κ = 0.773).
+The entire IS framework — the 5-step assessment rubric (Section 4), the 6 signal weights, the tier boundaries, the failure/success classifications, and the `llm_context_prob` heuristic — was designed by Claude (Anthropic) acting as an expert judge **at design time**. This is a form of **LLM-distilled evaluation**: Claude's judgment was elicited once during metric design and encoded into deterministic, reproducible code. **No LLM API is called when computing IS or `llm_context_prob` — the implementation is pure Python math** (`difflib.SequenceMatcher`, weighted sums, threshold comparisons in a 15-rule decision tree). Evaluating all 1,497 segments takes seconds of local computation and costs $0. The `llm_context_prob` heuristic correlates at **r=0.934** (ρ=0.952) with IS on the baseline. Agreement with the IS ≥ 3.0 threshold: 88.6% (Cohen's κ = 0.773).
 
-**Cross-config LLM judge stability** (16 decode configurations): The LLM judge correlation with IS is rock-solid — **mean r=0.925** (std=0.015, range 0.910–0.973). Correlation with Semantic Similarity is equally stable (mean r=0.891, std=0.020). Cohen's κ ranges from 0.62 to 0.86 across configs (mean ~0.72). Recall is near-perfect (97.6–100.0%) while precision varies more (65–82%). Config J achieves the best agreement at scale (κ=0.791). See [is_correlation_analysis.md](is_correlation_analysis.md) Sections 7.2a–7.2b for per-config tables and Section 8 for the full LLM-as-a-Judge analysis.
+**Cross-config heuristic stability** (16 decode configurations): The `llm_context_prob` decision tree correlation with IS is rock-solid — **mean r=0.925** (std=0.015, range 0.910–0.973). Correlation with Semantic Similarity is equally stable (mean r=0.891, std=0.020). Cohen's κ ranges from 0.62 to 0.86 across configs (mean ~0.72). Recall is near-perfect (97.6–100.0%) while precision varies more (65–82%). Config J achieves the best agreement at scale (κ=0.791). See [is_correlation_analysis.md](is_correlation_analysis.md) Sections 7.2a–7.2b for per-config tables and Section 8 for the full LLM-as-a-Judge analysis.
 
 ---
 

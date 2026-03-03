@@ -1317,7 +1317,7 @@ def slide_15(prs):
 
 def slide_16(prs):
     slide = new_slide(prs)
-    add_title(slide, "IS Validation: Claude-as-Judge Methodology")
+    add_title(slide, "IS Validation: Claude-Distilled Evaluation")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
@@ -1525,13 +1525,13 @@ def slide_21(prs):
         ("Smart Segmentation",
          "Configurable overlap for context preservation across segment "
          "boundaries.", LGRAY),
-        ("Claude-as-Judge",
+        ("Claude-Distilled IS",
          "IS = 0-5 composite of 6 signals (semantic, phonetic, WER, WWER, "
          "NEA, length ratio). Claude designed the rubric, weights, tiers, "
-         "and failure taxonomy — distilled into deterministic metrics. "
+         "and failure taxonomy at design time — distilled into deterministic "
+         "code (no LLM API calls at runtime). "
          "Validated: r=0.925 across 16 configs, 88.6% agreement. "
-         "6 signals collapse into 3 independent dimensions (PCA). "
-         "No LLM called per sample.", GREEN),
+         "6 signals collapse into 3 independent dimensions (PCA).", GREEN),
     ]
 
     cw = Inches(2.7)
@@ -1557,7 +1557,7 @@ def slide_21(prs):
     _finish(slide, 21,
         "Four intelligent features. Transcription reuse: manual corrections "
         "persist across runs. Golden k-means: consistent clustering baseline. "
-        "Smart segmentation: configurable overlap. Claude-as-Judge: the IS is "
+        "Smart segmentation: configurable overlap. Claude-Distilled IS: the IS is "
         "a 0-5 composite score combining 6 signals — semantic similarity (25%), "
         "phonetic similarity (15%), inverse WER (15%), inverse WWER (15%), "
         "Named Entity Accuracy F1 (15%), and length ratio (15%). Claude "
@@ -1650,7 +1650,7 @@ def slide_24(prs):
         ("50.9% with LLM salvage (165 recoverable segments)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
-        "LLM judge: 88.6% agreement, r=0.925",
+        "Claude-designed heuristic: 88.6% agreement, r=0.925 (no runtime LLM)",
     ], mx2 + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(1.2), size=Pt(13), bullet_color=TEAL)
 

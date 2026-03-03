@@ -605,7 +605,15 @@ def section_3_homophenes(doc):
 
 
 def section_4_assessment_process(doc):
-    add_heading(doc, "4. Claude\u2019s Assessment Process", 1)
+    add_heading(doc, "4. Claude\u2019s Assessment Process (Design-Time Only)", 1)
+
+    add_para(doc, (
+        "Clarification: The 5-step process below describes how Claude (Anthropic) "
+        "designed the evaluation rubric at design time \u2014 not a per-sample runtime "
+        "process. The resulting IS formula and llm_context_prob decision tree are "
+        "fully deterministic Python code with zero LLM API calls. Evaluating all "
+        "1,497 segments takes seconds of local computation and costs $0."
+    ))
 
     add_para(doc, (
         'When acting as an "LLM judge" for each ref/hyp pair, the assessment '

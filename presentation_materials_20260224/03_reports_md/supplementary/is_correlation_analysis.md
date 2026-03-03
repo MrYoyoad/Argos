@@ -181,9 +181,9 @@ The LLM heuristic correlates most strongly with IS itself (r=0.93) and with Sema
 | WWER | -0.728 | 0.178 | -0.915 | -0.287 | No |
 | Length Ratio | -0.023 | 0.333 | -0.560 | 0.814 | No |
 
-**Key finding:** The LLM judge's correlation with IS and with Semantic Similarity is **rock-solid** across all 16 configs (std < 0.02). WER and Length Ratio are the same volatile signals seen in the IS analysis (Section 10.2), confirming that these instabilities are properties of the signals themselves, not of the LLM heuristic.
+**Key finding:** The `llm_context_prob` heuristic's correlation with IS and with Semantic Similarity is **rock-solid** across all 16 configs (std < 0.02). WER and Length Ratio are the same volatile signals seen in the IS analysis (Section 10.2), confirming that these instabilities are properties of the signals themselves, not of the heuristic.
 
-### 7.2b LLM Judge Agreement (κ) — Cross-Configuration
+### 7.2b `llm_context_prob` Agreement (κ) — Cross-Configuration
 
 | Config | N | Agreement | Cohen's κ | Precision | Recall | F1 |
 |--------|---|-----------|----------|-----------|--------|-----|
