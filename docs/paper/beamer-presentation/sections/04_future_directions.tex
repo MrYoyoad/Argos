@@ -31,15 +31,12 @@
 
       \vspace{2pt}
 
-      \begin{block}{\small LLM Salvage Analysis}
-        \begin{itemize}\scriptsize
-          \item \keyword{165 segments} recoverable from IS failures
-          \item Claude heuristic finds meaning metrics miss
-          \item 6 recovery types: overlap, phonetic bridge, structure
-          \item Effective capture: \keyword{762/1497} (50.9\%)
-          \item Validated: r = 0.925 across 16 configs
-        \end{itemize}
-      \end{block}
+      \begin{exampleblock}{\small Summary}
+        {\scriptsize Half the output delivers useful information.\\
+        IS + expert heuristic proves it.\\[2pt]
+        See Slides 7c--7d for the full evaluation story\\
+        and A11/A11b for curated salvage examples.}
+      \end{exampleblock}
     \end{column}
   \end{columns}
 
@@ -48,7 +45,7 @@
     1. WER says 11.4\% usable (too pessimistic).
     2. IS says 39.9\% properly captured (3.5x more).
     3. LLM salvage analysis: 165 more segments recoverable = 50.9\% effective capture.
-    Claude heuristic (r=0.93 with IS) finds meaning in 18.3\% of ``failed'' segments.
+    Claude heuristic (r=0.934 with IS) finds meaning in 18.3\% of ``failed'' segments.
     Recovery types: good overlap, phonetic bridge, semantic preservation, structure match.
     ``Half the output works. IS + salvage proves it. The starting point is much better than WER says.''
   }

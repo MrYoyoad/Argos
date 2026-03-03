@@ -270,7 +270,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Directory | Contents |
 |-----------|----------|
-| `english_full_results/` | 1497 segments, WER 67.0%, WWER 59.5%, IS 2.52/5.0, full report suite |
+| `english_full_results/` | 1497 segments, WER 64.1%, WWER 61.9%, IS 2.52/5.0, full report suite |
 | `tuning_results/` | 13 decode parameter experiments (beam, lenpen, sampling, greedy) |
 
 ### Baseline Evaluation Results (February 2026)
@@ -279,9 +279,9 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| **Mean WER** | 67.0% | Segment-level; 2.5x worse than paper's 25.4% on LRS3 |
-| **Mean WWER** | 59.5% | Weighted WER — high-value tokens penalized 2x |
-| **Named Entity F1** | 38.8% | Entities missed in 85% of segments |
+| **Mean WER** | 64.1% | Segment-level; 2.5x worse than paper's 25.4% on LRS3 |
+| **Mean WWER** | 61.9% | Weighted WER — high-value tokens penalized 2x |
+| **Named Entity F1** | 38.9% | Entities missed in 85% of segments |
 | **Intelligibility Score** | 2.52/5.0 | Composite metric (semantic, phonetic, WER, WWER, NEA, length) |
 | **Properly Captured (IS ≥ 3)** | 597/1,497 (39.9%) | Only 4 in 10 segments convey intelligible meaning |
 | **Hallucinated (WER ≥ 100%)** | 307/1,497 (20.5%) | Fluent but fabricated text — most dangerous failure mode |
@@ -337,7 +337,7 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── vsp_input_tuning/      # Data: Tuning input (symlinks)
 ├── flat/                  # Data: Intermediate flat format
 ├── outputs/               # Data: Current pipeline outputs
-├── english_full_results/  # Results: Full dataset baseline (WER 67.0%)
+├── english_full_results/  # Results: Full dataset baseline (WER 64.1%)
 ├── tuning_results/        # Results: Decode parameter experiments
 │
 ├── face_alignment/        # Models: Face alignment (pipeline dependency)

@@ -48,6 +48,13 @@
     \vspace{6pt}
     \notetext{Context is the ONLY disambiguation signal.\\This is why the LLM component matters.}
   }
+
+  \note{
+    Q\&A backup for ``why is lip-reading so hard?''
+    50--70\% of sounds invisible on lips --- same mouth shape for multiple phonemes.
+    ``admiral'' vs ``animal'': identical bilabial + alveolar sequence.
+    Context (the LLM) is the ONLY disambiguation signal.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -107,6 +114,13 @@
 
   \vspace{4pt}
   \notetext{lenpen=2.0 removes the generation length brake, letting the LLM prior run unchecked.}
+
+  \note{
+    Q\&A backup for ``how bad can it get?''
+    lenpen=2.0 rewards longer output, removing the generation length brake.
+    Mean WER 539.6\%. Individual segments reach 6,833\% WER.
+    Dramatically illustrates the LLM prior overwhelming the visual signal.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -187,8 +201,8 @@
         \begin{tabular}{@{}lcc@{}}
           \scriptsize\textbf{Signal} & \scriptsize\textbf{Stability} & \scriptsize\textbf{Std} \\
           \scriptsize Semantic & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.017 \\
-          \scriptsize Phonetic & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.023 \\
-          \scriptsize NEA & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.056 \\
+          \scriptsize Phonetic & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.059 \\
+          \scriptsize NEA & \scriptsize\textcolor{ArgosGreen}{Stable} & \scriptsize 0.023 \\
           \scriptsize WER & \scriptsize\textcolor{ArgosRed}{Volatile} & \scriptsize 0.165 \\
           \scriptsize Length & \scriptsize\textcolor{ArgosRed}{Volatile} & \scriptsize 0.142 \\
         \end{tabular}
@@ -221,14 +235,14 @@
     \toprule
     \textbf{Metric} & \textbf{Baseline (A)} & \textbf{Config C} & \textbf{Config J} \\
     \midrule
-    Mean IS & 2.52 & 2.56 & \keyword{2.60} \\
-    Captured (IS$\geq$3) & 597 & 608 & \keyword{622} \\
-    Captured \% & 39.9\% & 40.6\% & \keyword{41.5\%} \\
-    Mean WER & 67.0\% & 79.8\% & 73.2\% \\
+    Mean IS & 2.52 & 2.57 & \keyword{2.60} \\
+    Captured (IS$\geq$3) & 597 & 594 & \keyword{622} \\
+    Captured \% & 39.9\% & 39.7\% & \keyword{41.5\%} \\
+    Mean WER & 64.1\% & 79.3\% & 78.9\% \\
     Empties & 70 & 0 & \keyword{0} \\
-    Hallucinations & 307 & 330 & \alert{348} \\
+    Hallucinations & 307 & 360 & \alert{348} \\
     \midrule
-    \multicolumn{4}{l}{\scriptsize\textbf{Trade-off}: J eliminates empties (+25 captured) but increases hallucinations (+41)} \\
+    \multicolumn{4}{l}{\scriptsize\textbf{Trade-off}: J eliminates empties (+25 captured) but increases hallucinations (+41). C is strictly worse ($-$3 captured, +53 hallucinations).} \\
     \bottomrule
   \end{tabular}
 
@@ -248,6 +262,13 @@
       \end{block}
     \end{column}
   \end{columns}
+
+  \note{
+    Q\&A backup for ``did tuning help?''
+    Config J eliminates empties (+25 captured) but adds hallucinations (+41).
+    Config C is strictly worse: $-$3 captured, +53 hallucinations.
+    Baseline WER 64.1\%, both J and C higher (~79\%).
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -350,6 +371,59 @@
 
     \notetext{Categories overlap --- segments can exhibit multiple recovery signals. System delivers useful output for 1 in 2 segments.}
   }
+
+  \note{
+    Q\&A backup for ``how did you get 50.9\%?''
+    165 of 900 metric-failed segments are LLM-recoverable.
+    15-rule decision tree (no runtime LLM), r=0.934 with IS.
+    6 overlapping categories. Effective capture: 39.9\% $\rightarrow$ 50.9\%.
+    See A11b for one real example per category.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% A11b: LLM Salvage Curated Examples
+% ----------------------------------------------------------
+\begin{frame}[shrink=12]{A11b: LLM Salvage --- Curated Examples}
+  {\small One real example per recovery category (6 categories):}
+
+  \vspace{4pt}
+
+  {\scriptsize
+  \begin{tabular}{@{}p{2.2cm}p{3.2cm}p{3.2cm}ccc@{}}
+    \toprule
+    \textbf{Category} & \textbf{Reference} & \textbf{Hypothesis} & \textbf{WER} & \textbf{IS} & \textbf{LLM} \\
+    \midrule
+    \cellcolor{TierFairBg} Hidden Gem &
+    ``\ldots opinions about reason and logic and all these other concepts\ldots'' &
+    ``\ldots our opinion is about reasoning and logic and all these other concepts\ldots'' &
+    74\% & \tierfair{2.92} & 0.90 \\[2pt]
+    \cellcolor{TierFairBg} Semantic Pres. &
+    ``india china afghanistan\ldots so foreign\ldots both sides would benefit'' &
+    ``middle east and afghanistan\ldots warring places\ldots both sides will benefit'' &
+    72\% & \tierfair{2.86} & 0.90 \\[2pt]
+    \cellcolor{TierFairBg} Phonetic Bridge &
+    ``\keyword{expresses} in concrete and symbolic and beautifully real deep'' &
+    ``\keyword{suppresses} the concrete and the symbolic and the beautiful\ldots'' &
+    89\% & \tierfair{2.75} & 0.90 \\[2pt]
+    \cellcolor{TierFairBg} Entity-Preserved &
+    ``how \keyword{facebook} is a media company\ldots what's about \keyword{twitter}'' &
+    ``how \keyword{facebook} is a media company on switzerland'' &
+    57\% & \tierfair{2.86} & 0.90 \\[2pt]
+    \cellcolor{TierFairBg} Structure Match &
+    ``neptune gives us a long time to learn\ldots energies and wisdom\ldots'' &
+    ``you give it a long time to learn\ldots energies and wisdom\ldots'' &
+    39\% & \tierfair{2.94} & 0.95 \\[2pt]
+    \cellcolor{TierFairBg} WER Over-Punish. &
+    ``so um'' &
+    ``so i kind of'' &
+    150\% & \tierfair{2.06} & 0.65 \\
+    \bottomrule
+  \end{tabular}}
+
+  \vspace{4pt}
+  \notetext{All examples: IS $<$ 3.0 (metrics say ``failed'') but LLM heuristic says recoverable.\\
+  Categories overlap: segments can exhibit multiple recovery signals.}
 \end{frame}
 
 % ----------------------------------------------------------
@@ -382,9 +456,9 @@
     ``6 4 whys up to 20 whys now\ldots'' &
     15\% & \tiergood{4.32} \\[2pt]
     \cellcolor{ArgosTeal!10} Entities Preserved &
-    ``i could not believe i'm like\ldots'' &
-    ``i could not believe i mean i did\ldots'' &
-    31\% & \tiergood{4.15} \\[2pt]
+    ``over the last 10 years we have had 8,616 students'' &
+    ``over the last 10 years we have had 1600 students'' &
+    31\% & \tiergood{3.98} \\[2pt]
     \cellcolor{ArgosTeal!10} Low-Moderate WER &
     ``one series of experiments that\ldots'' &
     ``one series of experiments that\ldots'' &
@@ -418,40 +492,47 @@
     ``and body parts'' &
     ``20 years ago when i was'' &
     \werbad{200\%} & \tierfailed{0.00} \\[2pt]
-    \cellcolor{TierFailedBg} Truncation &
-    ``so there's different sizes\ldots'' &
-    ``i'm going to tell you'' &
-    \werbad{100\%} & \tierfailed{0.17} \\[2pt]
+    \cellcolor{TierPoorBg} Truncation &
+    ``i don't want to say mistakes but i will say\ldots'' &
+    ``i don't want to seem disrespectful'' &
+    69\% & \tierpoor{1.26} \\[2pt]
     \cellcolor{TierFailedBg} Topic Drift &
     ``i've made lots of videos\ldots'' &
     ``when i was a little girl\ldots'' &
     97\% & \tierfailed{0.38} \\[2pt]
     \cellcolor{TierFailedBg} Entity Destruction &
-    ``it'll work'' &
-    ``but'' &
-    100\% & \tierfailed{0.69} \\[2pt]
+    ``china to take off to cross the pacific ocean\ldots'' &
+    ``i don't think that's a good idea'' &
+    100\% & \tierfailed{0.72} \\[2pt]
     \cellcolor{TierFailedBg} Phonetic Wrong Topic &
     ``they have something like\ldots'' &
     ``some english for you all\ldots'' &
     100\% & \tierfailed{0.94} \\[2pt]
-    \cellcolor{TierFailedBg} High Error Rate &
+    \cellcolor{TierPoorBg} High Error Rate &
     ``today here the three in one\ldots'' &
     ``i'm so happy to be here\ldots'' &
-    100\% & \tierfailed{1.13} \\[2pt]
-    \cellcolor{TierFailedBg} Accum. Small Errors &
+    100\% & \tierpoor{1.13} \\[2pt]
+    \cellcolor{TierPoorBg} Accum. Small Errors &
     ``you're rich no no no\ldots'' &
     ``your ring that's not what\ldots'' &
-    67\% & \tierfailed{1.64} \\[2pt]
-    \cellcolor{TierFailedBg} Content Word Errors &
+    67\% & \tierpoor{1.64} \\[2pt]
+    \cellcolor{TierPoorBg} Content Word Errors &
     ``even after the insurance\ldots'' &
     ``after the initial contamination'' &
-    60\% & \tierfailed{1.86} \\[2pt]
-    \cellcolor{TierFailedBg} Over-generation &
+    60\% & \tierpoor{1.86} \\[2pt]
+    \cellcolor{TierFairBg} Over-generation &
     ``to the next level'' &
     ``to the next level and they\ldots'' &
     100\% & \tierfair{2.32} \\
     \bottomrule
   \end{tabular}}
+
+  \note{
+    Q\&A backup for ``what do the failures look like?''
+    10 modes, each with a real example. Topic Drift and Phonetic Wrong Topic are the
+    most common (15.9\% and 15.7\%). Empty Output and Hallucination are the most extreme.
+    IS tier colors match IS scores: green $\geq$ 3.0, yellow 2.0--2.99, orange 1.0--1.99, red $<$ 1.0.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -496,4 +577,56 @@
 
   \vspace{4pt}
   \notetext{Each mismatch pattern reveals a different system behavior. Multiple patterns can co-occur in one segment.}
+\end{frame}
+
+% ----------------------------------------------------------
+% A14b: Metric Mismatch Examples
+% ----------------------------------------------------------
+\begin{frame}[shrink=12]{A14b: Metric Mismatch --- Concrete Examples}
+  {\small One real example per diagnostic pattern from A14:}
+
+  \vspace{4pt}
+
+  {\scriptsize
+  \begin{tabular}{@{}p{2.5cm}p{3cm}p{3cm}p{2.5cm}@{}}
+    \toprule
+    \textbf{Pattern} & \textbf{Reference} & \textbf{Hypothesis} & \textbf{Key Metrics} \\
+    \midrule
+    \cellcolor{ArgosGreen!10} WER $\gg$ WWER &
+    ``those arrays that we have not declared'' &
+    ``those are realities we have to deal with'' &
+    WER 71\%, WWER 56\% \\[3pt]
+    \cellcolor{ArgosOrange!10} WWER $\gg$ WER &
+    ``publishing a bad paper is not yet perceived\ldots'' &
+    ``publishing a manuscript is not yet perceived\ldots'' &
+    WER 27\%, WWER 36\% \\[3pt]
+    \cellcolor{ArgosGreen!10} High Sem + High WER &
+    ``running a marathon knocked her out'' &
+    ``when a marathon not a sprint'' &
+    Sem 0.55, WER 67\% \\[3pt]
+    \cellcolor{ArgosOrange!10} Low Sem + Low WER &
+    ``fill it out all the paperwork\ldots'' &
+    ``all the people that we've ever had'' &
+    Sem 0.23, WER 40\% \\[3pt]
+    \cellcolor{ArgosGreen!10} High Phon + Low Sem &
+    ``today i'm talking with \keyword{admiral mcrae}'' &
+    ``today i'm talking with \keyword{animal migratory}'' &
+    Phon 0.83, Sem 0.16 \\[3pt]
+    \cellcolor{ArgosOrange!10} High NEA + High WWER &
+    ``i don't have any belt whatsoever\ldots'' &
+    ``i don't have that email whatsoever\ldots'' &
+    NEA 54\%, WWER 60\% \\[3pt]
+    \cellcolor{ArgosGreen!10} LR $>$ 1.5 + High WER &
+    ``has now carried you home'' &
+    ``i dare you to hear the new home'' &
+    LR 1.60, WER 140\% \\[3pt]
+    \cellcolor{ArgosOrange!10} LR $<$ 0.5 + Low WER &
+    ``i don't want to say mistakes but i will say\ldots'' &
+    ``i don't want to seem disrespectful'' &
+    LR 0.46, WER 69\% \\
+    \bottomrule
+  \end{tabular}}
+
+  \vspace{4pt}
+  \notetext{Every example sourced from the 1,497-segment baseline. Each illustrates a different diagnostic pattern from A14.}
 \end{frame}

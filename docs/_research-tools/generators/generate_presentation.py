@@ -882,14 +882,14 @@ def slide_04(prs):
         num_label="WER on LRS3 (TED Talks)",
         bullets=[
             "Curated data, controlled conditions",
-            ("Real-world YouTube: 67.0% WER — 2.6× worse", {"color": CORAL}),
+            ("Real-world YouTube: 64.1% WER — 2.5× worse", {"color": CORAL}),
         ],
         bottom_text="Two questions: How does this hold on real-world video? "
                     "And is WER even the right metric?",
         notes="The paper claims 25.4% Word Error Rate on LRS3 — a curated dataset "
               "of TED talks with clear speech, frontal faces, good lighting. Our "
               "question: what happens on real-world YouTube video? The chart on the "
-              "right previews the answer: 67.0% WER, 2.6x worse. And more "
+              "right previews the answer: 64.1% WER, 2.5x worse. And more "
               "importantly — is WER even the right way to measure this?")
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -898,7 +898,7 @@ def slide_04(prs):
 
 def slide_05(prs):
     build_split(prs, 5, "The Reality Gap", "P1_quality",
-        big_num="67.0%", num_color=CORAL,
+        big_num="64.1%", num_color=CORAL,
         num_label="Mean WER across 1,497 real-world segments",
         bullets=[
             ("11.4% Usable (<30%)", {"bullet": "●", "bullet_color": GREEN}),
@@ -908,7 +908,7 @@ def slide_05(prs):
             ("20.6% Hallucinated (>100%)", {"bullet": "●", "bullet_color": DRED}),
         ],
         bottom_text="But WER overstates failure — see next slide.",
-        notes="1,497 diverse YouTube segments. 67.0% mean WER — 2.6x worse than "
+        notes="1,497 diverse YouTube segments. 64.1% mean WER — 2.5x worse than "
               "the paper's 25.4%. Only 11.4% usable by WER standards. And 20.6% "
               "are hallucinations — fluent text that's completely fabricated. This "
               "is the most dangerous failure mode. But WER is misleading — it "
@@ -1210,7 +1210,7 @@ def slide_12(prs):
 def slide_13(prs):
     build_split(prs, 13, "Tuning Is Mitigation, Not a Cure", "P4_lenpen",
         bullets=[
-            ("Config J: eliminates empties but doubles hallucinations",
+            ("Config J: eliminates empties but increases hallucinations by 13%",
              {"color": CORAL}),
             "Net IS gain: only +0.08 across 1,497 segments",
             "Cross-config proof: per-segment rankings identical (r > 0.92)",
@@ -1775,7 +1775,7 @@ def slide_25(prs):
 
 def slide_26(prs):
     slide = new_slide(prs)
-    add_title(slide, "Five Phases — From 67% to Target 27-42% WER")
+    add_title(slide, "Five Phases — From 64% to Target 27-42% WER")
     add_accent_line(slide)
 
     phases = [
@@ -1979,7 +1979,7 @@ def slide_31(prs):
     add_accent_line(slide)
 
     takeaways = [
-        ("1", "Rigorous assessment: 2.6× WER gap on 1,497 segments. "
+        ("1", "Rigorous assessment: 2.5× WER gap on 1,497 segments. "
               "Novel IS metric reveals 40% properly captured, 51% with "
               "LLM salvage. 10 classified failure modes."),
         ("2", "Production system delivered: standalone container, 37 bugs "
@@ -2019,9 +2019,295 @@ def slide_31(prs):
         "Four takeaways. One: we know exactly where we stand — rigorous "
         "assessment with a novel metric that reveals the true picture. "
         "Two: production system delivered and deployed. Three: data, not "
-        "model capacity, is the bottleneck. Four: clear roadmap from 67% "
+        "model capacity, is the bottleneck. Four: clear roadmap from 64% "
         "to 27-42% WER.",
         [point_shapes])
+
+# ═══════════════════════════════════════════════════════════════════════
+# APPENDIX SLIDES (A1–A13)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_a1(prs):
+    """A1: Homophenes — The Lip-Reading Problem."""
+    slide = new_slide(prs)
+    add_title(slide, "A1: Homophenes — The Lip-Reading Problem")
+    add_accent_line(slide)
+
+    # Left: viseme table
+    add_text(slide, "50–70% of English sounds are invisible on lips.\n"
+             "Multiple sounds produce identical mouth shapes:",
+             MX, CT, SLW, Inches(0.7), size=Pt(14), color=LGRAY)
+
+    tbl1 = add_table(slide,
+        ["Viseme Group", "Sounds"],
+        [["Bilabial", "p, b, m"],
+         ["Alveolar", "t, d, n, s, z, l"],
+         ["Velar", "k, g, ng"],
+         ["Labiodental", "f, v"]],
+        MX, CT + Inches(0.9), SLW, text_size=Pt(12))
+
+    # Right: confusable pairs
+    add_text(slide, "Confusable word pairs (identical on lips):",
+             SRL, CT, SRW, Inches(0.5), size=Pt(14), color=LGRAY)
+
+    tbl2 = add_table(slide,
+        ["Word A", "Word B"],
+        [["mom", "bomb"], ["pat", "bat"], ["collar", "color"],
+         ["pads", "pants"], ["admiral", "animal"],
+         ["probiotics", "permafrost"]],
+        SRL, CT + Inches(0.6), SRW, text_size=Pt(12))
+
+    add_text(slide, 'Context is the ONLY disambiguation signal.\n'
+             'This is why the LLM component matters.',
+             SRL, CT + Inches(3.6), SRW, Inches(0.5),
+             size=Pt(12), color=TEAL, italic=True)
+
+    _finish(slide, "A1",
+        "Homophenes: visually identical mouth shapes for different sounds. "
+        "50-70% of sounds invisible on lips. Admiral/animal, mom/bomb — "
+        "context is the only way to disambiguate. This is why the LLM matters.",
+        [[tbl1], [tbl2]])
+
+
+def slide_a3(prs):
+    """A3: Catastrophic lenpen=2.0."""
+    slide = new_slide(prs)
+    add_title(slide, "A3: Catastrophic lenpen=2.0 (Config H)")
+    add_accent_line(slide)
+
+    add_text(slide, "Config H forces the model to generate longer text. "
+             "Mean WER: 539.6%\nThe model generates paragraphs of "
+             "hallucinated text:",
+             MX, CT, CW, Inches(0.6), size=Pt(14), color=CORAL)
+
+    tbl = add_table(slide,
+        ["Segment", "Reference", "Config H Output", "WER"],
+        [["pOeJSxbFyto", '"get the idea"',
+          '"that\'s why I\'m here thank you so much for having me '
+          'it\'s been an honor and a privilege..."', "6,833%"],
+         ["9KACXV-cW-4", '"now those predictions I think"',
+          '"of first believers the same path I\'d like to take a moment '
+          'to thank all of you..."', "4,640%"],
+         ["loebelfG9T4", '"so repeat make yourself at home"',
+          '"don\'t forget to make yourself at home thank you very much '
+          'that was a lot of fun..."', "4,183%"]],
+        MX, CT + Inches(0.8), CW, text_size=Pt(10),
+        row_colors={0: {3: CORAL}, 1: {3: CORAL}, 2: {3: CORAL}})
+
+    add_text(slide, "lenpen=2.0 removes the generation length brake, "
+             "letting the LLM prior run unchecked.",
+             MX, CT + Inches(3.4), CW, Inches(0.4),
+             size=Pt(11), color=LGRAY, italic=True)
+
+    _finish(slide, "A3",
+        "Config H (lenpen=2.0) produces catastrophic hallucinations. "
+        "Mean WER 539.6%. The model generates entire paragraphs of fluent "
+        "but completely fabricated text. This dramatically illustrates the "
+        "LLM prior overwhelming the visual signal.")
+
+
+def slide_a8(prs):
+    """A8: IS Component Correlation."""
+    slide = new_slide(prs)
+    add_title(slide, "A8: IS Component Correlation")
+    add_accent_line(slide)
+
+    # Dimension table
+    add_text(slide, "The 6 IS signals collapse into 3 independent dimensions:",
+             MX, CT, CW, Inches(0.4), size=Pt(14), color=WHITE)
+
+    tbl1 = add_table(slide,
+        ["Dimension", "Signals", "Variance", "Inter-signal r"],
+        [["Word Accuracy", "WER, WWER, Phonetic", "60.0%", "> 0.79"],
+         ["Meaning Preservation", "Semantic", "28.5%", "independent"],
+         ["Output Sanity", "Length Ratio", "9.1%", "independent"]],
+        MX, CT + Inches(0.5), CW * 0.55, text_size=Pt(11))
+
+    # Cross-config stability
+    add_text(slide, "Cross-Config Stability (16 configs)",
+             SRL, CT, SRW, Inches(0.4), size=Pt(14), color=TEAL, bold=True)
+
+    tbl2 = add_table(slide,
+        ["Signal", "Stability", "Std"],
+        [["Semantic", "Stable", "0.017"],
+         ["Phonetic", "Stable", "0.059"],
+         ["NEA", "Stable", "0.023"],
+         ["WER", "Volatile", "0.165"],
+         ["Length", "Volatile", "0.142"]],
+        SRL, CT + Inches(0.5), SRW, text_size=Pt(11),
+        row_colors={3: {1: CORAL}, 4: {1: CORAL},
+                    0: {1: GREEN}, 1: {1: GREEN}, 2: {1: GREEN}})
+
+    # Heuristic validation
+    add_text(slide, "Heuristic Validation (no runtime LLM)",
+             SRL, CT + Inches(2.8), SRW, Inches(0.3),
+             size=Pt(13), color=TEAL, bold=True)
+
+    tbl3 = add_table(slide,
+        ["Metric", "Value"],
+        [["Mean r", "0.925 (std 0.015)"],
+         ["Agreement", "88.6%"],
+         ["Cohen's κ", "0.773"],
+         ["Recall (IS≥3)", "97.6–100%"],
+         ["Config range", "κ 0.62–0.86"]],
+        SRL, CT + Inches(3.2), SRW * 0.7, text_size=Pt(10))
+
+    _finish(slide, "A8",
+        "IS components collapse into 3 dimensions: word accuracy (60%), "
+        "meaning (28%), output sanity (9%). Cross-config: Semantic, Phonetic, "
+        "NEA are stable; WER and Length Ratio are volatile. Heuristic: "
+        "r=0.925, agreement 88.6%, kappa 0.773.")
+
+
+def slide_a11(prs):
+    """A11: LLM Salvage — Recoverable Segments."""
+    slide = new_slide(prs)
+    add_title(slide, "A11: LLM Salvage — Recoverable Segments")
+    add_accent_line(slide)
+
+    # Key numbers
+    add_text(slide, "Key Numbers", MX, CT, SLW, Inches(0.3),
+             size=Pt(14), color=TEAL, bold=True)
+
+    tbl1 = add_table(slide,
+        ["Metric", "Value"],
+        [["Metric-failed segments", "900"],
+         ["LLM-recoverable", "165 (18.3%)"],
+         ["Metric capture (IS ≥ 3.0)", "39.9%"],
+         ["Effective capture", "50.9%"],
+         ["Uplift", "+11.0pp (+27.6% rel.)"]],
+        MX, CT + Inches(0.4), SLW, text_size=Pt(11),
+        row_colors={1: {1: TEAL}, 3: {1: TEAL}})
+
+    add_text(slide, "58% of salvageable have moderate WER (50–70%).\n"
+             "Decision tree: 15 rules, r=0.934 with IS.",
+             MX, CT + Inches(2.8), SLW, Inches(0.6),
+             size=Pt(11), color=LGRAY)
+
+    # Recovery categories
+    add_text(slide, "6 Recovery Categories", SRL, CT, SRW, Inches(0.3),
+             size=Pt(14), color=TEAL, bold=True)
+
+    tbl2 = add_table(slide,
+        ["Category", "N", "Key Signal"],
+        [["Hidden Gems", "54", "LLM prob ≥ 0.8"],
+         ["Semantic Pres.", "57", "Semantic ≥ 0.5"],
+         ["Phonetic Bridge", "93", "Phonetic ≥ 0.6"],
+         ["Entity-Preserved", "44", "NEA F1 ≥ 50%"],
+         ["Structure Match", "74", "Word order intact"],
+         ["WER Over-Punish.", "27", "WER−WWER ≥ 10pp"]],
+        SRL, CT + Inches(0.4), SRW, text_size=Pt(11))
+
+    add_text(slide, "Categories overlap — segments can exhibit multiple "
+             "recovery signals. System delivers useful output for 1 in 2 segments.",
+             SRL, CT + Inches(3.2), SRW, Inches(0.5),
+             size=Pt(11), color=LGRAY, italic=True)
+
+    _finish(slide, "A11",
+        "165 of 900 metric-failed segments are recoverable by the LLM "
+        "heuristic. Effective capture rises from 39.9% to 50.9%. "
+        "6 recovery categories (overlap, not disjoint). "
+        "58% have moderate WER (50-70%).")
+
+
+def slide_a11b(prs):
+    """A11b: LLM Salvage — Curated Examples."""
+    slide = new_slide(prs)
+    add_title(slide, "A11b: LLM Salvage — Curated Examples")
+    add_accent_line(slide)
+
+    add_text(slide, "One real example per recovery category — all IS < 3.0 "
+             '(metrics say "failed") but heuristic says recoverable:',
+             MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY)
+
+    tbl = add_table(slide,
+        ["Category", "Reference (excerpt)", "Hypothesis (excerpt)",
+         "WER", "IS", "LLM"],
+        [["Hidden Gem",
+          "...opinions about reason and logic and all these other concepts...",
+          "...our opinion is about reasoning and logic and all these...",
+          "74%", "2.92", "0.90"],
+         ["Semantic Pres.",
+          "india china afghanistan...both sides would benefit",
+          "middle east and afghanistan...both sides will benefit",
+          "72%", "2.86", "0.90"],
+         ["Phonetic Bridge",
+          "expresses in concrete and symbolic and beautifully real deep",
+          "suppresses the concrete and the symbolic and the beautiful...",
+          "89%", "2.75", "0.90"],
+         ["Entity-Preserved",
+          "how facebook is a media company...what's about twitter",
+          "how facebook is a media company on switzerland",
+          "57%", "2.86", "0.90"],
+         ["Structure Match",
+          "neptune gives us a long time to learn...energies and wisdom...",
+          "you give it a long time to learn...energies and wisdom...",
+          "39%", "2.94", "0.95"],
+         ["WER Over-Punish.",
+          "so um",
+          "so i kind of",
+          "150%", "2.06", "0.65"]],
+        MX, CT + Inches(0.6), CW, text_size=Pt(9),
+        row_height=Inches(0.45))
+
+    _finish(slide, "A11b",
+        "Curated examples showing each of the 6 recovery categories. "
+        "All have IS < 3.0 but the heuristic identifies recoverable meaning. "
+        "Categories overlap: a segment can exhibit multiple recovery signals.")
+
+
+def slide_a13(prs):
+    """A13: Failure Mode Examples."""
+    slide = new_slide(prs)
+    add_title(slide, "A13: Failure Mode Examples")
+    add_accent_line(slide)
+
+    add_text(slide, "One real example per failure mode (10 modes):",
+             MX, CT, CW, Inches(0.3), size=Pt(13), color=LGRAY)
+
+    tbl = add_table(slide,
+        ["Mode", "Reference", "Hypothesis", "WER", "IS"],
+        [["Empty Output",
+          '"do you say i wonder what..."',
+          "(empty)", "100%", "0.00"],
+         ["Hallucination",
+          '"and body parts"',
+          '"20 years ago when i was"', "200%", "0.00"],
+         ["Truncation",
+          '"i don\'t want to say mistakes but i will say..."',
+          '"i don\'t want to seem disrespectful"', "69%", "1.26"],
+         ["Topic Drift",
+          '"i\'ve made lots of videos..."',
+          '"when i was a little girl..."', "97%", "0.38"],
+         ["Entity Destruction",
+          '"china to take off to cross the pacific ocean..."',
+          '"i don\'t think that\'s a good idea"', "100%", "0.72"],
+         ["Phonetic Wrong Topic",
+          '"they have something like..."',
+          '"some english for you all..."', "100%", "0.94"],
+         ["High Error Rate",
+          '"today here the three in one..."',
+          '"i\'m so happy to be here..."', "100%", "1.13"],
+         ["Accum. Small Errors",
+          '"you\'re rich no no no..."',
+          '"your ring that\'s not what..."', "67%", "1.64"],
+         ["Content Word Errors",
+          '"even after the insurance..."',
+          '"after the initial contamination"', "60%", "1.86"],
+         ["Over-generation",
+          '"to the next level"',
+          '"to the next level and they..."', "100%", "2.32"]],
+        MX, CT + Inches(0.4), CW, text_size=Pt(9),
+        row_height=Inches(0.42),
+        row_colors={0: {4: CORAL}, 1: {4: CORAL}, 3: {4: CORAL},
+                    4: {4: CORAL}, 5: {4: CORAL}})
+
+    _finish(slide, "A13",
+        "10 classified failure modes with real examples from the 1,497-segment "
+        "baseline. Topic Drift and Phonetically Similar are the most common "
+        "(15.9% and 15.7%). Hallucination is the most dangerous — fluent but "
+        "completely fabricated text.")
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # MAIN
@@ -2032,7 +2318,7 @@ def main():
     prs.slide_width = SL_W
     prs.slide_height = SL_H
 
-    print("Generating 31-slide presentation...")
+    print("Generating presentation...")
 
     builders = [
         slide_01, slide_02, slide_03, slide_04, slide_05,
@@ -2042,10 +2328,13 @@ def main():
         slide_21, slide_22, slide_23, slide_24, slide_25,
         slide_26, slide_27, slide_28, slide_29, slide_30,
         slide_31,
+        # Appendix / backup slides
+        slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b, slide_a13,
     ]
+    total = len(builders)
 
     for i, builder in enumerate(builders, 1):
-        print(f"  Slide {i:2d}/31 ...", end=" ")
+        print(f"  Slide {i:2d}/{total} ...", end=" ")
         try:
             builder(prs)
             print("OK")

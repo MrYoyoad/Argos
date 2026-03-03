@@ -168,6 +168,51 @@
 \end{frame}
 
 % ----------------------------------------------------------
+% Slide 21: Standalone Container
+% ----------------------------------------------------------
+\begin{frame}{Standalone Container --- No Cloud Required}
+  \twocol{0.50}{
+    \begin{block}{\small Deployment Model}
+      \begin{itemize}\scriptsize
+        \item Docker container with web UI
+        \item Drag-and-drop video upload
+        \item Automatic end-to-end processing
+        \item \keyword{No internet required} at runtime
+        \item GPU auto-detection (Tesla T4 / CPU fallback)
+      \end{itemize}
+    \end{block}
+
+    \vspace{4pt}
+
+    \begin{exampleblock}{\small INSTALL.sh Overlay}
+      {\scriptsize Automated deployment with backup \& 13-point verification.\\
+      Currently deployed at client site.}
+    \end{exampleblock}
+  }{0.47}{
+    \successmetric{37}{Bugs Fixed}
+
+    \vspace{4pt}
+
+    \begin{block}{\small Container Challenges Solved}
+      \begin{itemize}\scriptsize
+        \item No internet $\rightarrow$ offline Whisper, spaCy wheels
+        \item 12GB vs 24GB GPU $\rightarrow$ batch size adaptation
+        \item \texttt{/home/ubuntu} vs \texttt{/workspace} paths
+        \item 5 desktop launcher rewrites
+        \item Mounted filesystem restrictions
+      \end{itemize}
+    \end{block}
+  }
+
+  \note{
+    Standalone deployment: Docker container, no cloud, no internet.
+    37 bugs fixed across installation, deployment, GPU, and runtime.
+    Key challenges: offline operation, different GPU memory, path mismatches.
+    INSTALL.sh handles deployment with automatic backup and 13-point verification.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Slide 22: Evaluation Infrastructure
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{Evaluation Infrastructure}

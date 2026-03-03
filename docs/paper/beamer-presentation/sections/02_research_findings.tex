@@ -15,7 +15,7 @@
 
     \begin{itemize}
       \item Paper: \wergood{25.4\%} WER (TED talks)
-      \item Real-world: \werbad{67.0\%} WER (YouTube)
+      \item Real-world: \werbad{64.1\%} WER (YouTube)
       \item By WER: only \werbad{11.4\%} ``usable''
     \end{itemize}
 
@@ -26,7 +26,7 @@
   }
 
   \note{
-    25.4\% to 67.0\% WER = 2.5x worse. Expected for domain mismatch.
+    25.4\% to 64.1\% WER = 2.5x worse. Expected for domain mismatch.
     Only 11.4\% ``usable'' by WER standards.
     But WER dramatically overstates failure --- set up IS metric reveal.
     Hook: ``or do they?'' --- transitions to the IS metric.
@@ -72,7 +72,7 @@
 % ----------------------------------------------------------
 % Slide 7: The Intelligibility Score
 % ----------------------------------------------------------
-\begin{frame}[shrink=20]{The Intelligibility Score (IS)}
+\begin{frame}[shrink=15]{The Intelligibility Score (IS)}
   \begin{columns}[T]
     \begin{column}{0.40\textwidth}
       \metricbox{39.9\%}{Properly Captured (IS $\geq$ 3.0)}
@@ -80,9 +80,13 @@
       \vspace{3pt}
 
       \begin{itemize}\small
-        \item \keyword{3.5$\times$} more than WER's 11.4\%
+        \item \keyword{3.5$\times$} more than WER's 11.4\%\\
+              {\scriptsize (``usable'' = WER $<$ 30\%)}
         \item 6 deterministic signals:\\
-              {\scriptsize Semantic, Phonetic, WER, WWER, NEA, Length}
+              {\scriptsize Semantic {\tiny(sentence embeddings)},\\
+              Phonetic {\tiny(phoneme distance)},\\
+              WER, WWER {\tiny(content words 2$\times$)},\\
+              NEA {\tiny(named entity F1)}, Length}
         \item \textbf{Claude-distilled} design:\\
               {\scriptsize Claude designed the rubric at design time;\\
               no LLM called per sample at runtime}
@@ -118,7 +122,7 @@
 % ----------------------------------------------------------
 % Slide 7b: IS Deep Dive — Correlations & Methodology
 % ----------------------------------------------------------
-\begin{frame}[shrink=15]{IS Deep Dive: What Drives Quality?}
+\begin{frame}[shrink=10]{IS Deep Dive: What Drives Quality?}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
       \begin{block}{\small 6 Signals $\rightarrow$ 3 Independent Dimensions}
@@ -140,23 +144,25 @@
       \end{block}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{block}{\small Claude-Distilled Evaluation}
+      \begin{block}{\small Key Insights}
         {\scriptsize
-        \textbf{Design time (one-off):} Claude (Anthropic) acted as\\
-        expert judge to design the IS framework:\\[2pt]
-        \begin{itemize}\scriptsize
-          \item Selected 6 linguistic signals
-          \item Assigned weights (semantic 0.25, rest 0.15)
-          \item Defined 5-tier quality boundaries
-          \item Validated against human intuition
-        \end{itemize}
-        \vspace{2pt}
-        \textbf{Run time:} Fully deterministic ---\\
-        no LLM calls needed per sample.\\[2pt]
-        \textbf{Validation:} \keyword{r = 0.925} across 16 configs,\\
-        $\kappa$ = 0.77, recall 97.6--100\%.\\
-        Strictly additive: $R^2 = 1.000$.}
+        \textbf{Phonetic Sim} is the \#1 IS predictor (r=0.943)\\
+        despite only 15\% weight --- most direct measure\\
+        of visual encoder quality.\\[4pt]
+        \textbf{NEA F1} punches above its weight:\\
+        17.3\% variance from 15\% weight.\\
+        Names/numbers are binary --- right or wrong.\\[4pt]
+        \textbf{WER is unstable}: correlation swings from\\
+        $-$0.95 to $-$0.45 with length penalty changes.\\
+        This is why IS was created over raw WER.\\[4pt]
+        \textbf{Length Ratio} nearly useless (9.1\%,\\
+        sign flips across configs).}
       \end{block}
+
+      \vspace{2pt}
+
+      {\scriptsize Validation: \keyword{r = 0.925} across 16 configs,\\
+      $\kappa$ = 0.77, $R^2$ = 1.000 (strictly additive).}
     \end{column}
   \end{columns}
 
@@ -184,6 +190,122 @@
     Cross-config: r=0.925 mean, recall 97.6--100\% across 16 decode configs.
     See A14 for Metric Mismatch Guide --- 8 diagnostic patterns for interpreting signal combinations.
     See A11 for LLM Salvage analysis of segments where metrics understate true quality.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 7c: Two Evaluation Systems
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{Two Evaluation Systems}
+  \twocol{0.50}{
+    \begin{block}{\small IS: Strict, Word-Focused}
+      {\scriptsize 6 weighted signals $\rightarrow$ single score:\\
+      IS = 0.25$\times$Sem + 0.15$\times$(Phon + InvWER + InvWWER + NEA + LR)\\[2pt]
+      Threshold: IS $\geq$ 3.0 = ``captured''\\
+      Result: \keyword{39.9\%} of segments captured}
+    \end{block}
+
+    \vspace{4pt}
+
+    \begin{block}{\small Expert Heuristic: Generous, Meaning-Focused}
+      {\scriptsize 15-rule decision tree evaluates 6 factors:\\
+      content word overlap, sequence preservation,\\
+      phonetic plausibility, length sanity,\\
+      semantic coherence, information density\\[2pt]
+      Threshold: prob $\geq$ 0.5 = ``recoverable''\\
+      Result: \keyword{50.9\%} of segments recoverable}
+    \end{block}
+
+    \vspace{4pt}
+
+    {\scriptsize Both designed by Claude at development time.\\
+    Fully deterministic at runtime --- no LLM calls per sample.}
+  }{0.47}{
+    \begin{exampleblock}{\small Agreement Matrix}
+      {\scriptsize
+      \begin{tabular}{@{}lcc@{}}
+        & \textbf{IS $\geq$ 3.0} & \textbf{IS $<$ 3.0} \\
+        \midrule
+        Heuristic $\geq$ 0.5 & 592 & 165 \\
+        Heuristic $<$ 0.5 & 5 & 735 \\
+      \end{tabular}\\[4pt]
+      Agreement: \keyword{88.6\%}, $\kappa$ = 0.773}
+    \end{exampleblock}
+
+    \vspace{4pt}
+
+    \begin{alertblock}{\small Worked Example: Where They Diverge}
+      {\scriptsize
+      \textbf{Ref}: ``dollars of damages\ldots they love football\ldots protest on their own time''\\
+      \textbf{Hyp}: ``years of taekwondo\ldots they love football\ldots protest in the streets''\\[2pt]
+      WER: 57\% $\rightarrow$ IS: \tierfair{2.82} (``failed'')\\
+      Heuristic: \keyword{0.90} (``a viewer would understand'')\\[2pt]
+      Football/protest content preserved despite word errors.}
+    \end{alertblock}
+  }
+
+  \note{
+    TWO complementary evaluation systems, both designed by Claude:
+    1. IS: strict, signal-weighted formula. Threshold IS >= 3.0. Result: 39.9\%.
+    2. Expert heuristic: generous, meaning-focused 15-rule decision tree. Result: 50.9\%.
+    Agreement 88.6\%, kappa 0.773. The 165 divergent segments: heuristic finds meaning that IS misses.
+    Worked example: football/protest content preserved despite 57\% WER.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 7d: LLM Salvage — What Metrics Miss
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{LLM Salvage: What Metrics Miss}
+  \twocol{0.42}{
+    {\small\textbf{Impact Staircase:}}
+
+    \vspace{6pt}
+
+    \alertmetric{11.4\%}{WER alone says ``usable''}
+
+    \vspace{4pt}
+
+    \successmetric{39.9\%}{IS: properly captured (3.5$\times$)}
+
+    \vspace{4pt}
+
+    \metricbox{50.9\%}{+ Expert heuristic (4.5$\times$)}
+
+    \vspace{6pt}
+
+    \centering
+    {\small\textit{``Every other segment delivers\\useful information.''}}
+  }{0.55}{
+    \begin{block}{\small The 165 Salvaged Segments}
+      {\scriptsize
+      \textbf{WER profile}: 58\% have moderate WER (50--70\%)\\
+      Close to correct but penalized by strict word-matching.\\[4pt]
+      \begin{tabular}{@{}lrl@{}}
+        \textbf{Category} & \textbf{N} & \textbf{Key Signal} \\
+        \midrule
+        Hidden Gems & 54 & LLM prob $\geq$ 0.8 \\
+        Semantic Pres. & 57 & Semantic $\geq$ 0.5 \\
+        Phonetic Bridge & 93 & Phonetic $\geq$ 0.6 \\
+        Entity-Preserved & 44 & NEA F1 $\geq$ 50\% \\
+        Structure Match & 74 & Word order intact \\
+        WER Over-Punish. & 27 & WER$-$WWER $\geq$ 10pp \\
+      \end{tabular}\\[2pt]
+      {\tiny Categories overlap (sum=349, unique=165).}}
+    \end{block}
+
+    \vspace{2pt}
+    \notetext{See A11/A11b for full analysis and curated examples.}
+  }
+
+  \note{
+    Three levels of assessment, each more generous:
+    1. WER: 11.4\% ``usable'' (too pessimistic).
+    2. IS: 39.9\% captured (3.5x more).
+    3. Expert heuristic: 50.9\% meaningful (4.5x more than WER).
+    58\% of salvageable segments have moderate WER (50--70\%).
+    6 recovery categories --- these overlap, not disjoint.
+    ``Every other segment delivers useful information.''
   }
 \end{frame}
 
@@ -224,8 +346,8 @@
         Entity Destruction,
         High Error Rate,
         Hallucination,
-        Accumulated Errors,
-        Phonetically Similar,
+        Accum. Small Errors,
+        Phonetic Wrong Topic,
         Topic Drift
       },
     ]
@@ -238,8 +360,8 @@
           (12.0,Entity Destruction)
           (12.1,High Error Rate)
           (12.3,Hallucination)
-          (12.3,Accumulated Errors)
-          (15.7,Phonetically Similar)
+          (12.3,Accum. Small Errors)
+          (15.7,Phonetic Wrong Topic)
           (15.9,Topic Drift)
         };
     \end{axis}
@@ -252,7 +374,7 @@
   \note{
     10 failure modes classified across 900 segments.
     Topic Drift \#1 at 15.9\% --- model drifts to unrelated content.
-    Phonetically Similar \#2 at 15.7\% --- inherent visual ambiguity.
+    Phonetic Wrong Topic \#2 at 15.7\% --- inherent visual ambiguity.
     Hallucination at 12.3\% --- fluent but fabricated.
     Key insight: failures are diverse, each phase targets specific categories.
     See A13 for one real reference/hypothesis example per failure mode.
@@ -410,7 +532,7 @@
     \vspace{4pt}
 
     \begin{itemize}\small
-      \item Config J: eliminates empties,\\doubles hallucinations
+      \item Config J: eliminates empties,\\increases hallucinations by 13\%
       \item Rankings \keyword{stable} (r $>$ 0.92)\\across all 16 configs
       \item ``Hard'' and ``easy'' segments\\stay the same
     \end{itemize}
