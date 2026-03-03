@@ -956,3 +956,65 @@ Traditional metrics classify 900 of 1,497 segments as failures (IS < 3.0). Howev
 The salvage analysis demonstrates that WER and even IS systematically undercount the system's real-world value. A domain-aware viewer watching a cooking tutorial will mentally correct "flour" → "flower" — the phonetic similarity bridges the gap. This context recovery is real and measurable: the LLM heuristic captures it with r=0.934 correlation to IS and 99.2% recall on properly captured segments.
 
 The effective message shifts from "only 2 in 5 segments are useful" to "roughly 1 in 2 segments delivers value" — a meaningful difference for stakeholders evaluating the system.
+
+---
+
+## 17. LLM-as-a-Judge Gold Standard: Cross-Validation of IS Framework
+
+*(Added 2026-03-03. Full analysis: [llm_judge/llm_judge_analysis.md](llm_judge/llm_judge_analysis.md))*
+
+Claude Opus 4.6 evaluated all 1,497 baseline hypothesis-reference pairs using holistic LLM reasoning (3-level Y/P/N scale), blind to all metrics. This provides an independent "gold standard" to validate the IS framework.
+
+### Results
+
+| Judgment | Count | % |
+|----------|-------|-----|
+| Y (meaning conveyed) | 345 | 23.0% |
+| P (partial) | 626 | 41.8% |
+| N (meaning lost) | 526 | 35.1% |
+
+Intra-rater reliability: 86.7% exact agreement, 100% lenient (30 embedded duplicates).
+
+### Correlation with IS
+
+| Metric | Pearson r | Spearman ρ |
+|--------|-----------|------------|
+| IS Score | **0.850** | **0.858** |
+| Semantic Sim | 0.846 | 0.846 |
+| llm_context_prob heuristic | 0.823 | 0.834 |
+| Phonetic Sim | 0.806 | 0.822 |
+| WWER | -0.741 | -0.798 |
+| WER | -0.714 | -0.811 |
+
+The LLM judge tracks semantic meaning (r = 0.85) more than raw WER (r = -0.71), confirming that holistic quality assessment prioritizes meaning over word-level accuracy.
+
+### Agreement with IS ≥ 3.0 Threshold
+
+| Comparison | κ | Accuracy | Precision | Recall |
+|------------|-----|----------|-----------|--------|
+| LLM Y vs IS ≥ 3.0 (strict) | 0.565 | 0.806 | 0.945 | 0.546 |
+| LLM Y+P vs IS ≥ 3.0 (lenient) | 0.521 | 0.746 | 0.612 | 0.995 |
+
+When the LLM says Y, 94.5% of those segments pass IS ≥ 3.0. When any segment passes IS ≥ 3.0, the LLM catches 99.5% of them as Y or P. Only 22 segments (1.5%) show boundary disagreement (19 LLM=Y with IS < 3.0, 3 LLM=N with IS ≥ 3.0).
+
+### 3×5 Confusion Matrix
+
+| LLM | Tier 1 | Tier 2 | Tier 3 | Tier 4 | Tier 5 |
+|-----|--------|--------|--------|--------|--------|
+| Y | 0 | 2 | 17 | 100 | 226 |
+| P | 5 | 81 | 272 | 218 | 50 |
+| N | 234 | 253 | 36 | 3 | 0 |
+
+Clean separation: no Y in tier 1, no N in tier 5. P spans tiers 2–4 as the boundary zone.
+
+### What "Partial" Means
+
+In the 626 P-coded segments, structure is preserved in 88.8% of cases and key content words in 66.6%. Semantic meaning and fine detail are lost in ~55% each. The VSP model reliably produces grammatically well-formed output with recognizable vocabulary, but frequently loses the specific meaning.
+
+### Cross-Configuration Stability
+
+Tested across 16 decode configurations, the `llm_context_prob` heuristic correlates with IS at mean r = 0.925 (std = 0.015). Cohen's κ ranges from 0.62 to 0.86. The correlation is rock-solid regardless of beam size, length penalty, or sampling temperature.
+
+### Key Implication
+
+Two independently designed systems — the IS formula (weighted linear composite of 6 signals) and the LLM judge (holistic reasoning over raw text) — converge on the same quality rankings at r = 0.85 and agree on 88–90% of segments. This validates IS as a reliable, deterministic, free-to-run quality metric that tracks holistic LLM judgment. The main gap is IS's binary threshold at 3.0, which collapses a large partial-utility zone that the LLM captures with its P verdict.

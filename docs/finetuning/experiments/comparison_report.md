@@ -1,122 +1,111 @@
-# Weekend Fine-Tuning Comparison Report
+# Fine-Tuning Comparison Report
 
-**Date**: February 2026
+**Date**: March 2026
 **GPU**: Tesla T4 (16GB VRAM)
 **Dataset**: 1,273 train / 224 val segments (AVSpeech YouTube, stratified by IS tier)
-**Encoder**: Frozen throughout (safe for T4)
+**Encoder**: Frozen throughout
 
-## Experiments
+## Default Decode Parameters (beam=20, lenpen=0)
 
-| | Baseline | Exp A: r=16 Fine-Tuned | Exp B: r=64 Fresh Init |
-|---|---|---|---|
-| **LoRA Rank** | 16 (pretrained) | 16 (continued) | 64 (from scratch) |
-| **LoRA Alpha** | 32 | 32 | 128 |
-| **Updates** | 0 (inference only) | 3,000 | 3,000 |
-| **LR** | — | 3e-4 | 3e-4 |
+| Metric | Baseline | ExpA_r16 | ExpB_r64 | Best |
+|--------|---|---|---|------|
+| **Mean IS (0-5)** | 2.5 | 2.3 | 2.0 | Baseline (default) |
+| **Median IS** | 2.4 | 2.3 | 2.0 | Baseline (default) |
+| **Properly Captured (%)** | 39.7% | 38.8% | 33.0% | Baseline (default) |
+| **WER (%)** | _pending_ | _pending_ | _pending_ | N/A |
+| **WWER (%)** | _pending_ | _pending_ | _pending_ | N/A |
+| **NEA F1 (%)** | _pending_ | _pending_ | _pending_ | N/A |
+| **Hallucination Rate (%)** | 0.0% | 0.0% | 0.0% | Baseline (default) |
+| **Empty Output (%)** | 6.7% | 11.6% | 25.4% | Baseline (default) |
 
-## Training Results (Exp A)
+## IS Tier Distribution (Default Decode)
 
-Training completed Feb 27, 2026 after 17.0 hours on Tesla T4 (FP16).
+| Tier | Baseline | ExpA_r16 | ExpB_r64 |
+|------|---|---|---|
+| 5 — Excellent (4.0-5.0) | 18.3% (41) | 17.9% (40) | 15.2% (34) |
+| 4 — Good (3.0-3.99) | 21.4% (48) | 21.0% (47) | 17.9% (40) |
+| 3 — Fair (2.0-2.99) | 21.9% (49) | 17.0% (38) | 17.4% (39) |
+| 2 — Poor (1.0-1.99) | 22.3% (50) | 18.3% (41) | 13.8% (31) |
+| 1 — Failed (0.0-0.99) | 16.1% (36) | 25.9% (58) | 35.7% (80) |
 
-### Key Training Metrics
+## Decode Hyperparameter Sweep
 
-| Metric | Epoch 2 (Best) | Epoch 19 (Final) | Delta |
-|--------|----------------|-------------------|-------|
-| **Val Accuracy** | 62.94% | 58.98% | -3.96 pp |
-| **Val Loss** | 2.391 | 4.120 | +72% |
-| **Val Perplexity** | 5.24 | 17.39 | +232% |
-| **Train Accuracy** | 65.00% | 95.52% | +30.5 pp |
-| **Train Loss** | 2.192 | 0.022 | -99% |
-| **Train-Val Acc Gap** | 2.1 pp | 36.5 pp | +34.4 pp |
+### Baseline
 
-### Overfitting Analysis
+| Config | Mean IS | Properly Captured | WER | WWER | NEA F1 | Hallucination | Empty |
+|--------|---------|-------------------|-----|------|--------|---------------|-------|
+| beam5 | 2.6 | 40.6% | _pending_ | _pending_ | _pending_ | 0.0% | 2.2% |
+| default | 2.5 | 39.7% | _pending_ | _pending_ | _pending_ | 0.0% | 6.7% |
+| greedy | 2.5 | 36.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
+| lenpen1 | 2.6 | 40.2% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
+| sample_low | 2.6 | 39.7% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
+| sample_med | 2.6 | 40.2% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
 
-Best validation accuracy (62.94%) was reached at **epoch 2** (~320 updates). All subsequent epochs showed monotonic degradation in validation metrics while training metrics continued to improve, indicating severe overfitting:
+### ExpA_r16
 
-- **Train accuracy** climbed from 62.7% to 95.5% (memorization)
-- **Val accuracy** declined from 62.9% to 59.0% (generalization failure)
-- **Val perplexity** exploded from 5.24 to 17.39 (model increasingly uncertain on unseen data)
-- **Gradient norms** decreased from ~3.3 to ~1.0 (model converged to sharp minimum)
+| Config | Mean IS | Properly Captured | WER | WWER | NEA F1 | Hallucination | Empty |
+|--------|---------|-------------------|-----|------|--------|---------------|-------|
+| beam5 | 2.5 | 41.1% | _pending_ | _pending_ | _pending_ | 0.0% | 6.7% |
+| default | 2.3 | 38.8% | _pending_ | _pending_ | _pending_ | 0.0% | 11.6% |
+| greedy | 2.5 | 35.7% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
+| lenpen1 | 2.6 | 41.5% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
+| sample_low | 2.5 | 40.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
+| sample_med | 2.5 | 41.5% | _pending_ | _pending_ | _pending_ | 0.0% | 0.9% |
 
-The `checkpoint_best.pt` (saved at epoch 2) is the only usable checkpoint for inference.
+### ExpB_r64
 
-### Training Dynamics
-
-- **LR Schedule**: Tri-stage — warmup 0-600 steps, peak 3e-4, decay 600-3000
-- **Convergence**: Loss dropped rapidly in first 800 updates, plateaued near zero by epoch 10
-- **Checkpoints**: 7 saved (best + 5 interval + last), each ~3.9 GB
-
-### Diagnostic Plots
-
-All 10 training diagnostic plots are in `docs/finetuning/plots/`:
-
-| Plot | Shows |
-|------|-------|
-| FT_01 | Loss curves (train vs val) — divergence after epoch 2 |
-| FT_02 | Accuracy curves — 36.5 pp gap by final epoch |
-| FT_03 | Overfitting gap progression (dual-axis) |
-| FT_04 | Tri-stage LR schedule |
-| FT_05 | Gradient norm trajectory |
-| FT_06 | Perplexity (log scale) — val PPL explosion |
-| FT_07 | Training data IS tier distribution |
-| FT_08 | Granular loss (50-update resolution) with checkpoints |
-| FT_09 | Wall-clock time per epoch (~48 min avg) |
-| FT_10 | Summary dashboard (6-panel overview) |
-
-## Full Metrics Comparison (Decode Evaluation)
-
-_Requires running decode on fine-tuned checkpoint. Training complete, decode pending._
-
-| Metric | Baseline | Exp A (r=16) | Exp B (r=64) | Best |
-|--------|----------|--------------|--------------|------|
-| **WER** (%) | 67.0 | _pending_ | _not trained_ | — |
-| **WWER** (%) | 59.5 | _pending_ | _not trained_ | — |
-| **Named Entity F1** (%) | 38.8 | _pending_ | _not trained_ | — |
-| **Intelligibility Score** (0-5) | 2.52 | _pending_ | _not trained_ | — |
-| **Properly Captured** (IS >= 3) | 39.9% | _pending_ | _not trained_ | — |
-| **Hallucination Rate** (WER >= 100%) | 20.6% | _pending_ | _not trained_ | — |
-
-## IS Tier Distribution (Decode Evaluation)
-
-| Tier | Baseline | Exp A | Exp B |
-|------|----------|-------|-------|
-| 5 — Excellent (4.0-5.0) | 18.4% (276) | _pending_ | _not trained_ |
-| 4 — Good (3.0-3.99) | 21.4% (321) | _pending_ | _not trained_ |
-| 3 — Fair (2.0-2.99) | 21.7% (325) | _pending_ | _not trained_ |
-| 2 — Poor (1.0-1.99) | 22.4% (336) | _pending_ | _not trained_ |
-| 1 — Failed (0.0-0.99) | 16.0% (239) | _pending_ | _not trained_ |
+| Config | Mean IS | Properly Captured | WER | WWER | NEA F1 | Hallucination | Empty |
+|--------|---------|-------------------|-----|------|--------|---------------|-------|
+| beam5 | 2.4 | 36.6% | _pending_ | _pending_ | _pending_ | 0.0% | 4.5% |
+| default | 2.0 | 33.0% | _pending_ | _pending_ | _pending_ | 0.0% | 25.4% |
+| greedy | 2.4 | 32.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
+| lenpen1 | 2.4 | 36.6% | _pending_ | _pending_ | _pending_ | 0.0% | 0.0% |
+| sample_low | 2.4 | 37.9% | _pending_ | _pending_ | _pending_ | 0.0% | 1.3% |
+| sample_med | 2.4 | 37.5% | _pending_ | _pending_ | _pending_ | 0.0% | 1.8% |
 
 ## Analysis
 
-### Training Takeaways
+### Best Overall
+**Baseline** achieved the highest mean IS of 2.5 with default decode parameters.
 
-1. **Early stopping is critical**: Best checkpoint at epoch 2 — 17 of 19 epochs were wasted training time
-2. **The dataset (1,273 segments) was far too small for meaningful generalization**: Both r=16 and r=64 memorized training data (~95% train acc) and failed to generalize (~59-63% val acc). This is below the ~1,000-sample minimum for LoRA to generalize (per ICLR 2024 scaling law research). The experiments tested the dataset's limits, not the model's capacity
-3. **Data shows learning signal exists**: Validation accuracy improved from epoch 1 to 2 (62.5% → 62.9%), proving the model can learn from AVSpeech data — it just needs 10-50x more of it
-4. **r=64 was worse (-3.1pp) due to data scarcity, not because r=16 is sufficient**: With only 1,273 samples, more parameters = faster overfitting. With 20K+ samples, results could differ
-5. **Both data scaling and encoder adaptation are needed**: The frozen encoder limits visual feature quality; insufficient data limits the decoder's ability to learn from what features exist. These are independent bottlenecks
+### Improvement Over Baseline
 
-### Per-Tier Impact
-_To be filled after decode evaluation. Key question: Did fine-tuning help more on hard (Tier 1-2) or easy (Tier 4-5) segments?_
+- **ExpA_r16**: IS 2.3 (Δ -0.175, regression)
+- **ExpB_r64**: IS 2.0 (Δ -0.464, regression)
 
-### Hallucination Analysis
-_To be filled after decode evaluation. Key question: Did fine-tuning reduce fabricated outputs?_
+## LLM-as-a-Judge Evaluation
 
-### Failure Mode Shifts
-_To be filled after decode evaluation. Key question: Which of the 10 failure modes improved/worsened?_
+Claude Opus 4.6 evaluated all 224 val segments per experiment using the same Y/P/N protocol as the baseline 1,497-segment study. Empty/trivially short outputs auto-classified as N.
+
+| Experiment | Y | P | N | Y% | P% | N% | Y+P% | Auto-N |
+|-----------|---|---|---|---|---|---|---|---|
+| Baseline | 40 | 76 | 108 | 17.9 | 33.9 | 48.2 | 51.8 | 16 |
+| Exp A (r=16) | 41 | 74 | 109 | 18.3 | 33.0 | 48.7 | 51.3 | 28 |
+| Exp B (r=64) | 32 | 88 | 104 | 14.3 | 39.3 | 46.4 | 53.6 | 60 |
+
+### IS vs LLM Judge Comparison
+
+IS scores decrease monotonically (Baseline 2.487 > Exp A 2.312 > Exp B 2.023), but LLM Y+P% is flat (~51–54%). The discrepancy exists because:
+1. IS heavily penalizes empty outputs (IS = 0) which drag down the mean
+2. The LLM judge confirms that when text IS produced, fine-tuned models are about as useful as baseline
+3. Exp B's higher P% (39.3% vs 33.9%) at the cost of lower Y% (14.3% vs 17.9%) reflects a shift toward fluent but slightly wrong outputs — characteristic of overfitting
+
+### Agreement Between Experiments
+
+| Pair | Exact | Lenient (Y+P vs N) |
+|------|:---:|:---:|
+| Baseline vs Exp A | 80.8% | 87.9% |
+| Baseline vs Exp B | 69.6% | 78.6% |
+| Exp A vs Exp B | 71.0% | 79.9% |
+
+The auto-N count is the clearest overfitting signal: Baseline = 16 (7.1%), Exp A = 28 (12.5%), Exp B = 60 (26.8%). More LoRA parameters with insufficient data → more empty/gibberish outputs.
+
+### Conclusion
+
+Both IS and Claude-as-Judge converge on the same finding: fine-tuning on 1,273 segments produced no meaningful improvement. The Baseline (paper checkpoint) remains the recommended model.
+
+Full LLM judge analysis: [../llm_judge/finetune_llm_judge_comparison.md](../llm_judge/finetune_llm_judge_comparison.md)
 
 ## Recommendations
 
-### For Exp B (r=64)
-1. **Use early stopping**: Save checkpoints every epoch, stop at first val accuracy decline
-2. **Set max_update=500**: Based on Exp A, peak is at ~320 updates — 3,000 is massive overkill
-3. **Increase LoRA rank**: r=64 with alpha=128 gives 4x adapter capacity
-4. **Consider validation frequency**: Validate every 50 updates (not every epoch) for finer early-stopping
-
-### For Future Experiments (Corrected Priorities After Exp B)
-- **Scale training data to 20K-50K segments** (MOST CRITICAL): Both experiments proved that 1,273 segments is below the threshold for generalization. AVSpeech has 290K videos / 4,700 hours available
-- **Upgrade LLM to Llama 3.1 8B**: ≈Llama-2-70B quality, same hidden_size (4096), enables advanced prompting strategies. Gains multiply with more data
-- **Smarter prompts**: Topic context, word count hints, GER post-processing — force multiplier for stronger models
-- **Improve labels**: Use Whisper large-v3 instead of base for training transcriptions
-- **Encoder unfreezing** (requires larger GPU): Addresses visual domain shift ceiling
-- **Data quality curation**: Filter by face detection confidence >0.9, exclude extreme head poses
+_To be filled after reviewing results._

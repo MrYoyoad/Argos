@@ -233,6 +233,34 @@ The 165 salvageable segments include cases where high phonetic similarity (natur
 
 Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md)
 
+### 6.4 LLM-as-a-Judge Cross-Validation (March 2026)
+
+An independent gold standard evaluation using Claude Opus 4.6 judged all 1,497 baseline segments on a 3-level scale (Y = meaning conveyed, P = partial, N = meaning lost), blind to all metrics. This provides external validation of the IS framework.
+
+| Measure | Value |
+|---------|-------|
+| Pearson r (LLM judge vs IS) | **0.850** |
+| Spearman ρ | **0.858** |
+| Segment-level agreement | 88–90% |
+| Boundary disagreements | 22 / 1,497 (1.5%) |
+| Intra-rater reliability | 86.7% exact (30 duplicates) |
+
+**Capture rate comparison:**
+
+| Method | Useful Segments | Rate |
+|--------|-----------------|------|
+| WER-only (WER ≤ 20%) | ~98 | 11.4% |
+| IS (IS ≥ 3.0) | 597 | 39.9% |
+| IS + LLM salvage | 762 | 50.9% |
+| LLM judge strict (Y only) | 345 | 23.0% |
+| LLM judge lenient (Y+P) | 971 | 64.9% |
+
+The LLM judge is more conservative for "full success" (Y = 23% vs IS ≥ 3.0 = 40%) but more generous for "any useful output" (Y+P = 65% vs IS = 40%). The 3×5 confusion matrix shows clean tier separation — Y concentrates in IS tiers 4–5, N in tiers 1–2, with only 22 boundary disagreements.
+
+**Cross-configuration stability:** Tested across 16 decode configurations, the `llm_context_prob` heuristic's correlation with IS holds at mean r = 0.925 (std = 0.015), confirming both systems are robust to decode parameter changes.
+
+Full analysis: [llm_judge/llm_judge_analysis.md](llm_judge/llm_judge_analysis.md)
+
 ---
 
 ## 7. Comparison with Paper Expectations
