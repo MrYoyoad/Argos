@@ -235,8 +235,8 @@
     \begin{block}{\small Key Finding}
       {\scriptsize r=64 performed \alert{3.1pp worse}\\
       $\rightarrow$ 4$\times$ params = faster overfitting on tiny data\\[2pt]
-      \keyword{1,273 segments is below the $\sim$1K minimum}\\
-      for LoRA generalization (ICLR 2024)}
+      \keyword{1,273 segments is insufficient}\\
+      for LoRA generalization ($\sim$20K minimum, ICLR 2024)}
     \end{block}
   }{0.49}{
     \includegraphics[width=\linewidth, height=0.45\textheight, keepaspectratio]{finetune/FT_10_summary_dashboard.png}
@@ -259,7 +259,7 @@
   \note{
     Exp A: best val 62.94\% at epoch 2, then severe overfitting.
     Exp B (r=64) was WORSE --- proves data scarcity is the bottleneck, not model capacity.
-    1,273 segments is below the minimum for LoRA generalization.
+    1,273 segments is insufficient for LoRA generalization (need $\sim$20K).
     Data scaling: 20K segments with Llama 3.1 could reach 40--45\%.
     AVSpeech has 290K videos --- data is available, just needs processing.
   }

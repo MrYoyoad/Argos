@@ -81,12 +81,19 @@
       \notetext{Training data IS tier distribution}
     \end{column}
   \end{columns}
+
+  \note{
+    Q\&A backup for fine-tuning methodology questions.
+    Exp A: LoRA r=16, 1,273 segments. ~95\% train / ~60\% val accuracy = overfitting.
+    Perplexity diverges after epoch 3 --- classic data-limited behavior.
+    Training data skewed toward lower IS tiers --- model learns from poor examples.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
 % A3: Catastrophic lenpen=2.0
 % ----------------------------------------------------------
-\begin{frame}[shrink=10]{A3: Catastrophic lenpen=2.0 (Config H)}
+\begin{frame}[shrink=10]{A3: Catastrophic Length Penalty (lenpen=2.0, Config H)}
   {\small Config H forces the model to generate longer text. Mean WER: \alert{539.6\%}\\
   The model generates \alert{paragraphs of hallucinated text}:}
 
@@ -129,6 +136,13 @@
 \begin{frame}{A4: Segment Stability Across Configurations}
   \fullwidthfig{12_segment_stability_heatmap.png}
                 {Per-segment WWER across 13 configs. ``Hard'' and ``easy'' segments are consistent --- the visual encoder is the bottleneck.}
+
+  \note{
+    Q\&A backup for ``can tuning fix the hard segments?''
+    Segment difficulty is stable across all 13 decode configurations.
+    Dark rows (high WWER) stay dark regardless of beam/lenpen/sampling.
+    This proves the bottleneck is the visual encoder, not the decoder.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -136,6 +150,13 @@
 % ----------------------------------------------------------
 \begin{frame}[shrink=10]{A5: Full Experiment Table (13 Configurations)}
   \input{tables/experiment_comparison.tex}
+
+  \note{
+    Q\&A backup: full data behind the 13-experiment sweep.
+    Baseline (beam=20, lenpen=0, no sampling) proved most robust.
+    Config J (lenpen=1.0, temp=0.5) is the only meaningful alternative.
+    Configs D and H are catastrophic --- shown in detail on A3.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -143,6 +164,14 @@
 % ----------------------------------------------------------
 \begin{frame}[shrink=10]{A6: Topic Analysis --- 11 Categories}
   \input{tables/topic_analysis.tex}
+
+  \note{
+    Q\&A backup for ``does performance vary by topic?''
+    11 categories from automatic topic classification.
+    Short/simple topics (greetings, commands) perform best.
+    Technical/domain topics (legal, medical) perform worst.
+    Topic distribution is skewed --- most segments are conversational.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -171,6 +200,13 @@
   \vspace{6pt}
   \notetext{NEA F1 has the largest gap (58.3pp) --- names and numbers are the hardest signals to get right.\\
   Length Ratio is NOT a strong differentiator (both groups produce roughly correct-length output).}
+
+  \note{
+    Q\&A backup for ``how do the IS signals separate good from bad?''
+    NEA F1 has the largest success/failure gap at 58.3pp.
+    Length Ratio barely differentiates --- both groups produce similar-length output.
+    Semantic and Phonetic both show ~0.4--0.5 gaps, confirming they measure different things.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -220,6 +256,13 @@
       \end{block}
     \end{column}
   \end{columns}
+
+  \note{
+    Q\&A backup for ``how was the IS validated?''
+    6 signals collapse into 3 independent dimensions via PCA.
+    Cross-config stability: IS rankings hold across all 16 decode configs (mean r=0.925).
+    Expert heuristic agrees with IS at 88.6\% (Cohen's $\kappa$=0.773) --- no runtime LLM needed.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -326,6 +369,14 @@
       Proves: architecture innovation $>$ model size.}
     \end{block}
   }
+
+  \note{
+    Q\&A backup for ``what's the path to 30\% WER?''
+    Drop-in LLM swap (Llama 3.1 8B) requires only projection layer retraining.
+    Data scaling from 1.3K to 20K--50K segments is the biggest single lever.
+    VALLR (ICCV 2025) proves 18.7\% is achievable with architecture innovation.
+    Waterfall shows 27--42\% WER target from combining all improvements.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -424,6 +475,13 @@
   \vspace{4pt}
   \notetext{All examples: IS $<$ 3.0 (metrics say ``failed'') but LLM heuristic says recoverable.\\
   Categories overlap: segments can exhibit multiple recovery signals.}
+
+  \note{
+    Q\&A backup: concrete examples of the 165 salvaged segments.
+    Each row: metrics say ``failed'' (IS $<$ 3.0) but the LLM heuristic says a viewer would understand.
+    Hidden Gem: ``reasoning and logic'' --- nearly perfect content despite 74\% WER from function word errors.
+    WER Over-Punishment: ``so um'' $\rightarrow$ ``so i kind of'' --- 150\% WER for a trivial filler substitution.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -469,6 +527,13 @@
     52\% & \tierfair{3.02} \\
     \bottomrule
   \end{tabular}}
+
+  \note{
+    Q\&A backup: concrete examples of the 7 success patterns.
+    Near-Perfect and Minor Errors are the ``easy wins'' (IS $\geq$ 4.0).
+    Entities Preserved: even with wrong numbers (8,616 vs 1,600), IS credits structure preservation.
+    Semantic + Phonetic at IS 3.02 --- barely captured, shows the IS 3.0 boundary in action.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -577,6 +642,14 @@
 
   \vspace{4pt}
   \notetext{Each mismatch pattern reveals a different system behavior. Multiple patterns can co-occur in one segment.}
+
+  \note{
+    Q\&A backup for ``why not just use WER?''
+    8 diagnostic patterns show how different metric combinations reveal different system behaviors.
+    Key example: WER $\gg$ WWER means function words wrong but meaning preserved --- WER over-penalizes.
+    Low Semantic + Low WER = entity destruction --- few words changed but meaning lost entirely.
+    See A14b for concrete examples of each pattern.
+  }
 \end{frame}
 
 % ----------------------------------------------------------
@@ -629,4 +702,11 @@
 
   \vspace{4pt}
   \notetext{Every example sourced from the 1,497-segment baseline. Each illustrates a different diagnostic pattern from A14.}
+
+  \note{
+    Q\&A backup: real examples for every metric mismatch pattern.
+    Admiral/animal (row 5): Phonetic 0.83 but Semantic 0.16 --- classic homophene confusion.
+    ``so um'' $\rightarrow$ ``so i kind of'' (row 7): LR 1.60, WER 140\% for trivial filler expansion.
+    All sourced from 1,497-segment baseline, verifiable in report.csv.
+  }
 \end{frame}

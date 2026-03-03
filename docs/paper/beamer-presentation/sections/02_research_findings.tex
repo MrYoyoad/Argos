@@ -49,7 +49,7 @@
       \textbf{Hypothesis:} ``work with the team on the project''\\[4pt]
       {\scriptsize Minor word substitution --- meaning fully preserved}
     }
-    {\faIcon{times-circle}~Unintelligible (WER 33\%, IS 1.2)}
+    {\faIcon{times-circle}~Not Captured (WER 33\%, IS 2.96)}
     {
       \textbf{Reference:} ``admiral mcrae visited the fleet''\\[2pt]
       \textbf{Hypothesis:} ``animal migratory visited the fleet''\\[4pt]
@@ -313,7 +313,7 @@
 % Slide 8: Failure Mode Taxonomy
 % ----------------------------------------------------------
 \begin{frame}[shrink=10]{Failure Mode Taxonomy}
-  {\small 10 classified failure modes across \textbf{900 failed segments} (IS $<$ 3.0):}
+  {\small Even after salvage, \textbf{49\% of output fails} --- 10 classified failure modes across \textbf{900 segments} (IS $<$ 3.0):}
 
   \vspace{4pt}
 
@@ -551,7 +551,7 @@
     \halfwidthfig{P4_lenpen_sensitivity.png}
 
     \vspace{2pt}
-    \notetext{Length penalty vs empty/hallucination trade-off}
+    \notetext{Length penalty (\texttt{lenpen}) vs empty/hallucination trade-off}
   }
 
   \note{
@@ -571,7 +571,7 @@
 
   \note{
     Walk through each row:
-    1. Perfect: 33 words about insurance, WER 0\% --- it works.
+    1. Perfect: 30 words about insurance, WER 0\% --- it works.
     2. Near-miss: ``admiral'' vs ``animal'' --- lip shapes identical.
     3. Hallucination: model fabricates entire narrative. Reads fluently.
     4. Tuning tradeoff: Config J recovers empty output but at cost.
@@ -650,7 +650,7 @@
         \item \textbf{Intelligibility Methodology}\\
               {\scriptsize IS design, 6 signals, tier validation}
         \item \textbf{LLM Upgrade Analysis}\\
-              {\scriptsize Model alternatives, data scaling, GER}
+              {\scriptsize Model alternatives, data scaling, GER (Generative Error Correction)}
       \end{enumerate}
     \end{column}
   \end{columns}
