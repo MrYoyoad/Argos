@@ -323,6 +323,75 @@ Every segment scoring IS < 3.0 is classified into its dominant failure mode. Thi
 | Truncation | 10 | 1.1% |
 | Over-generation | 1 | 0.1% |
 
+### 8.1 What Each Failure Mode Means (Plain English)
+
+**Empty Output** (70 segments, 7.8%)
+- *What it looks like*: The model produced no text at all — complete silence.
+- *Why it happens*: The visual encoder could not extract enough signal from the mouth region (face occluded, very short segment, poor video quality).
+- *What could fix it*: Config J (lenpen=1 + sampling) eliminates all 70 empties. Phase 2 (N-best) provides fallback candidates.
+
+**Hallucination** (111 segments, 12.3%)
+- *What it looks like*: The model generated fluent, confident text that has nothing to do with what was actually said. Often longer than the reference.
+- *Why it happens*: The LLM "runs ahead" of the visual signal, generating plausible text from its language model prior rather than from lip movements. This is the most dangerous failure mode because the output sounds convincing.
+- *What could fix it*: Stronger visual encoder (more training data), anti-hallucination prompts, GER post-processing to compare multiple hypotheses.
+
+**Over-generation** (1 segment, 0.1%)
+- *What it looks like*: The model captured the right content but kept generating extra text beyond what was said.
+- *Why it happens*: Length penalty too low — the model doesn't know when to stop.
+- *What could fix it*: Length penalty tuning (lenpen > 0), explicit stop tokens.
+
+**Truncation** (10 segments, 1.1%)
+- *What it looks like*: The model started correctly but stopped too early, capturing only part of the utterance.
+- *Why it happens*: Short visual segments, or the model's confidence drops below the generation threshold.
+- *What could fix it*: Lower generation stopping threshold, N-best with different length penalties.
+
+**Total Topic Drift** (143 segments, 15.9%)
+- *What it looks like*: The output is about a completely different subject. Reference talks about weight loss, hypothesis talks about being a princess.
+- *Why it happens*: The visual encoder extracted no meaningful signal — the model fell back entirely on its language prior, generating generic text.
+- *What could fix it*: Better visual encoder (more training data, domain adaptation), topic-context prompts.
+
+**Phonetically Similar but Wrong Topic** (141 segments, 15.7%)
+- *What it looks like*: The words sound somewhat right (similar mouth shapes) but the topic is completely different.
+- *Why it happens*: The visual encoder captured some mouth shape information, but the LLM decoded it into the wrong semantic domain.
+- *What could fix it*: Topic-aware prompting, stronger LLM with better disambiguation, N-best hypothesis aggregation.
+
+**Entity Destruction** (108 segments, 12.0%)
+- *What it looks like*: The general topic is vaguely right, but all names, numbers, and proper nouns are wrong. "The 13th amendment" becomes "13th may mean something to him."
+- *Why it happens*: Named entities are arbitrary strings with no phonetic or semantic predictability — the model cannot guess "McRae" from lip shapes alone.
+- *What could fix it*: Context injection (provide known entity lists), N-best with entity voting, domain-specific fine-tuning.
+
+**High Error Rate** (109 segments, 12.1%)
+- *What it looks like*: Too many words are wrong for any signal to survive. The output contains fragments of correct words mixed with errors.
+- *Why it happens*: Combination of visual ambiguity, unfamiliar vocabulary, and rapid speech.
+- *What could fix it*: More training data, stronger LLM, visual encoder improvements.
+
+**Content Word Errors** (96 segments, 10.7%)
+- *What it looks like*: The sentence structure is intact and function words are correct, but key nouns and verbs are wrong. "Before I get into that" becomes "the day before I get here."
+- *Why it happens*: The model captures sentence rhythm and structure from lip movements but substitutes content words with similar-looking alternatives.
+- *What could fix it*: Stronger LLM (better word-level predictions), phonetic post-correction, context prompts.
+
+**Accumulated Small Errors** (111 segments, 12.3%)
+- *What it looks like*: Each individual error is small, but they compound to make the sentence incomprehensible. "Convert your body into an avatar" becomes "interjection to an existing body into an adjoining sentence."
+- *Why it happens*: Many simultaneous phonetic confusions, each individually plausible but collectively destructive.
+- *What could fix it*: N-best aggregation (ROVER voting), GER post-processing, stronger visual encoder.
+
+### 8.2 Failure Mode Examples
+
+One representative segment from each failure mode:
+
+| Mode | Reference | Hypothesis | WER | IS |
+|------|-----------|-----------|-----|-----|
+| **Empty Output** | "you don't just pull it apart you're not strong enough..." | *(empty)* | 100% | 0.00 |
+| **Hallucination** | "the chapter starts with a doxology..." | "so i'm going to tell you a little story about how i got..." | 172% | 0.23 |
+| **Over-generation** | "to the next level" | "to the next level and they have tried" | 100% | 2.32 |
+| **Truncation** | "how's it going guys eric here from tech a sode tv..." | "as john lennon once said may the force be with you" | 95% | 0.40 |
+| **Total Topic Drift** | "i've made lots of videos about weight loss..." | "when i was a little girl i always wanted to be a princess" | 97% | 0.38 |
+| **Phonetically Similar Wrong Topic** | "and if we don't listen then it will start yelling..." | "although recently we started an alliance even though recently..." | 76% | 1.68 |
+| **Entity Destruction** | "about the 13th amendment the 13th amendment is going to come..." | "13th may mean something to him because it can help him..." | 81% | 2.14 |
+| **High Error Rate** | "there's a lot to learn from those experiences..." | "these experiences and in my day to day thinking i continue..." | 75% | 2.35 |
+| **Content Word Errors** | "again before i get into that i just want to check in..." | "the day before i get here i just want to check in..." | 56% | 2.66 |
+| **Accumulated Small Errors** | "and as you did those gestures it would convert your body..." | "and add to interjection to an existing body into an adjoining..." | 69% | 2.04 |
+
 ---
 
 ## 9. Success Pattern Classification
@@ -354,6 +423,57 @@ Every segment scoring IS >= 3.0 is classified by what made it succeed.
 
 **Key Insight:** Phonetic preservation is the #1 success driver (41.5%). The visual signal preserves the phonetic structure of speech even when specific words are wrong. A system that corrects phonetic near-misses could potentially recover many more segments.
 
+### 9.1 What Each Success Pattern Means (Plain English)
+
+**Near-Perfect Output** (69 segments, 11.6%)
+- *What it looks like*: Almost word-for-word correct. A human wouldn't notice the difference.
+- *Why it matters*: Proves the system CAN achieve near-human accuracy under good conditions (clear speech, frontal face, good lighting, familiar vocabulary).
+- *Implication*: These segments define the system's ceiling. The gap between these and the average is the improvement opportunity.
+
+**Minor Errors, High Semantic Match** (146 segments, 24.5%)
+- *What it looks like*: A few words are different (articles changed, slight restructuring) but the meaning is completely preserved. WER says 15-25% error, but a human reader understands everything.
+- *Why it matters*: This is where WER is most misleading — it penalizes harmless differences. IS correctly scores these as Good (4.0+).
+- *Implication*: These prove that WER systematically overstates failure. The "real" error rate is much lower than WER suggests.
+
+**Phonetically Preserved** (248 segments, 41.5%)
+- *What it looks like*: Many words are technically wrong by WER, but they SOUND like the right words. The model captures mouth shapes accurately; it just picks a similar-sounding alternative. "Respiratory system" becomes "rosetta mission" — wrong words, but the mouth movements were read correctly.
+- *Why it matters*: This is the #1 success driver. It means the visual encoder IS working — the bottleneck is disambiguation, not perception.
+- *Implication*: A stronger LLM or context injection could correct these phonetic near-misses, potentially recovering many "fair" tier segments.
+
+**Entities Preserved** (74 segments, 12.4%)
+- *What it looks like*: Names, numbers, and proper nouns survived even though surrounding words are wrong. The factual anchors are correct.
+- *Why it matters*: For many use cases (legal, intelligence, medical), preserving key entities matters more than perfect transcription.
+- *Implication*: These segments are immediately useful for entity extraction even without full transcription accuracy.
+
+**Good Semantic + Correct Length** (45 segments, 7.5%)
+- *What it looks like*: The meaning is coherent and the output is the right length, even though individual words differ.
+- *Why it matters*: Shows the model understands sentence-level structure, not just individual words.
+- *Implication*: These benefit most from N-best aggregation where multiple hypotheses can be merged.
+
+**Low-Moderate WER** (13 segments, 2.2%)
+- *What it looks like*: WER is in the 25-35% range with no standout signal. A mix of correct and incorrect words.
+- *Why it matters*: These are borderline segments where small improvements could push them to "Good" tier.
+- *Implication*: Phase 2 (N-best aggregation) and Phase 3 (prompt engineering) most likely to help.
+
+**Combined Semantic + Phonetic Bridge** (2 segments, 0.3%)
+- *What it looks like*: Neither semantic nor phonetic similarity alone is strong enough, but together they push the segment above the IS ≥ 3.0 threshold.
+- *Why it matters*: Demonstrates the value of combining multiple signals rather than relying on any single metric.
+- *Implication*: Validates the multi-signal IS design — no single metric captures all ways a segment can be intelligible.
+
+### 9.2 Success Pattern Examples
+
+One representative segment from each pattern:
+
+| Pattern | Reference | Hypothesis | WER | IS |
+|---------|-----------|-----------|-----|-----|
+| **Near-Perfect** | "piece of software for anybody who's just getting started..." | "piece of software for anybody who's just getting started..." | 6% | 4.77 |
+| **Minor Errors** | "mute the call that you're on it mutes and then you hear..." | "mute the call that you're on and then you hear..." | 17% | 4.63 |
+| **Phonetically Preserved** | "improvements have been made to it over the eons but the respiratory system..." | "improvements have been made to it over the years but the rosetta mission..." | 32% | 3.64 |
+| **Entities Preserved** | "these areas likely from mid to late afternoon through the evening hours..." | "terrorists lately from the midday afternoon through the evening hours..." | 51% | 3.28 |
+| **Semantic + Length** | "welcome to lesson number two what are we going to be doing..." | "welcome to lesson number two what are we going to be doing..." | 24% | 3.79 |
+| **Low-Moderate WER** | "therefore it's attractive and then the large manufacturers of soft rings..." | "is a default tracker and then the hardware manufacturers of softwares..." | 35% | 3.02 |
+| **Combined Bridge** | "and they're nice to their employees because that's the kind of thing..." | "no that's really important to me because that is not the thing..." | 56% | 3.01 |
+
 ---
 
 ## 10. Signal Comparison: Success vs Failure
@@ -368,6 +488,90 @@ Every segment scoring IS >= 3.0 is classified by what made it succeed.
 | Length Ratio | 0.974 | 0.892 | +0.082 |
 
 The largest differentiators are NEA F1 (entity preservation), WER, and semantic similarity. Length ratio is similar between groups, confirming it is not a strong solo predictor.
+
+## 10b. Metric Mismatch Guide: When Metrics Disagree
+
+When two metrics point in different directions, it reveals something specific about what the model got right or wrong. This guide explains the 8 most common mismatch patterns.
+
+### Pattern 1: WER >> WWER (gap ≥ 10 percentage points)
+
+**What you see**: WER is much higher than WWER (e.g., WER 100%, WWER 54%).
+
+**What it means**: Most errors are on function words (the, a, is, and, to) while content words (nouns, verbs, names) are largely correct. The meaning is likely preserved despite the high WER.
+
+**Example**: Ref: "good to help people mission accomplished" → Hyp: "her to help people but she got impatient so" (WER 100%, WWER 54%, gap 46pp). The content words "help people" survived; the errors are on structure words.
+
+**Which IS component catches this**: WWER is lower, so Inv-WWER gives more credit than Inv-WER. These segments are LLM salvage candidates ("WER Over-Punishment" category).
+
+### Pattern 2: WWER >> WER (rare, gap ≥ 10pp)
+
+**What you see**: WWER is much higher than WER (e.g., WER 172%, WWER 296%).
+
+**What it means**: The content words are MORE wrong than the function words. This is worse than it looks — the meaningful words are the ones that failed.
+
+**Example**: Ref: "the chapter starts with a doxology..." → Hyp: "so i'm going to tell you a little story about how i got..." (WER 172%, WWER 296%). Every content word is wrong AND the model hallucinated extra text.
+
+**Which IS component catches this**: WWER penalizes this harder than WER. Semantic similarity is also very low.
+
+### Pattern 3: High Semantic Similarity + High WER (sem ≥ 0.5, WER ≥ 60%)
+
+**What you see**: WER says it's terrible, but semantic similarity says the meaning is preserved.
+
+**What it means**: The model paraphrased rather than transcribed. Different words, same meaning. This is NOT an error — it's a translation.
+
+**Example**: Ref: "this course is all about transitions this video is all about transitions" → Hyp: "this course is all about transition in this video i'm going to talk about transi" (WER 67%, Semantic 0.89). Nearly identical meaning despite 67% word error rate.
+
+**Which IS component catches this**: Semantic similarity (0.25 weight) gives high credit. This is why IS was created — WER cannot see meaning preservation.
+
+### Pattern 4: Low Semantic Similarity + Low WER (sem < 0.3, WER < 40%)
+
+**What you see**: Few words changed, but semantic similarity is very low.
+
+**What it means**: Entity destruction — a small number of critical word substitutions changed the entire meaning. This is the most deceptive failure because WER looks fine.
+
+**Example**: Ref: "you can actually bring the pro controller with you on the go" → Hyp: "to actually bring the broken dollar with you on the go" (WER 38%, Semantic 0.14). Only "pro controller" → "broken dollar" changed, but the meaning is destroyed.
+
+**Which IS component catches this**: Semantic similarity drops sharply. NEA F1 also drops if named entities are lost.
+
+### Pattern 5: High Phonetic Similarity + Low Semantic Similarity (phon ≥ 0.7, sem < 0.3)
+
+**What you see**: Words sound alike but the meaning is completely different.
+
+**What it means**: Classic lip-reading confusion (homophene errors). The model correctly read the mouth shapes but decoded them into wrong words.
+
+**Example**: Ref: "it doesn't matter what the tradu" → Hyp: "it doesn't matter what the tradition" (Phonetic 0.88, Semantic 0.28). "Tradu[ction]" and "tradition" look identical on lips.
+
+**Which IS component catches this**: Phonetic similarity is high, but semantic similarity is low. The gap between these two signals identifies homophene confusion specifically.
+
+### Pattern 6: High NEA F1 + High WWER (NEA ≥ 50%, WWER ≥ 60%)
+
+**What you see**: Names and numbers are correct, but overall word accuracy is poor.
+
+**What it means**: The model captured the most important factual anchors (names, numbers, places) even though the surrounding context is garbled.
+
+**Example**: Ref: "it's our commercial product and i've got a few slides..." → Hyp: "this morning i saw a sign on the motorway that said..." (NEA 100%, WWER 73%). Key entities survived in a sea of errors.
+
+**Which IS component catches this**: NEA F1 provides credit even when WER and WWER are bad. These segments may be useful for entity extraction even if transcription is poor.
+
+### Pattern 7: Length Ratio > 1.5 + High WER
+
+**What you see**: The hypothesis is much longer than the reference.
+
+**What it means**: Over-generation — the model hallucinated extra text beyond what was said. The LLM's language prior "ran ahead" of the visual signal.
+
+**Example**: Ref: "very important" → Hyp: "policies that keep us out of the" (Length Ratio 3.50, WER 350%). Two words became six fabricated words.
+
+**Which IS component catches this**: Length Ratio deviates from 1.0, and WER > 100% signals text was inserted. Both Inv-WER and Length Ratio drop.
+
+### Pattern 8: Length Ratio < 0.5 + High WER
+
+**What you see**: The hypothesis is much shorter than the reference.
+
+**What it means**: Truncation — the model stopped generating early. It may have captured the beginning correctly but gave up.
+
+**Example**: Ref: "program covering everybody admittedly with fewer drugs covered but every person..." → Hyp: "i'm going to tell you" (Length Ratio 0.14, WER 94%). A substantive policy statement truncated to a generic filler.
+
+**Which IS component catches this**: Length Ratio drops sharply (< 0.5). WER is high because most words are simply missing.
 
 ---
 

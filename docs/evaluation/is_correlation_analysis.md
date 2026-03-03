@@ -6,6 +6,85 @@
 
 ---
 
+## 0. What This Analysis Says (Plain English)
+
+This document analyzes how the 6 signals that make up the Intelligibility Score (IS) relate to each other and to the overall score. Here is what you need to know:
+
+1. **The 6 signals really measure 3 things.** Word accuracy (~60% of the score), meaning preservation (~29%), and output length (~9%). Four of the six signals — Phonetic Similarity, WER, WWER, and NEA F1 — are all different ways of asking "did the model get the words right?" They correlate tightly with each other (r > 0.79). Semantic Similarity captures whether the *meaning* came through, even if different words were used. Length Ratio just checks if the output is roughly the right length.
+
+2. **When IS is high, both words AND meaning are right.** When IS is low, one or both are wrong. There is no shortcut — a segment needs to get both the words and the meaning approximately correct to score well.
+
+3. **~60% of IS depends on the visual encoder.** The word accuracy cluster (Phonetic, WER, WWER) is the largest contributor, and these signals measure how well the visual encoder extracts speech information from lip movements. To meaningfully improve IS, the visual features must improve — via better training data, a stronger encoder, or both.
+
+4. **The LLM heuristic agrees with IS 89% of the time.** Two independently designed systems — the IS formula and the `llm_context_prob` decision tree — converge on the same quality judgments. This confirms IS is not arbitrary.
+
+5. **Across 16 decode configurations: Semantic and Phonetic are rock-solid; WER and Length Ratio are volatile.** Changing decode parameters (beam size, length penalty, sampling) barely affects Semantic or Phonetic correlations with IS (std < 0.06). But WER correlation swings from -0.95 to -0.45, and Length Ratio even flips sign. This means WER is unreliable as a standalone quality metric.
+
+**Quick Reference:**
+
+| Signal | Role | Stability | Key Stat |
+|--------|------|-----------|----------|
+| Phonetic Sim | Strongest single predictor | Stable (std 0.059) | r = 0.943 — direct measure of encoder quality |
+| Semantic Sim | Highest weight (25%) and variance (28.5%) | Very stable (std 0.017) | Explains most IS differences between segments |
+| NEA F1 | Swing factor for borderline cases | Very stable (std 0.023) | 17.3% variance from 15% weight — names/numbers are binary |
+| WER | Traditional error metric | Volatile (std 0.163) | Unreliable across configs — inflated by length penalty |
+| WWER | Weighted error metric | Volatile (std 0.203) | Same instability as WER |
+| Length Ratio | Output length check | Highly volatile (std 0.368) | Nearly useless — sign flips across decode settings |
+| LLM heuristic | Independent validation | Very stable (std 0.015) | r = 0.925 with IS — confirms framework validity |
+
+---
+
+## 0.1 The Important Findings
+
+These are the findings from the correlation analysis that matter most for understanding the system and deciding what to improve.
+
+### Finding 1: Phonetic Similarity is the strongest single predictor (r = 0.943) despite having lower weight (15%)
+
+Phonetic Similarity has the highest correlation of any single signal with IS (r = 0.943), even though it only receives 15% weight (vs Semantic's 25%). This is because the visual encoder's primary job is decoding mouth shapes into sounds — phonetic accuracy is the most direct measure of whether the encoder did its job.
+
+**Implication:** Improving the visual encoder (via more training data or a stronger architecture) has the biggest single impact on IS. Phonetic accuracy is the closest proxy to "did the encoder work?"
+
+### Finding 2: 4 of 6 signals measure the same underlying thing (word accuracy cluster, r > 0.79)
+
+Phonetic Similarity, WER, WWER, and (partially) NEA F1 all correlate tightly with each other. They form a single "word accuracy" dimension that accounts for ~60% of IS variance. The IS formula assigns 15% weight to each of these four signals, creating an implicit 60% emphasis on word-level accuracy.
+
+**Implication:** The IS formula is heavily weighted toward "did it get the right words?" This is intentional — for lip-reading, getting the words right is the foundation. But it means a segment that perfectly captures meaning with different words (paraphrasing) will score lower than it deserves.
+
+### Finding 3: Semantic Similarity drives the most IS variance (28.5%) despite being partially redundant with word accuracy
+
+Semantic Similarity correlates at r = 0.82 with Phonetic — they share information, because getting the words right usually means getting the meaning right. But Semantic has the highest weight (25%) AND the highest spread among segments (σ = 0.31). This means: when two segments differ in IS, the semantic signal is often what separates them.
+
+**Implication:** Semantic Similarity is the "tiebreaker" signal. It distinguishes between segments where the words are similarly wrong but the meaning preservation varies. This is especially important for the Fair tier (IS 2.0–3.0), where many segments live.
+
+### Finding 4: NEA F1 punches above its weight (17.3% variance from 15% weight)
+
+Named Entity Accuracy has the highest variance of all signals (σ = 0.37). A segment either preserves names, numbers, and key entities or it doesn't — there's rarely a middle ground. This binary nature makes NEA the "swing factor" in borderline cases: a segment with correct entity capture often gets pushed into the next tier up.
+
+**Implication:** Names and numbers are the hardest things to get right in lip-reading (they can't be predicted from context). When the system does capture them, it's strong evidence that the visual features were good quality.
+
+### Finding 5: Length Ratio is nearly useless (9.1% variance, sign-flipping across configs)
+
+Length Ratio's contribution to IS variance is the smallest (9.1%), and its correlation with IS is only r = 0.23. Worse, its correlation *flips sign* across decode configurations — positive for configs that truncate, negative for configs that over-generate. Most outputs are roughly the right length regardless of quality.
+
+**Implication:** Future IS versions could reduce Length Ratio's weight (or remove it) without losing discrimination power. Its current 15% weight is the most "wasted" weight in the formula.
+
+### Finding 6: Per-tier analysis reveals different "what matters" at each quality level
+
+The dominant signal shifts across quality tiers:
+- **Failed tier (0–1):** Phonetic dominates (r = 0.79) — "does it even sound right?"
+- **Fair tier (2–3):** WER dominates (r = 0.55) — the boundary between "almost good" and "mediocre"
+- **Excellent tier (4–5):** WER dominates (r = 0.83) — at the top, small word-level differences determine ranking
+
+**Implication:** The visual encoder quality determines whether a segment escapes the Failed tier (phonetic accuracy). Once past that threshold, traditional word accuracy metrics separate Good from Excellent.
+
+### Finding 7: WER becomes unreliable when decode settings change
+
+WER's correlation with IS swings from r = -0.949 to r = -0.453 across 16 decode configurations. Specifically, length penalty settings (lenpen > 0) cause the model to generate longer outputs. These outputs have more word errors by WER's count, but IS stays stable because the extra words often contain useful semantic content.
+
+**Implication:** WER alone is misleading for comparing configurations. Config J has 12pp higher WER than baseline but +0.08 higher IS. This is the core reason IS was created — it captures quality dimensions that WER misses. When evaluating the system, IS should be the primary metric, not WER.
+
+---
+
 ## 1. Executive Summary
 
 The Intelligibility Score (IS) is a weighted linear composite of 6 signals:

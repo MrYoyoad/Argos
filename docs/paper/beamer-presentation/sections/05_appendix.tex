@@ -306,3 +306,194 @@
     \end{block}
   }
 \end{frame}
+
+% ----------------------------------------------------------
+% A11: LLM Salvage Taxonomy
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A11: LLM Salvage --- Recoverable Segments}
+  \twocol{0.48}{
+    \begin{block}{\small Key Numbers}
+      {\scriptsize
+      \begin{tabular}{@{}lr@{}}
+        Metric-failed segments & 900 \\
+        LLM-recoverable & \keyword{165 (18.3\%)} \\
+        Metric capture (IS $\geq$ 3.0) & 39.9\% \\
+        \textbf{Effective capture} & \keyword{50.9\%} \\
+        Uplift & +11.0pp (+27.6\% rel.) \\
+      \end{tabular}}
+    \end{block}
+
+    \vspace{4pt}
+
+    \begin{block}{\small WER Distribution of Salvageable}
+      {\scriptsize 58\% have moderate WER (50--70\%)\\
+      Close to correct but penalized by strict word-matching.\\
+      Decision tree: 15 rules, r=0.934 with IS,\\
+      88.6\% agreement, $\kappa$=0.773, recall 99.2\%.}
+    \end{block}
+  }{0.49}{
+    \begin{block}{\small 6 Recovery Categories}
+      {\scriptsize
+      \begin{tabular}{@{}lrl@{}}
+        \textbf{Category} & \textbf{N} & \textbf{Key Signal} \\
+        \midrule
+        Hidden Gems & 54 & LLM prob $\geq$ 0.8 \\
+        Semantic Pres. & 57 & Semantic $\geq$ 0.5 \\
+        Phonetic Bridge & 93 & Phonetic $\geq$ 0.6 \\
+        Entity-Preserved & 44 & NEA F1 $\geq$ 50\% \\
+        Structure Match & 74 & Word order intact \\
+        WER Over-Punish. & 27 & WER$-$WWER $\geq$ 10pp \\
+      \end{tabular}}
+    \end{block}
+
+    \vspace{4pt}
+
+    \notetext{Categories overlap --- segments can exhibit multiple recovery signals. System delivers useful output for 1 in 2 segments.}
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% A12: Success Pattern Examples
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A12: Success Pattern Examples}
+  {\small One real example per success pattern (7 patterns):}
+
+  \vspace{4pt}
+
+  {\scriptsize
+  \begin{tabular}{@{}p{3cm}p{3.5cm}p{3.5cm}cc@{}}
+    \toprule
+    \textbf{Pattern} & \textbf{Reference} & \textbf{Hypothesis} & \textbf{WER} & \textbf{IS} \\
+    \midrule
+    \cellcolor{ArgosTeal!10} Near-Perfect &
+    ``next week i will be making my debut'' &
+    ``next week i will be making my debut'' &
+    \tiergood{0\%} & \tiergood{5.00} \\[2pt]
+    \cellcolor{ArgosTeal!10} Minor Errors &
+    ``so i have two and a half of these\ldots'' &
+    ``i have two and a half of these nice\ldots'' &
+    11\% & \tiergood{4.73} \\[2pt]
+    \cellcolor{ArgosTeal!10} Phonetically Preserved &
+    ``it's an interesting topic though\ldots'' &
+    ``is an interesting topic though it\ldots'' &
+    27\% & \tiergood{4.42} \\[2pt]
+    \cellcolor{ArgosTeal!10} Good Semantic + Length &
+    ``6 4 watts up to 20 watts now\ldots'' &
+    ``6 4 whys up to 20 whys now\ldots'' &
+    15\% & \tiergood{4.32} \\[2pt]
+    \cellcolor{ArgosTeal!10} Entities Preserved &
+    ``i could not believe i'm like\ldots'' &
+    ``i could not believe i mean i did\ldots'' &
+    31\% & \tiergood{4.15} \\[2pt]
+    \cellcolor{ArgosTeal!10} Low-Moderate WER &
+    ``one series of experiments that\ldots'' &
+    ``one series of experiments that\ldots'' &
+    15\% & \tiergood{4.14} \\[2pt]
+    \cellcolor{ArgosTeal!10} Semantic + Phonetic &
+    ``what that meant is that we need\ldots'' &
+    ``their masses and we need a\ldots'' &
+    52\% & \tierfair{3.02} \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+% ----------------------------------------------------------
+% A13: Failure Mode Examples
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A13: Failure Mode Examples}
+  {\small One real example per failure mode (10 modes):}
+
+  \vspace{4pt}
+
+  {\scriptsize
+  \begin{tabular}{@{}p{2.5cm}p{3cm}p{3.5cm}cc@{}}
+    \toprule
+    \textbf{Mode} & \textbf{Reference} & \textbf{Hypothesis} & \textbf{WER} & \textbf{IS} \\
+    \midrule
+    \cellcolor{TierFailedBg} Empty Output &
+    ``do you say i wonder what\ldots'' &
+    \emph{(empty)} &
+    \werbad{100\%} & \tierfailed{0.00} \\[2pt]
+    \cellcolor{TierFailedBg} Hallucination &
+    ``and body parts'' &
+    ``20 years ago when i was'' &
+    \werbad{200\%} & \tierfailed{0.00} \\[2pt]
+    \cellcolor{TierFailedBg} Truncation &
+    ``so there's different sizes\ldots'' &
+    ``i'm going to tell you'' &
+    \werbad{100\%} & \tierfailed{0.17} \\[2pt]
+    \cellcolor{TierFailedBg} Topic Drift &
+    ``i've made lots of videos\ldots'' &
+    ``when i was a little girl\ldots'' &
+    97\% & \tierfailed{0.38} \\[2pt]
+    \cellcolor{TierFailedBg} Entity Destruction &
+    ``it'll work'' &
+    ``but'' &
+    100\% & \tierfailed{0.69} \\[2pt]
+    \cellcolor{TierFailedBg} Phonetic Wrong Topic &
+    ``they have something like\ldots'' &
+    ``some english for you all\ldots'' &
+    100\% & \tierfailed{0.94} \\[2pt]
+    \cellcolor{TierFailedBg} High Error Rate &
+    ``today here the three in one\ldots'' &
+    ``i'm so happy to be here\ldots'' &
+    100\% & \tierfailed{1.13} \\[2pt]
+    \cellcolor{TierFailedBg} Accum. Small Errors &
+    ``you're rich no no no\ldots'' &
+    ``your ring that's not what\ldots'' &
+    67\% & \tierfailed{1.64} \\[2pt]
+    \cellcolor{TierFailedBg} Content Word Errors &
+    ``even after the insurance\ldots'' &
+    ``after the initial contamination'' &
+    60\% & \tierfailed{1.86} \\[2pt]
+    \cellcolor{TierFailedBg} Over-generation &
+    ``to the next level'' &
+    ``to the next level and they\ldots'' &
+    100\% & \tierfair{2.32} \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+% ----------------------------------------------------------
+% A14: Metric Mismatch Guide
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A14: Metric Mismatch Guide}
+  {\small ``When you see X, it means Y'' --- 8 diagnostic patterns:}
+
+  \vspace{4pt}
+
+  {\scriptsize
+  \begin{tabular}{@{}p{3.5cm}p{5cm}p{3cm}@{}}
+    \toprule
+    \textbf{Pattern} & \textbf{What It Means} & \textbf{IS Signal} \\
+    \midrule
+    \alert{WER $\gg$ WWER} (gap $\geq$ 10pp) &
+    Function words wrong, content words right. Meaning likely preserved. &
+    Inv-WWER catches it \\[3pt]
+    WWER $\gg$ WER (rare) &
+    Content words wrong, function words right. \alert{Worse than it looks.} &
+    Inv-WWER penalizes \\[3pt]
+    High Semantic + High WER (sem $\geq$ 0.5, WER $\geq$ 60) &
+    Paraphrasing, not error. Different words, same meaning. &
+    Semantic preserves credit \\[3pt]
+    Low Semantic + Low WER (sem $<$ 0.3, WER $<$ 40) &
+    \alert{Entity destruction} --- few words changed but meaning lost. &
+    Semantic penalizes \\[3pt]
+    High Phonetic + Low Semantic (phon $\geq$ 0.7, sem $<$ 0.3) &
+    Homophene errors --- sounds right, means wrong. Classic lip-reading. &
+    Phonetic vs Semantic \\[3pt]
+    High NEA + High WWER (NEA $\geq$ 50, WWER $\geq$ 60) &
+    Names/numbers correct, everything else wrong. Key facts survive. &
+    NEA F1 preserves credit \\[3pt]
+    Length Ratio $>$ 1.5 + High WER &
+    Over-generation / hallucination --- model added fabricated text. &
+    Length Ratio penalizes \\[3pt]
+    Length Ratio $<$ 0.5 + Low WER &
+    Truncation --- partial capture, stopped too early. &
+    Length Ratio penalizes \\
+    \bottomrule
+  \end{tabular}}
+
+  \vspace{4pt}
+  \notetext{Each mismatch pattern reveals a different system behavior. Multiple patterns can co-occur in one segment.}
+\end{frame}

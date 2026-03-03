@@ -2,7 +2,7 @@
 """
 Argos VSP — PPTX Presentation Generator
 
-Creates the complete 30-slide "Argos VSP: Research Findings and Production
+Creates the complete 31-slide "Argos VSP: Research Findings and Production
 Roadmap" presentation with professional styling, real images, entrance
 animations, fade transitions, and speaker notes.
 
@@ -1378,12 +1378,23 @@ def slide_16(prs):
         "How the IS was built: Claude designed the entire framework at design "
         "time — rubric, 6 signals with weights, tier boundaries, failure mode "
         "taxonomy, success patterns. These were then encoded into deterministic "
-        "formulas. No LLM is called per sample at runtime. PCA shows the 6 "
-        "signals collapse into 3 independent dimensions: word accuracy "
-        "(WER/WWER/Phonetic, ~60%), meaning preservation (Semantic, 28.5%), "
-        "and output sanity (Length, 9.1%). Cross-config validation across 16 "
-        "decode configs confirms robustness: r=0.925, 88.6% agreement, "
-        "Cohen's kappa 0.773, recall 97.6-100%.")
+        "formulas. No LLM is called per sample at runtime.\n\n"
+        "KEY CORRELATION FINDINGS:\n"
+        "1. Phonetic Sim is the strongest single predictor (r=0.943) despite "
+        "15% weight — it's the most direct measure of visual encoder quality.\n"
+        "2. The 6 signals collapse into 3 dimensions: word accuracy "
+        "(WER/WWER/Phonetic, ~60%), meaning (Semantic, 28.5%), output sanity "
+        "(Length, 9.1%). Four of six signals measure the same thing.\n"
+        "3. Semantic Sim (25% weight) drives the most IS variance (28.5%) — "
+        "it's the tiebreaker that separates segments with similar word accuracy.\n"
+        "4. NEA F1 punches above its weight: 17.3% variance from 15% weight. "
+        "Names/numbers are binary — either preserved or not.\n"
+        "5. WER is UNRELIABLE across configs — correlation with IS swings from "
+        "-0.95 to -0.45 depending on length penalty. This is why IS was created.\n"
+        "6. Length Ratio is nearly useless (9.1%, sign flips). Future versions "
+        "could reduce its weight.\n\n"
+        "Cross-config validation: r=0.925, 88.6% agreement, κ=0.773, "
+        "recall 97.6-100% across 16 decode configs.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 17 — PIPELINE ARCHITECTURE
@@ -1662,10 +1673,107 @@ def slide_24(prs):
         [[r1], [r2, img]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 25 — RESEARCH ROADMAP (STAIRCASE)
+# SLIDE 25 — LLM SALVAGE: RECOVERABLE SEGMENTS
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_25(prs):
+    slide = new_slide(prs)
+    add_title(slide, "LLM Salvage: 1 in 2 Segments Delivers Value")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left column — big number card
+    r1 = add_rect(slide, MX, CT, col_w, Inches(4.8), fill_color=NAVY2,
+                  border_color=TEAL, border_width=Pt(2), corner_radius=True)
+
+    # Big number
+    add_text(slide, "50.9%", MX + Inches(0.3), CT + Inches(0.2),
+             col_w - Inches(0.6), Inches(0.9),
+             size=Pt(44), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "effective capture rate",
+             MX + Inches(0.3), CT + Inches(1.05),
+             col_w - Inches(0.6), Inches(0.4),
+             size=Pt(16), color=WHITE, align=PP_ALIGN.CENTER)
+    add_text(slide, "vs 39.9% from metrics alone (+11pp)",
+             MX + Inches(0.3), CT + Inches(1.45),
+             col_w - Inches(0.6), Inches(0.35),
+             size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Key bullets below the big number
+    add_bullets(slide, [
+        "165 recoverable from 900 metric-failures",
+        "18.3% recovery rate among IS < 3.0",
+        "58% of salvageable segments have 50-70% WER",
+        ("Deterministic 15-rule decision tree (r=0.934 with IS)",
+         {"color": TEAL}),
+    ], MX + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6),
+       Inches(2.2), size=Pt(13))
+
+    # Right column — recovery categories table
+    rx = MX + col_w + gap
+    add_text(slide, "6 Recovery Categories", rx, CT, col_w, Inches(0.35),
+             size=Pt(17), color=CORAL, bold=True)
+
+    headers = ["Category", "Count", "Key Signal"]
+    rows = [
+        ["Hidden Gems", "54", "LLM prob ≥ 0.8"],
+        ["Semantic Preservation", "57", "Semantic ≥ 0.5"],
+        ["Phonetic Bridge", "93", "Phonetic ≥ 0.6"],
+        ["Entity-Preserved", "44", "NEA F1 ≥ 50%"],
+        ["Structure Match", "74", "Word order intact"],
+        ["WER Over-Punishment", "27", "WER−WWER ≥ 10pp"],
+    ]
+    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
+                    row_height=Inches(0.35),
+                    col_widths=[Inches(2.5), Inches(0.8), Inches(2.2)],
+                    text_size=Pt(11))
+
+    # Interpretation below table
+    add_text(slide, "Categories overlap — segments can exhibit multiple "
+             "recovery signals simultaneously",
+             rx, CT + Inches(3.15), col_w, Inches(0.5),
+             size=Pt(11), color=LGRAY, italic=True)
+
+    # How it works block
+    add_text(slide, "How It Works", rx, CT + Inches(3.7), col_w,
+             Inches(0.3), size=Pt(15), color=TEAL, bold=True)
+    add_bullets(slide, [
+        "Claude-designed decision tree: 6 linguistic factors",
+        "Word overlap, sequence, phonetics, length, semantics, density",
+        ("Agrees with IS 88.6% (κ=0.773, recall 99.2%)", {"bold": True}),
+    ], rx, CT + Inches(4.05), col_w, Inches(1.2), size=Pt(12))
+
+    # Bottom text
+    add_text(slide,
+             "System delivers useful output for 1 in 2 segments — "
+             "not 2 in 5 as raw metrics suggest.",
+             MX, Inches(6.35), CW, Inches(0.4),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 25,
+        "LLM Salvage Analysis: 165 of 900 metric-failed segments (IS < 3.0) "
+        "are recoverable — meaning a domain-aware viewer would understand them. "
+        "This raises effective capture from 39.9% to 50.9% (+11pp). The recovery "
+        "is identified by a deterministic 15-rule decision tree that correlates "
+        "at r=0.934 with IS.\n\n"
+        "6 recovery categories (overlapping): Hidden Gems (54, LLM prob >= 0.8 "
+        "but IS < 3.0), Semantic Preservation (57, semantic sim >= 0.5 with high "
+        "WER), Phonetic Bridge (93, sounds right but different words), Entity-"
+        "Preserved (44, names/numbers correct despite errors), Structure Match "
+        "(74, word order intact), WER Over-Punishment (27, WER−WWER gap >= 10pp "
+        "meaning function words wrong but content words right).\n\n"
+        "Key implication: the system is more useful than traditional metrics "
+        "suggest. 58% of salvageable segments have moderate WER (50-70%) — they "
+        "are close to correct but penalized by strict word-matching.",
+        [[r1], [tbl]])
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 26 — RESEARCH ROADMAP (STAIRCASE)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_26(prs):
     slide = new_slide(prs)
     add_title(slide, "Five Phases — From 67% to Target 27-42% WER")
     add_accent_line(slide)
@@ -1710,7 +1818,7 @@ def slide_25(prs):
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    _finish(slide, 25,
+    _finish(slide, 26,
         "Five phases, each targeting different bottlenecks. Phase 1 is "
         "immediate: confidence scoring to surface the 40% that's already "
         "good (2-4 hours). Phase 2: N-best aggregation. Phase 3: swap LLM "
@@ -1720,11 +1828,11 @@ def slide_25(prs):
         [step_shapes, [img]])
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 26 — PHASE 1: CONFIDENCE SCORING
+# SLIDE 27 — PHASE 1: CONFIDENCE SCORING
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_26(prs):
-    build_bullets(prs, 26,
+def slide_27(prs):
+    build_bullets(prs, 27,
         "Phase 1: Automatic Quality Flagging",
         [
             "IS proves 40% is good — beam scores can flag it at decode time",
@@ -1740,11 +1848,11 @@ def slide_26(prs):
         "of implementation.")
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 27 — PHASE 2: N-BEST AGGREGATION
+# SLIDE 28 — PHASE 2: N-BEST AGGREGATION
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_27(prs):
-    build_bullets(prs, 27,
+def slide_28(prs):
+    build_bullets(prs, 28,
         "Phase 2: Exploit All 20 Hypotheses",
         [
             "Currently discarding 19 of 20 beam candidates",
@@ -1760,10 +1868,10 @@ def slide_27(prs):
         "cuts' failure mode.")
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 28 — FINE-TUNING + DATA SCALING
+# SLIDE 29 — FINE-TUNING + DATA SCALING
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_28(prs):
+def slide_29(prs):
     slide = new_slide(prs)
     add_title(slide, "Domain Adaptation: Data Is the Bottleneck")
     add_accent_line(slide)
@@ -1799,7 +1907,7 @@ def slide_28(prs):
         ("AVSpeech: 290K videos available", {"color": TEAL}),
     ], rx, col_y + Inches(0.35), col_w, Inches(2.0), size=Pt(13))
 
-    _finish(slide, 28,
+    _finish(slide, 29,
         "Exp A: 1,273 segments, 17 hours on Tesla T4. Best validation "
         "accuracy 62.94% at epoch 2 out of 19 — severe overfitting. Exp B "
         "with r=64: 3.1pp WORSE. This is NOT a model capacity problem. "
@@ -1808,10 +1916,10 @@ def slide_28(prs):
         [[img], [lt, lb], [rt, rb]])
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 29 — LLM UPGRADE + ADVANCED CAPABILITIES
+# SLIDE 30 — LLM UPGRADE + ADVANCED CAPABILITIES
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_29(prs):
+def slide_30(prs):
     slide = new_slide(prs)
     add_title(slide, "Stronger LLM + Smart Prompts = Force Multiplier")
     add_accent_line(slide)
@@ -1852,7 +1960,7 @@ def slide_29(prs):
                     cw - Inches(0.4), Inches(3.5), size=Pt(13))
         col_shapes.append(r)
 
-    _finish(slide, 29,
+    _finish(slide, 30,
         "Three columns of future capability. Left: LLM swap to Llama 3.1 "
         "8B is trivial — same hidden dimension, 1-2 hours. Center: 7 prompt "
         "strategies are a force multiplier — more effective on stronger "
@@ -1862,10 +1970,10 @@ def slide_29(prs):
         [col_shapes])
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 30 — SUMMARY
+# SLIDE 31 — SUMMARY
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_30(prs):
+def slide_31(prs):
     slide = new_slide(prs)
     add_title(slide, "Key Takeaways")
     add_accent_line(slide)
@@ -1907,7 +2015,7 @@ def slide_30(prs):
                       size=Pt(15), color=WHITE)
         point_shapes.append(tb)
 
-    _finish(slide, 30,
+    _finish(slide, 31,
         "Four takeaways. One: we know exactly where we stand — rigorous "
         "assessment with a novel metric that reveals the true picture. "
         "Two: production system delivered and deployed. Three: data, not "
@@ -1924,7 +2032,7 @@ def main():
     prs.slide_width = SL_W
     prs.slide_height = SL_H
 
-    print("Generating 30-slide presentation...")
+    print("Generating 31-slide presentation...")
 
     builders = [
         slide_01, slide_02, slide_03, slide_04, slide_05,
@@ -1933,10 +2041,11 @@ def main():
         slide_16, slide_17, slide_18, slide_19, slide_20,
         slide_21, slide_22, slide_23, slide_24, slide_25,
         slide_26, slide_27, slide_28, slide_29, slide_30,
+        slide_31,
     ]
 
     for i, builder in enumerate(builders, 1):
-        print(f"  Slide {i:2d}/30 ...", end=" ")
+        print(f"  Slide {i:2d}/31 ...", end=" ")
         try:
             builder(prs)
             print("OK")

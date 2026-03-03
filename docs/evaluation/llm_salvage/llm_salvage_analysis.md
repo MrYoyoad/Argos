@@ -1,6 +1,6 @@
 # LLM Salvage Analysis: Recoverable Predictions That Metrics Undercount
 
-**Date**: 2026-03-02
+**Date**: 2026-03-03
 **Dataset**: Full baseline (1,497 segments, AVSpeech)
 **Divergent segments**: 165 (LLM prob >= 0.5, IS < 3.0)
 
@@ -86,45 +86,9 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | high_semantic_good_overlap |
 | Topic | Other |
 
-**Why this matters**: Despite 74% WER, semantic similarity of 0.67 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 74% WER, semantic similarity of 0.67 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
 
-#### Example 2: `WTSIAfzvYUU_0__0f6af48b`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | india china afghanistan all these different places that are so foreign to us so both sides would benefit |
-| **Hypothesis** | middle east and afghanistan there are all these different warring places and there's no fertile soil so both sides will benefit |
-| WER | 72.2% |
-| WWER | 69.7% |
-| IS | 2.863 (Fair) |
-| Semantic Sim | 0.7155 |
-| Phonetic Sim | 0.6667 |
-| NEA F1 | 33.3% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 72% WER, semantic similarity of 0.72 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 3: `tRx7o3FZ6cc_3__4aadcba1`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | rotates all the way around once the dial that looks like a clock it means that you've used 7 48 |
-| **Hypothesis** | process all the way around once you get to the end of the clock it means that you viewed seven or seven point four a |
-| WER | 80.0% |
-| WWER | 74.3% |
-| IS | 2.256 (Fair) |
-| Semantic Sim | 0.6253 |
-| Phonetic Sim | 0.5750 |
-| NEA F1 | 0.0% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 80% WER, semantic similarity of 0.63 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 4: `JWhR-GLoVgk_7__5ef19db5`
+#### Example 2: `JWhR-GLoVgk_7__5ef19db5`
 
 | Metric | Value |
 |--------|-------|
@@ -140,187 +104,9 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | high_semantic_good_overlap |
 | Topic | Education/Academic |
 
-**Why this matters**: Despite 59% WER, semantic similarity of 0.70 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 59% WER, semantic similarity of 0.70 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
 
-#### Example 5: `ZbVXJ38oziA_12__ae289ba8`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | is also very heavy and is seven and a half pounds over 11 and a half inches |
-| **Hypothesis** | also very heavy at 7 5 pounds and over 11 5 inches |
-| WER | 64.7% |
-| WWER | 86.4% |
-| IS | 2.600 (Fair) |
-| Semantic Sim | 0.8465 |
-| Phonetic Sim | 0.4118 |
-| NEA F1 | 20.0% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 65% WER, semantic similarity of 0.85 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
----
-
-### Semantic Preservation: Same Meaning, Different Words
-
-*Semantic similarity >= 0.50 confirms the hypothesis conveys the same meaning as the reference, yet WER >= 50% rates these as failures. These cases show WER's blindness to meaning-equivalent paraphrasing.*
-
-**57 segments** in this category.
-
-#### Example 1: `Q8aPjew1aUU_5__621126f2`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | when life itself doesn't have essential worth our opinions about reason and logic and all these other concepts don't have any more value than we give them |
-| **Hypothesis** | a lot of these things haven't existed in our world until our opinion is about reasoning and logic and all these other concepts you don't have any more faith than you want to give up |
-| WER | 74.1% |
-| WWER | 52.4% |
-| IS | 2.918 (Fair) |
-| Semantic Sim | 0.6657 |
-| Phonetic Sim | 0.6852 |
-| NEA F1 | 46.2% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 74% WER, semantic similarity of 0.67 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 2: `WTSIAfzvYUU_0__0f6af48b`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | india china afghanistan all these different places that are so foreign to us so both sides would benefit |
-| **Hypothesis** | middle east and afghanistan there are all these different warring places and there's no fertile soil so both sides will benefit |
-| WER | 72.2% |
-| WWER | 69.7% |
-| IS | 2.863 (Fair) |
-| Semantic Sim | 0.7155 |
-| Phonetic Sim | 0.6667 |
-| NEA F1 | 33.3% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 72% WER, semantic similarity of 0.72 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 3: `tRx7o3FZ6cc_3__4aadcba1`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | rotates all the way around once the dial that looks like a clock it means that you've used 7 48 |
-| **Hypothesis** | process all the way around once you get to the end of the clock it means that you viewed seven or seven point four a |
-| WER | 80.0% |
-| WWER | 74.3% |
-| IS | 2.256 (Fair) |
-| Semantic Sim | 0.6253 |
-| Phonetic Sim | 0.5750 |
-| NEA F1 | 0.0% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 80% WER, semantic similarity of 0.63 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 4: `JWhR-GLoVgk_7__5ef19db5`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | so we're going to get on into some maybe more important things so in 1 5 we're going to start with some design of experiments type things and then i'm going to show you because we talked about it |
-| **Hypothesis** | you can get on and do some maybe more important things so like one point five we're going to show students this kind of experiment same things and then i'm gonna show you things that we talked about maybe that we |
-| WER | 59.0% |
-| WWER | 54.5% |
-| IS | 2.901 (Fair) |
-| Semantic Sim | 0.7010 |
-| Phonetic Sim | 0.6795 |
-| NEA F1 | 0.0% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Education/Academic |
-
-**Why this matters**: Despite 59% WER, semantic similarity of 0.70 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 5: `ZbVXJ38oziA_12__ae289ba8`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | is also very heavy and is seven and a half pounds over 11 and a half inches |
-| **Hypothesis** | also very heavy at 7 5 pounds and over 11 5 inches |
-| WER | 64.7% |
-| WWER | 86.4% |
-| IS | 2.600 (Fair) |
-| Semantic Sim | 0.8465 |
-| Phonetic Sim | 0.4118 |
-| NEA F1 | 20.0% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 65% WER, semantic similarity of 0.85 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
----
-
-### Phonetic Bridge: Natural Lip-Reading Confusions
-
-*Phonetic similarity >= 0.60 shows errors are caused by visually similar mouth shapes (homophenes), not hallucination. A viewer hearing these words spoken aloud would recognize the intended meaning.*
-
-**93 segments** in this category.
-
-#### Example 1: `Q8aPjew1aUU_5__621126f2`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | when life itself doesn't have essential worth our opinions about reason and logic and all these other concepts don't have any more value than we give them |
-| **Hypothesis** | a lot of these things haven't existed in our world until our opinion is about reasoning and logic and all these other concepts you don't have any more faith than you want to give up |
-| WER | 74.1% |
-| WWER | 52.4% |
-| IS | 2.918 (Fair) |
-| Semantic Sim | 0.6657 |
-| Phonetic Sim | 0.6852 |
-| NEA F1 | 46.2% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 74% WER, semantic similarity of 0.67 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 2: `WTSIAfzvYUU_0__0f6af48b`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | india china afghanistan all these different places that are so foreign to us so both sides would benefit |
-| **Hypothesis** | middle east and afghanistan there are all these different warring places and there's no fertile soil so both sides will benefit |
-| WER | 72.2% |
-| WWER | 69.7% |
-| IS | 2.863 (Fair) |
-| Semantic Sim | 0.7155 |
-| Phonetic Sim | 0.6667 |
-| NEA F1 | 33.3% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Other |
-
-**Why this matters**: Despite 72% WER, semantic similarity of 0.72 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 3: `JWhR-GLoVgk_7__5ef19db5`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | so we're going to get on into some maybe more important things so in 1 5 we're going to start with some design of experiments type things and then i'm going to show you because we talked about it |
-| **Hypothesis** | you can get on and do some maybe more important things so like one point five we're going to show students this kind of experiment same things and then i'm gonna show you things that we talked about maybe that we |
-| WER | 59.0% |
-| WWER | 54.5% |
-| IS | 2.901 (Fair) |
-| Semantic Sim | 0.7010 |
-| Phonetic Sim | 0.6795 |
-| NEA F1 | 0.0% |
-| LLM Context Prob | **0.900** |
-| LLM Reason | high_semantic_good_overlap |
-| Topic | Education/Academic |
-
-**Why this matters**: Despite 59% WER, semantic similarity of 0.70 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 4: `loebelfG9T4_10__76adce28 - Part 1`
+#### Example 3: `loebelfG9T4_10__76adce28 - Part 1`
 
 | Metric | Value |
 |--------|-------|
@@ -336,33 +122,149 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | high_semantic_good_overlap |
 | Topic | Cooking/Food |
 
-**Why this matters**: Despite 73% WER, semantic similarity of 0.63 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 73% WER, semantic similarity of 0.63 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
 
-#### Example 5: `cT6aHJmM4cA_2__a0c6120f`
+#### Example 4: `8lRWXCrYauk_26__bb277d54`
 
 | Metric | Value |
 |--------|-------|
-| **Reference** | expresses in concrete and symbolic and beautifully real deep |
-| **Hypothesis** | suppresses the concrete and the symbolic and the beautiful and the real |
-| WER | 88.9% |
-| WWER | 60.0% |
-| IS | 2.750 (Fair) |
-| Semantic Sim | 0.6516 |
+| **Reference** | calcium is made up of galactomyloids a substance similar to the carbohydrate starch or to cellulose |
+| **Hypothesis** | is made up of collected waste substances that are similar to the carbohydrates starch and cellulose the chemical |
+| WER | 68.8% |
+| WWER | 62.5% |
+| IS | 2.991 (Fair) |
+| Semantic Sim | 0.6463 |
+| Phonetic Sim | 0.6875 |
+| NEA F1 | 47.1% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Entertainment |
+
+**Why this matters**: Despite 69% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 5: `oQEVi0gxmoE_16__3949b7ce`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | dollars of damages americans want football they love football they want to go protest on their own time no one cares |
+| **Hypothesis** | years of taekwondo is american kids want football they love football they want to go protest in the streets |
+| WER | 57.1% |
+| WWER | 51.4% |
+| IS | 2.818 (Fair) |
+| Semantic Sim | 0.6721 |
+| Phonetic Sim | 0.6190 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Sports/Fitness |
+
+**Why this matters**: Despite 57% WER, semantic similarity of 0.67 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+---
+
+### Semantic Preservation: Same Meaning, Different Words
+
+*Semantic similarity >= 0.50 confirms the hypothesis conveys the same meaning as the reference, yet WER >= 50% rates these as failures. These cases show WER's blindness to meaning-equivalent paraphrasing.*
+
+**57 segments** in this category.
+
+#### Example 1: `WTSIAfzvYUU_0__0f6af48b`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | india china afghanistan all these different places that are so foreign to us so both sides would benefit |
+| **Hypothesis** | middle east and afghanistan there are all these different warring places and there's no fertile soil so both sides will benefit |
+| WER | 72.2% |
+| WWER | 69.7% |
+| IS | 2.863 (Fair) |
+| Semantic Sim | 0.7155 |
 | Phonetic Sim | 0.6667 |
-| NEA F1 | 54.5% |
+| NEA F1 | 33.3% |
 | LLM Context Prob | **0.900** |
 | LLM Reason | high_semantic_good_overlap |
 | Topic | Other |
 
-**Why this matters**: Despite 89% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 72% WER, semantic similarity of 0.72 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 2: `qUxQbCxP3Kg_7__8e48ee47 - Part 2`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | to put around it and kind of we're all getting a lot more knowledge about kind of where we came from |
+| **Hypothesis** | like to poke around and get to know more about where we came from |
+| WER | 61.9% |
+| WWER | 71.9% |
+| IS | 2.618 (Fair) |
+| Semantic Sim | 0.6992 |
+| Phonetic Sim | 0.5238 |
+| NEA F1 | 26.7% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Education/Academic |
+
+**Why this matters**: Despite 62% WER, semantic similarity of 0.70 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 3: `zvCa9Y9eklk_1__87543719`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | if you're not even anxious about your own death and demise and it gets into some philosophical and religious concepts it becomes very difficult to talk about because some people say well i'm going to heaven i don't care what happens now |
+| **Hypothesis** | very anxious about her own death and i think this is a philosophical religious concept that became very difficult to talk about because some people didn't want me going down that road what happened to that |
+| WER | 61.9% |
+| WWER | 74.6% |
+| IS | 2.522 (Fair) |
+| Semantic Sim | 0.6809 |
+| Phonetic Sim | 0.5357 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Cooking/Food |
+
+**Why this matters**: Despite 62% WER, semantic similarity of 0.68 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 4: `y0iPkZ3L6Fw_7__2b16dd83`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | one is as you're moving conceptual surface data over to engineering solutions and tools you want to make sure that you have good clean |
+| **Hypothesis** | has actually moved the conceptual rules over to engineering tools so what i want you to have good at is |
+| WER | 75.0% |
+| WWER | 85.4% |
+| IS | 2.179 (Fair) |
+| Semantic Sim | 0.6317 |
+| Phonetic Sim | 0.4375 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Technology |
+
+**Why this matters**: Despite 75% WER, semantic similarity of 0.63 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 5: `S0ID6pdAvvY_7__e2281119`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | with how to reverse it okay what are the handful of things i'm gonna show you some things that might help you here in just a minute |
+| **Hypothesis** | just reverse it like what is the handful of things i'm going to show you some things like my belt loop or something like that but |
+| WER | 59.3% |
+| WWER | 93.5% |
+| IS | 2.479 (Fair) |
+| Semantic Sim | 0.6704 |
+| Phonetic Sim | 0.5556 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Entertainment |
+
+**Why this matters**: Despite 59% WER, semantic similarity of 0.67 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
 
 ---
 
-### Entity-Preserved: Key Information Survives
+### Phonetic Bridge: Natural Lip-Reading Confusions
 
-*Named Entity F1 >= 50% shows that the most important information (names, numbers, places) is captured correctly, even when surrounding function words are wrong.*
+*Phonetic similarity >= 0.60 shows errors are caused by visually similar mouth shapes (homophenes), not hallucination. A viewer hearing these words spoken aloud would recognize the intended meaning.*
 
-**44 segments** in this category.
+**93 segments** in this category.
 
 #### Example 1: `cT6aHJmM4cA_2__a0c6120f`
 
@@ -380,9 +282,89 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | high_semantic_good_overlap |
 | Topic | Other |
 
-**Why this matters**: Despite 89% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 89% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
 
-#### Example 2: `tkblkDZq5oA_12__a389f3ee`
+#### Example 2: `b2K8u6wfPhU_0__e8c6e06b`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | if i have him in my arms and i just want him to go to sleep but he's not but i know lullabies help him i can say hey google turn on lullaby music for baby |
+| **Hypothesis** | if i have him in my arms then i just want him to go to sleep peacefully on my own on the back couch i take kids a turn on the lap of a baby |
+| WER | 50.0% |
+| WWER | 50.0% |
+| IS | 2.965 (Fair) |
+| Semantic Sim | 0.6990 |
+| Phonetic Sim | 0.6111 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Entertainment |
+
+**Why this matters**: Despite 50% WER, semantic similarity of 0.70 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 3: `xsK5nVERhnE_11__757cd73f`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | the folders notification center multitasking and that's pretty much it some little updates of the stock apps but not really much at all so finally we are getting what |
+| **Hypothesis** | the faults and notifications there are mostly texting and that's pretty much the sum total of the stock ups but not really much and also finding we are getting what |
+| WER | 55.2% |
+| WWER | 57.1% |
+| IS | 2.771 (Fair) |
+| Semantic Sim | 0.5840 |
+| Phonetic Sim | 0.7069 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.800** |
+| LLM Reason | semantic_plus_phonetic |
+| Topic | Technology |
+
+**Why this matters**: The 0.71 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 80% recovery probability.
+
+#### Example 4: `RYHeYQI8Ozg_4__cb42b815`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | that means the fear of allah is completely gone the only fear you have is that of the seen there's no more fear of the unseen what a horrible spiritual |
+| **Hypothesis** | is the fear of the loss complete the only fear you have outside of death is no more fear of loss what a horrible spiritual |
+| WER | 43.3% |
+| WWER | 60.4% |
+| IS | 2.754 (Fair) |
+| Semantic Sim | 0.6250 |
+| Phonetic Sim | 0.6500 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Religion/Spirituality |
+
+**Why this matters**: Despite 43% WER, semantic similarity of 0.62 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 5: `JTnwhXvcX9I_0__b67ad686`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | let the suit fool you i'm the founder and cto currently of a company called aerospike i founded this company to bring fast |
+| **Hypothesis** | true founder and ceo of a company called aereo i founded this company to bring fast |
+| WER | 43.5% |
+| WWER | 48.7% |
+| IS | 2.697 (Fair) |
+| Semantic Sim | 0.6189 |
+| Phonetic Sim | 0.6087 |
+| NEA F1 | 0.0% |
+| LLM Context Prob | **0.900** |
+| LLM Reason | high_semantic_good_overlap |
+| Topic | Business/Finance |
+
+**Why this matters**: Despite 44% WER, semantic similarity of 0.62 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+---
+
+### Entity-Preserved: Key Information Survives
+
+*Named Entity F1 >= 50% shows that the most important information (names, numbers, places) is captured correctly, even when surrounding function words are wrong.*
+
+**44 segments** in this category.
+
+#### Example 1: `tkblkDZq5oA_12__a389f3ee`
 
 | Metric | Value |
 |--------|-------|
@@ -398,45 +380,9 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | high_semantic_good_overlap |
 | Topic | Other |
 
-**Why this matters**: Despite 55% WER, semantic similarity of 0.75 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 55% WER, semantic similarity of 0.75 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
 
-#### Example 3: `KcDqXon7I3c_0__757ee72e`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | to the next level |
-| **Hypothesis** | to the next level and they have tried |
-| WER | 100.0% |
-| WWER | 133.3% |
-| IS | 2.318 (Fair) |
-| Semantic Sim | 0.6580 |
-| Phonetic Sim | 1.0000 |
-| NEA F1 | 80.0% |
-| LLM Context Prob | **0.600** |
-| LLM Reason | moderate_structure_coherent |
-| Topic | Other |
-
-**Why this matters**: Despite 100% WER, semantic similarity of 0.66 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
-
-#### Example 4: `xWuxviHUwM8_2__08325dad`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | there's that i know that looks really bad but if you do take time it'll look a lot better |
-| **Hypothesis** | and there's nothing i can do about that i know that this is going to be a painful experience but it will look a lot better |
-| WER | 89.5% |
-| WWER | 54.8% |
-| IS | 2.445 (Fair) |
-| Semantic Sim | 0.4658 |
-| Phonetic Sim | 0.6316 |
-| NEA F1 | 52.6% |
-| LLM Context Prob | **0.750** |
-| LLM Reason | good_overlap_coherent |
-| Topic | Other |
-
-**Why this matters**: The 0.63 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 1% recovery probability.
-
-#### Example 5: `cECxDMkqVcs_0__91f4d916`
+#### Example 2: `cECxDMkqVcs_0__91f4d916`
 
 | Metric | Value |
 |--------|-------|
@@ -452,7 +398,61 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | high_semantic_good_overlap |
 | Topic | Business/Finance |
 
-**Why this matters**: Despite 57% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 57% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 90% probability that a viewer with context would understand this segment.
+
+#### Example 3: `KBplcu6C5Gs_3__583c583c`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | it's a panasonic camera really awesome camera |
+| **Hypothesis** | to pan down on camera a really awesome camera i |
+| WER | 85.7% |
+| WWER | 61.5% |
+| IS | 2.698 (Fair) |
+| Semantic Sim | 0.6000 |
+| Phonetic Sim | 0.5714 |
+| NEA F1 | 75.0% |
+| LLM Context Prob | **0.800** |
+| LLM Reason | semantic_plus_phonetic |
+| Topic | Technology |
+
+**Why this matters**: Despite 86% WER, semantic similarity of 0.60 confirms the core meaning is preserved. Claude assigns 80% probability that a viewer with context would understand this segment.
+
+#### Example 4: `yIcwLBt4S64_7__97673c99`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | flat against your breastbone how do i know what size bra to buy that's our next step we're going to do some measurements that will help us figure out how to make the best bra |
+| **Hypothesis** | landing next to your bone how do i know what size boot to buy that's our next step we're going to use a 3d scanner to figure |
+| WER | 54.3% |
+| WWER | 58.5% |
+| IS | 2.749 (Fair) |
+| Semantic Sim | 0.4922 |
+| Phonetic Sim | 0.5571 |
+| NEA F1 | 50.0% |
+| LLM Context Prob | **0.750** |
+| LLM Reason | good_overlap_coherent |
+| Topic | DIY/Home |
+
+**Why this matters**: Claude identifies structural and semantic cues (good_overlap_coherent) suggesting 75% recovery probability, while IS scores only 2.75/5.0.
+
+#### Example 5: `qHImZGBRto8_5__fa62c87d`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | point being is if we had like if my k 52s started doing that i there's something's wrong it's going back to |
+| **Hypothesis** | beings if we had like my kfv2 i started doing that and something's wrong it's holding me back into |
+| WER | 50.0% |
+| WWER | 58.3% |
+| IS | 2.877 (Fair) |
+| Semantic Sim | 0.4554 |
+| Phonetic Sim | 0.6364 |
+| NEA F1 | 52.6% |
+| LLM Context Prob | **0.750** |
+| LLM Reason | good_overlap_coherent |
+| Topic | Entertainment |
+
+**Why this matters**: The 0.64 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 75% recovery probability.
 
 ---
 
@@ -478,7 +478,7 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | moderate_structure_coherent |
 | Topic | Other |
 
-**Why this matters**: Despite 100% WER, semantic similarity of 0.66 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 100% WER, semantic similarity of 0.66 confirms the core meaning is preserved. Claude assigns 60% probability that a viewer with context would understand this segment.
 
 #### Example 2: `IZcKDz911X8_0__21f03eb3`
 
@@ -496,61 +496,61 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | strong_structure_match |
 | Topic | Education/Academic |
 
-**Why this matters**: Despite 38% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 1% probability that a viewer with context would understand this segment.
+**Why this matters**: Despite 38% WER, semantic similarity of 0.65 confirms the core meaning is preserved. Claude assigns 95% probability that a viewer with context would understand this segment.
 
-#### Example 3: `xWuxviHUwM8_2__08325dad`
+#### Example 3: `qUV14ZWiMH8_6__e4f3a3e0`
 
 | Metric | Value |
 |--------|-------|
-| **Reference** | there's that i know that looks really bad but if you do take time it'll look a lot better |
-| **Hypothesis** | and there's nothing i can do about that i know that this is going to be a painful experience but it will look a lot better |
-| WER | 89.5% |
-| WWER | 54.8% |
-| IS | 2.445 (Fair) |
-| Semantic Sim | 0.4658 |
-| Phonetic Sim | 0.6316 |
-| NEA F1 | 52.6% |
+| **Reference** | now we are engaged in a great civil war testing whether that nation or any nation so conceived and so dedicated can long endure |
+| **Hypothesis** | now we are gaining a great civil war testing whether tyranny or anarchy should prevail in syria and donald trump |
+| WER | 58.3% |
+| WWER | 57.9% |
+| IS | 2.783 (Fair) |
+| Semantic Sim | 0.5832 |
+| Phonetic Sim | 0.4792 |
+| NEA F1 | 41.7% |
 | LLM Context Prob | **0.750** |
 | LLM Reason | good_overlap_coherent |
-| Topic | Other |
+| Topic | Cooking/Food |
 
-**Why this matters**: The 0.63 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 1% recovery probability.
+**Why this matters**: Claude identifies structural and semantic cues (good_overlap_coherent) suggesting 75% recovery probability, while IS scores only 2.78/5.0.
 
-#### Example 4: `5HbcQgQiQcU_0__e0708fa7`
+#### Example 4: `mgOhPGfqc2Q_7__2ab62cb5`
 
 | Metric | Value |
 |--------|-------|
-| **Reference** | chronic ocular oncocerciasis is also associated with oncocorioretinitis chronic inflammation of the retina and choroid as well as op |
-| **Hypothesis** | red octahedron under your eyes is also associated with uncoordinated right eye nystagmus red information of the right ocular cord as well as optic atrophy |
-| WER | 84.2% |
-| WWER | 61.8% |
-| IS | 2.007 (Fair) |
-| Semantic Sim | 0.4454 |
-| Phonetic Sim | 0.5789 |
+| **Reference** | i'm sure somebody can explain how and why that happens i don't really care at the moment |
+| **Hypothesis** | i'm sure somebody can explain how what happened and why at the moment or how we are |
+| WER | 64.7% |
+| WWER | 96.0% |
+| IS | 2.677 (Fair) |
+| Semantic Sim | 0.4741 |
+| Phonetic Sim | 0.6471 |
+| NEA F1 | 60.0% |
+| LLM Context Prob | **0.750** |
+| LLM Reason | good_overlap_coherent |
+| Topic | Technology |
+
+**Why this matters**: The 0.65 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 75% recovery probability.
+
+#### Example 5: `DlFfRJ9zoAs_2__9050e8cd - Part 1`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | so let me give you a stunning example of how nasa lies and why it is important why it's more than an academic exercise this is the current mission patch for sts 120 discovery |
+| **Hypothesis** | so let me give you a second example of how this ties in and why it's important why is it more than an academic exercise this is our vision path for a city which we can never |
+| WER | 52.9% |
+| WWER | 50.0% |
+| IS | 2.591 (Fair) |
+| Semantic Sim | 0.4492 |
+| Phonetic Sim | 0.6912 |
 | NEA F1 | 0.0% |
 | LLM Context Prob | **0.750** |
 | LLM Reason | good_overlap_coherent |
-| Topic | Other |
+| Topic | Sports/Fitness |
 
-**Why this matters**: Claude identifies structural and semantic cues (good_overlap_coherent) suggesting 1% recovery probability, while IS scores only 2.01/5.0.
-
-#### Example 5: `Ni-ZW0sTWoQ_8__8698a787`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | smoothies to 435 06 or whatever and that autoresponder message can have anything in it that i like so makes it really easy |
-| **Hypothesis** | movies through four three five zero six or whatever and that auto responder message can have anything in it that i like so it makes it really easy |
-| WER | 43.5% |
-| WWER | 39.5% |
-| IS | 2.714 (Fair) |
-| Semantic Sim | 0.4287 |
-| Phonetic Sim | 0.8261 |
-| NEA F1 | 0.0% |
-| LLM Context Prob | **0.950** |
-| LLM Reason | strong_structure_match |
-| Topic | Other |
-
-**Why this matters**: The 0.83 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 1% recovery probability.
+**Why this matters**: The 0.69 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 75% recovery probability.
 
 ---
 
@@ -576,7 +576,7 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | moderate_semantic_preserved_content |
 | Topic | Other |
 
-**Why this matters**: The 0.75 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 1% recovery probability.
+**Why this matters**: The 0.75 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 65% recovery probability.
 
 #### Example 2: `XHCAXkDOMtI_4__6a3ac270 - Part 2`
 
@@ -594,27 +594,9 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | phonetic_bridge_semantic |
 | Topic | Religion/Spirituality |
 
-**Why this matters**: The 0.62 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 1% recovery probability.
+**Why this matters**: The 0.62 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 55% recovery probability.
 
-#### Example 3: `svcXS7FWDqU_16__2202c48e`
-
-| Metric | Value |
-|--------|-------|
-| **Reference** | underpinnings to her |
-| **Hypothesis** | and her meetings to her |
-| WER | 100.0% |
-| WWER | 50.0% |
-| IS | 1.807 (Poor) |
-| Semantic Sim | 0.4639 |
-| Phonetic Sim | 0.6667 |
-| NEA F1 | 0.0% |
-| LLM Context Prob | **0.750** |
-| LLM Reason | good_overlap_coherent |
-| Topic | Other |
-
-**Why this matters**: The 0.67 phonetic similarity shows these are natural lip-reading confusions (similar mouth shapes), not random errors. Claude assigns 1% recovery probability.
-
-#### Example 4: `a2CS82VZyO4_7__a6316c95`
+#### Example 3: `a2CS82VZyO4_7__a6316c95`
 
 | Metric | Value |
 |--------|-------|
@@ -630,25 +612,43 @@ This represents an **18.3% recovery rate** among segments that metrics mark as f
 | LLM Reason | semantic_plus_phonetic |
 | Topic | Cooking/Food |
 
-**Why this matters**: Claude identifies structural and semantic cues (semantic_plus_phonetic) suggesting 1% recovery probability, while IS scores only 2.07/5.0.
+**Why this matters**: Claude identifies structural and semantic cues (semantic_plus_phonetic) suggesting 80% recovery probability, while IS scores only 2.07/5.0.
 
-#### Example 5: `0aTG09Jg2fY_0__2dd1b585`
+#### Example 4: `W25FLpQrqsg_0__0fc58273`
 
 | Metric | Value |
 |--------|-------|
-| **Reference** | this video we're teaching you some vocabulary some common phrases |
-| **Hypothesis** | of this video i want to introduce you to tom vocabulary i also call him friend |
-| WER | 120.0% |
-| WWER | 75.0% |
-| IS | 1.915 (Poor) |
-| Semantic Sim | 0.5333 |
-| Phonetic Sim | 0.5500 |
-| NEA F1 | 30.8% |
+| **Reference** | women who won't consider us today because we are not co educational and every person who wants to attend usj because |
+| **Hypothesis** | women and queer youth of color because we're not going to go to college every person who wants to take the test can because |
+| WER | 76.2% |
+| WWER | 63.6% |
+| IS | 2.256 (Fair) |
+| Semantic Sim | 0.5231 |
+| Phonetic Sim | 0.5238 |
+| NEA F1 | 0.0% |
 | LLM Context Prob | **0.800** |
 | LLM Reason | semantic_plus_phonetic |
-| Topic | Other |
+| Topic | Education/Academic |
 
-**Why this matters**: Claude identifies structural and semantic cues (semantic_plus_phonetic) suggesting 1% recovery probability, while IS scores only 1.92/5.0.
+**Why this matters**: Claude identifies structural and semantic cues (semantic_plus_phonetic) suggesting 80% recovery probability, while IS scores only 2.26/5.0.
+
+#### Example 5: `5mkJcxTK1sQ_6__b98995ef`
+
+| Metric | Value |
+|--------|-------|
+| **Reference** | in various different compositions i'm not gonna talk about any other math for learning this kind of stuff from real world data but rest assured |
+| **Hypothesis** | comics and fairy tales and different compositions i'm not going to talk about any of the math involved in this kind of stuff from renaissance |
+| WER | 68.0% |
+| WWER | 57.1% |
+| IS | 2.804 (Fair) |
+| Semantic Sim | 0.5029 |
+| Phonetic Sim | 0.5600 |
+| NEA F1 | 44.4% |
+| LLM Context Prob | **0.800** |
+| LLM Reason | semantic_plus_phonetic |
+| Topic | Technology |
+
+**Why this matters**: Claude identifies structural and semantic cues (semantic_plus_phonetic) suggesting 80% recovery probability, while IS scores only 2.80/5.0.
 
 ---
 

@@ -185,15 +185,15 @@ def format_example_md(r, idx):
 
     if sem >= 0.6:
         lines.append(f"**Why this matters**: Despite {wer:.0f}% WER, semantic similarity of {sem:.2f} "
-                      f"confirms the core meaning is preserved. Claude assigns {llm_p:.0f}% probability "
+                      f"confirms the core meaning is preserved. Claude assigns {llm_p*100:.0f}% probability "
                       f"that a viewer with context would understand this segment.")
     elif r["phonetic_sim"] and r["phonetic_sim"] >= 0.6:
         lines.append(f"**Why this matters**: The {r['phonetic_sim']:.2f} phonetic similarity shows these "
                       f"are natural lip-reading confusions (similar mouth shapes), not random errors. "
-                      f"Claude assigns {llm_p:.0f}% recovery probability.")
+                      f"Claude assigns {llm_p*100:.0f}% recovery probability.")
     else:
         lines.append(f"**Why this matters**: Claude identifies structural and semantic cues "
-                      f"({r['llm_context_reason']}) suggesting {llm_p:.0f}% recovery probability, "
+                      f"({r['llm_context_reason']}) suggesting {llm_p*100:.0f}% recovery probability, "
                       f"while IS scores only {r['intelligibility_score']:.2f}/5.0.")
     lines.append("")
     return "\n".join(lines)
@@ -297,6 +297,8 @@ def generate_markdown(categories, all_divergent, all_rows):
     lines.append("## Curated Examples by Category")
     lines.append("")
 
+    used_ids = set()  # Cross-category deduplication
+
     for cat_key, cat_data in categories.items():
         segs = cat_data["segments"]
         if not segs:
@@ -308,8 +310,30 @@ def generate_markdown(categories, all_divergent, all_rows):
         lines.append(f"**{len(segs)} segments** in this category.")
         lines.append("")
 
-        # Show top 5 examples
-        for i, r in enumerate(segs[:5], 1):
+        # Select 5 unique examples with topic diversity
+        selected = []
+        topics_seen = set()
+        # First pass: prefer unseen topics AND unseen IDs
+        for r in segs:
+            if len(selected) >= 5:
+                break
+            if r["utt_id"] in used_ids:
+                continue
+            topic = r.get("topic", "Unknown")
+            if topic not in topics_seen:
+                selected.append(r)
+                topics_seen.add(topic)
+                used_ids.add(r["utt_id"])
+        # Second pass: fill remaining slots with any unseen ID
+        for r in segs:
+            if len(selected) >= 5:
+                break
+            if r["utt_id"] in used_ids:
+                continue
+            selected.append(r)
+            used_ids.add(r["utt_id"])
+
+        for i, r in enumerate(selected, 1):
             lines.append(format_example_md(r, i))
 
         lines.append("---")

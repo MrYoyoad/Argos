@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "date": "2026-03-02",
+    "date": "2026-03-03",
     "description": "Segments where Claude's LLM heuristic identifies recoverable meaning that traditional metrics (WER, WWER, IS) miss",
     "selection_criteria": "llm_context_prob >= 0.5 AND intelligibility_score < 3.0",
     "total_divergent": 165

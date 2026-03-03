@@ -65,6 +65,7 @@
     Same WER, opposite meaning --- WER cannot distinguish these.
     ``admiral'' and ``animal'' are visually identical on lips.
     This motivates the entire IS framework.
+    See A14 for 8 metric mismatch patterns that IS resolves (e.g., high semantic + high WER = paraphrase, not error).
   }
 \end{frame}
 
@@ -108,6 +109,8 @@
     no LLM call needed at inference time. Free, decomposable, stable.
     Cross-config: r=0.925 across 16 decode configurations, recall 97.6--100\%.
     Phonetic preservation is \#1 IS correlate (r=0.943).
+    See A11 for LLM Salvage analysis (165 recoverable segments raise effective capture to 50.9\%).
+    See A14 for Metric Mismatch Guide (8 diagnostic patterns for interpreting IS signals).
   }
 \end{frame}
 
@@ -161,12 +164,25 @@
   {\scriptsize\textbf{Formula:} IS = 0.25$\times$Semantic + 0.15$\times$(Phonetic + InvWER + InvWWER + NEA + LengthRatio)}
 
   \note{
-    6 signals collapse into 3 dimensions via correlation analysis.
-    Phonetic similarity is \#1 correlate (r=0.943) despite equal weight to others.
-    Claude designed the entire framework at design time: weights, tiers, signals.
-    At run time it's fully deterministic --- no LLM API calls, free, reproducible.
-    R-squared = 1.0 confirms strictly additive, no hidden interactions.
-    Cross-config stable: r=0.925 mean across 16 decode configs.
+    KEY CORRELATION FINDINGS:
+    1. Phonetic Sim: strongest single predictor (r=0.943) despite 15\% weight ---
+    most direct measure of visual encoder quality.
+    2. 4 of 6 signals measure the same thing (word accuracy cluster, r > 0.79) ---
+    60\% of IS is ``did the model get the words right?''
+    3. Semantic Sim (25\% weight) drives most IS variance (28.5\%) ---
+    the tiebreaker signal separating segments with similar word accuracy.
+    4. NEA F1 punches above its weight: 17.3\% variance from 15\% weight.
+    Names/numbers are binary --- either preserved or not.
+    5. WER is UNRELIABLE across configs: correlation swings from -0.95 to -0.45
+    with length penalty changes. This is why IS was created over raw WER.
+    6. Length Ratio nearly useless (9.1\%, sign flips across configs).
+    7. Per-tier: Failed tier dominated by Phonetic (``does it sound right?''),
+    Excellent tier dominated by WER (``exact word accuracy'').
+    Claude designed the entire framework at design time. At run time: fully
+    deterministic, free, reproducible. R-squared = 1.0.
+    Cross-config: r=0.925 mean, recall 97.6--100\% across 16 decode configs.
+    See A14 for Metric Mismatch Guide --- 8 diagnostic patterns for interpreting signal combinations.
+    See A11 for LLM Salvage analysis of segments where metrics understate true quality.
   }
 \end{frame}
 
@@ -230,7 +246,7 @@
   \end{center}
 
   \vspace{-2pt}
-  \notetext{Each roadmap phase targets specific failure categories. No single fix addresses all modes.}
+  \notetext{Each roadmap phase targets specific failure categories. No single fix addresses all modes. See A13 for real examples of each mode.}
 
   \note{
     10 failure modes classified across 900 segments.
@@ -238,6 +254,7 @@
     Phonetically Similar \#2 at 15.7\% --- inherent visual ambiguity.
     Hallucination at 12.3\% --- fluent but fabricated.
     Key insight: failures are diverse, each phase targets specific categories.
+    See A13 for one real reference/hypothesis example per failure mode.
   }
 \end{frame}
 
@@ -303,6 +320,7 @@
     Business/Finance best at 57\% (formal vocabulary helps LLM).
     DIY/Home worst at 30\% (casual speech, technical jargon).
     Length is the single strongest predictor of success.
+    See A13 for concrete failure mode examples; A12 for success pattern examples.
   }
 \end{frame}
 
@@ -434,6 +452,7 @@
     2. Near-miss: ``admiral'' vs ``animal'' --- lip shapes identical.
     3. Hallucination: model fabricates entire narrative. Reads fluently.
     4. Tuning tradeoff: Config J recovers empty output but at cost.
+    See A12 for 7 success pattern examples; A13 for 10 failure mode examples.
   }
 \end{frame}
 
