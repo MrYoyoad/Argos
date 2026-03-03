@@ -452,12 +452,12 @@ These estimates are based on ASR confidence literature (Jiang, 2005; Seigel & Wo
 
 **Without confidence (current):**
 ```
-860 segments → Human reviews ALL 860 → finds 98 good ones → hours wasted
+1,497 segments → Human reviews ALL 1,497 → finds ~597 good ones → hours wasted
 ```
 
 **With confidence scoring:**
 ```
-860 segments → Sort by confidence → Review top 200 → find ~80 good ones → 5x faster
+1,497 segments → Sort by confidence → Review top 400 → find ~350 good ones → 4x faster
 ```
 
 ### 8.3 Per-Word Confidence for Partial Trust

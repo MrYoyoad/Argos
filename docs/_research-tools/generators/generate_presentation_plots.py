@@ -35,11 +35,11 @@ FIG_SIZE = (10, 6)
 
 
 def plot_P1_quality_tiers():
-    """Quality Tier breakdown — pie/bar chart from Report 1 (860 segments)."""
-    tiers = ["Usable\n(0-20%)", "Marginal\n(21-40%)", "Poor\n(41-60%)",
-             "Unusable\n(61-99%)", "Hallucinated\n(100%+)"]
-    counts = [98, 150, 153, 282, 177]
-    pcts = [11.4, 17.4, 17.8, 32.8, 20.6]
+    """Quality Tier breakdown — pie/bar chart from english_full baseline (1,497 segments)."""
+    tiers = ["Excellent\n(IS 4.0-5.0)", "Good\n(IS 3.0-3.99)", "Fair\n(IS 2.0-2.99)",
+             "Poor\n(IS 1.0-1.99)", "Failed\n(IS 0.0-0.99)"]
+    counts = [276, 321, 325, 336, 239]
+    pcts = [18.4, 21.4, 21.7, 22.4, 16.0]
     colors = ["#2ca02c", "#a8d08d", "#ffd966", "#e06666", "#990000"]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
@@ -50,7 +50,7 @@ def plot_P1_quality_tiers():
     ax1.set_yticks(y_pos)
     ax1.set_yticklabels(tiers, fontsize=11)
     ax1.set_xlabel("% of Segments", fontsize=12)
-    ax1.set_title("Quality Tier Distribution (860 segments)", fontsize=14, fontweight="bold")
+    ax1.set_title("IS Tier Distribution (1,497 segments)", fontsize=14, fontweight="bold")
     ax1.invert_yaxis()
     ax1.set_xlim(0, 40)
     for bar, pct, count in zip(bars, pcts, counts):

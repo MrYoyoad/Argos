@@ -284,7 +284,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | **Named Entity F1** | 38.8% | Entities missed in 85% of segments |
 | **Intelligibility Score** | 2.52/5.0 | Composite metric (semantic, phonetic, WER, WWER, NEA, length) |
 | **Properly Captured (IS ≥ 3)** | 597/1,497 (39.9%) | Only 4 in 10 segments convey intelligible meaning |
-| **Hallucinated (WER ≥ 100%)** | 177/860 (20.6%) | Fluent but fabricated text — most dangerous failure mode |
+| **Hallucinated (WER ≥ 100%)** | 307/1,497 (20.5%) | Fluent but fabricated text — most dangerous failure mode |
 
 **Intelligibility Score (IS) Tier Distribution:**
 
