@@ -188,3 +188,58 @@ at the boundary. However, including P judgments (lenient) likely aligns more clo
 The gold standard LLM lenient capture rate of 64.9% compares with:
 - IS >= 3.0: 39.9%
 - IS + salvage: 50.9%
+
+## Section 10: Visual and Topic Context Analysis
+
+**Question:** Would visual context from the source videos or general topic context have helped the LLM judge make better interpretations of ambiguous hypothesis text?
+
+**Answer:** Yes — both visual context and topic context would substantially help. The evidence falls into two complementary categories.
+
+### 10.1 Topic/Domain Context
+
+The model correctly lip-reads the phonetic shape of domain-specific words but resolves them to the wrong vocabulary domain. ~284 segments (19% of all data) show topic drift or wrong-domain confusion patterns where a simple topic label ("this is a cooking video") would constrain the LLM decoder.
+
+**Examples of domain vocabulary confusion:**
+- REF "costal cartilages" → HYP "cause our hormones" (Medical: phonetically close, wrong domain)
+- REF "probiotics and 2 tablespoons of apple cider vinegar" → HYP "permafrost at two tablespoons per square foot" (Cooking: preserves "tablespoons" but swaps food→geology)
+- REF "interchangeable lens" → HYP "judicial landscape" (Technology: phonetically plausible, total domain swap)
+- REF "oxidation rates of these carbohydrates" → HYP "art to action strides of this non profit" (Education: fluent but wrong topic)
+
+**Failure mode breakdown confirming topic context need:**
+- In N-coded segments: 27.0% show Total Topic Drift, 18.8% show Phonetically Similar but Wrong Topic
+- In P-coded segments: 6.7% show explicit domain confusion (phonetically close, wrong topic)
+
+### 10.2 Visual/Spatial Context
+
+48+ videos contained segments with deictic references ("this", "here", "look at this") — language that inherently depends on visual context. The model cannot resolve these without seeing what the speaker is pointing at.
+
+**DIY/Home content** is the most affected topic: 51.9% N-rate (vs 35.1% overall) because DIY is inherently visual ("attach this piece here", "sand along the grain"). Without seeing the physical demonstration, the speech is uninterpretable.
+
+### 10.3 Judgment Rates by Visually-Rich Topic
+
+| Topic | Total | Y% | P% | N% | Context Need |
+|-------|-------|----|----|----|--------------|
+| DIY/Home | 27 | 25.9 | 22.2 | **51.9** | Highest — physical demonstrations |
+| Religion/Spirituality | 17 | 29.4 | 23.5 | **47.1** | Specialized vocabulary |
+| Entertainment | 69 | 15.9 | 44.9 | **39.1** | Scene-dependent dialogue |
+| Medical/Health | 39 | 23.1 | 43.6 | 33.3 | Anatomy, procedures |
+| Cooking/Food | 117 | 28.2 | 41.9 | 29.9 | Ingredients, visible actions |
+| Technology | 132 | 29.5 | 42.4 | 28.0 | Product names, screens |
+| Sports/Fitness | 31 | 29.0 | **45.2** | 25.8 | Highest P — close but missing sport-specific vocab |
+
+### 10.4 Plausible-but-Wrong-Context Outputs
+
+90 segments produced fluent, grammatically correct output that was plausible in *some* context but completely wrong for the actual video. These are the most dangerous because they could fool a reader:
+
+- REF "overhead lights which are mostly fluorescent" → HYP "overheard ghost whisperer music for that scene"
+- REF "glucose and the glucose in maltose" → HYP "girls aged 10 to 12 years" (nutrition→demographics)
+
+Visual context would instantly disambiguate these — seeing a lab, studio, or food would constrain the model's output space.
+
+### 10.5 Implications for System Improvement
+
+1. **Topic context injection** (easiest win): Providing a topic label at decode time ("cooking", "medical", "technology") would constrain the LLM's vocabulary priors. This aligns with Mission 8 (Prompt Engineering) — topic hints in the system prompt could convert many P→Y and some N→P.
+
+2. **Visual scene context** (harder but higher ceiling): Incorporating scene-level features (object detection, scene classification) could provide grounding that pure lip-reading cannot. This is a longer-term architectural change.
+
+3. **Expected impact**: Topic context alone could improve ~284 segments (19%); visual grounding could additionally help DIY/Home (51.9% N-rate) and other visually-dependent content.

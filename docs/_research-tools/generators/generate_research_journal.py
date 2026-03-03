@@ -5,7 +5,9 @@ Argos — The Orchard — Comprehensive R&D Document Generator (v3)
 Generates a detailed, chapter-based research documentation Word document
 covering ALL work done on the Argos visual speech processing project.
 
-16 chapters, ~70 pages, content-rich with code examples and config snippets.
+17 chapters, ~75 pages, content-rich with code examples and config snippets.
+v4: Added Chapter 15 (LLM-as-a-Judge Gold Standard Evaluation + Visual Context Analysis),
+    renumbered Executive Summary to Ch 16, To-Do List to Ch 17.
 v3: Added Chapter 13 (Intelligibility Assessment), expanded Chapter 12 with
     plots/analysis, updated numbers to full 1,497-segment dataset.
 
@@ -3385,19 +3387,154 @@ def chapter_14(doc):
 
 
 # ═══════════════════════════════════════════════════
-# CHAPTER 15: Executive Summary (was Chapter 14)
+# CHAPTER 15: LLM-as-a-Judge Gold Standard Evaluation
 # ═══════════════════════════════════════════════════
 
 def chapter_15(doc):
-    add_heading(doc, "15. Executive Summary", 1, bookmark_id="ch15")
+    add_heading(doc, "15. LLM-as-a-Judge Gold Standard Evaluation", 1, bookmark_id="ch15")
+
+    add_para(doc, (
+        "To validate the Intelligibility Score framework against actual language understanding, "
+        "Claude Opus 4.6 evaluated all 1,497 hypothesis-reference pairs using holistic LLM reasoning. "
+        "The evaluation was blind (no metrics visible), used a 3-level scale (Y/P/N), and included "
+        "30 duplicate pairs for intra-rater reliability checking."
+    ))
+
+    # 15.1 Methodology
+    add_heading(doc, "15.1 Methodology", 2)
+    add_para(doc, (
+        "Each pair was judged: Y (meaning clearly conveyed), P (partial — some meaning preserved but "
+        "key info lost or distorted), or N (meaning lost — wrong topic, hallucination, empty). "
+        "70 empty-hypothesis pairs were auto-classified as N. Remaining 1,427 pairs were shuffled "
+        "into 15 batches of ~100, with 30 duplicate pairs embedded across batches."
+    ))
+    add_bullet_bold_value(doc, "Conservative tie-breaking: ", "Y vs P → P; P vs N → N.")
+    add_bullet_bold_value(doc, "Intra-rater reliability: ", "86.7% exact agreement, 100% lenient (30 duplicates).")
+
+    # 15.2 Results
+    add_heading(doc, "15.2 Gold Standard Capture Rates", 2)
+    add_styled_table(doc,
+        ["Metric", "Count", "Rate"],
+        [
+            ["LLM Judge: Y (strict)", "345", "23.0%"],
+            ["LLM Judge: Y+P (lenient)", "971", "64.9%"],
+            ["IS ≥ 3.0", "597", "39.9%"],
+            ["IS + salvage (llm_prob ≥ 0.5)", "762", "50.9%"],
+        ],
+        col_widths=[3.0, 1.0, 1.0]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "The LLM judge is more conservative than IS for 'full success' (23% vs 40%) but more "
+        "generous for 'any useful output' (65% vs 40%). The 42% partial zone — where structure "
+        "and key words survive but semantic meaning or detail is lost — is the critical boundary "
+        "that IS collapses into a binary pass/fail."
+    ))
+
+    # 15.3 Agreement with IS
+    add_heading(doc, "15.3 Agreement with IS Framework", 2)
+    add_styled_table(doc,
+        ["Comparison", "Kappa", "Accuracy", "Precision", "Recall", "F1"],
+        [
+            ["LLM Y vs IS ≥ 3.0 (strict)", "0.565", "0.806", "0.945", "0.546", "0.692"],
+            ["LLM Y+P vs IS ≥ 3.0 (lenient)", "0.521", "0.746", "0.612", "0.995", "0.758"],
+        ],
+        col_widths=[2.5, 0.6, 0.7, 0.7, 0.6, 0.6]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "Only 22 boundary disagreements: 19 where LLM=Y but IS<3.0 (salvage validated), and "
+        "3 where LLM=N but IS≥3.0. The IS threshold is well-calibrated — 94.5% of LLM=Y segments "
+        "score IS ≥ 3.0."
+    ))
+
+    # 15.4 Partial Judgment Analysis
+    add_heading(doc, "15.4 What Survives and What's Lost (P Analysis)", 2)
+    add_para(doc, (
+        "In the 626 P-coded segments, preservation and loss tags reveal what the VSP model "
+        "typically gets right vs wrong:"
+    ))
+    add_styled_table(doc,
+        ["Element", "Preserved (% of P)", "Lost (% of P)"],
+        [
+            ["Structure (word order, grammar)", "88.8%", "0.6%"],
+            ["Key content words", "66.6%", "25.6%"],
+            ["Semantic meaning / gist", "26.0%", "55.1%"],
+            ["Detail / qualifiers", "—", "55.4%"],
+            ["Named entities (people, places)", "0.6%", "20.6%"],
+            ["Phonetic resemblance", "16.6%", "—"],
+        ],
+        col_widths=[2.5, 1.5, 1.5]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "The model reliably produces grammatically well-formed output with recognizable content "
+        "words, but frequently loses the specific meaning, fine-grained detail, and named entities."
+    ))
+
+    # 15.5 Visual and Topic Context Analysis
+    add_heading(doc, "15.5 Visual and Topic Context Analysis", 2)
+    add_para(doc, (
+        "A post-evaluation analysis examined whether visual context from the source videos or "
+        "general topic context would have helped interpret ambiguous hypothesis text."
+    ))
+    add_para(doc, (
+        "Topic/domain context: ~284 segments (19%) show topic drift or wrong-domain confusion "
+        "where the model lip-reads the phonetic shape of domain-specific words correctly but "
+        "resolves them to the wrong vocabulary domain. A simple topic label at decode time would "
+        "constrain the LLM decoder and likely convert many P→Y and some N→P."
+    ), bold=True)
+
+    add_para(doc, "Examples of domain vocabulary confusion:")
+    add_bullet(doc, 'REF "costal cartilages" → HYP "cause our hormones" (Medical: phonetically close, wrong domain)')
+    add_bullet(doc, 'REF "probiotics and 2 tablespoons of apple cider vinegar" → HYP "permafrost at two tablespoons per square foot"')
+    add_bullet(doc, 'REF "interchangeable lens" → HYP "judicial landscape" (phonetically plausible, total domain swap)')
+
+    add_para(doc, (
+        "Visual/spatial context: 48+ videos contained deictic references ('this', 'here', 'look at this') "
+        "that cannot be resolved without seeing what the speaker is pointing at. DIY/Home content has "
+        "the highest failure rate of any topic (51.9% N-rate vs 35.1% overall) because it is inherently "
+        "visual — the speech is uninterpretable without seeing the physical demonstration."
+    ))
+
+    add_styled_table(doc,
+        ["Topic", "Total", "Y%", "P%", "N%", "Context Need"],
+        [
+            ["DIY/Home", "27", "25.9", "22.2", "51.9", "Highest — physical demos"],
+            ["Religion/Spirituality", "17", "29.4", "23.5", "47.1", "Specialized vocabulary"],
+            ["Entertainment", "69", "15.9", "44.9", "39.1", "Scene-dependent dialogue"],
+            ["Medical/Health", "39", "23.1", "43.6", "33.3", "Anatomy, procedures"],
+            ["Cooking/Food", "117", "28.2", "41.9", "29.9", "Ingredients, visible actions"],
+            ["Technology", "132", "29.5", "42.4", "28.0", "Product names, screens"],
+            ["Sports/Fitness", "31", "29.0", "45.2", "25.8", "Sport-specific vocabulary"],
+        ],
+        col_widths=[1.3, 0.5, 0.5, 0.5, 0.5, 2.0]
+    )
+
+    add_para(doc, "")
+    add_para(doc, (
+        "Implication: Topic context injection at decode time (Mission 8: Prompt Engineering) is the "
+        "easiest improvement path — providing even a topic label could improve ~284 segments. Visual "
+        "scene grounding is a higher-ceiling but longer-term architectural change."
+    ))
+
+    doc.add_page_break()
+
+
+# ═══════════════════════════════════════════════════
+# CHAPTER 16: Executive Summary (was Chapter 15)
+# ═══════════════════════════════════════════════════
+
+def chapter_16(doc):
+    add_heading(doc, "16. Executive Summary", 1, bookmark_id="ch16")
 
     add_para(doc, (
         "This chapter provides a high-level overview of the Argos project's scope, deliverables, "
         "and current state for management review."
     ))
 
-    # 15.1 Project Scope
-    add_heading(doc, "15.1 Project Scope & Timeline", 2)
+    # 16.1 Project Scope
+    add_heading(doc, "16.1 Project Scope & Timeline", 2)
     add_para(doc, (
         "The Argos project began on October 18, 2024, with the goal of building a production-ready "
         "visual speech processing (lip-reading) system based on the VSP-LLM research paper. All "
@@ -3410,8 +3547,8 @@ def chapter_15(doc):
         "classified, or unreliable."
     ))
 
-    # 15.2 Key Deliverables
-    add_heading(doc, "15.2 Key Deliverables", 2)
+    # 16.2 Key Deliverables
+    add_heading(doc, "16.2 Key Deliverables", 2)
     add_styled_table(doc,
         ["Deliverable", "Status", "Details"],
         [
@@ -3430,8 +3567,8 @@ def chapter_15(doc):
         col_widths=[1.8, 1.2, 3.5]
     )
 
-    # 15.3 Effort Estimate
-    add_heading(doc, "15.3 Total Effort Estimate", 2)
+    # 16.3 Effort Estimate
+    add_heading(doc, "16.3 Total Effort Estimate", 2)
     add_styled_table(doc,
         ["Phase", "Duration", "Key Activities"],
         [
@@ -3447,8 +3584,8 @@ def chapter_15(doc):
         col_widths=[1.5, 1.0, 4.0]
     )
 
-    # 15.4 Performance
-    add_heading(doc, "15.4 Current Performance", 2)
+    # 16.4 Performance
+    add_heading(doc, "16.4 Current Performance", 2)
     add_styled_table(doc,
         ["Metric", "Current Value", "Exp A (r=16)", "Expected Post-FT"],
         [
@@ -3464,8 +3601,8 @@ def chapter_15(doc):
         col_widths=[2.3, 1.1, 1.3, 1.1]
     )
 
-    # 15.5 Code Inventory
-    add_heading(doc, "15.5 Complete Code Inventory", 2)
+    # 16.5 Code Inventory
+    add_heading(doc, "16.5 Complete Code Inventory", 2)
     add_para(doc, (
         "The following table summarizes the complete codebase written for the Argos project. "
         "All code was developed by Yoad Oxman:"
@@ -3486,8 +3623,8 @@ def chapter_15(doc):
         col_widths=[1.5, 0.5, 0.5, 4.0]
     )
 
-    # 15.6 Infrastructure
-    add_heading(doc, "15.6 Infrastructure Summary", 2)
+    # 16.6 Infrastructure
+    add_heading(doc, "16.6 Infrastructure Summary", 2)
     add_styled_table(doc,
         ["Aspect", "Count", "Details"],
         [
@@ -3503,8 +3640,8 @@ def chapter_15(doc):
         col_widths=[1.8, 0.6, 4.1]
     )
 
-    # 15.7 Recommendations
-    add_heading(doc, "15.7 Recommendations", 2)
+    # 16.7 Recommendations
+    add_heading(doc, "16.7 Recommendations", 2)
     add_para(doc, "Based on the evaluation results and research analysis, the following next steps are recommended:")
     add_bullet_bold_value(doc, "1. Fine-Tune on AVSpeech: ",
         "Domain adaptation is the highest-impact improvement available. The training infrastructure "
@@ -3520,8 +3657,8 @@ def chapter_15(doc):
         "The hyperparameter tuning report identified segment duration as a high-impact data-level "
         "lever. Filtering segments to 5+ seconds and capping at 20-30 seconds may improve WER by 5-10%.")
 
-    # 15.8 Milestones
-    add_heading(doc, "15.8 Project Milestones", 2)
+    # 16.8 Milestones
+    add_heading(doc, "16.8 Project Milestones", 2)
     add_styled_table(doc,
         ["Date", "Milestone"],
         [
@@ -3554,8 +3691,8 @@ def chapter_15(doc):
 # CHAPTER 16: Project To-Do List
 # ═══════════════════════════════════════════════════
 
-def chapter_16(doc):
-    add_heading(doc, "16. Project To-Do List", 1, bookmark_id="ch16")
+def chapter_17(doc):
+    add_heading(doc, "17. Project To-Do List", 1, bookmark_id="ch17")
 
     add_para(doc, (
         "This chapter consolidates all pending work items across research, operations, "
@@ -3564,7 +3701,7 @@ def chapter_16(doc):
     ))
 
     # 16.1 Research & Model Improvement
-    add_heading(doc, "16.1 Research & Model Improvement", 2)
+    add_heading(doc, "17.1 Research & Model Improvement", 2)
     add_para(doc, (
         "These items directly target the WER gap between benchmark (25.4%) and real-world (64-67%) performance."
     ))
@@ -3599,7 +3736,7 @@ def chapter_16(doc):
     )
 
     # 16.2 Operations & Deployment
-    add_heading(doc, "16.2 Operations & Deployment", 2)
+    add_heading(doc, "17.2 Operations & Deployment", 2)
     add_para(doc, (
         "These items ensure production reliability and environment consistency."
     ))
@@ -3622,7 +3759,7 @@ def chapter_16(doc):
     )
 
     # 16.3 Technical Development
-    add_heading(doc, "16.3 Technical Development", 2)
+    add_heading(doc, "17.3 Technical Development", 2)
 
     add_styled_table(doc,
         ["#", "Task", "Priority", "Details"],
@@ -3642,7 +3779,7 @@ def chapter_16(doc):
     )
 
     # 16.4 Documentation & Process
-    add_heading(doc, "16.4 Documentation & Process", 2)
+    add_heading(doc, "17.4 Documentation & Process", 2)
 
     add_styled_table(doc,
         ["#", "Task", "Priority", "Details"],
@@ -3660,7 +3797,7 @@ def chapter_16(doc):
     )
 
     # Priority summary
-    add_heading(doc, "16.5 Priority Summary", 2)
+    add_heading(doc, "17.5 Priority Summary", 2)
     add_para(doc, "Items ranked by expected impact on the core metric (WER reduction):")
 
     add_bullet_bold_value(doc, "1. Fine-tune on AVSpeech (#1): ",
@@ -3711,10 +3848,11 @@ def main():
     chapter_10(doc)
     chapter_11(doc)
     chapter_12(doc)
-    chapter_13(doc)   # Intelligibility Assessment & Metric Analysis (NEW)
+    chapter_13(doc)   # Intelligibility Assessment & Metric Analysis
     chapter_14(doc)   # Fine-Tuning & Training Infrastructure
-    chapter_15(doc)   # Executive Summary
-    chapter_16(doc)   # Project To-Do List
+    chapter_15(doc)   # LLM-as-a-Judge Gold Standard Evaluation (NEW)
+    chapter_16(doc)   # Executive Summary
+    chapter_17(doc)   # Project To-Do List
 
     # Save
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

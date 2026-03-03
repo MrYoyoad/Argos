@@ -116,5 +116,24 @@
       "P:struct/detail-key-sem": 10,
       "P:sem+struct/detail-key": 9
     }
+  },
+  "visual_context_analysis": {
+    "topic_context_would_help_segments": 284,
+    "topic_context_would_help_pct": 19.0,
+    "deictic_reference_videos": 48,
+    "plausible_but_wrong_context": 90,
+    "topic_n_rates": {
+      "DIY/Home": {"n": 27, "N_pct": 51.9, "context_need": "highest"},
+      "Religion/Spirituality": {"n": 17, "N_pct": 47.1, "context_need": "high"},
+      "Entertainment": {"n": 69, "N_pct": 39.1, "context_need": "high"},
+      "Medical/Health": {"n": 39, "N_pct": 33.3, "context_need": "medium"},
+      "Cooking/Food": {"n": 117, "N_pct": 29.9, "context_need": "medium"},
+      "Technology": {"n": 132, "N_pct": 28.0, "context_need": "medium"}
+    },
+    "n_coded_failure_modes": {
+      "total_topic_drift_pct": 27.0,
+      "phonetically_similar_wrong_topic_pct": 18.8
+    },
+    "implication": "Topic context injection at decode time is the easiest improvement path; visual scene grounding is higher-ceiling but requires architectural changes"
   }
 }
