@@ -6,6 +6,8 @@ Generates a detailed, chapter-based research documentation Word document
 covering ALL work done on the Argos visual speech processing project.
 
 17 chapters, ~75 pages, content-rich with code examples and config snippets.
+v5: Added Section 15.7 (Context-Aware Re-Evaluation): context is stricter (Y 23%→15%,
+    net -162 transitions), transition matrix, per-topic deltas, implications.
 v4: Added Chapter 15 (LLM-as-a-Judge Gold Standard Evaluation + Visual Context Analysis),
     renumbered Executive Summary to Ch 16, To-Do List to Ch 17.
 v3: Added Chapter 13 (Intelligibility Assessment), expanded Chapter 12 with
@@ -3579,6 +3581,84 @@ def chapter_15(doc):
         "persists regardless of decode settings, and that the LLM judge\u2019s holistic assessment "
         "tracks this dimension faithfully."
     ))
+
+    # 15.7 Context-Aware Re-Evaluation
+    add_heading(doc, "15.7 Context-Aware Re-Evaluation", 2)
+    add_para(doc, (
+        "All 1,497 pairs were re-judged with a modified instruction: the judge was asked to infer the "
+        "likely topic/domain from the reference text and evaluate whether a viewer with that domain "
+        "context would understand the hypothesis. No explicit topic labels were injected — context "
+        "came from the judge\u2019s own inference. The same Y/P/N scale and conservative tie-breaking applied."
+    ))
+
+    add_heading(doc, "Key Finding: Context Mode Is Stricter, Not More Lenient", 3)
+    add_styled_table(doc,
+        ["Judgment", "Blind", "Context", "Delta"],
+        [
+            ["Y (full success)", "345 (23.0%)", "225 (15.0%)", "\u22128pp"],
+            ["P (partial)", "626 (41.8%)", "705 (47.1%)", "+5.3pp"],
+            ["N (failure)", "526 (35.1%)", "567 (37.9%)", "+2.8pp"],
+        ],
+        col_widths=[2.0, 1.2, 1.2, 1.0]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "Context awareness made the judge more conservative — applying domain knowledge raised the bar "
+        "for 'full success.' A hypothesis that seemed adequate without context often revealed vocabulary "
+        "mismatches when the judge knew the subject matter."
+    ))
+    add_bullet_bold_value(doc, "Net transitions: ", "230 downgrades vs 68 upgrades \u2192 net \u2212162 (\u221210.8%). 80.0% of pairs were stable.")
+    add_bullet_bold_value(doc, "Cross-condition reliability: ", "80.0% agreement on 30 duplicate pairs (vs 86.7% blind intra-rater).")
+
+    add_heading(doc, "Transition Matrix", 3)
+    add_styled_table(doc,
+        ["Blind \u2192 Context", "\u2192Y", "\u2192P", "\u2192N"],
+        [
+            ["Y (345)", "207 (60%)", "138 (40%)", "0"],
+            ["P (626)", "17 (3%)", "517 (83%)", "92 (15%)"],
+            ["N (526)", "1 (0%)", "50 (10%)", "475 (90%)"],
+        ],
+        col_widths=[1.5, 1.2, 1.2, 1.2]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "The dominant off-diagonal transition is Y\u2192P (138 cases): pairs that blind evaluation called "
+        "'full success' were downgraded to 'partial' once domain context was applied. These are typically "
+        "pairs where the overall meaning is approximately right but domain-specific vocabulary is wrong "
+        "— invisible without knowing the topic. Context rescued only 1 N\u2192Y and 50 N\u2192P, "
+        "confirming context does not conjure meaning from genuinely failed transcriptions."
+    ))
+
+    add_heading(doc, "Per-Topic Context Benefit", 3)
+    add_styled_table(doc,
+        ["Topic", "N", "Blind Y+P%", "Context Y+P%", "Delta"],
+        [
+            ["DIY/Home", "27", "48%", "56%", "+8pp"],
+            ["Religion/Spirituality", "17", "53%", "59%", "+6pp"],
+            ["Sports/Fitness", "31", "74%", "77%", "+3pp"],
+            ["Politics/News", "34", "74%", "76%", "+2pp"],
+            ["Business/Finance", "46", "76%", "76%", "0pp"],
+            ["Technology", "132", "72%", "69%", "\u22123pp"],
+            ["Cooking/Food", "117", "70%", "65%", "\u22125pp"],
+            ["Education/Academic", "86", "77%", "72%", "\u22125pp"],
+        ],
+        col_widths=[1.8, 0.4, 1.0, 1.1, 0.7]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "Domain-visual topics benefit from context (DIY/Home, Sports, Religion) — knowing the topic "
+        "helps interpret phonetically-approximate but semantically-adequate hypotheses. Technology, "
+        "Cooking, and Education decline because domain knowledge also raises expectations for correct "
+        "terminology."
+    ))
+
+    add_heading(doc, "Implications", 3)
+    add_bullet_bold_value(doc, "Context-aware evaluation is a quality tool, not a rescue tool. ",
+        "It reveals hidden vocabulary failures in segments that appear adequate at first glance.")
+    add_bullet_bold_value(doc, "Context does not rescue complete failures. ",
+        "Only 1 N\u2192Y transition across 1,497 pairs. Total topic drift and hallucination are not recoverable by context alone.")
+    add_bullet_bold_value(doc, "Effective capture rates: ",
+        "Blind Y=23.0%, Y+P=64.9% (primary standard). Context-aware Y=15.0%, Y+P=62.1% (stricter domain-expert benchmark).")
 
     doc.add_page_break()
 

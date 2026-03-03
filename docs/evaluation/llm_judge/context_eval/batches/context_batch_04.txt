@@ -1,0 +1,107 @@
+CONTEXT-AWARE EVALUATION | BATCH 04/15 | 102 pairs
+Consider the likely topic/domain of each reference. Judge whether a viewer
+with that domain context would understand the hypothesis.
+Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
+---
+001|inside and that's the surface of the eye it's a very interesting chemical interface|and that's the service of the fans to keep it all connected and
+002|me and he does that in whatever way and whatever realm|that didn't exactly in one effortless way and wouldn't ever wear my
+003|to have at least 10 of the active ingredient protodiocin which is one of the steroidal glycosides that is in tribulus|at least 10 percent of the active ingredient prototypes which in this world is considered to be a good
+004|it was nothing like that but when i got there and john paul courtier i seen all his clothes that he wanted me to wear i was like oh this ain't gonna be nothing like i have done before|it was nothing like that but i didn't when i got there and turned up on oj i said oh he's closed they won't be around i was like oh just tell me later like i haven't done before
+005|their oar was the same you know each was the same and he was in the middle and he didn't know whether to suicide left or right|ruled with an iron fist in a velvet glove my name is kim bowie and in the words of nikki giovanni
+006|the projects that this is not nothing special|this is a project i've been working on for a long time thank you very much
+007|a very brief history of the airplane but the history is going to start a little bit before|environment physicians are now becoming engineers a little bit before
+008|by the social conventions in other cultures like the hopi|by the social innovators in our culture at the open
+009|efforts to restore u s cuban ties obama will become the first sitting president to visit cuba since calvin coolidge in 1928 it's a move that is not popular with republican|efforts to restore us cuba ties obama will make up the first sitting president to visit cuba since calvin coolidge in 1928 it's a move that is not popular with republican president
+010|second point how long will it take|start at point how long will it take well
+011|whereas for example where i live right now we don't have a metro system so we use buses or taxis to get everywhere and it can be a little bit slower sometimes|here's for example where i live right now we don't have a major system so we use multiple taxis to get everywhere and it can be a little bit slower sometimes
+012|signing some deals where wherein|i guess this is where wearing a
+013|this is why i am so excited to share with you all today that we will begin the 2016 ted talks|is why i am so excited to share with you all today that we will begin the 2016 tedbreaks
+014|so even if india takes myanmar away from china in an economic|nights so even if he needs eight hours of sleep away from tracking and coming back
+015|yeah observations is like what it sounds like you just sit there and you observe|observation is like what it sounds like you sit there and you observe
+016|mainly digital database systems and about the projects which you have done in college and you should be very thorough with whatever you have done|about the project which you have done in college and you should be very low with whatever you
+017|it was really hard to come out to them i understand that my mother was very religious when i came out to her|really hard to come out as gay but i understand that my mother was very religious when i came out to her
+018|to share inwardly his likeness that he might become the firstborn among many|to share equally his likeness that he might become the first born among me
+019|so one solution is to empty the box of matches and nail this box on the wall|one solution is to apply the parts of matrix to the six parts of the wall
+020|crop loss because it would burn up the crops it would cause eye disease because your pupils would open up and it would allow the uv rays to get in|cause these remarkable gaps it will cause gas to leak into the supernovae will open up and we can then serve the amazing
+021|to supplying your body with these essentials your bug out bag is there to provide for contingencies that may occur along the way repairing your body if it is injured hygiene|supply your body with these essentials your buck up pack is there to provide for contingencies that may occur along the way we bear your body if it's injured i j
+022|next two weeks or so going after another link network|the next two weeks or so going after another lead that we're going to
+023|if i have him in my arms and i just want him to go to sleep but he's not but i know lullabies help him i can say hey google turn on lullaby music for baby|if i have him in my arms then i just want him to go to sleep peacefully on my own on the back couch i take kids a turn on the lap of a baby
+024|i thought i was gonna die i remember my sister saying i thought you were going to die i was coughing and i don't sweat|i thought i was dying i remember my sisters saying i thought you were going to die i was in a coma i don't know what
+025|he's not going to be president of the united states|not going to be president of the united states
+026|i also don't want them to confuse their clients i also as it gets passed on i don't want it to get changed too much in a way that's not actually what it's supposed to be you know like that|i also don't want them to confuse their clients i also as it gets passed on i don t want it to change too much in a way that is not actually what it s supposed to be
+027|that we're going to work with and we're going to re moisturize this section and really just put some moisture and seal it in okay|i'm going to work with i want to free your triceps and deltoids and pecs and moisturize it
+028|basically says that no senator can speak more than twice on a pending question|says that no senator gets to be more than twice on pandering question
+029|next week i will be making my debut|next week i will be making my debut
+030|this look and feel like a high end|this long and feel like i ended
+031|6 7 and 8 1|in the science and technology sector what
+032|politically correct way of saying i did whatever my parents told me to do so i went to university i wore a lot of turtlenecks and i|correct way of saying i did whatever my parents told me to do so i went to university i wore a lot of turtlenecks and after
+033|so why debrief at all|so why should we care it's
+034|in the creation of these children or in the making|in the creation of these children's orders and then in the making of
+035|i think i should say welcome to the whiskey party alright you do it now it's too much pressure|i think i'll take what else was on the menu so now i'm just waiting
+036|coming off of a nasa website particularly when some of the agencies that are involved|because of the next weapon site particularly weapons of mass destruction that are involved
+037|so let's look into it let's switch camera|in order to turn this story into a story game
+038|you were given a paragraph and you had to fill in the blanks based on the context so let's see what you got|underwater diving for your parachute and you have to fill in the blanks based on the context so let's see what you got
+039|he also treats the detection cautiously noting at the end of his paper that there is some positive evidence for a planetary body in this system|he also treated his nation consciously using the active voice paper that there was some positive evidence for pneumonia in this system
+040|or that person that's on your top 20 list or the 100 people on your list and send something like this|that person takes your time ruining this or the 100 people can do this and it does something like this called
+041|good general guidelines|just say this
+042|so all we need now is zero latency input devices and processors|all we need now is serial links to input devices and processors
+043|readers out there because they're everywhere and remember you want to network|when i was a little girl i always wanted to be a princess
+044|is also very heavy and is seven and a half pounds over 11 and a half inches|also very heavy at 7 5 pounds and over 11 5 inches
+045|pursue my hobbies i've participated in several school plays and even taken on main roles|to my comics i've participated in several school competitions and got my awards
+046|and to make important decisions at geographic scales as professor amy lobin of the university of oregon describes it neurogeographers are constantly scanning|and to make important decisions at geographic scales as professor amy loeb of the university of oregon describes it geographers are constantly standing
+047|areas where steve jobs beat bill gates|not always with steve jobs bill gates
+048|so repeat make yourself at home|so repeat make yourself at home
+049|by that time weren't you already married and had kids yes yes|by that time we were growing marijuana in the suburbs
+050|you guys send in some really good stories so we are about to read them|when i was 18 years old and i
+051|the folders notification center multitasking and that's pretty much it some little updates of the stock apps but not really much at all so finally we are getting what|the faults and notifications there are mostly texting and that's pretty much the sum total of the stock ups but not really much and also finding we are getting what
+052|all those other things and it's also setting the base of the three dimensional chain with|little things need to understand the basics of a three dimensional chain which
+053|very honored to be here and i have been in many biennials i met bose and shweta for the first time in sao paulo when i was showing at the sao paulo biennial|radio economy and they helped me many many years i met paul rusesabagina for the first time in 2004 when he was telling his story at the united nations
+054|looking to the front so we were in the shoulder stand again from this position a little distance between you and the pole|looking into the front so we were eating jokes and laughter from the audience the system which you name both
+055|germany in germany it's legal to have an abortion but in|german law it is illegal to have an emotional
+056|because the range of global unicast which are the equivalent to publicly rottable addresses|there's a range of global screencasts which are the equivalent to publicly readable addresses
+057|so that's two draw three draw whole step bend|it was easy to do so we did the whole step by step
+058|discovered a passion for sitting in a bathtub full of 20 bills while pouring gold coins and gemstones on your head|even a passion or a hobby like needlepoint or something like that girls going into the gym i was like no
+059|to mr benjamin delpy in the front row|so that's what i want to talk about today i'm going to spend most of my time talking about
+060|investing into things is to make sure that you have money set aside in case something happens|into this is to make sure that you have money set aside and yes something happens
+061|you are using that mental chess game to figure out what it is your interviewer needs to hear|are using that mental chess game to figure out what an initial interview needs to hear what
+062|but they couldn't identify the quantum|i think it's a very valid question
+063|elements can i build a visit as a new patient or can i use the time element|me to say can i move this desk or can i
+064|go ahead and get these bad boys out of the box and see how they stack up to the competition|get these bad boys out of the box and take it to the competition
+065|and bring out whenever you need to achieve a specific goal let's get right into it|and bring out whatever you need to achieve a specific goal does it get right into it
+066|i don't know europe or something like that if you have a full backpack out of spare batteries but i have no idea how to charge them but i|you know i mean i'm not really sad if i can't film many ways but i have no idea how to change the medium
+067|i'm sorry i've forgotten your name|i'm sorry i've forgotten your name
+068|that process has continued but there's something i think lost in that initial burst of excitement that we both felt|that process has continued but there was something i think lost in that initial burst of excitement that we both felt
+069|those arrays that we have not declared|those are realities that we have to deal with
+070|now the reason this isn't so obvious is because there's some things that just seem like they're correct|the reason this is so obvious is because there are some things that just seem like they're correct
+071|well if you subscribe to our newsletter i'm in charge of|if you subscribe to our understanding i'm just kidding
+072|neptune gives us a long time to learn and experience the energies and wisdom it has to bring you will find over the next few weeks|you give it a long time to learn and experience the energies and wisdom that it brings you will find over the
+073|12 95 free shipping i could have sold them for a little bit higher there was somebody there was one other seller that was selling them|very funny for example i love the experience of being angry because it was one of the only times in my
+074|pupil dilating eye drops could someday be a thing of the past thanks to a new camera that is not only smaller and more portable than other similar devices but also less expensive|pupil dilation eye drops are some day being a thing of the past thanks to a new camera that is not only smaller and more portable than other similar devices but also less expensive to
+075|a 10 minute delivery for a 30 second audio there are several reasons one is that we created another service eight years ago|10 megabytes of data for a third second out there and there are several reasons one is that we here at cern discovered it eight years ago
+076|routines and channels give you a way to sort of structure the program and|kids a chance to decide if they want to go into structuring programming and
+077|replaces it with generally a really consumer|linked with generally a release to
+078|16mp camera overall is a pretty good shooter but not so much that instant mode|a picture camera overall it's a pretty good sugar but not so much that it has them both
+079|the air in the bottle between trials|and the middle school grades with
+080|fluent communication fluent conversations native speakers and communication we're reading recipes this is another example|communication fluent conversations native speakers and communication we're reading recipes this is another example
+081|in this series we will learn new words by the pms method personal meaning system|in this series we will learn new words by the b amp m accelerated person meaning system
+082|i only use this laptop for school so when i need to get on wikipedia or to upload my work to the system this little|use the name of the institution regularly to get the right meaning or to talk about my work so this is
+083|to go and of course attitudes to work have really changed as well|to go and of course kansas city we're looking for engineers as well one of the
+084|more than 28 percent probably 30 percent of what a bitcoin is right and we see this|more than 28 percent about 30 percent of what bitcoin is right now is
+085|creative unruly energized campaign|creative unruly energized campy you are
+086|as a spy she's helping the greasers because there's a what right the big rumble is going to come down between the socias and the greasers|in spanish he told me that you need to speak english because this is america and when the big rebels come down between soldiers and
+087|is perfect for you it has all the features you need and it has|perfect for you it has all the features you need and
+088|and you start over again now let me go to dance with the counts|don't look good like hospital gowns
+089|grammar and syntax math rules and procedures social and behavioral rules and facts that are learned by rote|cooperatively to make the rules and procedures and social norms and enforce them through peer pressure
+090|but not all bees make honey insects like bumblebees stingless bees and even honey wasps can produce small amounts of honey but the stuff you're familiar with is the product of one of the seven|not honey is made honey it sounds like bumblebees a single bee can even honey wasps can produce small amounts of honey but the stuff you're familiar with is the product of one of the 70
+091|controller showchatcontroller like that wouldn't that be nice well we can't do that right now because we don't have a reference|all the things i should have done or not done that would have led to this outcome we won't have any reference
+092|these videos take really long to make i don't know if you want to hear about this but you have to set up the camera and make sure that it looks okay and just like think about all these|when you're saying it was really hard to make i don't even want to hear about this but you have to set up the camera and make sure that it looks ok and just like think about all these
+093|and now in 1916 he showed his worth by analyzing the problems likely to face the 6th corps his planning began with both infantry and air protection|now in that sense that time he's shown his worth by analyzing the problems likely to face the next core his planning began with both left and right brain
+094|generally speaking is to achieve our result of restoring density with a single procedure occasionally there will be a patient who needs so many hair roots transplanted that will need to divide|simply speaking is to achieve our result of the student listening with a single procedure occasionally there will be a patient who needs so many corrections because they really need to divide
+095|so you can update the spreadsheet from autocad|you're going to get dated especially from other guys
+096|the stop tongue technique is pretty difficult to learn so it's important that you isolate it and then as you play this faster and faster the stop tongue technique starts to become more of a bounce tongue technique|stop song technique is pretty difficult to learn so it's no surprise that you isolate and then as you play it faster and faster the stop song techniques starts to become more of a pound song technique
+097|we go to the hotel elevator|ca we are a hot desert valley
+098|and that is just something that i have|and that is just something that i have
+099|i have to be advised to read religion this is everybody you'll|i just want to make it very clear that everybody here
+100|but when we first started this series i wondered if we'd actually get through it you know all great ideas|when we first started this series i wondered if we'd actually get through it you know all great ideas
+101|something that worries a bit of stress the stress is okay too but after this fight brings in separation|doesn't want to be distressed it's distress that you can't use what we have to is want based separation
+102|want to let them know like hey you don't have to do this just kind of make them think like oh wait why am i doing this again so|to let them know like hey you don't have to do this just kind of make him think like oh wait why am i doing this again so

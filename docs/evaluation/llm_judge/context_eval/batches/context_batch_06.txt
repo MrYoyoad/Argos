@@ -1,0 +1,108 @@
+CONTEXT-AWARE EVALUATION | BATCH 06/15 | 103 pairs
+Consider the likely topic/domain of each reference. Judge whether a viewer
+with that domain context would understand the hypothesis.
+Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
+---
+001|we're going to be eternally connected we're going to be eternally alive god has given eternal life to the whole human race|to be internally connected we're going to be externally alive god has given an internal life to the whole human race
+002|actually a very intelligent man who cares deeply|the key very clearly and no one cares at all
+003|and we have a bit of fun as well along the way but driving energy and determination to succeed is how i describe jason|have a bit of fun as well along the way but drive an engine and determination are key with how i describe jason
+004|if they pass other discretionary measures that become a part of the fixed expenditures for the future|those destructive measures and becoming part of the solution rather than the
+005|so that's the similarity with our philosophy|try to summarize it in a few words
+006|your password they're going to now try to log into all these sites to see what you've got|their passwords they are now trying to log in to all these sites to deal with what you've got
+007|we also have remote boom and bucket position|2000 miles across the united states
+008|experiencing the emotions of the other people around you|is the emotions of the other people around you
+009|actually maybe enough to even cause flooding in some locations that's the kind of precipitation we're|actually maybe it doesn't even have to fly in a specific location like that but someone with access to
+010|so it's a really nice compact setup it's basically the same size as the|so it's a really nice compact game it is based on the same size as
+011|from wantonly destroying the lives of others|from one to then destroying the lives of others
+012|service is only distributed for mobile|1 2 3 4 5 6 7 8 9 10 11 12
+013|eight ounces of philadelphia cream cheese and all i'm gonna do i've let this sit out on the|care of every other object and all i'm going to do is have to get this done on the
+014|pouches they come with too so these are my speed lights these are the yn562s that i use here|pounds and i'm with you so these are my speaking cases on the why in 562 little kids
+015|that are going to allow you to work with the team in a more|are going to allow you to work with a team and more
+016|national safety month i'm not entirely sure why it's not 12 months of the year maybe there's some thoughts about you doing it|cartoons every month not exactly sure when it started long time ago maybe there's some thoughts about
+017|lowered immune system and also being able to control your growing medium for your own food all of these things most of the people that i know that home|when i was 10 years old
+018|in various different compositions i'm not gonna talk about any other math for learning this kind of stuff from real world data but rest assured|comics and fairy tales and different compositions i'm not going to talk about any of the math involved in this kind of stuff from renaissance
+019|now if you were ever in years ago that was completely not okay if you joined a c org the only organization in scientology you could work for again|you now if you were ever in india years ago that was completely not okay if you joined a sect the only organization sanctioned to work for it was the
+020|but why is stress a function|why because it's effective
+021|was showing at the bahia sao paulo bahia|story about the power of healing through
+022|in trying to make this business work or that business work and i've learned more in doterra|trying to make this business work or that business work and i feel more and so scared
+023|and that's really how we become unique and one of my friends chris ewen explained to me that a friendship is built based on two people|and that's really how we become a community and one of my friends on instagram explained to me that a friendship is based not just on people
+024|and just scrolling down they have an option right here for fighting flights and more you can just turn|just google it down they have an app for that for finding flights and more you can just do
+025|for that he was successful because i found it entertaining and i well i would like my own microscope to someday but it really got me thinking if|for that it was successful because i found it entertaining and i outlined my own microscope so someday but i really got me thinking in
+026|i never felt comfortable with that name because it was so white|i never felt comfortable with that name because it felt it was so white
+027|have to back that stuff up because it's automatically backed up by its very nature|to back that stuff up because it's automatically backed up and is very engaging
+028|there is some slight background noise or slight hiss that can be heard when you're not listening to anything or during quieter sections of music but the signal itself is strong i didn't have any delays or drops|some slate background there needs to be slate hands that can be heard we're not listening to any of the older acoustic sections of music but the single instrument of each strong i didn't have any delay or dropped or
+029|in all over the last 10 years we have had 8 616 students|and over the last 10 years we have had 1600 students
+030|some will not even pay any attention to meditation that too is changing|some will not even pay any attention to meditation that's too weird
+031|cartoon characters the blue and the red those things change all the time on influenza which is why we have to re evaluate|are constantly changing in some unique way those things change all the time influencing which is why we have to reach
+032|india china afghanistan all these different places that are so foreign to us so both sides would benefit|middle east and afghanistan there are all these different warring places and there's no fertile soil so both sides will benefit
+033|god designed the whole universe to be in symphony and harmony|take the whole story and turn it into a movie because it
+034|is here some object where i go you know|staying in some abandoned warehouse in the south side of chicago
+035|last section on part a cross side recover cross side recover jazz box cross back side forward|good evening ladies and gentlemen thank you so much for attending this evening towards the end we'll have a jazz band towards the back in the corner towards the
+036|i'm hearing him sing this through the door if it wasn't such a professional|here he comes saying this through the door if you want to touch the perfection that
+037|and on top of my lungs saying that i wanted to see my lawyers saying that i wanted to see the ambassador|and on top of my notes he said that i want to see my notes that i wanted to see them matter
+038|when i write i kind of drag my pinky right here and i always get like a black mark because i'm dragging my pen but these do not transfer onto your skin|when i write i kind of drag my pen across the paper and i always say please i'm trying my best please do not judge first skin
+039|so i just try to search in other ways like the text like his portrait in my qp i write|when i was 11 years old i was diagnosed with type 1 diabetes
+040|i put an apology like sorry this was dictated not text|yeah i'm going to go out on a limb and say that's calling this business sense
+041|is a bad day alright i don't know about share this with you before but it's|the past day or right i don't know if i've shared this with you before but
+042|the main risk factors|those are the two main risk factors
+043|but on a completely raw diet once i had left my produce manager's job the amount of time that i spent trying to find|on it completely wrong once i had left my predecessor's job the amount of time that i spent trying to find
+044|it's a panasonic camera really awesome camera|to pan down on camera a really awesome camera i
+045|where is the car wo ist das auto|where is the car full is dusty outdoors
+046|i'm gonna put it right here right here this stuff i love|going to put it right here right here this stuff i love
+047|now let's take a look at how to write n in c|now let's take a look at how to create energy
+048|as a time of this recording html imports have landed in chrome and opera firefox supports it in nightly but it is not supported in the nightly|at the time of this recording it's very important to note that this is from an opera where we were supposed to say 99 behind
+049|there was little they could do|to look sexy they could do
+050|month of the year now i have made|month of the year now i have my role
+051|there's a lot to learn from those experiences and you might not think about it until it comes up as a learning example so let's take a walk on the smile side i want you to think about a group or an experience that comes with a smile|these experiences and in my day to day thinking i continue to come back to this little cartoon example so let's take a walk in this man's head i want you to think about your own experiences while i
+052|are you saying that there are parts of our bodies or certain organs or cells within our|what you say is that all parts of our bodies or certain organs or cells within our
+053|to put around it and kind of we're all getting a lot more knowledge about kind of where we came from|like to poke around and get to know more about where we came from
+054|who wants to do something in life such as writing a book|want to do something nice decide why not
+055|for mark numbers between 0 3 and 0 8|of all numbers between 0 and 1
+056|this is my new tree frog|is this my new dream work
+057|or even death now what are the symptoms how do you know a baby may be suffering from shaken baby syndrome well the signs are they're very|i think it's important for us to understand that
+058|on the linux battlefield there are many many many|so in my own field there are many many
+059|i think any industry can benefit but obviously we're focused on document intensive workflows and we've had most traction in those|i like to study it but obviously we've focused on the neanderthal remains of wall paintings and we have had most challenging leaders
+060|document that requires a change request once it's been|documents and requests to change requests it wasn't about
+061|but information from things that i have learnt throughout my school year|information from things i have learned throughout my school years
+062|you can get electrocuted working on them that's one damn thing that's a big danger|much the year under water that's where shape gets a bit dangerous
+063|has now carried you home|i dare you to hear the new home
+064|so instead of being 150 155 i was almost approaching 160 and i could have|instead of being 50 55 i was almost approaching 60 and i
+065|also it's very flexible and unbreakable|also makes us flexible and unbreakable
+066|do is either sit or stand the baby up on a chair|either standing or sitting the baby up on a chair
+067|we evolve from and you know i think we were talking a little bit earlier kind of i've done 23 and me and that will now kind of break down your neanderthal dna for you so it's wonderful that i got now i'm getting a bit more context to put around it and kind of we're all|we had evolved from and it was certainly when i had turned 23 me and now we kind of break down into the x and y dna for you so it's wonderful that now we get a bit more context to pull around and we're all
+068|and that all sits at the heart of our 2020 goals|years is the hardest if you're 23 years old
+069|ooh that's rather like a drinking yoghurt|that's why they lie it's trickery
+070|back to school supply list before meet the teacher night i have a couple of tips|to school as a black kid before meeting this teacher i have a couple of tips
+071|because i wanted to be sheetaro because to me sheetaro represented power she represented just strength that i was attracted to|because i wanted to be just hara because to me she saw hara represented power she represented the strength that i was attracted to and
+072|point being is if we had like if my k 52s started doing that i there's something's wrong it's going back to|beings if we had like my kfv2 i started doing that and something's wrong it's holding me back into
+073|get the idea|life and i
+074|electronics internals to make this just a little bit faster than before|electronic tweezers to make these just a little bit faster than before so they look
+075|have a negative reaction than if you were just to say i love you very calm good facial expressions|a negative reaction then if you were just to say i love you very calm you could face your expressions
+076|you can name it how you want so generally a bedroom in korean is just|when i was a little girl i always wanted to be a princess or a ballerina or a mermaid or a unicorn or a dragon or a
+077|but generally there are a few things and each one is so different|but generally enough to say that i quite enjoyed the
+078|on youtube that you don't have to be all the things that he just listed much less you don't have to be good enough that's what i don't like about this end of the video|on youtube that you don't have to be all of the things that he doesn't see much less you don t have to good enough that's what i don t like about this and the video
+079|i'm creating i will have to like clean my area|i will have lesbians in my area
+080|huge diamonds or something of that sort but you really can't accurately collect data like that for a large group of people|timed into something of that sort but you really can't accurately collect data like that for a group of people
+081|weekly or monthly in your clean or aseptic|quickly oil mustard and uranium or something
+082|you feeling how are you feeling|you feeling how are you feeling
+083|side four and that's part a let's go over the counts|and i enjoyed it so much that's why i decided to
+084|that the material we're using has the right rate and level of absorption|material you were using has the right weight and everything
+085|link down there|down there go over there and watch the videos yourself
+086|jason asks her what is that she says oh i was pouring wine i poured it for you|and asked what is that she says oh i was pouring why i poured it for you
+087|also noise reduction software used minimally again if you're in a loud space the best noise reduction software can only do so much|so after you've gone through the process of discovering what you use minimally and if you're on a cloud space best which we'll discuss in a while you can use your best and
+088|oxygen to breathe and the other one is what happens|to breathe and the other one is what happens
+089|issue of inference it's never clear cut and they're always room for alternative arguments which is actually one of the best things about the field|is true of the internet it's never going to die there are always new forums and alternative arguments which is actually one of the best things about the internet
+090|but he helped me build life on fire and get out what was in my heart and how i want to serve and how i want to help rehas started with helping in designing and branding large fortune 500 companies so he's been doing|how i would rebuild that for firefighting and get out what was in my heart and how i wanted to serve and help we actually started with helping and designing and building a large fortune 500 companies so he's been doing
+091|and give them nothing to do but to go after people|and give them nothing to do but to go after people
+092|and now we're on to beat two so this is half of a half of a|when i was a little girl my grandmother taught me to
+093|from whom they're trying to help and this is documented in kelly kearney and ray's ghost symptoms break the spell and be well|from being trained to help this is documented in ethical ways in local symptoms and ways to spot them so well
+094|i can't tell you how many times i heard someone in my baptist church or an outside conversation tell me what a particular bible passage meant to them|can't tell you how many times i heard someone in my math class or in an outside conversation tell me what a particular biblical passage meant to them
+095|and received a generous paycheck so|received a certificate of appreciation so
+096|so every sunday i actually started off with this book|so every single day i actually start off with this morning
+097|they've actually succeeded to do is make a whole bunch of people that were living and breathing in|with a french accent to someone who doesn't even speak french
+098|and he turned around and said uh have you tried eating with the men i'm like yes it felt unnatural|he turned around and said have you tried any with meat i guess it felt unnatural
+099|client pair client so you either go to an agency get the work|it's like being a client so you are the who you need to see getting what you want
+100|sort of behavior but then again this is an unusual sort of system|sort of behavior but it is an unusual sort of system so
+101|probably 90 chance of that happening and then there is the camera probably the biggest question mark ever|probably 90 percent chance of that happening and then there is the camera probably the biggest question mark ever
+102|the ultimate owners so let's say for example you have someone coming over to your house to visit your family so it could be a grandparent it could be an aunt it could be a good family friend and they say to your child|there to be owners so let's say for example that you have someone coming over to your house to visit your family to read who could be a great grandparent could be an aunt could be your family friend and they send your daughter
+103|important to replace the expression for dx|into what plastic expression for that

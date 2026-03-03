@@ -117,6 +117,56 @@
       "P:sem+struct/detail-key": 9
     }
   },
+  "context_aware_reeval": {
+    "date": "2026-03-03",
+    "protocol": "Same 1,497 pairs re-judged with instruction to infer topic/domain from reference and apply domain knowledge. Same Y/P/N scale and conservative tie-breaking. No explicit topic labels injected.",
+    "key_finding": "Context mode is STRICTER, not more lenient. Applying domain knowledge raises the bar for full success.",
+    "distribution": {
+      "Y": {"blind": 345, "context": 225, "delta": -120, "blind_pct": 23.0, "context_pct": 15.0},
+      "P": {"blind": 626, "context": 705, "delta": 79, "blind_pct": 41.8, "context_pct": 47.1},
+      "N": {"blind": 526, "context": 567, "delta": 41, "blind_pct": 35.1, "context_pct": 37.9}
+    },
+    "capture_rates": {
+      "blind_full_Y_pct": 23.0,
+      "context_full_Y_pct": 15.0,
+      "blind_any_YP_pct": 64.9,
+      "context_any_YP_pct": 62.1
+    },
+    "net_transitions": {
+      "upgrades": 68,
+      "stable": 1199,
+      "downgrades": 230,
+      "net": -162,
+      "net_pct": -10.8
+    },
+    "transition_matrix": {
+      "Y": {"Y": 207, "P": 138, "N": 0},
+      "P": {"Y": 17, "P": 517, "N": 92},
+      "N": {"Y": 1, "P": 50, "N": 475}
+    },
+    "hallucination_detection": {
+      "total_hallucinated": 307,
+      "blind_N_rate_pct": 91.9,
+      "context_N_rate_pct": 89.3,
+      "newly_caught": 4
+    },
+    "cross_condition_reliability": {
+      "n_duplicates": 30,
+      "agreement_pct": 80.0,
+      "blind_intra_rater_pct": 86.7
+    },
+    "topic_deltas": {
+      "DIY/Home": "+8pp",
+      "Religion/Spirituality": "+6pp",
+      "Sports/Fitness": "+3pp",
+      "Politics/News": "+2pp",
+      "Business/Finance": "0pp",
+      "Technology": "-3pp",
+      "Cooking/Food": "-5pp",
+      "Education/Academic": "-5pp"
+    },
+    "interpretation": "Y→P (138 cases) is dominant: domain knowledge reveals vocabulary failures in segments that appeared adequate without context. Context does not rescue complete failures (N→Y: 1 case). Use blind eval as primary standard; context-aware as stricter domain-expert benchmark."
+  },
   "visual_context_analysis": {
     "topic_context_would_help_segments": 284,
     "topic_context_would_help_pct": 19.0,

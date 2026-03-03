@@ -1,0 +1,107 @@
+CONTEXT-AWARE EVALUATION | BATCH 12/15 | 102 pairs
+Consider the likely topic/domain of each reference. Judge whether a viewer
+with that domain context would understand the hypothesis.
+Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
+---
+001|good to help people mission accomplished|her to help people but she got impatient so
+002|is a very very common side effect so do not worry if muscle tension is a part of your|very common state of mind so don't worry if muscle tension is a part of your
+003|so you can hear what you need to do after the previous video lesson so it needs to sound like this now|so you can hear what you need to do after the previous video lesson so we're looking into a sound like this now
+004|and to be honest after that abortion i actually experienced some relief fast forward two years later and i am a freshman in college and i get pregnant again and i make the decision to abort my son|to be honest after that abortion actually experienced some relief fast forward two years later and i am a freshman in college and i get pregnant again and i make the decision to abort my son
+005|each bottle contains 1 billion cfus of probiotics and 2 tablespoons of apple cider vinegar only 80 calories per|each monitor has 1 million cfus of permafrost at two tablespoons per square foot only 80 gallons per
+006|you know cause your gums and your mouth is affected by like everything in your body whether it's medication or your diet or your general health|either a certain hums that your mouth is effected by like everything in your body whether it's medication or your diet or your general health
+007|or sub q so if it's ordered any other way we know it has to be a mistake|or skip you so if we're doing it any other way we don't ask the way we say it
+008|himself can now become the very aspect of himself to become the instrument to create beauty in the world|himself he now becomes the very aspect of himself to become the instrument to create beauty in the world and
+009|normally paid when it comes to wordpress themes and plugins|be paid when it comes to the one plus ones place
+010|anger and fear place you in a position of being intoxicated by your emotions when you're angry or when you're fearful you are drunk with feelings|and fear bring you to a position of being isolated by your emotions when you are angry or when you're fearful you are struck with venom
+011|probably not going to get hurt at all and the padding|this was to get called get called and the pattern here
+012|implication of this feature|implications of this vision and
+013|vote they never thought that the community could organize its ranks|vote the internet community could organize a strike
+014|some points here such that the intersection is not empty|right that's exactly the direction i'm heading
+015|an important property of sets of solutions to homogeneous equations is the concept of superposition|important property of text of solutions to our machine learning algorithms is the concept of superposition
+016|was given is to go to those schools and meet with the people you have no idea if you're going to really mesh with the type of people at the different schools obviously like|you have no idea if you're going to really mess with a couple of people that you just met
+017|and in the last i don't know if you pay attention to the last thing the code is actually from benjamin|i stood on the runway from bangalore to london the cockpit of the aircraft was filled
+018|we're seeing that in our energy prices and in the energy boom that's happening in the united states|is any indication our interrupters are surprised that this is happening in the united states
+019|i felt like we could do this i felt like this is something we can overcome|like we could do this and i felt like this is something we had to overcome
+020|it's more than one thing|it's more than one thing
+021|return books taken from the main library to the king's manor library and vice versa unless they have been requested in that case you need to return the book to the library that you issued it from|term booked down from the main library to his local library and vice versa or at least they've been requested in that case you need to return the book to the library that you borrowed it from
+022|i believe that everybody that's listening|i believe that everybody is a leader
+023|blue collar and white collar will always be a part clean dirty will always be a part|blue color and white color will always be apart clean and dirty water so
+024|you can also use our json web token decoder|because i think it's really cool
+025|let the suit fool you i'm the founder and cto currently of a company called aerospike i founded this company to bring fast|true founder and ceo of a company called aereo i founded this company to bring fast
+026|i already got an rsp it's nice when you don't have to worry about finances and those of you thinking scott i'm paying you on patreon man you're rich no no no no no no no that's not what i'm|this says i can't get a girl to talk to me it's nice when you don't have to worry about finances those of you thinking just got a paycheck or a pay raise no that's not what i'm talking
+027|you're rich no no no no no no that's not what i'm talking about i still like getting|your ring that's not what i'm talking about
+028|they were putting a lot of their gear|they would put in a lot of third year
+029|i mean i think one of the intersections between my|think about the word associations between my
+030|a price that was beyond what the limit was they gave in the commercial for this commercial they gave a limit that will actually like you can get a mac with everything that she's saying so|and i'll tell you what i'm
+031|for example the bitcoin virtual currency situation and also oftentimes there are financial schemes that should be regulated but they are not regulated because they don't|for example the minority currency situation and also often times there are financial teams that should be regulated but are not regulated because no one comes
+032|for a presentation so trick number one is|presentation so train number one is be
+033|said that they realize now that consumers want a bigger smartphone when in the past they said that apple's not going to do a bigger smartphone well now it looks like they are so if those rumors are correct and apple actually is going to make two different sized versions of the iphone|that they realize now that consumers will not upgrade their smartphone but in the past they've said that apple's not going to upgrade your smartphone well now it looks like they are so if those assumptions are incorrect apple actually is going to make two different versions of the iphone 6s
+034|my little practice pieces and i always start off black and white|praise be to god and i always love black and
+035|google has just announced the newest way to save your precious photographs with photoscan|has just announced the newest way of your precious photographs with photo scanning
+036|and there you have just played every single song that can be played on|there you have just played every single song that can be played on the
+037|but they're not regulated because they don't come the laws are out|of friends because i don't want to
+038|on every receipt of any local businesses|are never received by financial institutions that
+039|output 3 7 volts|uncomfortable to keep myself at fault and
+040|i consider myself very lucky to meet the 500 students who come for breakfast and lunch each day at the dining hall i have a special nickname i call|i consider myself very lucky to meet the 500 students who come for breakfast and lunch each day having done nothing i have a special nickname i call
+041|obviously didn't start as a business it just started as a youtube channel just this thing we were doing for fun to hopefully reach people|me as a business to join us as a full partner and then we were on the track and hopefully we should be more
+042|we have a cpu gpu high definition video accelerator|well i was a sophomore in high school i had the first official salary there
+043|we're going to do a little bit of background to start so why aging is important the need for slps to really get into this field because we're getting in kind of late|going to do a little bit of background to this start so why aging is important the need for vitamin e is really needed in this figure because we're eating kind of late and
+044|doesn't always work because as i mentioned in the elasticity video cigarettes are very in the last|start was wrong because i didn't start at the end of the video sequence i started at the
+045|absorption include a source of fat|scripture includes a source of fat
+046|but let's take a narrow definition and just say we're literally only talking about the act of paying the money|but let's take a narrower definition here today we're literally only talking about the act of paying the money to
+047|my phone and there's nothing i can do so let's get back to maybe it's not your|forest destruction and climate impacts of
+048|of laws have we just been talking about recently in physics|the cause that we've just been talking about recently climate
+049|as were as they were supposed to be a let's say an answer to so|was it supposed to be a let's say an answer to sonia
+050|i'm right now plans every single one of them has said and you know what now that i'm here i've realized what the hell was i waiting for and there's a massive misconception with|we're running up against every single one of them at the same time so you walk out there and meet them and realize what they're looking for and there was some massive misconception with
+051|or in measurements across parts per the same drawing|michelangelo's mark by the same story
+052|and if we don't listen then it will start yelling and if we don't listen then then we'll start wrecking the house so treat this sensation treat this pain like a little kid trying to get your attention|although recently we started an alliance even though recently that didn't work out at the house so during this tedxweekend again trying to get our attention
+053|for example where we have two parents the parents are both heterozygous remember that that means they have two different alleles|group where we have two parents the parents are both androgynous the member of the family is they have two different little
+054|of different management positions and for the last four years she's been a senior manager|different management positions and for the last four years she's been a c suite manager
+055|the 25 most important people to the growth of your business|the one that i'm most proud of is this one
+056|technology in there to really feel all surround sound it's a very nice headset it fits on your head well it is adjustable|technology there to really feel our surround sounds it's very nice it has side effects on your ears while it is adjustable
+057|in windows and things like that|windows instead of glass to
+058|with the same technician so all of a sudden|with the same technique so all of a sudden it's
+059|to see advanced jesus and talk to them about it|so i'm going to tell you a story
+060|therefore it is important to make sure you check with your insurance company to find out if this is covered or if it will require some out of pocket expense|therefore it is important to make sure you check with your insurance company to find out if this is covered or if it will require some out of pocket expense
+061|and for catalase guanylate cyclase it is stored in the form of ferritin you can find it within the body|that ferguson is a legend it is stored in the form of folklore and you can find it within the body
+062|control the light on the flash okay so first things first why is it bad that this flash pops up and ruins most people's photos|control the light on the flash so first of all why is it bad that this flash pops up and ruins most people's photos so
+063|that's why they say hicksfix and not cpt|how to do it i had to figure it out
+064|i don't think there's a better time to share the good news with somebody|there's a better time to show you something
+065|so we're going to get on into some maybe more important things so in 1 5 we're going to start with some design of experiments type things and then i'm going to show you because we talked about it|you can get on and do some maybe more important things so like one point five we're going to show students this kind of experiment same things and then i'm gonna show you things that we talked about maybe that we
+066|they're still using manure now one of the nice byproducts of this is that if you have more food coming out and more food being produced you can use more of that food not for your own fam|still used to be true one of the last byproducts of this is that if you have more food coming out more food being produced you can use more of that food not for your own family
+067|wellness is 100 in our control simply by thinking positive|is 100 in our control simply by thinking positive
+068|of every person is|of every person is
+069|hello from germany good to see you we are getting a solar storm|from germany to see you we are really so
+070|and hopefully that's not a subconscious indication of its pyrotechnical potential|hopefully this leads us to the edge of spinal technical potential like
+071|certainly it needs this as well you start with developers this is actually a great environment for developers because|certainly idk needs this as well it's not with the developers this is actually a great environment for developers because
+072|have them all right there all for when you're ready to go|all right there all for when you're ready to go
+073|that they're worried about i don't know if you guys have any requests for them on like advice or whatever just let me know and i'll try to get them|worried i don't know if you guys have any requests for them any advice or whatever just let me know and i'll try to get them in
+074|to the next level|to the next level and they have tried
+075|if it's from the microphone i think it's from the camera itself where there's a bumping noise|from the monkey forest i think it's from the camera itself where there's like a bumping noise that
+076|let me give you an example one of the areas where we have a tremendous strength is in location based services|give you an example one of the areas where we have a tremendous growth is in location based services
+077|and a lot of the things that we see going on right now with isis and with iran|understand a lot of the things we see going on right now with isis and with iran
+078|from but i really loved the grainy quality of the ribbon mic|is from but i really love writing in a way that doesn't require me to
+079|i haven't tried co2 oil i know it's available but i haven't tried it|to try to steal your story or to develop their own
+080|maximizing quantity i'll step one up|autism in our community all started up a
+081|i knew it all looked real good on the outside|what all of us were looking on the outside because
+082|to my true nature so i'm gonna just first invite all of you to take a breath|mind into nature so i'm here to provide all of us with a little breathing
+083|and it's already in there you don't have to make up something you know|and it's all there you have to make up something you have
+084|and today we're going to talk about a few news we have|we're going to start up because i don't know if you know this but
+085|today we will focus on you alright in the future lesson we will talk about hishi|cake we will throw it at each other right in the future lesson we will talk about eating
+086|we found that for glucose and the glucose in maltose the same maximum rate of oxidation was found with|we found that for girls aged 10 to 12 years the same maximum brain volume of cortical thickness was found with
+087|i have dreams of collaborating with some of the greatest people|have dreams of collaborating with some of the greatest people
+088|also a very interesting common intellectual experience we've added in the last few years is the common reading program called wire wingate reading experience|a very interesting comment that's one of the experiments we've had in the last few years it's a common reading program called wild wednesdays we invite speakers into the
+089|congratulations that said though|of education is not that
+090|be that vegans feminists environmentalists or anyone else who is fighting against the tide|that vegan feminist environmentalist or anyone else who is fighting against the sky and
+091|you might have seen this japanese method of multiplying circulating the web where everyone's like wow math is so much better in japan|you might have seen the japanese method of multiplying circles like the web where everyone was like wow math is so much better in japan
+092|but it's mostly cardiac muscle and as i said before that's the pump component of the heart|is mostly not yet muscle and as i said before that's the pump but part of the heat
+093|you will come to some defining moment where it will seem as though|comes to some defining moment where you receive this call
+094|contracting and getting smaller on the exhale|this traditional indigenous clothing that day
+095|or emmy awards and say and i want to thank you|i'm going to tell you a story
+096|the donning process is a step by step process that ensures good infection control and safety|processing is a step by step process that ensures good infection control and safety
+097|so we started working on get around in year 2009 it's been about 18 months so far working really hard but basically the reason we all|we started working on that ground in 2009 it's been about 18 months so far working really hard but basically the reason we called
+098|in my opinion one of the most difficult things about dealing with an arc|it might be one of the most difficult things about raising daughters
+099|all in all quick reminder that calcium is an alkalinizing mineral so what that means is that it helps to|reminder that calcium is in our dairy milk so what that means is that it helps
+100|and he says we're interrupting a defense mechanism|so it's not just the
+101|typing your name and it's going to start auto populating|you name it start auto populating
+102|that we're going to work on for next week i'll probably put something up|but it's also about putting yourself in a position to

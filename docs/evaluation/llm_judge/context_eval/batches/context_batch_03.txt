@@ -1,0 +1,108 @@
+CONTEXT-AWARE EVALUATION | BATCH 03/15 | 103 pairs
+Consider the likely topic/domain of each reference. Judge whether a viewer
+with that domain context would understand the hypothesis.
+Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
+---
+001|lures all with punch out hooks that go along with it this is no bigger than a credit card guys|is one of the largest oil rigs in the gulf of mexico it's no bigger than grand canyon
+002|like where the extra income was gonna come from but i told myself i was gonna quit my job|where the internet was going to come from i told myself i'm going to quit my job and
+003|supposed to be you know like that telephone game if you whisper something to|supposed to be you know like that ted telephone game if you whisper something
+004|people to guide them and that's where the health coaches come in and this is why doctors need people to help them implement these things but once a person experiences how much better they feel when they|books inside them and that's where now nurses come in this is why doctors need people to help them implement these skills but once a person experiences how much better they feel when they
+005|pascal like william james disagreed with this line of reasoning because he saw great personal benefit in being a believer|like william james disagreed with this line of reasoning because he saw a great personal benefit in being a believer
+006|and believe it or not that was the first time i've been|and believe it or not it was the first time i'd been
+007|sometimes my wife is busy doing recipes or doing whatever else and i'll i want to play with my son i want to be around my son but you know really cuts into my work schedule|my wife and kids do whatever it is right now i'm going to play with my son and my grandson but really i see my work go so i don't
+008|popular with republican presidential candidates|unpopular with republican presidential candidates
+009|chlamydia one of the leading causes of infertility|in media one of the leading causes of infant mortality
+010|and ask us what plane to put this sketch on so we'll click|it just takes a second to decide that i don't want to
+011|so let's go and let's reduce that action by multiplying top and bottom by a common factor|so let's go with this reduction that actually my most blind spot bought by calm and fat
+012|3 million users about 12 million people who speak about us for our community|three million users about 12 million people who speak about it through their communities
+013|this course is all about transitions this video is all about transitions|this course is all about transition in this video i'm going to talk about transition by
+014|teaspoon of baking soda and salt you may say|beethoven sonata and it's going to take you about 15
+015|as this eternal light of creative intelligence awareness and power|self as an internal guide through the native intelligence awareness and power
+016|weight so they're really concerned about being very|i'm going to tell you
+017|who runs around my house destroys everything he touches i love him to death and she works as a registered nurse now there was an issue when i was going into high school|out stories around my house the stories of the ancients and she wanted to hear my stories too there was a year when i was going into high school
+018|now let's fill in the punnet square|to feel like the monkey square for the
+019|from firefly which is an itunes server also an awesome name that lets you stream music|from firefox which is an open source web browser that lets you stream music
+020|hello everybody welcome back to daily easy english expression ah boy today we have something very good fomo|everybody welcome back to tedx tehran today we have something very good vemo is
+021|in this regard it always helps me to think of stephen covey's notion of|this card always helps me to think of steve jobs's no shift
+022|i got this 08 mazda 3 with 130 miles on it|i don't know a hundred miles is 1000
+023|from people's stem cells that they would not reject over time and we were very near to a cure for things like aids|from people's stem cells that they would not reject over time and we were very eager to cure for things like aids why is it
+024|egg hunts we're going to find them all we're really excited|is we are going to find them all we are ready to
+025|now inside here you have to go and search for the section file now this section|there is second that you have no energy for this fight that you can find there is a discussion
+026|most of it's about relationships i think you know it depends where you're at|most of it's about relationships and i think it depends where you're at in
+027|something to make it easier to bring native code to the web|can make a difference and so can you
+028|the house that we built is called a remote wall|house that would be in the hollywood walk of fame
+029|likely don't have it there are situations where you can still have it|don't have it you're in trouble you can't
+030|face to bring it home in anticipation that one day this piece|it to be always in space that one day this species
+031|even after the insurance examination|after the initial contamination
+032|devices idle connected to a un muted network or charger the job scheduler is one of my favourite features and i love it i'm happy with it and i will share it with you soon the job scheduler is one of my favourite features and i love it|to iraq connected to the al qaeda network all to charge the job changer is one of my
+033|mistakes and i think if you don't get out of that rut you just end up|not anything you can get out of that run in your chimp
+034|even though he's very much spoken out against cults|even though he's very much born again christian
+035|so therefore it's attractive and then of course the large manufacturers of soft rings they can apply their distribution networks|is a default tracker and then of course the hardware manufacturers of softwares they can apply their distribution networks
+036|i should have it at the patriot nurses website the patriot nurses supply stash the bragg's liquid aminos is organic soy sauce basically|and i should have another petition to start a website that petitions to ban plastic wrap because it's an organic toxin and
+037|been out there the ocean occupies about 80 of the earth's surface there is almost a limitless supply of sea vegetables|been out there the ocean occupies about 80 percent of the earth's surface and there is almost a limitless supply of sea vegetables and
+038|up the order and just a little bit over the edge|to the neurosurgeon she's sitting up in the operating
+039|i surrendered good quite i surrendered to the low security|years ago when i was
+040|indoor professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if you were shooting|in your professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if
+041|i'm not sure if you're aware of it but yes there has been a class action suit filed against apple for that very thing and yes technically speaking it wasn't a wine it was a beer|i'm not sure if you're aware of it but yes there has been a class action student filed a lawsuit for that very thing and yes now technically speaking it wasn't a wine it was a beer
+042|to get into the regular modes we simply just hold it down that will cycle you into your regular|get into the rhythm most when somebody is holding down that will cycle into your rhythm
+043|we're doing everything we can to make our wood as environmentally|doing everything we can to make our world a better
+044|tool for studying the concept behind absolute zero you can|studied at singapore polytechnic during my
+045|this book ain't just narrated by one fool tellin us what's up with the dun|speak as i see i write about what i feel not the other way around
+046|if you don't build your business correctly some of the cons can be you'll get burned out you get stressed out and you'll work 24 seven and have no boundaries in life and feel like you always have to be on and you're|build your business correctly some things can't be you don't get burned out you get stressed out and you work 24 7 and have your own boundaries in life and feel like you always have to be on and you're carrying
+047|and the security was sort of hovering around the side and i watched a nurse just gently go up and put a hand on this gentleman's arm|and she knew it was covering around the side and i wanted to gently go up and put a hand off on the gentleman's team
+048|i like salt in my chocolate so i use my seaweed salt the cheney cabot seaweed salt so there are your basic ingredients|i'd like to talk to you about chocolate so what i'm going to do is see if we can change that perception with the basic theory is
+049|christ the messiah throughout the world|just to say that david foster wallace
+050|that's a major or that's a major seventh or that's a you know diminished chord or that's augmented or you know that chord there happens to be a dominant seventh so that's where|a major seventh or a minor seventh that's a consonant chord or that dissonant message and so that chord later happens to be a dominant seventh so that is where this
+051|very important|policies that keep us out of the
+052|personally i think it's a safe bet to say that we will see the device between september and october it'll feature an a5|personally i think it's a safe bet to say that we will see the iphone 5 sometime in november or early fall
+053|when you put everything in the pot you need to cook until everything is dissolved|when you put everything in pause looking sure you know everything is solved and
+054|from another game that is doing that oh intentionally|for a long time that is doing that so let's
+055|of a boy who is going to bat|another boy who was going to beat
+056|so many stories have been spreading around the internet about the 1 5 million dollar powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people|many stories have been spreading around the internet about the 1 5 million powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people
+057|joking is that it oh my gosh i thought i had so many more books on here i do have a lot more books on here i just have ones i haven't even started reading yet so anyways that's all for here|so like saying oh my gosh i think i'm in love with someone personally i don't get to be in love like i used to have once again when i was a teenager and so anyone can say it all over again
+058|people tied they worked they had sound doctrine|people's eyes that weren't shielded to 100
+059|on every receipt of any local businesses|are never received by financial institutions that
+060|beneficial regardless of whether you are performing or you're doing administration|that we're going to be able to
+061|is agents being transactional if you will be a transactional agent the customer has the ability to treat us like a commodity if we're just going to be transactional|that's just being a transactor if you would be a transactional agent in the hitchhiker's guide to the galaxy it's like a lemony if we're going to start being transactional
+062|discussion we will look into how stress|discussion we were going to allow stress
+063|you do have this in your bag and you|have in the
+064|too much because our arv for a property like it once it was fixed up to the standards we were planning to do was only gonna be 200 000|much because our head off property like it once it was fixed up and the standards we replaced it to was only going to be 2000
+065|but when we first started this series i wondered if we'd actually get through it you know all great ideas|when we first started this series i wondered if we'd actually get through it you know all great ideas
+066|to give me the insurance policy at all because i had very high cholesterol high triglycerides and hypertension and meanwhile at the same time i had horrible irritable bowel syndrome i mean like|me an interest in psychology because i have a very high iq i trained as a clinical psychologist and meanwhile at the same time i got horrible grades from my math teachers maybe like
+067|thus was born the idea of positive ticketing each year police in richmond issue a|that's what's born the idea of positive thinking each year buddies enrichment eco
+068|to stay quiet for a whole week maybe a whole year|she cried for a whole week maybe a whole year
+069|so we have here six apples because we find|we have in our six children because we feel
+070|while busiest woman in show business and so we're just going to be talking about all kinds of stuff we're going to talk about selling dots|in the business world and show business and so we're just going to be talking about all of this because it's all
+071|let's start by asking who's doing well well unfortunately there's no international ranking tables for teacher feedback systems|let's start by asking who's doing well unfortunately there's no international ranking tables for teacher feedback systems
+072|so we've got what looks like a walking dead or zombies button so that's pretty cool it can go with the other ones on my backpack|so we've got a walking stick or a zombie spike so that's pretty cool hanging here with the ones on my backpack
+073|that all the world leaders are expecting something to happen|they all coalesced expecting something to happen
+074|so in theory that makes facebook's job a lot easier you build a single solid|so in theory that makes vice president's job a lot easier you're merely a stealer solid for
+075|finally we beg for traveling mercies as we return home to|we pay for traveling merchants as we return their homes to
+076|that you tell them what is the way it is and what they should do the way it should be|to tell them what the next step is what they should do or what they
+077|what's going on guys this is vince with vshred com and today i'm going to be showing you guys three ways to fix your muscular imbalance|what's going on ladies and gentlemen welcome to freetrader com and today i'm going to show you guys three ways to fix your muscular imbalances
+078|but i have siblings who did|but i have double citizenship
+079|you screwed up you made a mistake|pointed up you made a mistake
+080|the nsa spies on its own citizens does data mining|specialty shows that just doesn't add up
+081|anyways make sure you have a white rag handy because this grease is greasy|so when you have a white bread sandwich
+082|and put all my body weight on it and my heel snaps off my boot completely and i go|and put all my body weight on it and my knees snap off my boot completely and i go
+083|to take the insurance you'll place half of your current bet|say that you'll donate half of your chocolate bar
+084|the thing is i just acquired this ammo last week so i don't really know the conditions under which it's been stored but|the highest score on the quiz last week so i don't really know the conditions under which this was measured but
+085|as co creators of this reality|as the co creators of this reality to
+086|hey everybody it's jon stabley i'm here with brian mayo everybody's favorite tech guru today we're gonna|money is just an idea that has no
+087|or you can actually bring the pro controller with you on the go|to actually bring the broken dollar with you on the go
+088|usually after lunch i'll get kind of sleepy so i'll have some iced coffee|you just have to relax sit back and enjoy life have some coffee
+089|expresses in concrete and symbolic and beautifully real deep|suppresses the concrete and the symbolic and the beautiful and the real
+090|everything i just use a little bit of that to shear it down or use it full strength|to get everything and you put it on and you shorten it or you lengthen it so if you're taller maybe
+091|look at this here's two dollars and a self addressed stamped envelope first things first the bender|look at this there are two arrows instead of intersecting at the same time they're parallel to each other
+092|going to wonder whether or not that sort of nudged or propelled you into|when i was a teenager in the 90s and early 2000s
+093|a lot more success than if you were shooting your son's high school game just because there's more light|lot more success if you wish you could succeed at school games just because there's more like
+094|so that's all i have that's all i got for christmas and i really enjoy my presents and if you like christmas and if you like this video give it a thumbs up comment down below and subscribe see you guys next time|that's all i got for christmas and i really enjoyed my present and if you like christmas then if you'd like to give your thumbs up comment down below and subscribe to the guys next time
+095|hey what's up it's donna today we're gonna be talking about gruselcoin and i'm gonna break the video down into parts and timestamps can be found down below|we're going to be talking about crucial coins and i'm going to break the video down into parts and time stamps can be found down below
+096|malahim they are servants of our father and they are also the bible says they are our brethren|team they also serve as their fathers and they are also the babysitters on long plane trips
+097|out this kind of stuff the three union members then proceeded to knock mr gladney to the ground and repeatedly punch and kick him now let me answer the question that this left wing union member asked|design itself the three us members at brazil's congress are likely to go out and repeal the ipcc now let me ask you the question that this us member has
+098|so i just want to spend a minute talking about the relationship between haydn and ludwig because it was it had its it had its|so i just wanted to spend a bit of time on the relationship between light and darkness
+099|with your partner|yeah i'm with the opera and
+100|that wanted to install deities in their sankhya tan vehicle|wanted to know and see and understand and to
+101|five six a hinge half turn to the left|that's why i'm here because
+102|i can't tell the difference but something here in this female is telling her to either mate with him or not or pass them up and try to choose a different mate so the females actually have a different mate|i can't tell the difference but sometimes i can hear that this female is telling him that either bite him or not or punch him up and try to do stuff for paying so it's the females actually have a choice
+103|a tremendous opportunity it's just very exciting|tremendous opportunity interesting and very exciting

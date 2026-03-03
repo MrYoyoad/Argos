@@ -1,0 +1,105 @@
+CONTEXT-AWARE EVALUATION | BATCH 08/15 | 100 pairs
+Consider the likely topic/domain of each reference. Judge whether a viewer
+with that domain context would understand the hypothesis.
+Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
+---
+001|you know i guess dual stereo headset whatever you can|i guess dual steroid hd whatever
+002|this is the fc hf34|6d 8f 94 i
+003|it enabled me to find my voice in the courtroom and that was|it enabled me to find my voice in the courtroom and that was
+004|when jesus rose again|in one sense it's rose and kennedy
+005|they work together we enjoy the conversations together we complete the conversations and we are consistent with the working together so those kinds of people|together we enjoy the conversations together we compliment the conversation and we are consistently working together to those kinds of people i
+006|would make me weep and i'd have to pull over to the side of the room|make me weak but i have to pull it over to the side of the
+007|even though he's very much spoken out against cults|even though he's very much born again christian
+008|saying specific things about these items and i have denied and always will deny those sort of|specific things about these items that i have denied and always will deny those sorts of
+009|a friend of mine was recently diagnosed with and died of stage 4 breast cancer and she described|friend of mine was recently diagnosed and died of stage four breast cancer and since she described
+010|so um|so i kind of
+011|about how what we're learning about the neurobiology of social emotions that is emotions that we feel about other people and the emotions|about how what we're learning about the biology of social emotions and emotions that we feel about other people and the emotions
+012|i'm always open to new ideas and new things to try|i'm always open to new ideas and new things to try
+013|donald trump is not going to be president of the united states i would respect for the fact that the people have not voted he's not going to be president of the united states|donald trump is not going to be president of the united states awful respectful of the fact that people have gone forward and he's not gonna be president
+014|physical tour of the ds 216 which isn't the easiest name to say neither is disc station ds 216 as i'm trying to rush it let's call it bus disc or nope|tour i think he has too many sticks which isn't his easiest name to say either it's disconcerting he has two but since i'm trying to rush it let's call it by statistics which
+015|put on your humanity and has really constrained you|her to her body and has really strengthened her
+016|louder or quieter that doesn't get synchronized because every|out in the wilderness and i said you guys just leave me
+017|1240 as i said so everyone's sleeping everybody worse in spanish i like to say no so throws|so everyone is sleeping except everybody who speaks spanish like to say hola
+018|quite a bit down to the production process itself|quite a bit down the production process
+019|it's ever going to capture any of the market when all you have is a single high speed transistor that is not something you can build|is never going to capture any of the money all you have is as i said at the high speed transition year it's not something you can build
+020|you're smart enough to realize that you need a plan and i don't think that you know how to get a plan together and what you need to achieve has to have a plan|smart enough to realize that you need a plan and i don't think that you know how to get a plan together and what you need to achieve has to have a plan
+021|new clients and people who want to|it was really interesting to talk to these guys because once you
+022|it was to be a certain way and not be able to talk with people about it|wants to be in a certain way and i'll be able to talk with people about it
+023|i mean it's a number i knew my screen resolution at the time was 1024 by 768|is in a book you must do your research at the time which was day 24 by stephen covey and
+024|to engineer out of our habitat one of our basic human needs routine physical activity|the salary in the outskirts of rio de janeiro is around 30 reais a month which is equivalent to
+025|this is just a hobby of mine that it's turned into something a lot bigger than i thought it would|this job of mine that it's so hard for me to be honest with you
+026|that he had allergies on top of it so that's another component|get out of college so that's a dollar a book
+027|just like everybody else now because everyone's afraid of|everybody else what do you want to forget and if you
+028|supplier it would be i think very difficult for that individual|it would be i think very difficult for that individual
+029|my yi fu action|my effervescent
+030|achieve so have a clear goal whenever you make a pizza or whenever you learn a foreign language|achieve so have a clear goal whenever you make a piece of art whenever you learn a foreign language
+031|acres and hills and a pond and you know a variety of vegetation so it was with a lot of excitement and anticipation that the staff brought mahini to her new home|layers in the earth's body and a variety of vegetation so it was with a lot of elation and excitement that i have brought me into a new home
+032|let's try these bread crisps cheers|all these blood crimes right trunks now
+033|the amplitude is different depending on whether your eyes are open or closed|to considerably better than when you had your open heart surgery
+034|so like tuberculosis which is another infection that can develop resistance quickly|so neuropathology was another invention that is available to us quickly
+035|the store bought salad dressing are really really high in sodium|sodium and potassium are really really high in turkey so
+036|set it apart not just from other network marketing companies but from anything i've ever looked at in my life feature number one is|i'm better not just from a health care perspective but in every aspect of my life adventure number one is
+037|program covering everybody admittedly with fewer drugs covered but every person in the province of ontario not just those 24 and under and you know suspicious people are going to wonder whether or not that|i'm going to tell you
+038|which is the t5i line the 700d line so i think we're going to see a 700d line|1995 i think that's a good year to start so i think we can see
+039|with my iq and my background following all these scientists that's a terrible setup|my answer to that might be that following all the science is not going to save us
+040|use water or orange juice fresh squeezed orange juice you can also use|why go into the venture capital world when you could get all this
+041|and did he stoop to quibble could tell why the little buried mole continues blind why flesh that mirrors him must someday die|he didn't assume that rebecca was white through marie beauvoir he knew she was black why he fucked her must have died
+042|of fat source when eating turmeric the beneficial compounds in turmeric like curcumin are more fat soluble than water soluble so to aid absorption include a source of|fact source we need to absorb the beneficial compounds in turmeric like curcumin are more absorbable in water soluble so dandelion absorption includes a source of
+043|hi i'm paul barr and i went|in prague with
+044|there forever and i want it to be a five star review|forever and i wanted to be around for you
+045|try to get pokemon to catch and i'm really into i don't know i never followed the franchise i'm a little outside of the age range of people who would have played pokemon but i have siblings who did|to keep polly barton in check and i'm willing to do i don't know i never would have followed the franchise and i am a little outside of the age range of people who will play polybart but i have double citizenship
+046|i will receive the multi material unit i should receive it either in end of august beginning of september somewhere around there i believe|i will receive the multimaterial suit and i'll just receive it either in an end of august beginning of september somewhere around there i believe
+047|things become resistant to antibiotics|things become less serious and more artistic
+048|as you thought but you will not be breaking down muscle and again there's a test to confirm|sort of hard but you will not be breaking down muscle again there is no need to come from
+049|to see if it's actually going to go away or not but um|to see if it's actually going to go so well or not but
+050|in this case i think it was a mother|in this case it was a mother or
+051|everybody and welcome to day 5 of my 14 day water fast|good and welcome to day five of my 14 day workout fast
+052|fingerprint scanner they put in the home button of the newly redesigned|months later and they put the home button of the new iphone 6s and i
+053|obsolete instead of just throwing it away you can resell these as gaming cards or use them as gaming cards yourself as they're still very capable|obsidian instead of just throwing it away you know what i'm saying it can be hard to do something that's against yourself and still very capable
+054|sts 120 discovery up there right now so far|is what 2075 right now so far so
+055|on here and say it's you know x number of inches or centimeters long|in the states you know how many provisions there are in the constitution
+056|of the video the lego minifig uh we have|video a little bit of fun we have
+057|medicaid so that indicates that there's some level of inability to provide extra|and also at a certain level of inability to provide extra
+058|got that choreographed by paul james and yanni toft anderson|that to promote genocide is a crime against humanity
+059|same they both survive only through the suppression of knowledge|20 years ago when i
+060|when i write i kind of drag my pinky right here and i always get like a black mark because i'm dragging my pen but these do not transfer onto your skin|when i write i kind of drag my pen across the paper and i always say please i'm trying my best please do not judge first skin
+061|platforms do this i don't know why if you believe in your coins so much why wouldn't you|students i don't know why their beliefs are going so much why would we just
+062|if you're judging someone you're not loving them|if you're not just doing it wrong you are not loved either
+063|this g stick i mean this g stick becomes a renderer|is six and we have a system of six cards
+064|you may know me from the|i'm going to tell you a story
+065|i'm here to talk about go obviously|that we're going to make so let's
+066|last year was that there were some issues with the calibration especially on the darker end of an image|i'm just going to read you one of the captions so you can see what it's like
+067|of the 12 tribes of the children of israel|12 times on the tutu of the shirt
+068|you're unable to learn languages and despite this over|up to your house and despite this all
+069|see what i mean now today i want to|this is what i mean and today i want to
+070|so it might be something you want to invest in but there's that book|so it may be something you want to invest in but there's that book
+071|service that allows you to sync files to your computer and|surface that allows you to stick files to your computer and
+072|make yourself at home make yourself at home si ntase como en casa so repeat|make yourself i still home make yourself at home take things in your own hands don't repeat make your
+073|dollars of damages americans want football they love football they want to go protest on their own time no one cares|years of taekwondo is american kids want football they love football they want to go protest in the streets
+074|goes on coral grab by maria mag is a 32 count 2 way|have no choice to do what our people have been doing since the
+075|of publishing a bad paper is not yet perceived as being such a big problem|cost of publishing a manuscript is not yet perceived as being such a big problem but
+076|and it's almost every word in a sentence fuck the fucking fuckers|should never be in a sentence fighting fires as soon
+077|frequency they vary in intensity sometimes it's 30 seconds sometimes it's seven minutes we brought him in the bed with us because we could call him|of run frequency they're very intense and sometimes that's 30 seconds sometimes it's seven minutes we call them in the bed with us because we can call them
+078|my macbook i've used it on my netbook|my backpack and my notebook and
+079|sitting down standing up come here|sitting down standing up coming in
+080|don't just open the door knock first|years ago when i was
+081|this is the g0514x2b|the cheese into five one four eight two
+082|favorite i would say was american ballet theatre even though it was their|favorite i would say was a merry melancholy even though it was a
+083|and see that it is not happening you will not lose muscle weight now you'll lose yucky water and fat weight and maybe underneath all that water and fat weight you didn't have as much muscle as you thought but you will not be|see that it's not happening you will not lose muscle weight neither lose a lot of weight or fat weight you didn't have as much muscle as you thought but you will be
+084|i will let you guys know i am a very lazy natural which i'm trying|will let you guys know i am a very lazy astronaut with some training
+085|connection within the cable to check that you've got continuity between both ends now of course on this length of|connection within the cable to chat that you've got continuously between both hands now of course on this length of
+086|so we have all of our purple cabbage sliced|kind of all of our moods happen in just a second
+087|and these amazing gadgets we now all hold in our hand and we|these amazing gadgets we now all carry in our
+088|across the campus with schenck shortly after he had come to|at the camp through his child and shortly after the couple
+089|both people are atheists they're just different kinds|people are at the edge of their seat
+090|right or|2000 miles across the united states
+091|i have a gift from one of my viewers a vostok koran komand|a gift from one of my viewers the first shot ok you're mine
+092|but i have to understand in my head what that looks like in 3d as i'm drawing it|but i feel like this side of my head what that looks like in the real world as i'm drawing
+093|see how they work they both came with level 4 software licensing and i don't know if i've talked about it but i'm not a huge fan of software licensing|i don't know if it's a coincidence or not but
+094|but let's be honest here for a moment i started a photography shooting film the workflow|let's be honest for a moment alice in wonderland is a children's film the word of
+095|is flashing for you|that it is lasting for you
+096|because i cared a great deal about the company and about|second inquiry is around the ethics around it
+097|amateur radio call sign is k5acl|right across 18th avenue in the
+098|and while it's good to have practice in school another great thing about adulthood is that it's not high school and you don't have to be interested in only the things you were interested in when you were young|while it does at practice in school another great thing about taekwondo is that it's not high school and you don't have to be interested in only the things you are interested in what you are not
+099|and i'll tell you in just a second if they are|and then i'll take you just a second of the year so
+100|think tanks so what are they doing in the world of places where they're|like that so what can you do in the world of places which

@@ -1,0 +1,152 @@
+{
+  "analysis_date": "2026-03-03",
+  "total_pairs": 1497,
+  "blind_distribution": {
+    "Y": {
+      "count": 345,
+      "pct": 23.0
+    },
+    "P": {
+      "count": 626,
+      "pct": 41.8
+    },
+    "N": {
+      "count": 526,
+      "pct": 35.1
+    }
+  },
+  "context_distribution": {
+    "Y": {
+      "count": 225,
+      "pct": 15.0
+    },
+    "P": {
+      "count": 705,
+      "pct": 47.1
+    },
+    "N": {
+      "count": 567,
+      "pct": 37.9
+    }
+  },
+  "capture_rates": {
+    "blind_full_Y": 23.0,
+    "context_full_Y": 15.0,
+    "blind_any_YP": 64.9,
+    "context_any_YP": 62.1,
+    "delta_full_Y": -8.0,
+    "delta_any_YP": -2.7
+  },
+  "net_transitions": {
+    "upgrades": 68,
+    "upgrades_pct": 4.5,
+    "stable": 1199,
+    "stable_pct": 80.1,
+    "downgrades": 230,
+    "downgrades_pct": 15.4,
+    "net": -162,
+    "net_pct": -10.8
+  },
+  "transition_matrix": {
+    "Y": {
+      "Y": 207,
+      "P": 138,
+      "N": 0
+    },
+    "P": {
+      "Y": 17,
+      "P": 517,
+      "N": 92
+    },
+    "N": {
+      "Y": 1,
+      "P": 50,
+      "N": 475
+    }
+  },
+  "hallucination_detection": {
+    "total_hallucinated": 307,
+    "blind_N_rate_pct": 91.9,
+    "context_N_rate_pct": 89.3,
+    "newly_caught_by_context": 4
+  },
+  "cross_condition_reliability": {
+    "duplicate_pairs": 30,
+    "cross_condition_agreement_pct": 80.0,
+    "blind_intra_rater_pct": 86.7
+  },
+  "key_transitions": {
+    "N_to_Y": 1,
+    "N_to_P": 50,
+    "P_to_Y": 17,
+    "Y_to_N": 0
+  },
+  "per_topic": {
+    "Other": {
+      "n": 899,
+      "blind_YP_pct": 61.7,
+      "context_YP_pct": 58.7,
+      "delta_YP_pct": -3.0
+    },
+    "Sports/Fitness": {
+      "n": 31,
+      "blind_YP_pct": 74.2,
+      "context_YP_pct": 77.4,
+      "delta_YP_pct": 3.2
+    },
+    "Education/Academic": {
+      "n": 86,
+      "blind_YP_pct": 76.7,
+      "context_YP_pct": 72.1,
+      "delta_YP_pct": -4.7
+    },
+    "Business/Finance": {
+      "n": 46,
+      "blind_YP_pct": 76.1,
+      "context_YP_pct": 76.1,
+      "delta_YP_pct": 0.0
+    },
+    "Cooking/Food": {
+      "n": 117,
+      "blind_YP_pct": 70.1,
+      "context_YP_pct": 65.0,
+      "delta_YP_pct": -5.1
+    },
+    "Technology": {
+      "n": 132,
+      "blind_YP_pct": 72.0,
+      "context_YP_pct": 68.9,
+      "delta_YP_pct": -3.0
+    },
+    "Entertainment": {
+      "n": 69,
+      "blind_YP_pct": 60.9,
+      "context_YP_pct": 56.5,
+      "delta_YP_pct": -4.3
+    },
+    "Medical/Health": {
+      "n": 39,
+      "blind_YP_pct": 66.7,
+      "context_YP_pct": 61.5,
+      "delta_YP_pct": -5.1
+    },
+    "DIY/Home": {
+      "n": 27,
+      "blind_YP_pct": 48.1,
+      "context_YP_pct": 55.6,
+      "delta_YP_pct": 7.4
+    },
+    "Politics/News": {
+      "n": 34,
+      "blind_YP_pct": 73.5,
+      "context_YP_pct": 76.5,
+      "delta_YP_pct": 2.9
+    },
+    "Religion/Spirituality": {
+      "n": 17,
+      "blind_YP_pct": 52.9,
+      "context_YP_pct": 58.8,
+      "delta_YP_pct": 5.9
+    }
+  }
+}
