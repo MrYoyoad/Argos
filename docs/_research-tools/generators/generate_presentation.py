@@ -60,7 +60,7 @@ VID = {
     # Curated examples (Slide 14)
     "perfect":        VIDEOS / "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4",
     "bogo":           VIDEOS / "d8BR6hsvzoY_31__2e9546df_with_hyp.mp4",
-    "nearmiss":       VIDEOS / "-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4",
+    "nearmiss":       VIDEOS / "-WQZsfHcPDM_7__5210cac1_with_hyp.mp4",
     "halluc":         VIDEOS / "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4",
     "tuning_fix":     VIDEOS / "DBhaa45mAro_2__07d05c7a_Part1_with_hyp.mp4",
     "topic_drift":    VIDEOS / "vBCnI4kf3-E_0__d2216cbf_Part1_with_hyp.mp4",
@@ -1586,11 +1586,11 @@ def slide_06(prs):
     rx = MX + bw + gap
     r2 = add_rect(slide, rx, by, bw, bh, fill_color=NAVY2,
                   border_color=RED, border_width=Pt(2.5), corner_radius=True)
-    add_text(slide, "WER 33%  •  IS 3.0 — Unintelligible",
+    add_text(slide, "WER 58%  •  IS 2.7 — Near-Miss",
              rx + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.4),
              size=Pt(14), color=RED, bold=True)
-    add_text(slide, 'Ref: "today i\'m talking with admiral mcrae"\n'
-                    'Hyp: "today i\'m talking with animal migratory"',
+    add_text(slide, 'Ref: "1 billion cfus of probiotics"\n'
+                    'Hyp: "1 million cfus of permafrost"',
              rx + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(2.5),
              size=Pt(15), color=WHITE)
 
@@ -1602,10 +1602,11 @@ def slide_06(prs):
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 6,
-        "Same WER, opposite meaning. Left: minor grammatical change, meaning "
-        "fully preserved. Right: a name destroyed — 'admiral mcrae' becomes "
-        "'animal migratory.' WER sees ~30% error in both. But one is usable "
-        "and the other is garbage. This motivated our Intelligibility Score.",
+        "Same low WER on the left, high WER on the right — but the real "
+        "difference is meaning. Left: minor grammatical change, meaning "
+        "fully preserved at WER 29%. Right: 'probiotics' becomes 'permafrost' — "
+        "phonetically similar but completely wrong product. Structure intact, "
+        "key terms destroyed. This motivated our Intelligibility Score.",
         [[r1], [r2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1860,14 +1861,14 @@ def slide_failure_deep_1a(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_failure_deep_2(prs):
-    """Three concrete failure mode examples with real segments."""
+    """Three concrete failure mode examples for the hardest-to-distinguish categories."""
     slide = new_slide(prs)
     add_title(slide, "Failure Modes: Real Examples")
     add_accent_line(slide)
 
     # Three cards side by side
     cw_card = Inches(3.8)
-    ch_card = Inches(4.7)
+    ch_card = Inches(4.9)
     gap = Inches(0.27)
     total = 3 * cw_card + 2 * gap
     cx = (SL_W - total) / 2
@@ -1875,50 +1876,58 @@ def slide_failure_deep_2(prs):
 
     examples = [
         {
-            "title": "Topic Drift",
-            "pct": "15.9%",
-            "color": DRED,
+            "title": "Hallucination",
+            "pct": "12.3%",
+            "color": CORAL,
+            "ref": "carry strap",
+            "hyp": "holocaust denier explanation\nof the final act",
+            "wer": "100%", "is_score": "0.1",
+            "why_label": "Why this category?",
+            "why": "The model generated 8 words from\n"
+                   "a 2-word input. The LLM\u2019s language\n"
+                   "model \u2018ran away\u2019 \u2014 output is fluent\n"
+                   "English but completely fabricated.\n"
+                   "Distinguishing feature: output is\n"
+                   "LONGER than reference (WER \u2265 100%).",
+        },
+        {
+            "title": "Wrong Topic",
+            "pct": "31.6%",
+            "color": GOLD,
             "ref": "i\u2019ve made lots of videos\nabout weight loss and diet",
             "hyp": "when i was a little girl i\nalways wanted to be a princess",
             "wer": "97%", "is_score": "0.38",
-            "why": "Visual encoder captured nothing.\n"
-                   "LLM generated text from its own\n"
-                   "language prior \u2014 completely\n"
-                   "unrelated to the actual speech.",
+            "why_label": "Why this category?",
+            "why": "Output is similar LENGTH to\n"
+                   "reference (not hallucination) but\n"
+                   "about a completely different subject.\n"
+                   "The visual encoder extracted mouth\n"
+                   "shapes that the LLM mapped to a\n"
+                   "wrong but coherent domain.",
         },
         {
-            "title": "Phonetic Wrong Topic",
-            "pct": "15.7%",
-            "color": CORAL,
-            "ref": "and if we don\u2019t listen then\nit will start yelling at us",
-            "hyp": "although recently we started\nan alliance even though",
-            "wer": "76%", "is_score": "1.68",
-            "why": "Mouth shapes partially match.\n"
-                   "LLM decoded phonemes into a\n"
-                   "coherent but wrong domain \u2014\n"
-                   "sounds plausible, means nothing.",
-        },
-        {
-            "title": "Entity Destruction",
-            "pct": "12.0%",
-            "color": ORANGE,
+            "title": "Right Topic, Wrong Details",
+            "pct": "22.7%",
+            "color": TEAL,
             "ref": "about the 13th amendment\nthe 13th amendment is going",
             "hyp": "13th may mean something to\nhim because it can help him",
             "wer": "81%", "is_score": "2.14",
-            "why": "Topic vaguely preserved (law),\n"
-                   "but the named entity \u201c13th\n"
-                   "amendment\u201d lost its meaning.\n"
-                   "Critical information irrecoverable.",
+            "why_label": "Why this category?",
+            "why": "The word \u201c13th\u201d survived but\n"
+                   "\u201camendment\u201d was lost. A viewer\n"
+                   "might guess the topic (law) but\n"
+                   "critical entity information is\n"
+                   "irrecoverable. Key distinction:\n"
+                   "Semantic \u2265 0.2 (topic is correct).",
         },
     ]
 
-    card_shapes = []
+    anim_groups = []
     for i, ex in enumerate(examples):
         x = cx + i * (cw_card + gap)
 
         r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
                      border_color=ex["color"], border_width=Pt(2), corner_radius=True)
-        card_shapes.append(r)
 
         # Title + percentage
         add_text(slide, f'{ex["title"]}  ({ex["pct"]})',
@@ -1945,90 +1954,101 @@ def slide_failure_deep_2(prs):
                  size=Pt(11), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
         # Why explanation
-        add_text(slide, "Why it fails:", x + Inches(0.15), cy + Inches(2.7),
+        add_text(slide, ex["why_label"],
+                 x + Inches(0.15), cy + Inches(2.7),
                  cw_card - Inches(0.3), Inches(0.22), size=Pt(9), color=TEAL, bold=True)
         add_text(slide, ex["why"],
-                 x + Inches(0.15), cy + Inches(2.9), cw_card - Inches(0.3), Inches(1.5),
+                 x + Inches(0.15), cy + Inches(2.9), cw_card - Inches(0.3), Inches(1.8),
                  size=Pt(10), color=LGRAY)
 
+        anim_groups.append([r])
+
     _finish(slide, 0,
-        "Three real failure examples. Topic Drift: LLM generates from language prior. "
-        "Phonetic Wrong Topic: mouth shapes match but meaning is wrong. "
-        "Entity Destruction: topic vaguely right but critical names/numbers lost. "
-        "Each type requires a different remedy in the roadmap.",
-        [card_shapes])
+        "Three real examples for the three most confusing categories. "
+        "Hallucination vs Wrong Topic: hallucination generates MORE words than "
+        "the reference (WER >= 100%), while Wrong Topic substitutes at similar "
+        "length. Wrong Topic vs Right Topic Wrong Details: semantic similarity "
+        "threshold of 0.2 separates them — below 0.2 means completely different "
+        "subject, above 0.2 means topic preserved but details lost. "
+        "Right Topic Wrong Details is the 'frustrating near-miss' — you can tell "
+        "what the speaker was ABOUT but not what they SAID.",
+        anim_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — IMPACT & ROADMAP MAPPING
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_failure_deep_3(prs):
-    """Failure mode impact severity and roadmap mapping."""
+    """Failure mode impact and what fixes each of the 5 categories."""
     slide = new_slide(prs)
     add_title(slide, "Failure Modes: Impact & What Fixes Them")
     add_accent_line(slide)
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
+    add_text(slide,
+        "Each category maps to a specific remedy \u2014 "
+        "no single fix addresses all failure types.",
+        MX, CT, CW, Inches(0.3),
+        size=Pt(13), color=LGRAY, italic=True)
 
-    # Left column — severity ranking
-    lt = add_text(slide, "Impact Severity (most \u2192 least dangerous)",
-                  MX, CT, col_w, Inches(0.4),
-                  size=Pt(16), color=CORAL, bold=True)
-
-    severity = [
-        ("\u26a0 Hallucination (12.3%)", "Sounds convincing, completely fabricated", DRED),
-        ("\u26a0 Phonetic Wrong Topic (15.7%)", "Deceptive: phonetically plausible lie", RED),
-        ("\u26a0 Entity Destruction (12.0%)", "Critical names/numbers irrecoverable", RED),
-        ("\u25cf Topic Drift (15.9%)", "Wrong message, but usually detectable", ORANGE),
-        ("\u25cf Content Word Errors (10.7%)", "Meaning eroded but structure intact", YELLOW),
-        ("\u25cf Accumulated Errors (12.3%)", "Partially recoverable with context", YELLOW),
-        ("\u25cb Empty / Truncation (8.9%)", "Obvious failure, easily detected", MGRAY),
-    ]
-
-    py = CT + Inches(0.5)
-    sev_shapes = []
-    for label, desc, color in severity:
-        t1 = add_text(slide, label, MX + Inches(0.1), py, col_w - Inches(0.2), Inches(0.28),
-                 size=Pt(12), color=color, bold=True)
-        add_text(slide, desc, MX + Inches(0.1), py + Inches(0.28), col_w - Inches(0.2), Inches(0.25),
-                 size=Pt(10), color=LGRAY, italic=True)
-        sev_shapes.append(t1)
-        py += Inches(0.6)
-
-    # Right column — roadmap mapping
-    rx = MX + col_w + gap
-    rt = add_text(slide, "Roadmap Phase \u2192 Targeted Failures",
-                  rx, CT, col_w, Inches(0.4),
-                  size=Pt(16), color=TEAL, bold=True)
-
-    headers = ["Phase", "Targets", "Impact"]
+    headers = ["Category", "%", "Severity", "What Fixes It"]
     rows = [
-        ["1: Confidence\nScoring", "Empty, High Error", "Surface the good\n40% reliably"],
-        ["2: N-best\nAggregation", "Accumulated Errors,\nContent Word", "Vote out noise\n(\u22125 to \u221215%)"],
-        ["3: LLM Swap\n+ Prompts", "Topic Drift,\nPhonetic Wrong", "Better language\nmodel (\u22128 to \u221218pp)"],
-        ["4: Fine-tune\n+ Scale Data", "Entity Destruction,\nAll modes", "Domain adaptation\n(\u221215 to \u221225pp)"],
-        ["5: Error\nCorrection", "Hallucination", "Post-process\ncleanup (\u22128 to \u221215pp)"],
+        ["Signal Loss", "9.0%", "Low \u2014 obvious,\neasily detected",
+         "Quality filtering, longer segments"],
+        ["Hallucination", "12.3%", "Critical \u2014 fluent\nbut fabricated",
+         "Anti-hallucination prompts,\nconfidence gating, GER"],
+        ["Wrong Topic", "31.6%", "High \u2014 wrong\ndomain entirely",
+         "Stronger LLM, topic-aware\nprompting, more training data"],
+        ["Right Topic,\nWrong Details", "22.7%", "Medium \u2014 topic\nright, details lost",
+         "Entity injection, domain\nadaptation, fine-tuning"],
+        ["Accumulated\nErrors", "24.4%", "Medium \u2014 gradual\nmeaning erosion",
+         "General model improvement,\nN-best aggregation"],
     ]
 
-    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.5), col_w,
-                    row_height=Inches(0.7),
-                    col_widths=[Inches(1.5), Inches(2.0), Inches(2.0)],
-                    text_size=Pt(9))
+    row_colors = {
+        0: {0: LGRAY, 2: MGRAY},
+        1: {0: CORAL, 2: DRED},
+        2: {0: GOLD, 2: RED},
+        3: {0: TEAL, 2: ORANGE},
+        4: {0: LGRAY, 2: YELLOW},
+    }
+
+    tbl = add_table(slide, headers, rows,
+                    MX, CT + Inches(0.45), CW,
+                    row_height=Inches(0.75),
+                    col_widths=[Inches(2.0), Inches(1.0), Inches(3.5), Inches(5.63)],
+                    text_size=Pt(11),
+                    row_colors=row_colors)
+
+    # Key insight callout
+    add_rect(slide, MX, Inches(5.5), CW, Inches(0.7), fill_color=NAVY2,
+             border_color=TEAL, border_width=Pt(1), corner_radius=True)
 
     add_text(slide,
-        "Each roadmap phase was designed to target specific failure modes \u2014 "
-        "no single fix addresses all types.",
+        "Key insight: Wrong Topic (31.6%) is the single largest failure mode \u2014 "
+        "and the one most likely to improve with a stronger LLM backbone "
+        "(e.g., Llama 3.1 8B replacing Llama 2 7B). Combined with Right Topic "
+        "Wrong Details (22.7%), over half of all failures need better language "
+        "modeling and domain adaptation.",
+        MX + Inches(0.2), Inches(5.55), CW - Inches(0.4), Inches(0.6),
+        size=Pt(12), color=WHITE)
+
+    add_text(slide,
+        "Severity ranked: Hallucination > Wrong Topic > Right Topic Wrong Details "
+        "> Accumulated Errors > Signal Loss",
         MX, Inches(6.4), CW, Inches(0.35),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Impact ranking and roadmap mapping. Hallucination is the most dangerous "
-        "because it sounds convincing. Each roadmap phase targets specific failure "
-        "modes: confidence scoring surfaces the good 40%, N-best aggregation reduces "
-        "accumulated errors, LLM swap fixes topic drift, fine-tuning helps entity "
-        "preservation, and error correction catches hallucinations.",
-        [sev_shapes, [tbl]])
+        "Impact and fixes table for the 5-category taxonomy. Hallucination is the "
+        "most dangerous because it sounds convincing \u2014 a user cannot tell it is wrong. "
+        "Wrong Topic is the LARGEST at 31.6% and the most amenable to improvement "
+        "through LLM upgrade. Signal Loss is the least dangerous because it is "
+        "obvious (empty output). The key strategic insight: 54.3% of failures "
+        "(Wrong Topic + Right Topic Wrong Details) trace to the LLM backbone "
+        "being too weak for out-of-domain content. A stronger LLM is the single "
+        "highest-leverage intervention.",
+        [[tbl]])
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 9 — PERFORMANCE DISTRIBUTION
@@ -2294,7 +2314,7 @@ def slide_14(prs):
     rows = [
         ["Perfect", "health insurance company they pay...", "[exact match]", "0%", "5.0"],
         ["WER Misleads", "work with the team in a more", "work with a team and more", "29%", "4.3"],
-        ["Entity Lost", "talking with admiral mcrae", "talking with animal migratory", "33%", "3.0"],
+        ["Near-Miss", "1 billion cfus of probiotics", "1 million cfus of permafrost", "58%", "2.7"],
         ["Hallucinated", "carry strap", "holocaust denier", "100%", "0.7"],
     ]
     # Color IS column by value
@@ -2314,9 +2334,9 @@ def slide_14(prs):
     _finish(slide, 14,
         "Four examples spanning the quality range. Row 1: perfect lip-reading. "
         "Row 2: WER says 29% error but the meaning is fully preserved — IS 4.3. "
-        "Row 3: same WER range but a name destroyed, meaning lost. Row 4: "
-        "complete hallucination — 'carry strap' becomes 'holocaust denier.' "
-        "This is why WER alone is insufficient.",
+        "Row 3: near-miss — structure intact but key terms phonetically garbled "
+        "(probiotics→permafrost). Row 4: complete hallucination — 'carry strap' "
+        "becomes 'holocaust denier.' This is why WER alone is insufficient.",
         [[tbl]])
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -2331,7 +2351,7 @@ def slide_15(prs):
     # Three embedded videos side by side — click each to play
     # VID dict mapping (confirmed correct):
     #   "ok_demo"   -> 8SMYkCQkT4Q_0  (sheetaro -> just hara, gist right)
-    #   "nearmiss"  -> -POZpyVCN8k_9  (admiral mcrae -> animal migratory)
+    #   "nearmiss"  -> -WQZsfHcPDM_7  (probiotics -> permafrost)
     #   "halluc"    -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
     vid_w = Inches(3.6)
     vid_h = Inches(2.7)
@@ -2342,7 +2362,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("nearmiss", '"admiral mcrae" \u2192 "animal migratory"\nTopic right, entity destroyed', "WER 33%  IS 2.9", YELLOW),
+        ("nearmiss", '"probiotics" \u2192 "permafrost"\nStructure right, key terms garbled', "WER 58%  IS 2.7", YELLOW),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -2363,7 +2383,8 @@ def slide_15(prs):
     _finish(slide, 15,
         "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
         "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'admiral mcrae' becomes 'animal migratory' (near-miss, IS 2.9). "
+        "'probiotics' becomes 'permafrost' (near-miss, IS 2.7 — sentence "
+        "structure preserved but key terms phonetically garbled). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
 
@@ -3888,7 +3909,7 @@ def slide_14b(prs):
 
     rows = [
         [("perfect",      "Perfect",     "0%",   GREEN),
-         ("nearmiss",     "Near-Miss",   "33%",  YELLOW),
+         ("nearmiss",     "Near-Miss",   "58%",  YELLOW),
          ("halluc",       "Hallucin.",   "100%", RED),
          ("tuning_fix",   "Tuning Fix\n(baseline: empty)",  "73%",  ORANGE)],
         [("topic_drift",  "Topic Drift", "97%",  RED),
@@ -3910,7 +3931,7 @@ def slide_14b(prs):
 
     _finish(slide, "14b",
         "8 videos matching the curated examples on Slide 14. "
-        "Row 1: Perfect transcription, homophene confusion (admiral→animal), "
+        "Row 1: Perfect transcription, near-miss (probiotics→permafrost), "
         "full hallucination, Config J tuning fix (empty→output). "
         "Row 2: Topic drift (#1 failure), salvage hidden gem, entity preserved "
         "despite wrong numbers, entity completely destroyed. Click each to play.")
@@ -3935,7 +3956,7 @@ def slide_a15(prs):
     left_rows = [
         # Curated Examples
         ["IEa7qEkMvfQ_3",  "Perfect",         "14",    "0%",   "★"],
-        ["-POZpyVCN8k_9",  "Near-Miss",       "14",    "33%",  "★"],
+        ["-WQZsfHcPDM_7",  "Near-Miss",       "14",    "58%",  "★"],
         ["00MUdHQ7GGY_8",  "Hallucination",   "14",    "100%", "★"],
         ["DBhaa45mAro_2",  "Tuning Fix",      "14",    "73%",  "★"],
         ["vBCnI4kf3-E_0",  "Topic Drift",     "14/A13","97%",  "★"],
