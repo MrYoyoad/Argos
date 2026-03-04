@@ -640,7 +640,12 @@ def _fix_pptx_video_compat(pptx_path):
 
 def add_animations(slide, groups, click_reveal=False):
     """
-    Add entrance fade animations with proper OOXML click-to-advance.
+    Add entrance "Appear" animations matching PowerPoint's native OOXML output.
+
+    Structure mirrors what PowerPoint 365 generates for "Appear → On Click":
+      timing > tnLst > par(tmRoot) > seq(mainSeq)
+        per click-step:  par > par(delay=0) > par(presetID=1, clickEffect) > set
+      timing > bldLst > bldP (one per hidden shape)
 
     groups: list of lists of shape objects.
         Each inner list = one animation group (one "click step").
@@ -655,7 +660,7 @@ def add_animations(slide, groups, click_reveal=False):
     if not groups:
         return
 
-    # Collect all shape IDs that will be animated (for bldLst)
+    # Collect all shape IDs that will be animated
     all_anim_shapes = []
     for gi, group in enumerate(groups):
         for shape in group:
@@ -682,6 +687,7 @@ def add_animations(slide, groups, click_reveal=False):
         _id[0] += 1
         return str(v)
 
+    # ── Root: timing > tnLst > par(tmRoot) ──
     timing = etree.SubElement(sld, qn('p:timing'))
     tnLst = etree.SubElement(timing, qn('p:tnLst'))
     par_root = etree.SubElement(tnLst, qn('p:par'))
@@ -694,6 +700,7 @@ def add_animations(slide, groups, click_reveal=False):
 
     childTnLst_root = etree.SubElement(cTn_root, qn('p:childTnLst'))
 
+    # ── Main sequence ──
     seq = etree.SubElement(childTnLst_root, qn('p:seq'))
     seq.set('concurrent', '1')
     seq.set('nextAc', 'seek')
@@ -705,81 +712,94 @@ def add_animations(slide, groups, click_reveal=False):
 
     childTnLst_seq = etree.SubElement(cTn_seq, qn('p:childTnLst'))
 
+    # Determine which groups to animate
+    start_gi = 1 if click_reveal else 0
+
     for gi, group in enumerate(groups):
-        # Each group = one click step (one <p:par> under mainSeq)
-        par_click = etree.SubElement(childTnLst_seq, qn('p:par'))
-        cTn_click = etree.SubElement(par_click, qn('p:cTn'))
-        cTn_click.set('id', nid())
-        cTn_click.set('fill', 'hold')
+        if gi < start_gi:
+            continue
 
-        stCondLst = etree.SubElement(cTn_click, qn('p:stCondLst'))
-        cond = etree.SubElement(stCondLst, qn('p:cond'))
-        # delay="0" for all groups — the p:seq structure handles
-        # click-to-advance automatically between <p:par> children
-        cond.set('delay', '0')
-
-        childTnLst_click = etree.SubElement(cTn_click, qn('p:childTnLst'))
-
-        for si, shape in enumerate(group):
+        valid_shapes = []
+        for shape in group:
             if shape is None:
                 continue
             try:
-                spid = str(shape.shape_id)
+                _ = shape.shape_id
+                valid_shapes.append(shape)
             except AttributeError:
                 continue
+        if not valid_shapes:
+            continue
 
-            delay_ms = si * 120  # subtle stagger within group
+        # ── Level 1: click-step par (delay="indefinite" = wait for click) ──
+        par_step = etree.SubElement(childTnLst_seq, qn('p:par'))
+        cTn_step = etree.SubElement(par_step, qn('p:cTn'))
+        cTn_step.set('id', nid())
+        cTn_step.set('fill', 'hold')
 
-            # Animation container
-            par_anim = etree.SubElement(childTnLst_click, qn('p:par'))
-            cTn_anim = etree.SubElement(par_anim, qn('p:cTn'))
-            cTn_anim.set('id', nid())
-            cTn_anim.set('fill', 'hold')
+        stCond_step = etree.SubElement(cTn_step, qn('p:stCondLst'))
+        cond_step = etree.SubElement(stCond_step, qn('p:cond'))
+        cond_step.set('delay', 'indefinite')  # KEY: waits for click
 
-            st_anim = etree.SubElement(cTn_anim, qn('p:stCondLst'))
-            c_anim = etree.SubElement(st_anim, qn('p:cond'))
-            c_anim.set('delay', str(delay_ms))
+        childTnLst_step = etree.SubElement(cTn_step, qn('p:childTnLst'))
 
-            child_anim = etree.SubElement(cTn_anim, qn('p:childTnLst'))
+        # ── Level 2: container par (delay="0") ──
+        par_container = etree.SubElement(childTnLst_step, qn('p:par'))
+        cTn_container = etree.SubElement(par_container, qn('p:cTn'))
+        cTn_container.set('id', nid())
+        cTn_container.set('fill', 'hold')
 
-            # Set visibility to visible
-            p_set = etree.SubElement(child_anim, qn('p:set'))
-            cBhvr_s = etree.SubElement(p_set, qn('p:cBhvr'))
-            cTn_s = etree.SubElement(cBhvr_s, qn('p:cTn'))
-            cTn_s.set('id', nid())
-            cTn_s.set('dur', '1')
-            cTn_s.set('fill', 'hold')
-            st_s = etree.SubElement(cTn_s, qn('p:stCondLst'))
-            c_s = etree.SubElement(st_s, qn('p:cond'))
-            c_s.set('delay', '0')
+        stCond_container = etree.SubElement(cTn_container, qn('p:stCondLst'))
+        cond_container = etree.SubElement(stCond_container, qn('p:cond'))
+        cond_container.set('delay', '0')
 
-            tgt_s = etree.SubElement(cBhvr_s, qn('p:tgtEl'))
-            sp_s = etree.SubElement(tgt_s, qn('p:spTgt'))
-            sp_s.set('spid', spid)
+        childTnLst_container = etree.SubElement(cTn_container, qn('p:childTnLst'))
 
-            attr_list = etree.SubElement(cBhvr_s, qn('p:attrNameLst'))
-            attr_name = etree.SubElement(attr_list, qn('p:attrName'))
-            attr_name.text = 'style.visibility'
+        for si, shape in enumerate(valid_shapes):
+            spid = str(shape.shape_id)
+
+            # ── Level 3: effect par (presetID=1 Appear) ──
+            par_effect = etree.SubElement(childTnLst_container, qn('p:par'))
+            cTn_effect = etree.SubElement(par_effect, qn('p:cTn'))
+            cTn_effect.set('id', nid())
+            cTn_effect.set('presetID', '1')       # 1 = Appear
+            cTn_effect.set('presetClass', 'entr')  # entrance
+            cTn_effect.set('presetSubtype', '0')
+            cTn_effect.set('fill', 'hold')
+            cTn_effect.set('grpId', '0')
+            cTn_effect.set('nodeType', 'clickEffect')
+
+            stCond_effect = etree.SubElement(cTn_effect, qn('p:stCondLst'))
+            cond_effect = etree.SubElement(stCond_effect, qn('p:cond'))
+            cond_effect.set('delay', '0')
+
+            childTnLst_effect = etree.SubElement(cTn_effect, qn('p:childTnLst'))
+
+            # ── p:set — visibility toggle (the actual "Appear") ──
+            p_set = etree.SubElement(childTnLst_effect, qn('p:set'))
+
+            cBhvr = etree.SubElement(p_set, qn('p:cBhvr'))
+            cTn_set = etree.SubElement(cBhvr, qn('p:cTn'))
+            cTn_set.set('id', nid())
+            cTn_set.set('dur', '1')
+            cTn_set.set('fill', 'hold')
+            stCond_set = etree.SubElement(cTn_set, qn('p:stCondLst'))
+            cond_set = etree.SubElement(stCond_set, qn('p:cond'))
+            cond_set.set('delay', '0')
+
+            tgtEl = etree.SubElement(cBhvr, qn('p:tgtEl'))
+            spTgt = etree.SubElement(tgtEl, qn('p:spTgt'))
+            spTgt.set('spid', spid)
+
+            attrNameLst = etree.SubElement(cBhvr, qn('p:attrNameLst'))
+            attrName = etree.SubElement(attrNameLst, qn('p:attrName'))
+            attrName.text = 'style.visibility'
 
             p_to = etree.SubElement(p_set, qn('p:to'))
-            str_val = etree.SubElement(p_to, qn('p:strVal'))
-            str_val.set('val', 'visible')
+            strVal = etree.SubElement(p_to, qn('p:strVal'))
+            strVal.set('val', 'visible')
 
-            # Fade effect
-            anim_eff = etree.SubElement(child_anim, qn('p:animEffect'))
-            anim_eff.set('transition', 'in')
-            anim_eff.set('filter', 'fade')
-
-            cBhvr_f = etree.SubElement(anim_eff, qn('p:cBhvr'))
-            cTn_f = etree.SubElement(cBhvr_f, qn('p:cTn'))
-            cTn_f.set('id', nid())
-            cTn_f.set('dur', '500')
-
-            tgt_f = etree.SubElement(cBhvr_f, qn('p:tgtEl'))
-            sp_f = etree.SubElement(tgt_f, qn('p:spTgt'))
-            sp_f.set('spid', spid)
-
-    # Sequence navigation — click forward/backward
+    # ── Sequence navigation ──
     prev_cl = etree.SubElement(seq, qn('p:prevCondLst'))
     prev_c = etree.SubElement(prev_cl, qn('p:cond'))
     prev_c.set('evt', 'onPrev')
@@ -794,19 +814,15 @@ def add_animations(slide, groups, click_reveal=False):
     next_t = etree.SubElement(next_c, qn('p:tgtEl'))
     etree.SubElement(next_t, qn('p:sldTgt'))
 
-    # Build list — tells PowerPoint these shapes start HIDDEN
-    # until their animation fires. Without this, shapes are visible
-    # from the start and fade-in is invisible.
+    # ── Build list — shapes start HIDDEN ──
     bldLst = etree.SubElement(timing, qn('p:bldLst'))
-    grp_counter = {}
     for gi, shape in all_anim_shapes:
-        spid = str(shape.shape_id)
         if click_reveal and gi == 0:
-            continue  # First group visible immediately — no build
-        grp_id = gi if click_reveal else 0
+            continue  # First group visible on entry
+        spid = str(shape.shape_id)
         bldP = etree.SubElement(bldLst, qn('p:bldP'))
         bldP.set('spid', spid)
-        bldP.set('grpId', str(grp_id))
+        bldP.set('grpId', '0')
 
 # ═══════════════════════════════════════════════════════════════════════
 # REUSABLE SLIDE BUILDERS
