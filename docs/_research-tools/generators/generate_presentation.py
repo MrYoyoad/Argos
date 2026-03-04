@@ -13,6 +13,7 @@ Output:
     presentation_materials_20260224/Argos_VSP_Project_Review.pptx
 """
 
+import os
 import subprocess
 from pathlib import Path
 from pptx import Presentation
@@ -495,6 +496,92 @@ def add_fade_transition(slide, speed='med'):
         sld.insert(list(sld).index(timing_el), transition)
     else:
         sld.append(transition)
+
+
+def _fix_pptx_video_compat(pptx_path):
+    """Post-process saved PPTX to wrap video p:pic in mc:AlternateContent.
+
+    python-pptx embeds videos as bare p:pic elements with p14:media extensions.
+    PowerPoint expects these wrapped in mc:AlternateContent (Choice/Fallback)
+    per ISO/IEC 29500.  Without the wrapper, PowerPoint shows a repair dialog.
+
+    This function opens the saved PPTX zip, fixes affected slide XMLs, and
+    writes the corrected file back.
+    """
+    import zipfile, io, re as _re, copy, shutil, tempfile
+
+    MC_NS = "http://schemas.openxmlformats.org/markup-compatibility/2006"
+    P14_NS = "http://schemas.microsoft.com/office/powerpoint/2010/main"
+
+    tmp_fd, tmp_path = tempfile.mkstemp(suffix='.pptx')
+    os.close(tmp_fd)
+    changed = False
+
+    with zipfile.ZipFile(pptx_path, 'r') as zin, \
+         zipfile.ZipFile(tmp_path, 'w', zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            raw = zin.read(item.filename)
+
+            # Only process slide XMLs that contain videoFile
+            if (item.filename.startswith('ppt/slides/slide') and
+                    item.filename.endswith('.xml') and
+                    b'videoFile' in raw):
+                text = raw.decode('utf-8')
+
+                # Ensure mc namespace is declared on root element
+                if 'xmlns:mc=' not in text:
+                    text = text.replace(
+                        'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"',
+                        'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" '
+                        f'xmlns:mc="{MC_NS}" mc:Ignorable="p14"',
+                        1)
+                elif 'mc:Ignorable' not in text:
+                    # mc namespace declared but no Ignorable — add it
+                    text = _re.sub(
+                        r'(xmlns:mc="[^"]*")',
+                        r'\1 mc:Ignorable="p14"', text, count=1)
+
+                # Ensure p14 namespace is declared on root element
+                if 'xmlns:p14=' not in text:
+                    text = text.replace(
+                        f'xmlns:mc="{MC_NS}"',
+                        f'xmlns:mc="{MC_NS}" xmlns:p14="{P14_NS}"',
+                        1)
+
+                # Wrap each video p:pic in mc:AlternateContent
+                # Match <p:pic>...</p:pic> blocks containing videoFile
+                def _wrap_video_pic(m):
+                    pic_xml = m.group(0)
+                    if 'videoFile' not in pic_xml:
+                        return pic_xml
+                    # Build fallback: same pic but without videoFile and p14:media
+                    fallback = _re.sub(
+                        r'<a:videoFile[^/]*/>', '', pic_xml)
+                    fallback = _re.sub(
+                        r'<p:extLst>.*?</p:extLst>', '', fallback,
+                        flags=_re.DOTALL)
+                    # Remove inline p14 namespace decls from Choice version
+                    choice_xml = _re.sub(
+                        r'\s*xmlns:p14="[^"]*"', '', pic_xml)
+                    return (f'<mc:AlternateContent>'
+                            f'<mc:Choice Requires="p14">{choice_xml}</mc:Choice>'
+                            f'<mc:Fallback>{fallback}</mc:Fallback>'
+                            f'</mc:AlternateContent>')
+
+                new_text = _re.sub(
+                    r'<p:pic>.*?</p:pic>', _wrap_video_pic, text,
+                    flags=_re.DOTALL)
+
+                if new_text != text:
+                    changed = True
+                raw = new_text.encode('utf-8')
+
+            zout.writestr(item, raw)
+
+    if changed:
+        shutil.move(tmp_path, pptx_path)
+    else:
+        os.remove(tmp_path)
 
 
 def add_animations(slide, groups, click_reveal=False):
@@ -5514,6 +5601,7 @@ def main():
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT))
+    _fix_pptx_video_compat(str(OUTPUT))
     print(f"\nSaved: {OUTPUT}")
     print(f"Slides: {len(prs.slides)}")
 
