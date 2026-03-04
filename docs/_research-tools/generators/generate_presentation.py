@@ -70,6 +70,7 @@ VID = {
     "wer_broken":     VIDEOS / "0FUlRjBcGGE_21__8fc418e2_with_hyp.mp4",
     "entity_success": VIDEOS / "BS4kTgaiydQ_0__10c532bb_with_hyp.mp4",
     "entity_destroy": VIDEOS / "EMfcKvHA5Uc_0__b74dba61_with_hyp.mp4",
+    "ok_demo":        VIDEOS / "8SMYkCQkT4Q_0__fdf516a0_with_hyp.mp4",
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"
@@ -2112,9 +2113,9 @@ def slide_15(prs):
     vid_y = CT + Inches(0.1)
 
     vids = [
-        ("entity_success", '"business quarterly"\nentities preserved', "WER 31%", TEAL),
-        ("nearmiss", '"admiral mcrae" → "animal migratory"', "WER 33%", YELLOW),
-        ("halluc", '"carry strap" → "holocaust denier"', "WER 100%", RED),
+        ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
+        ("nearmiss", '"admiral mcrae" \u2192 "animal migratory"', "WER 33%  IS 2.9", YELLOW),
+        ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
     for i, (key, desc, wer, color) in enumerate(vids):
@@ -2132,10 +2133,11 @@ def slide_15(prs):
              size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 15,
-        "Three demos side by side. Left: business quarterly with entities "
-        "preserved (WER 31%). Center: 'admiral mcrae' becomes 'animal "
-        "migratory' (phonetic near-miss). Right: 'carry strap' becomes "
-        "'holocaust denier' (complete hallucination). Click each video to play.")
+        "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
+        "(IS 3.8 — gist right but names garbled, OK quality). Center: "
+        "'admiral mcrae' becomes 'animal migratory' (near-miss, IS 2.9). "
+        "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
+        "IS 0.1). Click each video to play.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 16 — IS VALIDATION: CLAUDE-AS-JUDGE
@@ -2256,8 +2258,8 @@ def slide_18(prs):
 
     phases = [
         {
-            "title": "Integration",
-            "subtitle": "~2 weeks",
+            "title": "Pipeline Build",
+            "subtitle": "~2\u20133 weeks",
             "color": TEAL,
             "items": [
                 "3 independent repos with no docs",
@@ -2269,7 +2271,7 @@ def slide_18(prs):
         },
         {
             "title": "Migration",
-            "subtitle": "~1 week",
+            "subtitle": "~4\u20135 weeks",
             "color": CORAL,
             "items": [
                 "EC2 \u2192 Docker container",
@@ -2277,6 +2279,7 @@ def slide_18(prs):
                 "Python version conflicts",
                 "Offline dependency packaging\n(no internet in container)",
                 "spaCy wheels, fairseq patches,\nCython compilation",
+                "Web UI migration (1\u20132 weeks\nwithin this phase)",
             ],
         },
         {
@@ -2324,10 +2327,10 @@ def slide_18(prs):
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 18,
-        "The full engineering journey: 2 weeks of integration, 1 week of "
-        "migration to Docker, and ongoing bug fixing. 37+ bugs including "
-        "NVENC silent corruption. Refactored from 823-line monolith to "
-        "11 reusable modules. All documented and synced across environments.",
+        "The full engineering journey: 2-3 weeks of pipeline build, 4-5 weeks of "
+        "migration to Docker (including 1-2 weeks for Web UI migration), and "
+        "ongoing bug fixing. 37+ bugs including NVENC silent corruption. "
+        "Refactored from 823-line monolith to 11 reusable modules.",
         [card_shapes])
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -2979,16 +2982,12 @@ def slide_arabic_roadmap(prs):
     lb = add_bullets(slide, [
         ("Arabic AV-HuBERT encoder", {"bold": True}),
         "Pre-trained on Arabic visual speech data (or fine-tuned from English)",
-        "",
         ("Arabic LLM backend", {"bold": True}),
         "Arabic-capable Llama or equivalent (Arabic tokenizer required)",
-        "",
         ("Arabic evaluation dataset", {"bold": True}),
         "Manual transcriptions for MSA + dialect coverage",
-        "",
         ("Text normalization", {"bold": True}),
         "spaCy Arabic, diacritic handling, NER for Arabic names",
-        "",
         ("K-means reclustering", {"bold": True}),
         "Recluster visual features on Arabic mouth shapes",
     ], MX, CT + Inches(0.4), col_w, Inches(4.5), size=Pt(12))
@@ -4514,6 +4513,30 @@ def slide_dual_env(prs):
         [[r1, r2], [rt, rb]])
 
 
+def slide_future_transition(prs):
+    """Section divider: entering future directions portion."""
+    slide = new_slide(prs)
+
+    add_text(slide, "FUTURE DIRECTIONS",
+             MX, Inches(2.2), CW, Inches(1.2),
+             size=Pt(48), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "From Analysis to Action",
+             MX, Inches(3.5), CW, Inches(0.6),
+             size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
+             fill_color=GREEN)
+
+    add_text(slide, "5 research insights  \u2192  5-phase improvement roadmap",
+             MX, Inches(4.8), CW, Inches(0.5),
+             size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Section transition: we now move from what we found to what we "
+        "recommend doing about it. Five key insights lead to a five-phase "
+        "improvement roadmap.")
+
+
 def slide_insights(prs):
     """Key research insights that inform the roadmap."""
     slide = new_slide(prs)
@@ -4878,6 +4901,7 @@ def main():
         slide_21,
         slide_dual_env,     # Two environments (Req #19: slide_22/23 removed)
         # --- Section 8: Future Directions ---
+        slide_future_transition, # Section divider
         slide_insights,     # Key research insights
         slide_24,           # Starting point better than WER
         slide_llm_context_engine, # LLM as context engine

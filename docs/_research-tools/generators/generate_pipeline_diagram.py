@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
 """
 Generate a professional pipeline architecture diagram for the VSP presentation.
-Shows 8 pipeline stages in 2 rows of 4 with navy background, data-flow arrows,
-and component labels.
+8 stages flow left-to-right in 2 rows: row 1 (stages 1-4), then wraps to
+row 2 (stages 5-8) via a connecting elbow.
 
 Usage:
     python3 generate_pipeline_diagram.py
 
 Output:
     docs/evaluation/plots/pipeline_architecture.png
+    presentation_materials_20260224/01_plots_for_slides/pipeline_architecture.png
 """
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyBboxPatch
-import numpy as np
+from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+from pathlib import Path
 
-OUTPUT = "/home/ubuntu/docs/evaluation/plots/pipeline_architecture.png"
+OUTPUT1 = "/home/ubuntu/docs/evaluation/plots/pipeline_architecture.png"
+OUTPUT2 = "/home/ubuntu/presentation_materials_20260224/01_plots_for_slides/pipeline_architecture.png"
 
-# ── Color Palette (presentation theme) ──────────────────────
+# ── Color Palette (matches presentation theme) ───────────
 BG      = "#0D1B2A"
 TEAL    = "#00B4D8"
 CORAL   = "#E06C75"
@@ -27,218 +29,224 @@ GOLD    = "#FFD966"
 WHITE   = "#FFFFFF"
 LGRAY   = "#8899AA"
 DGRAY   = "#1B2D44"
-ARROW_C = "#5599BB"
+ARROW_C = "#6BAED6"
 
-# Stage colours: preprocessing=teal, core=green, model=gold, output=coral
-STAGE_COLORS = [TEAL, TEAL, TEAL, TEAL, GREEN, GREEN, GOLD, CORAL]
-
+# ── Stage definitions ────────────────────────────────────
 STAGES = [
-    ("1. Normalize",      "HDR/10-bit\nconversion"),
-    ("2. ASR\n(Whisper)",  "Speech-to-text\ntranscription"),
-    ("3. Mouth Crop",     "Face detection\n& ROI extraction"),
-    ("4. LRS3 Convert",   "Flat \u2192 LRS3\nformat"),
-    ("5. Manifests",      "TSV + splits\ngeneration"),
-    ("6. K-means\nCluster", "Feature\nextraction"),
-    ("7. LLM Decode",     "AV-HuBERT +\nLLaMA-2"),
-    ("8. Outputs",        "JSON reports\n& burned video"),
+    ("1. Normalize",    "HDR/10-bit\nconversion",        TEAL),
+    ("2. ASR",          "Whisper\ntranscription",         TEAL),
+    ("3. Mouth Crop",   "Face detection\n& ROI extract",  TEAL),
+    ("4. LRS3 Convert", "Flat \u2192 LRS3\nformat",      TEAL),
+    ("5. Manifests",    "TSV + splits\ngeneration",       GREEN),
+    ("6. K-means",      "Feature\nextraction",            GREEN),
+    ("7. LLM Decode",   "AV-HuBERT +\nLLaMA-2",         GOLD),
+    ("8. Outputs",      "Reports &\nburned video",        CORAL),
 ]
 
-FLOW_LABELS = [".mp4", ".wrd", ".mp4\n(cropped)", "LRS3/", ".tsv", ".npy", "text", ".json"]
+# Data flow labels on arrows between stages
+FLOW_LABELS = [".mp4", ".wrd", ".mp4 (crop)", "LRS3/", ".tsv", ".npy", "text", ".json"]
 
-# Component spans: (label, start_stage_idx, end_stage_idx)
-COMPONENTS = [
-    ("auto_avsr",  2, 3),
-    ("av_hubert",  4, 5),
-    ("VSP-LLM",   6, 6),
-]
+# ── Layout constants ─────────────────────────────────────
+FIG_W, FIG_H = 16, 7.5
+BOX_W = 2.8
+BOX_H = 1.4
+GAP_X = 0.65       # horizontal gap between boxes
+ROW1_Y = 4.8       # top-left y of row 1 boxes
+ROW2_Y = 1.4       # top-left y of row 2 boxes
+MARGIN_L = 1.2     # left margin for input label
 
-# ── Layout ──────────────────────────────────────────────────
-fig, ax = plt.subplots(figsize=(18, 8))
+# Compute start x to center both rows
+TOTAL_ROW_W = 4 * BOX_W + 3 * GAP_X  # = 13.15
+START_X = (FIG_W - TOTAL_ROW_W) / 2
+
+
+def get_box_rect(stage_idx):
+    """Return (x, y, w, h) for a stage box."""
+    row = 0 if stage_idx < 4 else 1
+    col = stage_idx % 4
+    x = START_X + col * (BOX_W + GAP_X)
+    y = ROW1_Y if row == 0 else ROW2_Y
+    return x, y, BOX_W, BOX_H
+
+
+def get_box_center(stage_idx):
+    x, y, w, h = get_box_rect(stage_idx)
+    return x + w / 2, y + h / 2
+
+
+def get_box_edge(stage_idx, side):
+    """Get midpoint of a box edge. side: 'left','right','top','bottom'."""
+    x, y, w, h = get_box_rect(stage_idx)
+    cx, cy = x + w / 2, y + h / 2
+    if side == "left":
+        return x, cy
+    elif side == "right":
+        return x + w, cy
+    elif side == "top":
+        return cx, y + h
+    elif side == "bottom":
+        return cx, y
+
+
+# ── Create figure ────────────────────────────────────────
+fig, ax = plt.subplots(figsize=(FIG_W, FIG_H))
 fig.patch.set_facecolor(BG)
 ax.set_facecolor(BG)
-ax.set_xlim(0, 18)
-ax.set_ylim(0, 8)
+ax.set_xlim(0, FIG_W)
+ax.set_ylim(0, FIG_H)
 ax.set_aspect("equal")
 ax.axis("off")
 
-BOX_W = 3.2
-BOX_H = 1.6
-GAP_X = 0.6
-ROW1_Y = 5.2
-ROW2_Y = 1.8
-START_X = 0.5
+# ── Draw stage boxes ─────────────────────────────────────
+for i, (name, desc, color) in enumerate(STAGES):
+    x, y, w, h = get_box_rect(i)
 
-def box_center(row, col):
-    """Return (cx, cy) for a stage box at given row (0=top, 1=bottom) and column (0-3)."""
-    cx = START_X + col * (BOX_W + GAP_X) + BOX_W / 2
-    cy = ROW1_Y + BOX_H / 2 if row == 0 else ROW2_Y + BOX_H / 2
-    return cx, cy
-
-def box_left(row, col):
-    cx, cy = box_center(row, col)
-    return cx - BOX_W / 2, cy
-
-def box_right(row, col):
-    cx, cy = box_center(row, col)
-    return cx + BOX_W / 2, cy
-
-def box_bottom(row, col):
-    cx, cy = box_center(row, col)
-    return cx, cy - BOX_H / 2
-
-def box_top(row, col):
-    cx, cy = box_center(row, col)
-    return cx, cy + BOX_H / 2
-
-# ── Draw Title ──────────────────────────────────────────────
-ax.text(9, 7.65, "Argos VSP Pipeline Architecture", ha="center", va="center",
-        fontsize=20, fontweight="bold", color=WHITE)
-ax.text(9, 7.25, "8-Stage Visual Speech Processing Pipeline", ha="center", va="center",
-        fontsize=12, color=LGRAY)
-
-# ── Draw Boxes ──────────────────────────────────────────────
-for i, (name, desc) in enumerate(STAGES):
-    row = 0 if i < 4 else 1
-    col = i if i < 4 else i - 4
-    cx, cy = box_center(row, col)
-    x0 = cx - BOX_W / 2
-    y0 = cy - BOX_H / 2
-
-    color = STAGE_COLORS[i]
-    box = FancyBboxPatch((x0, y0), BOX_W, BOX_H, boxstyle="round,pad=0.18",
-                         facecolor=color, edgecolor=WHITE, linewidth=2,
-                         alpha=0.92, zorder=3)
+    # Box
+    box = FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.15",
+                         facecolor=color, edgecolor=WHITE, linewidth=1.8,
+                         alpha=0.90, zorder=3)
     ax.add_patch(box)
 
-    # Stage name (upper portion)
-    ax.text(cx, cy + 0.2, name, ha="center", va="center",
+    cx, cy = x + w / 2, y + h / 2
+
+    # Stage name
+    ax.text(cx, cy + 0.22, name, ha="center", va="center",
             fontsize=12, fontweight="bold", color=WHITE, zorder=4)
-    # Description (lower portion)
-    ax.text(cx, cy - 0.35, desc, ha="center", va="center",
+    # Description
+    ax.text(cx, cy - 0.30, desc, ha="center", va="center",
             fontsize=8.5, color=WHITE, alpha=0.85, zorder=4)
 
-# ── Draw Arrows ─────────────────────────────────────────────
-arrow_kw = dict(arrowstyle="-|>", color=ARROW_C, lw=2.2, shrinkA=4, shrinkB=4)
 
-# Row 1: left to right (stages 0->1->2->3)
+# ── Draw arrows ──────────────────────────────────────────
+arrow_kw = dict(arrowstyle="-|>", color=ARROW_C, lw=2.5,
+                shrinkA=8, shrinkB=8, mutation_scale=18)
+
+
+def draw_arrow(from_xy, to_xy, **kw):
+    merged = {**arrow_kw, **kw}
+    ax.annotate("", xy=to_xy, xytext=from_xy, arrowprops=merged, zorder=2)
+
+
+def draw_flow_label(x, y, text):
+    ax.text(x, y, text, ha="center", va="center",
+            fontsize=7.5, color=LGRAY, family="monospace",
+            bbox=dict(boxstyle="round,pad=0.15", facecolor=DGRAY,
+                      edgecolor="none", alpha=0.85),
+            zorder=5)
+
+
+# Row 1: stages 0→1→2→3
 for col in range(3):
-    x1, y1 = box_right(0, col)
-    x2, y2 = box_left(0, col + 1)
-    ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
-                arrowprops=arrow_kw, zorder=2)
-    # Flow label
-    mx = (x1 + x2) / 2
-    my = y1 + 0.45
-    ax.text(mx, my, FLOW_LABELS[col + 1], ha="center", va="bottom",
-            fontsize=8, color=LGRAY, family="monospace",
-            bbox=dict(boxstyle="round,pad=0.15", facecolor=DGRAY, edgecolor="none", alpha=0.8))
+    fr = get_box_edge(col, "right")
+    to = get_box_edge(col + 1, "left")
+    draw_arrow(fr, to)
+    # Flow label above arrow
+    mx = (fr[0] + to[0]) / 2
+    my = fr[1] + 0.55
+    draw_flow_label(mx, my, FLOW_LABELS[col + 1])
 
-# Input label on far left of row 1
-x_in, y_in = box_left(0, 0)
-ax.text(x_in - 0.15, y_in + 0.45, FLOW_LABELS[0], ha="right", va="bottom",
-        fontsize=8, color=LGRAY, family="monospace",
-        bbox=dict(boxstyle="round,pad=0.15", facecolor=DGRAY, edgecolor="none", alpha=0.8))
+# Input label before stage 0
+ix, iy = get_box_edge(0, "left")
+ax.annotate("", xy=(ix - 0.05, iy), xytext=(ix - 0.8, iy),
+            arrowprops=dict(arrowstyle="-|>", color=ARROW_C, lw=2.5,
+                            shrinkB=6, mutation_scale=18), zorder=2)
+draw_flow_label(ix - 1.15, iy + 0.55, FLOW_LABELS[0])
+ax.text(ix - 1.15, iy, "Video\nInput", ha="center", va="center",
+        fontsize=9, fontweight="bold", color=WHITE, zorder=4)
 
-# Connecting arrow: row 1 col 3 bottom -> row 2 col 0 top (stages 3->4)
-x_top_r, _ = box_right(0, 3)
-_, y_top_b = box_bottom(0, 3)
-x_bot_r, _ = box_right(1, 3)
-_, y_bot_t = box_top(1, 3)
-# Draw a bend: go down from stage 4 (row1 col3) to stage 5 (row2 col3), then left
-# Actually stage 4 is index 3 (row0 col3), stage 5 is index 4 (row1 col0)
-# The flow goes: row1 col3 -> row2 col0 (wrapping around)
-# Better: draw an arrow going down from row1 col3 bottom to row2 col3 top
-# Then row2 goes right-to-left: col3->col2->col1->col0
-# Wait, the task says 2 rows of 4, but the flow should still be logical.
-# Let me place row2 left-to-right as well: stages 5-8
-# and connect row1 col3 bottom -> row2 col0 top via a curved path.
+# Connector: stage 3 (row1 col3) → stage 4 (row2 col0)
+# Elbow: right edge of stage 3 → down → left → top of stage 4
+r3_bottom = get_box_edge(3, "bottom")
+s4_top = get_box_edge(4, "top")
 
-# Vertical + horizontal connector from stage 4 (row1,col3) to stage 5 (row2,col0)
-cx3_top, _ = box_center(0, 3)
-_, cy3_bot = box_bottom(0, 3)
-cx0_bot, _ = box_center(1, 0)
-_, cy0_top = box_top(1, 0)
+# Three-segment elbow path using plot lines + one arrow at the end
+elbow_right_x = r3_bottom[0] + 0.8   # go slightly right of stage 4
+mid_y = (r3_bottom[1] + s4_top[1]) / 2
 
-# Draw path: down from stage 4, then left to stage 5
-mid_y = (cy3_bot + cy0_top) / 2
-# Segment 1: vertical down from stage 4
-ax.annotate("", xy=(cx3_top, mid_y), xytext=(cx3_top, cy3_bot - 0.05),
-            arrowprops=dict(arrowstyle="-", color=ARROW_C, lw=2.2), zorder=2)
-# Segment 2: horizontal left
-ax.annotate("", xy=(cx0_bot, mid_y), xytext=(cx3_top, mid_y),
-            arrowprops=dict(arrowstyle="-", color=ARROW_C, lw=2.2), zorder=2)
-# Segment 3: vertical down into stage 5
-ax.annotate("", xy=(cx0_bot, cy0_top + 0.05), xytext=(cx0_bot, mid_y),
-            arrowprops=dict(arrowstyle="-|>", color=ARROW_C, lw=2.2, shrinkB=4), zorder=2)
+# Vertical segment from bottom of stage 3
+ax.plot([r3_bottom[0], r3_bottom[0]], [r3_bottom[1] - 0.08, mid_y],
+        color=ARROW_C, lw=2.5, solid_capstyle="round", zorder=2)
+# Horizontal segment across to above stage 4
+ax.plot([r3_bottom[0], s4_top[0]], [mid_y, mid_y],
+        color=ARROW_C, lw=2.5, solid_capstyle="round", zorder=2)
+# Arrow down into stage 4
+ax.annotate("", xy=(s4_top[0], s4_top[1] + 0.08),
+            xytext=(s4_top[0], mid_y),
+            arrowprops=dict(arrowstyle="-|>", color=ARROW_C, lw=2.5,
+                            shrinkA=0, shrinkB=6, mutation_scale=18),
+            zorder=2)
+# Flow label on connector
+draw_flow_label((r3_bottom[0] + s4_top[0]) / 2, mid_y + 0.3, FLOW_LABELS[4])
 
-# Flow label on the connector
-ax.text((cx3_top + cx0_bot) / 2, mid_y + 0.25, FLOW_LABELS[4], ha="center", va="bottom",
-        fontsize=8, color=LGRAY, family="monospace",
-        bbox=dict(boxstyle="round,pad=0.15", facecolor=DGRAY, edgecolor="none", alpha=0.8))
-
-# Row 2: left to right (stages 4->5->6->7, i.e. row2 col0->1->2->3)
+# Row 2: stages 4→5→6→7
 for col in range(3):
-    x1, y1 = box_right(1, col)
-    x2, y2 = box_left(1, col + 1)
-    ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
-                arrowprops=arrow_kw, zorder=2)
-    # Flow label
-    mx = (x1 + x2) / 2
-    my = y1 + 0.45
-    ax.text(mx, my, FLOW_LABELS[col + 5], ha="center", va="bottom",
-            fontsize=8, color=LGRAY, family="monospace",
-            bbox=dict(boxstyle="round,pad=0.15", facecolor=DGRAY, edgecolor="none", alpha=0.8))
+    fr = get_box_edge(4 + col, "right")
+    to = get_box_edge(4 + col + 1, "left")
+    draw_arrow(fr, to)
+    mx = (fr[0] + to[0]) / 2
+    my = fr[1] + 0.55
+    draw_flow_label(mx, my, FLOW_LABELS[col + 5])
 
-# Output label on far right of row 2
-x_out, y_out = box_right(1, 3)
-ax.text(x_out + 0.15, y_out + 0.45, FLOW_LABELS[7], ha="left", va="bottom",
-        fontsize=8, color=LGRAY, family="monospace",
-        bbox=dict(boxstyle="round,pad=0.15", facecolor=DGRAY, edgecolor="none", alpha=0.8))
+# Output label after stage 7
+ox, oy = get_box_edge(7, "right")
+ax.annotate("", xy=(ox + 0.8, oy), xytext=(ox + 0.05, oy),
+            arrowprops=dict(arrowstyle="-|>", color=ARROW_C, lw=2.5,
+                            shrinkA=6, mutation_scale=18), zorder=2)
+draw_flow_label(ox + 1.15, oy + 0.55, FLOW_LABELS[7])
+ax.text(ox + 1.15, oy, "Reports\n& Videos", ha="center", va="center",
+        fontsize=9, fontweight="bold", color=WHITE, zorder=4)
 
-# ── Component Labels (below row 2) ─────────────────────────
+# ── Component brackets (below row 2) ────────────────────
+COMPONENTS = [
+    ("auto_avsr",  2, 3),   # stages 3-4 (Mouth Crop + LRS3 Convert)
+    ("av_hubert",  4, 5),   # stages 5-6 (Manifests + K-means)
+    ("VSP-LLM",   6, 6),   # stage 7 (LLM Decode)
+]
+
 for label, s_start, s_end in COMPONENTS:
-    # These indices are 0-based within the full 8 stages
-    # Row 2 stages are indices 4-7, so col = idx - 4
-    col_start = s_start - 4 if s_start >= 4 else s_start
-    col_end = s_end - 4 if s_end >= 4 else s_end
-    row = 1 if s_start >= 4 else 0
+    x_left, y_left, _, _ = get_box_rect(s_start)
+    x_right, _, w_right, _ = get_box_rect(s_end)
+    x_right_edge = x_right + w_right
 
-    x_left, _ = box_left(row, col_start)
-    x_right, _ = box_right(row, col_end)
-    _, y_bottom = box_bottom(row, col_start)
-
-    bracket_y = y_bottom - 0.35
+    row = 0 if s_start < 4 else 1
+    _, box_y, _, _ = get_box_rect(s_start)
+    bracket_y = box_y - 0.3
     label_y = bracket_y - 0.35
 
-    # Draw bracket
-    ax.plot([x_left + 0.3, x_left + 0.3], [bracket_y + 0.15, bracket_y],
-            color=LGRAY, lw=1.5, alpha=0.7)
-    ax.plot([x_left + 0.3, x_right - 0.3], [bracket_y, bracket_y],
-            color=LGRAY, lw=1.5, alpha=0.7)
-    ax.plot([x_right - 0.3, x_right - 0.3], [bracket_y + 0.15, bracket_y],
-            color=LGRAY, lw=1.5, alpha=0.7)
+    # Draw U-bracket
+    bx_l = x_left + 0.2
+    bx_r = x_right_edge - 0.2
+    ax.plot([bx_l, bx_l], [bracket_y + 0.15, bracket_y],
+            color=LGRAY, lw=1.2, alpha=0.6)
+    ax.plot([bx_l, bx_r], [bracket_y, bracket_y],
+            color=LGRAY, lw=1.2, alpha=0.6)
+    ax.plot([bx_r, bx_r], [bracket_y + 0.15, bracket_y],
+            color=LGRAY, lw=1.2, alpha=0.6)
 
-    # Label
-    ax.text((x_left + x_right) / 2, label_y, label, ha="center", va="top",
-            fontsize=10, fontweight="bold", color=LGRAY, family="monospace")
+    ax.text((bx_l + bx_r) / 2, label_y, label, ha="center", va="top",
+            fontsize=9.5, fontweight="bold", color=LGRAY, family="monospace")
 
-# ── Legend ──────────────────────────────────────────────────
+# ── Legend ────────────────────────────────────────────────
 legend_items = [
     (TEAL,  "Preprocessing"),
-    (GREEN, "Core Processing"),
-    (GOLD,  "LLM Decode"),
-    (CORAL, "Output"),
+    (GREEN, "Feature Processing"),
+    (GOLD,  "LLM Inference"),
+    (CORAL, "Output Generation"),
 ]
+legend_y = 0.2
+legend_start_x = (FIG_W - len(legend_items) * 3.5) / 2
 for i, (color, label) in enumerate(legend_items):
-    rx = 1.0 + i * 3.8
-    ry = 0.15
-    box = FancyBboxPatch((rx, ry), 0.35, 0.35, boxstyle="round,pad=0.04",
+    rx = legend_start_x + i * 3.5
+    box = FancyBboxPatch((rx, legend_y), 0.3, 0.3, boxstyle="round,pad=0.04",
                          facecolor=color, edgecolor=WHITE, linewidth=1, alpha=0.9)
     ax.add_patch(box)
-    ax.text(rx + 0.5, ry + 0.175, label, va="center", fontsize=9, color=LGRAY,
-            fontweight="bold")
+    ax.text(rx + 0.45, legend_y + 0.15, label, va="center", fontsize=8.5,
+            color=LGRAY, fontweight="bold")
 
-plt.tight_layout()
-fig.savefig(OUTPUT, dpi=200, bbox_inches="tight", facecolor=BG)
+# ── Save ─────────────────────────────────────────────────
+plt.tight_layout(pad=0.3)
+for out in [OUTPUT1, OUTPUT2]:
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=200, bbox_inches="tight", facecolor=BG)
+    print(f"Saved pipeline diagram: {out}")
 plt.close(fig)
-print(f"Saved pipeline diagram: {OUTPUT}")
