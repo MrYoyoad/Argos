@@ -813,3 +813,120 @@
     All segment IDs map to files: \{segment\_id\}\_with\_hyp.mp4.
   }
 \end{frame}
+
+% ----------------------------------------------------------
+% A16: LLM Judge x IS Tier Agreement
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{A16: LLM Judge $\times$ IS Tier Agreement}
+  {\small Full 3$\times$5 breakdown of LLM Judge (Y/P/N) vs IS tier:}
+
+  \vspace{6pt}
+
+  \centering
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    \textbf{LLM} & \textbf{Failed} & \textbf{Poor} & \textbf{Fair} & \textbf{Good} & \textbf{Excellent} \\
+     & \textbf{(0--1)} & \textbf{(1--2)} & \textbf{(2--3)} & \textbf{(3--4)} & \textbf{(4--5)} \\
+    \midrule
+    \textbf{Y} & 0 & 2 & 17 & 100 & \keyword{226} \\
+    \textbf{P} & 5 & 81 & \keyword{272} & 218 & 50 \\
+    \textbf{N} & \alert{234} & \alert{253} & 36 & 3 & 0 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{8pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Perfect Alignment at Extremes}
+        {\scriptsize Excellent tier: 226/276 = \keyword{82\%} Y\\
+        Failed tier: 234/239 = \keyword{98\%} N\\
+        No Excellent segments judged N.\\
+        No Failed segments judged Y.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Fair Tier: The Battleground}
+        {\scriptsize 272/325 = \keyword{84\%} Partial\\
+        Only 17/325 (5\%) judged Y.\\
+        This is where meaning exists\\
+        but word accuracy is insufficient.}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \note{
+    Q\&A backup for LLM Judge slide. The 3x5 table is the most granular agreement view.
+    Near-perfect alignment at extremes: Excellent = Y (82\%), Failed = N (98\%).
+    The Fair tier (IS 2.0--3.0) is where IS and LLM judgment diverge most: 84\% Partial.
+    This confirms IS 3.0 is a meaningful boundary --- segments below it have meaning
+    but not enough word accuracy for full confidence.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% A17: Context Evaluation --- Transition Matrix
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{A17: Context Evaluation --- Transition Matrix}
+  \twocol{0.52}{
+    {\small Full transition matrix (blind $\rightarrow$ context-aware):}
+
+    \vspace{6pt}
+
+    \centering
+    \begin{tabular}{@{}lccc@{}}
+      \toprule
+      \textbf{Blind$\rightarrow$Context} & \textbf{$\rightarrow$Y} & \textbf{$\rightarrow$P} & \textbf{$\rightarrow$N} \\
+      \midrule
+      \textbf{Y} (345) & 207 & \alert{138} & 0 \\
+      \textbf{P} (626) & 17 & 517 & \alert{92} \\
+      \textbf{N} (526) & 1 & 50 & 475 \\
+      \bottomrule
+    \end{tabular}
+
+    \vspace{6pt}
+
+    {\scriptsize
+    \alert{230 downgrades} vs 68 upgrades (net $-$162).\\
+    80.1\% stable (1,199 pairs).\\
+    Dominant transition: Y$\rightarrow$P (\alert{138 cases}).\\
+    N$\rightarrow$Y: \textbf{only 1 case} across all 1,497 pairs.\\[4pt]
+    Cross-condition reliability: 80.0\%\\
+    (vs 86.7\% blind intra-rater).\\
+    6.7pp gap = genuine mode effect, not noise.}
+  }{0.45}{
+    {\small\textbf{Per-Topic Y+P Deltas:}}
+
+    \vspace{4pt}
+
+    {\scriptsize
+    \begin{tabular}{@{}lrc@{}}
+      \toprule
+      \textbf{Topic} & \textbf{$\Delta$ Y+P} \\
+      \midrule
+      DIY/Home & \textcolor{ArgosGreen}{+7.4pp} \\
+      Religion & \textcolor{ArgosGreen}{+5.9pp} \\
+      Sports & \textcolor{ArgosGreen}{+3.2pp} \\
+      Politics & +2.9pp \\
+      Business & 0.0pp \\
+      Technology & \alert{$-$3.0pp} \\
+      Education & \alert{$-$4.7pp} \\
+      Cooking & \alert{$-$5.1pp} \\
+      Medical & \alert{$-$5.1pp} \\
+      \bottomrule
+    \end{tabular}}
+
+    \vspace{4pt}
+    \notetext{DIY, Religion, Sports \textit{benefit} from context ---\\topic knowledge accepts phonetic approximations.\\
+    Tech, Cooking, Medical \textit{decline} ---\\domain terms raise expectations.}
+  }
+
+  \note{
+    Q\&A backup for context evaluation slide.
+    Full transition matrix: 230 downgrades vs 68 upgrades.
+    DIY/Home benefits most (+7.4pp) because topic knowledge lets the judge
+    accept phonetically-approximate but topically-valid hypotheses.
+    Technology, Cooking, Medical decline because domain vocabulary raises expectations.
+    Context is a quality tool, not a rescue tool.
+  }
+\end{frame}

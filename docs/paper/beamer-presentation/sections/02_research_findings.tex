@@ -18,6 +18,56 @@
 % ==========================================================
 
 % ----------------------------------------------------------
+% Our Evaluation Dataset
+% ----------------------------------------------------------
+\begin{frame}{Our Evaluation Dataset}
+  \twocol{0.52}{
+    \metricbox{1,497}{Segments from Diverse YouTube Videos}
+
+    \vspace{4pt}
+
+    \begin{itemize}\small
+      \item \textbf{100+ source videos} across 11 topic categories
+      \item Segment length: 5--40 words, median $\sim$15
+      \item Visual quality ranges from professional (news)\\
+            to casual (vlogs, cooking shows)
+      \item \alert{No curation, no controlled lighting,\\no frontal face requirement}
+    \end{itemize}
+
+    \vspace{4pt}
+    \notetext{Each segment has a human-transcribed reference\\for ground truth comparison.}
+  }{0.45}{
+    \begin{block}{\small 11 Topic Categories}
+      {\scriptsize
+      \begin{tabular}{@{}lr@{}}
+        Business/Finance & 86 \\
+        Education & 204 \\
+        Entertainment & 188 \\
+        Food/Cooking & 112 \\
+        Health/Fitness & 98 \\
+        DIY/Home & 63 \\
+        News/Politics & 149 \\
+        Science/Tech & 167 \\
+        Sports & 74 \\
+        Travel/Vlogs & 121 \\
+        Other & 135 \\
+      \end{tabular}}
+    \end{block}
+
+    \vspace{4pt}
+    \notetext{Deliberately diverse --- not optimized\\for lip-reading success.}
+  }
+
+  \note{
+    1,497 segments from 100+ YouTube videos. 11 topic categories from business to DIY.
+    Segment length varies from 5 to 40 words, median around 15.
+    Key point: this dataset was NOT curated for success. No controlled lighting,
+    no frontal face requirement, no professional speakers.
+    This is as close to ``real-world'' as you can get without a field deployment.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % The Reality Gap
 % ----------------------------------------------------------
 \begin{frame}{The Reality Gap}
@@ -43,6 +93,57 @@
     Only 11.4\% ``usable'' by WER standards.
     But WER dramatically overstates failure --- set up IS metric reveal.
     Hook: ``or do they?'' --- transitions to the IS metric.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Word Error Rate: The Standard Metric
+% ----------------------------------------------------------
+\begin{frame}{Word Error Rate: The Standard Metric}
+  \twocol{0.52}{
+    \begin{block}{\small WER Formula}
+      $$\text{WER} = \frac{S + I + D}{N} \times 100\%$$
+      {\scriptsize where $S$ = substitutions, $I$ = insertions,\\
+      $D$ = deletions, $N$ = reference word count}
+    \end{block}
+
+    \vspace{4pt}
+
+    \begin{exampleblock}{\small Worked Example}
+      {\scriptsize
+      \textbf{Reference:} ``the cat sat on the mat'' (6 words)\\
+      \textbf{Hypothesis:} ``a cat sat on a mat''\\[2pt]
+      2 substitutions (the$\rightarrow$a), 0 insertions, 0 deletions\\
+      WER = $\frac{2}{6}$ = \keyword{33\%}}
+    \end{exampleblock}
+  }{0.45}{
+    \textbf{What WER captures:}
+    \begin{itemize}\small
+      \item Total word-level accuracy
+      \item Industry standard for ASR
+      \item Easy to compute and compare
+    \end{itemize}
+
+    \vspace{6pt}
+
+    \textbf{\textcolor{ArgosRed}{What WER misses:}}
+    \begin{itemize}\small
+      \item \alert{Meaning preservation}
+      \item Entity importance (names vs ``the'')
+      \item Phonetic plausibility
+      \item Output length pathologies
+    \end{itemize}
+
+    \vspace{4pt}
+    \notetext{WER $<$ 30\% generally considered ``usable''\\in speech recognition.}
+  }
+
+  \note{
+    Brief WER primer for non-specialists. WER is the standard metric in speech recognition.
+    Simple formula: count word-level errors (substitutions, insertions, deletions) divided by
+    reference length. WER under 30\% is generally considered ``usable.''
+    BUT: WER treats all errors equally. Changing ``the'' to ``a'' counts the same as
+    changing ``admiral'' to ``animal.'' This matters enormously for lip reading.
   }
 \end{frame}
 
@@ -125,6 +226,96 @@
     IS is a composite 0--5 metric combining 6 signals. Designed by Claude at development
     time, runs as pure deterministic Python at evaluation time. No LLM is called per
     sample. IS >= 3.0 means ``properly captured.''
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Design Philosophy: Deterministic, Not AI
+% ----------------------------------------------------------
+\begin{frame}{Design Philosophy: Deterministic, Not AI}
+  \twocol{0.50}{
+    \textbf{\textcolor{ArgosOrange}{Option A: LLM Per Sample}}
+
+    \vspace{4pt}
+
+    \begin{itemize}\small
+      \item Call Claude/GPT-4 for each segment
+      \item \alert{Expensive} (\$0.01--0.05 per sample)
+      \item Non-reproducible (temperature, version drift)
+      \item Slow (API latency per evaluation)
+    \end{itemize}
+  }{0.47}{
+    \textbf{\textcolor{ArgosTeal}{Option B: Design-Time LLM (Our Approach)}}
+
+    \vspace{4pt}
+
+    \begin{itemize}\small
+      \item Claude \textbf{designed the rubric} at development time
+      \item Selected 6 signals, weights, tier boundaries
+      \item Distilled into deterministic Python code
+      \item \keyword{Runtime: pure math, \$0, instant}
+      \item Reproducible, decomposable, auditable
+    \end{itemize}
+  }
+
+  \vspace{6pt}
+  \centering
+  {\small Validated: \keyword{88.6\%} agreement with full LLM judge (r = 0.85 with blind evaluation).}
+
+  \note{
+    Two approaches to quality evaluation. We chose Option B: use Claude at design time
+    to create the rubric, then encode it into deterministic code.
+    Result: IS pipeline is pure Python math --- \$0 cost, runs in seconds, fully reproducible.
+    Validated at 88.6\% agreement with full LLM-as-a-Judge evaluation (r = 0.85).
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Three Dimensions of Quality
+% ----------------------------------------------------------
+\begin{frame}{Three Dimensions of Quality}
+  \vspace{2pt}
+  {\small PCA analysis reveals the 6 IS signals collapse into \keyword{3 independent dimensions}:}
+
+  \vspace{8pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.30\textwidth}
+      \centering
+      \metricbox{60\%}{Word Accuracy}
+      \vspace{4pt}
+      {\scriptsize WER, WWER, Phonetic\\(all r $>$ 0.79 with each other)\\[4pt]
+      ``Did it get the words right?''\\
+      Dominated by visual encoder quality.}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \centering
+      \metricbox{29\%}{Meaning Preservation}
+      \vspace{4pt}
+      {\scriptsize Semantic Similarity\\(partially independent)\\[4pt]
+      ``Does it mean the same thing?''\\
+      The tiebreaker for borderline cases.}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \centering
+      \metricbox{9\%}{Output Sanity}
+      \vspace{4pt}
+      {\scriptsize Length Ratio\\(largely independent)\\[4pt]
+      ``Is the output the right length?''\\
+      Catches hallucination and truncation.}
+    \end{column}
+  \end{columns}
+
+  \vspace{8pt}
+  \centering
+  \notetext{Next: the 6 individual signals and how they combine.}
+
+  \note{
+    Before diving into 6 signals, the audience needs the big picture.
+    PCA reveals 3 independent dimensions: word accuracy (60\%), meaning (29\%), sanity (9\%).
+    Word accuracy is dominated by the visual encoder --- this is why it is the bottleneck.
+    Meaning preservation is the tiebreaker for borderline cases.
+    Output sanity catches pathological outputs but has low discriminative power.
   }
 \end{frame}
 
@@ -303,6 +494,58 @@
 \end{frame}
 
 % ----------------------------------------------------------
+% Domain Mismatch: A Closer Look
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{Domain Mismatch: A Closer Look}
+  \twocol{0.55}{
+    {\small Performance varies dramatically by topic:}
+
+    \vspace{4pt}
+
+    {\scriptsize
+    \begin{tabular}{@{}lccc@{}}
+      \toprule
+      \textbf{Topic} & \textbf{IS} & \textbf{Captured} & \textbf{Judge N\%} \\
+      \midrule
+      Business/Finance & \tiergood{3.08} & 57\% & 23.9\% \\
+      Education & \tierfair{2.67} & 43\% & 23.3\% \\
+      Sports & \tierfair{2.55} & 39\% & 25.8\% \\
+      Entertainment & \tierfair{2.41} & 36\% & 39.1\% \\
+      Technology & \tierfair{2.49} & 38\% & 28.0\% \\
+      Food/Cooking & \tierfair{2.45} & 38\% & 29.9\% \\
+      DIY/Home & \tierpoor{2.13} & 30\% & 51.9\% \\
+      \bottomrule
+    \end{tabular}}
+
+    \vspace{4pt}
+    \notetext{LLM trained on TED-talk-style formal speech.\\Casual/technical vocabulary is out-of-domain.}
+  }{0.42}{
+    \alertmetric{19\%}{Domain Vocabulary Confusion}
+
+    \vspace{4pt}
+
+    {\small$\sim$284 segments show systematic vocabulary confusion where a \keyword{topic label at decode time} would help.}
+
+    \vspace{6pt}
+
+    {\scriptsize
+    \textbf{Why Business/Finance works:}\\
+    Formal vocabulary matches LLM training data.\\[4pt]
+    \textbf{Why DIY/Home fails:}\\
+    Casual speech, slang, technical jargon\\
+    are alien to the TED-talk-trained model.}
+  }
+
+  \note{
+    Full topic analysis showing why domain matters. Business/Finance at 57\% captured
+    vs DIY/Home at 30\%. The LLM was trained on TED-talk-style formal speech.
+    ~284 segments (19\%) show domain vocabulary confusion --- the model substitutes
+    domain-appropriate words with generic TED-talk vocabulary.
+    This directly motivates topic context injection in the roadmap.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Named Entity Accuracy
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{Named Entity Accuracy}
@@ -410,6 +653,63 @@
 % ==========================================================
 % PART D: CAN WE TUNE IT?
 % ==========================================================
+
+% ----------------------------------------------------------
+% What Are Decode Parameters?
+% ----------------------------------------------------------
+\begin{frame}{What Are Decode Parameters?}
+  \vspace{2pt}
+  {\small Before showing our experiments --- a brief primer on what we can control:}
+
+  \vspace{6pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Beam Size}
+        {\scriptsize How many candidate sequences the model considers simultaneously.\\
+        \keyword{Wider beam = more thorough search} but slower.\\
+        Tested: 5 $\rightarrow$ 50 candidates.}
+      \end{block}
+
+      \vspace{2pt}
+
+      \begin{block}{\small Length Penalty}
+        {\scriptsize Bias toward longer or shorter output.\\
+        Negative = encourages brevity (risk: empty output).\\
+        Positive = encourages length (risk: hallucination).\\
+        Tested: $-$0.5 $\rightarrow$ 2.0.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Temperature}
+        {\scriptsize Controls randomness in word selection.\\
+        0 = always pick most likely word.\\
+        $>$1 = more creative/random.\\
+        Tested: 0.3 $\rightarrow$ 1.5.}
+      \end{block}
+
+      \vspace{2pt}
+
+      \begin{block}{\small Sampling vs Greedy}
+        {\scriptsize Greedy: always pick best word.\\
+        Nucleus: sample from top candidates.\\
+        Trade-off: diversity vs reliability.}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \vspace{6pt}
+  \centering
+  {\textcolor{ArgosTeal}{\textit{``Like adjusting a stereo's settings --- you can change the sound,\\but you cannot change the recording.''}}}
+
+  \note{
+    Brief primer for non-specialists before the tuning experiments.
+    Four key parameters: beam size (search breadth), length penalty (output length bias),
+    temperature (randomness), and sampling strategy (greedy vs probabilistic).
+    The stereo analogy captures the key insight: these parameters cannot fix fundamental
+    visual encoder limitations, only adjust how the LLM uses the visual information.
+  }
+\end{frame}
 
 % ----------------------------------------------------------
 % Why We Tried Tuning (Motivation)
@@ -691,6 +991,126 @@
 \end{frame}
 
 % ----------------------------------------------------------
+% LLM-as-a-Judge: Gold Standard
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{LLM-as-a-Judge: Gold Standard}
+  \twocol{0.50}{
+    \begin{block}{\small Protocol}
+      {\scriptsize Claude Opus evaluated all \textbf{1,497 pairs} blind:\\
+      Y = meaning conveyed, P = partial, N = meaning lost.\\[2pt]
+      Conservative tie-breaking: Y vs P $\rightarrow$ P; P vs N $\rightarrow$ N.\\
+      70 empty outputs auto-classified as N.}
+    \end{block}
+
+    \vspace{4pt}
+
+    \begin{block}{\small Results}
+      {\scriptsize
+      \begin{tabular}{@{}lcr@{}}
+        \textbf{Judgment} & \textbf{Count} & \textbf{Rate} \\
+        \midrule
+        Y (meaning conveyed) & 345 & \keyword{23.0\%} \\
+        P (partial) & 626 & 41.8\% \\
+        N (meaning lost) & 526 & 35.1\% \\
+        \midrule
+        \textbf{Y+P} & \textbf{971} & \keyword{64.9\%} \\
+      \end{tabular}}
+    \end{block}
+
+    \vspace{4pt}
+    {\scriptsize Intra-rater reliability: \keyword{86.7\%} exact (30 duplicates).}
+  }{0.47}{
+    \begin{exampleblock}{\small IS $\leftrightarrow$ LLM Judge Correlation}
+      {\scriptsize
+      IS correlates with LLM Judge at \keyword{r = 0.85}\\
+      (Spearman $\rho$ = 0.86).\\[4pt]
+      IS is \textbf{stricter} for full success:\\
+      40\% captured vs 23\% Y.\\[2pt]
+      LLM is \textbf{more generous} for any value:\\
+      65\% Y+P vs 51\% salvage.}
+    \end{exampleblock}
+
+    \vspace{4pt}
+
+    \begin{block}{\small 3$\times$5 Tier Agreement (see A16)}
+      {\scriptsize
+      \begin{tabular}{@{}lccc@{}}
+        & \textbf{Y} & \textbf{P} & \textbf{N} \\
+        \midrule
+        Excellent & 226 & 50 & 0 \\
+        Good & 100 & 218 & 3 \\
+        Fair & 17 & 272 & 36 \\
+        Poor & 2 & 81 & 253 \\
+        Failed & 0 & 5 & 234 \\
+      \end{tabular}\\[2pt]
+      Near-perfect alignment at extremes.}
+    \end{block}
+  }
+
+  \note{
+    LLM-as-a-Judge gold standard: Claude Opus evaluated all 1,497 pairs blind.
+    Y=23\%, P=41.8\%, N=35.1\%, Y+P=64.9\%.
+    IS correlates with LLM Judge at r=0.85. IS is stricter for full success (40\% vs 23\% Y)
+    but LLM is more generous for any useful output (65\% Y+P vs 51\% salvage).
+    3x5 table: near-perfect alignment at extremes (Excellent=Y, Failed=N).
+    Fair tier is where they diverge most: 272 P judgments.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Context-Aware Re-Evaluation
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{What Happens When the Judge Knows the Topic?}
+  \twocol{0.52}{
+    \begin{alertblock}{\small Context Makes the Judge Stricter}
+      {\scriptsize Re-evaluation with topic context inferred from reference text:\\[4pt]
+      \begin{tabular}{@{}lccc@{}}
+        & \textbf{Blind} & \textbf{Context} & \textbf{$\Delta$} \\
+        \midrule
+        Y & 23.0\% & \alert{15.0\%} & $-$8.0pp \\
+        P & 41.8\% & 47.1\% & +5.3pp \\
+        N & 35.1\% & 37.9\% & +2.8pp \\
+        Y+P & 64.9\% & \alert{62.1\%} & $-$2.7pp \\
+      \end{tabular}}
+    \end{alertblock}
+
+    \vspace{4pt}
+
+    {\scriptsize \textbf{Key finding}: Context is a \alert{quality tool, not a rescue tool}.\\
+    Domain knowledge \alert{reveals vocabulary failures} that look\\
+    adequate without context.}
+  }{0.45}{
+    \begin{block}{\small Transition Matrix}
+      {\scriptsize
+      \begin{tabular}{@{}lccc@{}}
+        \textbf{Blind$\rightarrow$} & \textbf{$\rightarrow$Y} & \textbf{$\rightarrow$P} & \textbf{$\rightarrow$N} \\
+        \midrule
+        Y & 207 & \alert{138} & 0 \\
+        P & 17 & 517 & \alert{92} \\
+        N & 1 & 50 & 475 \\
+      \end{tabular}\\[4pt]
+      \alert{230 downgrades} vs 68 upgrades.\\
+      80.1\% stable (1,199 pairs).\\
+      Dominant: Y$\rightarrow$P (\alert{138 cases}).\\
+      N$\rightarrow$Y: \textbf{only 1 case} across all 1,497.}
+    \end{block}
+
+    \vspace{4pt}
+
+    \notetext{Cross-condition reliability: 80.0\%\\(vs 86.7\% blind intra-rater).}
+  }
+
+  \note{
+    Counterintuitive finding: context makes the judge STRICTER, not lenient.
+    Y drops 8pp, Y+P drops 2.7pp. 230 downgrades vs 68 upgrades.
+    Dominant transition: Y to P (138 cases) --- domain knowledge reveals vocabulary
+    failures that looked adequate without context.
+    Only 1 N-to-Y rescue across all 1,497 pairs.
+    Implication: topic context injection at decode time is both an opportunity and a challenge.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % LLM Salvage: What Metrics Miss
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{LLM Salvage: What Metrics Miss}
@@ -709,10 +1129,14 @@
 
     \metricbox{50.9\%}{+ Expert heuristic (4.5$\times$)}
 
+    \vspace{4pt}
+
+    \successmetric{64.9\%}{LLM Judge Y+P (5.7$\times$)}
+
     \vspace{6pt}
 
     \centering
-    {\small\textit{``Every other segment delivers\\useful information.''}}
+    {\small\textit{``The truth lies between IS (40\%)\\and LLM Judge (65\%).''}}
   }{0.55}{
     \begin{block}{\small The 165 Salvaged Segments}
       {\scriptsize
@@ -749,6 +1173,46 @@
 % ==========================================================
 % PART F: EXAMPLES & WRAP-UP
 % ==========================================================
+
+% ----------------------------------------------------------
+% What Good Looks Like
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{What Good Looks Like (IS Tier 5)}
+  \vspace{2pt}
+  {\small \keyword{276 segments} (18.4\%) scored IS $\geq$ 4.0. The system works on diverse content:}
+
+  \vspace{6pt}
+
+  {\scriptsize
+  \begin{tabular}{@{}p{4cm}p{4cm}cc@{}}
+    \toprule
+    \textbf{Reference} & \textbf{Hypothesis} & \textbf{WER} & \textbf{IS} \\
+    \midrule
+    \cellcolor{ArgosTeal!10} ``next week i will be making my debut'' &
+    ``next week i will be making my debut'' &
+    \tiergood{0\%} & \tiergood{5.00} \\[3pt]
+    \cellcolor{ArgosTeal!10} ``so i have two and a half of these nice pieces'' &
+    ``i have two and a half of these nice pieces'' &
+    11\% & \tiergood{4.73} \\[3pt]
+    \cellcolor{ArgosTeal!10} ``over the last 10 years we have had 8,616 students'' &
+    ``over the last 10 years we have had 1600 students'' &
+    31\% & \tiergood{3.98} \\
+    \bottomrule
+  \end{tabular}}
+
+  \vspace{8pt}
+  \centering
+  {\textcolor{ArgosTeal}{\textbf{These successes prove the architecture is sound.}}\\
+  \textit{The challenge is expanding 18\% to 50\%+.}}
+
+  \note{
+    Show the audience what success looks like before diving into examples.
+    276 segments (18.4\%) scored IS >= 4.0 (Excellent tier).
+    First: perfect word-for-word match. Second: minor function word difference.
+    Third: entity partially captured (8,616 vs 1,600) but structure and meaning intact.
+    Key message: the architecture works. The challenge is making it work more often.
+  }
+\end{frame}
 
 % ----------------------------------------------------------
 % Curated Examples

@@ -5,6 +5,43 @@
 \section{Future Directions}
 
 % ----------------------------------------------------------
+% What We Learned: Key Research Insights
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{What We Learned: Key Research Insights}
+  \vspace{2pt}
+  {\small Five findings that directly inform the improvement roadmap:}
+
+  \vspace{6pt}
+
+  \begin{enumerate}
+    \item \keyword{WER dramatically overstates failure}\\
+          {\scriptsize IS reveals 4$\times$ more useful output (40\% vs 11\%). LLM Judge confirms: 65\% Y+P.}
+    \item \keyword{The visual encoder is the primary bottleneck}\\
+          {\scriptsize Segment rankings stable across all 16 decode configs (r $>$ 0.92).}
+    \item \keyword{Data scarcity limits fine-tuning}\\
+          {\scriptsize 1,273 segments is below the $\sim$1K minimum for LoRA generalization (ICLR 2024).}
+    \item \keyword{Decode parameter tuning has diminishing returns}\\
+          {\scriptsize Best config gained only +0.08 IS. 13 experiments, no breakthrough.}
+    \item \keyword{Domain vocabulary confusion is systematic}\\
+          {\scriptsize $\sim$284 segments (19\%) show confusion where topic labels would help.}
+  \end{enumerate}
+
+  \vspace{4pt}
+  \centering
+  \notetext{Each insight maps to a specific roadmap phase.}
+
+  \note{
+    Transition slide summarizing the five key findings before presenting the roadmap.
+    Each finding directly motivates a specific improvement phase:
+    1. WER overstates -> need IS-based confidence scoring.
+    2. Visual encoder bottleneck -> need data scaling and encoder improvements.
+    3. Data scarcity -> need 20K-50K segments from AVSpeech.
+    4. Tuning limits -> don't invest more in decode parameters.
+    5. Domain confusion -> topic context injection at decode time.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Slide 24: Starting Point Is Better Than WER Says
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{The Starting Point Is Better Than WER Says}
@@ -48,6 +85,54 @@
     Claude heuristic (r=0.934 with IS) finds meaning in 18.3\% of ``failed'' segments.
     Recovery types: good overlap, phonetic bridge, semantic preservation, structure match.
     ``Half the output works. IS + salvage proves it. The starting point is much better than WER says.''
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% The LLM: Context Engine for Visual Ambiguity
+% ----------------------------------------------------------
+\begin{frame}{The LLM: Context Engine for Visual Ambiguity}
+  \twocol{0.52}{
+    \textbf{\textcolor{ArgosTeal}{What the LLM Does}}
+
+    \vspace{4pt}
+
+    \begin{itemize}\small
+      \item Visual encoder outputs a \keyword{probability distribution}\\over phonemes/visemes
+      \item Multiple words match the same lip movements\\
+            {\scriptsize (admiral/animal, mom/bomb, pat/bat)}
+      \item The LLM's job: \textbf{disambiguate}\\using linguistic context
+      \item Better LLM = better disambiguation\\= fewer hallucinations, better entities
+    \end{itemize}
+  }{0.45}{
+    \begin{alertblock}{\small Current: Llama-2-7B (2023)}
+      \begin{itemize}\scriptsize
+        \item 32K vocabulary
+        \item 4K context window
+        \item Trained on web text, not speech
+        \item Limited world knowledge
+      \end{itemize}
+    \end{alertblock}
+
+    \vspace{4pt}
+
+    \begin{exampleblock}{\small Upgrade: Llama 3.1 8B (2024)}
+      \begin{itemize}\scriptsize
+        \item 128K vocabulary (4$\times$)
+        \item 128K context (32$\times$)
+        \item $\approx$ Llama-2-70B quality
+        \item \keyword{Same hidden\_size (4096) = drop-in}
+        \item Setup: \textbf{1--2 hours}
+      \end{itemize}
+    \end{exampleblock}
+  }
+
+  \note{
+    Why the LLM matters: it disambiguates visual ambiguity using linguistic context.
+    Current Llama-2-7B has limited vocabulary and world knowledge.
+    Llama 3.1 8B is a drop-in replacement (same hidden dimension 4096).
+    4x vocabulary, 32x context window, quality approaching Llama-2-70B.
+    Setup requires only 1-2 hours: swap model files, retrain projection layer.
   }
 \end{frame}
 
@@ -102,9 +187,13 @@
   \twocol{0.52}{
     \phasebox{Phase 1}{Confidence Scoring}{%
       IS already proves 40\% is good.\\
-      Now extract \keyword{beam scores} to flag it automatically.\\[3pt]
-      No additional inference needed --- scores already exist\\
-      inside the decode process.
+      Beam search already computes \keyword{probability scores}\\
+      for each hypothesis during decode.\\[3pt]
+      Confidence = attach these probabilities to each output.\\
+      Users can \keyword{trust high-confidence} segments,\\
+      flag low-confidence for review.\\[3pt]
+      No additional inference --- just exposing scores\\
+      that already exist inside the decode process.
     }{2--4 hours effort}
 
     \vspace{6pt}
@@ -211,6 +300,63 @@
     MBR: select hypothesis with minimum expected error.
     Targets accumulated small errors and content word errors.
     5--15\% relative improvement expected.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Data Scaling: The Evidence
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Data Scaling: The Evidence}
+  \twocol{0.52}{
+    \begin{alertblock}{\small What Fine-Tuning Showed}
+      {\scriptsize
+      \begin{tabular}{@{}ll@{}}
+        Exp A (r=16) & Best val: 62.94\%, gap: 36.5pp \\
+        Exp B (r=64) & \alert{3.1pp worse} than r=16 \\
+      \end{tabular}\\[4pt]
+      Both show severe overfitting ($\sim$95\% train, $\sim$60\% val).\\
+      \keyword{More parameters = faster overfitting on tiny data.}\\[4pt]
+      Conclusion: \textbf{1,273 segments is insufficient.}\\
+      ICLR 2024: $\sim$20K minimum for LoRA generalization.}
+    \end{alertblock}
+
+    \vspace{4pt}
+
+    \begin{block}{\small Multiplicative Scaling Law}
+      {\scriptsize Stronger LLM + more data = \keyword{compounding gains}.\\
+      Each improvement extracts more from the same visual features.\\
+      Not additive --- multiplicative (ICLR 2024).}
+    \end{block}
+  }{0.45}{
+    \begin{exampleblock}{\small Data Scaling Projections}
+      {\scriptsize
+      \begin{tabular}{@{}lcc@{}}
+        \textbf{Segments} & \textbf{Llama-2} & \textbf{Llama 3.1} \\
+        \midrule
+        1.3K (current) & 64\% & --- \\
+        5K & 55--60\% & 50--55\% \\
+        20K & 45--50\% & \keyword{40--45\%} \\
+        50K & 40--45\% & \keyword{35--40\%} \\
+      \end{tabular}}
+    \end{exampleblock}
+
+    \vspace{4pt}
+
+    \successmetric{290K}{AVSpeech Videos Available}
+
+    \vspace{4pt}
+
+    {\scriptsize Data curation is tractable --- not a research problem.\\
+    Processing 20K--50K segments from AVSpeech\\
+    is an engineering task, not a scientific one.}
+  }
+
+  \note{
+    Why data scaling is the biggest lever. Exp A and Exp B both showed severe overfitting.
+    r=64 was WORSE than r=16 --- proves data scarcity is the bottleneck, not model capacity.
+    ICLR 2024 scaling laws: need ~20K minimum for LoRA generalization.
+    AVSpeech has 290K videos --- data is available, processing is tractable.
+    Multiplicative scaling: LLM improvement AND data improvement compound.
   }
 \end{frame}
 

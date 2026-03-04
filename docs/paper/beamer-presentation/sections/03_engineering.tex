@@ -5,6 +5,59 @@
 \section{Engineering}
 
 % ----------------------------------------------------------
+% The Starting Point: Three Research Repos
+% ----------------------------------------------------------
+\begin{frame}{The Starting Point: Three Research Repos}
+  \vspace{2pt}
+  {\small Three separate codebases, \alert{none designed to work together}:}
+
+  \vspace{6pt}
+
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{\small \texttt{auto\_avsr/}}
+        {\scriptsize Audio-Visual ASR\\preprocessing framework.\\[3pt]
+        Mouth detection, cropping,\\video normalization.\\[3pt]
+        \notetext{Python 3.8, PyTorch 1.x}}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{\small \texttt{av\_hubert/}}
+        {\scriptsize AV-HuBERT feature\\extraction and clustering.\\[3pt]
+        K-means quantization,\\manifest generation.\\[3pt]
+        \notetext{fairseq framework}}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{\small \texttt{VSP-LLM/}}
+        {\scriptsize Visual Speech + LLM\\decode and training.\\[3pt]
+        Llama-2 integration,\\LoRA fine-tuning.\\[3pt]
+        \notetext{Hydra configs, QLoRA}}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \vspace{6pt}
+
+  \begin{itemize}\small
+    \item No documentation for end-to-end usage
+    \item Different Python versions, conflicting dependencies
+    \item Hardcoded paths, no environment detection
+  \end{itemize}
+
+  \vspace{2pt}
+  \centering
+  \notetext{``Research code assumes a specific researcher's environment ---\\making it work anywhere else is the real engineering.''}
+
+  \note{
+    Before showing the polished pipeline, the audience needs the starting point.
+    Three separate research repos, each designed for different purposes.
+    No documentation, no tests, different Python versions, conflicting dependencies.
+    Making research code work in production is the core engineering challenge.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Slide 17: Pipeline Architecture
 % ----------------------------------------------------------
 \begin{frame}{Pipeline Architecture --- 8 Stages}
@@ -218,6 +271,58 @@
 \end{frame}
 
 % ----------------------------------------------------------
+% User Experience: Drag-and-Drop
+% ----------------------------------------------------------
+\begin{frame}{User Experience: Drag-and-Drop}
+  \twocol{0.52}{
+    \begin{block}{\small Web UI Features}
+      \begin{itemize}\scriptsize
+        \item \keyword{Drag-and-drop} video upload
+        \item Real-time progress tracking per stage
+        \item Automatic end-to-end processing
+        \item Download results: burned video + JSON report
+        \item Multi-video batch processing
+      \end{itemize}
+    \end{block}
+
+    \vspace{4pt}
+
+    \begin{block}{\small Desktop Integration}
+      \begin{itemize}\scriptsize
+        \item Desktop launcher icon (5 rewrites to get right)
+        \item Auto-starts Docker container + web server
+        \item Opens browser to upload page
+        \item \keyword{Zero command-line knowledge required}
+      \end{itemize}
+    \end{block}
+  }{0.45}{
+    \begin{exampleblock}{\small Under the Hood}
+      {\scriptsize
+      8-stage pipeline runs automatically:\\[4pt]
+      1. Normalize video format\\
+      2. Run Whisper ASR\\
+      3. Crop mouth regions\\
+      4. Convert to LRS3 format\\
+      5. Generate manifests\\
+      6. K-means clustering\\
+      7. VSP-LLM decode\\
+      8. Generate reports + burned video\\[4pt]
+      All stages visible in progress tracker.}
+    \end{exampleblock}
+
+    \vspace{4pt}
+    \notetext{GPU auto-detection: NVIDIA T4 or CPU fallback.\\No internet required at any point.}
+  }
+
+  \note{
+    Production UX: drag-and-drop upload, no command-line knowledge needed.
+    Desktop launcher auto-starts everything. Progress tracking shows each pipeline stage.
+    Five separate rewrites of the desktop launcher to handle edge cases.
+    The 8-stage pipeline runs transparently under the hood.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Slide 22: Evaluation Infrastructure
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{Evaluation Infrastructure}
@@ -303,5 +408,57 @@
     8 research reports cover the entire investigation space.
     37 tests + 13 integrity checks for deployment validation.
     Golden k-means ensures reproducible clustering across runs.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Two Environments, One Codebase
+% ----------------------------------------------------------
+\begin{frame}{Two Environments, One Codebase}
+  \twocol{0.50}{
+    \begin{block}{\small EC2 --- Development}
+      \begin{itemize}\scriptsize
+        \item Path: \texttt{/home/ubuntu/}
+        \item GPU: Tesla T4 24GB
+        \item Internet: available
+        \item Purpose: research \& testing
+      \end{itemize}
+    \end{block}
+
+    \vspace{4pt}
+
+    \begin{alertblock}{\small Container --- Production}
+      \begin{itemize}\scriptsize
+        \item Path: \texttt{/workspace/}
+        \item GPU: Tesla T4 12GB
+        \item Internet: \alert{airgapped}
+        \item Purpose: client deployment
+      \end{itemize}
+    \end{alertblock}
+  }{0.47}{
+    \alertmetric{26}{Documented Sync Items}
+
+    \vspace{4pt}
+
+    {\scriptsize
+    \textbf{Challenges solved:}
+    \begin{itemize}
+      \item Hardcoded \texttt{/home/ubuntu} $\rightarrow$ \texttt{/workspace}
+      \item 12GB vs 24GB $\rightarrow$ batch size adaptation
+      \item No internet $\rightarrow$ offline Whisper, spaCy wheels
+      \item Mounted filesystem $\rightarrow$ permission handling
+      \item venv conflicts $\rightarrow$ environment-aware modules
+    \end{itemize}}
+
+    \vspace{4pt}
+    \centering
+    {\textcolor{ArgosTeal}{\textit{``Every EC2 change is incomplete\\until it works in the container.''}}}
+  }
+
+  \note{
+    Two-environment development model: EC2 for research, Docker container for deployment.
+    Different paths, different GPU memory, different network access.
+    26 documented sync items with detailed change instructions.
+    Environment-aware modules automatically detect EC2 vs container.
   }
 \end{frame}
