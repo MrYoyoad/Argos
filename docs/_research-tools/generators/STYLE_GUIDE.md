@@ -230,25 +230,36 @@ C_BEST  = "#FFD700"   # Best checkpoint (gold star)
 
 # Pipeline Diagram
 
+## Beamer: Image-Based (from generator)
+
 **Generator**: `generate_pipeline_diagram.py` (254 lines)
 **Output**: `docs/evaluation/plots/pipeline_architecture.png`
-
-## Pipeline Diagram Layout
 
 - 8 stages in 2 rows (4 per row), elbow connector between rows
 - Input/output labels with additional context
 - Component brackets below: `auto_avsr`, `av_hubert`, `VSP-LLM`
 
+## PPTX: Programmatic Layout (slide 17)
+
+PPTX slide 17 is fully programmatic (no external image). Built with `add_rect()` and `add_text()`:
+
+- 2 rows × 4 boxes, each `2.65" × 1.6"` with `0.35"` gap
+- Each box: stage number + name (18pt bold), subtitle (13pt), format label above (10pt)
+- Input label (left of row 1), output label (right of row 2)
+- Repo labels below rows: `auto_avsr`, `av_hubert`, `VSP-LLM`
+- Legend bar at bottom with 4 color swatches
+- Click-reveal: row 1 appears first, row 2 on click
+
 ## Pipeline Phase Color Mapping
 
-| Phase | Color | Hex | Stages |
-|-------|-------|-----|--------|
-| Preprocessing | Teal | `#00B4D8` | 1-4 (normalize, ASR, crop, LRS3) |
-| Feature Processing | Green | `#56B870` | 5-6 (manifests, clustering) |
-| LLM Inference | Gold | `#FFD966` | 7 (VSP-LLM decode) |
-| Output | Coral | `#E06C75` | 8 (reports, burned videos) |
+| Phase | Color (matplotlib) | PPTX Hex | Stages |
+|-------|-------------------|----------|--------|
+| Preprocessing | Teal | `#4DD0E1` (light cyan) | 1-4 (normalize, ASR, crop, LRS3) |
+| Feature Processing | Green | `#66BB6A` (soft green) | 5-6 (manifests, clustering) |
+| LLM Inference | Gold | `#FFCA28` (gold) | 7 (VSP-LLM decode) |
+| Output | Coral | `#EF9A9A` (soft pink) | 8 (reports, burned videos) |
 
-Arrow/flow color: `#6BAED6`
+Arrow/flow color (matplotlib only): `#6BAED6`
 
 ---
 

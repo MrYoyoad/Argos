@@ -69,7 +69,7 @@
 
 | # | File | Slide | Placement |
 |---|------|-------|-----------|
-| 1 | `09_pipeline_diagram/pipeline_architecture.png` | 17 | Full width — pipeline diagram |
+| 1 | _(programmatic — no image file)_ | 17 | Programmatic 2-row layout with 8 color-coded stage boxes and click-reveal |
 | 2 | `01_plots_for_slides/15_cdf_wwer_curated.png` | 22 | Right half — CDF thresholds |
 
 | # | Slide | Key Content | Graph/Visual |
@@ -124,6 +124,20 @@
 | A12 | **Success Pattern Examples** | Curated examples of segments where the model preserves meaning despite high WER — phonetic near-misses, semantic paraphrases, entity preservation cases with IS scores and llm_context_prob values | If asked for concrete examples of what "good" looks like |
 | A13 | **Failure Mode Examples** | Curated examples of each failure mode — hallucination, topic drift, entity destruction, empty output, truncation — with reference text, hypothesis, WER, and IS scores | If asked for concrete examples of what "bad" looks like |
 | A14 | **Metric Mismatch Guide** | Cases where WER and IS disagree: high WER + high IS (paraphrased but meaningful), low WER + low IS (lucky word overlap but wrong meaning). Explains why IS is needed alongside WER and when each metric is appropriate | If asked about metric disagreements or why WER is insufficient |
+
+**PPTX Appendix Mapping** (PPTX uses sequential A1-A9, Beamer uses A1-A17):
+
+| PPTX | Beamer | Content |
+|------|--------|---------|
+| A1 | A1 | Homophenes |
+| A2 | A3 | Catastrophic lenpen=2.0 |
+| A3 | A8 | IS Correlation & Cross-Config |
+| A4 | A11 | LLM Salvage Taxonomy |
+| A5 | A11b | LLM Salvage Curated Examples |
+| A6 | A13 | Failure Mode Examples |
+| A7 | A15 | Video Gallery |
+| A8 | A16 | LLM Judge Cross-Tabulation |
+| A9 | A17 | Context Evaluation Transitions |
 
 ---
 

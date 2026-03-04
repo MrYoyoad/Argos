@@ -15,7 +15,9 @@
 - **Generator**: `docs/_research-tools/generators/generate_presentation.py` (~5,500 lines)
 - **Output**: `presentation_materials_20260224/Argos_VSP_Project_Review.pptx`
 - **Build**: `python3 docs/_research-tools/generators/generate_presentation.py`
-- **Total slides**: ~47 (main + appendix subset)
+- **Total slides**: ~47 (main + 9 appendix)
+- **Appendix**: A1-A9 (sequentially numbered subset of Beamer's A1-A17)
+- **Pipeline slide 17**: Programmatic 2-row layout (not image-based)
 - **Status**: Current as of March 4, 2026
 
 ## Content Coverage Matrix
@@ -29,15 +31,15 @@
 | Failure mode taxonomy (5 categories) | Slides 19a-19b | Slides ~18-19 | Signal Loss, Hallucination, Wrong Topic, Right Topic Wrong Details, Accumulated Errors |
 | Hallucination vs topic drift | Slides 19a-19b | Slides ~18-19 | Explicit detection rules |
 | Tuning experiments (13 configs) | Slides 16-17 | Slide ~15 | Condensed in PPTX |
-| LLM Salvage (165 segments, 50.9%) | Slide 21, A11-A11b | Slides ~22-26 | Domain context examples |
-| LLM Judge blind (Y+P=65%) | Slide 22, A16 | Slide ~21 | Agreement matrices |
-| LLM Judge context (Y+P=62%) | Slide 23, A17 | Included | 230 downgrades vs 68 upgrades |
+| LLM Salvage (165 segments, 50.9%) | Slide 21, A11-A11b | Slides ~22-26, A4-A5 | Domain context examples |
+| LLM Judge blind (Y+P=65%) | Slide 22, A16 | Slide ~21, A8 | Agreement matrices |
+| LLM Judge context (Y+P=62%) | Slide 23, A17 | A9 | 230 downgrades vs 68 upgrades |
 | Fine-tuning Exp A/B | Slide 40-41, A2 | Slides ~30-31 | Data-limited framing |
 | Spider/radar chart (IS profiles) | Referenced | Slide ~16 | P6 IS radar |
 | Pipeline architecture | Slide 25 | Slide ~28 | 8-stage diagram |
 | Roadmap (5 phases, IS 3.5-4.0 target) | Slides 37-42 | Slides ~33-40 | Phase-to-failure-category mapping |
 | Topic analysis (11 categories) | Slide 18, A6 | Included | Domain confusion ~19% |
-| IS validation (cross-config) | Slides 15a-15b, A8 | Included | r=0.925, 16 configs |
+| IS validation (cross-config) | Slides 15a-15b, A8 | A3 | r=0.925, 16 configs |
 
 ## Sync Status
 
@@ -73,7 +75,7 @@ Both formats are **independently maintained**:
 |-----------|--------|-------|
 | `generate_presentation_plots.py` | `docs/evaluation/plots/P*.png` | P1-P6+P3b (tiers, gap, WER trajectory, IS trajectory, lenpen, tuning, radar) |
 | `generate_finetune_plots.py` | `docs/finetuning/plots/FT_*.png` | FT_01-FT_11 (loss, accuracy, overfitting, etc.) |
-| `generate_pipeline_diagram.py` | `docs/evaluation/plots/pipeline_architecture.png` | 8-stage pipeline diagram |
+| `generate_pipeline_diagram.py` | `docs/evaluation/plots/pipeline_architecture.png` | 8-stage pipeline diagram (Beamer only; PPTX slide 17 is now programmatic) |
 
 ## Regeneration Checklist
 
