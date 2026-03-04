@@ -3380,10 +3380,66 @@ def chapter_14(doc):
     add_bullet_bold_value(doc, "Data curation: ",
         "Filter training data by face detection confidence >0.9 and head pose <30\u00b0.")
     add_para(doc, (
-        "Decode evaluation of the Exp A best checkpoint on the full 1,497-segment test set is pending. "
         "10 diagnostic plots documenting the full training dynamics are available in "
         "docs/finetuning/plots/FT_01 through FT_10."
+    ))
+
+    add_heading(doc, "14.8 Decode Evaluation: Baseline vs Exp A vs Exp B", 2)
+    add_para(doc, (
+        "Claude-as-Judge evaluation (224 validation segments) compared decode outputs from the "
+        "baseline checkpoint, Exp A best (r=16, epoch 2), and Exp B best (r=64). "
+        "Neither fine-tuned checkpoint improved over baseline."
+    ))
+    add_styled_table(doc,
+        ["Metric", "Baseline", "Exp A (r=16)", "Exp B (r=64)"],
+        [
+            ["IS mean", "2.487", "2.312", "2.023"],
+            ["Captured (IS \u2265 3.0)", "38.4%", "33.0%", "25.4%"],
+            ["Empty outputs", "7.1%", "12.5%", "26.8%"],
+            ["LLM Y+P", "~51%", "~54%", "~51%"],
+        ],
+        col_widths=[2.0, 1.2, 1.2, 1.2]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "Exp B\u2019s 26.8% empty rate (vs 7.1% baseline) confirms that r=64 on 1,273 segments "
+        "causes the model to \u201cforget\u201d how to generate text entirely for a quarter of inputs. "
+        "This is a hallmark of severe overfitting on tiny data \u2014 the model memorizes training "
+        "patterns so precisely that it cannot generalize to even slightly different visual inputs."
+    ))
+    add_para(doc, (
+        "The LLM Y+P rates (~51\u201354%) are indistinguishable across all three conditions, "
+        "meaning fine-tuning did not improve the rate at which outputs convey useful meaning. "
+        "The IS scores (2.487 \u2192 2.312 \u2192 2.023) show progressive degradation with "
+        "increasing LoRA rank, confirming the data-limited interpretation: more parameters on "
+        "1.3K segments = faster memorization, not better generalization."
     ), bold=True)
+
+    add_heading(doc, "14.9 LLM Salvage Recovery Categories", 2)
+    add_para(doc, (
+        "The LLM salvage analysis identified 165 of 900 metric-failed segments (IS < 3.0) "
+        "as having recoverable meaning (llm_context_prob \u2265 0.5). These 165 segments raise "
+        "the effective capture rate from 39.9% to 50.9%. Six conceptual recovery categories:"
+    ))
+    add_styled_table(doc,
+        ["Category", "Count", "Description"],
+        [
+            ["Phonetic Bridge", "93", "Words sound right but spelled differently"],
+            ["Structure Match", "74", "Same grammatical structure, word order intact"],
+            ["Semantic Preservation", "57", "Core meaning conveyed despite high WER"],
+            ["Hidden Gems", "54", "Decision tree assigns \u226580% recovery probability"],
+            ["Entity-Preserved", "44", "Critical names/numbers correct"],
+            ["WER Over-Punishment", "27", "WER inflated by function word errors"],
+        ],
+        col_widths=[1.8, 0.6, 3.0]
+    )
+    add_para(doc, "")
+    add_para(doc, (
+        "Categories overlap \u2014 a single segment may qualify under multiple reasons. "
+        "The dominant recovery mechanism is phonetic bridge (93 segments), confirming "
+        "that the visual encoder often captures the right mouth shapes but the LLM "
+        "maps them to wrong spellings."
+    ))
 
     doc.add_page_break()
 

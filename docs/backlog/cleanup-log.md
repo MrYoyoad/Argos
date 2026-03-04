@@ -372,3 +372,52 @@ All references to `english_1k`, `english_1k_results/`, and "860 segments" update
 **Presentation materials** (`presentation_materials_20260224/`) left untouched — frozen Feb 24 snapshot, historical artifact.
 
 **Freed**: ~2.6 GB
+
+---
+
+## Round 6 — Presentation Sprint (March 2-4, 2026)
+
+**Reason**: Intensive 2-day sprint creating and refining presentations. ~40 commits. This round created more than it removed.
+
+### Files Created
+
+| Category | Items |
+|----------|-------|
+| **PPTX generator** | `docs/_research-tools/generators/generate_presentation.py` (~5,500 lines) |
+| **Plot generators** | `generate_presentation_plots.py` (P1-P6), `generate_finetune_plots.py` (FT_01-FT_11), `generate_pipeline_diagram.py` |
+| **Beamer presentation** | `docs/paper/beamer-presentation/` — full LaTeX source (5 sections, theme, tables, figures) |
+| **LLM Judge research** | `docs/evaluation/llm_judge/` — 15 batch files, 15 judgment files, analysis.md, results.csv, summary.json |
+| **Context eval research** | `docs/evaluation/llm_judge/context_eval/` — 15 context batches, 15 context judgments, analysis.md, results.csv |
+| **LLM Salvage research** | `docs/evaluation/llm_salvage/` — analysis.md, segments.json, docx |
+| **Fine-tuning eval tools** | `scripts/run_train_eval.sh`, `scripts/eval_checkpoint_correlation.sh`, `scripts/generate_checkpoint_correlation.py` |
+| **Presentation plots** | `docs/evaluation/plots/P1-P6.png`, `docs/finetuning/plots/FT_01-FT_11.png` |
+| **Pipeline diagrams** | `docs/evaluation/plots/pipeline_architecture.png` (redesigned) |
+| **Poster frames** | `presentation_materials_20260224/.poster_frames/` (12 video poster JPEGs) |
+| **Beamer figures** | `docs/paper/beamer-presentation/figures/` — branding, deep_dive, plots, pipeline, tikz |
+| **Build status** | `docs/paper/beamer-presentation/BUILD_STATUS.md` |
+
+### Files Removed
+
+| Item | Reason |
+|------|--------|
+| `english_1k_results/` (2.6 GB) | Preliminary 860-segment run superseded by english_full (1,497 segments) |
+| `scripts/monitoring/watch_and_analyze.sh` | Only referenced 1k pipeline |
+
+### Data Fixes Applied
+
+| Fix | Scope | Commit |
+|-----|-------|--------|
+| Stale 67% → 64.1% WER | 22+ files (reports, generators, backlog) | dd2f891, 0f1d04c |
+| Context eval de-duplication | context_eval_analysis.md, llm_judge_analysis.md | 5b1df0a |
+| Design-time vs runtime LLM | 13 files (docs, generators, Beamer, PPTX) | aa64b9a |
+| Beamer stale 67% in appendix | 04_future_directions.tex, 05_appendix.tex | e2bc7bd |
+
+### Conceptual Changes
+
+| Change | Description |
+|--------|-------------|
+| Fine-tuning reframing | "Experiments failed" → "data-limited, not model-limited" |
+| Salvage repositioning | Moved from "future work" to "the full picture" (current evaluation) |
+| Failure taxonomy split | 1 slide → 2 slides with explicit detection rules |
+| IS explanation | Added weight rationale, 3 independent dimensions, design-time framing |
+| Spider chart strategy | Established as reusable template for future LLM comparisons |

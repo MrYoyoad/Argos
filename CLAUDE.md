@@ -240,19 +240,19 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Folder | Contents | Backlog Mission |
 |--------|----------|-----------------|
-| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0), IS correlation analysis, LLM salvage analysis (165 recoverable segments), LLM-as-a-Judge gold standard (1,497 pairs, Y/P/N + visual context analysis) | M5: Expanded Metrics |
+| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0), IS correlation analysis + [cross-config validation](docs/evaluation/is_cross_config_validation.md), [extended analysis](docs/evaluation/intelligibility_extended_analysis.md), [LLM salvage](docs/evaluation/llm_salvage/) (165 recoverable segments + [example gallery](docs/evaluation/llm_salvage/salvage_example_gallery.md)), [LLM-as-a-Judge](docs/evaluation/llm_judge/) gold standard (1,497 pairs, Y/P/N + [context eval](docs/evaluation/llm_judge/context_eval/)) | M5: Expanded Metrics |
 | [docs/tuning/](docs/tuning/) | Report 2 (hyperparameter tuning), metrics explainer, 13 experiments, HTML reports | M7: Hyperparams, M14: Auto-tuning |
 | [docs/confidence/](docs/confidence/) | Report 4 (confidence scoring & quality filtering) | M4: Confidence Scoring |
 | [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR) | M6: Beam Aggregation |
 | [docs/prompts/](docs/prompts/) | Report 3 (prompt engineering & context injection) | M8: Prompt Engineering |
 | [docs/finetuning/](docs/finetuning/) | Report 6 (fine-tuning analysis), training research notes | M9: AVSpeech Fine-Tuning |
-| [docs/paper/](docs/paper/) | VSP-LLM paper (PDF + text), 2025 Presentation | — |
+| [docs/paper/](docs/paper/) | VSP-LLM paper (PDF + text), 2025 Presentation, [Beamer presentation](docs/paper/beamer-presentation/) (75 slides, 5 sections + appendix) | — |
 
 ### Operations
 
 | Folder | Contents |
 |--------|----------|
-| [docs/guides/](docs/guides/) | Installation, deployment, testing, container validation, transfer instructions |
+| [docs/guides/](docs/guides/) | Installation, deployment, testing, container validation, transfer instructions, [container update guide](docs/guides/container-update-feb2026.md) |
 | [docs/features/](docs/features/) | Feature documentation (golden k-means, transcription, segmentation, etc.) |
 | [docs/changelog/](docs/changelog/) | Fix history (complete changelog, fix inventory, individual fix docs) |
 | [docs/backlog/](docs/backlog/) | Mission backlog (roadmap, Missions 1-14), cleanup log |
@@ -264,7 +264,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | `docs/sessions/` | Session summaries |
 | `docs/licenses/` | Third-party license files |
 | `docs/branding/` | Logo files |
-| `docs/_research-tools/` | Report generators (Python), experiment scripts, datasets, assets |
+| `docs/_research-tools/` | Report generators (Python: `generate_*.py` for docx, journal, presentation, plots, pipeline diagram, finetune plots), experiment scripts, datasets, assets, [STYLE_GUIDE.md](docs/_research-tools/generators/STYLE_GUIDE.md) (docx + PPTX + Beamer + plot conventions) |
 
 ### Experimental Results (root level)
 
@@ -304,7 +304,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 **Hyperparameter tuning** (13 experiments on 107 segments): Baseline config (beam=20, lenpen=0, no sampling) proved most robust. No parameter combination improved WER meaningfully. See [docs/tuning/experiment-comparison.csv](docs/tuning/experiment-comparison.csv).
 
-**Fine-tuning experiments** (March 2026): Exp A (r=16) and Exp B (r=64) on 1,273 AVSpeech segments both showed severe overfitting (~95% train, ~60% val accuracy). r=64 was 3.1pp worse than r=16. These results were **data-limited** — 1,273 segments is below the ~1K minimum for LoRA generalization. The experiments tested the dataset's limits, not the model's capacity. With 20K-50K segments and a stronger LLM (e.g., Llama 3.1 8B), substantially better results are expected. See [docs/finetuning/training-research-notes.md](docs/finetuning/training-research-notes.md) and [docs/evaluation/llm_upgrade_analysis.md](docs/evaluation/llm_upgrade_analysis.md).
+**Fine-tuning experiments** (March 2026): Exp A (r=16) and Exp B (r=64) on 1,273 AVSpeech segments both showed severe overfitting (~95% train, ~60% val accuracy). r=64 was 3.1pp worse than r=16. Claude-as-Judge evaluation (224 val segments): Baseline IS=2.487, Exp A IS=2.312, Exp B IS=2.023; empty outputs 7.1%/12.5%/26.8%; LLM Y+P ~51-54% all three (no improvement from fine-tuning). These results were **data-limited** — 1,273 segments is below the ~1K minimum for LoRA generalization. The experiments tested the dataset's limits, not the model's capacity. With 20K-50K segments and a stronger LLM (e.g., Llama 3.1 8B), substantially better results are expected. See [docs/finetuning/training-research-notes.md](docs/finetuning/training-research-notes.md) and [docs/evaluation/llm_upgrade_analysis.md](docs/evaluation/llm_upgrade_analysis.md).
 
 **Key takeaway**: Domain adaptation requires three things: (1) sufficient training data (20K+ segments, not 1.3K), (2) a stronger LLM backbone, and (3) eventually visual encoder adaptation. Decode parameter tuning has reached diminishing returns.
 
@@ -352,7 +352,7 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── logs/                  # Logs: Pipeline run logs
 ├── build_assets/          # Build: Wheel caches & build venvs
 │
-├── presentation_materials_20260224/  # Snapshot: Frozen presentation package (Feb 24)
+├── presentation_materials_20260224/  # Presentations: PPTX (~47 slides) + plots + poster frames
 ├── vsp_docker/            # Deploy: Docker build dir (galaxy_export/ working copy)
 ├── vsp_linux_container_FINAL_20260217/  # Deploy: Container code overlay
 │

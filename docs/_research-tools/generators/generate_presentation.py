@@ -745,12 +745,15 @@ def _finish(slide, num, notes, anim_groups=None, click_reveal=False):
     """Add logo, slide number, transition, animations, and notes.
 
     num: ignored for int values (auto-numbered); string values (e.g. "A1")
-         are used directly for appendix slides.
+         are used directly for appendix slides.  Use None to skip numbering
+         entirely (section dividers).
     click_reveal: if True, animation groups require a click to advance
         (use for comparison slides like WER-vs-IS).  Default False =
         all groups auto-play on slide entry with subtle delays.
     """
-    if isinstance(num, int):
+    if num is None:
+        display_num = ""  # Section dividers — no number
+    elif isinstance(num, int):
         _auto_num[0] += 1
         display_num = _auto_num[0]
     else:
@@ -845,7 +848,7 @@ def build_two_col(prs, num, title, left_title, left_items, right_title,
     rb = add_bullets(slide, right_items, rx, CT + Inches(0.5), col_w,
                      CH - Inches(0.5))
 
-    _finish(slide, num, notes, [[lt, lb], [rt, rb]])
+    _finish(slide, num, notes, [[lt, lb], [rt, rb]], click_reveal=True)
     return slide
 
 
@@ -1018,8 +1021,8 @@ def slide_is_intro(prs):
         ('IS \u2265 3.0 = "Properly Captured"', {"color": TEAL, "bold": True}),
     ], rx, CT + Inches(0.55), rw, Inches(3.5), size=Pt(15))
 
-    # Calculation method details
-    add_rich_text(slide, [
+    # Calculation method details — positioned below right column bullets
+    calc = add_rich_text(slide, [
         [("How signals are calculated:", {"size": Pt(12), "color": LGRAY, "bold": True})],
         [("Phonetic: ", {"size": Pt(11), "color": TEAL, "bold": True}),
          ("phoneme sequence matching \u2014 do words SOUND alike?", {"size": Pt(11), "color": LGRAY})],
@@ -1027,13 +1030,7 @@ def slide_is_intro(prs):
          ("embedding cosine similarity \u2014 is MEANING preserved?", {"size": Pt(11), "color": LGRAY})],
         [("WWER: ", {"size": Pt(11), "color": TEAL, "bold": True}),
          ("content words penalized 2\u00d7 vs function words", {"size": Pt(11), "color": LGRAY})],
-    ], rx, CT + Inches(4.2), rw, Inches(1.5))
-
-    # Bottom
-    add_text(slide,
-        "Next: the 6 individual signals, then how they combine.",
-        MX, Inches(6.4), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    ], MX, CT + Inches(4.4), CW, Inches(1.2))
 
     _finish(slide, 0,
         "IS introduction. WER can't distinguish meaning preservation from "
@@ -1041,7 +1038,7 @@ def slide_is_intro(prs):
         "together capture whether a viewer would understand the output. "
         "Designed at development time, runs as pure deterministic "
         "Python at evaluation time. IS >= 3.0 means properly captured.",
-        [[lt, lb], [rt, rb]])
+        [[lt, lb], [rt, rb], [calc]], click_reveal=True)
 
 
 def slide_tuning_intro(prs):
@@ -1282,31 +1279,58 @@ def slide_is_weight_rationale(prs):
 
 
 def slide_is_calc_examples(prs):
-    """Two concrete IS calculation examples."""
+    """Two concrete IS calculation examples — side-by-side cards."""
     slide = new_slide(prs)
     add_title(slide, "IS in Action: Two Real Segments")
     add_accent_line(slide)
 
     col_w = Inches(5.8)
     gap = Inches(0.53)
+    card_h = Inches(5.0)
 
-    # --- Left card: Good segment ---
-    r1 = add_rect(slide, MX, CT, col_w, Inches(4.9), fill_color=NAVY2,
-                  border_color=GREEN, border_width=Pt(2), corner_radius=True)
+    def _draw_calc_card(slide, x, label, is_val, color, ref, hyp, lines, summary):
+        """Draw one calculation card at position x."""
+        r = add_rect(slide, x, CT, col_w, card_h, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(3), corner_radius=True)
 
-    add_text(slide, "Good Segment \u2014 IS = 4.2", MX + Inches(0.2), CT + Inches(0.1),
-             col_w - Inches(0.4), Inches(0.35),
-             size=Pt(16), color=GREEN, bold=True)
+        # Header bar with colored background
+        add_rect(slide, x + Inches(0.1), CT + Inches(0.1),
+                 col_w - Inches(0.2), Inches(0.5), fill_color=color,
+                 corner_radius=True)
+        add_text(slide, f"{label} \u2014 IS = {is_val}",
+                 x + Inches(0.1), CT + Inches(0.12),
+                 col_w - Inches(0.2), Inches(0.5),
+                 size=Pt(18), color=BG, bold=True, align=PP_ALIGN.CENTER)
 
-    add_rich_text(slide, [
-        [("Ref: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
-         ("\u201callow you to work with the team in a more\u201d", {"size": Pt(11), "color": WHITE})],
-        [("Hyp: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
-         ("\u201callow you to work with a team and more\u201d", {"size": Pt(11), "color": WHITE})],
-    ], MX + Inches(0.2), CT + Inches(0.5), col_w - Inches(0.4), Inches(0.6))
+        # Ref / Hyp
+        add_rich_text(slide, [
+            [("Ref: ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+             (f"\u201c{ref}\u201d", {"size": Pt(12), "color": WHITE})],
+            [("Hyp: ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+             (f"\u201c{hyp}\u201d", {"size": Pt(12), "color": WHITE})],
+        ], x + Inches(0.25), CT + Inches(0.65), col_w - Inches(0.5), Inches(0.65))
 
-    # Calculation table
-    calc_lines = [
+        # Calculation rows
+        cy = CT + Inches(1.45)
+        for name, val, mult, result, clr in lines:
+            add_text(slide, name, x + Inches(0.3), cy, Inches(1.8), Inches(0.32),
+                     size=Pt(12), color=LGRAY)
+            add_text(slide, val, x + Inches(2.2), cy, Inches(0.7), Inches(0.32),
+                     size=Pt(12), color=clr, bold=True)
+            add_text(slide, mult, x + Inches(2.9), cy, Inches(0.8), Inches(0.32),
+                     size=Pt(12), color=LGRAY)
+            add_text(slide, result, x + Inches(3.7), cy, Inches(0.9), Inches(0.32),
+                     size=Pt(12), color=WHITE, bold=True)
+            cy += Inches(0.35)
+
+        # Summary
+        add_text(slide, summary,
+                 x + Inches(0.3), cy + Inches(0.2), col_w - Inches(0.6), Inches(0.4),
+                 size=Pt(15), color=color, bold=True)
+        return r
+
+    # --- Left: Good segment ---
+    good_lines = [
         ("Semantic Sim", "0.82", "\u00d7 0.25", "= 0.205", GREEN),
         ("Phonetic Sim", "0.89", "\u00d7 0.15", "= 0.134", GREEN),
         ("Inverse WER", "0.71", "\u00d7 0.15", "= 0.107", TEAL),
@@ -1314,38 +1338,13 @@ def slide_is_calc_examples(prs):
         ("NEA F1", "1.00", "\u00d7 0.15", "= 0.150", TEAL),
         ("Length Ratio", "0.89", "\u00d7 0.15", "= 0.134", TEAL),
     ]
-    cy = CT + Inches(1.2)
-    for name, val, mult, result, clr in calc_lines:
-        add_text(slide, name, MX + Inches(0.3), cy, Inches(1.6), Inches(0.28),
-                 size=Pt(10), color=LGRAY)
-        add_text(slide, val, MX + Inches(2.0), cy, Inches(0.6), Inches(0.28),
-                 size=Pt(10), color=clr, bold=True)
-        add_text(slide, mult, MX + Inches(2.6), cy, Inches(0.7), Inches(0.28),
-                 size=Pt(10), color=LGRAY)
-        add_text(slide, result, MX + Inches(3.4), cy, Inches(0.8), Inches(0.28),
-                 size=Pt(10), color=WHITE, bold=True)
-        cy += Inches(0.3)
+    r1 = _draw_calc_card(slide, MX,
+        "Good Segment", "4.2", GREEN,
+        "allow you to work with the team in a more",
+        "allow you to work with a team and more",
+        good_lines, "Sum \u00d7 5 = 4.22 \u2192 IS 4.2 (Good)")
 
-    add_text(slide, "Sum \u00d7 5 = 4.22 \u2192 IS 4.2 (Good)",
-             MX + Inches(0.3), cy + Inches(0.15), col_w - Inches(0.6), Inches(0.35),
-             size=Pt(14), color=GREEN, bold=True)
-
-    # --- Right card: Bad segment ---
-    rx = MX + col_w + gap
-    r2 = add_rect(slide, rx, CT, col_w, Inches(4.9), fill_color=NAVY2,
-                  border_color=CORAL, border_width=Pt(2), corner_radius=True)
-
-    add_text(slide, "Bad Segment \u2014 IS = 0.9", rx + Inches(0.2), CT + Inches(0.1),
-             col_w - Inches(0.4), Inches(0.35),
-             size=Pt(16), color=CORAL, bold=True)
-
-    add_rich_text(slide, [
-        [("Ref: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
-         ("\u201ccarry strap\u201d", {"size": Pt(11), "color": WHITE})],
-        [("Hyp: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
-         ("\u201cholocaust denier\u201d", {"size": Pt(11), "color": WHITE})],
-    ], rx + Inches(0.2), CT + Inches(0.5), col_w - Inches(0.4), Inches(0.6))
-
+    # --- Right: Bad segment ---
     bad_lines = [
         ("Semantic Sim", "0.04", "\u00d7 0.25", "= 0.010", CORAL),
         ("Phonetic Sim", "0.12", "\u00d7 0.15", "= 0.018", CORAL),
@@ -1354,26 +1353,17 @@ def slide_is_calc_examples(prs):
         ("NEA F1", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
         ("Length Ratio", "1.00", "\u00d7 0.15", "= 0.150", LGRAY),
     ]
-    cy = CT + Inches(1.2)
-    for name, val, mult, result, clr in bad_lines:
-        add_text(slide, name, rx + Inches(0.3), cy, Inches(1.6), Inches(0.28),
-                 size=Pt(10), color=LGRAY)
-        add_text(slide, val, rx + Inches(2.0), cy, Inches(0.6), Inches(0.28),
-                 size=Pt(10), color=clr, bold=True)
-        add_text(slide, mult, rx + Inches(2.6), cy, Inches(0.7), Inches(0.28),
-                 size=Pt(10), color=LGRAY)
-        add_text(slide, result, rx + Inches(3.4), cy, Inches(0.8), Inches(0.28),
-                 size=Pt(10), color=WHITE, bold=True)
-        cy += Inches(0.3)
-
-    add_text(slide, "Sum \u00d7 5 = 0.89 \u2192 IS 0.9 (Failed)",
-             rx + Inches(0.3), cy + Inches(0.15), col_w - Inches(0.6), Inches(0.35),
-             size=Pt(14), color=CORAL, bold=True)
+    r2 = _draw_calc_card(slide, MX + col_w + gap,
+        "Bad Segment", "0.9", CORAL,
+        "carry strap",
+        "holocaust denier explanation of the final act",
+        bad_lines, "Sum \u00d7 5 = 0.89 \u2192 IS 0.9 (Failed)")
 
     _finish(slide, 0,
         "Two IS calculation examples. Left: good segment (IS 4.2) with high "
         "scores across all signals. Right: hallucination (IS 0.9) where only "
-        "length ratio is non-zero — the output is a completely different topic.",
+        "length ratio is non-zero — the output is a completely different topic. "
+        "The formula is IS = (sum of weighted scores) x 5, mapping to 0-5 scale.",
         [[r1], [r2]], click_reveal=True)
 
 
@@ -1761,130 +1751,109 @@ def slide_08(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_failure_deep_1a(prs):
-    """Failure mode taxonomy part 1: top 5 most critical modes with rationale."""
+    """Failure mode taxonomy: 5 academically-grounded categories as animated cards."""
     slide = new_slide(prs)
-    add_title(slide, "Failure Modes: How They\u2019re Classified (1/2)")
+    add_title(slide, "Failure Mode Taxonomy: 5 Categories")
     add_accent_line(slide)
 
     add_text(slide,
-        "Each of the 900 failed segments (IS < 3.0) is automatically classified "
-        "by rule-based detection \u2014 checked in priority order. "
-        "These 5 modes cover the most critical failures:",
-        MX, CT, CW, Inches(0.4), size=Pt(12), color=LGRAY, italic=True)
-
-    headers = ["Mode", "Detection Rule", "What Happens", "Why This Name", "Example"]
-    rows = [
-        ["Empty Output\n(7.8%)",
-         "No hypothesis\ntext",
-         "Model produces\nnothing",
-         "Self-explanatory \u2014\nno output at all",
-         "Ref: \u201cthe thirteenth\namendment\u201d\n\u2192 Hyp: \u201c\u201d"],
-        ["Hallucination\n(12.3%)",
-         "WER \u2265 100%",
-         "Output LONGER than\nreference \u2014 fluent\nfabricated text",
-         "\"Hallucinate\" = generate\ntext that doesn\u2019t exist.\nDetected by length:\nmore wrong words\nthan total words",
-         "Ref: \u201ccarry strap\u201d\n\u2192 Hyp: \u201cholocaust\ndenier explanation\nof the final act\u201d"],
-        ["Topic Drift\n(15.9%)",
-         "Semantic < 0.2\nPhonetic < 0.3\nWER < 100%",
-         "Completely different\nsubject, but\nsimilar length",
-         "NOT hallucination:\noutput length is normal.\nModel decoded mouth\nshapes into a different\ntopic entirely",
-         "Ref: \u201cweight loss\nand diet\u201d\n\u2192 Hyp: \u201cwanted to\nbe a princess\u201d"],
-        ["Phonetic Wrong\nTopic (15.7%)",
-         "Semantic < 0.2\nPhonetic \u2265 0.3",
-         "Words SOUND right\nbut topic is wrong",
-         "Mouth shapes decoded\ncorrectly but LLM\nmapped sounds to\nwrong domain",
-         "Ref: \u201clistening and\nyelling\u201d\n\u2192 Hyp: \u201calliances\nand willing\u201d"],
-        ["Entity Destruction\n(12.0%)",
-         "NEA F1 < 10%\nWER > 60%",
-         "Names, numbers,\nkey nouns lost",
-         "Named entities are\nirreplaceable \u2014 losing\n\u201cAdmiral McRae\u201d\ncan\u2019t be guessed",
-         "Ref: \u201c13th amendment\u201d\n\u2192 Hyp: \u201cthe animals\nof the world\u201d"],
-    ]
-
-    tbl = add_table(slide, headers, rows,
-                    MX, CT + Inches(0.5), CW,
-                    row_height=Inches(0.85),
-                    col_widths=[Inches(1.8), Inches(1.9), Inches(2.4), Inches(3.0), Inches(3.03)],
-                    text_size=Pt(9))
+        "900 failed segments (IS < 3.0) classified into 5 mutually exclusive "
+        "categories \u2014 each segment gets exactly one label, checked 1\u21925.",
+        MX, CT, CW, Inches(0.28), size=Pt(13), color=LGRAY, italic=True)
 
     add_text(slide,
-        "Rules checked in priority order: empty \u2192 hallucination \u2192 "
-        "topic drift \u2192 phonetic wrong topic \u2192 entity destruction \u2192 "
-        "accumulated \u2192 content word \u2192 high error \u2192 truncation \u2192 over-generation",
-        MX, Inches(6.45), CW, Inches(0.4),
-        size=Pt(10), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "Grounded in ASR error taxonomy (Fosler-Lussier 2004) and "
+        "LLM hallucination analysis (ACL 2025)",
+        MX, CT + Inches(0.28), CW, Inches(0.22),
+        size=Pt(10), color=MGRAY, italic=True)
 
-    _finish(slide, 0,
-        "Failure mode taxonomy part 1 of 2. The top 5 modes are the most critical "
-        "and cover ~64% of all failures. Key distinction: Hallucination is detected "
-        "by WER >= 100% (output LONGER than reference, i.e., more wrong words than "
-        "total reference words). Topic Drift is detected when output is a completely "
-        "different subject but at SIMILAR length (WER < 100%) — the model decoded "
-        "mouth shapes into a coherent but wrong topic. Hallucination over-generates; "
-        "Topic Drift substitutes. Both are catastrophic but require different fixes.",
-        [[tbl]])
-
-
-def slide_failure_deep_1b(prs):
-    """Failure mode taxonomy part 2: remaining 5 modes with click-reveal."""
-    slide = new_slide(prs)
-    add_title(slide, "Failure Modes: How They\u2019re Classified (2/2)")
-    add_accent_line(slide)
-
-    add_text(slide,
-        "Remaining 5 modes \u2014 less severe individually, but collectively "
-        "account for 36% of failures:",
-        MX, CT, CW, Inches(0.35), size=Pt(12), color=LGRAY, italic=True)
-
-    headers = ["Mode", "Detection Rule", "What Happens", "Why This Name", "Example"]
-    rows = [
-        ["Accumulated\nErrors (12.3%)",
-         "WER 40\u201380%\nSemantic 0.2\u20130.5",
-         "Many small word\nsubstitutions",
-         "Death by a thousand\ncuts \u2014 no single\ncatastrophic error",
-         "Individual words wrong\nthroughout; meaning\nerodes gradually"],
-        ["Content Word\nErrors (10.7%)",
-         "Key content words\nwrong, structure OK",
-         "Structure intact but\nsubstance changed",
-         "Skeleton is right but\nmeaning-carrying\nwords are wrong",
-         "Sentence shape correct\nbut nouns/verbs\nsubstituted"],
-        ["High Error\n(6.6%)",
-         "WER > 80%\nDoesn\u2019t fit above",
-         "Severe degradation,\nno specific pattern",
-         "Catch-all for high-error\nsegments not matching\nspecific patterns",
-         "Output badly garbled;\nno dominant failure\ntype detected"],
-        ["Truncation\n(3.7%)",
-         "Output much\nshorter than ref",
-         "Model stopped\nearly mid-sentence",
-         "Partial decode \u2014\nmodel gave up before\nfinishing",
-         "Ref: 12 words\n\u2192 Hyp: 4 words\n(cut off mid-thought)"],
-        ["Over-generation\n(3.1%)",
-         "Output much\nlonger than ref\n(but WER < 100%)",
-         "Model kept going\npast the content",
-         "Repetition or\nelaboration beyond\nreference",
-         "Ref: 5 words\n\u2192 Hyp: 15 words\n(repeated phrases)"],
+    modes = [
+        ("1. Signal Loss", "9.0%", "81 segments", LGRAY,
+         "Nothing came out",
+         "Empty output OR length ratio < 0.3",
+         "Ref: \u201cthe thirteenth amendment\u201d \u2192 Hyp: \u201c\u201d"),
+        ("2. Hallucination", "12.3%", "111 segments", CORAL,
+         "Model invented fake text",
+         "WER \u2265 100% (output longer than reference)",
+         "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier explanation of the final act\u201d"),
+        ("3. Wrong Topic", "31.6%", "284 segments", GOLD,
+         "Mouth shapes decoded to wrong domain",
+         "Semantic < 0.2 (phonetic-matched or not)",
+         "Ref: \u201cweight loss and diet\u201d \u2192 Hyp: \u201cwanted to be a princess\u201d"),
+        ("4. Right Topic, Wrong Details", "22.7%", "204 segments", TEAL,
+         "Roughly right but names/content words lost",
+         "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
+         "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
+        ("5. Accumulated Errors", "24.4%", "220 segments", LGRAY,
+         "Many small errors compound",
+         "IS < 3.0 and doesn\u2019t match categories 1\u20134",
+         "Many words slightly wrong throughout, meaning erodes"),
     ]
 
-    tbl = add_table(slide, headers, rows,
-                    MX, CT + Inches(0.45), CW,
-                    row_height=Inches(0.85),
-                    col_widths=[Inches(1.8), Inches(1.9), Inches(2.4), Inches(3.0), Inches(3.03)],
-                    text_size=Pt(9))
+    card_h = Inches(0.82)
+    gap = Inches(0.06)
+    y0 = CT + Inches(0.6)
+    name_w = Inches(3.0)
+    rule_w = CW - name_w - Inches(0.1)
 
-    footer = add_text(slide,
-        "All 10 modes are mutually exclusive. Each segment is assigned exactly "
-        "one mode by the first rule it matches in priority order.",
-        MX, Inches(6.45), CW, Inches(0.4),
-        size=Pt(10), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    anim_groups = []
+    for i, (name, pct, count, color, desc, rule, example) in enumerate(modes):
+        y = y0 + i * (card_h + gap)
+
+        # Card background
+        r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+
+        # Left: category name + percentage + count
+        add_text(slide, f"{name}  ({pct})",
+                 MX + Inches(0.2), y + Inches(0.05),
+                 name_w - Inches(0.3), Inches(0.28),
+                 size=Pt(15), color=color, bold=True)
+
+        # Left: one-line description
+        add_text(slide, desc,
+                 MX + Inches(0.2), y + Inches(0.32),
+                 name_w - Inches(0.3), Inches(0.22),
+                 size=Pt(11), color=WHITE)
+
+        # Left: count
+        add_text(slide, count,
+                 MX + Inches(0.2), y + Inches(0.55),
+                 name_w - Inches(0.3), Inches(0.22),
+                 size=Pt(10), color=MGRAY)
+
+        # Right: detection rule
+        add_text(slide, f"Rule: {rule}",
+                 MX + name_w, y + Inches(0.06),
+                 rule_w - Inches(0.15), Inches(0.35),
+                 size=Pt(12), color=WHITE)
+
+        # Right: example
+        add_text(slide, f"\u25b8 {example}",
+                 MX + name_w, y + Inches(0.45),
+                 rule_w - Inches(0.15), Inches(0.35),
+                 size=Pt(11), color=LGRAY, italic=True)
+
+        anim_groups.append([r])
+
+    # Priority order footer
+    add_text(slide,
+        "Priority: Signal Loss \u2192 Hallucination \u2192 Wrong Topic \u2192 "
+        "Right Topic Wrong Details \u2192 Accumulated Errors",
+        MX, Inches(6.55), CW, Inches(0.35),
+        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Failure mode taxonomy part 2 of 2. These 5 modes represent less severe "
-        "or less common failures. Accumulated Errors is the classic 'death by a "
-        "thousand cuts' — no single catastrophe, just gradual meaning erosion. "
-        "Content Word Errors preserve sentence structure but swap the meaningful "
-        "words. High Error is the catch-all. Truncation and Over-generation are "
-        "length-based failures. Click to reveal each row one at a time.",
-        [[tbl], [footer]], click_reveal=True)
+        "Five-category failure taxonomy grounded in ASR error research "
+        "(Fosler-Lussier 2004) and LLM hallucination analysis (ACL 2025). "
+        "Key insight: Wrong Topic is the LARGEST category at 31.6% — it merges "
+        "the old Topic Drift and Phonetic Wrong Topic categories because the fix "
+        "is the same (stronger LLM, more training data). Signal Loss and "
+        "Accumulated Errors are the bookends: one produces nothing, the other "
+        "produces something but death-by-a-thousand-cuts erodes meaning. "
+        "Each segment gets exactly one label, checked in priority order 1 through 5.",
+        anim_groups, click_reveal=True)
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — REAL EXAMPLES
@@ -4865,7 +4834,7 @@ def slide_research_transition(prs):
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
 
-    _finish(slide, 0,
+    _finish(slide, None,
         "Section transition: we now present the research findings — our novel "
         "Intelligibility Score metric, root cause analysis, failure mode taxonomy, "
         "and decode tuning experiments.")
@@ -4891,7 +4860,7 @@ def slide_eng_transition(prs):
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
 
-    _finish(slide, 0,
+    _finish(slide, None,
         "Section transition: we now move from research analysis to the "
         "engineering work that turned three research codebases into a "
         "production-ready system.")
@@ -5080,7 +5049,7 @@ def slide_future_transition(prs):
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
 
-    _finish(slide, 0,
+    _finish(slide, None,
         "Section transition: we now move from what we found to what we "
         "recommend doing about it. Five key insights lead to a five-phase "
         "improvement roadmap.")
@@ -5536,8 +5505,7 @@ def main():
         slide_10,           # Three Root Causes (text-only, Req #7)
         slide_domain_mismatch, # Domain mismatch detail
         slide_11,           # Named Entity Accuracy (expanded, Req #8)
-        slide_failure_deep_1a, # Failure Modes: Classification Rules (1/2 — top 5)
-        slide_failure_deep_1b, # Failure Modes: Classification Rules (2/2 — remaining 5)
+        slide_failure_deep_1a, # Failure Modes: 5-Category Taxonomy
         slide_failure_deep_2, # Failure Modes: Real Examples (make it concrete)
         slide_08,           # Failure Mode Taxonomy (now numbers make sense)
         slide_failure_deep_3, # Failure Modes: Impact & Fixes (what to do)
