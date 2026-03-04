@@ -804,7 +804,7 @@ def build_split(prs, num, title, image_key, notes, big_num=None,
         left_shapes.append(s)
 
     img = add_image(slide, image_key, SRL, CT, width=SRW)
-    _finish(slide, num, notes, [left_shapes, [img]])
+    _finish(slide, num, notes, [left_shapes, [img]], click_reveal=True)
     return slide
 
 
@@ -821,7 +821,7 @@ def build_bullets(prs, num, title, items, notes, subtitle=None):
         top += Inches(0.5)
 
     bul = add_bullets(slide, items, MX, top, CW, CH - (top - CT))
-    _finish(slide, num, notes, [[bul]])
+    _finish(slide, num, notes, [[bul]], click_reveal=True)
     return slide
 
 
