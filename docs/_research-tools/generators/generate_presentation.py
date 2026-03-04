@@ -2755,6 +2755,110 @@ def slide_25c(prs):
         "Validated at r=0.934 with IS, 88.6% agreement, stable across 16 configs.",
         [step_shapes, [tbl]])
 
+def slide_25d(prs):
+    """Three real salvage examples showing HOW recovery works."""
+    slide = new_slide(prs)
+    add_title(slide, "LLM Salvage: Three Real Recoveries")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "These segments failed IS (< 3.0) but a viewer with context would understand them:",
+        MX, CT, CW, Inches(0.35), size=Pt(13), color=LGRAY, italic=True)
+
+    # Three cards side by side
+    cw_card = Inches(3.8)
+    ch_card = Inches(4.6)
+    gap = Inches(0.27)
+    total = 3 * cw_card + 2 * gap
+    cx = (SL_W - total) / 2
+    cy = CT + Inches(0.45)
+
+    examples = [
+        {
+            "title": "Phonetic Bridge",
+            "color": TEAL,
+            "is_score": "1.29", "wer": "150%", "prob": "0.55",
+            "ref": "when jesus rose again",
+            "hyp": "in one sense it\u2019s rose\nand kennedy",
+            "how": "Mouth shapes for \u201cjesus\u201d \u2192 \u201csense it\u2019s\u201d are "
+                   "visually similar. A viewer watching a religious "
+                   "sermon recognizes \u201crose\u201d = resurrection, not the "
+                   "name. The phonemes are plausible lip-reading "
+                   "confusions, not hallucinations.",
+        },
+        {
+            "title": "Semantic Preservation",
+            "color": GREEN,
+            "is_score": "2.18", "wer": "75%", "prob": "0.90",
+            "ref": "moving conceptual surface data\nover to engineering solutions\nand tools",
+            "hyp": "moved the conceptual rules\nover to engineering tools",
+            "how": "Core meaning intact: \u201cmoving concepts \u2192 "
+                   "engineering tools.\u201d WER is 75% because function "
+                   "words changed, but a tech viewer follows the "
+                   "intent perfectly. WER over-punishes this by "
+                   "counting every small word change.",
+        },
+        {
+            "title": "Structure Match",
+            "color": GOLD,
+            "is_score": "2.55", "wer": "40%", "prob": "0.95",
+            "ref": "over the last 10 years we have\nhad 8,616 students",
+            "hyp": "over the last 10 years we have\nhad 1,600 students",
+            "how": "Grammar and word order are perfect. Only the "
+                   "number changed (8,616 \u2192 1,600). A viewer "
+                   "understands \u201cmany students over 10 years\u201d \u2014 the "
+                   "structure carries the message even when the "
+                   "exact figure is wrong.",
+        },
+    ]
+
+    card_shapes = []
+    for i, ex in enumerate(examples):
+        x = cx + i * (cw_card + gap)
+
+        r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
+                     border_color=ex["color"], border_width=Pt(2), corner_radius=True)
+        card_shapes.append(r)
+
+        # Title + badge
+        add_text(slide, ex["title"],
+                 x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.3),
+                 size=Pt(14), color=ex["color"], bold=True, align=PP_ALIGN.CENTER)
+        add_text(slide, f'IS {ex["is_score"]}  |  WER {ex["wer"]}  |  Prob {ex["prob"]}',
+                 x + Inches(0.15), cy + Inches(0.4), cw_card - Inches(0.3), Inches(0.25),
+                 size=Pt(9), color=LGRAY, align=PP_ALIGN.CENTER)
+
+        # Reference
+        add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.7),
+                 cw_card - Inches(0.3), Inches(0.2), size=Pt(9), color=LGRAY, bold=True)
+        add_text(slide, f'\u201c{ex["ref"]}\u201d',
+                 x + Inches(0.15), cy + Inches(0.88), cw_card - Inches(0.3), Inches(0.55),
+                 size=Pt(10), color=WHITE, italic=True)
+
+        # Hypothesis
+        add_text(slide, "Prediction:", x + Inches(0.15), cy + Inches(1.5),
+                 cw_card - Inches(0.3), Inches(0.2), size=Pt(9), color=LGRAY, bold=True)
+        add_text(slide, f'\u201c{ex["hyp"]}\u201d',
+                 x + Inches(0.15), cy + Inches(1.68), cw_card - Inches(0.3), Inches(0.55),
+                 size=Pt(10), color=ex["color"], italic=True)
+
+        # How it's recovered
+        add_text(slide, "How a viewer recovers this:",
+                 x + Inches(0.15), cy + Inches(2.35),
+                 cw_card - Inches(0.3), Inches(0.2), size=Pt(9), color=TEAL, bold=True)
+        add_text(slide, ex["how"],
+                 x + Inches(0.15), cy + Inches(2.55), cw_card - Inches(0.3), Inches(1.8),
+                 size=Pt(9.5), color=WHITE)
+
+    _finish(slide, "25d",
+        "Three real salvage examples from different recovery categories. "
+        "Phonetic Bridge (IS 1.29): lip-reading confusions that are linguistically "
+        "plausible, not hallucinations. Semantic Preservation (IS 2.18): WER 75% "
+        "but core meaning intact. Structure Match (IS 2.55): perfect grammar, "
+        "only a number changed. Each shows WHY the heuristic says recoverable.",
+        [card_shapes])
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 26 — RESEARCH ROADMAP (STAIRCASE)
 # ═══════════════════════════════════════════════════════════════════════
@@ -2976,60 +3080,68 @@ def slide_arabic_roadmap(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — what's needed
-    lt = add_text(slide, "What\u2019s Needed", MX, CT, col_w, Inches(0.35),
+    # Left — what's needed + how we solve it
+    lt = add_text(slide, "What\u2019s Needed & How We\u2019ll Do It",
+                  MX, CT, col_w, Inches(0.35),
                   size=Pt(18), color=TEAL, bold=True)
     lb = add_bullets(slide, [
-        ("Arabic AV-HuBERT encoder", {"bold": True}),
-        "Pre-trained on Arabic visual speech data (or fine-tuned from English)",
-        ("Arabic LLM backend", {"bold": True}),
-        "Arabic-capable Llama or equivalent (Arabic tokenizer required)",
-        ("Arabic evaluation dataset", {"bold": True}),
-        "Manual transcriptions for MSA + dialect coverage",
-        ("Text normalization", {"bold": True}),
-        "spaCy Arabic, diacritic handling, NER for Arabic names",
-        ("K-means reclustering", {"bold": True}),
-        "Recluster visual features on Arabic mouth shapes",
-    ], MX, CT + Inches(0.4), col_w, Inches(4.5), size=Pt(12))
+        ("Arabic AV-HuBERT encoder", {"bold": True, "color": TEAL}),
+        "Fine-tune English AV-HuBERT on Arabic visual speech data \u2014 "
+        "AVSpeech dataset has Arabic videos available for training",
+        ("Arabic LLM backend", {"bold": True, "color": TEAL}),
+        "Swap Llama-2 for Arabic-capable LLM (e.g. Jais, AceGPT, "
+        "or Arabic-tuned Llama 3) with Arabic tokenizer",
+        ("Training infrastructure", {"bold": True, "color": GREEN}),
+        "AWS GPU instance (existing) for AV-HuBERT fine-tuning "
+        "and K-means reclustering on Arabic mouth shapes",
+        ("Arabic evaluation dataset", {"bold": True, "color": CORAL}),
+        "Manual transcriptions needed for MSA + dialect coverage \u2014 "
+        "the main bottleneck (requires native speakers)",
+        ("Text normalization", {"bold": True, "color": TEAL}),
+        "spaCy Arabic, diacritic handling, Arabic NER",
+    ], MX, CT + Inches(0.4), col_w, Inches(4.5), size=Pt(11))
 
-    # Right — timeline
+    # Right — timeline with practical details
     rx = MX + col_w + gap
-    rt = add_text(slide, "Estimated Timeline", rx, CT, col_w, Inches(0.35),
+    rt = add_text(slide, "Practical Timeline", rx, CT, col_w, Inches(0.35),
                   size=Pt(18), color=GREEN, bold=True)
 
-    headers = ["Step", "Effort", "Depends On"]
+    headers = ["Step", "Effort", "How"]
     rows = [
-        ["Arabic K-means\nmodel", "2\u20133 days", "Arabic training\nvideos"],
-        ["Arabic LLM\nintegration", "1\u20132 days", "Arabic tokenizer"],
-        ["Pipeline config\nfor Arabic", "1 day", "Config changes\nonly"],
-        ["Arabic evaluation\ndataset", "1\u20132 weeks", "Manual transcription\n+ native speakers"],
-        ["End-to-end\ntesting", "3\u20135 days", "All above\ncomplete"],
+        ["AV-HuBERT\nfine-tune", "1\u20132 weeks", "AVSpeech Arabic\nvids + AWS GPU"],
+        ["Arabic K-means", "2\u20133 days", "Recluster on\nArabic features"],
+        ["Arabic LLM\nswap", "1\u20132 days", "Config change +\ntokenizer"],
+        ["Eval dataset", "1\u20132 weeks", "Native speaker\ntranscription"],
+        ["Pipeline config\n& testing", "3\u20135 days", "End-to-end\nvalidation"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
                     row_height=Inches(0.6),
-                    col_widths=[Inches(1.8), Inches(1.4), Inches(2.3)],
+                    col_widths=[Inches(1.6), Inches(1.3), Inches(2.6)],
                     text_size=Pt(10))
 
     # Total callout
     add_rect(slide, rx, CT + Inches(3.65), col_w, Inches(0.6),
              fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
              corner_radius=True)
-    add_text(slide, "Total: ~3\u20134 weeks",
+    add_text(slide, "Total: ~3\u20135 weeks",
              rx + Inches(0.2), CT + Inches(3.7), col_w - Inches(0.4), Inches(0.45),
              size=Pt(18), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
 
     # Bottom
     add_text(slide,
-        "The pipeline architecture is language-agnostic. Arabic support requires "
-        "model weights and evaluation data, not code changes.",
+        "Pipeline code is language-agnostic \u2014 no code changes needed. "
+        "AVSpeech Arabic videos + existing AWS GPU cover training. "
+        "Main bottleneck: manual Arabic evaluation transcriptions.",
         MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Arabic replication roadmap. The pipeline code is language-agnostic. "
-        "Arabic requires: (1) Arabic AV-HuBERT encoder, (2) Arabic LLM, "
-        "(3) Arabic evaluation data with manual transcriptions, (4) text "
-        "normalization for Arabic. Estimated timeline: 3-4 weeks.",
+        "Arabic replication roadmap with practical details. We have AVSpeech "
+        "Arabic videos for training data and an AWS GPU instance for fine-tuning. "
+        "Steps: fine-tune AV-HuBERT on Arabic (1-2 weeks), recluster K-means "
+        "(2-3 days), swap to Arabic LLM (1-2 days), build eval dataset with "
+        "native speakers (1-2 weeks), end-to-end testing (3-5 days). "
+        "Total 3-5 weeks. Pipeline code is language-agnostic.",
         [[lt, lb], [rt, tbl]])
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -4887,6 +4999,13 @@ def main():
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
         slide_context_eval, # Context-aware re-evaluation
+        # --- Salvage (moved here: answers "is 40% really the limit?") ---
+        slide_llm_context_engine, # LLM as context engine
+        slide_25,           # LLM Salvage overview: 39.9% -> 50.9%
+        slide_25b,          # Salvage: 6 Recovery Categories
+        slide_25d,          # Salvage: 3 Real Examples (NEW)
+        slide_25c,          # Salvage: How Detection Works
+        # --- What good looks like (now after salvage context) ---
         slide_what_good_looks_like, # What good looks like
         slide_14,           # Curated Examples (table)
         slide_14b,          # Video Gallery (label fixed, Req #12)
@@ -4904,10 +5023,6 @@ def main():
         slide_future_transition, # Section divider
         slide_insights,     # Key research insights
         slide_24,           # Starting point better than WER
-        slide_llm_context_engine, # LLM as context engine
-        slide_25,           # LLM Salvage overview (Req #12)
-        slide_25b,          # Salvage: 6 Recovery Categories (Req #12)
-        slide_25c,          # Salvage: How Detection Works (Req #12)
         slide_26,           # Five Phases roadmap (GER defined, Req #20)
         slide_27,           # Phase 1 Confidence
         slide_28,           # Phase 2 N-Best
