@@ -394,12 +394,18 @@ def add_video_poster(slide, vid_key, left, top, width, height):
     circle = slide.shapes.add_shape(MSO_SHAPE.OVAL, btn_x, btn_y, btn_size, btn_size)
     circle.fill.solid()
     circle.fill.fore_color.rgb = RGBColor(0, 0, 0)
-    # Semi-transparent effect via alpha
-    fill_elem = circle.fill._fill
-    srgb = fill_elem.find(qn('a:solidFill')).find(qn('a:srgbClr'))
-    if srgb is not None:
-        alpha = etree.SubElement(srgb, qn('a:alpha'))
-        alpha.set('val', '50000')  # 50% opacity
+    # Semi-transparent effect via alpha on the XML element
+    try:
+        spPr = circle._element.find(qn('a:spPr'))
+        if spPr is not None:
+            sf = spPr.find(qn('a:solidFill'))
+            if sf is not None:
+                srgb = sf.find(qn('a:srgbClr'))
+                if srgb is not None:
+                    alpha = etree.SubElement(srgb, qn('a:alpha'))
+                    alpha.set('val', '50000')  # 50% opacity
+    except Exception:
+        pass
     circle.line.fill.background()
     tb = slide.shapes.add_textbox(btn_x, btn_y, btn_size, btn_size)
     tf = tb.text_frame
@@ -2542,14 +2548,120 @@ def slide_16(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_17(prs):
-    build_full_image(prs, 17, "8-Stage Automated Pipeline", "pipeline",
-        subtitle="3 research repos → single orchestrated system",
-        notes="The pipeline orchestrates three separate research codebases "
-              "into a single automated system. Eight stages: video "
-              "normalization, ASR transcription, mouth cropping, LRS3 format "
-              "conversion, manifest generation, feature clustering, LLM "
-              "decode, and output generation. Each stage is a separate "
-              "module with its own tests.")
+    """8-Stage Pipeline — programmatic layout with click-reveal animations."""
+    slide = new_slide(prs)
+    add_title(slide, "8-Stage Automated Pipeline")
+    add_accent_line(slide)
+
+    add_text(slide, "3 research repos \u2192 single orchestrated system",
+             MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+
+    # Stage definitions: (number, name, subtitle, color_category)
+    # Colors: blue=preprocessing, green=features, gold=inference, coral=output
+    BLUE  = RGBColor(0x4D, 0xD0, 0xE1)   # light cyan
+    SGREEN = RGBColor(0x66, 0xBB, 0x6A)   # soft green
+    SGOLD  = RGBColor(0xFF, 0xCA, 0x28)   # gold
+    SPINK  = RGBColor(0xEF, 0x9A, 0x9A)   # soft pink/coral
+
+    row1_stages = [
+        ("1", "Normalize", "HDR/10-bit\nconversion", BLUE, ".mp4"),
+        ("2", "ASR", "Whisper\ntranscription", BLUE, ".wrd"),
+        ("3", "Mouth Crop", "Face detection\n& ROI extract", BLUE, ".mp4 (crop)"),
+        ("4", "LRS3 Convert", "Flat \u2192 LRS3\nformat", BLUE, "LRS3/"),
+    ]
+    row2_stages = [
+        ("5", "Manifests", "TSV + splits\ngeneration", SGREEN, ".tsv"),
+        ("6", "K-means", "Feature\nextraction", SGREEN, ".npy"),
+        ("7", "LLM Decode", "AV-HuBERT +\nLLaMA-2", SGOLD, "text"),
+        ("8", "Outputs", "Reports &\nburned video", SPINK, ".json"),
+    ]
+
+    box_w = Inches(2.65)
+    box_h = Inches(1.6)
+    gap = Inches(0.35)
+    total_w = 4 * box_w + 3 * gap
+    start_x = (SL_W - total_w) / 2
+    row1_y = CT + Inches(0.7)
+    row2_y = row1_y + box_h + Inches(0.9)
+
+    # Input label (left of row 1)
+    inp = add_text(slide, ".mp4\n\nVideo\nInput", MX, row1_y + Inches(0.15),
+                   Inches(0.8), box_h - Inches(0.3),
+                   size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER)
+
+    # Output label (right of row 2)
+    outp = add_text(slide, ".json\n\nReports\n& Videos",
+                    SL_W - MX - Inches(0.8), row2_y + Inches(0.15),
+                    Inches(0.8), box_h - Inches(0.3),
+                    size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER)
+
+    def _draw_stage_row(stages, y_top):
+        shapes = []
+        for i, (num, name, sub, color, fmt_label) in enumerate(stages):
+            x = start_x + i * (box_w + gap)
+            # Box
+            r = add_rect(slide, x, y_top, box_w, box_h,
+                         fill_color=color, border_color=None)
+            shapes.append(r)
+            # Stage number + name
+            add_text(slide, f"{num}. {name}",
+                     x + Inches(0.1), y_top + Inches(0.15),
+                     box_w - Inches(0.2), Inches(0.45),
+                     size=Pt(18), color=RGBColor(0x0D, 0x1B, 0x2A), bold=True,
+                     align=PP_ALIGN.CENTER)
+            # Subtitle
+            add_text(slide, sub,
+                     x + Inches(0.1), y_top + Inches(0.65),
+                     box_w - Inches(0.2), Inches(0.7),
+                     size=Pt(13), color=RGBColor(0x1A, 0x2A, 0x3A),
+                     align=PP_ALIGN.CENTER)
+            # Format label above box
+            add_text(slide, fmt_label,
+                     x, y_top - Inches(0.25), box_w, Inches(0.22),
+                     size=Pt(10), color=LGRAY,
+                     align=PP_ALIGN.CENTER)
+        return shapes
+
+    row1_shapes = _draw_stage_row(row1_stages, row1_y)
+    row2_shapes = _draw_stage_row(row2_stages, row2_y)
+
+    # Repo labels below each row
+    add_text(slide, "auto_avsr",
+             start_x + 2 * (box_w + gap), row1_y + box_h + Inches(0.08),
+             2 * box_w + gap, Inches(0.25),
+             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER)
+    add_text(slide, "av_hubert",
+             start_x, row2_y + box_h + Inches(0.08),
+             2 * box_w + gap, Inches(0.25),
+             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER)
+    add_text(slide, "VSP-LLM",
+             start_x + 2 * (box_w + gap), row2_y + box_h + Inches(0.08),
+             2 * box_w + gap, Inches(0.25),
+             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER)
+
+    # Legend at bottom
+    legend_y = Inches(6.8)
+    legend_items = [
+        ("Preprocessing", BLUE), ("Feature Processing", SGREEN),
+        ("LLM Inference", SGOLD), ("Output Generation", SPINK),
+    ]
+    leg_w = Inches(0.25)
+    leg_h = Inches(0.25)
+    leg_gap = Inches(2.8)
+    leg_start = (SL_W - 4 * leg_gap) / 2 + Inches(0.3)
+    for i, (lbl, clr) in enumerate(legend_items):
+        lx = leg_start + i * leg_gap
+        add_rect(slide, lx, legend_y, leg_w, leg_h, fill_color=clr)
+        add_text(slide, lbl, lx + Inches(0.35), legend_y - Inches(0.02),
+                 Inches(2.0), Inches(0.3),
+                 size=Pt(12), color=WHITE)
+
+    _finish(slide, 17,
+        "8-stage automated pipeline built from 3 research repos. "
+        "Row 1 (preprocessing): Normalize, ASR, Mouth Crop, LRS3 Convert. "
+        "Row 2 (processing): Manifests, K-means, LLM Decode, Outputs. "
+        "Click to reveal each row.",
+        [row1_shapes, row2_shapes], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 18 — ENGINEERING JOURNEY
@@ -3832,9 +3944,9 @@ def slide_a1(prs):
 
 
 def slide_a3(prs):
-    """A3: Catastrophic lenpen=2.0."""
+    """A2: Catastrophic lenpen=2.0."""
     slide = new_slide(prs)
-    add_title(slide, "A3: Catastrophic lenpen=2.0 (Config H)")
+    add_title(slide, "A2: Catastrophic lenpen=2.0 (Config H)")
     add_accent_line(slide)
 
     add_text(slide, "Config H forces the model to generate longer text. "
@@ -3861,7 +3973,7 @@ def slide_a3(prs):
              MX, CT + Inches(3.4), CW, Inches(0.4),
              size=Pt(11), color=LGRAY, italic=True)
 
-    _finish(slide, "A3",
+    _finish(slide, "A2",
         "Config H (lenpen=2.0) produces catastrophic hallucinations. "
         "Mean WER 539.6%. The model generates entire paragraphs of fluent "
         "but completely fabricated text. This dramatically illustrates the "
@@ -3869,9 +3981,9 @@ def slide_a3(prs):
 
 
 def slide_a8(prs):
-    """A8: IS Component Correlation."""
+    """A3: IS Component Correlation."""
     slide = new_slide(prs)
-    add_title(slide, "A8: IS Component Correlation")
+    add_title(slide, "A3: IS Component Correlation")
     add_accent_line(slide)
 
     # Dimension table
@@ -3914,7 +4026,7 @@ def slide_a8(prs):
          ["Config range", "κ 0.62–0.86"]],
         SRL, CT + Inches(3.2), SRW * 0.7, text_size=Pt(10))
 
-    _finish(slide, "A8",
+    _finish(slide, "A3",
         "IS components collapse into 3 dimensions: word accuracy (60%), "
         "meaning (28%), output sanity (9%). Cross-config: Semantic, Phonetic, "
         "NEA are stable; WER and Length Ratio are volatile. Heuristic: "
@@ -3922,9 +4034,9 @@ def slide_a8(prs):
 
 
 def slide_a11(prs):
-    """A11: LLM Salvage — Recoverable Segments."""
+    """A4: LLM Salvage — Recoverable Segments."""
     slide = new_slide(prs)
-    add_title(slide, "A11: LLM Salvage — Recoverable Segments")
+    add_title(slide, "A4: LLM Salvage — Recoverable Segments")
     add_accent_line(slide)
 
     # Key numbers
@@ -3965,7 +4077,7 @@ def slide_a11(prs):
              SRL, CT + Inches(3.2), SRW, Inches(0.5),
              size=Pt(11), color=LGRAY, italic=True)
 
-    _finish(slide, "A11",
+    _finish(slide, "A4",
         "165 of 900 metric-failed segments are recoverable by the LLM "
         "heuristic. Effective capture rises from 39.9% to 50.9%. "
         "6 recovery categories (overlap, not disjoint). "
@@ -3973,9 +4085,9 @@ def slide_a11(prs):
 
 
 def slide_a11b(prs):
-    """A11b: LLM Salvage — Curated Examples."""
+    """A5: LLM Salvage — Curated Examples."""
     slide = new_slide(prs)
-    add_title(slide, "A11b: LLM Salvage — Curated Examples")
+    add_title(slide, "A5: LLM Salvage — Curated Examples")
     add_accent_line(slide)
 
     add_text(slide, "One real example per recovery category — all IS < 3.0 "
@@ -4012,16 +4124,16 @@ def slide_a11b(prs):
         MX, CT + Inches(0.6), CW, text_size=Pt(9),
         row_height=Inches(0.45))
 
-    _finish(slide, "A11b",
+    _finish(slide, "A5",
         "Curated examples showing each of the 6 recovery categories. "
         "All have IS < 3.0 but the heuristic identifies recoverable meaning. "
         "Categories overlap: a segment can exhibit multiple recovery signals.")
 
 
 def slide_a13(prs):
-    """A13: Failure Mode Examples."""
+    """A6: Failure Mode Examples."""
     slide = new_slide(prs)
-    add_title(slide, "A13: Failure Mode Examples")
+    add_title(slide, "A6: Failure Mode Examples")
     add_accent_line(slide)
 
     add_text(slide, "One real example per failure category (5 categories):",
@@ -4064,7 +4176,7 @@ def slide_a13(prs):
         row_colors={0: {4: CORAL}, 1: {4: CORAL}, 3: {4: CORAL},
                     4: {4: CORAL}, 5: {4: CORAL}})
 
-    _finish(slide, "A13",
+    _finish(slide, "A6",
         "5 failure categories with real examples from the 1,497-segment "
         "baseline. Wrong Topic is the largest (31.6%). Hallucination is the "
         "most dangerous — fluent but completely fabricated text.")
@@ -4126,9 +4238,9 @@ def slide_14b(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_a15(prs):
-    """A15: Reference table of all 34 example segments across the presentation."""
+    """A7: Reference table of all 34 example segments across the presentation."""
     slide = new_slide(prs)
-    add_title(slide, "A15: Video Gallery — All Example Segments")
+    add_title(slide, "A7: Video Gallery — All Example Segments")
     add_accent_line(slide)
 
     add_text(slide, "★ = video embedded on a slide   ─ = available in burned_videos/ only",
@@ -4143,15 +4255,15 @@ def slide_a15(prs):
         ["-WQZsfHcPDM_7",  "Near-Miss",       "14",    "58%",  "★"],
         ["00MUdHQ7GGY_8",  "Hallucination",   "14",    "100%", "★"],
         ["DBhaa45mAro_2",  "Tuning Fix",      "14",    "73%",  "★"],
-        ["vBCnI4kf3-E_0",  "Topic Drift",     "14/A13","97%",  "★"],
-        ["Q8aPjew1aUU_5",  "Salvage",         "14/A11b","74%", "★"],
+        ["vBCnI4kf3-E_0",  "Topic Drift",     "14/A6", "97%",  "★"],
+        ["Q8aPjew1aUU_5",  "Salvage",         "14/A5", "74%",  "★"],
         ["d8BR6hsvzoY_31", "Perfect Short",   "15",    "0%",   "★"],
         # LLM Salvage
-        ["WTSIAfzvYUU_0",  "Semantic Pres.",  "A11b",  "72%",  "─"],
-        ["cT6aHJmM4cA_2",  "Phonetic Bridge", "A11b",  "89%",  "★"],
-        ["cECxDMkqVcs_0",  "Entity-Pres.",    "A11b",  "57%",  "─"],
-        ["IZcKDz911X8_0",  "Structure Match", "A11b",  "39%",  "─"],
-        ["0FUlRjBcGGE_21", "WER Over-Pun.",   "A11b",  "150%", "★"],
+        ["WTSIAfzvYUU_0",  "Semantic Pres.",  "A5",    "72%",  "─"],
+        ["cT6aHJmM4cA_2",  "Phonetic Bridge", "A5",    "89%",  "★"],
+        ["cECxDMkqVcs_0",  "Entity-Pres.",    "A5",    "57%",  "─"],
+        ["IZcKDz911X8_0",  "Structure Match", "A5",    "39%",  "─"],
+        ["0FUlRjBcGGE_21", "WER Over-Pun.",   "A5",    "150%", "★"],
         # Success Patterns
         ["FLRU5qzb6hc_9",  "Near-Perfect",    "A12",   "0%",   "─"],
         ["BVynmQr3cf8_0",  "Minor Errors",    "A12",   "11%",  "─"],
@@ -4164,15 +4276,15 @@ def slide_a15(prs):
         ["HecEY5bF-xs_5",  "Low-Mod WER",     "A12",   "15%",  "─"],
         ["c6eBrYor21I_10",  "Sem+Phonetic",    "A12",   "52%",  "─"],
         # Failure Modes
-        ["1RkFwRhhcWQ_0",  "Empty Output",    "A13",   "100%", "─"],
-        ["BmmJujNQvXw_0",  "Extreme Halluc.", "A13",   "200%", "★"],
-        ["0fmc81KXbB0_0",  "Truncation",      "A13",   "69%",  "─"],
-        ["EMfcKvHA5Uc_0",  "Entity Destruct.","A13",   "100%", "★"],
-        ["2JuBrr6TW8o_14", "Phonetic Wrong",  "A13",   "100%", "─"],
-        ["ZnoJxsXKULY_0",  "High Error Rate", "A13",   "100%", "─"],
-        ["49qxSMt4Xe0_0",  "Accum. Errors",   "A13",   "68%",  "─"],
-        ["xITCbZxwLn4_0",  "Content Errors",  "A13",   "60%",  "─"],
-        ["KcDqXon7I3c_0",  "Over-generation", "A13",   "100%", "─"],
+        ["1RkFwRhhcWQ_0",  "Empty Output",    "A6",    "100%", "─"],
+        ["BmmJujNQvXw_0",  "Extreme Halluc.", "A6",    "200%", "★"],
+        ["0fmc81KXbB0_0",  "Truncation",      "A6",    "69%",  "─"],
+        ["EMfcKvHA5Uc_0",  "Entity Destruct.","A6",    "100%", "★"],
+        ["2JuBrr6TW8o_14", "Phonetic Wrong",  "A6",    "100%", "─"],
+        ["ZnoJxsXKULY_0",  "High Error Rate", "A6",    "100%", "─"],
+        ["49qxSMt4Xe0_0",  "Accum. Errors",   "A6",    "68%",  "─"],
+        ["xITCbZxwLn4_0",  "Content Errors",  "A6",    "60%",  "─"],
+        ["KcDqXon7I3c_0",  "Over-generation", "A6",    "100%", "─"],
         # Metric Mismatch
         ["10xhJGx6-kc_0",  "WER>>WWER",       "A14b",  "71%",  "─"],
         ["-WqvFSuRYo0_12", "WWER>>WER",       "A14b",  "27%",  "─"],
@@ -4197,7 +4309,7 @@ def slide_a15(prs):
                       col_widths=[Inches(1.85), Inches(1.5), Inches(0.7),
                                   Inches(0.6), Inches(0.45)])
 
-    _finish(slide, "A15",
+    _finish(slide, "A7",
         "Reference map of all 34 unique example segments used across the "
         "presentation. 12 are embedded as clickable videos on Slides 14b and A11b. "
         "All 1,497 burned videos are available at "
@@ -5589,9 +5701,9 @@ def slide_data_scaling(prs):
 
 
 def slide_a16(prs):
-    """A16: LLM Judge x IS Tier cross-tabulation."""
+    """A8: LLM Judge x IS Tier cross-tabulation."""
     slide = new_slide(prs)
-    add_title(slide, "A16: LLM Judge \u00d7 IS Tier Cross-Tabulation")
+    add_title(slide, "A8: LLM Judge \u00d7 IS Tier Cross-Tabulation")
     add_accent_line(slide)
 
     add_text(slide,
@@ -5622,7 +5734,7 @@ def slide_a16(prs):
          {"color": TEAL}),
     ], MX, CT + Inches(3.4), CW, Inches(2.0), size=Pt(13))
 
-    _finish(slide, "A16",
+    _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers. Strong agreement at the "
         "extremes: 57% Y for Tier 5, 81% N for Tier 1. The interesting "
         "middle: Tiers 2-3 get majority P verdicts — the LLM sees partial "
@@ -5630,9 +5742,9 @@ def slide_a16(prs):
 
 
 def slide_a17(prs):
-    """A17: Context-aware transition matrix and per-topic deltas."""
+    """A9: Context-aware transition matrix and per-topic deltas."""
     slide = new_slide(prs)
-    add_title(slide, "A17: Context Evaluation \u2014 Transition Details")
+    add_title(slide, "A9: Context Evaluation \u2014 Transition Details")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
@@ -5690,7 +5802,7 @@ def slide_a17(prs):
         rx, CT + Inches(3.5), col_w, Inches(0.6),
         size=Pt(12), color=LGRAY, italic=True)
 
-    _finish(slide, "A17",
+    _finish(slide, "A9",
         "Full transition matrix and per-topic deltas for context-aware "
         "evaluation. 230 downgrades vs 68 upgrades. Dominant: Y to P (138). "
         "Context is uniformly stricter across all 7 topics, with DIY/Home "
@@ -5899,11 +6011,16 @@ def main():
         slide_arabic_roadmap, # Arabic Pipeline Roadmap (Req #22)
         slide_31,           # Key Takeaways
         slide_thank_you,    # Thank You & Questions
-        # --- Appendix ---
-        slide_a1, slide_a8, slide_a11, slide_a11b, slide_a13,
-        slide_a15,
-        slide_a16,          # LLM Judge × IS Tier
-        slide_a17,          # Context transition matrix
+        # --- Appendix (A1–A9) ---
+        slide_a1,           # A1: Homophenes
+        slide_a3,           # A2: Catastrophic lenpen
+        slide_a8,           # A3: IS Component Correlation
+        slide_a11,          # A4: LLM Salvage Recoverable
+        slide_a11b,         # A5: LLM Salvage Examples
+        slide_a13,          # A6: Failure Mode Examples
+        slide_a15,          # A7: Video Gallery Map
+        slide_a16,          # A8: LLM Judge × IS Tier
+        slide_a17,          # A9: Context transition matrix
     ]
     total = len(builders)
 
