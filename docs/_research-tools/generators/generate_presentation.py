@@ -463,16 +463,28 @@ def _rgb_hex(color):
 # ═══════════════════════════════════════════════════════════════════════
 
 def add_fade_transition(slide, speed='med'):
-    """Add fade transition to slide."""
+    """Add fade transition to slide.
+
+    ECMA-376 requires p:sld children in order:
+        cSld, clrMapOvr, transition, timing, extLst
+    So we must insert transition *before* any existing timing element,
+    not just append it (python-pptx add_movie creates timing early).
+    """
     sld = slide._element
     # Remove existing transition
     for child in list(sld):
         if child.tag.endswith('transition'):
             sld.remove(child)
-    transition = etree.SubElement(sld, qn('p:transition'))
+    transition = etree.Element(qn('p:transition'))
     transition.set('spd', speed)
     transition.set('advClick', '1')
     etree.SubElement(transition, qn('p:fade'))
+    # Insert before timing/extLst to maintain ECMA-376 order
+    timing_el = sld.find(qn('p:timing'))
+    if timing_el is not None:
+        sld.insert(list(sld).index(timing_el), transition)
+    else:
+        sld.append(transition)
 
 
 def add_animations(slide, groups, click_reveal=False):
@@ -863,7 +875,7 @@ def slide_is_foreshadow(prs):
     ], MX, CT + Inches(0.2), CW, Inches(3.5), size=Pt(17))
 
     add_text(slide,
-        "Designed by Claude (AI) at development time, but runs as pure "
+        "Designed at development time, runs as pure "
         "deterministic Python — $0 per evaluation, 100% reproducible.",
         MX, Inches(5.0), CW, Inches(0.5),
         size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -871,7 +883,7 @@ def slide_is_foreshadow(prs):
     _finish(slide, 0,
         "Bridge slide: WER is blind to meaning. We created IS — a composite "
         "0-5 metric combining 6 quality signals. IS >= 3.0 means the viewer "
-        "gets the right message. Designed by Claude at development time, "
+        "gets the right message. Designed at development time, "
         "runs as deterministic Python at evaluation time.",
         [[bul]])
 
@@ -903,7 +915,7 @@ def slide_is_intro(prs):
     rb = add_bullets(slide, [
         ("Composite score from 0 to 5", {"bold": True}),
         "Combines 6 complementary quality signals",
-        "Designed by Claude (AI) at development time",
+        "Designed at development time, not per-sample",
         "Fully deterministic at runtime \u2014 no LLM per sample",
         "Free, reproducible, decomposable",
         ('IS \u2265 3.0 = "Properly Captured"', {"color": TEAL, "bold": True}),
@@ -930,7 +942,7 @@ def slide_is_intro(prs):
         "IS introduction. WER can't distinguish meaning preservation from "
         "destruction. IS is a composite 0-5 metric combining 6 signals that "
         "together capture whether a viewer would understand the output. "
-        "Designed by Claude at development time, runs as pure deterministic "
+        "Designed at development time, runs as pure deterministic "
         "Python at evaluation time. IS >= 3.0 means properly captured.",
         [[lt, lb], [rt, rb]])
 
@@ -997,29 +1009,46 @@ def slide_is_signals(prs):
 
     # Each signal: name, weight, question, how it works, why this weight, color
     signals = [
-        ("Semantic Similarity", "(25%)", "Do the sentences mean the same thing?",
-         "Sentence embeddings (SBERT) \u2014 cosine similarity of meaning vectors",
-         "Highest weight: meaning is the ultimate goal. Drives 28.5% of IS variance.",
+        ("Semantic Similarity", "(25%)",
+         "Does the output preserve the intended meaning?",
+         "Sentence embeddings (SBERT) \u2014 cosine distance in 384-dim meaning space",
+         'Standard WER treats "admiral" \u2192 "animal" the same as "the" \u2192 "a". '
+         "Semantic similarity captures that these are fundamentally different errors "
+         "\u2014 one destroys meaning, the other doesn't.",
          TEAL),
-        ("Phonetic Similarity", "(15%)", "Do they sound alike? Key for lip reading.",
-         "Double Metaphone encoding \u2014 words that sound alike get same code",
-         "Strongest single predictor (r=0.943). Captures mouth-shape accuracy.",
+        ("Phonetic Similarity", "(15%)",
+         "Do the words sound like what was actually said?",
+         "Double Metaphone encoding \u2014 maps words to pronunciation codes",
+         "Lip-reading outputs are phonetically constrained \u2014 the model sees mouth "
+         "shapes, not text. Phonetic similarity measures how well it decoded what "
+         "the lips actually produced.",
          TEAL),
-        ("Inverse WER", "(15%)", "How many words are correct?",
-         "Standard 1 \u2212 Word Error Rate (substitutions + insertions + deletions)",
-         "Baseline accuracy. Together with WWER/Phonetic/NEA = 60% word accuracy.",
+        ("Inverse WER", "(15%)",
+         "How many words are correct at the surface level?",
+         "Standard 1 \u2212 WER (edit distance: substitutions + insertions + deletions)",
+         "The universal baseline in speech recognition. Necessary but insufficient "
+         "\u2014 a WER of 60% tells you nothing about whether the meaning survived.",
          TEAL),
-        ("Inverse WWER", "(15%)", "Are content words preserved?",
-         'Named entities 2\u00d7, content words 1\u00d7, function words 0.5\u00d7',
-         '"admiral"\u2192"animal" costs 2\u00d7 more than "the"\u2192"a".',
+        ("Inverse WWER", "(15%)",
+         "Are the important words correct?",
+         'Entities weighted 2\u00d7, content words 1\u00d7, function words 0.5\u00d7',
+         'Not all words carry equal information. Losing "the" barely matters; '
+         'losing "Admiral McRae" is catastrophic. WWER weights errors by '
+         "information content.",
          TEAL),
-        ("Named Entity F1", "(15%)", "Are names & numbers preserved?",
-         "Precision/recall on proper nouns, numbers, organizations",
-         "Binary nature makes it the swing factor \u2014 names can\u2019t be guessed.",
+        ("Named Entity F1", "(15%)",
+         "Are names, numbers, and places preserved?",
+         "spaCy NER extraction \u2192 precision/recall on proper nouns",
+         "Entities are irreplaceable \u2014 a viewer can infer a missing 'the' from "
+         "context, but cannot recover a lost name or number. Binary pass/fail "
+         "nature makes it the swing factor.",
          CORAL),
-        ("Length Ratio", "(15%)", "Is the output the right length?",
+        ("Length Ratio", "(15%)",
+         "Is the output the right length?",
          "len(hypothesis) / len(reference) \u2014 ideal = 1.0",
-         "Safety check: >1.5 = hallucination, <0.5 = truncation. Lowest impact (9%).",
+         "Safety net for extreme failures: ratio > 2.0 = hallucination (model "
+         "rambling), ratio < 0.3 = truncation (model gave up). Lowest real impact "
+         "\u2014 most outputs are roughly correct length.",
          LGRAY),
     ]
 
@@ -1120,25 +1149,27 @@ def slide_is_weight_rationale(prs):
     rt = add_text(slide, "Why 25% / 15%?", rx, CT, rw, Inches(0.4),
                   size=Pt(20), color=CORAL, bold=True)
     rb = add_bullets(slide, [
-        ("Semantic gets 25%: meaning is the goal",
+        ("Semantic gets 25%: meaning is the ultimate deliverable",
          {"bold": True, "color": GREEN}),
-        "A viewer who gets the right message succeeds even if exact words differ",
-        ("Other 5 signals get 15% each: complementary checks",
+        "If a viewer understands the message, the transcription succeeded \u2014 "
+        "even if exact wording differs. This is the goal of lip reading.",
+        ("4 word-accuracy signals share 60%: diminishing returns",
          {"bold": True, "color": TEAL}),
-        "4 word-accuracy signals overlap heavily \u2014 equal weights avoid "
-        "over-counting any single measure",
-        ("60/28/9 split is intentional", {"bold": True}),
-        "Lip reading quality depends primarily on getting words right (60%), "
-        "secondarily on meaning capture (28%), with a safety net for extreme "
-        "failures (9%)",
-        ("Validated empirically: r=0.93 with expert judgment",
+        "WER, WWER, Phonetic, and NEA all measure overlapping aspects of "
+        "'did the model get the right words?' Equal 15% weights prevent "
+        "any single word-level metric from dominating.",
+        ("Length ratio at 15%: a safety net, not a quality signal",
+         {"bold": True}),
+        "Catches hallucination and truncation \u2014 the two catastrophic "
+        "failure modes that other signals can miss.",
+        ("Validated: r=0.93 with expert judgment, \u03ba=0.77",
          {"color": GOLD}),
     ], rx, CT + Inches(0.55), rw, Inches(4.5), size=Pt(13))
 
     add_text(slide,
-        "The weight split was designed by Claude, then validated against "
-        "1,497 segments: the resulting IS correlates at r=0.93 with an "
-        "independent expert heuristic and \u03ba=0.77 with human-like judgment.",
+        "Validated against 1,497 segments: the resulting IS correlates at "
+        "r=0.93 with an independent expert heuristic and \u03ba=0.77 with "
+        "human-like judgment.",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1560,7 +1591,7 @@ def slide_07(prs):
         "The Intelligibility Score combines 6 signals into a 0-5 composite. "
         "Key insight: 39.9% of segments are properly captured (IS >= 3.0) — "
         "3.5x more than WER's 11.4% 'usable.' WER dramatically overstates "
-        "failure. Methodology: LLM-distilled evaluation — Claude designed the "
+        "failure. Methodology: LLM-distilled evaluation — the "
         "rubric, selected signals and weights, defined tier boundaries. "
         "Validated across 16 decode configs: LLM heuristic judge r=0.925 "
         "with IS, 88.6% agreement.",
@@ -1632,47 +1663,131 @@ def slide_08(prs):
 # FAILURE MODE DEEP-DIVE — DEFINITIONS & CLASSIFICATION RULES
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_failure_deep_1(prs):
-    """Failure mode definitions and classification rules."""
+def slide_failure_deep_1a(prs):
+    """Failure mode taxonomy part 1: top 5 most critical modes with rationale."""
     slide = new_slide(prs)
-    add_title(slide, "Failure Modes: How They\u2019re Classified")
+    add_title(slide, "Failure Modes: How They\u2019re Classified (1/2)")
     add_accent_line(slide)
 
     add_text(slide,
         "Each of the 900 failed segments (IS < 3.0) is automatically classified "
-        "by rule-based detection \u2014 checked in priority order:",
-        MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY, italic=True)
+        "by rule-based detection \u2014 checked in priority order. "
+        "These 5 modes cover the most critical failures:",
+        MX, CT, CW, Inches(0.4), size=Pt(12), color=LGRAY, italic=True)
 
-    headers = ["Mode", "Detection Rule", "What Happens", "Impact"]
+    headers = ["Mode", "Detection Rule", "What Happens", "Why This Name", "Example"]
     rows = [
-        ["Empty Output\n(7.8%)", "No hypothesis text", "Model produces\nnothing", "Total information\nloss"],
-        ["Hallucination\n(12.3%)", "WER \u2265 100%", "Fluent fabricated text,\nlonger than reference", "Most dangerous:\nsounds convincing"],
-        ["Topic Drift\n(15.9%)", "Semantic < 0.2\nPhonetic < 0.3", "Completely different\nsubject matter", "Viewer gets wrong\nmessage entirely"],
-        ["Phonetic Wrong\nTopic (15.7%)", "Semantic < 0.2\nPhonetic \u2265 0.3", "Words sound right\nbut topic is wrong", "Deceptive: phoneti-\ncally plausible"],
-        ["Entity Destruction\n(12.0%)", "NEA F1 < 10%\nWER > 60%", "Names, numbers,\nkey nouns lost", "Critical info\ndestroyed"],
-        ["Accumulated\nErrors (12.3%)", "WER 40\u201380%\nSemantic 0.2\u20130.5", "Many small word\nsubstitutions", "Meaning erodes\ngradually"],
-        ["Content Word\nErrors (10.7%)", "Key content words\nwrong, structure OK", "Structure intact but\nsubstance changed", "Partially\nrecoverable"],
+        ["Empty Output\n(7.8%)",
+         "No hypothesis\ntext",
+         "Model produces\nnothing",
+         "Self-explanatory \u2014\nno output at all",
+         "Ref: \u201cthe thirteenth\namendment\u201d\n\u2192 Hyp: \u201c\u201d"],
+        ["Hallucination\n(12.3%)",
+         "WER \u2265 100%",
+         "Output LONGER than\nreference \u2014 fluent\nfabricated text",
+         "\"Hallucinate\" = generate\ntext that doesn\u2019t exist.\nDetected by length:\nmore wrong words\nthan total words",
+         "Ref: \u201ccarry strap\u201d\n\u2192 Hyp: \u201cholocaust\ndenier explanation\nof the final act\u201d"],
+        ["Topic Drift\n(15.9%)",
+         "Semantic < 0.2\nPhonetic < 0.3\nWER < 100%",
+         "Completely different\nsubject, but\nsimilar length",
+         "NOT hallucination:\noutput length is normal.\nModel decoded mouth\nshapes into a different\ntopic entirely",
+         "Ref: \u201cweight loss\nand diet\u201d\n\u2192 Hyp: \u201cwanted to\nbe a princess\u201d"],
+        ["Phonetic Wrong\nTopic (15.7%)",
+         "Semantic < 0.2\nPhonetic \u2265 0.3",
+         "Words SOUND right\nbut topic is wrong",
+         "Mouth shapes decoded\ncorrectly but LLM\nmapped sounds to\nwrong domain",
+         "Ref: \u201clistening and\nyelling\u201d\n\u2192 Hyp: \u201calliances\nand willing\u201d"],
+        ["Entity Destruction\n(12.0%)",
+         "NEA F1 < 10%\nWER > 60%",
+         "Names, numbers,\nkey nouns lost",
+         "Named entities are\nirreplaceable \u2014 losing\n\u201cAdmiral McRae\u201d\ncan\u2019t be guessed",
+         "Ref: \u201c13th amendment\u201d\n\u2192 Hyp: \u201cthe animals\nof the world\u201d"],
     ]
 
     tbl = add_table(slide, headers, rows,
                     MX, CT + Inches(0.5), CW,
-                    row_height=Inches(0.6),
-                    col_widths=[Inches(2.2), Inches(2.8), Inches(3.5), Inches(3.6)],
+                    row_height=Inches(0.85),
+                    col_widths=[Inches(1.8), Inches(1.9), Inches(2.4), Inches(3.0), Inches(3.03)],
                     text_size=Pt(9))
 
     add_text(slide,
-        "Rules are checked in priority order: empty \u2192 hallucination \u2192 "
+        "Rules checked in priority order: empty \u2192 hallucination \u2192 "
         "topic drift \u2192 phonetic wrong topic \u2192 entity destruction \u2192 "
         "accumulated \u2192 content word \u2192 high error \u2192 truncation \u2192 over-generation",
-        MX, Inches(6.35), CW, Inches(0.45),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.45), CW, Inches(0.4),
+        size=Pt(10), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Failure mode classification rules. Each segment is checked in priority "
-        "order. The rules use IS component signals (semantic similarity, phonetic "
-        "similarity, WER, NEA F1) as inputs. Top 7 modes cover 92% of all failures. "
-        "Empty and hallucination are detected first as they are the most clear-cut.",
+        "Failure mode taxonomy part 1 of 2. The top 5 modes are the most critical "
+        "and cover ~64% of all failures. Key distinction: Hallucination is detected "
+        "by WER >= 100% (output LONGER than reference, i.e., more wrong words than "
+        "total reference words). Topic Drift is detected when output is a completely "
+        "different subject but at SIMILAR length (WER < 100%) — the model decoded "
+        "mouth shapes into a coherent but wrong topic. Hallucination over-generates; "
+        "Topic Drift substitutes. Both are catastrophic but require different fixes.",
         [[tbl]])
+
+
+def slide_failure_deep_1b(prs):
+    """Failure mode taxonomy part 2: remaining 5 modes with click-reveal."""
+    slide = new_slide(prs)
+    add_title(slide, "Failure Modes: How They\u2019re Classified (2/2)")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "Remaining 5 modes \u2014 less severe individually, but collectively "
+        "account for 36% of failures:",
+        MX, CT, CW, Inches(0.35), size=Pt(12), color=LGRAY, italic=True)
+
+    headers = ["Mode", "Detection Rule", "What Happens", "Why This Name", "Example"]
+    rows = [
+        ["Accumulated\nErrors (12.3%)",
+         "WER 40\u201380%\nSemantic 0.2\u20130.5",
+         "Many small word\nsubstitutions",
+         "Death by a thousand\ncuts \u2014 no single\ncatastrophic error",
+         "Individual words wrong\nthroughout; meaning\nerodes gradually"],
+        ["Content Word\nErrors (10.7%)",
+         "Key content words\nwrong, structure OK",
+         "Structure intact but\nsubstance changed",
+         "Skeleton is right but\nmeaning-carrying\nwords are wrong",
+         "Sentence shape correct\nbut nouns/verbs\nsubstituted"],
+        ["High Error\n(6.6%)",
+         "WER > 80%\nDoesn\u2019t fit above",
+         "Severe degradation,\nno specific pattern",
+         "Catch-all for high-error\nsegments not matching\nspecific patterns",
+         "Output badly garbled;\nno dominant failure\ntype detected"],
+        ["Truncation\n(3.7%)",
+         "Output much\nshorter than ref",
+         "Model stopped\nearly mid-sentence",
+         "Partial decode \u2014\nmodel gave up before\nfinishing",
+         "Ref: 12 words\n\u2192 Hyp: 4 words\n(cut off mid-thought)"],
+        ["Over-generation\n(3.1%)",
+         "Output much\nlonger than ref\n(but WER < 100%)",
+         "Model kept going\npast the content",
+         "Repetition or\nelaboration beyond\nreference",
+         "Ref: 5 words\n\u2192 Hyp: 15 words\n(repeated phrases)"],
+    ]
+
+    tbl = add_table(slide, headers, rows,
+                    MX, CT + Inches(0.45), CW,
+                    row_height=Inches(0.85),
+                    col_widths=[Inches(1.8), Inches(1.9), Inches(2.4), Inches(3.0), Inches(3.03)],
+                    text_size=Pt(9))
+
+    footer = add_text(slide,
+        "All 10 modes are mutually exclusive. Each segment is assigned exactly "
+        "one mode by the first rule it matches in priority order.",
+        MX, Inches(6.45), CW, Inches(0.4),
+        size=Pt(10), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Failure mode taxonomy part 2 of 2. These 5 modes represent less severe "
+        "or less common failures. Accumulated Errors is the classic 'death by a "
+        "thousand cuts' — no single catastrophe, just gradual meaning erosion. "
+        "Content Word Errors preserve sentence structure but swap the meaningful "
+        "words. High Error is the catch-all. Truncation and Over-generation are "
+        "length-based failures. Click to reveal each row one at a time.",
+        [[tbl], [footer]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — REAL EXAMPLES
@@ -1896,19 +2011,57 @@ def slide_10(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_11(prs):
-    build_split(prs, 11, "Named Entity Accuracy: The Largest Differentiator",
-        "nea_scatter",
-        "Named Entity Accuracy (NEA) measures whether critical names, numbers, "
-        "and proper nouns are preserved. It\u2019s the swing factor for borderline segments.",
-        bullets=[
-            ("What are named entities?", {"bold": True, "color": TEAL}),
-            "Names (Admiral McRae), numbers (13th), places, organizations \u2014 "
-            "either correct or destroyed, no partial credit",
-            ("Captured: 74% NEA F1 vs Failed: 16% \u2014 58pp gap",
-             {"bold": True, "color": CORAL}),
-            "NEA accounts for 17.3% of IS variance (highest for any 15%-weight signal)",
-            "A viewer can guess a missing \u201cthe\u201d but cannot guess a missing name",
-        ])
+    slide = new_slide(prs)
+    add_title(slide, "Named Entity Accuracy: The Largest Differentiator")
+    add_accent_line(slide)
+
+    # Narrower left column, larger image
+    col_w = Inches(4.5)
+    lt = add_text(slide, "What are named entities?", MX, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=TEAL, bold=True)
+    lb = add_bullets(slide, [
+        "Names (Admiral McRae), numbers (13th), places, "
+        "organizations",
+        "Either correct or destroyed \u2014 no partial credit",
+        ("Captured: 74% NEA F1 vs Failed: 16%",
+         {"bold": True, "color": CORAL}),
+        "58pp gap \u2014 largest differentiator of any signal",
+        "17.3% of IS variance (highest for 15%-weight signal)",
+        'A viewer can guess a missing "the" but not a missing name',
+    ], MX, CT + Inches(0.5), col_w, Inches(4.5), size=Pt(14))
+
+    # Large image on right
+    img_l = MX + col_w + Inches(0.3)
+    img_w = CW - col_w - Inches(0.3)
+    img = add_image(slide, "nea_scatter", img_l, CT, width=img_w)
+
+    _finish(slide, 11,
+        "PLOT EXPLANATION (NEA Recall vs WWER Per Segment):\n\n"
+        "This scatter plot shows every segment as a dot, with WWER (Weighted "
+        "Word Error Rate) on the x-axis and Named Entity Recall on the y-axis. "
+        "Each dot color represents a different decode configuration (A: Baseline, "
+        "C: LenPen=1, E: Sampling t=0.5, G: Greedy, J: LP1+t=0.5).\n\n"
+        "KEY PATTERNS TO NOTE:\n"
+        "1. Top-left cluster (low WWER, high NEA): These are the success cases \u2014 "
+        "segments where both word accuracy and entity preservation are high. "
+        "Most captured segments live here.\n\n"
+        "2. Bottom row at NEA=0: A large cluster of segments with ZERO entity "
+        "recall across ALL WWER values. This means many segments lose ALL named "
+        "entities regardless of how many other words they get right. This is why "
+        "NEA is the swing factor \u2014 entity destruction is binary.\n\n"
+        "3. Right side (WWER > 100%): These are hallucinated segments where the "
+        "model generates more wrong words than the reference contains. Even some "
+        "of these have high NEA (top-right dots) \u2014 meaning the model hallucinated "
+        "but still preserved some entity names.\n\n"
+        "4. All configurations cluster together: different decode parameters "
+        "don't change the fundamental NEA vs WWER relationship. The visual "
+        "encoder determines entity preservation, not the decoder.\n\n"
+        "TAKEAWAY: Named entities are binary \u2014 either preserved or destroyed. "
+        "The dense cluster at NEA=0 across all WWER levels shows that entity "
+        "loss is catastrophic and independent of general word accuracy. This is "
+        "why NEA accounts for 17.3% of IS variance despite only 15% weight \u2014 "
+        "it's the single most discriminating signal between captured and failed.",
+        [[lt, lb], [img]])
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 12 — 13 TUNING EXPERIMENTS
@@ -2145,7 +2298,7 @@ def slide_15(prs):
 
 def slide_16(prs):
     slide = new_slide(prs)
-    add_title(slide, "IS Validation: Claude-Distilled Evaluation")
+    add_title(slide, "IS Validation: Design-Time Distilled Evaluation")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
@@ -2155,7 +2308,7 @@ def slide_16(prs):
     lt = add_text(slide, "How the IS Was Built", MX, CT, col_w, Inches(0.35),
                   size=Pt(17), color=TEAL, bold=True)
     lb = add_bullets(slide, [
-        "Claude (Anthropic) designed the full evaluation framework",
+        "Full evaluation framework designed at development time",
         "Selected 6 signals: Semantic (25%), Phonetic (15%), "
         "inv. WER (15%), inv. WWER (15%), NEA F1 (15%), Length (15%)",
         "Defined 5 tiers, 10 failure modes, 7 success patterns",
@@ -2203,7 +2356,7 @@ def slide_16(prs):
               text_size=Pt(11))
 
     _finish(slide, 16,
-        "How the IS was built: Claude designed the entire framework at design "
+        "How the IS was built: the entire framework was designed at development "
         "time — rubric, 6 signals with weights, tier boundaries, failure mode "
         "taxonomy, success patterns. These were then encoded into deterministic "
         "formulas. No LLM is called per sample at runtime.\n\n"
@@ -2421,11 +2574,11 @@ def slide_21(prs):
         ("Smart Segmentation",
          "Configurable overlap for context preservation across segment "
          "boundaries.", LGRAY),
-        ("Claude-Distilled IS",
+        ("Intelligibility Score (IS)",
          "IS = 0-5 composite of 6 signals (semantic, phonetic, WER, WWER, "
-         "NEA, length ratio). Claude designed the rubric, weights, tiers, "
-         "and failure taxonomy at design time — distilled into deterministic "
-         "code (no LLM API calls at runtime). "
+         "NEA, length ratio). Rubric, weights, tiers, "
+         "and failure taxonomy designed at development time — distilled into "
+         "deterministic code (no LLM API calls at runtime). "
          "Validated: r=0.925 across 16 configs, 88.6% agreement. "
          "6 signals collapse into 3 independent dimensions (PCA).", GREEN),
     ]
@@ -2453,11 +2606,11 @@ def slide_21(prs):
     _finish(slide, 21,
         "Four intelligent features. Transcription reuse: manual corrections "
         "persist across runs. Golden k-means: consistent clustering baseline. "
-        "Smart segmentation: configurable overlap. Claude-Distilled IS: the IS is "
+        "Smart segmentation: configurable overlap. Intelligibility Score: the IS is "
         "a 0-5 composite score combining 6 signals — semantic similarity (25%), "
         "phonetic similarity (15%), inverse WER (15%), inverse WWER (15%), "
-        "Named Entity Accuracy F1 (15%), and length ratio (15%). Claude "
-        "(Anthropic) designed the entire framework: the rubric, signal selection "
+        "Named Entity Accuracy F1 (15%), and length ratio (15%). The entire "
+        "framework was designed at development time: the rubric, signal selection "
         "and weights, tier boundaries (Excellent/Good/Fair/Poor/Failed), 10 "
         "failure modes, and 7 success patterns. These were then distilled into "
         "deterministic formulas — no LLM is called per sample at runtime. "
@@ -2546,7 +2699,7 @@ def slide_24(prs):
         ("50.9% with LLM salvage (165 recoverable segments)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
-        "Claude-designed heuristic: 88.6% agreement, r=0.925 (no runtime LLM)",
+        "Expert heuristic: 88.6% agreement, r=0.925 (no runtime LLM)",
     ], mx2 + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(1.2), size=Pt(13), bullet_color=TEAL)
 
@@ -2744,7 +2897,7 @@ def slide_25c(prs):
 
     # Bottom
     add_text(slide,
-        "The tree was designed by Claude (AI) at development time, then distilled "
+        "The decision tree was designed at development time, then distilled "
         "into deterministic Python. No LLM is called during evaluation.",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -3881,7 +4034,7 @@ def slide_design_philosophy(prs):
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
     add_bullets(slide, [
-        ("Claude designed the rubric, signals, weights at design time",
+        ("Rubric, signals, weights designed at development time",
          {"bold": True}),
         "Distilled into deterministic Python formulas",
         ("$0 per evaluation run", {"color": GREEN}),
@@ -3900,8 +4053,8 @@ def slide_design_philosophy(prs):
 
     _finish(slide, 0,
         "Two approaches: Option A calls an LLM for every pair — expensive, "
-        "non-deterministic, slow. Option B (ours): Claude designed the entire "
-        "evaluation framework at design time, then we distilled it into "
+        "non-deterministic, slow. Option B (ours): the entire "
+        "evaluation framework was designed at development time, then distilled into "
         "deterministic formulas. Zero cost per run, 100% reproducible. "
         "Validated at 88.6% agreement, r=0.85.",
         [[r1], [r2]], click_reveal=True)
@@ -4988,7 +5141,8 @@ def main():
         slide_10,           # Three Root Causes (text-only, Req #7)
         slide_domain_mismatch, # Domain mismatch detail
         slide_11,           # Named Entity Accuracy (expanded, Req #8)
-        slide_failure_deep_1, # Failure Modes: Classification Rules (definitions first)
+        slide_failure_deep_1a, # Failure Modes: Classification Rules (1/2 — top 5)
+        slide_failure_deep_1b, # Failure Modes: Classification Rules (2/2 — remaining 5)
         slide_failure_deep_2, # Failure Modes: Real Examples (make it concrete)
         slide_08,           # Failure Mode Taxonomy (now numbers make sense)
         slide_failure_deep_3, # Failure Modes: Impact & Fixes (what to do)
