@@ -911,7 +911,7 @@ def slide_exec_summary(prs):
         "Key finding: WER dramatically overstates failure. Our Intelligibility "
         "Score shows 40% of output is properly captured, not the 11% WER suggests. "
         "Complete production system delivered. Clear roadmap to improve further.",
-        [[bul]])
+        [[bul]], click_reveal=True)
 
 
 def slide_toc(prs):
@@ -985,7 +985,7 @@ def slide_is_foreshadow(prs):
         "0-5 metric combining 6 quality signals. IS >= 3.0 means the viewer "
         "gets the right message. Designed at development time, "
         "runs as deterministic Python at evaluation time.",
-        [[bul]])
+        [[bul]], click_reveal=True)
 
 
 def slide_is_intro(prs):
@@ -1101,7 +1101,7 @@ def slide_tuning_intro(prs):
         "13 experiments varying beam size, length penalty, temperature, sampling, "
         "and repetition penalty. Tested on 107 segments, best config validated "
         "on the full 1,497-segment dataset.",
-        [[lt, lb], [rt]])
+        [[lt, lb], [rt]], click_reveal=True)
 
 
 def slide_is_signals(prs):
@@ -1284,7 +1284,7 @@ def slide_is_weight_rationale(prs):
         "goal. The 4 word-accuracy signals overlap heavily (r>0.79), so equal "
         "15% weights avoid over-counting. Validated: r=0.93 with expert "
         "heuristic, kappa=0.77.",
-        [[lt] + dim_shapes, [rt, rb]])
+        [[lt] + dim_shapes, [rt, rb]], click_reveal=True)
 
 
 def slide_is_calc_examples(prs):
@@ -1515,7 +1515,7 @@ def slide_03(prs):
         "generates text. Key: only the LoRA adapters and projection layer are "
         "trained — 12.6M of 7B parameters. And the LLM is swappable: Llama 3.1 "
         "8B has the same hidden dimension, making it a trivial 1-2 hour swap.",
-        [[img], blocks])
+        [[img], blocks], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 4 — THE BENCHMARK
@@ -1749,10 +1749,10 @@ def slide_08(prs):
              size=Pt(13), color=LGRAY, italic=True)
 
     _finish(slide, 8,
-        "900 failed segments classified into 10 failure modes. The top two — "
-        "topic drift and phonetically-similar-wrong-topic — account for 31.6%. "
+        "900 failed segments classified into 5 failure categories. Wrong Topic "
+        "is the largest (31.6%), combining topic drift and phonetic confusion. "
         "Hallucination (12.3%) is the most dangerous: fluent, confident, "
-        "completely fabricated. Entity destruction (12.0%) loses names and "
+        "completely fabricated. Right Topic Wrong Details (22.7%) loses names and "
         "numbers. This taxonomy maps directly to our roadmap.",
         [bar_shapes])
 
@@ -2056,7 +2056,7 @@ def slide_failure_deep_3(prs):
         "(Wrong Topic + Right Topic Wrong Details) trace to the LLM backbone "
         "being too weak for out-of-domain content. A stronger LLM is the single "
         "highest-leverage intervention.",
-        [[tbl]])
+        [[tbl]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -2156,7 +2156,7 @@ def slide_11(prs):
         "loss is catastrophic and independent of general word accuracy. This is "
         "why NEA accounts for 17.3% of IS variance despite only 15% weight \u2014 "
         "it's the single most discriminating signal between captured and failed.",
-        [[lt, lb], [img]])
+        [[lt, lb], [img]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 12 — 13 TUNING EXPERIMENTS
@@ -2202,7 +2202,7 @@ def slide_12(prs):
         "temperature, and sampling. Config J achieved the best IS. Key "
         "trade-off: eliminated all 70 empty outputs but added 41 "
         "hallucinations. Net IS gain: only +0.08.",
-        [[lt, lb], [rt, rb, img]])
+        [[lt, lb], [rt, rb, img]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 13 — LIMITS OF TUNING
@@ -2308,7 +2308,7 @@ def slide_tuning_summary(prs):
         "fundamental trade-off: length penalty controls whether the model stays "
         "silent (empty) or fabricates (hallucination). Config J chose the sweet "
         "spot — zero empties at the cost of +41 hallucinations.",
-        [[lt, lb], [rt, tbl], [r1]])
+        [[lt, lb], [rt, tbl], [r1]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 14 — CURATED EXAMPLES (TABLE)
@@ -2346,7 +2346,7 @@ def slide_14(prs):
         "Row 3: near-miss — structure intact but key terms phonetically garbled "
         "(probiotics→permafrost). Row 4: complete hallucination — 'carry strap' "
         "becomes 'holocaust denier.' This is why WER alone is insufficient.",
-        [[tbl]])
+        [[tbl]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 15 — LIVE DEMO (VIDEO)
@@ -2416,7 +2416,7 @@ def slide_16(prs):
         "Full evaluation framework designed at development time",
         "Selected 6 signals: Semantic (25%), Phonetic (15%), "
         "inv. WER (15%), inv. WWER (15%), NEA F1 (15%), Length (15%)",
-        "Defined 5 tiers, 10 failure modes, 7 success patterns",
+        "Defined 5 tiers, 5 failure categories, 7 success patterns",
         ("Distilled into deterministic formulas — no LLM per sample",
          {"bold": True}),
         "Result: reproducible, free, decomposable scoring",
@@ -2738,7 +2738,7 @@ def slide_22(prs):
             "Custom NEA metric for entity accuracy",
             "Intelligibility Score pipeline (LLM-distilled, 6 signals)",
             "IS correlation analysis (16 configs, r=0.925)",
-            "Failure mode classification (10 modes)",
+            "Failure mode classification (5 categories)",
             "Topic/length analysis (11 categories)",
             ("Fine-tuning diagnostics (10 training plots)", {"color": TEAL}),
         ],
@@ -2879,7 +2879,7 @@ def slide_25(prs):
         "Four levels of measurement: WER says 11.4% usable. IS says 39.9%. "
         "LLM salvage says 50.9%. And the LLM Judge gold standard confirms: "
         "Y+P = 64.9% \u2014 5.7x WER's assessment.",
-        [[r1], [bul]])
+        [[r1], [bul]], click_reveal=True)
 
 
 def slide_25b(prs):
@@ -3688,7 +3688,7 @@ def slide_a1(prs):
         "Homophenes: visually identical mouth shapes for different sounds. "
         "50-70% of sounds invisible on lips. Admiral/animal, mom/bomb — "
         "context is the only way to disambiguate. This is why the LLM matters.",
-        [[tbl1], [tbl2]])
+        [[tbl1], [tbl2]], click_reveal=True)
 
 
 def slide_a3(prs):
@@ -3884,7 +3884,7 @@ def slide_a13(prs):
     add_title(slide, "A13: Failure Mode Examples")
     add_accent_line(slide)
 
-    add_text(slide, "One real example per failure mode (10 modes):",
+    add_text(slide, "One real example per failure category (5 categories):",
              MX, CT, CW, Inches(0.3), size=Pt(13), color=LGRAY)
 
     tbl = add_table(slide,
@@ -3925,10 +3925,9 @@ def slide_a13(prs):
                     4: {4: CORAL}, 5: {4: CORAL}})
 
     _finish(slide, "A13",
-        "10 classified failure modes with real examples from the 1,497-segment "
-        "baseline. Topic Drift and Phonetically Similar are the most common "
-        "(15.9% and 15.7%). Hallucination is the most dangerous — fluent but "
-        "completely fabricated text.")
+        "5 failure categories with real examples from the 1,497-segment "
+        "baseline. Wrong Topic is the largest (31.6%). Hallucination is the "
+        "most dangerous — fluent but completely fabricated text.")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -4122,7 +4121,7 @@ def slide_visemes(prs):
         "identical mouth shapes called visemes. Admiral and animal look the same. "
         "Mom and bomb look the same. Context is the only disambiguation signal, "
         "which is why the LLM component is critical.",
-        [[lt, lb, tbl1], [rt, tbl2]])
+        [[lt, lb, tbl1], [rt, tbl2]], click_reveal=True)
 
 
 def slide_data_flow(prs):
@@ -4232,7 +4231,7 @@ def slide_eval_dataset(prs):
         "Multiple topics, speakers, accents, lighting conditions. Business and "
         "Finance has the highest IS (3.08) because it's closest to the TED talk "
         "training data. DIY/Home is worst (2.13) due to inherently visual content.",
-        [[s1, s2, s3], [tbl]])
+        [[s1, s2, s3], [tbl]], click_reveal=True)
 
 
 def slide_wer_explained(prs):
@@ -4293,7 +4292,7 @@ def slide_wer_explained(prs):
         "Admiral-to-animal gets the same penalty as the-to-a. No credit for "
         "meaning preservation or phonetic similarity. Can exceed 100% when the "
         "model generates extra words (insertions).",
-        [[lt], [rt, rb1, rb2]])
+        [[lt], [rt, rb1, rb2]], click_reveal=True)
 
 
 def slide_design_philosophy(prs):
@@ -4473,7 +4472,7 @@ def slide_domain_mismatch(prs):
         "DIY/Home is worst at IS 2.13 (30% captured) — inherently visual content "
         "that doesn't translate to speech patterns. 19% of segments (~284) show "
         "domain vocabulary confusion where a topic label would help.",
-        [[lt, tbl], []])
+        [[lt, tbl], []], click_reveal=True)
 
 
 def slide_decode_params(prs):
@@ -4600,7 +4599,7 @@ def slide_is_deep_dive(prs):
         "Semantic similarity (25% weight) captures 28.5% of IS variance. "
         "Length ratio is weakest at 9.1%. The expert heuristic (15-rule "
         "decision tree) achieves r=0.934.",
-        [[lt, tbl], [rt, rb]])
+        [[lt, tbl], [rt, rb]], click_reveal=True)
 
 
 def slide_metric_disagreement(prs):
@@ -4675,6 +4674,75 @@ def slide_metric_disagreement(prs):
         [cards], click_reveal=True)
 
 
+def slide_metric_disagreement_2(prs):
+    """More metric disagreement patterns — part 2."""
+    slide = new_slide(prs)
+    add_title(slide, "When Metrics Disagree: More Patterns")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "Additional diagnostic patterns that reveal specific transcription behaviors:",
+        MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY, italic=True)
+
+    cw = Inches(5.8)
+    ch = Inches(2.0)
+    gap_x = Inches(0.53)
+    gap_y = Inches(0.2)
+    cy = CT + Inches(0.55)
+
+    patterns = [
+        ("Length \u226a 1.0, all metrics low", CORAL,
+         "Signal loss — model gave up or truncated",
+         "Ref: \"the thirteenth amendment abolished slavery\"\n"
+         "Hyp: \"the\" (length ratio 0.06)\n"
+         "All signals collapse — nothing to evaluate."),
+        ("Length \u226b 1.0, Semantic low", CORAL,
+         "Hallucination — fluent fabrication",
+         "Ref: \"carry strap\" → Hyp: 3 paragraphs about history\n"
+         "WER 6,833%, length ratio 45\u00d7 — LLM ran unchecked.\n"
+         "IS catches via length + semantic: fluent but fabricated."),
+        ("NEA low, Semantic moderate", GOLD,
+         "Topic right, entities destroyed",
+         "\"the 13th amendment\" → \"the important decision\"\n"
+         "Semantic 0.52 but NEA F1 = 0% — gist right, facts lost.\n"
+         "IS penalizes: critical info (names, numbers) irrecoverable."),
+        ("All metrics moderate (~0.5)", TEAL,
+         "Accumulated small errors — death by a thousand cuts",
+         "Every signal is mediocre, none catastrophic.\n"
+         "WER 55%, Semantic 0.48, Phonetic 0.51, NEA 40%.\n"
+         "IS: ~2.5 (borderline) — individually OK, collectively degraded."),
+    ]
+
+    cards = []
+    for i, (title, color, subtitle, body) in enumerate(patterns):
+        col = i % 2
+        row = i // 2
+        x = MX + col * (cw + gap_x)
+        y = cy + row * (ch + gap_y)
+        r = add_rect(slide, x, y, cw, ch, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+        cards.append(r)
+        add_rich_text(slide, [
+            [(title, {"size": Pt(14), "color": color, "bold": True}),
+             (f"  —  {subtitle}", {"size": Pt(12), "color": WHITE})],
+        ], x + Inches(0.2), y + Inches(0.1), cw - Inches(0.4), Inches(0.35))
+        add_text(slide, body, x + Inches(0.2), y + Inches(0.5),
+                 cw - Inches(0.4), ch - Inches(0.6),
+                 size=Pt(11), color=LGRAY)
+
+    add_text(slide,
+        "8 total diagnostic patterns — IS decomposes quality into actionable signals "
+        "that each point to a different engineering fix.",
+        MX, Inches(6.3), CW, Inches(0.4),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Four more metric disagreement patterns. Length collapse = signal loss. "
+        "Length explosion + low semantic = hallucination. Low NEA + moderate semantic = "
+        "entity destruction. All-moderate = accumulated errors.",
+        [cards], click_reveal=True)
+
+
 def slide_two_eval_systems(prs):
     """Two evaluation systems — IS and expert heuristic."""
     slide = new_slide(prs)
@@ -4745,7 +4813,7 @@ def slide_two_eval_systems(prs):
         "raising effective capture to 50.9%. They agree 88.6% of the time "
         "(r=0.934, kappa=0.773). The heuristic catches meaning preservation "
         "that strict metrics miss.",
-        [[r1, r2], [rt, tbl]])
+        [[r1, r2], [rt, tbl]], click_reveal=True)
 
 
 def slide_llm_judge(prs):
@@ -4817,7 +4885,7 @@ def slide_llm_judge(prs):
         "blind. Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9% — "
         "the LLM says nearly 2 in 3 segments have useful output. Intra-rater "
         "reliability 86.7%. Correlation with IS: r=0.85 (Pearson 0.8495).",
-        [[lt, tbl], [rt, tbl2]])
+        [[lt, tbl], [rt, tbl2]], click_reveal=True)
 
 
 def slide_context_eval(prs):
@@ -4897,7 +4965,7 @@ def slide_context_eval(prs):
         "STRICTER, not lenient. 230 downgrades vs 68 upgrades. Dominant "
         "transition: Y to P (138 cases) — the judge realizes domain vocabulary "
         "was wrong. Only 1 N-to-Y rescue across all 1,497 pairs.",
-        [[lt, tbl], [rt, tbl2, tbl3]])
+        [[lt, tbl], [rt, tbl2, tbl3]], click_reveal=True)
 
 
 def slide_what_good_looks_like(prs):
@@ -4950,7 +5018,7 @@ def slide_what_good_looks_like(prs):
         "Perfect word-for-word transcription over 20-40 consecutive words. "
         "The architecture works — the challenge is getting it to work "
         "consistently across all domains.",
-        [[tbl]])
+        [[tbl]], click_reveal=True)
 
 
 def slide_research_transition(prs):
@@ -4967,7 +5035,7 @@ def slide_research_transition(prs):
     add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
              fill_color=CORAL)
 
-    add_text(slide, "1,497 segments  \u2022  6 quality signals  \u2022  10 failure modes  "
+    add_text(slide, "1,497 segments  \u2022  6 quality signals  \u2022  5 failure categories  "
              "\u2022  13 tuning experiments",
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
@@ -5100,7 +5168,7 @@ def slide_web_ui(prs):
         "The web UI provides a simple drag-and-drop interface for non-technical "
         "users. Under the hood, 8 pipeline stages run automatically. Each stage "
         "is a modular component that can be tested independently.",
-        [[lt, lb], [ph]])
+        [[lt, lb], [ph]], click_reveal=True)
 
 
 def slide_dual_env(prs):
@@ -5166,7 +5234,7 @@ def slide_dual_env(prs):
         "replicated correctly. Path translations, different Python environments, "
         "different hardware. INSTALL.sh handles deployment with automatic backup "
         "and 13-point verification.",
-        [[r1, r2], [rt, rb]])
+        [[r1, r2], [rt, rb]], click_reveal=True)
 
 
 def slide_future_transition(prs):
@@ -5321,7 +5389,7 @@ def slide_llm_context_engine(prs):
         "context. A stronger LLM means better disambiguation. Llama 3.1 8B "
         "has quality equivalent to LLaMA-2 70B with the same hidden dimension "
         "(4096), making it a trivial 1-2 hour swap.",
-        [[lt, lb], [r1, r2]])
+        [[lt, lb], [r1, r2]], click_reveal=True)
 
 
 def slide_data_scaling(prs):
@@ -5564,7 +5632,7 @@ def slide_confidence_scoring(prs):
         "our existing 1,497 labeled segments. Implementation: 2-4 hours. "
         "Impact: users see only trusted output, perceived error rate drops "
         "from 60% to ~20%.",
-        [[lt, lb], [rt, tbl]])
+        [[lt, lb], [rt, tbl]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -5587,7 +5655,7 @@ def slide_thank_you(prs):
              size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
 
     add_text(slide,
-        "1,497 segments  \u2022  6 quality signals  \u2022  10 failure modes  "
+        "1,497 segments  \u2022  6 quality signals  \u2022  5 failure categories  "
         "\u2022  13 experiments\n"
         "8-stage pipeline  \u2022  37 bugs fixed  \u2022  8 research reports",
         MX, Inches(4.8), CW, Inches(0.8),
@@ -5648,7 +5716,8 @@ def main():
         slide_tuning_summary, # 13 Experiments, Minimal Gain (replaces 5)
         # --- Section 6: The Full Picture ---
         slide_is_deep_dive, # Why These 6 Signals? Validation (Req #11)
-        slide_metric_disagreement, # When Metrics Disagree
+        slide_metric_disagreement, # When Metrics Disagree (4 patterns)
+        slide_metric_disagreement_2, # When Metrics Disagree pt 2 (4 more)
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
         slide_context_eval, # Context-aware re-evaluation
