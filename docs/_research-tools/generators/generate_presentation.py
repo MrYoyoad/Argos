@@ -2199,15 +2199,20 @@ def slide_tuning_summary(prs):
         rx, CT + Inches(3.0), col_w, Inches(0.7),
         size=Pt(14), color=LGRAY, italic=True)
 
-    # Right bottom: visual
-    add_image(slide, "P4_lenpen", rx, CT + Inches(3.8), col_w, Inches(1.3))
-
     _finish(slide, 0,
         "Condensed tuning results. 13 experiments across 4 decode parameters "
         "showed minimal improvement. Best config (J) eliminates empty outputs "
         "but increases hallucinations by 13%. Net IS gain only +0.08. "
         "Per-segment rankings are identical across configs (r > 0.92), proving "
-        "the bottleneck is the visual encoder, not decode parameters.",
+        "the bottleneck is the visual encoder, not decode parameters.\n\n"
+        "The original slide included a length penalty sensitivity chart showing "
+        "the empty-vs-hallucination trade-off: lenpen=-0.5 causes 44.9% empty "
+        "outputs; baseline (lenpen=0) has 4.7% empties; lenpen=1.0 (Config J) "
+        "eliminates all empties but hallucinations rise from 20.5% to 23.2%; "
+        "lenpen=2.0 pushes hallucinations to 52.9%. This demonstrates the "
+        "fundamental trade-off: length penalty controls whether the model stays "
+        "silent (empty) or fabricates (hallucination). Config J chose the sweet "
+        "spot — zero empties at the cost of +41 hallucinations.",
         [[lt, lb], [rt, tbl], [r1]])
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -3066,8 +3071,40 @@ def slide_26(prs):
         "immediate: confidence scoring to surface the 40% that's already "
         "good (2-4 hours). Phase 2: N-best aggregation. Phase 3: swap LLM "
         "to Llama 3.1 8B plus smart prompts. Phase 4: the biggest gain — "
-        "scale training data. Phase 5: Error Correction (GER) post-processing. Key: ICLR 2024 "
-        "shows these gains are multiplicative.",
+        "scale training data. Phase 5: Error Correction (GER) post-processing. "
+        "Key: ICLR 2024 shows these gains are multiplicative.\n\n"
+        "PLOT EXPLANATION (Improvement Roadmap: Projected WER Reduction):\n\n"
+        "The plot shows projected WER reduction across 3 implementation "
+        "phases, starting from our current 64.1% baseline.\n\n"
+        "X-AXIS: Implementation phases progressing left to right.\n"
+        "Y-AXIS: Word Error Rate (%).\n"
+        "BLUE LINE: Best estimate trajectory.\n"
+        "SHADED BAND: Expected range (optimistic to conservative).\n\n"
+        "PHASE 1 — Confidence + Metrics (Days of work, Missions M4, M5, M7): "
+        "Adds confidence scoring to surface the 40% that already works. "
+        "Projected WER: 52-60% (improvement comes from filtering out bad "
+        "segments, not reducing errors per se). This doesn't change actual "
+        "model output — it identifies which segments to trust.\n\n"
+        "PHASE 2 — N-Best + Prompts (Weeks of work, Missions M6, M8): "
+        "Uses beam search aggregation (N-best lists, ROVER voting, MBR) "
+        "and smart prompts to pick better hypotheses. Projected WER: "
+        "42-52%. These techniques give the model multiple chances and pick "
+        "the best output.\n\n"
+        "PHASE 3 — Fine-Tuning (Weeks + 8x GPU, Mission M9): "
+        "Scale training data from 1.3K to 20-50K segments, upgrade LLM "
+        "from Llama-2 7B to Llama 3.1 8B. Projected WER: 38-48%. This is "
+        "the only phase that actually improves the model itself.\n\n"
+        "Phase 5 (GER, shown separately below the plot) runs as "
+        "post-processing across all phases: -8 to -15pp by catching "
+        "hallucinations and common errors.\n\n"
+        "HOW THIS TRANSLATES TO IS:\n"
+        "Current: WER 64.1% -> IS 2.52 (39.9% captured).\n"
+        "Each ~10pp WER reduction typically improves IS by ~0.3-0.5 points "
+        "and captured rate by ~8-12pp.\n"
+        "Phase 3 target (42% WER) would project to roughly IS 3.5-4.0 and "
+        "55-65% captured rate.\n"
+        "The relationship is non-linear — improvements accelerate as more "
+        "segments cross the IS >= 3.0 threshold.",
         [step_shapes, [img]])
 
 # ═══════════════════════════════════════════════════════════════════════
