@@ -1289,33 +1289,33 @@ def slide_is_weight_rationale(prs):
                   size=Pt(20), color=TEAL, bold=True)
 
     dims = [
-        ("Word Accuracy (~60% of IS)", TEAL,
-         "Phonetic + WER + WWER + NEA (4 \u00d7 15% = 60%)\n"
-         "All 4 signals correlate tightly (r > 0.79 with each other). "
-         "They measure overlapping aspects of: did the model get the right words? "
-         "For lip-reading this is the foundation."),
-        ("Meaning Preservation (~28%)", GREEN,
-         "Semantic Similarity (1 \u00d7 25%)\n"
-         "Gets highest single weight because meaning is the ultimate goal. "
-         "Partially redundant with word accuracy (r=0.82) \u2014 correct words usually "
-         "mean correct meaning \u2014 but captures paraphrasing and near-misses."),
-        ("Output Sanity (~9%)", LGRAY,
-         "Length Ratio (1 \u00d7 15%)\n"
-         "Safety net, not a quality signal. Catches extreme hallucinations "
-         "(output 3\u00d7 too long) and truncation (output barely started). "
-         "Lowest real impact \u2014 most outputs are roughly the right length."),
+        ("Word Accuracy", "60%", TEAL,
+         "Phonetic + WER + WWER + NEA (4 \u00d7 15%)",
+         "All 4 correlate tightly (r > 0.79). Did the model get the right words?"),
+        ("Meaning Preservation", "28%", GREEN,
+         "Semantic Similarity (1 \u00d7 25%)",
+         "Highest single weight \u2014 meaning is the ultimate deliverable."),
+        ("Output Sanity", "9%", LGRAY,
+         "Length Ratio (1 \u00d7 15%)",
+         "Safety net: catches hallucination (too long) and truncation (too short)."),
     ]
 
     py = CT + Inches(0.55)
     dim_shapes = []
-    for name, color, desc in dims:
-        h = add_text(slide, name, MX + Inches(0.1), py, col_w - Inches(0.2),
-                     Inches(0.35), size=Pt(14), color=color, bold=True)
-        d = add_text(slide, desc, MX + Inches(0.1), py + Inches(0.35),
-                     col_w - Inches(0.2), Inches(1.1),
-                     size=Pt(11), color=WHITE)
-        dim_shapes.append(h)
-        py += Inches(1.55)
+    for name, pct, color, signals, desc in dims:
+        r = add_rect(slide, MX, py, col_w, Inches(1.35), fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+        add_text(slide, name, MX + Inches(0.2), py + Inches(0.08),
+                 Inches(3.5), Inches(0.35), size=Pt(16), color=color, bold=True)
+        add_text(slide, pct, MX + col_w - Inches(1.0), py + Inches(0.08),
+                 Inches(0.8), Inches(0.35), size=Pt(16), color=color,
+                 bold=True, align=PP_ALIGN.RIGHT)
+        add_text(slide, signals, MX + Inches(0.2), py + Inches(0.45),
+                 col_w - Inches(0.4), Inches(0.35), size=Pt(13), color=WHITE)
+        add_text(slide, desc, MX + Inches(0.2), py + Inches(0.85),
+                 col_w - Inches(0.4), Inches(0.4), size=Pt(12), color=LGRAY)
+        dim_shapes.append(r)
+        py += Inches(1.5)
 
     # Right column — design rationale
     rx = MX + col_w + gap
@@ -2556,12 +2556,12 @@ def slide_17(prs):
     add_text(slide, "3 research repos \u2192 single orchestrated system",
              MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
-    # Stage definitions: (number, name, subtitle, color_category)
-    # Colors: blue=preprocessing, green=features, gold=inference, coral=output
-    BLUE  = RGBColor(0x4D, 0xD0, 0xE1)   # light cyan
-    SGREEN = RGBColor(0x66, 0xBB, 0x6A)   # soft green
-    SGOLD  = RGBColor(0xFF, 0xCA, 0x28)   # gold
-    SPINK  = RGBColor(0xEF, 0x9A, 0x9A)   # soft pink/coral
+    BLUE   = RGBColor(0x4D, 0xD0, 0xE1)
+    SGREEN = RGBColor(0x66, 0xBB, 0x6A)
+    SGOLD  = RGBColor(0xFF, 0xCA, 0x28)
+    SPINK  = RGBColor(0xEF, 0x9A, 0x9A)
+    DARK   = RGBColor(0x0D, 0x1B, 0x2A)
+    DARK2  = RGBColor(0x1A, 0x2A, 0x3A)
 
     row1_stages = [
         ("1", "Normalize", "HDR/10-bit\nconversion", BLUE, ".mp4"),
@@ -2584,62 +2584,56 @@ def slide_17(prs):
     row1_y = CT + Inches(0.7)
     row2_y = row1_y + box_h + Inches(0.9)
 
-    # Input label (left of row 1)
-    inp = add_text(slide, ".mp4\n\nVideo\nInput", MX, row1_y + Inches(0.15),
-                   Inches(0.8), box_h - Inches(0.3),
-                   size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER)
-
-    # Output label (right of row 2)
-    outp = add_text(slide, ".json\n\nReports\n& Videos",
-                    SL_W - MX - Inches(0.8), row2_y + Inches(0.15),
-                    Inches(0.8), box_h - Inches(0.3),
-                    size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER)
-
     def _draw_stage_row(stages, y_top):
-        shapes = []
+        """Draw 4 stage boxes. Returns ALL shapes (labels + rects + texts)."""
+        all_shapes = []
         for i, (num, name, sub, color, fmt_label) in enumerate(stages):
             x = start_x + i * (box_w + gap)
-            # Box
-            r = add_rect(slide, x, y_top, box_w, box_h,
-                         fill_color=color, border_color=None)
-            shapes.append(r)
-            # Stage number + name
-            add_text(slide, f"{num}. {name}",
+            all_shapes.append(add_text(slide, fmt_label,
+                     x, y_top - Inches(0.25), box_w, Inches(0.22),
+                     size=Pt(10), color=LGRAY, align=PP_ALIGN.CENTER))
+            all_shapes.append(add_rect(slide, x, y_top, box_w, box_h,
+                         fill_color=color, border_color=None))
+            all_shapes.append(add_text(slide, f"{num}. {name}",
                      x + Inches(0.1), y_top + Inches(0.15),
                      box_w - Inches(0.2), Inches(0.45),
-                     size=Pt(18), color=RGBColor(0x0D, 0x1B, 0x2A), bold=True,
-                     align=PP_ALIGN.CENTER)
-            # Subtitle
-            add_text(slide, sub,
+                     size=Pt(18), color=DARK, bold=True,
+                     align=PP_ALIGN.CENTER))
+            all_shapes.append(add_text(slide, sub,
                      x + Inches(0.1), y_top + Inches(0.65),
                      box_w - Inches(0.2), Inches(0.7),
-                     size=Pt(13), color=RGBColor(0x1A, 0x2A, 0x3A),
-                     align=PP_ALIGN.CENTER)
-            # Format label above box
-            add_text(slide, fmt_label,
-                     x, y_top - Inches(0.25), box_w, Inches(0.22),
-                     size=Pt(10), color=LGRAY,
-                     align=PP_ALIGN.CENTER)
-        return shapes
+                     size=Pt(13), color=DARK2, align=PP_ALIGN.CENTER))
+        return all_shapes
 
-    row1_shapes = _draw_stage_row(row1_stages, row1_y)
-    row2_shapes = _draw_stage_row(row2_stages, row2_y)
-
-    # Repo labels below each row
-    add_text(slide, "auto_avsr",
+    # Row 1: all shapes in one animation group
+    row1_all = []
+    row1_all.append(add_text(slide, ".mp4\n\nVideo\nInput",
+                   MX, row1_y + Inches(0.15),
+                   Inches(0.8), box_h - Inches(0.3),
+                   size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER))
+    row1_all += _draw_stage_row(row1_stages, row1_y)
+    row1_all.append(add_text(slide, "auto_avsr",
              start_x + 2 * (box_w + gap), row1_y + box_h + Inches(0.08),
              2 * box_w + gap, Inches(0.25),
-             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER)
-    add_text(slide, "av_hubert",
+             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER))
+
+    # Row 2: all shapes in one animation group
+    row2_all = []
+    row2_all.append(add_text(slide, ".json\n\nReports\n& Videos",
+                    SL_W - MX - Inches(0.8), row2_y + Inches(0.15),
+                    Inches(0.8), box_h - Inches(0.3),
+                    size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER))
+    row2_all += _draw_stage_row(row2_stages, row2_y)
+    row2_all.append(add_text(slide, "av_hubert",
              start_x, row2_y + box_h + Inches(0.08),
              2 * box_w + gap, Inches(0.25),
-             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER)
-    add_text(slide, "VSP-LLM",
+             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER))
+    row2_all.append(add_text(slide, "VSP-LLM",
              start_x + 2 * (box_w + gap), row2_y + box_h + Inches(0.08),
              2 * box_w + gap, Inches(0.25),
-             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER)
+             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER))
 
-    # Legend at bottom
+    # Legend (part of row 2 group)
     legend_y = Inches(6.8)
     legend_items = [
         ("Preprocessing", BLUE), ("Feature Processing", SGREEN),
@@ -2651,17 +2645,18 @@ def slide_17(prs):
     leg_start = (SL_W - 4 * leg_gap) / 2 + Inches(0.3)
     for i, (lbl, clr) in enumerate(legend_items):
         lx = leg_start + i * leg_gap
-        add_rect(slide, lx, legend_y, leg_w, leg_h, fill_color=clr)
-        add_text(slide, lbl, lx + Inches(0.35), legend_y - Inches(0.02),
-                 Inches(2.0), Inches(0.3),
-                 size=Pt(12), color=WHITE)
+        row2_all.append(add_rect(slide, lx, legend_y, leg_w, leg_h,
+                                 fill_color=clr))
+        row2_all.append(add_text(slide, lbl,
+                 lx + Inches(0.35), legend_y - Inches(0.02),
+                 Inches(2.0), Inches(0.3), size=Pt(12), color=WHITE))
 
     _finish(slide, 17,
         "8-stage automated pipeline built from 3 research repos. "
         "Row 1 (preprocessing): Normalize, ASR, Mouth Crop, LRS3 Convert. "
         "Row 2 (processing): Manifests, K-means, LLM Decode, Outputs. "
         "Click to reveal each row.",
-        [row1_shapes, row2_shapes], click_reveal=True)
+        [row1_all, row2_all], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 18 — ENGINEERING JOURNEY
@@ -2721,29 +2716,28 @@ def slide_18(prs):
         },
     ]
 
-    card_shapes = []
+    card_groups = []  # list of lists — each inner list = all shapes for one card
     for i, phase in enumerate(phases):
         x = cx + i * (cw_card + gap_card)
-        r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
+        card = []
+        card.append(add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
                      border_color=phase["color"], border_width=Pt(2.5),
-                     corner_radius=True)
-        card_shapes.append(r)
-
-        add_text(slide, phase["title"],
+                     corner_radius=True))
+        card.append(add_text(slide, phase["title"],
                  x + Inches(0.2), cy + Inches(0.15),
                  cw_card - Inches(0.4), Inches(0.55),
                  size=Pt(18), color=phase["color"], bold=True,
-                 align=PP_ALIGN.CENTER)
-        add_text(slide, phase["subtitle"],
+                 align=PP_ALIGN.CENTER))
+        card.append(add_text(slide, phase["subtitle"],
                  x + Inches(0.2), cy + Inches(0.7),
                  cw_card - Inches(0.4), Inches(0.3),
                  size=Pt(12), color=LGRAY, italic=True,
-                 align=PP_ALIGN.CENTER)
-
-        add_bullets(slide, phase["items"],
+                 align=PP_ALIGN.CENTER))
+        card.append(add_bullets(slide, phase["items"],
                     x + Inches(0.15), cy + Inches(1.1),
                     cw_card - Inches(0.3), Inches(3.2),
-                    size=Pt(11))
+                    size=Pt(11)))
+        card_groups.append(card)
 
     bottom = add_text(slide,
         "Every bug documented with root cause. Every change synced between "
@@ -2756,7 +2750,7 @@ def slide_18(prs):
         "migration to Docker (including 1-2 weeks for Web UI migration), and "
         "ongoing bug fixing. 37+ bugs including NVENC silent corruption. "
         "Refactored from 823-line monolith to 11 reusable modules.",
-        [[c] for c in card_shapes] + [[bottom]], click_reveal=True)
+        card_groups + [[bottom]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 19 — MODULAR REFACTORING (BEFORE/AFTER)
@@ -3441,19 +3435,19 @@ def slide_26(prs):
         w = step_w - i * step_indent
         r = add_rect(slide, x, y, w, step_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
-        add_rich_text(slide, [
+        step_shapes.append(r)
+        step_shapes.append(add_rich_text(slide, [
             [(phase, {"size": Pt(13), "color": color, "bold": True}),
              (f"  {desc}", {"size": Pt(13), "color": WHITE})],
             [(detail, {"size": Pt(11), "color": LGRAY, "italic": True}),
              (f"   {is_note}", {"size": Pt(11), "color": GOLD})],
-        ], x + Inches(0.2), y + Inches(0.05), w - Inches(0.4), step_h - Inches(0.1))
-        step_shapes.append(r)
+        ], x + Inches(0.2), y + Inches(0.05), w - Inches(0.4), step_h - Inches(0.1)))
 
     # WER trajectory image on right
     img = add_image(slide, "P3_trajectory",
                     SRL - Inches(0.2), CT, width=SRW + Inches(0.2))
 
-    add_text(slide,
+    bottom = add_text(slide,
              "Combined target: IS 3.5–4.0 (55–65% captured). "
              "Gains are multiplicative (ICLR 2024 scaling law).",
              MX, Inches(6.35), CW, Inches(0.4),
@@ -3474,7 +3468,7 @@ def slide_26(prs):
         "55-65% captured rate.\n"
         "The relationship is non-linear — improvements accelerate as more "
         "segments cross the IS >= 3.0 threshold.",
-        [step_shapes, [img]], click_reveal=True)
+        [step_shapes, [img, bottom]], click_reveal=True)
 
 
 def slide_26b(prs):
@@ -3503,35 +3497,34 @@ def slide_26b(prs):
     ms_shapes = []
     for i, (phase, is_val, cap_val, color) in enumerate(milestones):
         y = CT + Inches(0.55) + i * Inches(1.15)
-        r = add_rect(slide, rx, y, rw, Inches(0.95), fill_color=NAVY2,
-                     border_color=color, border_width=Pt(1.5), corner_radius=True)
-        ms_shapes.append(r)
-        add_text(slide, phase, rx + Inches(0.15), y + Inches(0.05),
+        ms_shapes.append(add_rect(slide, rx, y, rw, Inches(0.95), fill_color=NAVY2,
+                     border_color=color, border_width=Pt(1.5), corner_radius=True))
+        ms_shapes.append(add_text(slide, phase, rx + Inches(0.15), y + Inches(0.05),
                  rw - Inches(0.3), Inches(0.3),
-                 size=Pt(13), color=color, bold=True)
-        add_text(slide, f"{is_val}  •  {cap_val}",
+                 size=Pt(13), color=color, bold=True))
+        ms_shapes.append(add_text(slide, f"{is_val}  \u2022  {cap_val}",
                  rx + Inches(0.15), y + Inches(0.35),
                  rw - Inches(0.3), Inches(0.3),
-                 size=Pt(16), color=WHITE, bold=True)
+                 size=Pt(16), color=WHITE, bold=True))
         if i > 0:
             delta = float(is_val.replace("IS ~", "")) - 2.52
-            add_text(slide, f"+{delta:.2f} from baseline",
+            ms_shapes.append(add_text(slide, f"+{delta:.2f} from baseline",
                      rx + Inches(0.15), y + Inches(0.63),
                      rw - Inches(0.3), Inches(0.25),
-                     size=Pt(10), color=LGRAY, italic=True)
+                     size=Pt(10), color=LGRAY, italic=True))
 
-    add_text(slide,
-             "Each ~10pp WER reduction → ~0.3–0.5 IS improvement + ~8–12pp captured rate.",
+    bottom = add_text(slide,
+             "Each ~10pp WER reduction \u2192 ~0.3\u20130.5 IS improvement + ~8\u201312pp captured rate.",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, "26b",
         "IS improvement trajectory paralleling the WER reduction roadmap. "
-        "Current IS 2.52 (39.9% captured) → Phase 3 target IS 3.80 (65% captured). "
-        "The IS ≥ 3.0 threshold marks 'captured' segments. "
-        "Key insight: relationship is non-linear — improvements accelerate as more "
-        "segments cross the IS ≥ 3.0 threshold.",
-        [[img], ms_shapes], click_reveal=True)
+        "Current IS 2.52 (39.9% captured) \u2192 Phase 3 target IS 3.80 (65% captured). "
+        "The IS \u2265 3.0 threshold marks 'captured' segments. "
+        "Key insight: relationship is non-linear \u2014 improvements accelerate as more "
+        "segments cross the IS \u2265 3.0 threshold.",
+        [[img], ms_shapes + [bottom]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
