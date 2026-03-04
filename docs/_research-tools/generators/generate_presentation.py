@@ -43,6 +43,7 @@ IMG = {
     "P1_quality": PLOTS / "P1_quality_tiers.png",
     "P2_paper": PLOTS / "P2_paper_vs_reality.png",
     "P3_trajectory": PLOTS / "P3_wer_trajectory.png",
+    "P3b_is_trajectory": PLOTS / "P3b_is_trajectory.png",
     "P4_lenpen": PLOTS / "P4_lenpen_sensitivity.png",
     "boxplot": PLOTS / "09_boxplot_wwer_all_experiments.png",
     "wer_duration": PLOTS / "01_wer_vs_duration.png",
@@ -973,7 +974,7 @@ def slide_toc(prs):
         "how the system works. Research findings are the core: our novel "
         "evaluation framework and what we learned. Engineering covers the "
         "production system. Future directions lays out the improvement roadmap.",
-        [shapes])
+        [[s] for s in shapes], click_reveal=True)
 
 
 def slide_is_foreshadow(prs):
@@ -1767,7 +1768,7 @@ def slide_08(prs):
         "Hallucination (12.3%) is the most dangerous: fluent, confident, "
         "completely fabricated. Right Topic Wrong Details (22.7%) loses names and "
         "numbers. This taxonomy maps directly to our roadmap.",
-        [bar_shapes])
+        [[b] for b in bar_shapes])
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — DEFINITIONS & CLASSIFICATION RULES
@@ -2596,7 +2597,7 @@ def slide_18(prs):
         "migration to Docker (including 1-2 weeks for Web UI migration), and "
         "ongoing bug fixing. 37+ bugs including NVENC silent corruption. "
         "Refactored from 823-line monolith to 11 reusable modules.",
-        [card_shapes, [bottom]], click_reveal=True)
+        [[c] for c in card_shapes] + [[bottom]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 19 — MODULAR REFACTORING (BEFORE/AFTER)
@@ -2731,7 +2732,7 @@ def slide_21(prs):
         "meaning preservation (Semantic, 28.5%), and output sanity (Length, "
         "9.1%). Cross-config validation across 16 decode configs: r=0.925, "
         "88.6% agreement, Cohen's kappa 0.773.",
-        [card_shapes])
+        [[c] for c in card_shapes], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 22 — EVALUATION INFRASTRUCTURE
@@ -3124,7 +3125,7 @@ def slide_25d(prs):
         "plausible, not hallucinations. Semantic Preservation (IS 2.18): WER 75% "
         "but core meaning intact. Structure Match (IS 2.55): perfect grammar, "
         "only a number changed. Each shows WHY the heuristic says recoverable.",
-        [card_shapes])
+        [[c] for c in card_shapes], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -3242,7 +3243,7 @@ def slide_25e(prs):
         "pepper on screen and corrects automatically. This is the strongest argument "
         "for multimodal context: the visual channel fills gaps that audio-only metrics "
         "cannot measure.",
-        [card_shapes])
+        [[c] for c in card_shapes], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -4454,7 +4455,7 @@ def slide_is_dimensions(prs):
         "the semantic similarity tiebreaker. Output Sanity (9%) is mostly length "
         "ratio. Four of six signals are redundant — but deliberate: cross-"
         "validation makes the metric robust.",
-        [card_shapes])
+        [[c] for c in card_shapes], click_reveal=True)
 
 
 def slide_domain_mismatch(prs):
@@ -4707,7 +4708,7 @@ def slide_metric_disagreement(prs):
         "are wrong but content preserved. High NEA + high WER means names survived. "
         "High semantic + high WER means paraphrasing. High phonetic + low semantic "
         "is the dangerous case — sounds right but wrong meaning.",
-        [cards], click_reveal=True)
+        [[c] for c in cards], click_reveal=True)
 
 
 def slide_metric_disagreement_2(prs):
@@ -4776,7 +4777,7 @@ def slide_metric_disagreement_2(prs):
         "Four more metric disagreement patterns. Length collapse = signal loss. "
         "Length explosion + low semantic = hallucination. Low NEA + moderate semantic = "
         "entity destruction. All-moderate = accumulated errors.",
-        [cards], click_reveal=True)
+        [[c] for c in cards], click_reveal=True)
 
 
 def slide_two_eval_systems(prs):
