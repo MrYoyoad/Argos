@@ -49,8 +49,10 @@ IMG = {
     "empty_halluc": PLOTS / "10_empty_and_hallucination_rates.png",
     "cdf_wwer": PLOTS / "15_cdf_wwer_curated.png",
     "ft_dashboard": PLOTS / "finetune" / "FT_10_summary_dashboard.png",
+    "ft_clean": PLOTS / "finetune" / "FT_11_clean_summary.png",
     "tuning_ba": PLOTS / "P5_tuning_before_after.png",
     "improve_ja": PLOTS / "16_improvement_J_vs_A.png",
+    "P6_is_radar": PLOTS / "P6_is_radar.png",
 }
 
 VID = {
@@ -844,6 +846,35 @@ def slide_toc(prs):
         [shapes])
 
 
+def slide_is_foreshadow(prs):
+    """Brief IS introduction — bridge from WER limitations."""
+    slide = new_slide(prs)
+    add_title(slide, "We Need a Better Metric")
+    add_accent_line(slide)
+
+    bul = add_bullets(slide, [
+        "WER counts word errors — but ignores whether the viewer understood",
+        ("We created the Intelligibility Score (IS): a composite 0\u20135 metric",
+         {"bold": True, "color": TEAL}),
+        "Combines 6 quality signals: meaning, phonetics, word accuracy, entities, length",
+        ("IS \u2265 3.0 = \u201cProperly Captured\u201d — the viewer gets the right message",
+         {"color": GREEN, "bold": True}),
+    ], MX, CT + Inches(0.2), CW, Inches(3.5), size=Pt(17))
+
+    add_text(slide,
+        "Designed by Claude (AI) at development time, but runs as pure "
+        "deterministic Python — $0 per evaluation, 100% reproducible.",
+        MX, Inches(5.0), CW, Inches(0.5),
+        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Bridge slide: WER is blind to meaning. We created IS — a composite "
+        "0-5 metric combining 6 quality signals. IS >= 3.0 means the viewer "
+        "gets the right message. Designed by Claude at development time, "
+        "runs as deterministic Python at evaluation time.",
+        [[bul]])
+
+
 def slide_is_intro(prs):
     """Introduce IS concept before showing results."""
     slide = new_slide(prs)
@@ -877,9 +908,20 @@ def slide_is_intro(prs):
         ('IS \u2265 3.0 = "Properly Captured"', {"color": TEAL, "bold": True}),
     ], rx, CT + Inches(0.55), rw, Inches(3.5), size=Pt(15))
 
+    # Calculation method details
+    add_rich_text(slide, [
+        [("How signals are calculated:", {"size": Pt(12), "color": LGRAY, "bold": True})],
+        [("Phonetic: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("phoneme sequence matching \u2014 do words SOUND alike?", {"size": Pt(11), "color": LGRAY})],
+        [("Semantic: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("embedding cosine similarity \u2014 is MEANING preserved?", {"size": Pt(11), "color": LGRAY})],
+        [("WWER: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("content words penalized 2\u00d7 vs function words", {"size": Pt(11), "color": LGRAY})],
+    ], rx, CT + Inches(4.2), rw, Inches(1.5))
+
     # Bottom
     add_text(slide,
-        "Next slide: the 6 signals explained step by step.",
+        "Next: the 6 individual signals, then how they combine.",
         MX, Inches(6.4), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1007,6 +1049,114 @@ def slide_is_signals(prs):
         "Length ratio catches hallucination and truncation. Formula: weighted "
         "sum producing a 0-5 score.",
         anim_groups)
+
+
+def slide_is_calc_examples(prs):
+    """Two concrete IS calculation examples."""
+    slide = new_slide(prs)
+    add_title(slide, "IS in Action: Two Real Segments")
+    add_accent_line(slide)
+
+    col_w = Inches(5.8)
+    gap = Inches(0.53)
+
+    # --- Left card: Good segment ---
+    r1 = add_rect(slide, MX, CT, col_w, Inches(4.9), fill_color=NAVY2,
+                  border_color=GREEN, border_width=Pt(2), corner_radius=True)
+
+    add_text(slide, "Good Segment \u2014 IS = 4.2", MX + Inches(0.2), CT + Inches(0.1),
+             col_w - Inches(0.4), Inches(0.35),
+             size=Pt(16), color=GREEN, bold=True)
+
+    add_rich_text(slide, [
+        [("Ref: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
+         ("\u201callow you to work with the team in a more\u201d", {"size": Pt(11), "color": WHITE})],
+        [("Hyp: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
+         ("\u201callow you to work with a team and more\u201d", {"size": Pt(11), "color": WHITE})],
+    ], MX + Inches(0.2), CT + Inches(0.5), col_w - Inches(0.4), Inches(0.6))
+
+    # Calculation table
+    calc_lines = [
+        ("Semantic Sim", "0.82", "\u00d7 0.25", "= 0.205", GREEN),
+        ("Phonetic Sim", "0.89", "\u00d7 0.15", "= 0.134", GREEN),
+        ("Inverse WER", "0.71", "\u00d7 0.15", "= 0.107", TEAL),
+        ("Inverse WWER", "0.76", "\u00d7 0.15", "= 0.114", TEAL),
+        ("NEA F1", "1.00", "\u00d7 0.15", "= 0.150", TEAL),
+        ("Length Ratio", "0.89", "\u00d7 0.15", "= 0.134", TEAL),
+    ]
+    cy = CT + Inches(1.2)
+    for name, val, mult, result, clr in calc_lines:
+        add_text(slide, name, MX + Inches(0.3), cy, Inches(1.6), Inches(0.28),
+                 size=Pt(10), color=LGRAY)
+        add_text(slide, val, MX + Inches(2.0), cy, Inches(0.6), Inches(0.28),
+                 size=Pt(10), color=clr, bold=True)
+        add_text(slide, mult, MX + Inches(2.6), cy, Inches(0.7), Inches(0.28),
+                 size=Pt(10), color=LGRAY)
+        add_text(slide, result, MX + Inches(3.4), cy, Inches(0.8), Inches(0.28),
+                 size=Pt(10), color=WHITE, bold=True)
+        cy += Inches(0.3)
+
+    add_text(slide, "Sum \u00d7 5 = 4.22 \u2192 IS 4.2 (Good)",
+             MX + Inches(0.3), cy + Inches(0.15), col_w - Inches(0.6), Inches(0.35),
+             size=Pt(14), color=GREEN, bold=True)
+
+    # --- Right card: Bad segment ---
+    rx = MX + col_w + gap
+    r2 = add_rect(slide, rx, CT, col_w, Inches(4.9), fill_color=NAVY2,
+                  border_color=CORAL, border_width=Pt(2), corner_radius=True)
+
+    add_text(slide, "Bad Segment \u2014 IS = 0.9", rx + Inches(0.2), CT + Inches(0.1),
+             col_w - Inches(0.4), Inches(0.35),
+             size=Pt(16), color=CORAL, bold=True)
+
+    add_rich_text(slide, [
+        [("Ref: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
+         ("\u201ccarry strap\u201d", {"size": Pt(11), "color": WHITE})],
+        [("Hyp: ", {"size": Pt(11), "color": LGRAY, "bold": True}),
+         ("\u201cholocaust denier\u201d", {"size": Pt(11), "color": WHITE})],
+    ], rx + Inches(0.2), CT + Inches(0.5), col_w - Inches(0.4), Inches(0.6))
+
+    bad_lines = [
+        ("Semantic Sim", "0.04", "\u00d7 0.25", "= 0.010", CORAL),
+        ("Phonetic Sim", "0.12", "\u00d7 0.15", "= 0.018", CORAL),
+        ("Inverse WER", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
+        ("Inverse WWER", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
+        ("NEA F1", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
+        ("Length Ratio", "1.00", "\u00d7 0.15", "= 0.150", LGRAY),
+    ]
+    cy = CT + Inches(1.2)
+    for name, val, mult, result, clr in bad_lines:
+        add_text(slide, name, rx + Inches(0.3), cy, Inches(1.6), Inches(0.28),
+                 size=Pt(10), color=LGRAY)
+        add_text(slide, val, rx + Inches(2.0), cy, Inches(0.6), Inches(0.28),
+                 size=Pt(10), color=clr, bold=True)
+        add_text(slide, mult, rx + Inches(2.6), cy, Inches(0.7), Inches(0.28),
+                 size=Pt(10), color=LGRAY)
+        add_text(slide, result, rx + Inches(3.4), cy, Inches(0.8), Inches(0.28),
+                 size=Pt(10), color=WHITE, bold=True)
+        cy += Inches(0.3)
+
+    add_text(slide, "Sum \u00d7 5 = 0.89 \u2192 IS 0.9 (Failed)",
+             rx + Inches(0.3), cy + Inches(0.15), col_w - Inches(0.6), Inches(0.35),
+             size=Pt(14), color=CORAL, bold=True)
+
+    _finish(slide, 0,
+        "Two IS calculation examples. Left: good segment (IS 4.2) with high "
+        "scores across all signals. Right: hallucination (IS 0.9) where only "
+        "length ratio is non-zero — the output is a completely different topic.",
+        [[r1], [r2]], click_reveal=True)
+
+
+def slide_is_radar(prs):
+    """Radar chart showing captured vs failed IS profiles."""
+    build_full_image(prs, 0,
+        "IS Radar: Success vs Failure Profile", "P6_is_radar",
+        notes="Radar chart comparing mean component values for IS >= 3.0 "
+              "(green) vs IS < 3.0 (red). Captured segments are strong across "
+              "all 6 signals. Failed segments collapse on meaning and entity "
+              "preservation while maintaining only partial length ratio.",
+        subtitle="Captured segments (green) are strong across all 6 signals. "
+                 "Failed segments (red) collapse on meaning and entities.")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1377,6 +1527,227 @@ def slide_08(prs):
         [bar_shapes])
 
 # ═══════════════════════════════════════════════════════════════════════
+# FAILURE MODE DEEP-DIVE — DEFINITIONS & CLASSIFICATION RULES
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_failure_deep_1(prs):
+    """Failure mode definitions and classification rules."""
+    slide = new_slide(prs)
+    add_title(slide, "Failure Modes: How They\u2019re Classified")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "Each of the 900 failed segments (IS < 3.0) is automatically classified "
+        "by rule-based detection \u2014 checked in priority order:",
+        MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY, italic=True)
+
+    headers = ["Mode", "Detection Rule", "What Happens", "Impact"]
+    rows = [
+        ["Empty Output\n(7.8%)", "No hypothesis text", "Model produces\nnothing", "Total information\nloss"],
+        ["Hallucination\n(12.3%)", "WER \u2265 100%", "Fluent fabricated text,\nlonger than reference", "Most dangerous:\nsounds convincing"],
+        ["Topic Drift\n(15.9%)", "Semantic < 0.2\nPhonetic < 0.3", "Completely different\nsubject matter", "Viewer gets wrong\nmessage entirely"],
+        ["Phonetic Wrong\nTopic (15.7%)", "Semantic < 0.2\nPhonetic \u2265 0.3", "Words sound right\nbut topic is wrong", "Deceptive: phoneti-\ncally plausible"],
+        ["Entity Destruction\n(12.0%)", "NEA F1 < 10%\nWER > 60%", "Names, numbers,\nkey nouns lost", "Critical info\ndestroyed"],
+        ["Accumulated\nErrors (12.3%)", "WER 40\u201380%\nSemantic 0.2\u20130.5", "Many small word\nsubstitutions", "Meaning erodes\ngradually"],
+        ["Content Word\nErrors (10.7%)", "Key content words\nwrong, structure OK", "Structure intact but\nsubstance changed", "Partially\nrecoverable"],
+    ]
+
+    tbl = add_table(slide, headers, rows,
+                    MX, CT + Inches(0.5), CW,
+                    row_height=Inches(0.6),
+                    col_widths=[Inches(2.2), Inches(2.8), Inches(3.5), Inches(3.6)],
+                    text_size=Pt(9))
+
+    add_text(slide,
+        "Rules are checked in priority order: empty \u2192 hallucination \u2192 "
+        "topic drift \u2192 phonetic wrong topic \u2192 entity destruction \u2192 "
+        "accumulated \u2192 content word \u2192 high error \u2192 truncation \u2192 over-generation",
+        MX, Inches(6.35), CW, Inches(0.45),
+        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Failure mode classification rules. Each segment is checked in priority "
+        "order. The rules use IS component signals (semantic similarity, phonetic "
+        "similarity, WER, NEA F1) as inputs. Top 7 modes cover 92% of all failures. "
+        "Empty and hallucination are detected first as they are the most clear-cut.",
+        [[tbl]])
+
+# ═══════════════════════════════════════════════════════════════════════
+# FAILURE MODE DEEP-DIVE — REAL EXAMPLES
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_failure_deep_2(prs):
+    """Three concrete failure mode examples with real segments."""
+    slide = new_slide(prs)
+    add_title(slide, "Failure Modes: Real Examples")
+    add_accent_line(slide)
+
+    # Three cards side by side
+    cw_card = Inches(3.8)
+    ch_card = Inches(4.7)
+    gap = Inches(0.27)
+    total = 3 * cw_card + 2 * gap
+    cx = (SL_W - total) / 2
+    cy = CT + Inches(0.05)
+
+    examples = [
+        {
+            "title": "Topic Drift",
+            "pct": "15.9%",
+            "color": DRED,
+            "ref": "i\u2019ve made lots of videos\nabout weight loss and diet",
+            "hyp": "when i was a little girl i\nalways wanted to be a princess",
+            "wer": "97%", "is_score": "0.38",
+            "why": "Visual encoder captured nothing.\n"
+                   "LLM generated text from its own\n"
+                   "language prior \u2014 completely\n"
+                   "unrelated to the actual speech.",
+        },
+        {
+            "title": "Phonetic Wrong Topic",
+            "pct": "15.7%",
+            "color": CORAL,
+            "ref": "and if we don\u2019t listen then\nit will start yelling at us",
+            "hyp": "although recently we started\nan alliance even though",
+            "wer": "76%", "is_score": "1.68",
+            "why": "Mouth shapes partially match.\n"
+                   "LLM decoded phonemes into a\n"
+                   "coherent but wrong domain \u2014\n"
+                   "sounds plausible, means nothing.",
+        },
+        {
+            "title": "Entity Destruction",
+            "pct": "12.0%",
+            "color": ORANGE,
+            "ref": "about the 13th amendment\nthe 13th amendment is going",
+            "hyp": "13th may mean something to\nhim because it can help him",
+            "wer": "81%", "is_score": "2.14",
+            "why": "Topic vaguely preserved (law),\n"
+                   "but the named entity \u201c13th\n"
+                   "amendment\u201d lost its meaning.\n"
+                   "Critical information irrecoverable.",
+        },
+    ]
+
+    card_shapes = []
+    for i, ex in enumerate(examples):
+        x = cx + i * (cw_card + gap)
+
+        r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
+                     border_color=ex["color"], border_width=Pt(2), corner_radius=True)
+        card_shapes.append(r)
+
+        # Title + percentage
+        add_text(slide, f'{ex["title"]}  ({ex["pct"]})',
+                 x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.35),
+                 size=Pt(14), color=ex["color"], bold=True, align=PP_ALIGN.CENTER)
+
+        # Reference
+        add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.5),
+                 cw_card - Inches(0.3), Inches(0.22), size=Pt(9), color=LGRAY, bold=True)
+        add_text(slide, f'\u201c{ex["ref"]}\u201d',
+                 x + Inches(0.15), cy + Inches(0.7), cw_card - Inches(0.3), Inches(0.6),
+                 size=Pt(10), color=WHITE, italic=True)
+
+        # Hypothesis
+        add_text(slide, "Prediction:", x + Inches(0.15), cy + Inches(1.35),
+                 cw_card - Inches(0.3), Inches(0.22), size=Pt(9), color=LGRAY, bold=True)
+        add_text(slide, f'\u201c{ex["hyp"]}\u201d',
+                 x + Inches(0.15), cy + Inches(1.55), cw_card - Inches(0.3), Inches(0.6),
+                 size=Pt(10), color=ex["color"], italic=True)
+
+        # Metrics badge
+        add_text(slide, f'WER {ex["wer"]}  |  IS {ex["is_score"]}',
+                 x + Inches(0.15), cy + Inches(2.25), cw_card - Inches(0.3), Inches(0.3),
+                 size=Pt(11), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+
+        # Why explanation
+        add_text(slide, "Why it fails:", x + Inches(0.15), cy + Inches(2.7),
+                 cw_card - Inches(0.3), Inches(0.22), size=Pt(9), color=TEAL, bold=True)
+        add_text(slide, ex["why"],
+                 x + Inches(0.15), cy + Inches(2.9), cw_card - Inches(0.3), Inches(1.5),
+                 size=Pt(10), color=LGRAY)
+
+    _finish(slide, 0,
+        "Three real failure examples. Topic Drift: LLM generates from language prior. "
+        "Phonetic Wrong Topic: mouth shapes match but meaning is wrong. "
+        "Entity Destruction: topic vaguely right but critical names/numbers lost. "
+        "Each type requires a different remedy in the roadmap.",
+        [card_shapes])
+
+# ═══════════════════════════════════════════════════════════════════════
+# FAILURE MODE DEEP-DIVE — IMPACT & ROADMAP MAPPING
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_failure_deep_3(prs):
+    """Failure mode impact severity and roadmap mapping."""
+    slide = new_slide(prs)
+    add_title(slide, "Failure Modes: Impact & What Fixes Them")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left column — severity ranking
+    lt = add_text(slide, "Impact Severity (most \u2192 least dangerous)",
+                  MX, CT, col_w, Inches(0.4),
+                  size=Pt(16), color=CORAL, bold=True)
+
+    severity = [
+        ("\u26a0 Hallucination (12.3%)", "Sounds convincing, completely fabricated", DRED),
+        ("\u26a0 Phonetic Wrong Topic (15.7%)", "Deceptive: phonetically plausible lie", RED),
+        ("\u26a0 Entity Destruction (12.0%)", "Critical names/numbers irrecoverable", RED),
+        ("\u25cf Topic Drift (15.9%)", "Wrong message, but usually detectable", ORANGE),
+        ("\u25cf Content Word Errors (10.7%)", "Meaning eroded but structure intact", YELLOW),
+        ("\u25cf Accumulated Errors (12.3%)", "Partially recoverable with context", YELLOW),
+        ("\u25cb Empty / Truncation (8.9%)", "Obvious failure, easily detected", MGRAY),
+    ]
+
+    py = CT + Inches(0.5)
+    sev_shapes = []
+    for label, desc, color in severity:
+        t1 = add_text(slide, label, MX + Inches(0.1), py, col_w - Inches(0.2), Inches(0.28),
+                 size=Pt(12), color=color, bold=True)
+        add_text(slide, desc, MX + Inches(0.1), py + Inches(0.28), col_w - Inches(0.2), Inches(0.25),
+                 size=Pt(10), color=LGRAY, italic=True)
+        sev_shapes.append(t1)
+        py += Inches(0.6)
+
+    # Right column — roadmap mapping
+    rx = MX + col_w + gap
+    rt = add_text(slide, "Roadmap Phase \u2192 Targeted Failures",
+                  rx, CT, col_w, Inches(0.4),
+                  size=Pt(16), color=TEAL, bold=True)
+
+    headers = ["Phase", "Targets", "Impact"]
+    rows = [
+        ["1: Confidence\nScoring", "Empty, High Error", "Surface the good\n40% reliably"],
+        ["2: N-best\nAggregation", "Accumulated Errors,\nContent Word", "Vote out noise\n(\u22125 to \u221215%)"],
+        ["3: LLM Swap\n+ Prompts", "Topic Drift,\nPhonetic Wrong", "Better language\nmodel (\u22128 to \u221218pp)"],
+        ["4: Fine-tune\n+ Scale Data", "Entity Destruction,\nAll modes", "Domain adaptation\n(\u221215 to \u221225pp)"],
+        ["5: Error\nCorrection", "Hallucination", "Post-process\ncleanup (\u22128 to \u221215pp)"],
+    ]
+
+    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.5), col_w,
+                    row_height=Inches(0.7),
+                    col_widths=[Inches(1.5), Inches(2.0), Inches(2.0)],
+                    text_size=Pt(9))
+
+    add_text(slide,
+        "Each roadmap phase was designed to target specific failure modes \u2014 "
+        "no single fix addresses all types.",
+        MX, Inches(6.4), CW, Inches(0.35),
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Impact ranking and roadmap mapping. Hallucination is the most dangerous "
+        "because it sounds convincing. Each roadmap phase targets specific failure "
+        "modes: confidence scoring surfaces the good 40%, N-best aggregation reduces "
+        "accumulated errors, LLM swap fixes topic drift, fine-tuning helps entity "
+        "preservation, and error correction catches hallucinations.",
+        [sev_shapes, [tbl]])
+
+# ═══════════════════════════════════════════════════════════════════════
 # SLIDE 9 — PERFORMANCE DISTRIBUTION
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -1397,43 +1768,58 @@ def slide_09(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_10(prs):
-    build_split(prs, 10, "Three Root Causes — With Data", "wer_duration",
-        bullets=[
-            ("Domain Mismatch — Business: IS 3.08, 57% captured (best). "
-             "DIY/Home: IS 2.13, 30% (worst)", {"bold": True}),
-            ("Short Segments — 5-10 words: 32% captured, 74% WER. "
-             "20+ words: 49% captured, 55% WER", {}),
-            ("Hallucination — LLM prior overwhelms weak visual signal. "
-             "15.9% topic drift, 12.3% hallucination",
-             {"color": CORAL}),
+    build_two_col(prs, 10, "Three Root Causes \u2014 Why 64.1% WER?",
+        "Root Causes", [
+            ("1. Domain Mismatch", {"bold": True, "color": TEAL}),
+            "Model trained on TED talks and lectures (LRS3)",
+            "Real-world: DIY, cooking, sports, business \u2014 vocabulary doesn\u2019t match",
+            "",
+            ("2. Short Segments Fail", {"bold": True, "color": TEAL}),
+            "Under 10 words: only 32% captured (74% WER)",
+            "20+ words: 49% captured (55% WER) \u2014 more context helps",
+            "",
+            ("3. Hallucination", {"bold": True, "color": TEAL}),
+            "LLM prior overwhelms weak visual signal",
+            "20.5% of all segments: fluent, confident, completely wrong",
         ],
-        notes="Three root causes. Domain mismatch: the model was trained on "
-              "formal TED talks, so business/finance content works best (57% "
-              "captured). DIY/home improvement is worst (30%). Short segments "
-              "fail catastrophically — under 10 words gives only 32% capture "
-              "rate. And hallucination: when the visual signal is weak, the "
-              "LLM's language prior takes over.")
+        "By the Numbers", [
+            ("Business/Finance: IS 3.08, 57% captured", {"color": GREEN}),
+            ("DIY/Home: IS 2.13, 30% captured", {"color": CORAL}),
+            "\u2192 27pp gap just from topic mismatch",
+            "",
+            "Short (5\u201310 words): 74.2% WER, 32% captured",
+            "Long (20+ words): 55.1% WER, 49% captured",
+            "\u2192 17pp gap from segment length alone",
+            "",
+            ("28.2% of failures = drift + hallucination", {"color": CORAL, "bold": True}),
+        ],
+        "Three root causes explain most failures: domain mismatch (model trained "
+        "on TED, tested on YouTube), short segments lacking context, and "
+        "hallucination where the LLM generates fluent but fabricated text.",
+        left_color=CORAL, right_color=TEAL)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 11 — NAMED ENTITY ACCURACY
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_11(prs):
-    build_split(prs, 11, "NEA F1: 38.8% — The Largest Differentiator",
+    build_split(prs, 11, "Named Entity Accuracy: The Largest Differentiator",
         "nea_scatter",
+        "Named Entity Accuracy (NEA) measures whether critical names, numbers, "
+        "and proper nouns are preserved. It\u2019s the swing factor for borderline segments.",
         bullets=[
-            "Names, numbers, proper nouns — what context cannot recover",
-            ("NEA F1: 74% vs 16% (gap: 58pp — LARGEST)", {"bold": True}),
-            "Semantic: 0.74 vs 0.24",
-            "Phonetic: 0.81 vs 0.38",
-            ("NEA contributes 17.3% of IS variance — disproportionate to "
-             "its 15% weight", {"color": TEAL}),
-        ],
-        notes="Named Entity Accuracy is the single largest differentiator "
-              "between success and failure: 74% vs 16%, a 58 percentage "
-              "point gap. You can guess a missing 'the' from context, but "
-              "you cannot recover 'Admiral McRae' if the model says 'animal "
-              "migratory.'")
+            ("What are named entities?", {"bold": True, "color": TEAL}),
+            "Names (Admiral McRae), numbers (13th), places, organizations",
+            "Binary: either correct or destroyed \u2014 no partial credit",
+            "",
+            ("The gap is enormous:", {"bold": True, "color": CORAL}),
+            ("Captured: 74% NEA F1 | Failed: 16% NEA F1", {"bold": True}),
+            "\u2192 58 percentage point difference",
+            "",
+            "NEA accounts for 17.3% of IS variance (highest for any 15%-weight signal)",
+            ("Phonetic similarity: r = 0.943 (strongest IS correlate)",
+             {"color": LGRAY}),
+        ])
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 12 — 13 TUNING EXPERIMENTS
@@ -1509,6 +1895,80 @@ def slide_13(prs):
               "20K-50K, (2) swap LLM to Llama 3.1 8B, (3) smart prompts.")
 
 # ═══════════════════════════════════════════════════════════════════════
+# SLIDE — TUNING SUMMARY (condensed)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_tuning_summary(prs):
+    """Condensed tuning section: 5 slides into 1."""
+    slide = new_slide(prs)
+    add_title(slide, "Decode Tuning: 13 Experiments, Minimal Gain")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left — What we tested
+    lt = add_text(slide, "What We Tested", MX, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=TEAL, bold=True)
+    lb = add_bullets(slide, [
+        "4 decode parameters: beam size, length penalty, temperature, sampling",
+        "13 systematic experiments (A\u2013M) on 107 segments",
+        "Best config (J) validated on full 1,497 segments",
+        "Parameters explored: beam 5\u201350, lenpen \u22120.5 to 2.0, temp 0.3\u20131.5",
+    ], MX, CT + Inches(0.45), col_w, Inches(2.5), size=Pt(14))
+
+    # Callout box
+    r1 = add_rect(slide, MX, CT + Inches(3.1), col_w, Inches(1.8),
+                  fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
+                  corner_radius=True)
+    add_text(slide, "Key Finding",
+             MX + Inches(0.2), CT + Inches(3.2), col_w - Inches(0.4), Inches(0.3),
+             size=Pt(14), color=CORAL, bold=True)
+    add_bullets(slide, [
+        "Per-segment quality rankings identical across configs (r > 0.92)",
+        "A \u201cgood\u201d segment is good in ALL configs; a \u201cbad\u201d one is always bad",
+        ("The bottleneck is the visual encoder, not decode parameters",
+         {"bold": True, "color": CORAL}),
+    ], MX + Inches(0.2), CT + Inches(3.55), col_w - Inches(0.4), Inches(1.2),
+       size=Pt(13))
+
+    # Right — What we found
+    rx = MX + col_w + gap
+    rt = add_text(slide, "What We Found", rx, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=CORAL, bold=True)
+
+    headers = ["Metric", "Baseline", "Best (J)", "\u0394"]
+    rows = [
+        ["Mean IS", "2.52", "2.60", "+0.08"],
+        ["Captured (IS\u22653)", "39.9%", "41.2%", "+1.3pp"],
+        ["Empty outputs", "70 (4.7%)", "0 (0%)", "\u221270"],
+        ["Hallucinations", "307 (20.5%)", "348 (23.2%)", "+41"],
+        ["Mean WWER", "61.9%", "59.8%", "\u22122.1pp"],
+    ]
+    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
+                    row_height=Inches(0.4),
+                    col_widths=[Inches(1.7), Inches(1.2), Inches(1.2), Inches(1.4)],
+                    text_size=Pt(11))
+
+    # Bottom verdict
+    add_text(slide,
+        "Config J eliminates empties but adds hallucinations. "
+        "Net IS gain: +0.08. Tuning is mitigation, not a cure.",
+        rx, CT + Inches(3.0), col_w, Inches(0.7),
+        size=Pt(14), color=LGRAY, italic=True)
+
+    # Right bottom: visual
+    add_image(slide, "P4_lenpen", rx, CT + Inches(3.8), col_w, Inches(1.3))
+
+    _finish(slide, 0,
+        "Condensed tuning results. 13 experiments across 4 decode parameters "
+        "showed minimal improvement. Best config (J) eliminates empty outputs "
+        "but increases hallucinations by 13%. Net IS gain only +0.08. "
+        "Per-segment rankings are identical across configs (r > 0.92), proving "
+        "the bottleneck is the visual encoder, not decode parameters.",
+        [[lt, lb], [rt, tbl], [r1]])
+
+# ═══════════════════════════════════════════════════════════════════════
 # SLIDE 14 — CURATED EXAMPLES (TABLE)
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -1552,7 +2012,7 @@ def slide_14(prs):
 
 def slide_15(prs):
     slide = new_slide(prs)
-    add_title(slide, "Demo: Good → Near-miss → Hallucination")
+    add_title(slide, "Demo: OK → Near-miss → Hallucination")
     add_accent_line(slide)
 
     # Three embedded videos side by side — click each to play
@@ -1564,7 +2024,7 @@ def slide_15(prs):
     vid_y = CT + Inches(0.1)
 
     vids = [
-        ("bogo", '"buy one get one free"', "WER 0%", GREEN),
+        ("entity_success", '"business quarterly"\nentities preserved', "WER 31%", TEAL),
         ("nearmiss", '"admiral mcrae" → "animal migratory"', "WER 33%", YELLOW),
         ("halluc", '"carry strap" → "holocaust denier"', "WER 100%", RED),
     ]
@@ -1584,10 +2044,10 @@ def slide_15(prs):
              size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 15,
-        "Three demos side by side. Left: 'buy one get one free' (WER 0%). "
-        "Center: 'admiral mcrae' becomes 'animal migratory' (phonetic "
-        "near-miss). Right: 'carry strap' becomes 'holocaust denier' "
-        "(complete hallucination). Click each video to play.")
+        "Three demos side by side. Left: business quarterly with entities "
+        "preserved (WER 31%). Center: 'admiral mcrae' becomes 'animal "
+        "migratory' (phonetic near-miss). Right: 'carry strap' becomes "
+        "'holocaust denier' (complete hallucination). Click each video to play.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 16 — IS VALIDATION: CLAUDE-AS-JUDGE
@@ -1689,31 +2149,98 @@ def slide_17(prs):
               "module with its own tests.")
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 18 — ENGINEERING CHALLENGES
+# SLIDE 18 — ENGINEERING JOURNEY
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_18(prs):
-    build_two_col(prs, 18, "37 Bugs Fixed: Research Code → Production",
-        "Critical Fixes", [
-            "NVENC silent corruption (destroyed 43% of videos)",
-            "HDR/10-bit tone mapping",
-            "Cython extension compilation",
-            "fairseq patching",
-            "spaCy offline installation",
-            "Docker networking",
-            "Python venv conflicts",
-        ],
-        "Result", [
-            "Any format: MP4, MKV, AVI, MOV",
-            "Any resolution, any codec",
-            "GPU detection with CPU fallback",
-            ("All 37 bugs documented with root cause", {"color": TEAL}),
-        ],
-        "37 bugs found and fixed turning research code into production. "
-        "The most critical: NVENC silent video corruption that destroyed "
-        "43% of processed videos without any error message. Every bug "
-        "documented with root cause analysis.",
-        left_color=CORAL, right_color=GREEN)
+    """Engineering journey: integration, migration, bug fixing."""
+    slide = new_slide(prs)
+    add_title(slide, "Building the Pipeline: The Engineering Journey")
+    add_accent_line(slide)
+
+    # Three phase cards
+    cw_card = Inches(3.6)
+    ch_card = Inches(4.5)
+    gap_card = Inches(0.5)
+    total = 3 * cw_card + 2 * gap_card
+    cx = (SL_W - total) / 2
+    cy = CT + Inches(0.1)
+
+    phases = [
+        {
+            "title": "Integration",
+            "subtitle": "~2 weeks",
+            "color": TEAL,
+            "items": [
+                "3 independent repos with no docs",
+                "Hardcoded paths everywhere",
+                "No error handling or logging",
+                "Built 8-stage orchestration\npipeline from scratch",
+                "Added venv management,\nGPU detection, logging",
+            ],
+        },
+        {
+            "title": "Migration",
+            "subtitle": "~1 week",
+            "color": CORAL,
+            "items": [
+                "EC2 \u2192 Docker container",
+                "Missing NVIDIA GPU drivers",
+                "Python version conflicts",
+                "Offline dependency packaging\n(no internet in container)",
+                "spaCy wheels, fairseq patches,\nCython compilation",
+            ],
+        },
+        {
+            "title": "Bug Fixing &\nRefactoring",
+            "subtitle": "Ongoing",
+            "color": GREEN,
+            "items": [
+                "37+ bugs found and fixed",
+                "NVENC silent corruption\n(destroyed 43% of videos)",
+                "HDR/10-bit tone mapping",
+                "823-line monolith \u2192 11 modules\n(52% reduction)",
+                "37 automated tests added",
+            ],
+        },
+    ]
+
+    card_shapes = []
+    for i, phase in enumerate(phases):
+        x = cx + i * (cw_card + gap_card)
+        r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
+                     border_color=phase["color"], border_width=Pt(2.5),
+                     corner_radius=True)
+        card_shapes.append(r)
+
+        add_text(slide, phase["title"],
+                 x + Inches(0.2), cy + Inches(0.15),
+                 cw_card - Inches(0.4), Inches(0.55),
+                 size=Pt(18), color=phase["color"], bold=True,
+                 align=PP_ALIGN.CENTER)
+        add_text(slide, phase["subtitle"],
+                 x + Inches(0.2), cy + Inches(0.7),
+                 cw_card - Inches(0.4), Inches(0.3),
+                 size=Pt(12), color=LGRAY, italic=True,
+                 align=PP_ALIGN.CENTER)
+
+        add_bullets(slide, phase["items"],
+                    x + Inches(0.15), cy + Inches(1.1),
+                    cw_card - Inches(0.3), Inches(3.2),
+                    size=Pt(11))
+
+    add_text(slide,
+        "Every bug documented with root cause. Every change synced between "
+        "EC2 and production container.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 18,
+        "The full engineering journey: 2 weeks of integration, 1 week of "
+        "migration to Docker, and ongoing bug fixing. 37+ bugs including "
+        "NVENC silent corruption. Refactored from 823-line monolith to "
+        "11 reusable modules. All documented and synced across environments.",
+        [card_shapes])
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 19 — MODULAR REFACTORING (BEFORE/AFTER)
@@ -1959,95 +2486,183 @@ def slide_25(prs):
     add_title(slide, "LLM Salvage: 1 in 2 Segments Delivers Value")
     add_accent_line(slide)
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
-
-    # Left column — big number card
-    r1 = add_rect(slide, MX, CT, col_w, Inches(4.8), fill_color=NAVY2,
+    # Big number card — centered, full width
+    r1 = add_rect(slide, MX, CT, CW, Inches(4.6), fill_color=NAVY2,
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
     # Big number
     add_text(slide, "50.9%", MX + Inches(0.3), CT + Inches(0.2),
-             col_w - Inches(0.6), Inches(0.9),
-             size=Pt(44), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+             CW - Inches(0.6), Inches(0.9),
+             size=Pt(64), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "effective capture rate",
-             MX + Inches(0.3), CT + Inches(1.05),
-             col_w - Inches(0.6), Inches(0.4),
-             size=Pt(16), color=WHITE, align=PP_ALIGN.CENTER)
+             MX + Inches(0.3), CT + Inches(1.1),
+             CW - Inches(0.6), Inches(0.4),
+             size=Pt(18), color=WHITE, align=PP_ALIGN.CENTER)
     add_text(slide, "vs 39.9% from metrics alone (+11pp)",
-             MX + Inches(0.3), CT + Inches(1.45),
-             col_w - Inches(0.6), Inches(0.35),
-             size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             MX + Inches(0.3), CT + Inches(1.55),
+             CW - Inches(0.6), Inches(0.35),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Key bullets below the big number
-    add_bullets(slide, [
-        "165 recoverable from 900 metric-failures",
-        "18.3% recovery rate among IS < 3.0",
-        "58% of salvageable segments have 50-70% WER",
-        ("Deterministic 15-rule decision tree (r=0.934 with IS)",
+    bul = add_bullets(slide, [
+        "165 recoverable from 900 metric-failures (18.3% recovery rate)",
+        "58% of salvageable segments have moderate WER (50\u201370%)",
+        ("Deterministic 15-rule decision tree \u2014 no LLM calls at runtime (r=0.934 with IS)",
          {"color": TEAL}),
         ("LLM Judge confirms: Y+P = 64.9% (5.7\u00d7 WER's 11.4%)",
          {"color": GREEN, "bold": True}),
-    ], MX + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6),
-       Inches(2.2), size=Pt(13))
-
-    # Right column — recovery categories table
-    rx = MX + col_w + gap
-    add_text(slide, "6 Recovery Categories", rx, CT, col_w, Inches(0.35),
-             size=Pt(17), color=CORAL, bold=True)
-
-    headers = ["Category", "Count", "Key Signal"]
-    rows = [
-        ["Hidden Gems", "54", "LLM prob ≥ 0.8"],
-        ["Semantic Preservation", "57", "Semantic ≥ 0.5"],
-        ["Phonetic Bridge", "93", "Phonetic ≥ 0.6"],
-        ["Entity-Preserved", "44", "NEA F1 ≥ 50%"],
-        ["Structure Match", "74", "Word order intact"],
-        ["WER Over-Punishment", "27", "WER−WWER ≥ 10pp"],
-    ]
-    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
-                    row_height=Inches(0.35),
-                    col_widths=[Inches(2.5), Inches(0.8), Inches(2.2)],
-                    text_size=Pt(11))
-
-    # Interpretation below table
-    add_text(slide, "Categories overlap — segments can exhibit multiple "
-             "recovery signals simultaneously",
-             rx, CT + Inches(3.15), col_w, Inches(0.5),
-             size=Pt(11), color=LGRAY, italic=True)
-
-    # How it works block
-    add_text(slide, "How It Works", rx, CT + Inches(3.7), col_w,
-             Inches(0.3), size=Pt(15), color=TEAL, bold=True)
-    add_bullets(slide, [
-        "Claude-designed decision tree: 6 linguistic factors",
-        "Word overlap, sequence, phonetics, length, semantics, density",
-        ("Agrees with IS 88.6% (κ=0.773, recall 99.2%)", {"bold": True}),
-    ], rx, CT + Inches(4.05), col_w, Inches(1.2), size=Pt(12))
+    ], MX + Inches(0.3), CT + Inches(2.2), CW - Inches(0.6),
+       Inches(2.0), size=Pt(14))
 
     # Bottom text
     add_text(slide,
-             "System delivers useful output for 1 in 2 segments — "
+             "System delivers useful output for 1 in 2 segments \u2014 "
              "not 2 in 5 as raw metrics suggest.",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 25,
         "LLM Salvage Analysis: 165 of 900 metric-failed segments (IS < 3.0) "
-        "are recoverable — meaning a domain-aware viewer would understand them. "
+        "are recoverable \u2014 meaning a domain-aware viewer would understand them. "
         "This raises effective capture from 39.9% to 50.9% (+11pp). The recovery "
         "is identified by a deterministic 15-rule decision tree that correlates "
         "at r=0.934 with IS.\n\n"
         "Four levels of measurement: WER says 11.4% usable. IS says 39.9%. "
         "LLM salvage says 50.9%. And the LLM Judge gold standard confirms: "
-        "Y+P = 64.9% — 5.7x WER's assessment.\n\n"
-        "6 recovery categories (overlapping): Hidden Gems (54, LLM prob >= 0.8 "
-        "but IS < 3.0), Semantic Preservation (57, semantic sim >= 0.5 with high "
-        "WER), Phonetic Bridge (93, sounds right but different words), Entity-"
-        "Preserved (44, names/numbers correct despite errors), Structure Match "
-        "(74, word order intact), WER Over-Punishment (27, WER-WWER gap >= 10pp "
-        "meaning function words wrong but content words right).",
-        [[r1], [tbl]])
+        "Y+P = 64.9% \u2014 5.7x WER's assessment.",
+        [[r1], [bul]])
+
+
+def slide_25b(prs):
+    """LLM Salvage: 6 recovery categories explained."""
+    slide = new_slide(prs)
+    add_title(slide, "LLM Salvage: 6 Recovery Categories")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "165 segments that metrics call \u201cfailed\u201d (IS < 3.0) actually deliver "
+        "useful meaning. They fall into 6 overlapping categories:",
+        MX, CT, CW, Inches(0.45), size=Pt(14), color=LGRAY, italic=True)
+
+    categories = [
+        ("Phonetic Bridge", "93", TEAL,
+         "Words sound right but are spelled differently \u2014 a viewer who knows "
+         "the topic fills in the gaps (phonetic sim \u2265 0.6)"),
+        ("Structure Match", "74", TEAL,
+         "Same grammatical structure as reference \u2014 word order intact, "
+         "subject-verb-object pattern preserved"),
+        ("Semantic Preservation", "57", GREEN,
+         "Core meaning conveyed despite high WER \u2014 like a paraphrase "
+         "(semantic sim \u2265 0.5)"),
+        ("Hidden Gems", "54", GREEN,
+         "Decision tree assigns \u2265 80% recovery probability despite metrics "
+         "all flagging failure"),
+        ("Entity-Preserved", "44", YELLOW,
+         "Critical names and numbers correct even though surrounding words "
+         "are wrong (NEA F1 \u2265 50%)"),
+        ("WER Over-Punishment", "27", YELLOW,
+         "WER inflated by function word errors (\u2018the\u2019 \u2192 \u2018a\u2019) "
+         "that don\u2019t affect meaning (WER\u2212WWER \u2265 10pp)"),
+    ]
+
+    py = CT + Inches(0.55)
+    cat_shapes = []
+    for name, count, color, desc in categories:
+        r = add_rect(slide, MX, py, CW, Inches(0.7), fill_color=NAVY2,
+                     border_color=color, border_width=Pt(1.5), corner_radius=True)
+        cat_shapes.append(r)
+        add_text(slide, f"{name} ({count})",
+                 MX + Inches(0.2), py + Inches(0.05), Inches(3.0), Inches(0.3),
+                 size=Pt(13), color=color, bold=True)
+        add_text(slide, desc,
+                 MX + Inches(3.3), py + Inches(0.08), Inches(8.5), Inches(0.55),
+                 size=Pt(11), color=LGRAY)
+        py += Inches(0.78)
+
+    add_text(slide,
+        "Categories overlap \u2014 a segment can exhibit multiple recovery signals.",
+        MX, Inches(6.45), CW, Inches(0.35),
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, "25b",
+        "6 salvage categories explained in plain English. Phonetic Bridge is "
+        "the largest (93 segments). Categories overlap. Each represents a "
+        "different mechanism by which meaning survives despite high WER.",
+        [cat_shapes])
+
+
+def slide_25c(prs):
+    """How the salvage detection decision tree works."""
+    slide = new_slide(prs)
+    add_title(slide, "How Salvage Detection Works")
+    add_accent_line(slide)
+
+    # Flow: Input -> 6 checks -> Score -> Threshold -> Result
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left — the process
+    lt = add_text(slide, "Deterministic Decision Tree", MX, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=TEAL, bold=True)
+
+    steps = [
+        ("1. Input", "Reference + hypothesis text pair", TEAL),
+        ("2. Compute 6 signals", "Word overlap, sequence order, phonetic similarity,\n"
+         "semantic embedding, entity preservation, length ratio", WHITE),
+        ("3. Apply 15 rules", "Decision tree checks signals in priority order,\n"
+         "assigns one of 15 probability leaf nodes (0.0 \u2013 1.0)", WHITE),
+        ("4. Threshold at 0.5", "Probability \u2265 0.5 = recoverable\n"
+         "Probability < 0.5 = likely unrecoverable", WHITE),
+        ("5. Classify", "Map to 6 recovery categories based on\n"
+         "which signals triggered the high probability", GREEN),
+    ]
+
+    py = CT + Inches(0.45)
+    step_shapes = []
+    for title, desc, color in steps:
+        t = add_text(slide, title, MX + Inches(0.1), py, Inches(1.8), Inches(0.3),
+                     size=Pt(13), color=color, bold=True)
+        add_text(slide, desc, MX + Inches(2.0), py, Inches(3.4), Inches(0.5),
+                 size=Pt(11), color=LGRAY)
+        step_shapes.append(t)
+        py += Inches(0.65)
+
+    # Right — validation stats
+    rx = MX + col_w + gap
+    rt = add_text(slide, "Validation", rx, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=GREEN, bold=True)
+
+    headers = ["Metric", "Value"]
+    rows = [
+        ["Correlation with IS", "r = 0.934"],
+        ["Agreement (IS \u2265 3.0)", "88.6%"],
+        ["Cohen\u2019s \u03ba", "0.773 (substantial)"],
+        ["Recall", "99.2%"],
+        ["Cross-config stability", "r = 0.925 \u00b1 0.015"],
+    ]
+    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.5), col_w,
+                    row_height=Inches(0.4),
+                    col_widths=[Inches(2.8), Inches(2.7)],
+                    text_size=Pt(12))
+
+    add_bullets(slide, [
+        "Stable across all 16 decode configurations",
+        "Catches 99.2% of IS \u2265 3.0 segments",
+        ("Zero cost: pure Python, no LLM calls at runtime", {"bold": True}),
+    ], rx, CT + Inches(3.1), col_w, Inches(1.5), size=Pt(13))
+
+    # Bottom
+    add_text(slide,
+        "The tree was designed by Claude (AI) at development time, then distilled "
+        "into deterministic Python. No LLM is called during evaluation.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, "25c",
+        "How the salvage detection works: a 15-rule deterministic decision tree "
+        "that checks 6 linguistic signals and outputs a recovery probability. "
+        "Validated at r=0.934 with IS, 88.6% agreement, stable across 16 configs.",
+        [step_shapes, [tbl]])
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 26 — RESEARCH ROADMAP (STAIRCASE)
@@ -2063,7 +2678,7 @@ def slide_26(prs):
         ("Phase 2", "Improve the fair 22%", "N-best aggregation (-5 to -15%)", TEAL),
         ("Phase 3", "LLM swap + smart prompts", "Llama 3.1 8B + prompts (-8 to -18pp)", GREEN),
         ("Phase 4", "Scale data 20K-50K", "Fine-tune (-15 to -25pp)", GREEN),
-        ("Phase 5", "GER post-processing", "No retraining needed (-8 to -15pp)", LGRAY),
+        ("Phase 5", "Error Correction (GER)", "Post-process: catch hallucinations and common errors without retraining (\u22128 to \u221215pp)", LGRAY),
     ]
 
     # Staircase on left side
@@ -2103,7 +2718,7 @@ def slide_26(prs):
         "immediate: confidence scoring to surface the 40% that's already "
         "good (2-4 hours). Phase 2: N-best aggregation. Phase 3: swap LLM "
         "to Llama 3.1 8B plus smart prompts. Phase 4: the biggest gain — "
-        "scale training data. Phase 5: GER post-processing. Key: ICLR 2024 "
+        "scale training data. Phase 5: Error Correction (GER) post-processing. Key: ICLR 2024 "
         "shows these gains are multiplicative.",
         [step_shapes, [img]])
 
@@ -2165,7 +2780,7 @@ def slide_29(prs):
     add_accent_line(slide)
 
     # Dashboard image — top half
-    img = add_image(slide, "ft_dashboard", MX, CT, width=CW,
+    img = add_image(slide, "ft_clean", MX, CT, width=CW,
                     height=Inches(2.8))
 
     # Two columns below
@@ -2256,6 +2871,79 @@ def slide_30(prs):
         "with no retraining. Right: Arabic support exists, VALLR achieves "
         "18.7% WER with a 3B model.",
         [col_shapes])
+
+# ═══════════════════════════════════════════════════════════════════════
+# ARABIC PIPELINE ROADMAP
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_arabic_roadmap(prs):
+    """Arabic pipeline replication roadmap."""
+    slide = new_slide(prs)
+    add_title(slide, "Arabic Pipeline: Replication Roadmap")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left — what's needed
+    lt = add_text(slide, "What\u2019s Needed", MX, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=TEAL, bold=True)
+    lb = add_bullets(slide, [
+        ("Arabic AV-HuBERT encoder", {"bold": True}),
+        "Pre-trained on Arabic visual speech data (or fine-tuned from English)",
+        "",
+        ("Arabic LLM backend", {"bold": True}),
+        "Arabic-capable Llama or equivalent (Arabic tokenizer required)",
+        "",
+        ("Arabic evaluation dataset", {"bold": True}),
+        "Manual transcriptions for MSA + dialect coverage",
+        "",
+        ("Text normalization", {"bold": True}),
+        "spaCy Arabic, diacritic handling, NER for Arabic names",
+        "",
+        ("K-means reclustering", {"bold": True}),
+        "Recluster visual features on Arabic mouth shapes",
+    ], MX, CT + Inches(0.4), col_w, Inches(4.5), size=Pt(12))
+
+    # Right — timeline
+    rx = MX + col_w + gap
+    rt = add_text(slide, "Estimated Timeline", rx, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=GREEN, bold=True)
+
+    headers = ["Step", "Effort", "Depends On"]
+    rows = [
+        ["Arabic K-means\nmodel", "2\u20133 days", "Arabic training\nvideos"],
+        ["Arabic LLM\nintegration", "1\u20132 days", "Arabic tokenizer"],
+        ["Pipeline config\nfor Arabic", "1 day", "Config changes\nonly"],
+        ["Arabic evaluation\ndataset", "1\u20132 weeks", "Manual transcription\n+ native speakers"],
+        ["End-to-end\ntesting", "3\u20135 days", "All above\ncomplete"],
+    ]
+    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
+                    row_height=Inches(0.6),
+                    col_widths=[Inches(1.8), Inches(1.4), Inches(2.3)],
+                    text_size=Pt(10))
+
+    # Total callout
+    add_rect(slide, rx, CT + Inches(3.65), col_w, Inches(0.6),
+             fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
+             corner_radius=True)
+    add_text(slide, "Total: ~3\u20134 weeks",
+             rx + Inches(0.2), CT + Inches(3.7), col_w - Inches(0.4), Inches(0.45),
+             size=Pt(18), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+
+    # Bottom
+    add_text(slide,
+        "The pipeline architecture is language-agnostic. Arabic support requires "
+        "model weights and evaluation data, not code changes.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Arabic replication roadmap. The pipeline code is language-agnostic. "
+        "Arabic requires: (1) Arabic AV-HuBERT encoder, (2) Arabic LLM, "
+        "(3) Arabic evaluation data with manual transcriptions, (4) text "
+        "normalization for Arabic. Estimated timeline: 3-4 weeks.",
+        [[lt, lb], [rt, tbl]])
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 31 — SUMMARY
@@ -2622,7 +3310,7 @@ def slide_14b(prs):
         [("perfect",      "Perfect",     "0%",   GREEN),
          ("nearmiss",     "Near-Miss",   "33%",  YELLOW),
          ("halluc",       "Hallucin.",   "100%", RED),
-         ("tuning_fix",   "Tuning Fix",  "73%",  ORANGE)],
+         ("tuning_fix",   "Tuning Fix\n(baseline: empty)",  "73%",  ORANGE)],
         [("topic_drift",  "Topic Drift", "97%",  RED),
          ("salvage",      "Salvage",     "74%",  YELLOW),
          ("entity_success","Entity OK",  "31%",  GREEN),
@@ -3213,14 +3901,20 @@ def slide_decode_params(prs):
 def slide_is_deep_dive(prs):
     """IS correlation deep dive — signal relationships."""
     slide = new_slide(prs)
-    add_title(slide, "IS Deep Dive: Signal Correlations")
+    add_title(slide, "Why These 6 Signals? A Validation")
     add_accent_line(slide)
+
+    add_text(slide,
+        "Three independent quality dimensions confirm IS captures distinct, "
+        "complementary aspects of transcription quality \u2014 not arbitrary signals.",
+        MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY, italic=True)
 
     col_w = Inches(5.5)
     gap = Inches(1.13)
+    offset = Inches(0.45)
 
     # Left — correlation table
-    lt = add_text(slide, "Signal \u2192 IS Correlation", MX, CT, col_w, Inches(0.4),
+    lt = add_text(slide, "Signal \u2192 IS Correlation", MX, CT + offset, col_w, Inches(0.4),
                   size=Pt(17), color=TEAL, bold=True)
 
     tbl = add_table(slide,
@@ -3231,12 +3925,12 @@ def slide_is_deep_dive(prs):
          ["Inv. WWER", "0.823", "15%", "~15%"],
          ["NEA F1", "0.748", "15%", "17.3%"],
          ["Length Ratio", "0.521", "15%", "9.1%"]],
-        MX, CT + Inches(0.5), col_w, text_size=Pt(12),
+        MX, CT + offset + Inches(0.5), col_w, text_size=Pt(12),
         row_colors={0: {1: GREEN}, 5: {1: CORAL, 3: CORAL}})
 
     # Right — key insights
     rx = MX + col_w + gap
-    rt = add_text(slide, "Key Insights", rx, CT, col_w, Inches(0.4),
+    rt = add_text(slide, "Key Insights", rx, CT + offset, col_w, Inches(0.4),
                   size=Pt(17), color=CORAL, bold=True)
     rb = add_bullets(slide, [
         ("Phonetic Sim is the strongest predictor (r=0.943) "
@@ -3251,7 +3945,7 @@ def slide_is_deep_dive(prs):
         ("Length Ratio is weakest (9.1%) \u2014 future versions "
          "could reduce its weight", {"color": CORAL}),
         "Expert heuristic: r=0.934 with IS (15-rule decision tree)",
-    ], rx, CT + Inches(0.5), col_w, Inches(4.5), size=Pt(13))
+    ], rx, CT + offset + Inches(0.5), col_w, Inches(4.0), size=Pt(13))
 
     _finish(slide, 0,
         "Signal correlation analysis. Phonetic similarity is the strongest "
@@ -3541,6 +4235,32 @@ def slide_what_good_looks_like(prs):
         [[tbl]])
 
 
+def slide_eng_transition(prs):
+    """Section divider: entering engineering portion."""
+    slide = new_slide(prs)
+
+    # Large centered section title
+    add_text(slide, "ENGINEERING",
+             MX, Inches(2.2), CW, Inches(1.2),
+             size=Pt(52), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "From Research Code to Production System",
+             MX, Inches(3.5), CW, Inches(0.6),
+             size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    # Subtle accent line
+    add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
+             fill_color=TEAL)
+
+    add_text(slide, "3 research repositories  \u2192  1 automated pipeline  \u2192  deployed container",
+             MX, Inches(4.8), CW, Inches(0.5),
+             size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Section transition: we now move from research analysis to the "
+        "engineering work that turned three research codebases into a "
+        "production-ready system.")
+
+
 def slide_three_repos(prs):
     """Starting point: three research codebases."""
     slide = new_slide(prs)
@@ -3621,35 +4341,23 @@ def slide_web_ui(prs):
         ("No command line needed", {"bold": True}),
     ], MX, CT + Inches(0.5), col_w, Inches(3.5), size=Pt(14))
 
-    # Right — 8 stages
+    # Right — UI screenshot placeholder
     rx = MX + col_w + gap
-    rt = add_text(slide, "Under the Hood: 8 Stages", rx, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=CORAL, bold=True)
-
-    stages = [
-        ("1", "Video Normalization", TEAL),
-        ("2", "ASR Transcription", TEAL),
-        ("3", "Mouth Cropping", TEAL),
-        ("4", "LRS3 Format Conversion", LGRAY),
-        ("5", "Manifest Generation", LGRAY),
-        ("6", "Feature Clustering", CORAL),
-        ("7", "LLM Decode", CORAL),
-        ("8", "Output Generation", GREEN),
-    ]
-
-    py = CT + Inches(0.55)
-    for num, name, color in stages:
-        add_rich_text(slide, [
-            [(f"{num}. ", {"size": Pt(13), "color": color, "bold": True}),
-             (name, {"size": Pt(13), "color": WHITE})],
-        ], rx + Inches(0.1), py, col_w - Inches(0.2), Inches(0.3))
-        py += Inches(0.42)
+    ph = add_rect(slide, rx, CT, col_w, Inches(4.0),
+                  fill_color=NAVY2, border_color=LGRAY, border_width=Pt(1),
+                  corner_radius=True)
+    add_text(slide, "UI Screenshot",
+             rx, CT + Inches(1.5), col_w, Inches(0.5),
+             size=Pt(20), color=MGRAY, align=PP_ALIGN.CENTER)
+    add_text(slide, "(will be added from running server)",
+             rx, CT + Inches(2.1), col_w, Inches(0.4),
+             size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "The web UI provides a simple drag-and-drop interface for non-technical "
         "users. Under the hood, 8 pipeline stages run automatically. Each stage "
         "is a modular component that can be tested independently.",
-        [[lt, lb], [rt]])
+        [[lt, lb], [ph]])
 
 
 def slide_dual_env(prs):
@@ -4035,65 +4743,71 @@ def main():
         slide_toc,          # Table of contents
         # --- Section 1: Context ---
         slide_02,           # What is VSP? (video)
-        slide_visemes,      # NEW: Fundamental challenge
+        slide_visemes,      # Fundamental challenge
         slide_03,           # Model Architecture
-        slide_data_flow,    # NEW: How It Works
-        slide_04,           # The Benchmark (EXPANDED)
+        slide_data_flow,    # How It Works
+        slide_04,           # The Benchmark
         # --- Section 2: The Problem ---
-        slide_eval_dataset, # NEW: Our evaluation dataset
+        slide_eval_dataset, # Our evaluation dataset
         slide_05,           # The Reality Gap (64.1% WER)
-        slide_wer_explained,# NEW: WER formula and limitations
+        slide_wer_explained,# WER formula and limitations
         slide_06,           # WER Is Blind to Meaning
+        slide_is_foreshadow,# Bridge: We Need a Better Metric (Req #2)
         # --- Section 3: IS Definition ---
-        slide_is_intro,     # Introducing IS (what + why)
-        slide_design_philosophy, # NEW: Deterministic not AI
-        slide_is_dimensions,# NEW: Three quality dimensions
-        slide_is_signals,   # IS: Six Signals (step by step)
+        slide_is_intro,     # Introducing IS (expanded, Req #6)
+        slide_is_signals,   # IS: Six Signals (SWAPPED, Req #4)
+        slide_is_dimensions,# Three quality dimensions (SWAPPED, Req #4)
+        slide_is_calc_examples, # IS in Action: Two Real Segments (Req #5)
+        slide_is_radar,     # IS Radar: Success vs Failure Profile (Req #1)
         slide_07,           # IS Results: 39.9% Captured
         # --- Section 4: Understanding Why ---
-        slide_10,           # Three Root Causes
-        slide_domain_mismatch, # NEW: Domain mismatch detail
-        slide_11,           # Named Entity Accuracy
-        slide_08,           # Failure Mode Taxonomy
-        # --- Section 5: Can We Tune It? ---
-        slide_decode_params,# NEW: What are decode parameters?
-        slide_tuning_intro, # Why We Tried Tuning
-        slide_09,           # Performance Distribution (boxplot)
-        slide_12,           # Best Config vs Baseline
-        slide_13,           # Limits of Tuning
+        slide_10,           # Three Root Causes (text-only, Req #7)
+        slide_domain_mismatch, # Domain mismatch detail
+        slide_11,           # Named Entity Accuracy (expanded, Req #8)
+        slide_08,           # Failure Mode Taxonomy (overview)
+        slide_failure_deep_1, # Failure Modes: Classification Rules (Req #9)
+        slide_failure_deep_2, # Failure Modes: Real Examples (Req #9)
+        slide_failure_deep_3, # Failure Modes: Impact & Fixes (Req #9)
+        # --- Section 5: Can We Tune It? (condensed, Req #10) ---
+        slide_tuning_summary, # 13 Experiments, Minimal Gain (replaces 5)
         # --- Section 6: The Full Picture ---
-        slide_is_deep_dive, # NEW: IS correlation deep dive
-        slide_two_eval_systems, # NEW: Two evaluation systems
-        slide_llm_judge,    # NEW: LLM-as-a-Judge
-        slide_context_eval, # NEW: Context-aware re-evaluation
-        slide_what_good_looks_like, # NEW: What good looks like
+        slide_is_deep_dive, # Why These 6 Signals? Validation (Req #11)
+        slide_two_eval_systems, # Two evaluation systems
+        slide_llm_judge,    # LLM-as-a-Judge
+        slide_context_eval, # Context-aware re-evaluation
+        slide_what_good_looks_like, # What good looks like
         slide_14,           # Curated Examples (table)
-        slide_14b,          # Video Gallery
-        slide_15,           # Live Demo
-        slide_16,           # Research Breadth: 8 Reports
-        # --- Section 7: Engineering ---
-        slide_three_repos,  # NEW: Starting point
-        slide_17, slide_18, slide_19, slide_20,
-        slide_web_ui,       # NEW: User experience
-        slide_21, slide_22, slide_23,
-        slide_dual_env,     # NEW: Two environments
+        slide_14b,          # Video Gallery (label fixed, Req #12)
+        slide_15,           # Demo: OK > Near-miss > Hallucination (Req #13)
+        # --- Section 7: Engineering (Req #14: slide_16 removed) ---
+        slide_eng_transition, # Section divider (Req #15)
+        slide_three_repos,  # Starting point
+        slide_17,           # Pipeline diagram (rebuilt, Req #16)
+        slide_18,           # Engineering Journey (expanded, Req #17)
+        slide_19, slide_20,
+        slide_web_ui,       # Web UI (placeholder for screenshot, Req #18)
+        slide_21,
+        slide_dual_env,     # Two environments (Req #19: slide_22/23 removed)
         # --- Section 8: Future Directions ---
-        slide_insights,     # NEW: Key research insights
+        slide_insights,     # Key research insights
         slide_24,           # Starting point better than WER
-        slide_llm_context_engine, # NEW: LLM as context engine
-        slide_25,           # LLM Salvage (MODIFIED: 4th level)
-        slide_26,           # Five Phases roadmap
-        slide_27,           # Phase 1 Confidence (MODIFIED: probabilities)
+        slide_llm_context_engine, # LLM as context engine
+        slide_25,           # LLM Salvage overview (Req #12)
+        slide_25b,          # Salvage: 6 Recovery Categories (Req #12)
+        slide_25c,          # Salvage: How Detection Works (Req #12)
+        slide_26,           # Five Phases roadmap (GER defined, Req #20)
+        slide_27,           # Phase 1 Confidence
         slide_28,           # Phase 2 N-Best
-        slide_data_scaling, # NEW: Data scaling evidence
-        slide_29,           # Phase 3-4 Fine-Tuning
+        slide_data_scaling, # Data scaling evidence
+        slide_29,           # Phase 3-4 Fine-Tuning (clean plot, Req #21)
         slide_30,           # Phase 5 LLM Upgrade
+        slide_arabic_roadmap, # Arabic Pipeline Roadmap (Req #22)
         slide_31,           # Key Takeaways
         # --- Appendix ---
         slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b, slide_a13,
         slide_a15,
-        slide_a16,          # NEW: LLM Judge × IS Tier
-        slide_a17,          # NEW: Context transition matrix
+        slide_a16,          # LLM Judge × IS Tier
+        slide_a17,          # Context transition matrix
     ]
     total = len(builders)
 

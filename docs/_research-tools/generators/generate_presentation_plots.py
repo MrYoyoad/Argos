@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Argos Presentation Plots — 5 charts for the VSP presentation.
+Argos Presentation Plots — 6 charts for the VSP presentation.
 
 Generates:
   P1: Quality Tier pie chart (from Report 1 data)
@@ -8,6 +8,7 @@ Generates:
   P3: WER Trajectory roadmap line chart (improvement phases)
   P4: Hyperparameter Sensitivity tornado chart (lenpen effect)
   P5: Before/After Tuning paired bars (baseline vs best config)
+  P6: IS Component Radar chart (captured vs failed segments)
 
 Usage:
     python3 generate_presentation_plots.py
@@ -18,6 +19,7 @@ Output:
     docs/evaluation/plots/P3_wer_trajectory.png
     docs/evaluation/plots/P4_lenpen_sensitivity.png
     docs/evaluation/plots/P5_tuning_before_after.png
+    docs/evaluation/plots/P6_is_radar.png
 """
 
 import os
@@ -299,13 +301,70 @@ def plot_P5_tuning_before_after():
     print(f"  Saved {out}")
 
 
+def plot_P6_is_radar():
+    """IS Component Radar — captured vs failed segments across 6 IS dimensions."""
+    categories = [
+        "Semantic\n(25%)", "Phonetic\n(15%)", "Inv WER\n(15%)",
+        "Inv WWER\n(15%)", "NEA F1\n(15%)", "Length\n(15%)",
+    ]
+    captured_vals = [0.74, 0.81, 0.55, 0.58, 0.74, 0.85]
+    failed_vals = [0.24, 0.38, 0.25, 0.30, 0.16, 0.55]
+
+    N = len(categories)
+    angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+    # Close the polygon
+    angles += angles[:1]
+    captured_vals_closed = captured_vals + captured_vals[:1]
+    failed_vals_closed = failed_vals + failed_vals[:1]
+
+    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+    fig.patch.set_facecolor("#0D1B2A")
+    ax.set_facecolor("#0D1B2A")
+
+    # Draw filled polygons
+    ax.plot(angles, captured_vals_closed, "o-", color="#56B870", linewidth=2.5, markersize=7)
+    ax.fill(angles, captured_vals_closed, color="#56B870", alpha=0.25, label="Captured (IS \u2265 3.0)")
+
+    ax.plot(angles, failed_vals_closed, "o-", color="#E06C75", linewidth=2.5, markersize=7)
+    ax.fill(angles, failed_vals_closed, color="#E06C75", alpha=0.25, label="Failed (IS < 3.0)")
+
+    # Axis labels
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(categories, fontsize=11, fontweight="bold", color="white")
+
+    # Gridlines and tick styling
+    ax.set_ylim(0, 1.0)
+    ax.set_yticks([0.2, 0.4, 0.6, 0.8, 1.0])
+    ax.set_yticklabels(["0.2", "0.4", "0.6", "0.8", "1.0"], fontsize=8, color="#AAAAAA")
+    ax.yaxis.grid(True, color="#334455", linewidth=0.8, alpha=0.6)
+    ax.xaxis.grid(True, color="#334455", linewidth=0.8, alpha=0.6)
+    ax.spines["polar"].set_color("#334455")
+
+    # Legend
+    legend = ax.legend(loc="upper right", bbox_to_anchor=(1.25, 1.12), fontsize=11,
+                       framealpha=0.9, edgecolor="#334455")
+    legend.get_frame().set_facecolor("#162A40")
+    for text in legend.get_texts():
+        text.set_color("white")
+
+    ax.set_title("IS Component Profile: Captured vs Failed Segments",
+                 fontsize=14, fontweight="bold", color="white", pad=30)
+
+    plt.tight_layout()
+    out = OUTPUT_DIR / "P6_is_radar.png"
+    fig.savefig(out, dpi=PLOT_DPI, bbox_inches="tight", facecolor="#0D1B2A")
+    plt.close(fig)
+    print(f"  Saved {out}")
+
+
 if __name__ == "__main__":
-    print("Generating 5 presentation plots...")
+    print("Generating 6 presentation plots...")
     print()
     plot_P1_quality_tiers()
     plot_P2_paper_vs_reality()
     plot_P3_wer_trajectory()
     plot_P4_lenpen_sensitivity()
     plot_P5_tuning_before_after()
+    plot_P6_is_radar()
     print()
-    print("Done! All 5 plots saved to", OUTPUT_DIR)
+    print("Done! All 6 plots saved to", OUTPUT_DIR)
