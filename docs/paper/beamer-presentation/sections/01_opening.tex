@@ -62,6 +62,59 @@
 \end{frame}
 
 % ----------------------------------------------------------
+% The Fundamental Challenge: Visemes
+% ----------------------------------------------------------
+\begin{frame}{The Fundamental Challenge: Visemes}
+  \twocol{0.52}{
+    {\small 50--70\% of English sounds are \alert{invisible} on lips.\\
+    Multiple sounds produce identical mouth shapes:}
+
+    \vspace{6pt}
+
+    \begin{tabular}{@{}ll@{}}
+      \toprule
+      \textbf{Viseme Group} & \textbf{Sounds} \\
+      \midrule
+      Bilabial & p, b, m \\
+      Alveolar & t, d, n, s, z, l \\
+      Velar & k, g, ng \\
+      Labiodental & f, v \\
+      \bottomrule
+    \end{tabular}
+
+    \vspace{6pt}
+    \notetext{``Viseme'' = visual phoneme. One viseme maps\\to multiple phonemes.}
+  }{0.45}{
+    {\small\textbf{Confusable word pairs:}}
+
+    \vspace{4pt}
+
+    \begin{tabular}{@{}l@{$\;\leftrightarrow\;$}l@{}}
+      \toprule
+      \multicolumn{2}{c}{\textbf{Identical on Lips}} \\
+      \midrule
+      admiral & animal \\
+      mom & bomb \\
+      pat & bat \\
+      collar & color \\
+      \bottomrule
+    \end{tabular}
+
+    \vspace{8pt}
+    \centering
+    {\textcolor{ArgosTeal}{\textbf{Context is the ONLY\\disambiguation signal ---\\this is why the LLM matters.}}}
+  }
+
+  \note{
+    50--70\% of sounds are invisible on lips --- same mouth shape for multiple phonemes.
+    ``admiral'' vs ``animal'': identical bilabial + alveolar sequence.
+    This is the fundamental challenge that makes lip-reading so hard.
+    Context (the LLM component) is the ONLY way to disambiguate.
+    This motivates the entire architecture: a frozen visual encoder + a powerful language model.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Slide 3: Model Architecture
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{Model Architecture}
@@ -100,37 +153,100 @@
 \end{frame}
 
 % ----------------------------------------------------------
+% How It Works: From Video to Text
+% ----------------------------------------------------------
+\begin{frame}{How It Works: From Video to Text}
+  \vspace{2pt}
+  {\small Five steps from raw video to transcribed text:}
+
+  \vspace{6pt}
+
+  \begin{enumerate}
+    \item \keyword{Video Frames} --- raw video at 25 fps
+    \item \keyword{Mouth Crop} --- 96$\times$96 grayscale, face detection + alignment
+    \item \keyword{Visual Features} --- AV-HuBERT encoder, 1024-dim vectors per frame
+    \item \keyword{Projection} --- linear layer maps 1024 $\rightarrow$ 4096 dimensions
+    \item \keyword{LLM Generates Text} --- Llama-2-7B decodes visual tokens into English
+  \end{enumerate}
+
+  \vspace{6pt}
+
+  \begin{center}
+  \begin{tikzpicture}[
+    box/.style={draw=ArgosTeal!60, fill=ArgosTeal!8, thick,
+                rounded corners=2pt, minimum height=0.7cm,
+                font=\scriptsize, align=center},
+    arr/.style={-{Stealth[length=2mm]}, ArgosTeal, thick},
+    node distance=0.15cm
+  ]
+    \node[box] (v) {Video\\25 fps};
+    \node[box, right=of v] (c) {Mouth Crop\\96$\times$96};
+    \node[box, right=of c] (f) {AV-HuBERT\\1024-dim};
+    \node[box, right=of f] (p) {Projection\\4096-dim};
+    \node[box, right=of p] (l) {LLM\\Text Output};
+
+    \draw[arr] (v) -- (c);
+    \draw[arr] (c) -- (f);
+    \draw[arr] (f) -- (p);
+    \draw[arr] (p) -- (l);
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{4pt}
+  \centering
+  \notetext{Visual encoder is \textbf{FROZEN} --- all learning in projection + LoRA adapters (0.19\% of params).}
+
+  \note{
+    Concrete walkthrough for non-specialists. Bridges the abstract architecture to a step-by-step process.
+    Key: the visual encoder (step 3) is frozen --- it was pre-trained on 30K hours of video.
+    All learning happens in the projection layer and LoRA adapters: only 12.6M of 6.7B parameters.
+    This is why the visual encoder is the bottleneck --- we cannot improve its representations without
+    unfreezing and retraining it, which requires massive data.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
 % Slide 4: The Benchmark
 % ----------------------------------------------------------
-\begin{frame}{The Benchmark}
+\begin{frame}[shrink=5]{The Benchmark}
   \twocol{0.50}{
     \begin{block}{Published Result}
       \keyword{25.4\% WER} on LRS3\\[2pt]
-      {\small Curated TED talks, controlled lighting,\\
-      frontal face, professional speakers}
+      {\small 1,000+ hours of TED talks\\
+      Controlled studio lighting\\
+      Frontal face, professional speakers\\
+      Clean audio transcription labels}
     \end{block}
 
-    \vspace{6pt}
+    \vspace{4pt}
 
-    \begin{alertblock}{Our Questions}
-      \begin{enumerate}
-        \item How does this perform on\\
-              \alert{real-world video}?
-        \item Is \alert{WER even the right metric}?
-      \end{enumerate}
+    \begin{alertblock}{Our Dataset}
+      {\small \textbf{1,497 segments} from 100+ diverse\\
+      YouTube videos --- cooking shows, news,\\
+      tutorials, vlogs, interviews\\[2pt]
+      No curation, no controlled lighting,\\
+      no frontal face requirement}
     \end{alertblock}
 
     \vspace{4pt}
-    \notetext{1,497 segments from diverse YouTube videos}
+
+    \begin{alertblock}{Our Questions}
+      \begin{enumerate}
+        \item How does this perform on \alert{real-world video}?
+        \item Is \alert{WER even the right metric}?
+      \end{enumerate}
+    \end{alertblock}
   }{0.47}{
     \halfwidthfig{P2_paper_vs_reality.png}
   }
 
   \note{
-    Paper reports 25.4\% WER on LRS3 benchmark (curated TED talks).
-    Our two questions frame the entire presentation:
+    Paper reports 25.4\% WER on LRS3 benchmark --- ``easy mode.''
+    LRS3: 1,000+ hours TED talks, studio-quality, frontal face, professional speakers.
+    Our dataset: 1,497 segments from 100+ diverse YouTube videos.
+    No curation, no controlled lighting, no frontal face requirement.
+    Two questions frame the entire presentation:
     1. Real-world performance (spoiler: 2.5x worse)
     2. WER as a metric (spoiler: dramatically overstates failure)
-    1,497 segments from diverse YouTube videos --- not curated, not controlled.
   }
 \end{frame}
