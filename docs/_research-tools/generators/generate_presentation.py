@@ -1053,9 +1053,9 @@ def slide_is_signals(prs):
     ]
 
     bw = Inches(5.76)
-    bh = Inches(1.5)
+    bh = Inches(1.65)
     gap_x = Inches(0.6)
-    gap_y = Inches(0.1)
+    gap_y = Inches(0.05)
 
     anim_groups = []
     for i, (name, weight, question, how, why_weight, color) in enumerate(signals):
@@ -1066,26 +1066,26 @@ def slide_is_signals(prs):
 
         r = add_rect(slide, x, y, bw, bh, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, f"{name} {weight}", x + Inches(0.2), y + Inches(0.08),
-                 bw - Inches(0.4), Inches(0.3),
-                 size=Pt(15), color=color, bold=True)
-        add_text(slide, question, x + Inches(0.2), y + Inches(0.4),
-                 bw - Inches(0.4), Inches(0.3),
-                 size=Pt(13), color=WHITE)
-        add_text(slide, how, x + Inches(0.2), y + Inches(0.72),
-                 bw - Inches(0.4), Inches(0.3),
+        add_text(slide, f"{name} {weight}", x + Inches(0.15), y + Inches(0.06),
+                 bw - Inches(0.3), Inches(0.28),
+                 size=Pt(14), color=color, bold=True)
+        add_text(slide, question, x + Inches(0.15), y + Inches(0.34),
+                 bw - Inches(0.3), Inches(0.28),
+                 size=Pt(12), color=WHITE)
+        add_text(slide, how, x + Inches(0.15), y + Inches(0.62),
+                 bw - Inches(0.3), Inches(0.28),
                  size=Pt(10), color=LGRAY, italic=True)
-        add_text(slide, f"\u25b8 Why this weight: {why_weight}",
-                 x + Inches(0.2), y + Inches(1.05),
-                 bw - Inches(0.4), Inches(0.4),
-                 size=Pt(10), color=GOLD)
+        add_text(slide, f"\u25b8 {why_weight}",
+                 x + Inches(0.15), y + Inches(0.92),
+                 bw - Inches(0.3), Inches(0.68),
+                 size=Pt(11), color=GOLD)
         anim_groups.append([r])
 
     # Formula at bottom
     add_text(slide,
         "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + InvWWER + NEA + Length)"
         "   \u2022   Score: 0\u20135   \u2022   Threshold: IS \u2265 3.0",
-        MX, Inches(6.35), CW, Inches(0.4),
+        MX, Inches(6.55), CW, Inches(0.4),
         size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
