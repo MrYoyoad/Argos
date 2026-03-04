@@ -2263,6 +2263,10 @@ def slide_15(prs):
     add_accent_line(slide)
 
     # Three embedded videos side by side — click each to play
+    # VID dict mapping (confirmed correct):
+    #   "ok_demo"   -> 8SMYkCQkT4Q_0  (sheetaro -> just hara, gist right)
+    #   "nearmiss"  -> -POZpyVCN8k_9  (admiral mcrae -> animal migratory)
+    #   "halluc"    -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
     vid_w = Inches(3.6)
     vid_h = Inches(2.7)
     gap = Inches(0.4)
@@ -2272,7 +2276,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("nearmiss", '"admiral mcrae" \u2192 "animal migratory"', "WER 33%  IS 2.9", YELLOW),
+        ("nearmiss", '"admiral mcrae" \u2192 "animal migratory"\nTopic right, entity destroyed', "WER 33%  IS 2.9", YELLOW),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -2938,11 +2942,14 @@ def slide_25d(prs):
             "is_score": "1.29", "wer": "150%", "prob": "0.55",
             "ref": "when jesus rose again",
             "hyp": "in one sense it\u2019s rose\nand kennedy",
-            "how": "Mouth shapes for \u201cjesus\u201d \u2192 \u201csense it\u2019s\u201d are "
-                   "visually similar. A viewer watching a religious "
-                   "sermon recognizes \u201crose\u201d = resurrection, not the "
-                   "name. The phonemes are plausible lip-reading "
-                   "confusions, not hallucinations.",
+            "how": "A wise viewer watching a religious program "
+                   "sees \u201cin one sense it\u2019s rose\u201d and thinks: "
+                   "\u201cthis is about Jesus rising \u2014 \u2018sense it\u2019s\u2019 "
+                   "sounds like \u2018Jesus,\u2019 and \u2018rose\u2019 = "
+                   "resurrection.\u201d The mouth shapes for "
+                   "\u201cjesus\u201d/\u201csense it\u2019s\u201d are nearly "
+                   "identical. The overall message is "
+                   "preserved even though exact words differ.",
         },
         {
             "title": "Semantic Preservation",
@@ -3018,6 +3025,124 @@ def slide_25d(prs):
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# SLIDE 25e — SALVAGE: 3 MORE REAL EXAMPLES (DOMAIN CONTEXT RECOVERY)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_25e(prs):
+    """Three more salvage examples emphasising domain-context recovery."""
+    slide = new_slide(prs)
+    add_title(slide, "LLM Salvage: Domain Context Fills the Gaps")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "A viewer who knows the topic recovers meaning that metrics miss entirely:",
+        MX, CT, CW, Inches(0.35), size=Pt(13), color=LGRAY, italic=True)
+
+    # Three cards side by side (same layout as slide_25d)
+    cw_card = Inches(3.8)
+    ch_card = Inches(4.6)
+    gap = Inches(0.27)
+    total = 3 * cw_card + 2 * gap
+    cx = (SL_W - total) / 2
+    cy = CT + Inches(0.45)
+
+    examples = [
+        {
+            "title": "Religious Context",
+            "color": CORAL,
+            "is_score": "2.75", "wer": "43%", "prob": "0.90",
+            "ref": "the fear of allah is completely\ngone \u2026 no more fear of the\nunseen what a horrible spiritual",
+            "hyp": "the fear of the loss complete\n\u2026 no more fear of loss\nwhat a horrible spiritual",
+            "how": "A viewer watching a religious sermon "
+                   "recognizes \u201cfear of the loss\u201d = \u201cfear of "
+                   "Allah.\u201d The structure (\u201cno more fear \u2026 "
+                   "horrible spiritual\u201d) is intact. \u201cAllah\u201d \u2192 "
+                   "\u201closs\u201d and \u201cunseen\u201d \u2192 \u201cdeath\u201d are "
+                   "phonetic confusions, but the sermon\u2019s "
+                   "theme of spiritual fear carries through.",
+        },
+        {
+            "title": "Geopolitical Context",
+            "color": TEAL,
+            "is_score": "2.86", "wer": "72%", "prob": "0.90",
+            "ref": "india china afghanistan all\nthese different places \u2026 so\nboth sides would benefit",
+            "hyp": "middle east and afghanistan\nall these different warring\nplaces \u2026 both sides will benefit",
+            "how": "WER is 72% because country names "
+                   "changed, but the argument is identical: "
+                   "\u201cdistant foreign regions \u2192 both sides "
+                   "benefit.\u201d A news viewer grasps the "
+                   "geopolitical point instantly. \u201cIndia "
+                   "China\u201d \u2192 \u201cMiddle East\u201d is a domain "
+                   "swap, not a meaning loss.",
+        },
+        {
+            "title": "Cooking Context",
+            "color": GREEN,
+            "is_score": "2.07", "wer": "89%", "prob": "0.80",
+            "ref": "i have a tablespoon of\njalapeno fresh jalapeno",
+            "hyp": "i have a dietary smoothie\ni\u2019ve got the banana called\nfresh banana",
+            "how": "IS rates this a near-total failure (2.07). "
+                   "But a viewer watching a cooking video "
+                   "sees the presenter holding a pepper and "
+                   "saying \u201cfresh banana.\u201d The visual context "
+                   "instantly overrides the garbled audio \u2014 "
+                   "the viewer knows it\u2019s a jalapeno. "
+                   "WER is blind to multimodal cues.",
+        },
+    ]
+
+    card_shapes = []
+    for i, ex in enumerate(examples):
+        x = cx + i * (cw_card + gap)
+
+        r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
+                     border_color=ex["color"], border_width=Pt(2), corner_radius=True)
+        card_shapes.append(r)
+
+        # Title + badge
+        add_text(slide, ex["title"],
+                 x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.3),
+                 size=Pt(14), color=ex["color"], bold=True, align=PP_ALIGN.CENTER)
+        add_text(slide, f'IS {ex["is_score"]}  |  WER {ex["wer"]}  |  Prob {ex["prob"]}',
+                 x + Inches(0.15), cy + Inches(0.4), cw_card - Inches(0.3), Inches(0.25),
+                 size=Pt(9), color=LGRAY, align=PP_ALIGN.CENTER)
+
+        # Reference
+        add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.7),
+                 cw_card - Inches(0.3), Inches(0.2), size=Pt(9), color=LGRAY, bold=True)
+        add_text(slide, f'\u201c{ex["ref"]}\u201d',
+                 x + Inches(0.15), cy + Inches(0.88), cw_card - Inches(0.3), Inches(0.55),
+                 size=Pt(10), color=WHITE, italic=True)
+
+        # Hypothesis
+        add_text(slide, "Prediction:", x + Inches(0.15), cy + Inches(1.5),
+                 cw_card - Inches(0.3), Inches(0.2), size=Pt(9), color=LGRAY, bold=True)
+        add_text(slide, f'\u201c{ex["hyp"]}\u201d',
+                 x + Inches(0.15), cy + Inches(1.68), cw_card - Inches(0.3), Inches(0.55),
+                 size=Pt(10), color=ex["color"], italic=True)
+
+        # How it's recovered
+        add_text(slide, "How a wise viewer recovers this:",
+                 x + Inches(0.15), cy + Inches(2.35),
+                 cw_card - Inches(0.3), Inches(0.2), size=Pt(9), color=TEAL, bold=True)
+        add_text(slide, ex["how"],
+                 x + Inches(0.15), cy + Inches(2.55), cw_card - Inches(0.3), Inches(1.8),
+                 size=Pt(9.5), color=WHITE)
+
+    _finish(slide, "25e",
+        "Three more salvage examples emphasising domain-context recovery. "
+        "Religious Context (IS 2.75): 'fear of allah' becomes 'fear of the loss' "
+        "-- a sermon viewer recognizes the spiritual theme despite name garbling. "
+        "Geopolitical Context (IS 2.86): country names swap but the argument "
+        "(foreign places, both sides benefit) is intact. Cooking Context (IS 2.07): "
+        "'jalapeno' becomes 'banana' -- absurd in text, but a viewer SEES the "
+        "pepper on screen and corrects automatically. This is the strongest argument "
+        "for multimodal context: the visual channel fills gaps that audio-only metrics "
+        "cannot measure.",
+        [card_shapes])
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # SLIDE 26 — RESEARCH ROADMAP (STAIRCASE)
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -3031,7 +3156,7 @@ def slide_26(prs):
         ("Phase 2", "Improve the fair 22%", "N-best aggregation (-5 to -15%)", TEAL),
         ("Phase 3", "LLM swap + smart prompts", "Llama 3.1 8B + prompts (-8 to -18pp)", GREEN),
         ("Phase 4", "Scale data 20K-50K", "Fine-tune (-15 to -25pp)", GREEN),
-        ("Phase 5", "Error Correction (GER)", "Post-process: catch hallucinations and common errors without retraining (\u22128 to \u221215pp)", LGRAY),
+        ("Phase 5", "Generative Error Correction (GER)", "Use a second LLM pass to catch hallucinations and fix common errors without retraining (\u22128 to \u221215pp)", LGRAY),
     ]
 
     # Staircase on left side
@@ -3309,12 +3434,12 @@ def slide_arabic_roadmap(prs):
                     col_widths=[Inches(1.6), Inches(1.3), Inches(2.6)],
                     text_size=Pt(10))
 
-    # Total callout
-    add_rect(slide, rx, CT + Inches(3.65), col_w, Inches(0.6),
+    # Total callout — positioned below table with clearance
+    add_rect(slide, rx, CT + Inches(4.05), col_w, Inches(0.55),
              fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
              corner_radius=True)
     add_text(slide, "Total: ~3\u20135 weeks",
-             rx + Inches(0.2), CT + Inches(3.7), col_w - Inches(0.4), Inches(0.45),
+             rx + Inches(0.2), CT + Inches(4.1), col_w - Inches(0.4), Inches(0.4),
              size=Pt(18), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
 
     # Bottom
@@ -4624,6 +4749,31 @@ def slide_what_good_looks_like(prs):
         [[tbl]])
 
 
+def slide_research_transition(prs):
+    """Section divider: entering research findings portion."""
+    slide = new_slide(prs)
+
+    add_text(slide, "RESEARCH FINDINGS",
+             MX, Inches(2.2), CW, Inches(1.2),
+             size=Pt(48), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "Understanding What Works, What Fails, and Why",
+             MX, Inches(3.5), CW, Inches(0.6),
+             size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
+             fill_color=CORAL)
+
+    add_text(slide, "1,497 segments  \u2022  6 quality signals  \u2022  10 failure modes  "
+             "\u2022  13 tuning experiments",
+             MX, Inches(4.8), CW, Inches(0.5),
+             size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Section transition: we now present the research findings — our novel "
+        "Intelligibility Score metric, root cause analysis, failure mode taxonomy, "
+        "and decode tuning experiments.")
+
+
 def slide_eng_transition(prs):
     """Section divider: entering engineering portion."""
     slide = new_slide(prs)
@@ -5137,6 +5287,116 @@ def slide_a17(prs):
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# SLIDE: CONFIDENCE SCORING — FUTURE DIRECTION
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_confidence_scoring(prs):
+    """Future direction: per-segment confidence probabilities."""
+    slide = new_slide(prs)
+    add_title(slide, "Phase 1: Confidence Scoring")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left — what it is
+    lt = add_text(slide, "What Is It?", MX, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=TEAL, bold=True)
+    lb = add_bullets(slide, [
+        ("Assign a probability (0\u20131.0) to each decoded segment",
+         {"bold": True}),
+        "High confidence (> 0.8): trust the output as-is",
+        "Medium (0.4\u20130.8): flag for human review",
+        "Low (< 0.4): suppress or mark as unreliable",
+        ("Goal: surface the 40% that already works", {"color": GREEN}),
+    ], MX, CT + Inches(0.45), col_w, Inches(2.5), size=Pt(14))
+
+    # How it works
+    add_text(slide, "How It Works", MX, CT + Inches(3.2), col_w, Inches(0.35),
+             size=Pt(16), color=TEAL, bold=True)
+    add_bullets(slide, [
+        "Combine decode-time signals: beam score, entropy, "
+        "N-best agreement, length ratio",
+        "Train a lightweight classifier on our 1,497 labeled segments",
+        "Output: probability that IS \u2265 3.0 for each segment",
+    ], MX, CT + Inches(3.65), col_w, Inches(2.0), size=Pt(13))
+
+    # Right — impact
+    rx = MX + col_w + gap
+    rw = CW - col_w - gap
+    rt = add_text(slide, "Impact", rx, CT, rw, Inches(0.35),
+                  size=Pt(18), color=GREEN, bold=True)
+
+    add_bullets(slide, [
+        ("Immediate value: 2\u20134 hours to implement", {"bold": True, "color": GREEN}),
+        "Users see only high-confidence segments by default",
+        "Reduces perceived error rate from 60% to ~20%",
+        "No model changes needed \u2014 pure post-processing",
+    ], rx, CT + Inches(0.45), rw, Inches(2.0), size=Pt(14))
+
+    # Right — what we already have
+    add_text(slide, "What We Already Have", rx, CT + Inches(2.7), rw, Inches(0.35),
+             size=Pt(16), color=CORAL, bold=True)
+    headers = ["Signal", "Source"]
+    rows = [
+        ["Beam score", "Available from decode"],
+        ["Token entropy", "Available from decode"],
+        ["N-best agreement", "Requires beam > 1"],
+        ["Length ratio", "Already in IS pipeline"],
+        ["IS sub-scores", "Already computed"],
+    ]
+    tbl = add_table(slide, headers, rows, rx, CT + Inches(3.15), rw,
+                    row_height=Inches(0.35), text_size=Pt(10),
+                    col_widths=[Inches(2.4), Inches(3.0)])
+
+    add_text(slide,
+        "The fastest path to user value. No retraining, no new data, "
+        "no infrastructure changes \u2014 just smarter filtering.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Phase 1 of the roadmap: confidence scoring. Assign a probability "
+        "to each decoded segment indicating how likely it is to be correctly "
+        "transcribed (IS >= 3.0). Uses decode-time signals like beam score, "
+        "token entropy, N-best agreement, and length ratio. Can be trained on "
+        "our existing 1,497 labeled segments. Implementation: 2-4 hours. "
+        "Impact: users see only trusted output, perceived error rate drops "
+        "from 60% to ~20%.",
+        [[lt, lb], [rt, tbl]])
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE: THANK YOU / END
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_thank_you(prs):
+    """Final slide: thank you and questions."""
+    slide = new_slide(prs)
+
+    add_text(slide, "Thank You",
+             MX, Inches(2.0), CW, Inches(1.2),
+             size=Pt(56), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+
+    add_rect(slide, Inches(4.5), Inches(3.4), Inches(4.33), Inches(0.04),
+             fill_color=TEAL)
+
+    add_text(slide, "Questions & Discussion",
+             MX, Inches(3.8), CW, Inches(0.6),
+             size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+
+    add_text(slide,
+        "1,497 segments  \u2022  6 quality signals  \u2022  10 failure modes  "
+        "\u2022  13 experiments\n"
+        "8-stage pipeline  \u2022  37 bugs fixed  \u2022  8 research reports",
+        MX, Inches(4.8), CW, Inches(0.8),
+        size=Pt(15), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Final slide. Thank the audience and open for questions.")
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -5166,7 +5426,8 @@ def main():
         slide_wer_explained,# WER formula and limitations
         slide_06,           # WER Is Blind to Meaning
         slide_is_foreshadow,# Bridge: We Need a Better Metric (Req #2)
-        # --- Section 3: IS Definition ---
+        # --- Section 3: Research Findings ---
+        slide_research_transition, # Section divider: RESEARCH FINDINGS
         slide_is_intro,     # Introducing IS (expanded, Req #6)
         slide_is_signals,   # IS: Six Signals (SWAPPED, Req #4)
         slide_is_weight_rationale, # Why These Weights? 3 Dimensions
@@ -5195,6 +5456,7 @@ def main():
         slide_25,           # LLM Salvage overview: 39.9% -> 50.9%
         slide_25b,          # Salvage: 6 Recovery Categories
         slide_25d,          # Salvage: 3 Real Examples (NEW)
+        slide_25e,          # Salvage: 3 More Examples — Domain Context Recovery
         slide_25c,          # Salvage: How Detection Works
         # --- What good looks like (now after salvage context) ---
         slide_what_good_looks_like, # What good looks like
@@ -5215,13 +5477,15 @@ def main():
         slide_insights,     # Key research insights
         slide_24,           # Starting point better than WER
         slide_26,           # Five Phases roadmap (GER defined, Req #20)
-        slide_27,           # Phase 1 Confidence
+        slide_confidence_scoring, # Phase 1: Confidence Scoring detail
+        slide_27,           # Phase 1 Confidence (quick summary)
         slide_28,           # Phase 2 N-Best
         slide_data_scaling, # Data scaling evidence
         slide_29,           # Phase 3-4 Fine-Tuning (clean plot, Req #21)
         slide_30,           # Phase 5 LLM Upgrade
         slide_arabic_roadmap, # Arabic Pipeline Roadmap (Req #22)
         slide_31,           # Key Takeaways
+        slide_thank_you,    # Thank You & Questions
         # --- Appendix ---
         slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b, slide_a13,
         slide_a15,

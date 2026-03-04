@@ -47,12 +47,12 @@ STAGES = [
 FLOW_LABELS = [".mp4", ".wrd", ".mp4 (crop)", "LRS3/", ".tsv", ".npy", "text", ".json"]
 
 # ── Layout constants ─────────────────────────────────────
-FIG_W, FIG_H = 16, 7.5
+FIG_W, FIG_H = 16, 8.5
 BOX_W = 2.8
 BOX_H = 1.4
 GAP_X = 0.65       # horizontal gap between boxes
-ROW1_Y = 4.8       # top-left y of row 1 boxes
-ROW2_Y = 1.4       # top-left y of row 2 boxes
+ROW1_Y = 5.5       # top-left y of row 1 boxes
+ROW2_Y = 1.8       # top-left y of row 2 boxes
 MARGIN_L = 1.2     # left margin for input label
 
 # Compute start x to center both rows
@@ -140,18 +140,18 @@ for col in range(3):
     fr = get_box_edge(col, "right")
     to = get_box_edge(col + 1, "left")
     draw_arrow(fr, to)
-    # Flow label above arrow
+    # Flow label above arrow (above box top edge + clearance)
     mx = (fr[0] + to[0]) / 2
-    my = fr[1] + 0.55
+    my = fr[1] + BOX_H / 2 + 0.30  # box top + 0.30 clearance
     draw_flow_label(mx, my, FLOW_LABELS[col + 1])
 
 # Input label before stage 0
 ix, iy = get_box_edge(0, "left")
-ax.annotate("", xy=(ix - 0.05, iy), xytext=(ix - 0.8, iy),
+ax.annotate("", xy=(ix - 0.05, iy), xytext=(ix - 1.0, iy),
             arrowprops=dict(arrowstyle="-|>", color=ARROW_C, lw=2.5,
                             shrinkB=6, mutation_scale=18), zorder=2)
-draw_flow_label(ix - 1.15, iy + 0.55, FLOW_LABELS[0])
-ax.text(ix - 1.15, iy, "Video\nInput", ha="center", va="center",
+draw_flow_label(ix - 1.4, iy + 0.45, FLOW_LABELS[0])
+ax.text(ix - 1.4, iy - 0.05, "Video\nInput", ha="center", va="top",
         fontsize=9, fontweight="bold", color=WHITE, zorder=4)
 
 # Connector: stage 3 (row1 col3) → stage 4 (row2 col0)
@@ -175,8 +175,9 @@ ax.annotate("", xy=(s4_top[0], s4_top[1] + 0.08),
             arrowprops=dict(arrowstyle="-|>", color=ARROW_C, lw=2.5,
                             shrinkA=0, shrinkB=6, mutation_scale=18),
             zorder=2)
-# Flow label on connector
-draw_flow_label((r3_bottom[0] + s4_top[0]) / 2, mid_y + 0.3, FLOW_LABELS[4])
+# Flow label on connector — offset right of horizontal midpoint to avoid line overlap
+elbow_label_x = (r3_bottom[0] + s4_top[0]) / 2
+draw_flow_label(elbow_label_x, mid_y + 0.35, FLOW_LABELS[4])
 
 # Row 2: stages 4→5→6→7
 for col in range(3):
@@ -184,16 +185,16 @@ for col in range(3):
     to = get_box_edge(4 + col + 1, "left")
     draw_arrow(fr, to)
     mx = (fr[0] + to[0]) / 2
-    my = fr[1] + 0.55
+    my = fr[1] + BOX_H / 2 + 0.30  # box top + 0.30 clearance
     draw_flow_label(mx, my, FLOW_LABELS[col + 5])
 
 # Output label after stage 7
 ox, oy = get_box_edge(7, "right")
-ax.annotate("", xy=(ox + 0.8, oy), xytext=(ox + 0.05, oy),
+ax.annotate("", xy=(ox + 1.0, oy), xytext=(ox + 0.05, oy),
             arrowprops=dict(arrowstyle="-|>", color=ARROW_C, lw=2.5,
                             shrinkA=6, mutation_scale=18), zorder=2)
-draw_flow_label(ox + 1.15, oy + 0.55, FLOW_LABELS[7])
-ax.text(ox + 1.15, oy, "Reports\n& Videos", ha="center", va="center",
+draw_flow_label(ox + 1.4, oy + 0.45, FLOW_LABELS[7])
+ax.text(ox + 1.4, oy - 0.05, "Reports\n& Videos", ha="center", va="top",
         fontsize=9, fontweight="bold", color=WHITE, zorder=4)
 
 # ── Component brackets (below row 2) ────────────────────
@@ -210,7 +211,7 @@ for label, s_start, s_end in COMPONENTS:
 
     row = 0 if s_start < 4 else 1
     _, box_y, _, _ = get_box_rect(s_start)
-    bracket_y = box_y - 0.3
+    bracket_y = box_y - 0.45
     label_y = bracket_y - 0.35
 
     # Draw U-bracket
@@ -233,7 +234,7 @@ legend_items = [
     (GOLD,  "LLM Inference"),
     (CORAL, "Output Generation"),
 ]
-legend_y = 0.2
+legend_y = 0.25
 legend_start_x = (FIG_W - len(legend_items) * 3.5) / 2
 for i, (color, label) in enumerate(legend_items):
     rx = legend_start_x + i * 3.5
