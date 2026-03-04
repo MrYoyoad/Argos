@@ -5,7 +5,34 @@
 \section{Context}
 
 % ----------------------------------------------------------
-% Slide 2: What Is Lip Reading?
+% Slide 2: Executive Summary
+% ----------------------------------------------------------
+\begin{frame}{Executive Summary}
+  \begin{itemize}
+    \item Evaluated VSP-LLM lip-reading system on \textbf{1,497 real-world YouTube segments}
+    \item Standard metric (WER): \werbad{64.1\%} --- \textbf{2.5$\times$} worse than benchmark
+    \item Our new \keyword{Intelligibility Score} reveals \textbf{40\%} of output is actually useful ---
+          \keyword{3.5$\times$} more than WER admits
+    \item Built production system: 8-stage pipeline, standalone container, 37 bugs fixed
+    \item Produced \textbf{8 research reports} covering evaluation, tuning, and methodology
+    \item Clear improvement roadmap targeting \keyword{27--42\% WER}
+  \end{itemize}
+
+  \vspace{6pt}
+  \centering
+  {\textcolor{ArgosTeal}{\textit{``Half the output delivers useful information.\\
+  The starting point is much better than WER says.''}}}
+
+  \note{
+    BOTTOM LINE UP FRONT.
+    Three months of research and engineering. Key finding: WER dramatically overstates
+    failure. Our Intelligibility Score shows 40\% of output is properly captured, not the
+    11\% WER suggests. Complete production system delivered. Clear roadmap to improve.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Slide 3: What Is Lip Reading?
 % ----------------------------------------------------------
 \begin{frame}{What Is Lip Reading?}
   \twocol{0.55}{

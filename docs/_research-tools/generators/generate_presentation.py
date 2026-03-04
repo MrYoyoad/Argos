@@ -98,6 +98,9 @@ NAVY3   = RGBColor(0x1A, 0x35, 0x50)  # lighter still for hover cards
 
 FONT = "Calibri"
 
+# Auto-numbering: incremented by _finish() for each main slide
+_auto_num = [0]
+
 # Layout (inches)
 MX   = Inches(0.6)      # horizontal margin
 MY   = Inches(0.4)      # top margin
@@ -629,12 +632,19 @@ def add_animations(slide, groups, click_reveal=False):
 def _finish(slide, num, notes, anim_groups=None, click_reveal=False):
     """Add logo, slide number, transition, animations, and notes.
 
+    num: ignored for int values (auto-numbered); string values (e.g. "A1")
+         are used directly for appendix slides.
     click_reveal: if True, animation groups require a click to advance
         (use for comparison slides like WER-vs-IS).  Default False =
         all groups auto-play on slide entry with subtle delays.
     """
+    if isinstance(num, int):
+        _auto_num[0] += 1
+        display_num = _auto_num[0]
+    else:
+        display_num = num  # Appendix labels like "A1"
     add_logo(slide)
-    add_slide_num(slide, num)
+    add_slide_num(slide, display_num)
     add_fade_transition(slide)
     if anim_groups:
         try:
@@ -753,6 +763,251 @@ def build_full_image(prs, num, title, image_key, notes, subtitle=None,
 
     _finish(slide, num, notes, [[img]])
     return slide
+
+# ═══════════════════════════════════════════════════════════════════════
+# NEW SLIDES — EXECUTIVE SUMMARY, TOC, IS BUILD-UP
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_exec_summary(prs):
+    """Executive summary — bottom-line-up-front overview."""
+    slide = new_slide(prs)
+    add_title(slide, "Executive Summary")
+    add_accent_line(slide)
+
+    add_text(slide, "Three months of research and engineering on visual speech processing:",
+             MX, CT, CW, Inches(0.4), size=Pt(16), color=LGRAY, italic=True)
+
+    items = [
+        ("Evaluated a lip-reading AI on 1,497 real-world YouTube segments",
+         {"bold": True}),
+        "Standard metric (WER) reports 64.1% error — 2.5\u00d7 worse than benchmark",
+        ("Our new Intelligibility Score (IS) reveals 40% is actually useful — "
+         "3.5\u00d7 more than WER admits", {"color": TEAL, "bold": True}),
+        "Built a complete production system: 8-stage pipeline, standalone container",
+        ("Clear roadmap targeting 27\u201342% WER through data scaling + LLM upgrade",
+         {"color": TEAL}),
+        "Produced 8 comprehensive research reports",
+    ]
+    bul = add_bullets(slide, items, MX, CT + Inches(0.6), CW, Inches(4.0),
+                      size=Pt(17), spacing=Pt(14))
+
+    _finish(slide, 2,
+        "Executive summary. Three months of work on visual speech processing. "
+        "Key finding: WER dramatically overstates failure. Our Intelligibility "
+        "Score shows 40% of output is properly captured, not the 11% WER suggests. "
+        "Complete production system delivered. Clear roadmap to improve further.",
+        [[bul]])
+
+
+def slide_toc(prs):
+    """Table of contents — 4-section overview."""
+    slide = new_slide(prs)
+    add_title(slide, "Presentation Overview")
+    add_accent_line(slide)
+
+    sections = [
+        ("1. Context",
+         "What is lip reading? \u2022 How does the system work? \u2022 What's the benchmark?",
+         TEAL),
+        ("2. Research Findings",
+         "Real-world evaluation \u2022 Intelligibility Score metric \u2022 Failure analysis "
+         "\u2022 Tuning experiments",
+         TEAL),
+        ("3. Engineering",
+         "8-stage pipeline \u2022 Modular refactoring \u2022 Standalone container "
+         "\u2022 Evaluation infrastructure",
+         TEAL),
+        ("4. Future Directions",
+         "Improvement roadmap \u2022 Data scaling \u2022 LLM upgrade \u2022 "
+         "Target: 27\u201342% WER",
+         TEAL),
+    ]
+    shapes = []
+    y = CT + Inches(0.1)
+    for sec_title, desc, color in sections:
+        r = add_rect(slide, MX, y, CW, Inches(1.05), fill_color=NAVY2,
+                     border_color=color, border_width=Pt(1.5), corner_radius=True)
+        add_text(slide, sec_title, MX + Inches(0.3), y + Inches(0.1),
+                 CW - Inches(0.6), Inches(0.4),
+                 size=Pt(22), color=WHITE, bold=True)
+        add_text(slide, desc, MX + Inches(0.3), y + Inches(0.55),
+                 CW - Inches(0.6), Inches(0.4),
+                 size=Pt(13), color=LGRAY)
+        shapes.append(r)
+        y += Inches(1.25)
+
+    _finish(slide, 3,
+        "Four sections. Context sets the stage — what is lip reading, "
+        "how the system works. Research findings are the core: our novel "
+        "evaluation framework and what we learned. Engineering covers the "
+        "production system. Future directions lays out the improvement roadmap.",
+        [shapes])
+
+
+def slide_is_intro(prs):
+    """Introduce IS concept before showing results."""
+    slide = new_slide(prs)
+    add_title(slide, "Introducing the Intelligibility Score")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left column — motivation
+    lt = add_text(slide, "Why a new metric?", MX, CT, col_w, Inches(0.4),
+                  size=Pt(20), color=CORAL, bold=True)
+    lb = add_bullets(slide, [
+        "WER counts word errors but ignores meaning",
+        '"admiral" \u2192 "animal" gets same WER as "the" \u2192 "a"',
+        "WER treats all errors equally \u2014 but not all errors matter equally",
+        "We need: does a viewer get the right message?",
+    ], MX, CT + Inches(0.55), col_w, Inches(3.0), size=Pt(15))
+
+    # Right column — what IS is
+    rx = MX + col_w + gap
+    rw = CW - col_w - gap
+    rt = add_text(slide, "What is IS?", rx, CT, rw, Inches(0.4),
+                  size=Pt(20), color=TEAL, bold=True)
+    rb = add_bullets(slide, [
+        ("Composite score from 0 to 5", {"bold": True}),
+        "Combines 6 complementary quality signals",
+        "Designed by Claude (AI) at development time",
+        "Fully deterministic at runtime \u2014 no LLM per sample",
+        "Free, reproducible, decomposable",
+        ('IS \u2265 3.0 = "Properly Captured"', {"color": TEAL, "bold": True}),
+    ], rx, CT + Inches(0.55), rw, Inches(3.5), size=Pt(15))
+
+    # Bottom
+    add_text(slide,
+        "Next slide: the 6 signals explained step by step.",
+        MX, Inches(6.4), CW, Inches(0.4),
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "IS introduction. WER can't distinguish meaning preservation from "
+        "destruction. IS is a composite 0-5 metric combining 6 signals that "
+        "together capture whether a viewer would understand the output. "
+        "Designed by Claude at development time, runs as pure deterministic "
+        "Python at evaluation time. IS >= 3.0 means properly captured.",
+        [[lt, lb], [rt, rb]])
+
+
+def slide_tuning_intro(prs):
+    """Motivation slide: why we ran 13 tuning experiments."""
+    slide = new_slide(prs)
+    add_title(slide, "Can We Tune Our Way Out?")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left: The question
+    lt = add_text(slide, "The Question", MX, CT, col_w, Inches(0.4),
+                  size=Pt(20), color=TEAL, bold=True)
+    lb = add_bullets(slide, [
+        "The visual encoder is the primary bottleneck",
+        "But decode parameters control HOW the LLM generates text",
+        "Can beam search, length penalty, or temperature improve output?",
+        ("We ran 13 systematic experiments to find out", {"bold": True}),
+    ], MX, CT + Inches(0.55), col_w, Inches(3.0), size=Pt(15))
+
+    # Right: What we varied
+    rx = MX + col_w + gap
+    rw = CW - col_w - gap
+    rt = add_text(slide, "Parameters Tested", rx, CT, rw, Inches(0.4),
+                  size=Pt(20), color=CORAL, bold=True)
+
+    params = [
+        ("Beam size", "5 \u2192 50 candidates"),
+        ("Length penalty", "\u22120.5 \u2192 2.0"),
+        ("Temperature", "0.3 \u2192 1.5"),
+        ("Sampling strategy", "greedy vs nucleus"),
+        ("Repetition penalty", "on / off"),
+    ]
+    py = CT + Inches(0.55)
+    for name, desc in params:
+        add_text(slide, f"{name}: {desc}",
+                 rx + Inches(0.2), py, rw - Inches(0.4), Inches(0.35),
+                 size=Pt(14), color=WHITE)
+        py += Inches(0.45)
+
+    # Bottom
+    add_text(slide,
+        "107-segment test set \u2022 Best config validated on all 1,497 segments",
+        MX, Inches(6.4), CW, Inches(0.4),
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Motivation for tuning. The visual encoder determines which segments "
+        "succeed or fail, but decode parameters affect output quality. We ran "
+        "13 experiments varying beam size, length penalty, temperature, sampling, "
+        "and repetition penalty. Tested on 107 segments, best config validated "
+        "on the full 1,497-segment dataset.",
+        [[lt, lb], [rt]])
+
+
+def slide_is_signals(prs):
+    """Step-by-step breakdown of the 6 IS signals."""
+    slide = new_slide(prs)
+    add_title(slide, "IS: Six Signals of Quality")
+    add_accent_line(slide)
+
+    signals = [
+        ("Semantic Similarity", "(25%)", "Do the sentences mean the same thing?",
+         "Sentence embeddings (SBERT)", TEAL),
+        ("Phonetic Similarity", "(15%)", "Do they sound alike? Key for lip reading.",
+         "Phoneme-level edit distance \u2022 r=0.943 with IS", TEAL),
+        ("Inverse WER", "(15%)", "How many words are correct?",
+         "Standard 1 \u2212 Word Error Rate", TEAL),
+        ("Inverse WWER", "(15%)", "Are content words preserved?",
+         'Content words weighted 2\u00d7 \u2014 "admiral" > "the"', TEAL),
+        ("Named Entity F1", "(15%)", "Are names & numbers preserved?",
+         "Cannot be recovered from context", CORAL),
+        ("Length Ratio", "(15%)", "Is the output the right length?",
+         "Catches hallucination & truncation", LGRAY),
+    ]
+
+    bw = Inches(5.76)
+    bh = Inches(1.35)
+    gap_x = Inches(0.6)
+    gap_y = Inches(0.18)
+
+    anim_groups = []
+    for i, (name, weight, question, detail, color) in enumerate(signals):
+        col = i % 2
+        row = i // 2
+        x = MX + col * (bw + gap_x)
+        y = CT + row * (bh + gap_y)
+
+        r = add_rect(slide, x, y, bw, bh, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+        add_text(slide, f"{name} {weight}", x + Inches(0.2), y + Inches(0.1),
+                 bw - Inches(0.4), Inches(0.35),
+                 size=Pt(15), color=color, bold=True)
+        add_text(slide, question, x + Inches(0.2), y + Inches(0.5),
+                 bw - Inches(0.4), Inches(0.35),
+                 size=Pt(14), color=WHITE)
+        add_text(slide, detail, x + Inches(0.2), y + Inches(0.9),
+                 bw - Inches(0.4), Inches(0.35),
+                 size=Pt(11), color=LGRAY, italic=True)
+        anim_groups.append([r])
+
+    # Formula at bottom
+    add_text(slide,
+        "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + InvWWER + NEA + Length)"
+        "   \u2022   Score: 0\u20135   \u2022   Threshold: IS \u2265 3.0",
+        MX, Inches(6.2), CW, Inches(0.5),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Six signals. Semantic similarity (25%) captures meaning at the sentence "
+        "level. Phonetic similarity (15%) is the strongest single predictor "
+        "(r=0.943) and is natural for lip reading. WER and WWER measure word "
+        "accuracy. NEA F1 captures names/numbers which can't be guessed. "
+        "Length ratio catches hallucination and truncation. Formula: weighted "
+        "sum producing a 0-5 score.",
+        anim_groups)
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 1 — TITLE
@@ -1058,8 +1313,12 @@ def slide_07(prs):
 
 def slide_08(prs):
     slide = new_slide(prs)
-    add_title(slide, "10 Classified Failure Modes (900 failed segments)")
+    add_title(slide, "Failure Mode Taxonomy")
     add_accent_line(slide)
+
+    add_text(slide,
+        "900 segments failed (IS < 3.0). We classified them into 10 failure modes:",
+        MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
 
     modes = [
         ("Total Topic Drift", 15.9, 143, DRED),
@@ -1079,7 +1338,7 @@ def slide_08(prs):
     label_w = Inches(3.2)
     max_bar_w = Inches(6.5)
     bar_x = MX + label_w + Inches(0.2)
-    start_y = CT
+    start_y = CT + Inches(0.45)  # offset for subtitle
 
     bar_shapes = []
     for i, (name, pct, count, color) in enumerate(modes):
@@ -1115,10 +1374,11 @@ def slide_08(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_09(prs):
-    build_full_image(prs, 9, "Distribution Across 13 Experiments", "boxplot",
-        subtitle=None,
-        bottom_text="Most segments: 50-80% WER. Stable core of ~11% "
-                    "always-good segments across all configs.",
+    build_full_image(prs, 9, "How Results Vary Across Configurations", "boxplot",
+        subtitle="Each box shows the WWER distribution for one of 13 decode configs. "
+                 "Lower is better.",
+        bottom_text="Most segments: 50\u201380% WER. ~11% always good, ~16% always bad "
+                    "\u2014 regardless of parameters.",
         notes="This boxplot shows WWER distribution across all 13 decode "
               "experiments. The box is consistently in the 50-80% range. "
               "About 11% of segments are always good regardless of parameters, "
@@ -1174,21 +1434,21 @@ def slide_11(prs):
 
 def slide_12(prs):
     slide = new_slide(prs)
-    add_title(slide, "Systematic Parameter Search: 13 Configurations")
+    add_title(slide, "Best Config vs Baseline: The Trade-off")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left column — Parameters Tested
-    lt = add_text(slide, "Parameters Tested", MX, CT, col_w, Inches(0.35),
+    # Left column — What we found
+    lt = add_text(slide, "What We Found", MX, CT, col_w, Inches(0.35),
                   size=Pt(17), color=TEAL, bold=True)
     lb = add_bullets(slide, [
-        "Beam size (5-50)",
-        "Length penalty (-0.5 to 2.0)",
-        "Temperature (0.3-1.5)",
-        "Sampling strategy",
-        "Repetition penalty",
+        ("Config J (lenpen=1.0, temp=0.5) was best overall", {"bold": True}),
+        "Most configs cluster in a narrow IS range (2.45\u20132.60)",
+        "Extreme parameters cause catastrophic failures",
+        ("Lenpen=\u22120.5: 45% empty outputs", {"color": CORAL}),
+        ("Lenpen=2.0: mean WER 540% (massive hallucination)", {"color": CORAL}),
     ], MX, CT + Inches(0.45), col_w, Inches(3.0))
 
     # Right column — Best Config (J)
@@ -2460,6 +2720,8 @@ def slide_a15(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
+    _auto_num[0] = 0  # Reset auto-numbering
+
     prs = Presentation()
     prs.slide_width = SL_W
     prs.slide_height = SL_H
@@ -2467,14 +2729,42 @@ def main():
     print("Generating presentation...")
 
     builders = [
-        slide_01, slide_02, slide_03, slide_04, slide_05,
-        slide_06, slide_07, slide_08, slide_09, slide_10,
-        slide_11, slide_12, slide_13, slide_14, slide_14b, slide_15,
-        slide_16, slide_17, slide_18, slide_19, slide_20,
-        slide_21, slide_22, slide_23, slide_24, slide_25,
-        slide_26, slide_27, slide_28, slide_29, slide_30,
-        slide_31,
-        # Appendix / backup slides
+        # --- Section 0: Opening ---
+        slide_01,           # Title
+        slide_exec_summary, # Executive summary
+        slide_toc,          # Table of contents
+        # --- Section 1: Context ---
+        slide_02,           # What is VSP? (video)
+        slide_03,           # Model Architecture
+        slide_04,           # The Benchmark
+        # --- Section 2: The Problem ---
+        slide_05,           # The Reality Gap (64.1% WER)
+        slide_06,           # WER Is Blind to Meaning
+        # --- Section 3: IS Definition ---
+        slide_is_intro,     # Introducing IS (what + why)
+        slide_is_signals,   # IS: Six Signals (step by step)
+        slide_07,           # IS Results: 39.9% Captured
+        # --- Section 4: Understanding Why ---
+        slide_10,           # Three Root Causes (domain, length, halluc)
+        slide_11,           # Named Entity Accuracy
+        slide_08,           # Failure Mode Taxonomy
+        # --- Section 5: Can We Tune It? ---
+        slide_tuning_intro, # Why We Tried Tuning (motivation)
+        slide_09,           # Performance Distribution (boxplot)
+        slide_12,           # 13 Experiments: Best Config vs Baseline
+        slide_13,           # Limits of Tuning
+        # --- Section 6: The Full Picture ---
+        slide_14,           # Curated Examples (table)
+        slide_14b,          # Video Gallery
+        slide_15,           # Live Demo
+        slide_16,           # Research Breadth: 8 Reports
+        # --- Section 7: Engineering ---
+        slide_17, slide_18, slide_19, slide_20,
+        slide_21, slide_22, slide_23,
+        # --- Section 8: Future Directions ---
+        slide_24, slide_25, slide_26, slide_27, slide_28, slide_29, slide_30,
+        slide_31,           # Key Takeaways
+        # --- Appendix ---
         slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b, slide_a13,
         slide_a15,
     ]

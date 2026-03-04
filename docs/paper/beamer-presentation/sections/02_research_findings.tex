@@ -1,11 +1,24 @@
 % ============================================================
-% SECTION 2: RESEARCH FINDINGS (Slides 5–16)
+% SECTION 2: RESEARCH FINDINGS
+% ============================================================
+%
+% Narrative flow:
+%   The Problem → Our Solution (IS) → Understanding Why →
+%   Can We Tune It? → The Full Picture → Examples
+%
+% Each idea builds on the previous one. No concept is used
+% before it is defined.
+%
 % ============================================================
 
 \section{Research Findings}
 
+% ==========================================================
+% PART A: THE PROBLEM
+% ==========================================================
+
 % ----------------------------------------------------------
-% Slide 5: The Reality Gap
+% The Reality Gap
 % ----------------------------------------------------------
 \begin{frame}{The Reality Gap}
   \twocol{0.48}{
@@ -34,7 +47,7 @@
 \end{frame}
 
 % ----------------------------------------------------------
-% Slide 6: WER Is Blind
+% WER Is Blind
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{WER Is Blind}
   \vspace{2pt}
@@ -69,8 +82,123 @@
   }
 \end{frame}
 
+% ==========================================================
+% PART B: OUR SOLUTION — THE INTELLIGIBILITY SCORE
+% ==========================================================
+
 % ----------------------------------------------------------
-% Slide 7: The Intelligibility Score
+% Introducing the Intelligibility Score
+% ----------------------------------------------------------
+\begin{frame}{Introducing the Intelligibility Score}
+  \twocol{0.50}{
+    \textbf{\textcolor{ArgosOrange}{Why a new metric?}}
+
+    \vspace{4pt}
+
+    \begin{itemize}
+      \item WER counts word errors\\but \alert{ignores meaning}
+      \item ``admiral'' $\rightarrow$ ``animal'' gets\\same WER as ``the'' $\rightarrow$ ``a''
+      \item WER treats all errors equally\\--- but not all errors matter equally
+      \item We need: does a viewer get\\the right message?
+    \end{itemize}
+  }{0.47}{
+    \textbf{\textcolor{ArgosTeal}{What is IS?}}
+
+    \vspace{4pt}
+
+    \begin{itemize}
+      \item Composite score from \textbf{0 to 5}
+      \item Combines \textbf{6 quality signals}
+      \item Designed by Claude (AI) at design time
+      \item Fully \keyword{deterministic} at runtime ---\\no LLM called per sample
+      \item Free, reproducible, decomposable
+      \item IS $\geq$ 3.0 = ``\keyword{Properly Captured}''
+    \end{itemize}
+  }
+
+  \vspace{4pt}
+  \centering
+  \notetext{Next: the 6 signals explained step by step.}
+
+  \note{
+    IS introduction. WER can't distinguish meaning preservation from destruction.
+    IS is a composite 0--5 metric combining 6 signals. Designed by Claude at development
+    time, runs as pure deterministic Python at evaluation time. No LLM is called per
+    sample. IS >= 3.0 means ``properly captured.''
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% IS: Six Signals of Quality
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{IS: Six Signals of Quality}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Semantic Similarity (25\%)}
+        {\scriptsize Do the sentences mean the same thing?\\
+        Sentence embeddings (SBERT).\\[2pt]
+        \keyword{Heaviest weight} --- meaning is the goal.}
+      \end{block}
+
+      \vspace{2pt}
+
+      \begin{block}{\small Phonetic Similarity (15\%)}
+        {\scriptsize Do they \textit{sound} alike?\\
+        Phoneme-level edit distance.\\[2pt]
+        \keyword{Strongest predictor} (r = 0.943 with IS).\\
+        Natural for lip reading: visemes $\rightarrow$ phonemes.}
+      \end{block}
+
+      \vspace{2pt}
+
+      \begin{block}{\small Inverse WER (15\%)}
+        {\scriptsize How many words are correct?\\
+        Standard word error rate, inverted ($1 - \text{WER}$).}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{\small Inverse WWER (15\%)}
+        {\scriptsize Are \textit{content words} preserved?\\
+        Content words weighted 2$\times$\\[2pt]
+        ``admiral'' matters more than ``the''.}
+      \end{block}
+
+      \vspace{2pt}
+
+      \begin{block}{\small Named Entity F1 (15\%)}
+        {\scriptsize Are names, numbers, places preserved?\\
+        \alert{Cannot be recovered from context}.\\[2pt]
+        Largest differentiator: 74\% vs 16\% (58pp gap).}
+      \end{block}
+
+      \vspace{2pt}
+
+      \begin{block}{\small Length Ratio (15\%)}
+        {\scriptsize Is the output the right length?\\
+        Catches hallucination (too long) and\\
+        truncation (too short).}
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \vspace{4pt}
+  \centering
+  {\small\textbf{Formula:} IS = 0.25$\times$Semantic + 0.15$\times$(Phonetic + InvWER + InvWWER + NEA + LengthRatio)}\\
+  {\small Score: 0--5 \quad Threshold: IS $\geq$ 3.0 = ``Properly Captured''}
+
+  \note{
+    Six signals explained step by step. Semantic similarity (25\%) is the heaviest ---
+    meaning preservation is the whole point. Phonetic similarity (15\%) is the strongest
+    single predictor (r=0.943) --- natural for lip reading where visual ambiguity maps to
+    phonetic similarity. WER and WWER measure word accuracy at different granularities.
+    NEA F1 captures names/numbers which can't be guessed from context --- the largest
+    success/failure differentiator (58pp gap). Length ratio catches output pathologies.
+    Formula at the bottom: weighted sum producing a 0--5 score.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% IS Results: The Big Reveal
 % ----------------------------------------------------------
 \begin{frame}[shrink=15]{The Intelligibility Score (IS)}
   \begin{columns}[T]
@@ -119,8 +247,319 @@
   }
 \end{frame}
 
+% ==========================================================
+% PART C: UNDERSTANDING WHY
+% ==========================================================
+
 % ----------------------------------------------------------
-% Slide 7b: IS Deep Dive — Correlations & Methodology
+% Why the Gap: Root Causes
+% ----------------------------------------------------------
+\begin{frame}[shrink=8]{Why the Gap: Root Causes}
+  \twocol{0.48}{
+    \textbf{Three root causes:}
+    \begin{enumerate}
+      \item \alert{Domain mismatch}\\
+            {\scriptsize TED talks $\neq$ YouTube}
+      \item \alert{Hallucination}\\
+            {\scriptsize LLM prior overwhelms visual signal}
+      \item \alert{Short-segment failure}\\
+            {\scriptsize Not enough visual context}
+    \end{enumerate}
+
+    \vspace{6pt}
+
+    \begin{exampleblock}{\small Topic Analysis}
+      \begin{tabular}{@{}lcc@{}}
+        \scriptsize\textbf{Topic} & \scriptsize\textbf{IS} & \scriptsize\textbf{Captured} \\
+        \scriptsize Business/Finance & \scriptsize\tiergood{3.08} & \scriptsize 57\% \\
+        \scriptsize Education & \scriptsize\tierfair{2.67} & \scriptsize 43\% \\
+        \scriptsize DIY/Home & \scriptsize\tierpoor{2.13} & \scriptsize 30\% \\
+      \end{tabular}
+    \end{exampleblock}
+
+    \vspace{2pt}
+    \notetext{Formal vocabulary $\rightarrow$ better predictions}
+  }{0.49}{
+    \halfwidthfig{01_wer_vs_duration.png}
+
+    \vspace{2pt}
+    \begin{center}
+    {\small\textbf{Length matters:}}\\[2pt]
+    \begin{tabular}{@{}lcc@{}}
+      \scriptsize\textbf{Words} & \scriptsize\textbf{WER} & \scriptsize\textbf{Captured} \\
+      \scriptsize 5--10 & \scriptsize\werbad{74\%} & \scriptsize 32\% \\
+      \scriptsize 20+ & \scriptsize\werneutral{55\%} & \scriptsize 49\% \\
+    \end{tabular}
+    \end{center}
+  }
+
+  \note{
+    Short segments catastrophic --- 5--10 words only 32\% captured vs 49\% for 20+.
+    Business/Finance best at 57\% (formal vocabulary helps LLM).
+    DIY/Home worst at 30\% (casual speech, technical jargon).
+    Length is the single strongest predictor of success.
+    See A13 for concrete failure mode examples; A12 for success pattern examples.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Named Entity Accuracy
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Named Entity Accuracy}
+  \twocol{0.46}{
+    \alertmetric{38.8\%}{NEA F1 --- Misses 61\% of names/numbers}
+
+    \vspace{4pt}
+
+    \begin{itemize}
+      \item Names, numbers, places:\\
+            \alert{cannot be recovered from context}
+      \item Largest success/failure differentiator:
+      \begin{itemize}
+        \item Success: \wergood{74.0\%} NEA F1
+        \item Failure: \werbad{15.7\%} NEA F1
+        \item Gap: \textbf{58.3 pp}
+      \end{itemize}
+      \item 17.3\% of IS variance\\
+            \notetext{(disproportionate to 15\% weight)}
+    \end{itemize}
+  }{0.51}{
+    \halfwidthfig{14_nea_vs_wwer_scatter.png}
+  }
+
+  \note{
+    NEA F1 38.8\% --- misses 61\% of names and numbers.
+    These are the words context can't recover --- ``admiral mcrae'' can't be guessed.
+    Largest differentiator: 74\% vs 16\%, gap 58.3pp.
+    Contributes 17.3\% of IS variance despite only 15\% weight.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Failure Mode Taxonomy
+% ----------------------------------------------------------
+\begin{frame}[shrink=10]{Failure Mode Taxonomy}
+  {\small 900 segments failed (IS $<$ 3.0). We classified them into \textbf{10 failure modes}:}
+
+  \vspace{4pt}
+
+  \begin{center}
+  \begin{tikzpicture}
+    \pgfplotsset{
+      failure bar/.style={
+        xbar, bar width=6pt, xmin=0, xmax=18,
+        width=0.75\textwidth, height=0.55\textheight,
+        xlabel={\small Percentage of failed segments (\%)},
+        xlabel style={font=\small},
+        ytick=data,
+        yticklabel style={font=\scriptsize, anchor=east},
+        xticklabel style={font=\scriptsize},
+        nodes near coords,
+        nodes near coords style={font=\tiny, anchor=west},
+        every node near coord/.append style={xshift=1pt},
+        enlarge y limits=0.08,
+        axis line style={ArgosGray},
+        tick style={ArgosGray},
+        grid=major, grid style={ArgosLightGray, thin},
+      }
+    }
+    \begin{axis}[failure bar,
+      symbolic y coords={
+        Over-generation,
+        Truncation,
+        Empty Output,
+        Content Word Errors,
+        Entity Destruction,
+        High Error Rate,
+        Hallucination,
+        Accum. Small Errors,
+        Phonetic Wrong Topic,
+        Topic Drift
+      },
+    ]
+      \addplot[fill=ArgosRed!70, draw=ArgosRed]
+        coordinates {
+          (0.1,Over-generation)
+          (1.1,Truncation)
+          (7.8,Empty Output)
+          (10.7,Content Word Errors)
+          (12.0,Entity Destruction)
+          (12.1,High Error Rate)
+          (12.3,Hallucination)
+          (12.3,Accum. Small Errors)
+          (15.7,Phonetic Wrong Topic)
+          (15.9,Topic Drift)
+        };
+    \end{axis}
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{-2pt}
+  \notetext{Failures are diverse --- no single fix. Each roadmap phase targets specific categories. See A13 for real examples.}
+
+  \note{
+    10 failure modes classified across 900 segments.
+    Topic Drift \#1 at 15.9\% --- model drifts to unrelated content.
+    Phonetic Wrong Topic \#2 at 15.7\% --- inherent visual ambiguity.
+    Hallucination at 12.3\% --- fluent but fabricated.
+    Key insight: failures are diverse, each phase targets specific categories.
+    See A13 for one real reference/hypothesis example per failure mode.
+  }
+\end{frame}
+
+% ==========================================================
+% PART D: CAN WE TUNE IT?
+% ==========================================================
+
+% ----------------------------------------------------------
+% Why We Tried Tuning (Motivation)
+% ----------------------------------------------------------
+\begin{frame}{Can We Tune Our Way Out?}
+  \twocol{0.50}{
+    \textbf{\textcolor{ArgosOrange}{The Question}}
+
+    \vspace{4pt}
+
+    \begin{itemize}
+      \item The visual encoder is the primary bottleneck
+      \item But decode parameters control \alert{how} the LLM generates text
+      \item Can beam search, length penalty, or temperature improve output?
+    \end{itemize}
+
+    \vspace{6pt}
+
+    {\small\keyword{We ran 13 systematic experiments to find out.}}
+  }{0.47}{
+    \begin{block}{\small Parameters Tested}
+      \begin{tabular}{@{}ll@{}}
+        \scriptsize\textbf{Parameter} & \scriptsize\textbf{Range} \\
+        \midrule
+        \scriptsize Beam size & \scriptsize 5 $\rightarrow$ 50 candidates \\
+        \scriptsize Length penalty & \scriptsize $-$0.5 $\rightarrow$ 2.0 \\
+        \scriptsize Temperature & \scriptsize 0.3 $\rightarrow$ 1.5 \\
+        \scriptsize Sampling & \scriptsize greedy vs nucleus \\
+        \scriptsize Rep.\ penalty & \scriptsize on / off \\
+      \end{tabular}
+    \end{block}
+
+    \vspace{4pt}
+    \notetext{107-segment test set, best config\\validated on all 1,497 segments}
+  }
+
+  \note{
+    Motivation for tuning experiments. The visual encoder determines which segments
+    succeed or fail, but decode parameters affect output quality. We ran 13 experiments
+    varying beam size, length penalty, temperature, sampling, and repetition penalty.
+    Tested on 107 segments, best config validated on full 1,497-segment dataset.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Performance Distribution
+% ----------------------------------------------------------
+\begin{frame}{How Results Vary Across Configurations}
+  {\small Each box shows WWER distribution for one of 13 configs. Lower is better.}
+
+  \fullwidthfig{09_boxplot_wwer_all_experiments.png}
+               {Configs D and H are outliers --- extreme length penalty causes catastrophic failures.}
+
+  \note{
+    Most segments at 50--80\% WER, long tail of catastrophic failures.
+    D (lenpen=-0.5) produces 45\% empties.
+    H (lenpen=2.0) produces massive hallucinations (mean WER 540\%).
+    The ``sweet spot'' is narrow --- beam=20, lenpen=0--1, optional low-temp sampling.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% 13 Tuning Experiments: Best Config vs Baseline
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Best Config vs Baseline}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\linewidth, height=0.42\textheight, keepaspectratio]{P5_tuning_before_after.png}
+
+      \vspace{2pt}
+      \begin{block}{\scriptsize Config J (Best --- Full Dataset)}
+        {\scriptsize
+        \begin{tabular}{@{}lcc@{}}
+          & \textbf{Baseline} & \textbf{Config J} \\
+          IS & 2.52 & \keyword{2.60} \\
+          Captured & 597 & \keyword{622 (+25)} \\
+          Empties & 70 & \keyword{0} \\
+        \end{tabular}}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\linewidth, height=0.42\textheight, keepaspectratio]{10_empty_and_hallucination_rates.png}
+
+      \vspace{2pt}
+      \begin{alertblock}{\scriptsize The Trade-off}
+        {\scriptsize
+        \begin{tabular}{@{}lcc@{}}
+          & \textbf{Baseline} & \textbf{Config J} \\
+          Halluc.\ & 307 & \alert{348 (+41)} \\
+          Net IS & --- & +0.08 \\
+        \end{tabular}}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+
+  \note{
+    13 experiments: beam, lenpen, sampling, temperature.
+    Config J (lenpen=1.0, temp=0.5): IS 2.60 vs 2.52, empties eliminated.
+    But hallucinations increase by 41 segments --- fundamental tradeoff.
+    Net IS gain only +0.08 --- tuning has reached diminishing returns.
+  }
+\end{frame}
+
+% ----------------------------------------------------------
+% Limits of Tuning
+% ----------------------------------------------------------
+\begin{frame}[shrink=5]{Limits of Tuning}
+  \twocol{0.48}{
+    {\large\keyword{Tuning = mitigation, not cure}}
+
+    \vspace{4pt}
+
+    \begin{itemize}\small
+      \item Config J: eliminates empties,\\increases hallucinations by 13\%
+      \item Rankings \keyword{stable} (r $>$ 0.92)\\across all 16 configs
+      \item ``Hard'' and ``easy'' segments\\stay the same
+    \end{itemize}
+
+    \vspace{4pt}
+
+    \begin{alertblock}{\scriptsize Bottleneck: Visual Encoder}
+      {\small Three levers remain:}
+      \begin{enumerate}\scriptsize
+        \item Scale data to 20K--50K segments
+        \item Swap to stronger LLM
+        \item Smart prompts
+      \end{enumerate}
+    \end{alertblock}
+  }{0.49}{
+    \halfwidthfig{P4_lenpen_sensitivity.png}
+
+    \vspace{2pt}
+    \notetext{Length penalty (\texttt{lenpen}) vs empty/hallucination trade-off}
+  }
+
+  \note{
+    Tuning cannot fix the fundamental problem.
+    Cross-config proof: segment rankings stable (r>0.92).
+    The visual encoder determines which segments succeed or fail.
+    Three remaining levers: data, LLM, and prompts.
+    This sets up the entire Future Directions section.
+  }
+\end{frame}
+
+% ==========================================================
+% PART E: THE FULL PICTURE
+% ==========================================================
+
+% ----------------------------------------------------------
+% IS Deep Dive: What Drives Quality?
 % ----------------------------------------------------------
 \begin{frame}[shrink=10]{IS Deep Dive: What Drives Quality?}
   \begin{columns}[T]
@@ -183,8 +622,6 @@
     5. WER is UNRELIABLE across configs: correlation swings from -0.95 to -0.45
     with length penalty changes. This is why IS was created over raw WER.
     6. Length Ratio nearly useless (9.1\%, sign flips across configs).
-    7. Per-tier: Failed tier dominated by Phonetic (``does it sound right?''),
-    Excellent tier dominated by WER (``exact word accuracy'').
     Claude designed the entire framework at design time. At run time: fully
     deterministic, free, reproducible. R-squared = 1.0.
     Cross-config: r=0.925 mean, recall 97.6--100\% across 16 decode configs.
@@ -194,7 +631,7 @@
 \end{frame}
 
 % ----------------------------------------------------------
-% Slide 7c: Two Evaluation Systems
+% Two Evaluation Systems
 % ----------------------------------------------------------
 \begin{frame}[shrink=10]{Two Evaluation Systems}
   \twocol{0.50}{
@@ -254,7 +691,7 @@
 \end{frame}
 
 % ----------------------------------------------------------
-% Slide 7d: LLM Salvage — What Metrics Miss
+% LLM Salvage: What Metrics Miss
 % ----------------------------------------------------------
 \begin{frame}[shrink=5]{LLM Salvage: What Metrics Miss}
   \twocol{0.42}{
@@ -309,262 +746,12 @@
   }
 \end{frame}
 
-% ----------------------------------------------------------
-% Slide 8: Failure Mode Taxonomy
-% ----------------------------------------------------------
-\begin{frame}[shrink=10]{Failure Mode Taxonomy}
-  {\small Even after salvage, \textbf{49\% of output fails} --- 10 classified failure modes across \textbf{900 segments} (IS $<$ 3.0):}
-
-  \vspace{4pt}
-
-  \begin{center}
-  \begin{tikzpicture}
-    \pgfplotsset{
-      failure bar/.style={
-        xbar, bar width=6pt, xmin=0, xmax=18,
-        width=0.75\textwidth, height=0.55\textheight,
-        xlabel={\small Percentage of failed segments (\%)},
-        xlabel style={font=\small},
-        ytick=data,
-        yticklabel style={font=\scriptsize, anchor=east},
-        xticklabel style={font=\scriptsize},
-        nodes near coords,
-        nodes near coords style={font=\tiny, anchor=west},
-        every node near coord/.append style={xshift=1pt},
-        enlarge y limits=0.08,
-        axis line style={ArgosGray},
-        tick style={ArgosGray},
-        grid=major, grid style={ArgosLightGray, thin},
-      }
-    }
-    \begin{axis}[failure bar,
-      symbolic y coords={
-        Over-generation,
-        Truncation,
-        Empty Output,
-        Content Word Errors,
-        Entity Destruction,
-        High Error Rate,
-        Hallucination,
-        Accum. Small Errors,
-        Phonetic Wrong Topic,
-        Topic Drift
-      },
-    ]
-      \addplot[fill=ArgosRed!70, draw=ArgosRed]
-        coordinates {
-          (0.1,Over-generation)
-          (1.1,Truncation)
-          (7.8,Empty Output)
-          (10.7,Content Word Errors)
-          (12.0,Entity Destruction)
-          (12.1,High Error Rate)
-          (12.3,Hallucination)
-          (12.3,Accum. Small Errors)
-          (15.7,Phonetic Wrong Topic)
-          (15.9,Topic Drift)
-        };
-    \end{axis}
-  \end{tikzpicture}
-  \end{center}
-
-  \vspace{-2pt}
-  \notetext{Each roadmap phase targets specific failure categories. No single fix addresses all modes. See A13 for real examples of each mode.}
-
-  \note{
-    10 failure modes classified across 900 segments.
-    Topic Drift \#1 at 15.9\% --- model drifts to unrelated content.
-    Phonetic Wrong Topic \#2 at 15.7\% --- inherent visual ambiguity.
-    Hallucination at 12.3\% --- fluent but fabricated.
-    Key insight: failures are diverse, each phase targets specific categories.
-    See A13 for one real reference/hypothesis example per failure mode.
-  }
-\end{frame}
+% ==========================================================
+% PART F: EXAMPLES & WRAP-UP
+% ==========================================================
 
 % ----------------------------------------------------------
-% Slide 9: Performance Distribution
-% ----------------------------------------------------------
-\begin{frame}{Performance Distribution Across 13 Experiments}
-  \fullwidthfig{09_boxplot_wwer_all_experiments.png}
-                {WWER distribution across 13 decode configurations (107 segments each). Configs D and H are outliers.}
-
-  \note{
-    Most segments at 50--80\% WER, long tail of catastrophic failures.
-    D (lenpen=-0.5) produces 45\% empties.
-    H (lenpen=2.0) produces massive hallucinations (mean WER 540\%).
-    The ``sweet spot'' is narrow --- beam=20, lenpen=0--1, optional low-temp sampling.
-  }
-\end{frame}
-
-% ----------------------------------------------------------
-% Slide 10: Why the Gap
-% ----------------------------------------------------------
-\begin{frame}[shrink=8]{Why the Gap: Root Causes}
-  \twocol{0.48}{
-    \textbf{Three root causes:}
-    \begin{enumerate}
-      \item \alert{Domain mismatch}\\
-            {\scriptsize TED talks $\neq$ YouTube}
-      \item \alert{Hallucination}\\
-            {\scriptsize LLM prior overwhelms visual signal}
-      \item \alert{Short-segment failure}\\
-            {\scriptsize Not enough visual context}
-    \end{enumerate}
-
-    \vspace{6pt}
-
-    \begin{exampleblock}{\small Topic Analysis}
-      \begin{tabular}{@{}lcc@{}}
-        \scriptsize\textbf{Topic} & \scriptsize\textbf{IS} & \scriptsize\textbf{Captured} \\
-        \scriptsize Business/Finance & \scriptsize\tiergood{3.08} & \scriptsize 57\% \\
-        \scriptsize Education & \scriptsize\tierfair{2.67} & \scriptsize 43\% \\
-        \scriptsize DIY/Home & \scriptsize\tierpoor{2.13} & \scriptsize 30\% \\
-      \end{tabular}
-    \end{exampleblock}
-
-    \vspace{2pt}
-    \notetext{Formal vocabulary $\rightarrow$ better predictions}
-  }{0.49}{
-    \halfwidthfig{01_wer_vs_duration.png}
-
-    \vspace{2pt}
-    \begin{center}
-    {\small\textbf{Length matters:}}\\[2pt]
-    \begin{tabular}{@{}lcc@{}}
-      \scriptsize\textbf{Words} & \scriptsize\textbf{WER} & \scriptsize\textbf{Captured} \\
-      \scriptsize 5--10 & \scriptsize\werbad{74\%} & \scriptsize 32\% \\
-      \scriptsize 20+ & \scriptsize\werneutral{55\%} & \scriptsize 49\% \\
-    \end{tabular}
-    \end{center}
-  }
-
-  \note{
-    Short segments catastrophic --- 5--10 words only 32\% captured vs 49\% for 20+.
-    Business/Finance best at 57\% (formal vocabulary helps LLM).
-    DIY/Home worst at 30\% (casual speech, technical jargon).
-    Length is the single strongest predictor of success.
-    See A13 for concrete failure mode examples; A12 for success pattern examples.
-  }
-\end{frame}
-
-% ----------------------------------------------------------
-% Slide 11: Named Entity Accuracy
-% ----------------------------------------------------------
-\begin{frame}[shrink=5]{Named Entity Accuracy}
-  \twocol{0.46}{
-    \alertmetric{38.8\%}{NEA F1 --- Misses 61\% of names/numbers}
-
-    \vspace{4pt}
-
-    \begin{itemize}
-      \item Names, numbers, places:\\
-            \alert{cannot be recovered from context}
-      \item Largest success/failure differentiator:
-      \begin{itemize}
-        \item Success: \wergood{74.0\%} NEA F1
-        \item Failure: \werbad{15.7\%} NEA F1
-        \item Gap: \textbf{58.3 pp}
-      \end{itemize}
-      \item 17.3\% of IS variance\\
-            \notetext{(disproportionate to 15\% weight)}
-    \end{itemize}
-  }{0.51}{
-    \halfwidthfig{14_nea_vs_wwer_scatter.png}
-  }
-
-  \note{
-    NEA F1 38.8\% --- misses 61\% of names and numbers.
-    These are the words context can't recover --- ``admiral mcrae'' can't be guessed.
-    Largest differentiator: 74\% vs 16\%, gap 58.3pp.
-    Contributes 17.3\% of IS variance despite only 15\% weight.
-  }
-\end{frame}
-
-% ----------------------------------------------------------
-% Slide 12: 13 Tuning Experiments
-% ----------------------------------------------------------
-\begin{frame}[shrink=5]{13 Tuning Experiments}
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \includegraphics[width=\linewidth, height=0.42\textheight, keepaspectratio]{P5_tuning_before_after.png}
-
-      \vspace{2pt}
-      \begin{block}{\scriptsize Config J (Best --- Full Dataset)}
-        {\scriptsize
-        \begin{tabular}{@{}lcc@{}}
-          & \textbf{Baseline} & \textbf{Config J} \\
-          IS & 2.52 & \keyword{2.60} \\
-          Captured & 597 & \keyword{622 (+25)} \\
-          Empties & 70 & \keyword{0} \\
-        \end{tabular}}
-      \end{block}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \includegraphics[width=\linewidth, height=0.42\textheight, keepaspectratio]{10_empty_and_hallucination_rates.png}
-
-      \vspace{2pt}
-      \begin{alertblock}{\scriptsize The Trade-off}
-        {\scriptsize
-        \begin{tabular}{@{}lcc@{}}
-          & \textbf{Baseline} & \textbf{Config J} \\
-          Halluc.\ & 307 & \alert{348 (+41)} \\
-          Net IS & --- & +0.08 \\
-        \end{tabular}}
-      \end{alertblock}
-    \end{column}
-  \end{columns}
-
-  \note{
-    13 experiments: beam, lenpen, sampling, temperature.
-    Config J (lenpen=1.0, temp=0.5): IS 2.60 vs 2.52, empties eliminated.
-    But hallucinations increase by 41 segments --- fundamental tradeoff.
-    Net IS gain only +0.08 --- tuning has reached diminishing returns.
-  }
-\end{frame}
-
-% ----------------------------------------------------------
-% Slide 13: Limits of Tuning
-% ----------------------------------------------------------
-\begin{frame}[shrink=5]{Limits of Tuning}
-  \twocol{0.48}{
-    {\large\keyword{Tuning = mitigation, not cure}}
-
-    \vspace{4pt}
-
-    \begin{itemize}\small
-      \item Config J: eliminates empties,\\increases hallucinations by 13\%
-      \item Rankings \keyword{stable} (r $>$ 0.92)\\across all 16 configs
-      \item ``Hard'' and ``easy'' segments\\stay the same
-    \end{itemize}
-
-    \vspace{4pt}
-
-    \begin{alertblock}{\scriptsize Bottleneck: Visual Encoder}
-      {\small Three levers remain:}
-      \begin{enumerate}\scriptsize
-        \item Scale data to 20K--50K segments
-        \item Swap to stronger LLM
-        \item Smart prompts
-      \end{enumerate}
-    \end{alertblock}
-  }{0.49}{
-    \halfwidthfig{P4_lenpen_sensitivity.png}
-
-    \vspace{2pt}
-    \notetext{Length penalty (\texttt{lenpen}) vs empty/hallucination trade-off}
-  }
-
-  \note{
-    Tuning cannot fix the fundamental problem.
-    Cross-config proof: segment rankings stable (r>0.92).
-    The visual encoder determines which segments succeed or fail.
-    Three remaining levers: data, LLM, and prompts.
-    This sets up the entire Future Directions section.
-  }
-\end{frame}
-
-% ----------------------------------------------------------
-% Slide 14: Curated Examples
+% Curated Examples
 % ----------------------------------------------------------
 \begin{frame}[shrink=20]{Curated Examples}
   \input{tables/curated_examples.tex}
@@ -580,7 +767,7 @@
 \end{frame}
 
 % ----------------------------------------------------------
-% Slide 14b: Video Examples
+% Video Gallery
 % ----------------------------------------------------------
 \begin{frame}{Curated Examples --- Video Gallery}
   {\small Click any thumbnail to play (requires pdfpc or Adobe Acrobat):}
@@ -646,7 +833,7 @@
   \end{columns}
 
   \note{
-    8 embedded videos matching the curated examples on Slide 14.
+    8 embedded videos matching the curated examples.
     Row 1: Perfect, homophene confusion, hallucination, Config J recovery.
     Row 2: Topic drift (\#1 failure), salvage (most novel finding), entity preserved vs destroyed.
     Each video has hypothesis text burned in. Click to play.
@@ -654,7 +841,7 @@
 \end{frame}
 
 % ----------------------------------------------------------
-% Slide 15: Live Demo
+% Live Demo
 % ----------------------------------------------------------
 \begin{frame}{Live Demo}
   \vspace{4pt}
@@ -697,7 +884,7 @@
 \end{frame}
 
 % ----------------------------------------------------------
-% Slide 16: Research Breadth
+% Research Breadth
 % ----------------------------------------------------------
 \begin{frame}{Research Breadth: 8 Reports}
   \vspace{2pt}
