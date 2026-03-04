@@ -268,7 +268,7 @@ The IS metric was not designed independently from LLM judgment — **Claude (Ant
 
 4. **Claude designed the context recovery heuristic** — the `estimate_llm_context_recovery()` decision tree with its 15 rules and 6 linguistic factors codifies Claude's judgment about when a viewer with domain context could recover meaning.
 
-5. **Claude classified failure modes and success patterns** — the 10 failure categories and 7 success categories were defined by Claude analyzing real pipeline outputs.
+5. **Claude classified failure modes and success patterns** — the 5 failure categories and 7 success categories were defined by Claude analyzing real pipeline outputs.
 
 This is a form of **LLM-distilled evaluation**: rather than calling an LLM per sample at runtime, the LLM's expert judgment was elicited once and encoded into deterministic, reproducible metrics. The IS metric is effectively "what Claude would score" — made computable, free, and deterministic.
 

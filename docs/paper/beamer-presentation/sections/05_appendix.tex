@@ -559,63 +559,47 @@
 % ----------------------------------------------------------
 % A13: Failure Mode Examples
 % ----------------------------------------------------------
-\begin{frame}[shrink=10]{A13: Failure Mode Examples}
-  {\small One real example per failure mode (10 modes):}
+\begin{frame}[shrink=10]{A13: Failure Category Examples}
+  {\small One real example per failure category (5 categories):}
 
   \vspace{4pt}
 
   {\scriptsize
-  \begin{tabular}{@{}p{2.5cm}p{3cm}p{3.5cm}cc@{}}
+  \begin{tabular}{@{}p{3cm}p{3cm}p{3.5cm}cc@{}}
     \toprule
-    \textbf{Mode} & \textbf{Reference} & \textbf{Hypothesis} & \textbf{WER} & \textbf{IS} \\
+    \textbf{Category} & \textbf{Reference} & \textbf{Hypothesis} & \textbf{WER} & \textbf{IS} \\
     \midrule
-    \cellcolor{TierFailedBg} Empty Output &
+    \cellcolor{TierFailedBg} Signal Loss (9\%) &
     ``do you say i wonder what\ldots'' &
     \emph{(empty)} &
-    \werbad{100\%} & \tierfailed{0.00} \\[2pt]
-    \cellcolor{TierFailedBg} Hallucination &
+    \werbad{100\%} & \tierfailed{0.00} \\[4pt]
+    \cellcolor{TierFailedBg} Hallucination (12.3\%) &
     ``and body parts'' &
     ``20 years ago when i was'' &
-    \werbad{200\%} & \tierfailed{0.00} \\[2pt]
-    \cellcolor{TierPoorBg} Truncation &
-    ``i don't want to say mistakes but i will say\ldots'' &
-    ``i don't want to seem disrespectful'' &
-    69\% & \tierpoor{1.26} \\[2pt]
-    \cellcolor{TierFailedBg} Topic Drift &
+    \werbad{200\%} & \tierfailed{0.00} \\[4pt]
+    \cellcolor{TierFailedBg} Wrong Topic (31.6\%) &
     ``i've made lots of videos\ldots'' &
     ``when i was a little girl\ldots'' &
-    97\% & \tierfailed{0.38} \\[2pt]
-    \cellcolor{TierFailedBg} Entity Destruction &
+    97\% & \tierfailed{0.38} \\[4pt]
+    \cellcolor{TierPoorBg} Right Topic Wrong Details (22.7\%) &
     ``china to take off to cross the pacific ocean\ldots'' &
     ``i don't think that's a good idea'' &
-    100\% & \tierfailed{0.72} \\[2pt]
-    \cellcolor{TierFailedBg} Phonetic Wrong Topic &
-    ``they have something like\ldots'' &
-    ``some english for you all\ldots'' &
-    100\% & \tierfailed{0.94} \\[2pt]
-    \cellcolor{TierPoorBg} High Error Rate &
-    ``today here the three in one\ldots'' &
-    ``i'm so happy to be here\ldots'' &
-    100\% & \tierpoor{1.13} \\[2pt]
-    \cellcolor{TierPoorBg} Accum. Small Errors &
+    100\% & \tierfailed{0.72} \\[4pt]
+    \cellcolor{TierPoorBg} Accumulated Errors (24.4\%) &
     ``you're rich no no no\ldots'' &
     ``your ring that's not what\ldots'' &
-    67\% & \tierpoor{1.64} \\[2pt]
-    \cellcolor{TierPoorBg} Content Word Errors &
-    ``even after the insurance\ldots'' &
-    ``after the initial contamination'' &
-    60\% & \tierpoor{1.86} \\[2pt]
-    \cellcolor{TierFairBg} Over-generation &
-    ``to the next level'' &
-    ``to the next level and they\ldots'' &
-    100\% & \tierfair{2.32} \\
+    67\% & \tierpoor{1.64} \\
     \bottomrule
   \end{tabular}}
 
+  \vspace{6pt}
+  \notetext{Signal Loss = empty/truncated/over-generated. Wrong Topic = total drift + phonetically similar wrong domain.\\
+  Right Topic Wrong Details = entity destruction + content word errors. Accumulated = many small errors compound.}
+
   \note{
     Q\&A backup for ``what do the failures look like?''
-    10 modes, each with a real example. Topic Drift and Phonetic Wrong Topic are the
-    most common (15.9\% and 15.7\%). Empty Output and Hallucination are the most extreme.
+    5 categories, each with a real example. Wrong Topic is the largest (31.6\%).
+    Hallucination is the most dangerous (fluent but fabricated).
     IS tier colors match IS scores: green $\geq$ 3.0, yellow 2.0--2.99, orange 1.0--1.99, red $<$ 1.0.
   }
 \end{frame}

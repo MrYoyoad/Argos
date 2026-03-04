@@ -295,104 +295,64 @@ These are the segments where a human could understand what was actually said fro
 
 ## 8. Failure Mode Classification
 
-Every segment scoring IS < 3.0 is classified into its dominant failure mode. This runs automatically as part of the scoring pipeline.
+Every segment scoring IS < 3.0 is classified into its dominant failure category. This runs automatically as part of the scoring pipeline. The original 10 fine-grained modes have been consolidated into **5 academically-grounded categories** that map cleanly to remediation strategies.
 
-| Failure Mode | Criteria | Description |
-|-------------|----------|-------------|
-| **Empty Output** | No hypothesis text | Model produced nothing |
-| **Hallucination** | WER > 100% | Fluent but completely fabricated text, longer than reference |
-| **Over-generation** | Length ratio > 1.8 | Hypothesis much longer than reference |
-| **Truncation** | Length ratio < 0.3 | Hypothesis much shorter than reference |
-| **Total Topic Drift** | Semantic < 0.2 AND Phonetic < 0.3 | No connection to reference at all |
-| **Phonetically Similar but Wrong Topic** | Semantic < 0.2 AND Phonetic >= 0.3 | Words sound right but mean something different |
-| **Entity Destruction** | Semantic >= 0.2, NEA F1 < 10%, WER > 60% | Topic vaguely right but all names/numbers lost |
-| **High Error Rate** | WER > 70% | Too many wrong words for any signal to survive |
-| **Content Word Errors** | Semantic >= 0.3, WER > 50% | Structure intact but key nouns/verbs wrong |
-| **Accumulated Small Errors** | Default | Many minor errors collectively destroy meaning |
+| Failure Category | Constituent Modes | Detection Rules | Description |
+|-----------------|-------------------|-----------------|-------------|
+| **Signal Loss** | Empty Output, Truncation, Over-generation | No hypothesis text, or length ratio < 0.3 or > 1.8 | Model produced nothing, stopped too early, or ran past the content |
+| **Hallucination** | Hallucination | WER > 100% (hypothesis longer than reference, fluent but fabricated) | LLM "runs ahead" of visual signal, generating plausible but invented text |
+| **Wrong Topic** | Total Topic Drift, Phonetically Similar but Wrong Topic | Semantic < 0.2 (topic drift) or Semantic < 0.2 AND Phonetic >= 0.3 (phonetic wrong topic) | Output is about a completely different subject, possibly with similar-sounding words |
+| **Right Topic Wrong Details** | Entity Destruction, Content Word Errors | Semantic >= 0.2 but NEA F1 < 10% and WER > 60% (entities lost) or Semantic >= 0.3 but WER > 50% (content words wrong) | General topic preserved but names, numbers, and key content words are wrong |
+| **Accumulated Errors** | High Error Rate, Accumulated Small Errors | WER > 70% (high error) or default (many small errors) | Many individually small errors that compound to destroy meaning |
 
 ### Baseline Results (1497 segments, 900 failures)
 
-| Mode | Count | % of Failures |
-|------|-------|--------------|
-| Total Topic Drift | 143 | 15.9% |
-| Phonetically Similar but Wrong Topic | 141 | 15.7% |
-| Accumulated Small Errors | 111 | 12.3% |
+| Category | Count | % of Failures |
+|----------|-------|--------------|
+| Wrong Topic | 284 | 31.6% |
+| Accumulated Errors | 220 | 24.4% |
+| Right Topic Wrong Details | 204 | 22.7% |
 | Hallucination | 111 | 12.3% |
-| High Error Rate | 109 | 12.1% |
-| Entity Destruction | 108 | 12.0% |
-| Content Word Errors | 96 | 10.7% |
-| Empty Output | 70 | 7.8% |
-| Truncation | 10 | 1.1% |
-| Over-generation | 1 | 0.1% |
+| Signal Loss | 81 | 9.0% |
 
-### 8.1 What Each Failure Mode Means (Plain English)
+### 8.1 What Each Failure Category Means (Plain English)
 
-**Empty Output** (70 segments, 7.8%)
-- *What it looks like*: The model produced no text at all — complete silence.
-- *Why it happens*: The visual encoder could not extract enough signal from the mouth region (face occluded, very short segment, poor video quality).
-- *What could fix it*: Config J (lenpen=1 + sampling) eliminates all 70 empties. Phase 2 (N-best) provides fallback candidates.
+**Signal Loss** (81 segments, 9.0%)
+- *What it looks like*: The model produced nothing (empty output, 70 segments), stopped too early (truncation, 10 segments), or ran past the content (over-generation, 1 segment).
+- *Why it happens*: Visual encoder could not extract enough signal — face occluded, very short segment, poor video quality, or confidence drops below generation threshold.
+- *What could fix it*: Config J (lenpen=1 + sampling) eliminates all 70 empties. N-best provides fallback candidates. Length penalty tuning handles over-generation.
 
 **Hallucination** (111 segments, 12.3%)
 - *What it looks like*: The model generated fluent, confident text that has nothing to do with what was actually said. Often longer than the reference.
-- *Why it happens*: The LLM "runs ahead" of the visual signal, generating plausible text from its language model prior rather than from lip movements. This is the most dangerous failure mode because the output sounds convincing.
+- *Why it happens*: The LLM "runs ahead" of the visual signal, generating plausible text from its language model prior rather than from lip movements. This is the most dangerous failure category because the output sounds convincing.
 - *What could fix it*: Stronger visual encoder (more training data), anti-hallucination prompts, GER post-processing to compare multiple hypotheses.
 
-**Over-generation** (1 segment, 0.1%)
-- *What it looks like*: The model captured the right content but kept generating extra text beyond what was said.
-- *Why it happens*: Length penalty too low — the model doesn't know when to stop.
-- *What could fix it*: Length penalty tuning (lenpen > 0), explicit stop tokens.
+**Wrong Topic** (284 segments, 31.6%)
+- *What it looks like*: The output is about a completely different subject. Either no connection at all (total topic drift, 143 segments — e.g., reference about weight loss, hypothesis about being a princess), or words that sound similar but belong to the wrong domain (phonetically similar wrong topic, 141 segments — similar mouth shapes but different meaning).
+- *Why it happens*: Visual encoder extracted no meaningful signal (pure drift) or captured mouth shapes but the LLM decoded them into the wrong semantic domain (phonetic confusion).
+- *What could fix it*: Better visual encoder (more training data, domain adaptation), topic-context prompts, stronger LLM with better disambiguation, N-best aggregation.
 
-**Truncation** (10 segments, 1.1%)
-- *What it looks like*: The model started correctly but stopped too early, capturing only part of the utterance.
-- *Why it happens*: Short visual segments, or the model's confidence drops below the generation threshold.
-- *What could fix it*: Lower generation stopping threshold, N-best with different length penalties.
+**Right Topic Wrong Details** (204 segments, 22.7%)
+- *What it looks like*: The general topic is vaguely right, but all names, numbers, and proper nouns are wrong (entity destruction, 108 segments — e.g., "the 13th amendment" → "13th may mean something to him"), or sentence structure is intact but key nouns and verbs are substituted (content word errors, 96 segments — e.g., "before I get into that" → "the day before I get here").
+- *Why it happens*: Named entities are unpredictable from lip shapes. Content words get substituted with similar-looking alternatives while structure is preserved.
+- *What could fix it*: Context injection (entity lists), N-best with entity voting, stronger LLM, phonetic post-correction, domain-specific fine-tuning.
 
-**Total Topic Drift** (143 segments, 15.9%)
-- *What it looks like*: The output is about a completely different subject. Reference talks about weight loss, hypothesis talks about being a princess.
-- *Why it happens*: The visual encoder extracted no meaningful signal — the model fell back entirely on its language prior, generating generic text.
-- *What could fix it*: Better visual encoder (more training data, domain adaptation), topic-context prompts.
+**Accumulated Errors** (220 segments, 24.4%)
+- *What it looks like*: Either too many words wrong for any signal to survive (high error rate, 109 segments), or many individually small errors that compound to destroy meaning (accumulated small errors, 111 segments — e.g., "convert your body into an avatar" → "interjection to an existing body into an adjoining sentence").
+- *Why it happens*: Combination of visual ambiguity, unfamiliar vocabulary, rapid speech, and many simultaneous phonetic confusions.
+- *What could fix it*: N-best aggregation (ROVER voting), GER post-processing, more training data, stronger LLM, visual encoder improvements.
 
-**Phonetically Similar but Wrong Topic** (141 segments, 15.7%)
-- *What it looks like*: The words sound somewhat right (similar mouth shapes) but the topic is completely different.
-- *Why it happens*: The visual encoder captured some mouth shape information, but the LLM decoded it into the wrong semantic domain.
-- *What could fix it*: Topic-aware prompting, stronger LLM with better disambiguation, N-best hypothesis aggregation.
+### 8.2 Failure Category Examples
 
-**Entity Destruction** (108 segments, 12.0%)
-- *What it looks like*: The general topic is vaguely right, but all names, numbers, and proper nouns are wrong. "The 13th amendment" becomes "13th may mean something to him."
-- *Why it happens*: Named entities are arbitrary strings with no phonetic or semantic predictability — the model cannot guess "McRae" from lip shapes alone.
-- *What could fix it*: Context injection (provide known entity lists), N-best with entity voting, domain-specific fine-tuning.
+One representative segment from each failure category:
 
-**High Error Rate** (109 segments, 12.1%)
-- *What it looks like*: Too many words are wrong for any signal to survive. The output contains fragments of correct words mixed with errors.
-- *Why it happens*: Combination of visual ambiguity, unfamiliar vocabulary, and rapid speech.
-- *What could fix it*: More training data, stronger LLM, visual encoder improvements.
-
-**Content Word Errors** (96 segments, 10.7%)
-- *What it looks like*: The sentence structure is intact and function words are correct, but key nouns and verbs are wrong. "Before I get into that" becomes "the day before I get here."
-- *Why it happens*: The model captures sentence rhythm and structure from lip movements but substitutes content words with similar-looking alternatives.
-- *What could fix it*: Stronger LLM (better word-level predictions), phonetic post-correction, context prompts.
-
-**Accumulated Small Errors** (111 segments, 12.3%)
-- *What it looks like*: Each individual error is small, but they compound to make the sentence incomprehensible. "Convert your body into an avatar" becomes "interjection to an existing body into an adjoining sentence."
-- *Why it happens*: Many simultaneous phonetic confusions, each individually plausible but collectively destructive.
-- *What could fix it*: N-best aggregation (ROVER voting), GER post-processing, stronger visual encoder.
-
-### 8.2 Failure Mode Examples
-
-One representative segment from each failure mode:
-
-| Mode | Reference | Hypothesis | WER | IS |
-|------|-----------|-----------|-----|-----|
-| **Empty Output** | "you don't just pull it apart you're not strong enough..." | *(empty)* | 100% | 0.00 |
+| Category | Reference | Hypothesis | WER | IS |
+|----------|-----------|-----------|-----|-----|
+| **Signal Loss** | "you don't just pull it apart you're not strong enough..." | *(empty)* | 100% | 0.00 |
 | **Hallucination** | "the chapter starts with a doxology..." | "so i'm going to tell you a little story about how i got..." | 172% | 0.23 |
-| **Over-generation** | "to the next level" | "to the next level and they have tried" | 100% | 2.32 |
-| **Truncation** | "how's it going guys eric here from tech a sode tv..." | "as john lennon once said may the force be with you" | 95% | 0.40 |
-| **Total Topic Drift** | "i've made lots of videos about weight loss..." | "when i was a little girl i always wanted to be a princess" | 97% | 0.38 |
-| **Phonetically Similar Wrong Topic** | "and if we don't listen then it will start yelling..." | "although recently we started an alliance even though recently..." | 76% | 1.68 |
-| **Entity Destruction** | "about the 13th amendment the 13th amendment is going to come..." | "13th may mean something to him because it can help him..." | 81% | 2.14 |
-| **High Error Rate** | "there's a lot to learn from those experiences..." | "these experiences and in my day to day thinking i continue..." | 75% | 2.35 |
-| **Content Word Errors** | "again before i get into that i just want to check in..." | "the day before i get here i just want to check in..." | 56% | 2.66 |
-| **Accumulated Small Errors** | "and as you did those gestures it would convert your body..." | "and add to interjection to an existing body into an adjoining..." | 69% | 2.04 |
+| **Wrong Topic** | "i've made lots of videos about weight loss..." | "when i was a little girl i always wanted to be a princess" | 97% | 0.38 |
+| **Right Topic Wrong Details** | "about the 13th amendment the 13th amendment is going to come..." | "13th may mean something to him because it can help him..." | 81% | 2.14 |
+| **Accumulated Errors** | "and as you did those gestures it would convert your body..." | "and add to interjection to an existing body into an adjoining..." | 69% | 2.04 |
 
 ---
 

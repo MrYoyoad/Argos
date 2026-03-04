@@ -443,20 +443,15 @@ SPEAKER NOTES: "The Intelligibility Score combines 6 signals into a 0-5 composit
 
 SLIDE 8 - Failure Mode Taxonomy
 LAYOUT: Horizontal bar chart (create this chart directly from the data below \u2014 do NOT use an image)
-Title: "10 Classified Failure Modes (900 failed segments)"
+Title: "5 Failure Categories (900 failed segments)"
 Create a horizontal bar chart with these values (sorted by frequency, largest at top):
-  Total Topic Drift: 15.9% (143) \u2014 dark red
-  Phonetically Similar Wrong Topic: 15.7% (141) \u2014 red
-  Accumulated Small Errors: 12.3% (111) \u2014 orange
+  Wrong Topic: 31.6% (284) \u2014 dark red
+  Accumulated Errors: 24.4% (220) \u2014 orange
+  Right Topic Wrong Details: 22.7% (204) \u2014 red
   Hallucination: 12.3% (111) \u2014 dark red
-  High Error Rate: 12.1% (109) \u2014 orange
-  Entity Destruction: 12.0% (108) \u2014 red
-  Content Word Errors: 10.7% (96) \u2014 yellow
-  Empty Output: 7.8% (70) \u2014 gray
-  Truncation: 1.1% (10) \u2014 gray
-  Over-generation: 0.1% (1) \u2014 gray
-Bottom: "Failures are diverse \u2014 no single fix. Each roadmap phase targets specific modes."
-SPEAKER NOTES: "900 failed segments classified into 10 failure modes. The top two \u2014 topic drift and phonetically-similar-wrong-topic \u2014 account for 31.6%. Hallucination (12.3%) is the most dangerous: fluent, confident, completely fabricated. Entity destruction (12.0%) loses names and numbers. This taxonomy maps directly to our roadmap: N-best aggregation targets accumulated small errors, confidence scoring flags hallucinations, data scaling reduces topic drift. [ANIMATION: Bars build top-to-bottom, wipe left. Transition: Fade 0.5s.]"
+  Signal Loss: 9.0% (81) \u2014 gray
+Bottom: "Failures are diverse \u2014 no single fix. Each roadmap phase targets specific categories."
+SPEAKER NOTES: "900 failed segments classified into 5 failure categories. Wrong Topic is the largest (31.6%) \u2014 model drifts to unrelated content or phonetically similar wrong domain. Accumulated Errors (24.4%) is the 'death by a thousand cuts' category. Hallucination (12.3%) is the most dangerous: fluent, confident, completely fabricated. This taxonomy maps directly to our roadmap: each phase targets a specific failure category. [ANIMATION: Bars build top-to-bottom, wipe left. Transition: Fade 0.5s.]"
 
 ---
 
@@ -565,7 +560,7 @@ Numbered list:
   7. Intelligibility Scoring \u2014 6-signal composite metric, failure taxonomy
   8. LLM Upgrade Analysis \u2014 Llama 3.1 8B drop-in, data scaling, GER
   + Exp A Training Report \u2014 overfitting analysis, 10 diagnostic plots
-SPEAKER NOTES: "Eight formal research reports plus the Exp A training analysis. Each report is a deep dive with methodology, results, and recommendations. The Intelligibility Score report is the main methodological contribution. The LLM Upgrade Analysis maps the path forward: model alternatives, data scaling projections, prompt strategies, and investment roadmap targeting 27-42% WER. [ANIMATION: List items build one at a time. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "Eight formal research reports plus the Exp A training analysis. Each report is a deep dive with methodology, results, and recommendations. The Intelligibility Score report is the main methodological contribution. The LLM Upgrade Analysis maps the path forward: model alternatives, data scaling projections, prompt strategies, and investment roadmap targeting IS 3.5-4.0. [ANIMATION: List items build one at a time. Transition: Fade 0.5s.]"
 """
 
 PROMPT_3 = """Continue the same presentation (dark navy #0D1B2A, white text, teal/coral accents).
@@ -646,7 +641,7 @@ Left list:
   \u2022 Custom NEA metric for entity accuracy
   \u2022 Intelligibility Score pipeline (LLM-distilled, 6 signals)
   \u2022 IS correlation analysis (16 configs, r=0.925)
-  \u2022 Failure mode classification (10 modes)
+  \u2022 Failure mode classification (5 categories)
   \u2022 Topic/length analysis (11 categories)
   \u2022 Fine-tuning diagnostics (10 training plots)
 SPEAKER NOTES: "Evaluation infrastructure goes far beyond standard WER. 16 plots auto-generated per experiment. Interactive HTML reports. Custom Named Entity Accuracy metric. The full Intelligibility Score pipeline with 6 signals, validated across 16 decode configs (Claude-designed heuristic r=0.925 (no runtime LLM calls)). Automated failure mode classification into 10 categories. Topic and segment length analysis across 11 content categories. Plus 10 fine-tuning diagnostic plots for training analysis. The CDF chart shows actionable quality thresholds. [ANIMATION: List items build one at a time. Transition: Fade 0.5s.]"
@@ -690,16 +685,16 @@ SPEAKER NOTES: "This is the turning point. WER says 11.4% usable. Our Intelligib
 ---
 
 SLIDE 25 - Research Roadmap
-LAYOUT: Staircase/waterfall descending from 67% to 27-42%
+LAYOUT: Staircase/waterfall descending from IS 2.52 to IS 3.5-4.0
 Right half: IMAGE PLACEHOLDER labeled "[P3_wer_trajectory.png]"
-Title: "Five Phases \u2014 From 67% to Target 27-42% WER"
+Title: "Five Phases \u2014 From IS 2.52 to Target 3.5-4.0"
 Five phases as descending steps (left side):
   Phase 1: Surface the good 40% \u2014 confidence scoring (2-4 hours)
   Phase 2: Improve the fair 22% \u2014 N-best aggregation (-5 to -15%)
   Phase 3: LLM swap + smart prompts \u2014 Llama 3.1 8B + prompts (-8 to -18pp)
   Phase 4: Scale data to 20K-50K segments + fine-tune (-15 to -25pp)
   Phase 5: GER post-processing \u2014 no retraining needed (-8 to -15pp)
-Bottom: "Combined target: 27-42% WER. Multiplicative scaling law (ICLR 2024)."
+Bottom: "Combined target: IS 3.5-4.0. Multiplicative scaling law (ICLR 2024)."
 SPEAKER NOTES: "Five phases, each targeting different bottlenecks. Phase 1 is immediate: confidence scoring to surface the 40% that\u2019s already good (2-4 hours). Phase 2: N-best aggregation exploiting all 20 beam hypotheses. Phase 3: swap LLM to Llama 3.1 8B (drop-in, 1-2 hours) plus smart prompts as force multiplier. Phase 4: the biggest gain \u2014 scale training data from 1.3K to 20K-50K segments. Phase 5: GER post-processing using an external correction LLM. Key: ICLR 2024 shows these gains are multiplicative \u2014 stronger LLM extracts MORE from the same data. [ANIMATION: Five phases build as descending staircase, one at a time. Transition: Fade 0.5s.]"
 
 ---
@@ -771,11 +766,11 @@ SLIDE 30 - Summary
 LAYOUT: Four numbered points
 Title: "Key Takeaways"
 Four points (teal numbers):
-  1. Rigorous assessment: 2.5x WER gap on 1,497 segments. Novel IS metric reveals 40% properly captured. 10 classified failure modes.
+  1. Rigorous assessment: 2.5x WER gap on 1,497 segments. Novel IS metric reveals 40% properly captured. 5 classified failure categories.
   2. Production system delivered: standalone container, 37 bugs fixed, 8-stage pipeline, 37 tests, 8 research reports.
   3. Data is the bottleneck: Exp A/B proved 1,273 segments too small. Multiplicative scaling law: stronger LLM + more data compounds.
-  4. Actionable roadmap to 27-42% WER: LLM swap + smart prompts + data scaling + GER. Each targets a different bottleneck.
-SPEAKER NOTES: "Four takeaways. One: we know exactly where we stand \u2014 rigorous assessment with a novel metric that reveals the true picture. Two: production system delivered and deployed. Three: data, not model capacity, is the bottleneck \u2014 and we know the scaling law. Four: clear roadmap from 67% to 27-42% WER, with each phase targeting a different bottleneck and gains that compound multiplicatively. [ANIMATION: Four points build one at a time. Transition: Fade 0.5s.]"
+  4. Actionable roadmap to IS 3.5-4.0: LLM swap + smart prompts + data scaling + GER. Each phase targets a different failure category.
+SPEAKER NOTES: "Four takeaways. One: we know exactly where we stand \u2014 rigorous assessment with a novel metric that reveals the true picture. Two: production system delivered and deployed. Three: data, not model capacity, is the bottleneck \u2014 and we know the scaling law. Four: clear roadmap from IS 2.52 to 3.5-4.0, with each phase targeting a different failure category and gains that compound multiplicatively. [ANIMATION: Four points build one at a time. Transition: Fade 0.5s.]"
 """
 
 
@@ -827,7 +822,7 @@ ANIMATION_CHECKLIST = [
     ["5", "5 quality tier bars", "Build top-to-bottom (0.3s each)", "Fade 0.5s"],
     ["6", "Left/right comparison boxes", "Left appears, then right", "Fade 0.5s"],
     ["7", "6 IS signal blocks + tier bars", "Blocks build one at a time", "Fade 0.5s"],
-    ["8", "10 failure mode bars", "Wipe left, top-to-bottom", "Fade 0.5s"],
+    ["8", "5 failure category bars", "Wipe left, top-to-bottom", "Fade 0.5s"],
     ["9", "Chart", "No build animation", "Fade 0.5s"],
     ["10", "Three root cause columns", "Columns appear one at a time", "Fade 0.5s"],
     ["11", "Text, chart", "Text appears, chart fades in", "Fade 0.5s"],
@@ -935,7 +930,7 @@ def build_overview(doc):
             ["Reality gap", "2.5x worse", "Report 1"],
             ["Properly captured (IS \u2265 3.0)", "39.9% (597 segments)", "Intelligibility Score"],
             ["WER overstatement factor", "3.5x", "39.9% vs 11.4%"],
-            ["Failure modes classified", "10 modes", "900 failed segments"],
+            ["Failure modes classified", "5 categories", "900 failed segments"],
             ["#1 failure: Topic Drift", "15.9% (143 segments)", "Failure taxonomy"],
             ["#1 success: Phonetic Preservation", "41.5%", "248 of 597 successes"],
             ["Bugs fixed", "37", "Bug tracking docs"],
@@ -949,7 +944,7 @@ def build_overview(doc):
             ["LLM: recommended swap", "Llama 3.1 8B (drop-in)", "1-2 hours setup"],
             ["Prompts: force multiplier", "Llama-2 +5-10pp / 3.1 +12-20pp", "7 strategies"],
             ["GER post-processing", "+8-15pp, no retraining", "N-best + correction LLM"],
-            ["Combined target", "27-42% WER (from 67%)", "LLM + data + prompts + GER"],
+            ["Combined target", "IS 3.5-4.0 (from 2.52)", "LLM + data + prompts + GER"],
         ],
         col_widths=[2.5, 2.2, 2.0],
     )
@@ -1000,7 +995,7 @@ def build_appendix(doc):
             ["A8", "IS Correlation & Cross-Config Analysis", "If asked about IS validation methodology"],
             ["A9", "LLM Upgrade Analysis \u2014 model alternatives, "
                    "data scaling projections (1.3K\u2192100K), "
-                   "7 prompt strategies, improvement waterfall (67%\u219227-42%)",
+                   "7 prompt strategies, improvement waterfall (IS 2.52\u21923.5-4.0)",
                    "If asked about LLM alternatives or investment strategy"],
         ],
         col_widths=[0.4, 3.0, 3.2],

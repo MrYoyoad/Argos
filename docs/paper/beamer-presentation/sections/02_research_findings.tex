@@ -582,7 +582,7 @@
 % Failure Mode Taxonomy
 % ----------------------------------------------------------
 \begin{frame}[shrink=10]{Failure Mode Taxonomy}
-  {\small 900 segments failed (IS $<$ 3.0). We classified them into \textbf{10 failure modes}:}
+  {\small 900 segments failed (IS $<$ 3.0). We classified them into \textbf{5 failure categories}:}
 
   \vspace{4pt}
 
@@ -590,17 +590,17 @@
   \begin{tikzpicture}
     \pgfplotsset{
       failure bar/.style={
-        xbar, bar width=6pt, xmin=0, xmax=18,
-        width=0.75\textwidth, height=0.55\textheight,
+        xbar, bar width=10pt, xmin=0, xmax=35,
+        width=0.75\textwidth, height=0.40\textheight,
         xlabel={\small Percentage of failed segments (\%)},
         xlabel style={font=\small},
         ytick=data,
         yticklabel style={font=\scriptsize, anchor=east},
         xticklabel style={font=\scriptsize},
         nodes near coords,
-        nodes near coords style={font=\tiny, anchor=west},
+        nodes near coords style={font=\small, anchor=west},
         every node near coord/.append style={xshift=1pt},
-        enlarge y limits=0.08,
+        enlarge y limits=0.15,
         axis line style={ArgosGray},
         tick style={ArgosGray},
         grid=major, grid style={ArgosLightGray, thin},
@@ -608,30 +608,20 @@
     }
     \begin{axis}[failure bar,
       symbolic y coords={
-        Over-generation,
-        Truncation,
-        Empty Output,
-        Content Word Errors,
-        Entity Destruction,
-        High Error Rate,
+        Signal Loss,
         Hallucination,
-        Accum. Small Errors,
-        Phonetic Wrong Topic,
-        Topic Drift
+        Right Topic Wrong Details,
+        Accumulated Errors,
+        Wrong Topic
       },
     ]
       \addplot[fill=ArgosRed!70, draw=ArgosRed]
         coordinates {
-          (0.1,Over-generation)
-          (1.1,Truncation)
-          (7.8,Empty Output)
-          (10.7,Content Word Errors)
-          (12.0,Entity Destruction)
-          (12.1,High Error Rate)
+          (9.0,Signal Loss)
           (12.3,Hallucination)
-          (12.3,Accum. Small Errors)
-          (15.7,Phonetic Wrong Topic)
-          (15.9,Topic Drift)
+          (22.7,Right Topic Wrong Details)
+          (24.4,Accumulated Errors)
+          (31.6,Wrong Topic)
         };
     \end{axis}
   \end{tikzpicture}
@@ -641,12 +631,13 @@
   \notetext{Failures are diverse --- no single fix. Each roadmap phase targets specific categories. See A13 for real examples.}
 
   \note{
-    10 failure modes classified across 900 segments.
-    Topic Drift \#1 at 15.9\% --- model drifts to unrelated content.
-    Phonetic Wrong Topic \#2 at 15.7\% --- inherent visual ambiguity.
-    Hallucination at 12.3\% --- fluent but fabricated.
-    Key insight: failures are diverse, each phase targets specific categories.
-    See A13 for one real reference/hypothesis example per failure mode.
+    5 failure categories classified across 900 segments.
+    Wrong Topic \#1 at 31.6\% --- model drifts to unrelated content or phonetically similar but wrong domain.
+    Accumulated Errors \#2 at 24.4\% --- death by a thousand cuts.
+    Right Topic Wrong Details at 22.7\% --- entities and specifics lost.
+    Hallucination at 12.3\% --- fluent but fabricated (most dangerous).
+    Signal Loss at 9.0\% --- empty output, truncation, over-generation.
+    Each roadmap phase targets specific categories.
   }
 \end{frame}
 
@@ -1226,7 +1217,7 @@
     2. Near-miss: ``admiral'' vs ``animal'' --- lip shapes identical.
     3. Hallucination: model fabricates entire narrative. Reads fluently.
     4. Tuning tradeoff: Config J recovers empty output but at cost.
-    See A12 for 7 success pattern examples; A13 for 10 failure mode examples.
+    See A12 for 7 success pattern examples; A13 for 5 failure category examples.
   }
 \end{frame}
 

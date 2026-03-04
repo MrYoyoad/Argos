@@ -46,7 +46,7 @@ Both are independently maintained — changes in one do NOT propagate to the oth
 | Finetune: Baseline IS | 2.487 | checkpoint_correlation.csv |
 | Finetune: Exp A IS | 2.312 | checkpoint_correlation.csv |
 | Cross-config r | 0.925 (16 configs) | is_correlation_analysis.md |
-| Projected WER (combined) | 27-42% | llm_upgrade_analysis.md |
+| Roadmap target | IS 3.5-4.0 (from 2.52) | llm_upgrade_analysis.md |
 
 ---
 

@@ -102,7 +102,7 @@ _To be filled after decode evaluation. Key question: Did fine-tuning help more o
 _To be filled after decode evaluation. Key question: Did fine-tuning reduce fabricated outputs?_
 
 ### Failure Mode Shifts
-_To be filled after decode evaluation. Key question: Which of the 10 failure modes improved/worsened?_
+_To be filled after decode evaluation. Key question: Which of the 5 failure categories improved/worsened?_
 
 ## Recommendations
 

@@ -560,9 +560,9 @@ def _fix_pptx_video_compat(pptx_path):
                     fallback = _re.sub(
                         r'<p:extLst>.*?</p:extLst>', '', fallback,
                         flags=_re.DOTALL)
-                    # Remove inline p14 namespace decls from Choice version
-                    choice_xml = _re.sub(
-                        r'\s*xmlns:p14="[^"]*"', '', pic_xml)
+                    # Keep inline p14 namespace decls in Choice version
+                    # (removing them can break namespace resolution)
+                    choice_xml = pic_xml
                     return (f'<mc:AlternateContent>'
                             f'<mc:Choice Requires="p14">{choice_xml}</mc:Choice>'
                             f'<mc:Fallback>{fallback}</mc:Fallback>'
@@ -5774,7 +5774,10 @@ def main():
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT))
-    _fix_pptx_video_compat(str(OUTPUT))
+    # _fix_pptx_video_compat disabled — was causing PowerPoint repair
+    # dialog and destroying video slide content. The minor repair warning
+    # from bare p:pic elements is preferable to blank slides.
+    # _fix_pptx_video_compat(str(OUTPUT))
     print(f"\nSaved: {OUTPUT}")
     print(f"Slides: {len(prs.slides)}")
 

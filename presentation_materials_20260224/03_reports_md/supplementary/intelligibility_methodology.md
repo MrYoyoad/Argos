@@ -517,7 +517,7 @@ Two approaches exist: (A) inject word count at inference only (no retraining), o
 | Empty Output | 70 | 0.0% | 0.000 |
 | Over-generation | 1 | 0.0% | 2.000 |
 
-**6 out of 10 failure modes** (706/900 = 78.4% of failures) already produce approximately the correct number of words. Word count has zero effect on them — the problem is **which words** are generated, not **how many**.
+**3 out of 5 failure categories** (708/900 = 78.7% of failures) already produce approximately the correct number of words. Word count has zero effect on them — the problem is **which words** are generated, not **how many**.
 
 #### Per-Failure-Mode Impact (Inference-Only)
 

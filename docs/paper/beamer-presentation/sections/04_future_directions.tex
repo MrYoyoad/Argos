@@ -162,8 +162,8 @@
 
     \begin{exampleblock}{\small Realistic Target}
       \centering
-      {\large\keyword{27--42\% WER}}\\
-      {\scriptsize from current 64\%}
+      {\large\keyword{IS 3.5--4.0}}\\
+      {\scriptsize from current 2.52 (55--65\% captured)}
     \end{exampleblock}
   }{0.57}{
     \halfwidthfig{P3_wer_trajectory.png}
@@ -173,9 +173,9 @@
   }
 
   \note{
-    5 phases, each targeting specific failure modes.
+    5 phases, each targeting specific failure categories.
     Multiplicative scaling: stronger LLM extracts more from same data.
-    Combined target: 27--42\% WER (from 64\%).
+    Combined target: IS 3.5--4.0 (from 2.52), roughly 55--65\% captured.
     Each phase is independently valuable --- gains stack.
   }
 \end{frame}
@@ -449,7 +449,7 @@
         Data scaling & $-$10 to $-$15pp \\
         GER post-processing & $-$5 to $-$10pp \\
         \midrule
-        \textbf{Combined target} & \keyword{27--42\%} \\
+        \textbf{Combined target} & \keyword{IS 3.5--4.0} \\
       \end{tabular}}
     \end{exampleblock}
 
@@ -471,7 +471,7 @@
     Stronger models unlock more strategies: Llama-2 +5--10pp, Llama 3.1 +12--20pp.
     GER: N-best + correction LLM, no retraining, can use external API.
     VALLR (ICCV 2025): 18.7\% WER on LRS3 with only 3B params --- architecture matters.
-    Combined target: 27--42\% WER from current 64\%.
+    Combined target: IS 3.5--4.0 from current 2.52 (55--65\% captured).
   }
 \end{frame}
 
@@ -485,7 +485,7 @@
       \takeawaybox{1}{Rigorous Assessment}{%
         2.5$\times$ WER gap on 1,497 segments.\\
         Novel IS metric reveals \textbf{40\% properly captured}.\\
-        10 failure modes, topic/length analysis.
+        5 failure categories, topic/length analysis.
       }
 
       \vspace{6pt}
@@ -505,10 +505,10 @@
 
       \vspace{6pt}
 
-      \takeawaybox{4}{Actionable Roadmap to 27--42\%}{%
-        LLM swap (hours), smart prompts (days),\\
-        data scaling (weeks), GER (no retraining).\\
-        Each addresses a different bottleneck.
+      \takeawaybox{4}{Actionable Roadmap to IS 3.5--4.0}{%
+        Confidence scoring + N-best aggregation +\\
+        LLM upgrade + data scaling + GER.\\
+        Each phase targets a different failure category.
       }
     \end{column}
   \end{columns}
@@ -522,7 +522,7 @@
     1. Rigorous characterization at every level (segment, topic, length, failure mode).
     2. Complete production system --- not just research.
     3. Data scarcity is THE bottleneck --- not model or parameters.
-    4. Principled roadmap where each phase targets different bottleneck.
+    4. Principled roadmap where each phase targets a different failure category.
     ``We've systematically characterized the gap and have a clear plan.''
   }
 \end{frame}

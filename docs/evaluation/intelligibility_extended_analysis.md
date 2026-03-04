@@ -115,20 +115,15 @@ Two approaches exist: (A) inject word count at inference only (no retraining), o
 
 #### The Critical Finding: Most Failures Are Content Problems, Not Length Problems
 
-| Failure Mode | N | Already Correct Length (0.8-1.2 ratio) | Mean length_ratio |
+| Failure Category | N | Already Correct Length (0.8-1.2 ratio) | Mean length_ratio |
 |---|---|---|---|
-| Accumulated Small Errors | 111 | **82.0%** | 0.923 |
-| Phonetically Similar but Wrong Topic | 141 | **78.0%** | 0.949 |
-| Content Word Errors | 96 | **74.0%** | 0.899 |
-| Entity Destruction | 108 | **63.9%** | 0.904 |
-| High Error Rate | 109 | **62.4%** | 0.937 |
-| Total Topic Drift | 143 | 39.2% | 0.720 |
+| Accumulated Errors | 220 | **72.3%** | 0.930 |
+| Wrong Topic | 284 | **58.1%** | 0.837 |
+| Right Topic Wrong Details | 204 | **68.6%** | 0.902 |
 | Hallucination | 111 | 23.4% | 1.563 |
-| Truncation | 10 | 0.0% | 0.207 |
-| Empty Output | 70 | 0.0% | 0.000 |
-| Over-generation | 1 | 0.0% | 2.000 |
+| Signal Loss | 81 | 0.0% | 0.064 |
 
-**6 out of 10 failure modes** (706/900 = 78.4% of failures) already produce approximately the correct number of words. Word count has zero effect on them — the problem is **which words** are generated, not **how many**.
+**3 out of 5 failure categories** (708/900 = 78.7% of failures) already produce approximately the correct number of words. Word count has zero effect on them — the problem is **which words** are generated, not **how many**.
 
 #### Per-Failure-Mode Impact (Inference-Only)
 

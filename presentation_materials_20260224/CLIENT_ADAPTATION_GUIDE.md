@@ -15,7 +15,7 @@ In Google Slides: File → Make a copy → rename to "Argos VSP — Client Prese
 
 | Manager Slide # | Title | Why Remove |
 |-----------------|-------|------------|
-| 8 | Failure Mode Taxonomy | Too technical — internal analysis of 10 failure categories |
+| 8 | Failure Mode Taxonomy | Too technical — internal analysis of 5 failure categories |
 | 9 | Performance Distribution | Too technical — boxplot across 13 experiments |
 | 11 | Named Entity Accuracy | Mention 38.8% verbally; scatter plot is too dense |
 | 13 | Limits of Tuning | Don't highlight limitations to clients |
@@ -137,9 +137,9 @@ Both versions use the **same plots, same data, same folder**. No new materials n
 | Fine-tuning | "Exp A complete on ~1,400 videos — proved the model learns from YouTube data. Overfitting at r=16 tells us we need higher rank + more data. Exp B next." | "We've started training on real-world data and the initial results are promising — next iteration will bring significant accuracy gains" |
 | do_sample | Explain the divergence and plans to unify | Don't mention |
 | IS metric | Full formula, 6 signals, methodology | "We developed a smarter way to measure quality — it shows 40% is already reliable" |
-| Failure modes | "10 classified modes — Topic Drift 15.9%, each phase targets specific categories" | Don't mention. Simplify to "we know exactly where to improve" |
+| Failure modes | "5 classified categories — Wrong Topic 31.6%, each phase targets specific categories" | Don't mention. Simplify to "we know exactly where to improve" |
 | Topic analysis | "Business best at 57%, DIY worst at 30% — formal speech easier" | Mention verbally if relevant: "it works better on formal speech" |
 | Config J full data | "Full-dataset comparison: +25 captured segments, doubles hallucinations, net +0.08 IS" | Don't mention details. "Our best configuration eliminates empty outputs" |
-| LLM upgrade | "Llama 3.1 8B is a drop-in swap (same hidden_size 4096, 1-2 hours setup). With 20K-50K training segments + smart prompts, target 27-42% WER. Multiplicative scaling law: stronger LLM extracts more from same data." | "We have a clear roadmap to significantly improve accuracy — next-generation models are ready to integrate, and each improvement phase delivers measurable gains" |
+| LLM upgrade | "Llama 3.1 8B is a drop-in swap (same hidden_size 4096, 1-2 hours setup). With 20K-50K training segments + smart prompts, target IS 3.5-4.0 (from 2.52). Multiplicative scaling law: stronger LLM extracts more from same data." | "We have a clear roadmap to significantly improve accuracy — next-generation models are ready to integrate, and each improvement phase delivers measurable gains" |
 | Data scaling | "1,273 segments was below the ~1K LoRA minimum. Both r=16 and r=64 memorized. Need 20K-50K segments — AVSpeech has 290K available." | "We're expanding our training data — larger datasets will drive the biggest accuracy improvements" |
 | GER / prompt strategies | "7 prompt strategies — force multiplier for stronger LLMs. GER post-processing (+8-15pp) needs no retraining, can use external API." | Don't mention technical details. "We're adding intelligent post-processing that will further improve output quality" |

@@ -26,7 +26,7 @@
 | IS methodology (6 signals) | Slides 10-11 | Slides 10-11 | Weight rationale, 3 dimensions |
 | IS tier distribution | Slide 9 | Slide 9 | P1 quality tiers chart |
 | Paper vs reality gap | Slide 8 | Slide 8 | P2 comparison chart |
-| Failure mode taxonomy (10 modes) | Slides 19a-19b | Slides ~18-19 | Split into 2 slides |
+| Failure mode taxonomy (5 categories) | Slides 19a-19b | Slides ~18-19 | Signal Loss, Hallucination, Wrong Topic, Right Topic Wrong Details, Accumulated Errors |
 | Hallucination vs topic drift | Slides 19a-19b | Slides ~18-19 | Explicit detection rules |
 | Tuning experiments (13 configs) | Slides 16-17 | Slide ~15 | Condensed in PPTX |
 | LLM Salvage (165 segments, 50.9%) | Slide 21, A11-A11b | Slides ~22-26 | Domain context examples |
@@ -35,7 +35,7 @@
 | Fine-tuning Exp A/B | Slide 40-41, A2 | Slides ~30-31 | Data-limited framing |
 | Spider/radar chart (IS profiles) | Referenced | Slide ~16 | P6 IS radar |
 | Pipeline architecture | Slide 25 | Slide ~28 | 8-stage diagram |
-| Roadmap (5 phases, 27-42% target) | Slides 37-42 | Slides ~33-40 | Improvement waterfall |
+| Roadmap (5 phases, IS 3.5-4.0 target) | Slides 37-42 | Slides ~33-40 | Phase-to-failure-category mapping |
 | Topic analysis (11 categories) | Slide 18, A6 | Included | Domain confusion ~19% |
 | IS validation (cross-config) | Slides 15a-15b, A8 | Included | r=0.925, 16 configs |
 
