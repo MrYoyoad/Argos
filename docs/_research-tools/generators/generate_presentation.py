@@ -586,21 +586,34 @@ def _fix_pptx_video_compat(pptx_path):
 
 def add_animations(slide, groups, click_reveal=False):
     """
-    Add entrance fade animations.
+    Add entrance fade animations with proper OOXML click-to-advance.
 
     groups: list of lists of shape objects.
-        Each inner list = one animation group.
+        Each inner list = one animation group (one "click step").
 
-    click_reveal=False (default): All groups auto-play on slide entry
-        with 400ms delay between groups.  No clicks needed.
-    click_reveal=True: First group auto-plays, subsequent groups
-        require a click (use for comparison slides where you want
-        to reveal left, then right).
+    click_reveal=True: First group visible on entry, subsequent groups
+        appear one-by-one on each click.
+    click_reveal=False: All groups auto-play on slide entry with delays.
     """
     if not groups:
         return
     groups = [g for g in groups if g]
     if not groups:
+        return
+
+    # Collect all shape IDs that will be animated (for bldLst)
+    all_anim_shapes = []
+    for gi, group in enumerate(groups):
+        for shape in group:
+            if shape is None:
+                continue
+            try:
+                _ = shape.shape_id
+                all_anim_shapes.append((gi, shape))
+            except AttributeError:
+                continue
+
+    if not all_anim_shapes:
         return
 
     sld = slide._element
@@ -638,11 +651,8 @@ def add_animations(slide, groups, click_reveal=False):
 
     childTnLst_seq = etree.SubElement(cTn_seq, qn('p:childTnLst'))
 
-    # Cumulative delay for auto-play mode
-    cumulative_ms = 0
-    GROUP_GAP_MS = 400
-
     for gi, group in enumerate(groups):
+        # Each group = one click step (one <p:par> under mainSeq)
         par_click = etree.SubElement(childTnLst_seq, qn('p:par'))
         cTn_click = etree.SubElement(par_click, qn('p:cTn'))
         cTn_click.set('id', nid())
@@ -650,13 +660,9 @@ def add_animations(slide, groups, click_reveal=False):
 
         stCondLst = etree.SubElement(cTn_click, qn('p:stCondLst'))
         cond = etree.SubElement(stCondLst, qn('p:cond'))
-        if gi == 0:
-            cond.set('delay', '0')
-        elif click_reveal:
-            cond.set('delay', 'indefinite')
-        else:
-            # Auto-play: delay after previous group
-            cond.set('delay', str(cumulative_ms))
+        # delay="0" for all groups — the p:seq structure handles
+        # click-to-advance automatically between <p:par> children
+        cond.set('delay', '0')
 
         childTnLst_click = etree.SubElement(cTn_click, qn('p:childTnLst'))
 
@@ -668,7 +674,7 @@ def add_animations(slide, groups, click_reveal=False):
             except AttributeError:
                 continue
 
-            delay_ms = si * 150  # subtle stagger within group
+            delay_ms = si * 120  # subtle stagger within group
 
             # Animation container
             par_anim = etree.SubElement(childTnLst_click, qn('p:par'))
@@ -682,7 +688,7 @@ def add_animations(slide, groups, click_reveal=False):
 
             child_anim = etree.SubElement(cTn_anim, qn('p:childTnLst'))
 
-            # Set visibility
+            # Set visibility to visible
             p_set = etree.SubElement(child_anim, qn('p:set'))
             cBhvr_s = etree.SubElement(p_set, qn('p:cBhvr'))
             cTn_s = etree.SubElement(cBhvr_s, qn('p:cTn'))
@@ -707,7 +713,8 @@ def add_animations(slide, groups, click_reveal=False):
 
             # Fade effect
             anim_eff = etree.SubElement(child_anim, qn('p:animEffect'))
-            anim_eff.set('prst', 'fade')
+            anim_eff.set('transition', 'in')
+            anim_eff.set('filter', 'fade')
 
             cBhvr_f = etree.SubElement(anim_eff, qn('p:cBhvr'))
             cTn_f = etree.SubElement(cBhvr_f, qn('p:cTn'))
@@ -718,11 +725,7 @@ def add_animations(slide, groups, click_reveal=False):
             sp_f = etree.SubElement(tgt_f, qn('p:spTgt'))
             sp_f.set('spid', spid)
 
-        # Update cumulative delay for auto-play mode
-        n_shapes = len([s for s in group if s is not None])
-        cumulative_ms += n_shapes * 150 + GROUP_GAP_MS
-
-    # Sequence navigation
+    # Sequence navigation — click forward/backward
     prev_cl = etree.SubElement(seq, qn('p:prevCondLst'))
     prev_c = etree.SubElement(prev_cl, qn('p:cond'))
     prev_c.set('evt', 'onPrev')
@@ -736,6 +739,20 @@ def add_animations(slide, groups, click_reveal=False):
     next_c.set('delay', '0')
     next_t = etree.SubElement(next_c, qn('p:tgtEl'))
     etree.SubElement(next_t, qn('p:sldTgt'))
+
+    # Build list — tells PowerPoint these shapes start HIDDEN
+    # until their animation fires. Without this, shapes are visible
+    # from the start and fade-in is invisible.
+    bldLst = etree.SubElement(timing, qn('p:bldLst'))
+    grp_counter = {}
+    for gi, shape in all_anim_shapes:
+        spid = str(shape.shape_id)
+        if click_reveal and gi == 0:
+            continue  # First group visible immediately — no build
+        grp_id = gi if click_reveal else 0
+        bldP = etree.SubElement(bldLst, qn('p:bldP'))
+        bldP.set('spid', spid)
+        bldP.set('grpId', str(grp_id))
 
 # ═══════════════════════════════════════════════════════════════════════
 # REUSABLE SLIDE BUILDERS
@@ -1295,7 +1312,7 @@ def slide_is_calc_examples(prs):
 
     col_w = Inches(5.8)
     gap = Inches(0.53)
-    card_h = Inches(5.0)
+    card_h = Inches(4.6)
 
     def _draw_calc_card(slide, x, label, is_val, color, ref, hyp, lines, summary):
         """Draw one calculation card at position x."""
@@ -1708,39 +1725,35 @@ def slide_08(prs):
         MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
 
     modes = [
-        ("Total Topic Drift", 15.9, 143, DRED),
-        ("Phonetic Wrong Topic", 15.7, 141, RED),
-        ("Accumulated Small Errors", 12.3, 111, ORANGE),
-        ("Hallucination", 12.3, 111, DRED),
-        ("High Error Rate", 12.1, 109, ORANGE),
-        ("Entity Destruction", 12.0, 108, RED),
-        ("Content Word Errors", 10.7, 96, YELLOW),
-        ("Empty Output", 7.8, 70, MGRAY),
-        ("Truncation", 1.1, 10, MGRAY),
-        ("Over-generation", 0.1, 1, MGRAY),
+        ("Wrong Topic", 31.6, 284, GOLD),
+        ("Accumulated Errors", 24.4, 220, LGRAY),
+        ("Right Topic, Wrong Details", 22.7, 204, TEAL),
+        ("Hallucination", 12.3, 111, CORAL),
+        ("Signal Loss", 9.0, 81, MGRAY),
     ]
 
-    bar_h = Inches(0.36)
-    bar_gap = Inches(0.1)
-    label_w = Inches(3.2)
-    max_bar_w = Inches(6.5)
+    bar_h = Inches(0.65)
+    bar_gap = Inches(0.2)
+    label_w = Inches(3.5)
+    max_bar_w = Inches(6.0)
     bar_x = MX + label_w + Inches(0.2)
-    start_y = CT + Inches(0.45)  # offset for subtitle
+    start_y = CT + Inches(0.55)
 
     bar_shapes = []
     for i, (name, pct, count, color) in enumerate(modes):
         y = start_y + i * (bar_h + bar_gap)
         # Label
         add_text(slide, name, MX, y, label_w, bar_h,
-                 size=Pt(12), color=WHITE, align=PP_ALIGN.RIGHT)
+                 size=Pt(16), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
         # Bar
-        w = max(Inches(0.1), int(max_bar_w * pct / 16.0))
-        bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color)
+        w = max(Inches(0.2), int(max_bar_w * pct / 32.0))
+        bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color,
+                       corner_radius=True)
         bar_shapes.append(bar)
         # Value label
         add_text(slide, f"{pct}% ({count})",
-                 bar_x + w + Inches(0.1), y, Inches(1.5), bar_h,
-                 size=Pt(11), color=LGRAY)
+                 bar_x + w + Inches(0.15), y, Inches(1.8), bar_h,
+                 size=Pt(14), color=LGRAY)
 
     add_text(slide,
              "Failures are diverse — no single fix. Each roadmap phase "
@@ -1800,10 +1813,10 @@ def slide_failure_deep_1a(prs):
          "Many words slightly wrong throughout, meaning erodes"),
     ]
 
-    card_h = Inches(0.82)
-    gap = Inches(0.06)
-    y0 = CT + Inches(0.6)
-    name_w = Inches(3.0)
+    card_h = Inches(0.88)
+    gap = Inches(0.08)
+    y0 = CT + Inches(0.55)
+    name_w = Inches(3.5)
     rule_w = CW - name_w - Inches(0.1)
 
     anim_groups = []
@@ -1814,23 +1827,17 @@ def slide_failure_deep_1a(prs):
         r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
 
-        # Left: category name + percentage + count
+        # Left: category name + percentage
         add_text(slide, f"{name}  ({pct})",
                  MX + Inches(0.2), y + Inches(0.05),
-                 name_w - Inches(0.3), Inches(0.28),
+                 name_w - Inches(0.3), Inches(0.3),
                  size=Pt(15), color=color, bold=True)
 
-        # Left: one-line description
-        add_text(slide, desc,
-                 MX + Inches(0.2), y + Inches(0.32),
-                 name_w - Inches(0.3), Inches(0.22),
-                 size=Pt(11), color=WHITE)
-
-        # Left: count
-        add_text(slide, count,
-                 MX + Inches(0.2), y + Inches(0.55),
-                 name_w - Inches(0.3), Inches(0.22),
-                 size=Pt(10), color=MGRAY)
+        # Left: one-line description + count
+        add_text(slide, f"{desc}  \u2014  {count}",
+                 MX + Inches(0.2), y + Inches(0.38),
+                 name_w - Inches(0.3), Inches(0.45),
+                 size=Pt(11), color=LGRAY)
 
         # Right: detection rule
         add_text(slide, f"Rule: {rule}",
@@ -4554,13 +4561,13 @@ def slide_is_deep_dive(prs):
         "complementary aspects of transcription quality \u2014 not arbitrary signals.",
         MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY, italic=True)
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
+    col_w = Inches(5.8)
+    gap = Inches(0.53)
     offset = Inches(0.45)
 
-    # Left — correlation table
+    # Left — correlation table (larger)
     lt = add_text(slide, "Signal \u2192 IS Correlation", MX, CT + offset, col_w, Inches(0.4),
-                  size=Pt(17), color=TEAL, bold=True)
+                  size=Pt(20), color=TEAL, bold=True)
 
     tbl = add_table(slide,
         ["Signal", "r with IS", "Weight", "Variance %"],
@@ -4570,27 +4577,29 @@ def slide_is_deep_dive(prs):
          ["Inv. WWER", "0.823", "15%", "~15%"],
          ["NEA F1", "0.748", "15%", "17.3%"],
          ["Length Ratio", "0.521", "15%", "9.1%"]],
-        MX, CT + offset + Inches(0.5), col_w, text_size=Pt(12),
+        MX, CT + offset + Inches(0.5), col_w, text_size=Pt(14),
+        row_height=Inches(0.5),
         row_colors={0: {1: GREEN}, 5: {1: CORAL, 3: CORAL}})
 
-    # Right — key insights
+    # Right — key insights (larger text)
     rx = MX + col_w + gap
-    rt = add_text(slide, "Key Insights", rx, CT + offset, col_w, Inches(0.4),
-                  size=Pt(17), color=CORAL, bold=True)
+    rw = CW - col_w - gap
+    rt = add_text(slide, "Key Insights", rx, CT + offset, rw, Inches(0.4),
+                  size=Pt(20), color=CORAL, bold=True)
     rb = add_bullets(slide, [
-        ("Phonetic Sim is the strongest predictor (r=0.943) "
+        ("Phonetic Sim is strongest predictor (r=0.943) "
          "despite only 15% weight", {"bold": True}),
-        "WER/WWER/Phonetic are NOT independent \u2014 they all "
-         "measure visual encoder quality",
-        "Semantic Sim (25% weight) drives 28.5% variance \u2014 "
+        "WER/WWER/Phonetic are NOT independent \u2014 "
+         "all measure visual encoder quality",
+        "Semantic Sim (25%) drives 28.5% variance \u2014 "
          "the tiebreaker for similar-accuracy segments",
-        ("NEA punches above weight: 17.3% variance from 15% "
-         "weight \u2014 names are binary (right or wrong)",
+        ("NEA punches above weight: 17.3% variance "
+         "\u2014 names are binary (right or wrong)",
          {"color": TEAL}),
-        ("Length Ratio is weakest (9.1%) \u2014 future versions "
-         "could reduce its weight", {"color": CORAL}),
-        "Expert heuristic: r=0.934 with IS (15-rule decision tree)",
-    ], rx, CT + offset + Inches(0.5), col_w, Inches(4.0), size=Pt(13))
+        ("Length Ratio weakest (9.1%) \u2014 could "
+         "reduce its weight in future", {"color": CORAL}),
+        ("Expert heuristic: r=0.934 with IS", {"bold": True}),
+    ], rx, CT + offset + Inches(0.5), rw, Inches(4.5), size=Pt(15))
 
     _finish(slide, 0,
         "Signal correlation analysis. Phonetic similarity is the strongest "

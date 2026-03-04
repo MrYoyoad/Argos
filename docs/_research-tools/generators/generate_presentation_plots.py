@@ -317,7 +317,7 @@ def plot_P6_is_radar():
     captured_vals_closed = captured_vals + captured_vals[:1]
     failed_vals_closed = failed_vals + failed_vals[:1]
 
-    fig, ax = plt.subplots(figsize=(9, 9), subplot_kw=dict(polar=True))
+    fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(polar=True))
     fig.patch.set_facecolor("#0D1B2A")
     ax.set_facecolor("#0D1B2A")
 
@@ -350,21 +350,22 @@ def plot_P6_is_radar():
         # Captured annotation (offset outward)
         cap_r = captured_vals[i]
         ax.annotate(f"{cap_r:.2f}",
-                    xy=(angle, cap_r), fontsize=10, fontweight="bold",
+                    xy=(angle, cap_r), fontsize=11, fontweight="bold",
                     color="#56B870", ha="center", va="bottom",
-                    xytext=(0, 8), textcoords="offset points", zorder=5)
-        # Failed annotation (offset inward/below)
+                    xytext=(0, 10), textcoords="offset points", zorder=5)
+        # Failed annotation (offset inward — use different direction per point)
         fail_r = failed_vals[i]
+        # Alternate offset direction to avoid overlap
+        x_off = 12 if i % 2 == 0 else -12
         ax.annotate(f"{fail_r:.2f}",
-                    xy=(angle, fail_r), fontsize=10, fontweight="bold",
+                    xy=(angle, fail_r), fontsize=11, fontweight="bold",
                     color="#E06C75", ha="center", va="top",
-                    xytext=(0, -8), textcoords="offset points", zorder=5)
+                    xytext=(x_off, -10), textcoords="offset points", zorder=5)
 
-    # --- Axis labels: larger, bold, white ---
+    # --- Axis labels: larger, bold, white, pushed far outward ---
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(categories, fontsize=13, fontweight="bold", color="white")
-    # Push labels outward so they don't crowd the polygon
-    ax.tick_params(axis="x", pad=18)
+    ax.set_xticklabels(categories, fontsize=14, fontweight="bold", color="white")
+    ax.tick_params(axis="x", pad=30)
 
     # --- No in-chart title (slide already has one) ---
 
