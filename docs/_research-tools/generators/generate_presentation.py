@@ -3321,28 +3321,55 @@ def slide_26(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_27(prs):
-    build_bullets(prs, 27,
-        "Phase 1: Confidence Scoring — Surface the Good 40%",
-        [
-            ("Beam search already computes probability scores for every "
-             "hypothesis \u2014 we just don't expose them yet", {"bold": True}),
-            "Confidence = attaching these existing probabilities to outputs",
-            "Users trust high-confidence results, flag low-confidence for "
-            "human review",
-            ("No additional model inference \u2014 scores are a free "
-             "byproduct of decode", {"color": TEAL}),
-            ("Effort: 2\u20134 hours implementation", {"color": TEAL,
-             "bold": True}),
-            "Priority: Business/Finance segments (57% captured) get "
-            "highest confidence",
-            "Short segments (<10 words, 32%) need lower confidence thresholds",
-        ],
+    slide = new_slide(prs)
+    add_title(slide, "Phase 1: Confidence Scoring \u2014 Surface the Good 40%")
+    add_accent_line(slide)
+
+    col_w = Inches(5.8)
+    gap = Inches(0.53)
+
+    # Left — The Idea
+    lt = add_text(slide, "The Idea", MX, CT, col_w, Inches(0.4),
+                  size=Pt(20), color=TEAL, bold=True)
+    lb = add_bullets(slide, [
+        ("Beam search already computes probability scores "
+         "for every hypothesis", {"bold": True}),
+        "We just don\u2019t expose them yet",
+        "Confidence = attaching these scores to outputs",
+        ("No extra model inference \u2014 scores are a "
+         "free byproduct of decode", {"color": TEAL}),
+    ], MX, CT + Inches(0.5), col_w, Inches(2.5), size=Pt(16))
+
+    # Effort callout
+    r1 = add_rect(slide, MX, CT + Inches(3.2), col_w, Inches(0.6),
+                  fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
+                  corner_radius=True)
+    add_text(slide, "Effort: 2\u20134 hours implementation",
+             MX + Inches(0.3), CT + Inches(3.25), col_w - Inches(0.6), Inches(0.5),
+             size=Pt(18), color=GREEN, bold=True)
+
+    # Right — What It Enables
+    rx = MX + col_w + gap
+    rw = CW - col_w - gap
+    rt = add_text(slide, "What It Enables", rx, CT, rw, Inches(0.4),
+                  size=Pt(20), color=CORAL, bold=True)
+    rb = add_bullets(slide, [
+        "Users see only high-confidence segments by default",
+        "Low-confidence segments flagged for human review",
+        ("Reduces perceived error rate from 60% to ~20%",
+         {"bold": True, "color": GREEN}),
+        "Business/Finance segments (57% captured) get highest confidence",
+        "Short segments (<10 words, 32%) need lower thresholds",
+    ], rx, CT + Inches(0.5), rw, Inches(3.0), size=Pt(15))
+
+    _finish(slide, 27,
         "Phase 1 is the quick win. Beam search already computes probability "
         "scores for every hypothesis — we just don't surface them. Confidence "
         "scoring means attaching these scores to outputs so users can trust "
         "high-confidence results and flag low-confidence for review. No extra "
         "model inference needed — the scores are a free byproduct of decode. "
-        "2-4 hours of implementation.")
+        "2-4 hours of implementation.",
+        [[lt, lb, r1], [rt, rb]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 28 — PHASE 2: N-BEST AGGREGATION
