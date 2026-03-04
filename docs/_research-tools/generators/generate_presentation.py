@@ -376,9 +376,19 @@ def add_video(slide, vid_key, left, top, width, height):
         return add_play_button(slide, left, top, size=min(width, height))
     poster = _extract_poster(vid_path, POSTER_DIR / f"{vid_key}.jpg")
     poster_arg = str(poster) if poster else None
-    return slide.shapes.add_movie(
+    shape = slide.shapes.add_movie(
         str(vid_path), left, top, width, height,
         poster_frame_image=poster_arg, mime_type="video/mp4")
+    # Fix python-pptx bug: add_movie creates <a:hlinkClick r:id="" action="ppaction://media"/>
+    # with empty r:id, which triggers PowerPoint repair warning.  Remove empty hlinkClick.
+    cNvPr = shape._element.find('.//' + qn('p:cNvPr'))
+    if cNvPr is not None:
+        for hlink in list(cNvPr):
+            if hlink.tag.endswith('hlinkClick'):
+                rid = hlink.get(qn('r:id'), '')
+                if rid == '':
+                    cNvPr.remove(hlink)
+    return shape
 
 
 # ═══════════════════════════════════════════════════════════════════════
