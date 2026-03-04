@@ -899,7 +899,7 @@ def slide_exec_summary(prs):
         ("Our new Intelligibility Score (IS) reveals 40% is actually useful — "
          "3.5\u00d7 more than WER admits", {"color": TEAL, "bold": True}),
         "Built a complete production system: 8-stage pipeline, standalone container",
-        ("Clear roadmap targeting 27\u201342% WER through data scaling + LLM upgrade",
+        ("Clear roadmap to IS 3.5\u20134.0 (from 2.52) through data scaling + LLM upgrade",
          {"color": TEAL}),
         "Produced 8 comprehensive research reports",
     ]
@@ -934,7 +934,7 @@ def slide_toc(prs):
          TEAL),
         ("4. Future Directions",
          "Improvement roadmap \u2022 Data scaling \u2022 LLM upgrade \u2022 "
-         "Target: 27\u201342% WER",
+         "Target: IS 3.5\u20134.0",
          TEAL),
     ]
     shapes = []
@@ -1023,14 +1023,23 @@ def slide_is_intro(prs):
 
     # Calculation method details — positioned below right column bullets
     calc = add_rich_text(slide, [
-        [("How signals are calculated:", {"size": Pt(12), "color": LGRAY, "bold": True})],
-        [("Phonetic: ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("phoneme sequence matching \u2014 do words SOUND alike?", {"size": Pt(11), "color": LGRAY})],
-        [("Semantic: ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("embedding cosine similarity \u2014 is MEANING preserved?", {"size": Pt(11), "color": LGRAY})],
-        [("WWER: ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("content words penalized 2\u00d7 vs function words", {"size": Pt(11), "color": LGRAY})],
-    ], MX, CT + Inches(4.4), CW, Inches(1.2))
+        [("How each signal is calculated:", {"size": Pt(13), "color": WHITE, "bold": True})],
+        [("Semantic (25%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("Encode ref & hyp with sentence-transformer (MiniLM), compute cosine similarity. "
+          "Captures whether the overall MEANING is preserved.", {"size": Pt(11), "color": LGRAY})],
+        [("Phonetic (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("Convert text to phoneme sequences (g2p), compute edit-distance similarity. "
+          "Detects when words SOUND right even if spelled differently.", {"size": Pt(11), "color": LGRAY})],
+        [("WWER (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("WER with content words (nouns, verbs, names) penalized 2\u00d7 vs function words ('the', 'a').",
+          {"size": Pt(11), "color": LGRAY})],
+        [("NEA (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("Named Entity F1 \u2014 are names, numbers, proper nouns preserved? Binary: right or wrong.",
+          {"size": Pt(11), "color": LGRAY})],
+        [("Length (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("Output length vs reference length ratio. Catches truncation (too short) and hallucination (too long).",
+          {"size": Pt(11), "color": LGRAY})],
+    ], MX, CT + Inches(3.8), CW, Inches(2.0))
 
     _finish(slide, 0,
         "IS introduction. WER can't distinguish meaning preservation from "
@@ -2569,18 +2578,18 @@ def slide_18(prs):
                     cw_card - Inches(0.3), Inches(3.2),
                     size=Pt(11))
 
-    add_text(slide,
+    bottom = add_text(slide,
         "Every bug documented with root cause. Every change synced between "
         "EC2 and production container.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.3), CW, Inches(0.4),
+        size=Pt(13), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 18,
         "The full engineering journey: 2-3 weeks of pipeline build, 4-5 weeks of "
         "migration to Docker (including 1-2 weeks for Web UI migration), and "
         "ongoing bug fixing. 37+ bugs including NVENC silent corruption. "
         "Refactored from 823-line monolith to 11 reusable modules.",
-        [card_shapes])
+        [card_shapes, [bottom]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 19 — MODULAR REFACTORING (BEFORE/AFTER)
@@ -3235,15 +3244,20 @@ def slide_25e(prs):
 
 def slide_26(prs):
     slide = new_slide(prs)
-    add_title(slide, "Five Phases — From 64% to Target 27-42% WER")
+    add_title(slide, "Five Phases — From IS 2.5 to Target IS 3.5–4.0")
     add_accent_line(slide)
 
     phases = [
-        ("Phase 1", "Surface the good 40%", "Confidence scoring (2-4 hrs)", TEAL),
-        ("Phase 2", "Improve the fair 22%", "N-best aggregation (-5 to -15%)", TEAL),
-        ("Phase 3", "LLM swap + smart prompts", "Llama 3.1 8B + prompts (-8 to -18pp)", GREEN),
-        ("Phase 4", "Scale data 20K-50K", "Fine-tune (-15 to -25pp)", GREEN),
-        ("Phase 5", "Generative Error Correction (GER)", "Use a second LLM pass to catch hallucinations and fix common errors without retraining (\u22128 to \u221215pp)", LGRAY),
+        ("Phase 1", "Surface the good 40%", "Confidence scoring (2–4 hrs)",
+         "IS: identify segments already ≥ 3.0", TEAL),
+        ("Phase 2", "Improve the fair 22%", "N-best aggregation (ROVER/MBR)",
+         "IS: +0.3–0.5 from better hypothesis selection", TEAL),
+        ("Phase 3", "LLM swap + smart prompts", "Llama 3.1 8B + context prompts",
+         "IS: +0.5–0.8 from stronger language model", GREEN),
+        ("Phase 4", "Scale data 20K–50K", "Fine-tune with more data",
+         "IS: +0.5–1.0 — biggest single gain", GREEN),
+        ("Phase 5", "Error Correction (GER)", "Second LLM catches hallucinations",
+         "IS: +0.3–0.5 from post-processing cleanup", LGRAY),
     ]
 
     # Staircase on left side
@@ -3254,17 +3268,17 @@ def slide_26(prs):
     start_x = MX
 
     step_shapes = []
-    for i, (phase, desc, detail, color) in enumerate(phases):
+    for i, (phase, desc, detail, is_note, color) in enumerate(phases):
         x = start_x + i * step_indent
         y = start_y + i * (step_h + Inches(0.08))
         w = step_w - i * step_indent
         r = add_rect(slide, x, y, w, step_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
-        # Phase label + description
         add_rich_text(slide, [
             [(phase, {"size": Pt(13), "color": color, "bold": True}),
              (f"  {desc}", {"size": Pt(13), "color": WHITE})],
-            [(detail, {"size": Pt(11), "color": LGRAY, "italic": True})],
+            [(detail, {"size": Pt(11), "color": LGRAY, "italic": True}),
+             (f"   {is_note}", {"size": Pt(11), "color": GOLD})],
         ], x + Inches(0.2), y + Inches(0.05), w - Inches(0.4), step_h - Inches(0.1))
         step_shapes.append(r)
 
@@ -3273,42 +3287,18 @@ def slide_26(prs):
                     SRL - Inches(0.2), CT, width=SRW + Inches(0.2))
 
     add_text(slide,
-             "Combined target: 27-42% WER. Multiplicative scaling law "
-             "(ICLR 2024).",
+             "Combined target: IS 3.5–4.0 (55–65% captured). "
+             "Gains are multiplicative (ICLR 2024 scaling law).",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 26,
         "Five phases, each targeting different bottlenecks. Phase 1 is "
         "immediate: confidence scoring to surface the 40% that's already "
-        "good (2-4 hours). Phase 2: N-best aggregation. Phase 3: swap LLM "
+        "good (2-4 hours). Phase 2: N-best aggregation (ROVER/MBR). Phase 3: swap LLM "
         "to Llama 3.1 8B plus smart prompts. Phase 4: the biggest gain — "
         "scale training data. Phase 5: Error Correction (GER) post-processing. "
         "Key: ICLR 2024 shows these gains are multiplicative.\n\n"
-        "PLOT EXPLANATION (Improvement Roadmap: Projected WER Reduction):\n\n"
-        "The plot shows projected WER reduction across 3 implementation "
-        "phases, starting from our current 64.1% baseline.\n\n"
-        "X-AXIS: Implementation phases progressing left to right.\n"
-        "Y-AXIS: Word Error Rate (%).\n"
-        "BLUE LINE: Best estimate trajectory.\n"
-        "SHADED BAND: Expected range (optimistic to conservative).\n\n"
-        "PHASE 1 — Confidence + Metrics (Days of work, Missions M4, M5, M7): "
-        "Adds confidence scoring to surface the 40% that already works. "
-        "Projected WER: 52-60% (improvement comes from filtering out bad "
-        "segments, not reducing errors per se). This doesn't change actual "
-        "model output — it identifies which segments to trust.\n\n"
-        "PHASE 2 — N-Best + Prompts (Weeks of work, Missions M6, M8): "
-        "Uses beam search aggregation (N-best lists, ROVER voting, MBR) "
-        "and smart prompts to pick better hypotheses. Projected WER: "
-        "42-52%. These techniques give the model multiple chances and pick "
-        "the best output.\n\n"
-        "PHASE 3 — Fine-Tuning (Weeks + 8x GPU, Mission M9): "
-        "Scale training data from 1.3K to 20-50K segments, upgrade LLM "
-        "from Llama-2 7B to Llama 3.1 8B. Projected WER: 38-48%. This is "
-        "the only phase that actually improves the model itself.\n\n"
-        "Phase 5 (GER, shown separately below the plot) runs as "
-        "post-processing across all phases: -8 to -15pp by catching "
-        "hallucinations and common errors.\n\n"
         "HOW THIS TRANSLATES TO IS:\n"
         "Current: WER 64.1% -> IS 2.52 (39.9% captured).\n"
         "Each ~10pp WER reduction typically improves IS by ~0.3-0.5 points "
@@ -3317,7 +3307,7 @@ def slide_26(prs):
         "55-65% captured rate.\n"
         "The relationship is non-linear — improvements accelerate as more "
         "segments cross the IS >= 3.0 threshold.",
-        [step_shapes, [img]])
+        [step_shapes, [img]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 27 — PHASE 1: CONFIDENCE SCORING
@@ -3352,20 +3342,65 @@ def slide_27(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_28(prs):
-    build_bullets(prs, 28,
-        "Phase 2: Exploit All 20 Hypotheses",
-        [
-            "Currently discarding 19 of 20 beam candidates",
-            "ROVER/MBR — established technique, consistent gains",
-            ("Expected: 5-15% relative improvement", {"color": TEAL, "bold": True}),
-            "Targets: Accumulated Small Errors (12.3%) and Content Word "
-            "Errors (10.7%)",
-            'Moves "fair" tier segments up to "good"',
-        ],
-        "We're currently throwing away 19 of 20 hypotheses. N-best "
-        "aggregation (ROVER/MBR) is an established technique that combines "
-        "multiple hypotheses to reduce errors. Targets the 'death by 1000 "
-        "cuts' failure mode.")
+    """Phase 2: N-best aggregation with ROVER/MBR explanation."""
+    slide = new_slide(prs)
+    add_title(slide, "Phase 2: Exploit All 20 Hypotheses")
+    add_accent_line(slide)
+
+    # Main point
+    add_text(slide, "Currently discarding 19 of 20 beam candidates",
+             MX, CT, CW, Inches(0.35), size=Pt(16), color=WHITE, bold=True)
+
+    # Two technique cards side by side
+    cw = Inches(5.5)
+    gap = Inches(1.13)
+    cy = CT + Inches(0.55)
+    ch = Inches(2.2)
+
+    r1 = add_rect(slide, MX, cy, cw, ch, fill_color=NAVY2,
+                  border_color=TEAL, border_width=Pt(2), corner_radius=True)
+    add_text(slide, "ROVER", MX + Inches(0.2), cy + Inches(0.1),
+             cw - Inches(0.4), Inches(0.3), size=Pt(16), color=TEAL, bold=True)
+    add_text(slide, "Recognizer Output Voting Error Reduction",
+             MX + Inches(0.2), cy + Inches(0.4), cw - Inches(0.4), Inches(0.25),
+             size=Pt(11), color=LGRAY, italic=True)
+    add_bullets(slide, [
+        "Align all 20 hypotheses word-by-word",
+        "Vote at each position \u2014 most common word wins",
+        "Reduces random substitution errors",
+    ], MX + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.3),
+       size=Pt(13))
+
+    rx = MX + cw + gap
+    r2 = add_rect(slide, rx, cy, cw, ch, fill_color=NAVY2,
+                  border_color=GREEN, border_width=Pt(2), corner_radius=True)
+    add_text(slide, "MBR", rx + Inches(0.2), cy + Inches(0.1),
+             cw - Inches(0.4), Inches(0.3), size=Pt(16), color=GREEN, bold=True)
+    add_text(slide, "Minimum Bayes Risk Decoding",
+             rx + Inches(0.2), cy + Inches(0.4), cw - Inches(0.4), Inches(0.25),
+             size=Pt(11), color=LGRAY, italic=True)
+    add_bullets(slide, [
+        "Score each hypothesis against ALL others",
+        "Pick the one most similar to the consensus",
+        "Best single hypothesis, no alignment needed",
+    ], rx + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.3),
+       size=Pt(13))
+
+    # Impact summary
+    iy = cy + ch + Inches(0.3)
+    add_bullets(slide, [
+        ("Expected: 5\u201315% relative IS improvement", {"color": TEAL, "bold": True}),
+        "Targets: Accumulated Errors (24.4%) \u2014 the \"death by a thousand cuts\" category",
+        "Moves IS 2.0\u20132.9 segments above the 3.0 threshold",
+    ], MX, iy, CW, Inches(1.5), size=Pt(14))
+
+    _finish(slide, 28,
+        "Phase 2 exploits beam search output. Currently we keep only the top "
+        "hypothesis and throw away 19 alternatives. ROVER aligns all 20 and "
+        "votes word-by-word. MBR picks the hypothesis closest to the consensus. "
+        "Both are established ASR techniques with consistent 5-15% gains. "
+        "Targets the Accumulated Errors category (24.4% of failures).",
+        [[r1], [r2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 29 — FINE-TUNING + DATA SCALING
@@ -3373,7 +3408,7 @@ def slide_28(prs):
 
 def slide_29(prs):
     slide = new_slide(prs)
-    add_title(slide, "Domain Adaptation: Data Is the Bottleneck")
+    add_title(slide, "Fine-Tuning Experiments: Limited Data, Limited Gains")
     add_accent_line(slide)
 
     # Dashboard image — top half
@@ -3386,34 +3421,37 @@ def slide_29(prs):
     col_y = CT + Inches(3.0)
 
     # Left — Exp A/B Results
-    lt = add_text(slide, "Exp A/B Results", MX, col_y, col_w, Inches(0.3),
+    lt = add_text(slide, "What We Tried", MX, col_y, col_w, Inches(0.3),
                   size=Pt(15), color=CORAL, bold=True)
     lb = add_bullets(slide, [
-        "Exp A (r=16): best val acc 62.94% at epoch 2, severe overfitting",
-        ("Exp B (r=64): 3.1pp WORSE — more params = faster overfitting",
-         {"color": CORAL}),
-        ("KEY: 1,273 segments too small for LoRA generalization",
+        ("Small-scale LoRA fine-tune with only 1,273 segments",
          {"bold": True}),
+        "Exp A (rank 16): best val accuracy 62.94% at epoch 2",
+        ("Exp B (rank 64): 3.1pp WORSE — more params = faster overfitting",
+         {"color": CORAL}),
+        ("Result: data too limited for LoRA to generalize",
+         {"bold": True, "color": GOLD}),
     ], MX, col_y + Inches(0.35), col_w, Inches(2.0), size=Pt(13))
 
-    # Right — Data Scaling
+    # Right — IS Impact
     rx = MX + col_w + gap
-    rt = add_text(slide, "Data Scaling (ICLR 2024)", rx, col_y, col_w,
+    rt = add_text(slide, "Impact on Intelligibility", rx, col_y, col_w,
                   Inches(0.3), size=Pt(15), color=TEAL, bold=True)
     rb = add_bullets(slide, [
-        "5K segments: 55-60% WER",
-        "20K segments: 45-50% / 40-45% (Llama 3.1)",
-        "50K segments: 40-45% / 35-40%",
-        ("AVSpeech: 290K videos available", {"color": TEAL}),
+        "Baseline IS: 2.49 — Exp A IS: 2.31 — Exp B IS: 2.02",
+        ("Fine-tuning made IS WORSE, not better", {"color": CORAL}),
+        "Empty outputs: 7% → 13% → 27% (catastrophic)",
+        ("Key insight: need 20K+ segments, not parameter tuning",
+         {"bold": True, "color": GREEN}),
     ], rx, col_y + Inches(0.35), col_w, Inches(2.0), size=Pt(13))
 
     _finish(slide, 29,
-        "Exp A: 1,273 segments, 17 hours on Tesla T4. Best validation "
-        "accuracy 62.94% at epoch 2 out of 19 — severe overfitting. Exp B "
-        "with r=64: 3.1pp WORSE. This is NOT a model capacity problem. "
-        "Data scaling projections: 20K segments brings WER to 45-50%. "
-        "AVSpeech has 290K videos — data curation is tractable.",
-        [[img], [lt, lb], [rt, rb]])
+        "Fine-tuning experiments with LoRA on 1,273 segments. Exp A (rank 16): "
+        "62.94% val accuracy, severe overfitting. Exp B (rank 64): 3.1pp worse. "
+        "IS scores actually decreased: baseline 2.49, Exp A 2.31, Exp B 2.02. "
+        "Empty outputs increased dramatically. The bottleneck is data quantity "
+        "(need 20K+), not model capacity or parameter tuning.",
+        [[img], [lt, lb], [rt, rb]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 30 — LLM UPGRADE + ADVANCED CAPABILITIES
@@ -3501,7 +3539,7 @@ def slide_arabic_roadmap(prs):
         "the main bottleneck (requires native speakers)",
         ("Text normalization", {"bold": True, "color": TEAL}),
         "spaCy Arabic, diacritic handling, Arabic NER",
-    ], MX, CT + Inches(0.4), col_w, Inches(4.5), size=Pt(11))
+    ], MX, CT + Inches(0.4), col_w, Inches(4.5), size=Pt(13))
 
     # Right — timeline with practical details
     rx = MX + col_w + gap
@@ -3519,7 +3557,7 @@ def slide_arabic_roadmap(prs):
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
                     row_height=Inches(0.6),
                     col_widths=[Inches(1.6), Inches(1.3), Inches(2.6)],
-                    text_size=Pt(10))
+                    text_size=Pt(12))
 
     # Total callout — positioned below table with clearance
     add_rect(slide, rx, CT + Inches(4.05), col_w, Inches(0.55),
@@ -3544,7 +3582,7 @@ def slide_arabic_roadmap(prs):
         "(2-3 days), swap to Arabic LLM (1-2 days), build eval dataset with "
         "native speakers (1-2 weeks), end-to-end testing (3-5 days). "
         "Total 3-5 weeks. Pipeline code is language-agnostic.",
-        [[lt, lb], [rt, tbl]])
+        [[lt, lb], [rt, tbl]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 31 — SUMMARY
@@ -3556,49 +3594,56 @@ def slide_31(prs):
     add_accent_line(slide)
 
     takeaways = [
-        ("1", "Rigorous assessment: 2.5× WER gap on 1,497 segments. "
+        ("1", "Rigorous assessment: 2.5\u00d7 WER gap on 1,497 segments. "
               "Novel IS metric reveals 40% properly captured, 51% with "
-              "LLM salvage. 10 classified failure modes."),
+              "LLM salvage. 5 classified failure categories."),
         ("2", "Production system delivered: standalone container, 37 bugs "
               "fixed, 8-stage pipeline, 37 tests, 8 research reports."),
-        ("3", "Data is the bottleneck: Exp A/B proved 1,273 segments too "
-              "small. Multiplicative scaling law: stronger LLM + more data "
-              "compounds."),
-        ("4", "Actionable roadmap to 27-42% WER: LLM swap + smart prompts "
-              "+ data scaling + GER. Each targets a different bottleneck."),
+        ("3", "Data is the bottleneck: fine-tuning experiments (Exp A/B) "
+              "proved 1,273 segments too small. Multiplicative scaling law: "
+              "stronger LLM + more data compounds."),
+        ("4", "Actionable roadmap to IS 3.5\u20134.0 (from 2.52): "
+              "confidence scoring + N-best aggregation + LLM upgrade + "
+              "data scaling + GER. Each phase targets a different failure "
+              "category."),
     ]
 
-    point_h = Inches(1.1)
-    gap = Inches(0.15)
-    start_y = CT
+    card_h = Inches(1.05)
+    gap = Inches(0.12)
+    circle_d = Inches(0.55)
 
     point_shapes = []
     for i, (num, text) in enumerate(takeaways):
-        y = start_y + i * (point_h + gap)
+        y = CT + i * (card_h + gap)
 
-        # Number circle
+        # Card background
+        r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
+                     border_color=TEAL, border_width=Pt(1), corner_radius=True)
+
+        # Number circle — vertically centered in card
+        cy = y + (card_h - circle_d) / 2
         circle = slide.shapes.add_shape(
-            MSO_SHAPE.OVAL, MX, y + Inches(0.15), Inches(0.6), Inches(0.6))
+            MSO_SHAPE.OVAL, MX + Inches(0.2), cy, circle_d, circle_d)
         circle.fill.solid()
         circle.fill.fore_color.rgb = TEAL
         circle.line.fill.background()
-        add_text(slide, num, MX + Inches(0.05), y + Inches(0.15),
-                 Inches(0.5), Inches(0.6),
+        add_text(slide, num, MX + Inches(0.2), cy,
+                 circle_d, circle_d,
                  size=Pt(22), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
-        # Text
+        # Text — left-aligned next to circle
         tb = add_text(slide, text,
-                      MX + Inches(0.85), y, CW - Inches(1.0), point_h,
+                      MX + Inches(1.0), y + Inches(0.12),
+                      CW - Inches(1.2), card_h - Inches(0.24),
                       size=Pt(15), color=WHITE)
-        point_shapes.append(tb)
+        point_shapes.append(r)
 
     _finish(slide, 31,
-        "Four takeaways. One: we know exactly where we stand — rigorous "
-        "assessment with a novel metric that reveals the true picture. "
-        "Two: production system delivered and deployed. Three: data, not "
-        "model capacity, is the bottleneck. Four: clear roadmap from 64% "
-        "to 27-42% WER.",
-        [point_shapes])
+        "Four takeaways. One: rigorous assessment with novel IS metric. "
+        "Two: production system delivered. Three: data is the bottleneck "
+        "(fine-tuning proved it). Four: clear roadmap from IS 2.52 to "
+        "3.5-4.0, each phase targeting a different failure category.",
+        [point_shapes], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # APPENDIX SLIDES (A1–A13)
@@ -4558,6 +4603,78 @@ def slide_is_deep_dive(prs):
         [[lt, tbl], [rt, rb]])
 
 
+def slide_metric_disagreement(prs):
+    """What metric disagreements reveal about transcription quality."""
+    slide = new_slide(prs)
+    add_title(slide, "When Metrics Disagree: What It Tells Us")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "IS uses 6 signals because no single metric tells the full story. "
+        "Disagreements between metrics reveal specific quality patterns:",
+        MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY, italic=True)
+
+    # Four disagreement pattern cards (2x2 grid)
+    cw = Inches(5.8)
+    ch = Inches(2.0)
+    gap_x = Inches(0.53)
+    gap_y = Inches(0.2)
+    cy = CT + Inches(0.55)
+
+    patterns = [
+        ("WWER \u226a WER", TEAL,
+         "Function words wrong, content words right",
+         "\"the team discussed a quarterly\" \u2192 \"team discuss quarterly\"\n"
+         "WER 43% but WWER 15% — viewer gets the message.\n"
+         "IS captures this: meaning preserved despite surface errors."),
+        ("NEA high, WER high", GREEN,
+         "Names preserved despite overall poor accuracy",
+         "\"Dr. Chen presented the Q3 results\" \u2192 \"Dr. Chen present Q3 result\"\n"
+         "WER 57% but NEA F1 = 100% — critical info intact.\n"
+         "IS rewards: the most important facts came through."),
+        ("Semantic high, WER high", GOLD,
+         "Meaning preserved through paraphrasing",
+         "\"we need to reduce spending\" \u2192 \"must cut the budget\"\n"
+         "WER 100% but Semantic 0.87 — same meaning, different words.\n"
+         "IS captures: WER says total failure, IS says useful output."),
+        ("Phonetic high, Semantic low", CORAL,
+         "Sounds right, wrong meaning (deceptive)",
+         "\"the alliance was formed\" \u2192 \"the lions were found\"\n"
+         "Phonetic 0.71 but Semantic 0.12 — sounds similar, wrong topic.\n"
+         "IS catches: phonetic alone would miss this dangerous error."),
+    ]
+
+    cards = []
+    for i, (title, color, subtitle, body) in enumerate(patterns):
+        col = i % 2
+        row = i // 2
+        x = MX + col * (cw + gap_x)
+        y = cy + row * (ch + gap_y)
+        r = add_rect(slide, x, y, cw, ch, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+        cards.append(r)
+        add_rich_text(slide, [
+            [(title, {"size": Pt(14), "color": color, "bold": True}),
+             (f"  —  {subtitle}", {"size": Pt(12), "color": WHITE})],
+        ], x + Inches(0.2), y + Inches(0.1), cw - Inches(0.4), Inches(0.35))
+        add_text(slide, body, x + Inches(0.2), y + Inches(0.5),
+                 cw - Inches(0.4), ch - Inches(0.6),
+                 size=Pt(11), color=LGRAY)
+
+    add_text(slide,
+        "This is why IS uses 6 signals, not just WER — each disagreement pattern "
+        "reveals a different type of quality that a single metric would miss.",
+        MX, Inches(6.3), CW, Inches(0.4),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Four key metric disagreement patterns. WWER<<WER means function words "
+        "are wrong but content preserved. High NEA + high WER means names survived. "
+        "High semantic + high WER means paraphrasing. High phonetic + low semantic "
+        "is the dangerous case — sounds right but wrong meaning.",
+        [cards], click_reveal=True)
+
+
 def slide_two_eval_systems(prs):
     """Two evaluation systems — IS and expert heuristic."""
     slide = new_slide(prs)
@@ -5210,39 +5327,37 @@ def slide_llm_context_engine(prs):
 def slide_data_scaling(prs):
     """Data scaling evidence and projections."""
     slide = new_slide(prs)
-    add_title(slide, "Data Scaling: The Path to Better Results")
+    add_title(slide, "Data Scaling: The Path to IS 3.5–4.0")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
     # Left — fine-tuning results + scaling law
-    lt = add_text(slide, "What We Learned (Exp A/B)", MX, CT, col_w, Inches(0.4),
+    lt = add_text(slide, "Why More Data Is the Answer", MX, CT, col_w, Inches(0.4),
                   size=Pt(17), color=CORAL, bold=True)
     lb = add_bullets(slide, [
-        "1,273 training segments \u2014 below ~1K LoRA minimum",
-        "Exp A (r=16): 62.94% val accuracy, severe overfitting",
-        ("Exp B (r=64): 3.1pp WORSE \u2014 more params = faster overfitting",
-         {"color": CORAL}),
-        "This tests the dataset's limits, not the model's capacity",
-        ("Scaling law (ICLR 2024): data + LLM quality = multiplicative gains",
-         {"bold": True}),
+        ("Current: 1,273 segments — far below LoRA minimum", {"bold": True}),
+        "Fine-tune experiments confirmed: small data = overfitting",
+        "Scaling law (ICLR 2024): data × LLM quality = multiplicative gains",
+        ("AVSpeech: 290K videos available for curation", {"color": TEAL}),
+        ("Next step: curate 20K–50K diverse segments", {"bold": True, "color": GREEN}),
     ], MX, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(13))
 
-    # Right — projection table
+    # Right — projection table with IS
     rx = MX + col_w + gap
-    rt = add_text(slide, "WER Projection by Data Scale", rx, CT, col_w,
+    rt = add_text(slide, "Projected Impact on IS", rx, CT, col_w,
                   Inches(0.4), size=Pt(17), color=TEAL, bold=True)
 
     tbl = add_table(slide,
-        ["Segments", "LLaMA-2 WER", "Llama 3.1 WER"],
-        [["1.3K (current)", "64.1%", "\u2014"],
-         ["5K", "55\u201360%", "50\u201355%"],
-         ["20K", "45\u201350%", "40\u201345%"],
-         ["50K", "40\u201345%", "35\u201340%"],
-         ["100K+", "35\u201340%", "27\u201332%"]],
+        ["Segments", "WER", "Projected IS"],
+        [["1.3K (current)", "64.1%", "2.52"],
+         ["5K", "55–60%", "~2.8–3.0"],
+         ["20K", "45–50%", "~3.2–3.5"],
+         ["50K", "40–45%", "~3.5–4.0"],
+         ["100K+", "35–40%", "~4.0+"]],
         rx, CT + Inches(0.5), col_w, text_size=Pt(12),
-        row_colors={0: {1: CORAL}, 4: {2: GREEN}})
+        row_colors={0: {1: CORAL}, 3: {2: GREEN}, 4: {2: GREEN}})
 
     # AVSpeech callout
     r1 = add_rect(slide, rx, CT + Inches(3.0), col_w, Inches(1.0),
@@ -5258,10 +5373,9 @@ def slide_data_scaling(prs):
     _finish(slide, 0,
         "Data scaling projections based on ICLR 2024 multiplicative scaling "
         "law. Current 1,273 segments is far below minimum. 20K segments with "
-        "Llama 3.1 8B projects to 40-45% WER. AVSpeech has 290K videos "
-        "available for training data curation. Data is tractable — the "
-        "bottleneck is curation effort, not data availability.",
-        [[lt, lb], [rt, tbl, r1]])
+        "Llama 3.1 8B projects to IS 3.5-4.0 (55-65% captured). AVSpeech has "
+        "290K videos available for training data curation.",
+        [[lt, lb], [rt, tbl, r1]], click_reveal=True)
 
 
 def slide_a16(prs):
@@ -5534,6 +5648,7 @@ def main():
         slide_tuning_summary, # 13 Experiments, Minimal Gain (replaces 5)
         # --- Section 6: The Full Picture ---
         slide_is_deep_dive, # Why These 6 Signals? Validation (Req #11)
+        slide_metric_disagreement, # When Metrics Disagree
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
         slide_context_eval, # Context-aware re-evaluation
@@ -5573,7 +5688,7 @@ def main():
         slide_31,           # Key Takeaways
         slide_thank_you,    # Thank You & Questions
         # --- Appendix ---
-        slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b, slide_a13,
+        slide_a1, slide_a8, slide_a11, slide_a11b, slide_a13,
         slide_a15,
         slide_a16,          # LLM Judge × IS Tier
         slide_a17,          # Context transition matrix
