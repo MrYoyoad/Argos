@@ -371,6 +371,53 @@ def _extract_poster(vid_path, poster_path):
     return None
 
 
+def add_video_poster(slide, vid_key, left, top, width, height):
+    """Show a video poster frame (static thumbnail) with play button overlay.
+
+    This avoids PowerPoint repair issues caused by python-pptx video embeds.
+    Falls back to a dark placeholder with play icon if poster not available.
+    """
+    vid_path = VID.get(vid_key)
+    poster = None
+    if vid_path and vid_path.exists():
+        poster = _extract_poster(vid_path, POSTER_DIR / f"{vid_key}.jpg")
+    if poster and poster.exists():
+        shape = slide.shapes.add_picture(str(poster), left, top, width, height)
+    else:
+        # Dark placeholder
+        shape = add_rect(slide, left, top, width, height,
+                         fill_color=NAVY2, border_color=MGRAY, border_width=Pt(1))
+    # Play button overlay (centered, small)
+    btn_size = min(width, height) * 0.3
+    btn_x = left + (width - btn_size) // 2
+    btn_y = top + (height - btn_size) // 2
+    circle = slide.shapes.add_shape(MSO_SHAPE.OVAL, btn_x, btn_y, btn_size, btn_size)
+    circle.fill.solid()
+    circle.fill.fore_color.rgb = RGBColor(0, 0, 0)
+    # Semi-transparent effect via alpha
+    fill_elem = circle.fill._fill
+    srgb = fill_elem.find(qn('a:solidFill')).find(qn('a:srgbClr'))
+    if srgb is not None:
+        alpha = etree.SubElement(srgb, qn('a:alpha'))
+        alpha.set('val', '50000')  # 50% opacity
+    circle.line.fill.background()
+    tb = slide.shapes.add_textbox(btn_x, btn_y, btn_size, btn_size)
+    tf = tb.text_frame
+    tf.word_wrap = False
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+    run = p.add_run()
+    run.text = "\u25b6"
+    run.font.size = Pt(int(btn_size / Inches(1) * 28))
+    run.font.color.rgb = WHITE
+    run.font.name = FONT
+    try:
+        tf._txBody.bodyPr.set('anchor', 'ctr')
+    except Exception:
+        pass
+    return shape
+
+
 def add_video(slide, vid_key, left, top, width, height):
     """Embed an MP4 video with poster frame. Click to play in PowerPoint."""
     vid_path = VID.get(vid_key)
@@ -2385,7 +2432,7 @@ def slide_15(prs):
 
     for i, (key, desc, wer, color) in enumerate(vids):
         x = start_x + i * (vid_w + gap)
-        add_video(slide, key, x, vid_y, vid_w, vid_h)
+        add_video_poster(slide, key, x, vid_y, vid_w, vid_h)
         add_text(slide, wer, x, vid_y + vid_h + Inches(0.05), vid_w,
                  Inches(0.3), size=Pt(14), color=color, bold=True,
                  align=PP_ALIGN.CENTER)
@@ -3317,6 +3364,64 @@ def slide_26(prs):
         "segments cross the IS >= 3.0 threshold.",
         [step_shapes, [img]], click_reveal=True)
 
+
+def slide_26b(prs):
+    """26b: IS trajectory roadmap — parallel to WER trajectory on slide_26."""
+    slide = new_slide(prs)
+    add_title(slide, "IS Improvement Roadmap — From 2.5 to 3.8")
+    add_accent_line(slide)
+
+    add_text(slide, "Projected Intelligibility Score improvement per phase",
+             MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+
+    # IS trajectory plot (right side, large)
+    img = add_image(slide, "P3b_is_trajectory",
+                    MX + Inches(0.5), CT + Inches(0.45),
+                    width=Inches(7.0))
+
+    # Key milestones callout (right side)
+    rx = MX + Inches(7.8)
+    rw = Inches(4.0)
+    milestones = [
+        ("Current", "IS 2.52", "39.9% captured", CORAL),
+        ("Phase 1", "IS ~2.85", "~48% captured", TEAL),
+        ("Phase 2", "IS ~3.40", "~58% captured", GREEN),
+        ("Phase 3", "IS ~3.80", "~65% captured", GREEN),
+    ]
+    ms_shapes = []
+    for i, (phase, is_val, cap_val, color) in enumerate(milestones):
+        y = CT + Inches(0.55) + i * Inches(1.15)
+        r = add_rect(slide, rx, y, rw, Inches(0.95), fill_color=NAVY2,
+                     border_color=color, border_width=Pt(1.5), corner_radius=True)
+        ms_shapes.append(r)
+        add_text(slide, phase, rx + Inches(0.15), y + Inches(0.05),
+                 rw - Inches(0.3), Inches(0.3),
+                 size=Pt(13), color=color, bold=True)
+        add_text(slide, f"{is_val}  •  {cap_val}",
+                 rx + Inches(0.15), y + Inches(0.35),
+                 rw - Inches(0.3), Inches(0.3),
+                 size=Pt(16), color=WHITE, bold=True)
+        if i > 0:
+            delta = float(is_val.replace("IS ~", "")) - 2.52
+            add_text(slide, f"+{delta:.2f} from baseline",
+                     rx + Inches(0.15), y + Inches(0.63),
+                     rw - Inches(0.3), Inches(0.25),
+                     size=Pt(10), color=LGRAY, italic=True)
+
+    add_text(slide,
+             "Each ~10pp WER reduction → ~0.3–0.5 IS improvement + ~8–12pp captured rate.",
+             MX, Inches(6.35), CW, Inches(0.4),
+             size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, "26b",
+        "IS improvement trajectory paralleling the WER reduction roadmap. "
+        "Current IS 2.52 (39.9% captured) → Phase 3 target IS 3.80 (65% captured). "
+        "The IS ≥ 3.0 threshold marks 'captured' segments. "
+        "Key insight: relationship is non-linear — improvements accelerate as more "
+        "segments cross the IS ≥ 3.0 threshold.",
+        [[img], ms_shapes], click_reveal=True)
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 27 — PHASE 1: CONFIDENCE SCORING
 # ═══════════════════════════════════════════════════════════════════════
@@ -4001,7 +4106,7 @@ def slide_14b(prs):
         for c, (key, label, wer, color) in enumerate(row):
             x = start_x + c * (vid_w + gap_x)
             y = row_y[r]
-            add_video(slide, key, x, y, vid_w, vid_h)
+            add_video_poster(slide, key, x, y, vid_w, vid_h)
             # WER badge
             add_text(slide, f"{label}  WER {wer}",
                      x, y + vid_h + Inches(0.04), vid_w, Inches(0.32),
@@ -5784,6 +5889,7 @@ def main():
         slide_insights,     # Key research insights
         slide_24,           # Starting point better than WER
         slide_26,           # Five Phases roadmap (GER defined, Req #20)
+        slide_26b,          # IS trajectory roadmap (parallel to WER)
         slide_confidence_scoring, # Phase 1: Confidence Scoring detail
         slide_27,           # Phase 1 Confidence (quick summary)
         slide_28,           # Phase 2 N-Best

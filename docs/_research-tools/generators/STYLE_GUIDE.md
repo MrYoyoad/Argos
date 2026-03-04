@@ -187,7 +187,7 @@ Images centralized in `IMG` dictionary mapping semantic keys to file paths.
 
 # Plot Styling
 
-**Generators**: `generate_presentation_plots.py` (P1-P6), `generate_finetune_plots.py` (FT_01-FT_11)
+**Generators**: `generate_presentation_plots.py` (P1-P6 + P3b), `generate_finetune_plots.py` (FT_01-FT_11)
 **Output**: `docs/evaluation/plots/P*.png`, `docs/finetuning/plots/FT_*.png`
 
 ## Plot Defaults

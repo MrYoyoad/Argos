@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Argos Presentation Plots — 6 charts for the VSP presentation.
+Argos Presentation Plots — 7 charts for the VSP presentation.
 
 Generates:
   P1: Quality Tier pie chart (from Report 1 data)
   P2: Paper vs Reality bar chart (LRS3 vs real-world WER)
   P3: WER Trajectory roadmap line chart (improvement phases)
+  P3b: IS Trajectory roadmap line chart (projected IS improvement)
   P4: Hyperparameter Sensitivity tornado chart (lenpen effect)
   P5: Before/After Tuning paired bars (baseline vs best config)
   P6: IS Component Radar chart (captured vs failed segments)
@@ -17,6 +18,7 @@ Output:
     docs/evaluation/plots/P1_quality_tiers.png
     docs/evaluation/plots/P2_paper_vs_reality.png
     docs/evaluation/plots/P3_wer_trajectory.png
+    docs/evaluation/plots/P3b_is_trajectory.png
     docs/evaluation/plots/P4_lenpen_sensitivity.png
     docs/evaluation/plots/P5_tuning_before_after.png
     docs/evaluation/plots/P6_is_radar.png
@@ -175,6 +177,77 @@ def plot_P3_wer_trajectory():
 
     plt.tight_layout()
     out = OUTPUT_DIR / "P3_wer_trajectory.png"
+    fig.savefig(out, dpi=PLOT_DPI, bbox_inches="tight")
+    plt.close(fig)
+    print(f"  Saved {out}")
+
+
+def plot_P3b_is_trajectory():
+    """IS Trajectory roadmap — projected IS improvement per phase (parallel to P3)."""
+    phases = ["Current\nBaseline", "Phase 1\nConf+Metrics", "Phase 2\nN-Best+Prompts",
+              "Phase 3\nFine-Tuning"]
+    is_mid = [2.52, 2.85, 3.40, 3.80]
+    is_lo  = [2.52, 2.65, 3.10, 3.50]
+    is_hi  = [2.52, 3.05, 3.70, 4.10]
+
+    captured_mid = [39.9, 48, 58, 65]  # % segments IS >= 3.0
+
+    missions = ["", "M4, M5, M7", "M6, M8", "M9"]
+    effort = ["", "Days", "Weeks", "Weeks + 8x GPU"]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    x = np.arange(len(phases))
+    ax.fill_between(x, is_lo, is_hi, alpha=0.2, color="#ff9800", label="Expected range")
+    ax.plot(x, is_mid, "o-", color="#ff9800", linewidth=3, markersize=12, zorder=5,
+            label="Best estimate")
+
+    # IS >= 3.0 threshold line
+    ax.axhline(y=3.0, color="#4CAF50", linestyle="--", linewidth=1.5, alpha=0.7)
+    ax.text(3.15, 3.05, "IS ≥ 3.0 = Captured", fontsize=9, color="#4CAF50",
+            fontweight="bold", va="bottom")
+
+    # Labels on points
+    for i, (mid, lo, hi, cap) in enumerate(zip(is_mid, is_lo, is_hi, captured_mid)):
+        if i == 0:
+            ax.text(i, mid + 0.12, f"{mid}", ha="center", fontsize=14, fontweight="bold",
+                    color="#cc0000")
+            ax.text(i, mid - 0.18, f"{cap}% captured", ha="center", fontsize=9,
+                    color="#cc0000", style="italic")
+        else:
+            ax.text(i, mid + 0.12, f"~{mid:.1f}", ha="center", fontsize=13, fontweight="bold",
+                    color="#ff9800")
+            ax.text(i, hi + 0.18, f"({lo:.1f}–{hi:.1f})", ha="center", fontsize=9,
+                    color="#666666")
+            ax.text(i, mid - 0.18, f"~{cap}% captured", ha="center", fontsize=9,
+                    color="#ff9800", style="italic")
+
+    # Mission labels below
+    for i, (m, e) in enumerate(zip(missions, effort)):
+        if m:
+            ax.text(i, is_lo[i] - 0.30, m, ha="center", fontsize=9, color="#555555",
+                    fontweight="bold")
+            ax.text(i, is_lo[i] - 0.48, e, ha="center", fontsize=8, color="#888888",
+                    style="italic")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(phases, fontsize=11)
+    ax.set_ylabel("Intelligibility Score (IS)", fontsize=13)
+    ax.set_title("Improvement Roadmap: Projected IS Improvement",
+                 fontsize=15, fontweight="bold")
+    ax.set_ylim(1.5, 4.8)
+    ax.legend(fontsize=10, loc="upper left")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # Improvement annotation
+    ax.annotate("", xy=(3, 3.80), xytext=(0, 2.52),
+                arrowprops=dict(arrowstyle="<->", color="#2ca02c", lw=2))
+    ax.text(1.5, 3.05, "+1.28 IS\n(+51% relative)",
+            ha="center", fontsize=11, fontweight="bold", color="#2ca02c")
+
+    plt.tight_layout()
+    out = OUTPUT_DIR / "P3b_is_trajectory.png"
     fig.savefig(out, dpi=PLOT_DPI, bbox_inches="tight")
     plt.close(fig)
     print(f"  Saved {out}")
@@ -395,13 +468,14 @@ def plot_P6_is_radar():
 
 
 if __name__ == "__main__":
-    print("Generating 6 presentation plots...")
+    print("Generating 7 presentation plots...")
     print()
     plot_P1_quality_tiers()
     plot_P2_paper_vs_reality()
     plot_P3_wer_trajectory()
+    plot_P3b_is_trajectory()
     plot_P4_lenpen_sensitivity()
     plot_P5_tuning_before_after()
     plot_P6_is_radar()
     print()
-    print("Done! All 6 plots saved to", OUTPUT_DIR)
+    print("Done! All 7 plots saved to", OUTPUT_DIR)

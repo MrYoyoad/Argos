@@ -71,14 +71,14 @@ Both formats are **independently maintained**:
 
 | Generator | Output | Plots |
 |-----------|--------|-------|
-| `generate_presentation_plots.py` | `docs/evaluation/plots/P*.png` | P1-P6 (tiers, gap, trajectory, lenpen, tuning, radar) |
+| `generate_presentation_plots.py` | `docs/evaluation/plots/P*.png` | P1-P6+P3b (tiers, gap, WER trajectory, IS trajectory, lenpen, tuning, radar) |
 | `generate_finetune_plots.py` | `docs/finetuning/plots/FT_*.png` | FT_01-FT_11 (loss, accuracy, overfitting, etc.) |
 | `generate_pipeline_diagram.py` | `docs/evaluation/plots/pipeline_architecture.png` | 8-stage pipeline diagram |
 
 ## Regeneration Checklist
 
 To rebuild from scratch:
-1. `python3 docs/_research-tools/generators/generate_presentation_plots.py` — regenerate P1-P6
+1. `python3 docs/_research-tools/generators/generate_presentation_plots.py` — regenerate P1-P6 + P3b
 2. `python3 docs/_research-tools/generators/generate_finetune_plots.py` — regenerate FT_01-FT_11
 3. `python3 docs/_research-tools/generators/generate_pipeline_diagram.py` — regenerate pipeline diagram
 4. `python3 docs/_research-tools/generators/generate_presentation.py` — regenerate PPTX
