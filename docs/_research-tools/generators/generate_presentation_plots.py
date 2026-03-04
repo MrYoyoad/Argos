@@ -317,42 +317,78 @@ def plot_P6_is_radar():
     captured_vals_closed = captured_vals + captured_vals[:1]
     failed_vals_closed = failed_vals + failed_vals[:1]
 
-    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+    fig, ax = plt.subplots(figsize=(9, 9), subplot_kw=dict(polar=True))
     fig.patch.set_facecolor("#0D1B2A")
     ax.set_facecolor("#0D1B2A")
 
-    # Draw filled polygons
-    ax.plot(angles, captured_vals_closed, "o-", color="#56B870", linewidth=2.5, markersize=7)
-    ax.fill(angles, captured_vals_closed, color="#56B870", alpha=0.25, label="Captured (IS \u2265 3.0)")
+    # --- Clean grid: only 4 rings at 0.25 intervals ---
+    ax.set_ylim(0, 1.05)
+    ax.set_yticks([0.25, 0.50, 0.75, 1.00])
+    ax.set_yticklabels(["0.25", "0.50", "0.75", "1.00"],
+                       fontsize=8, color="#667788", fontweight="light")
+    ax.yaxis.grid(True, color="#1E3A5F", linewidth=0.6, alpha=0.5)
+    ax.xaxis.grid(True, color="#1E3A5F", linewidth=0.6, alpha=0.5)
+    ax.spines["polar"].set_color("#1E3A5F")
+    ax.spines["polar"].set_linewidth(0.6)
 
-    ax.plot(angles, failed_vals_closed, "o-", color="#E06C75", linewidth=2.5, markersize=7)
-    ax.fill(angles, failed_vals_closed, color="#E06C75", alpha=0.25, label="Failed (IS < 3.0)")
+    # --- Draw filled polygons: thin lines, low-opacity fill ---
+    # Failed first (behind) — dashed red
+    ax.plot(angles, failed_vals_closed, color="#E06C75", linewidth=1.8,
+            linestyle="--", marker="D", markersize=6, markeredgecolor="white",
+            markeredgewidth=0.8, zorder=3)
+    ax.fill(angles, failed_vals_closed, color="#E06C75", alpha=0.15)
 
-    # Axis labels
+    # Captured on top — solid green
+    ax.plot(angles, captured_vals_closed, color="#56B870", linewidth=2.0,
+            linestyle="-", marker="o", markersize=7, markeredgecolor="white",
+            markeredgewidth=0.8, zorder=4)
+    ax.fill(angles, captured_vals_closed, color="#56B870", alpha=0.15)
+
+    # --- Value annotations next to each data point ---
+    for i in range(N):
+        angle = angles[i]
+        # Captured annotation (offset outward)
+        cap_r = captured_vals[i]
+        ax.annotate(f"{cap_r:.2f}",
+                    xy=(angle, cap_r), fontsize=10, fontweight="bold",
+                    color="#56B870", ha="center", va="bottom",
+                    xytext=(0, 8), textcoords="offset points", zorder=5)
+        # Failed annotation (offset inward/below)
+        fail_r = failed_vals[i]
+        ax.annotate(f"{fail_r:.2f}",
+                    xy=(angle, fail_r), fontsize=10, fontweight="bold",
+                    color="#E06C75", ha="center", va="top",
+                    xytext=(0, -8), textcoords="offset points", zorder=5)
+
+    # --- Axis labels: larger, bold, white ---
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(categories, fontsize=11, fontweight="bold", color="white")
+    ax.set_xticklabels(categories, fontsize=13, fontweight="bold", color="white")
+    # Push labels outward so they don't crowd the polygon
+    ax.tick_params(axis="x", pad=18)
 
-    # Gridlines and tick styling
-    ax.set_ylim(0, 1.0)
-    ax.set_yticks([0.2, 0.4, 0.6, 0.8, 1.0])
-    ax.set_yticklabels(["0.2", "0.4", "0.6", "0.8", "1.0"], fontsize=8, color="#AAAAAA")
-    ax.yaxis.grid(True, color="#334455", linewidth=0.8, alpha=0.6)
-    ax.xaxis.grid(True, color="#334455", linewidth=0.8, alpha=0.6)
-    ax.spines["polar"].set_color("#334455")
+    # --- No in-chart title (slide already has one) ---
 
-    # Legend
-    legend = ax.legend(loc="upper right", bbox_to_anchor=(1.25, 1.12), fontsize=11,
-                       framealpha=0.9, edgecolor="#334455")
+    # --- Legend: bottom center, dark background box ---
+    from matplotlib.lines import Line2D
+    legend_elements = [
+        Line2D([0], [0], color="#56B870", linewidth=2.0, linestyle="-",
+               marker="o", markersize=7, markeredgecolor="white",
+               markeredgewidth=0.8, label="Captured (IS \u2265 3.0)"),
+        Line2D([0], [0], color="#E06C75", linewidth=1.8, linestyle="--",
+               marker="D", markersize=6, markeredgecolor="white",
+               markeredgewidth=0.8, label="Failed (IS < 3.0)"),
+    ]
+    legend = ax.legend(handles=legend_elements, loc="lower center",
+                       bbox_to_anchor=(0.5, -0.18), ncol=2, fontsize=12,
+                       framealpha=0.95, edgecolor="#334455",
+                       handlelength=2.5, columnspacing=2.0)
     legend.get_frame().set_facecolor("#162A40")
     for text in legend.get_texts():
         text.set_color("white")
 
-    ax.set_title("IS Component Profile: Captured vs Failed Segments",
-                 fontsize=14, fontweight="bold", color="white", pad=30)
-
-    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12)
     out = OUTPUT_DIR / "P6_is_radar.png"
-    fig.savefig(out, dpi=PLOT_DPI, bbox_inches="tight", facecolor="#0D1B2A")
+    fig.savefig(out, dpi=250, bbox_inches="tight", facecolor="#0D1B2A")
     plt.close(fig)
     print(f"  Saved {out}")
 
