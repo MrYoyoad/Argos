@@ -638,21 +638,29 @@ def _fix_pptx_video_compat(pptx_path):
         os.remove(tmp_path)
 
 
-def add_animations(slide, groups, click_reveal=False):
+def _para_indices(shape):
+    """Return indices of non-empty paragraphs in shape's text frame."""
+    try:
+        return [i for i, p in enumerate(shape.text_frame.paragraphs)
+                if p.text.strip()]
+    except (AttributeError, TypeError):
+        return []
+
+
+def add_animations(slide, groups, click_reveal=False, para_build=False):
     """
-    Add entrance "Appear" animations matching PowerPoint's native OOXML output.
+    Add click-to-advance entrance animations (Appear) with valid OOXML.
 
-    Structure mirrors what PowerPoint 365 generates for "Appear → On Click":
+    Produces the three-level par nesting that PowerPoint 365 expects:
       timing > tnLst > par(tmRoot) > seq(mainSeq)
-        per click-step:  par > par(delay=0) > par(presetID=1, clickEffect) > set
-      timing > bldLst > bldP (one per hidden shape)
+        per click:  par(indefinite) > par(delay=0) > par(presetID=1) > set
 
-    groups: list of lists of shape objects.
-        Each inner list = one animation group (one "click step").
-
-    click_reveal=True: First group visible on entry, subsequent groups
-        appear one-by-one on each click.
-    click_reveal=False: All groups auto-play on slide entry with delays.
+    groups       – list of lists of shape objects; each inner list is one
+                   animation group (one "click step").
+    click_reveal – True  → first group visible on slide entry;
+                   False → all groups hidden until clicked.
+    para_build   – True  → multi-paragraph text shapes (bullet lists)
+                   reveal one paragraph per click instead of all at once.
     """
     if not groups:
         return
@@ -660,7 +668,7 @@ def add_animations(slide, groups, click_reveal=False):
     if not groups:
         return
 
-    # Collect all shape IDs that will be animated
+    # ── Collect all animatable shapes ──────────────────────────────────
     all_anim_shapes = []
     for gi, group in enumerate(groups):
         for shape in group:
@@ -671,172 +679,170 @@ def add_animations(slide, groups, click_reveal=False):
                 all_anim_shapes.append((gi, shape))
             except AttributeError:
                 continue
-
     if not all_anim_shapes:
         return
 
+    # ── Expand groups into click steps ─────────────────────────────────
+    # Each step is a list of (shape, para_idx | None) tuples.
+    click_steps = []
+    para_build_spids = set()   # shape IDs needing build="p"
+    hidden_spids = set()       # shape IDs that go in bldLst
+
+    for gi, group in enumerate(groups):
+        is_entry = click_reveal and gi == 0
+        step_items = []
+
+        for shape in group:
+            if shape is None:
+                continue
+            try:
+                spid = shape.shape_id
+            except AttributeError:
+                continue
+
+            pindices = _para_indices(shape) if para_build else []
+
+            if len(pindices) > 1:
+                # Multi-paragraph → per-paragraph click steps
+                para_build_spids.add(spid)
+                hidden_spids.add(spid)
+                for pi in pindices:
+                    click_steps.append([(shape, pi)])
+            elif is_entry:
+                pass   # visible on entry — no animation needed
+            else:
+                hidden_spids.add(spid)
+                step_items.append((shape, None))
+
+        if step_items:
+            click_steps.append(step_items)
+
+    if not click_steps:
+        return
+
+    # ── Remove existing timing ─────────────────────────────────────────
     sld = slide._element
     for child in list(sld):
         if child.tag.endswith('timing'):
             sld.remove(child)
 
     _id = [1]
-
     def nid():
-        v = _id[0]
-        _id[0] += 1
-        return str(v)
+        v = _id[0]; _id[0] += 1; return str(v)
 
-    # ── Root: timing > tnLst > par(tmRoot) ──
-    timing = etree.SubElement(sld, qn('p:timing'))
-    tnLst = etree.SubElement(timing, qn('p:tnLst'))
-    par_root = etree.SubElement(tnLst, qn('p:par'))
+    SE = etree.SubElement
 
-    cTn_root = etree.SubElement(par_root, qn('p:cTn'))
-    cTn_root.set('id', nid())
-    cTn_root.set('dur', 'indefinite')
-    cTn_root.set('restart', 'never')
-    cTn_root.set('nodeType', 'tmRoot')
+    # ── Timing tree ────────────────────────────────────────────────────
+    timing  = SE(sld, qn('p:timing'))
+    tnLst   = SE(timing, qn('p:tnLst'))
+    par0    = SE(tnLst, qn('p:par'))
+    cTn0    = SE(par0, qn('p:cTn'))
+    cTn0.set('id', nid()); cTn0.set('dur', 'indefinite')
+    cTn0.set('restart', 'never'); cTn0.set('nodeType', 'tmRoot')
+    root_cl = SE(cTn0, qn('p:childTnLst'))
 
-    childTnLst_root = etree.SubElement(cTn_root, qn('p:childTnLst'))
-
-    # ── Main sequence ──
-    seq = etree.SubElement(childTnLst_root, qn('p:seq'))
-    seq.set('concurrent', '1')
-    seq.set('nextAc', 'seek')
-
-    cTn_seq = etree.SubElement(seq, qn('p:cTn'))
-    cTn_seq.set('id', nid())
-    cTn_seq.set('dur', 'indefinite')
+    # Main click sequence
+    seq     = SE(root_cl, qn('p:seq'))
+    seq.set('concurrent', '1'); seq.set('nextAc', 'seek')
+    cTn_seq = SE(seq, qn('p:cTn'))
+    cTn_seq.set('id', nid()); cTn_seq.set('dur', 'indefinite')
     cTn_seq.set('nodeType', 'mainSeq')
+    seq_cl  = SE(cTn_seq, qn('p:childTnLst'))
 
-    childTnLst_seq = etree.SubElement(cTn_seq, qn('p:childTnLst'))
+    for step in click_steps:
+        # Level 1 – click step container (delay=indefinite → waits for click)
+        p1 = SE(seq_cl, qn('p:par'))
+        c1 = SE(p1, qn('p:cTn'))
+        c1.set('id', nid()); c1.set('fill', 'hold')
+        s1 = SE(c1, qn('p:stCondLst'))
+        SE(s1, qn('p:cond')).set('delay', 'indefinite')
+        ch1 = SE(c1, qn('p:childTnLst'))
 
-    # Determine which groups to animate
-    start_gi = 1 if click_reveal else 0
+        # Level 2 – group container (delay=0)
+        p2 = SE(ch1, qn('p:par'))
+        c2 = SE(p2, qn('p:cTn'))
+        c2.set('id', nid()); c2.set('fill', 'hold')
+        s2 = SE(c2, qn('p:stCondLst'))
+        SE(s2, qn('p:cond')).set('delay', '0')
+        ch2 = SE(c2, qn('p:childTnLst'))
 
-    for gi, group in enumerate(groups):
-        if gi < start_gi:
-            continue
-
-        valid_shapes = []
-        for shape in group:
-            if shape is None:
-                continue
-            try:
-                _ = shape.shape_id
-                valid_shapes.append(shape)
-            except AttributeError:
-                continue
-        if not valid_shapes:
-            continue
-
-        # ── Level 1: click-step par (delay="indefinite" = wait for click) ──
-        par_step = etree.SubElement(childTnLst_seq, qn('p:par'))
-        cTn_step = etree.SubElement(par_step, qn('p:cTn'))
-        cTn_step.set('id', nid())
-        cTn_step.set('fill', 'hold')
-
-        stCond_step = etree.SubElement(cTn_step, qn('p:stCondLst'))
-        cond_step = etree.SubElement(stCond_step, qn('p:cond'))
-        cond_step.set('delay', 'indefinite')  # KEY: waits for click
-
-        childTnLst_step = etree.SubElement(cTn_step, qn('p:childTnLst'))
-
-        # ── Level 2: container par (delay="0") ──
-        par_container = etree.SubElement(childTnLst_step, qn('p:par'))
-        cTn_container = etree.SubElement(par_container, qn('p:cTn'))
-        cTn_container.set('id', nid())
-        cTn_container.set('fill', 'hold')
-
-        stCond_container = etree.SubElement(cTn_container, qn('p:stCondLst'))
-        cond_container = etree.SubElement(stCond_container, qn('p:cond'))
-        cond_container.set('delay', '0')
-
-        childTnLst_container = etree.SubElement(cTn_container, qn('p:childTnLst'))
-
-        for si, shape in enumerate(valid_shapes):
+        for si, (shape, para_idx) in enumerate(step):
             spid = str(shape.shape_id)
+            delay_ms = si * 120    # subtle stagger within group
 
-            # ── Level 3: effect par (presetID=1 Appear) ──
-            par_effect = etree.SubElement(childTnLst_container, qn('p:par'))
-            cTn_effect = etree.SubElement(par_effect, qn('p:cTn'))
-            cTn_effect.set('id', nid())
-            cTn_effect.set('presetID', '1')       # 1 = Appear
-            cTn_effect.set('presetClass', 'entr')  # entrance
-            cTn_effect.set('presetSubtype', '0')
-            cTn_effect.set('fill', 'hold')
-            cTn_effect.set('grpId', '0')
-            cTn_effect.set('nodeType', 'clickEffect')
+            # Level 3 – Appear effect (presetID=1)
+            p3 = SE(ch2, qn('p:par'))
+            c3 = SE(p3, qn('p:cTn'))
+            c3.set('id', nid())
+            c3.set('presetID', '1')         # Appear
+            c3.set('presetClass', 'entr')
+            c3.set('presetSubtype', '0')
+            c3.set('fill', 'hold')
+            c3.set('grpId', '0')
+            c3.set('nodeType', 'clickEffect' if si == 0 else 'withEffect')
+            s3 = SE(c3, qn('p:stCondLst'))
+            SE(s3, qn('p:cond')).set('delay', str(delay_ms))
+            ch3 = SE(c3, qn('p:childTnLst'))
 
-            stCond_effect = etree.SubElement(cTn_effect, qn('p:stCondLst'))
-            cond_effect = etree.SubElement(stCond_effect, qn('p:cond'))
-            cond_effect.set('delay', '0')
+            # <p:set> visibility → visible
+            p_set = SE(ch3, qn('p:set'))
+            cb = SE(p_set, qn('p:cBhvr'))
+            ct = SE(cb, qn('p:cTn'))
+            ct.set('id', nid()); ct.set('dur', '1'); ct.set('fill', 'hold')
+            sc = SE(ct, qn('p:stCondLst'))
+            SE(sc, qn('p:cond')).set('delay', '0')
+            tgt = SE(cb, qn('p:tgtEl'))
+            sp = SE(tgt, qn('p:spTgt'))
+            sp.set('spid', spid)
+            if para_idx is not None:
+                tx = SE(sp, qn('p:txEl'))
+                pr = SE(tx, qn('p:pRg'))
+                pr.set('st', str(para_idx)); pr.set('end', str(para_idx))
+            al = SE(cb, qn('p:attrNameLst'))
+            SE(al, qn('p:attrName')).text = 'style.visibility'
+            to = SE(p_set, qn('p:to'))
+            SE(to, qn('p:strVal')).set('val', 'visible')
 
-            childTnLst_effect = etree.SubElement(cTn_effect, qn('p:childTnLst'))
+    # Prev / Next navigation
+    for evt, tag in [('onPrev', 'p:prevCondLst'),
+                     ('onNext', 'p:nextCondLst')]:
+        cl = SE(seq, qn(tag))
+        c  = SE(cl, qn('p:cond'))
+        c.set('evt', evt); c.set('delay', '0')
+        t  = SE(c, qn('p:tgtEl'))
+        SE(t, qn('p:sldTgt'))
 
-            # ── p:set — visibility toggle (the actual "Appear") ──
-            p_set = etree.SubElement(childTnLst_effect, qn('p:set'))
-
-            cBhvr = etree.SubElement(p_set, qn('p:cBhvr'))
-            cTn_set = etree.SubElement(cBhvr, qn('p:cTn'))
-            cTn_set.set('id', nid())
-            cTn_set.set('dur', '1')
-            cTn_set.set('fill', 'hold')
-            stCond_set = etree.SubElement(cTn_set, qn('p:stCondLst'))
-            cond_set = etree.SubElement(stCond_set, qn('p:cond'))
-            cond_set.set('delay', '0')
-
-            tgtEl = etree.SubElement(cBhvr, qn('p:tgtEl'))
-            spTgt = etree.SubElement(tgtEl, qn('p:spTgt'))
-            spTgt.set('spid', spid)
-
-            attrNameLst = etree.SubElement(cBhvr, qn('p:attrNameLst'))
-            attrName = etree.SubElement(attrNameLst, qn('p:attrName'))
-            attrName.text = 'style.visibility'
-
-            p_to = etree.SubElement(p_set, qn('p:to'))
-            strVal = etree.SubElement(p_to, qn('p:strVal'))
-            strVal.set('val', 'visible')
-
-    # ── Sequence navigation ──
-    prev_cl = etree.SubElement(seq, qn('p:prevCondLst'))
-    prev_c = etree.SubElement(prev_cl, qn('p:cond'))
-    prev_c.set('evt', 'onPrev')
-    prev_c.set('delay', '0')
-    prev_t = etree.SubElement(prev_c, qn('p:tgtEl'))
-    etree.SubElement(prev_t, qn('p:sldTgt'))
-
-    next_cl = etree.SubElement(seq, qn('p:nextCondLst'))
-    next_c = etree.SubElement(next_cl, qn('p:cond'))
-    next_c.set('evt', 'onNext')
-    next_c.set('delay', '0')
-    next_t = etree.SubElement(next_c, qn('p:tgtEl'))
-    etree.SubElement(next_t, qn('p:sldTgt'))
-
-    # ── Build list — shapes start HIDDEN ──
-    bldLst = etree.SubElement(timing, qn('p:bldLst'))
-    for gi, shape in all_anim_shapes:
-        if click_reveal and gi == 0:
-            continue  # First group visible on entry
-        spid = str(shape.shape_id)
-        bldP = etree.SubElement(bldLst, qn('p:bldP'))
-        bldP.set('spid', spid)
-        bldP.set('grpId', '0')
+    # ── Build list — shapes that start HIDDEN ──────────────────────────
+    if hidden_spids:
+        bldLst = SE(timing, qn('p:bldLst'))
+        seen = set()
+        for _gi, shape in all_anim_shapes:
+            spid = shape.shape_id
+            if spid not in hidden_spids or spid in seen:
+                continue
+            seen.add(spid)
+            bp = SE(bldLst, qn('p:bldP'))
+            bp.set('spid', str(spid))
+            bp.set('grpId', '0')
+            bp.set('animBg', '1')
+            if spid in para_build_spids:
+                bp.set('build', 'p')
 
 # ═══════════════════════════════════════════════════════════════════════
 # REUSABLE SLIDE BUILDERS
 # ═══════════════════════════════════════════════════════════════════════
 
-def _finish(slide, num, notes, anim_groups=None, click_reveal=False):
+def _finish(slide, num, notes, anim_groups=None, click_reveal=True,
+            para_build=True):
     """Add logo, slide number, transition, animations, and notes.
 
     num: ignored for int values (auto-numbered); string values (e.g. "A1")
          are used directly for appendix slides.  Use None to skip numbering
          entirely (section dividers).
-    click_reveal: if True, animation groups require a click to advance
-        (use for comparison slides like WER-vs-IS).  Default False =
-        all groups auto-play on slide entry with subtle delays.
+    click_reveal: if True, first animation group visible on entry, rest
+        appear one-by-one on click.  Default True.
+    para_build: if True, multi-paragraph text shapes (bullet lists) reveal
+        one paragraph per click.  Default True.
     """
     if num is None:
         display_num = ""  # Section dividers — no number
@@ -850,7 +856,8 @@ def _finish(slide, num, notes, anim_groups=None, click_reveal=False):
     add_fade_transition(slide)
     if anim_groups:
         try:
-            add_animations(slide, anim_groups, click_reveal=click_reveal)
+            add_animations(slide, anim_groups, click_reveal=click_reveal,
+                           para_build=para_build)
         except Exception:
             pass  # Graceful fallback — slides still render
     set_notes(slide, notes)
