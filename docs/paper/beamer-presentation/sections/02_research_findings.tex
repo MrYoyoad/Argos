@@ -541,7 +541,33 @@
     vs DIY/Home at 30\%. The LLM was trained on TED-talk-style formal speech.
     ~284 segments (19\%) show domain vocabulary confusion --- the model substitutes
     domain-appropriate words with generic TED-talk vocabulary.
-    This directly motivates topic context injection in the roadmap.
+    \\[6pt]
+    \textbf{Where does the 284 come from?} The LLM-as-a-Judge evaluation classified
+    failure modes for all 1,497 segments: 143 tagged ``Total Topic Drift'' (fluent text,
+    completely wrong topic) + 141 tagged ``Phonetically Similar but Wrong Topic''
+    (correct sounds, wrong domain vocabulary) = 284.
+    \\[6pt]
+    \textbf{How would topic labels technically work?} The VSP-LLM architecture prepends
+    a text instruction to visual features before feeding them to Llama-2-7B. The token
+    sequence is: [instruction tokens] [visual encoder features] [label tokens].
+    A topic label would be injected at the \emph{beginning} of the instruction:
+    ``The speaker is discussing \{Topic\}. Recognize this speech in English. Input~:~''
+    --- this is a one-line code change in \texttt{vsp\_llm\_dataset.py}, no model
+    retraining needed.
+    \\[6pt]
+    \textbf{Experiment (March 2026):} We ran this exact experiment on 284 segments.
+    Result: \textbf{topic labels do NOT help} without model fine-tuning.
+    Baseline WER 85.1\% vs Topic WER 85.7\% ($-$0.6pp, worse).
+    33 segments improved, 34 degraded, 88 unchanged (out of 155 decoded).
+    Critical failure: 30 segments (19\%) echoed ``the speaker is discussing technology''
+    literally instead of recognizing speech. Cooking/Food labels made things 12.7pp worse
+    (mislabeled segments). The model was trained with a fixed instruction format;
+    extra tokens shift visual feature positions and break learned attention patterns.
+    This is prompt engineering on a model not trained for it.
+    \\[6pt]
+    \textbf{What would work:} Fine-tune with topic-prefixed instructions in training
+    data so the model learns to use topic context. Requires training data augmentation,
+    not just inference-time prompt changes.
   }
 \end{frame}
 

@@ -151,3 +151,11 @@ User remark: "many slides have bad animations and occlusions"
 | 94 | 57 (slide_29, Fine-tuning) | Plots unreadable — replaced single combined FT_11_clean_summary.png with two separate plots (FT_11a_loss.png, FT_11b_impact.png) at larger size (5.9"×3.4" each). Bigger text, cleaner axes. Bullets shortened below. | done |
 | 95 | 58 (slide_30) | Added GER explanation: "GER = Generative Error Correction: feed N-best hypotheses to a correction LLM that fixes errors" in grey text before the impact line. | done |
 | 96 | 59 (Arabic roadmap) | Added per-topic click animations — each of the 5 requirement categories (encoder, LLM, infra, eval dataset, normalization) appears on separate click. Timeline table + callout appear last. | done |
+
+---
+
+## Batch 7 — 2026-03-05 (Topic Label Experiment)
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 97 | 19 (Domain Mismatch) | User asked: "how technically would topic label injection work?" and "why 284?" — expanded speaker notes with: (1) origin of 284 (143 Total Topic Drift + 141 Phonetically Similar Wrong Topic), (2) technical mechanism (instruction prefix injection in vsp_llm_dataset.py), (3) actual experiment results showing topic labels do NOT help (-0.8pp WER, 20% instruction echoing), (4) what would actually work (fine-tuning with topic-prefixed instructions) | done |
