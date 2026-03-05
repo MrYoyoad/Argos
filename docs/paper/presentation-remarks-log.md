@@ -4,7 +4,7 @@ Tracks all user feedback, remarks, and requests regarding presentation slides so
 
 ---
 
-## Batch 1 — 2026-03-05 (v77 slides)
+## Batch 1 — 2026-03-05 (v77→v76 slides)
 
 | # | Slide | Remark | Status |
 |---|-------|--------|--------|
@@ -32,10 +32,10 @@ Tracks all user feedback, remarks, and requests regarding presentation slides so
 | 22 | 34, 35, 36 | Animations off again | done |
 | 23 | 38 | Lower grey text too high and occluded | done |
 | 24 | 41 | Animation is just of the table — weird | done |
-| 25 | 44, 45 | Videos not working (they worked before) | pending |
-| 26 | 43 | Remove this slide entirely | pending |
-| 27 | 49 | Animations off — wrong order, some parts missing animation | pending |
-| 28 | 54 | Re-order slide content | pending |
+| 25 | 44, 45 | Videos not working (they worked before) | done (switched from add_video_poster to add_video for proper embedding) |
+| 26 | 43 | Remove this slide entirely | done (removed slide_14 from builders list) |
+| 27 | 49 | Animations off — wrong order, some parts missing animation | done (added para_build=False for card-level animation) |
+| 28 | 54 | Re-order slide content | done (captured all shapes, restructured anim_groups) |
 | 29 | 56 | User disagrees with most points — pending user input on what to say | pending |
 | 30 | 58 | Missing explanation on what happens in phase 1 and 2; move plot to later place | done (added phase explanations; plot move deferred) |
 | 31 | 59 | Figure does not appear; wrong placement of grey text | done (copied P3b_is_trajectory.png to plots dir) |
@@ -45,4 +45,4 @@ Tracks all user feedback, remarks, and requests regarding presentation slides so
 | 35 | 64 | Plots not good for human eye; "empty outputs not catastrophic" — change phrasing; wrong order of animations | done (changed "catastrophic" to "identifiable and filterable") |
 | 36 | 66 | Add "3-5 weeks" into animation at the end | done (added timeline callout box as 3rd animation group) |
 | 37 | 71 | Tables overlap — bad | done (pushed heuristic title +0.4in, tbl3 +0.4in down) |
-| 38 | — | Write current version number to keep it updated | pending |
+| 38 | — | Write current version number to keep it updated | done (v76 slides, 2026-03-05) |
