@@ -152,7 +152,7 @@ def slide_26(prs):
     # Academic references
     add_text(slide,
         "References: ROVER (Fiscus 1997)  |  GER (Chen et al. 2024)  |  "
-        "VALLR (Park et al. 2025)  |  LoRA Scaling (Biderman et al. 2024)",
+        "LoRA Scaling (Biderman et al. 2024)",
         MX, Inches(6.65), CW, Inches(0.25),
         size=Pt(8), color=MGRAY, italic=True)
 
@@ -426,7 +426,6 @@ def slide_30(prs):
         ], CORAL),
         ("Future", [
             "Arabic (K-means model exists)",
-            "VALLR: 18.7% WER with 3B model",
             "Multi-speaker, streaming",
         ], LGRAY),
     ]
@@ -450,7 +449,6 @@ def slide_30(prs):
 
     # Academic references
     add_text(slide,
-        "VALLR: Park et al. (2025), ICCV — 18.7% WER on LRS3, 3B params  |  "
         "GER: Chen et al. (2024), ICASSP  |  "
         "Scaling Laws: Hoffmann et al. (2022), NeurIPS (Chinchilla)",
         MX, Inches(6.55), CW, Inches(0.3),
@@ -461,8 +459,8 @@ def slide_30(prs):
         "8B is trivial — same hidden dimension, 1-2 hours. Center: 7 prompt "
         "strategies are a force multiplier — more effective on stronger "
         "models. GER uses N-best hypotheses + correction LLM for +8-15pp "
-        "with no retraining. Right: Arabic support exists, VALLR achieves "
-        "18.7% WER with a 3B model.",
+        "with no retraining. Right: Arabic support planned, multi-speaker "
+        "and streaming as future extensions.",
         col_groups)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -489,9 +487,9 @@ def slide_arabic_roadmap(prs):
 
     topics = [
         (TEAL,  "Arabic AV-HuBERT encoder (BOTTLENECK)",
-         "Fine-tune English AV-HuBERT on Arabic visual speech data \u2014 "
-         "Arabic visual data availability is UNKNOWN; AVSpeech has some "
-         "Arabic videos but quality/quantity unverified"),
+         "AV-HuBERT learned English mouth shapes (visemes). Arabic has different "
+         "phonemes (pharyngeals, emphatics) producing distinct lip movements \u2014 "
+         "without fine-tuning, Arabic lips map to wrong English clusters"),
         (TEAL,  "Arabic LLM backend",
          "Swap Llama-2 for Arabic-capable LLM (e.g. Jais, AceGPT, "
          "or Arabic-tuned Llama 3) \u2014 Arabic tokenizer quality varies"),
@@ -516,7 +514,7 @@ def slide_arabic_roadmap(prs):
             detail,
         ], MX, by, col_w, Inches(0.75), size=Pt(13)))
         topic_groups.append(grp)
-        by += Inches(0.85)
+        by += Inches(0.75)
 
     # Right — timeline with practical details
     rx = MX + col_w + gap
@@ -525,12 +523,10 @@ def slide_arabic_roadmap(prs):
 
     headers = ["Step", "Effort", "Risks / Unknowns"]
     rows = [
-        ["AV-HuBERT\nfine-tune", "4\u20138 weeks", "Arabic visual data\nquality unknown"],
-        ["Arabic K-means", "1\u20132 weeks", "May need multiple\niterations"],
+        ["AV-HuBERT fine-tune\n+ K-means", "5\u201310 weeks", "Arabic visual data\nquality unknown"],
         ["Arabic LLM\nswap", "1\u20132 weeks", "Tokenizer quality\nvaries by model"],
         ["Eval dataset", "4\u20138 weeks", "No benchmark exists;\nneeds native speakers"],
-        ["RTL text &\nnormalization", "2\u20134 weeks", "RTL handling may\nneed research"],
-        ["Pipeline config\n& testing", "2\u20134 weeks", "End-to-end\nvalidation"],
+        ["RTL normalization\n+ testing", "3\u20136 weeks", "RTL handling +\nend-to-end validation"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
                     row_height=Inches(0.55),
@@ -538,19 +534,19 @@ def slide_arabic_roadmap(prs):
                     text_size=Pt(11))
 
     # Timeline summary callout (below last topic item which extends to ~y=6.05")
-    timeline_box = add_rect(slide, MX, Inches(6.15), CW, Inches(0.55),
+    timeline_box = add_rect(slide, MX, Inches(5.85), CW, Inches(0.55),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
     timeline_txt = add_text(slide,
-             "Realistic estimate: 4\u20136 months (encoder pre-training is the bottleneck)",
-             MX + Inches(0.3), Inches(6.20), CW - Inches(0.6), Inches(0.4),
+             "Realistic estimate: 3\u20135 months (encoder pre-training is the bottleneck)",
+             MX + Inches(0.3), Inches(5.90), CW - Inches(0.6), Inches(0.4),
              size=Pt(20), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
 
     # Bottom note (below callout box)
     note = add_text(slide,
         "Pipeline code is language-agnostic. Main bottlenecks: encoder pre-training "
         "data and eval dataset collection. No Arabic lip-reading benchmark exists.",
-        MX, Inches(6.75), CW, Inches(0.35),
+        MX, Inches(6.45), CW, Inches(0.35),
         size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Animation: title → each topic one by one → right column → callout
@@ -558,18 +554,18 @@ def slide_arabic_roadmap(prs):
 
     _finish(slide, 0,
         "Arabic replication roadmap with realistic, conservative estimates. "
+        "Key insight: AV-HuBERT learned English visemes \u2014 Arabic has different "
+        "phonemes (pharyngeals, emphatics) producing distinct lip movements, so "
+        "fine-tuning is essential, not optional.\n\n"
         "Key unknowns and bottlenecks:\n"
-        "1. Arabic visual data availability is unverified \u2014 AVSpeech has some "
-        "Arabic videos but quality/quantity need assessment.\n"
+        "1. Arabic visual data quality unverified for AV-HuBERT fine-tuning.\n"
         "2. No Arabic lip-reading benchmark exists \u2014 eval dataset must be "
         "built from scratch with native speakers.\n"
-        "3. RTL text handling and Arabic NER tooling maturity is unknown.\n"
-        "4. Encoder pre-training is the bottleneck (4-8 weeks alone).\n\n"
-        "Steps: fine-tune AV-HuBERT on Arabic (4-8 weeks), recluster K-means "
-        "(1-2 weeks), swap to Arabic LLM (1-2 weeks), build eval dataset "
-        "(4-8 weeks, parallel), RTL normalization (2-4 weeks), end-to-end "
-        "testing (2-4 weeks). Total 4-6 months realistic. Pipeline code "
-        "itself is language-agnostic.",
+        "3. RTL text handling and Arabic NER tooling maturity is unknown.\n\n"
+        "Steps: fine-tune AV-HuBERT + recluster K-means (5-10 weeks), swap to "
+        "Arabic LLM (1-2 weeks), build eval dataset (4-8 weeks, parallel), "
+        "RTL normalization + end-to-end testing (3-6 weeks). Total 3-5 months "
+        "realistic. Pipeline code itself is language-agnostic.",
         anim, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1141,8 +1137,8 @@ def slide_data_scaling(prs):
          ["Phase 2", "10K hrs", "48\u201352%", "~3.3", "4\u20136 wks"],
          ["Phase 3", "20K hrs", "42\u201346%", "~3.7", "6\u20138 wks"],
          ["Phase 4", "50K+ hrs", "38\u201342%", "~4.0+", "3\u20134 mo"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(11),
-        col_widths=[Inches(0.9), Inches(1.0), Inches(1.0), Inches(0.9), Inches(1.0)],
+        rx, CT + Inches(0.5), col_w, text_size=Pt(13),
+        col_widths=[Inches(1.0), Inches(1.1), Inches(1.1), Inches(1.0), Inches(1.1)],
         row_colors={0: {2: CORAL}, 3: {3: GREEN}, 4: {3: GREEN}})
 
     # AVSpeech callout
@@ -1156,6 +1152,12 @@ def slide_data_scaling(prs):
              rx + Inches(1.5), CT + Inches(3.1), col_w - Inches(1.7),
              Inches(0.7), size=Pt(13), color=WHITE)
 
+    realistic_note = add_text(slide,
+        "Timelines assume realistic training: bugs, bad epochs, debugging overhead \u2014 "
+        "not ideal paper conditions.",
+        rx, CT + Inches(4.1), col_w, Inches(0.35),
+        size=Pt(10), color=LGRAY, italic=True)
+
     # Academic references
     add_text(slide,
         "LoRA Scaling: Biderman et al. (2024), ICLR  |  "
@@ -1168,7 +1170,7 @@ def slide_data_scaling(prs):
         "law. Current 1,273 segments is far below minimum. 20K segments with "
         "Llama 3.1 8B projects to IS 3.5-4.0 (55-65% captured). AVSpeech has "
         "290K videos available for training data curation.",
-        [[lt, lb], [rt, tbl, r1]], click_reveal=True)
+        [[lt, lb], [rt], [tbl], [r1, realistic_note]], click_reveal=True)
 
 
 def slide_price_tag(prs):
