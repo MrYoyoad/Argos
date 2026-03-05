@@ -35,8 +35,8 @@ def slide_24(prs):
     add_title(slide, "Starting from 40%, Not 11%")
     add_accent_line(slide)
 
-    col_w = Inches(3.8)
-    img_w = Inches(4.2)
+    col_w = Inches(3.6)
+    img_w = Inches(4.0)
     gap = Inches(0.3)
 
     # Left column — WER Says (coral)
@@ -442,17 +442,17 @@ def slide_30(prs):
     total = 3 * cw + 2 * gap
     cx = (SL_W - total) / 2
 
-    col_shapes = []
+    col_groups = []
     for i, (title, items, color) in enumerate(cols):
         x = cx + i * (cw + gap)
         r = add_rect(slide, x, CT, cw, Inches(4.8), fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, title, x + Inches(0.2), CT + Inches(0.15),
+        t = add_text(slide, title, x + Inches(0.2), CT + Inches(0.15),
                  cw - Inches(0.4), Inches(0.45),
                  size=Pt(15), color=color, bold=True, align=PP_ALIGN.CENTER)
-        add_bullets(slide, items, x + Inches(0.2), CT + Inches(0.7),
+        b = add_bullets(slide, items, x + Inches(0.2), CT + Inches(0.7),
                     cw - Inches(0.4), Inches(3.5), size=Pt(13))
-        col_shapes.append(r)
+        col_groups.append([r, t, b])
 
     _finish(slide, 30,
         "Three columns of future capability. Left: LLM swap to Llama 3.1 "
@@ -461,7 +461,7 @@ def slide_30(prs):
         "models. GER uses N-best hypotheses + correction LLM for +8-15pp "
         "with no retraining. Right: Arabic support exists, VALLR achieves "
         "18.7% WER with a 3B model.",
-        [col_shapes])
+        col_groups)
 
 # ═══════════════════════════════════════════════════════════════════════
 # ARABIC PIPELINE ROADMAP
@@ -518,14 +518,6 @@ def slide_arabic_roadmap(prs):
                     row_height=Inches(0.6),
                     col_widths=[Inches(1.6), Inches(1.3), Inches(2.6)],
                     text_size=Pt(12))
-
-    # Total callout — positioned below table with clearance
-    add_rect(slide, rx, CT + Inches(4.05), col_w, Inches(0.55),
-             fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
-             corner_radius=True)
-    add_text(slide, "Total: ~3\u20135 weeks",
-             rx + Inches(0.2), CT + Inches(4.1), col_w - Inches(0.4), Inches(0.4),
-             size=Pt(18), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
 
     # Bottom
     add_text(slide,
@@ -584,7 +576,7 @@ def slide_31(prs):
     gap = Inches(0.12)
     circle_d = Inches(0.55)
 
-    point_shapes = []
+    card_groups = []
     for i, (num, text) in enumerate(takeaways):
         y = CT + i * (card_h + gap)
 
@@ -599,7 +591,7 @@ def slide_31(prs):
         circle.fill.solid()
         circle.fill.fore_color.rgb = TEAL
         circle.line.fill.background()
-        add_text(slide, num, MX + Inches(0.2), cy,
+        nt = add_text(slide, num, MX + Inches(0.2), cy,
                  circle_d, circle_d,
                  size=Pt(22), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
@@ -608,14 +600,14 @@ def slide_31(prs):
                       MX + Inches(1.0), y + Inches(0.12),
                       CW - Inches(1.2), card_h - Inches(0.24),
                       size=Pt(15), color=WHITE)
-        point_shapes.append(r)
+        card_groups.append([r, circle, nt, tb])
 
     _finish(slide, 31,
         "Four takeaways. One: rigorous assessment with novel IS metric. "
         "Two: production system delivered. Three: data is the bottleneck "
         "(fine-tuning proved it). Four: clear roadmap from IS 2.52 to "
         "3.5-4.0, each phase targeting a different failure category.",
-        [point_shapes], click_reveal=True)
+        card_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # APPENDIX SLIDES (A1–A13)
@@ -1055,7 +1047,7 @@ def slide_insights(prs):
     step_h = Inches(0.85)
     start_y = CT
 
-    shapes = []
+    insight_groups = []
     for i, (num, title, detail, color) in enumerate(insights):
         y = start_y + i * (step_h + Inches(0.1))
 
@@ -1065,23 +1057,23 @@ def slide_insights(prs):
         circle.fill.solid()
         circle.fill.fore_color.rgb = color
         circle.line.fill.background()
-        add_text(slide, num, MX, y + Inches(0.1),
+        nt = add_text(slide, num, MX, y + Inches(0.1),
                  Inches(0.5), Inches(0.5),
                  size=Pt(18), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
-        add_rich_text(slide, [
+        rt = add_rich_text(slide, [
             [(title, {"size": Pt(14), "color": WHITE, "bold": True})],
             [(detail, {"size": Pt(11), "color": LGRAY})],
         ], MX + Inches(0.7), y + Inches(0.02),
            CW - Inches(0.8), step_h - Inches(0.04))
-        shapes.append(circle)
+        insight_groups.append([circle, nt, rt])
 
     _finish(slide, 0,
         "Five key research insights. The visual encoder is the bottleneck. "
         "WER dramatically overstates failure. Domain mismatch is the primary "
         "quality driver. Data scarcity limits fine-tuning. And gains are "
         "multiplicative — stronger LLM times more data times smart prompts.",
-        [shapes])
+        insight_groups)
 
 
 def slide_data_scaling(prs):

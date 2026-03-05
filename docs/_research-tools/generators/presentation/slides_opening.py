@@ -170,18 +170,18 @@ def slide_toc(prs):
          "Arabic pipeline \u2022 Target: IS 3.5\u20134.0",
          TEAL),
     ]
-    shapes = []
+    card_groups = []
     y = CT + Inches(0.1)
     for sec_title, desc, color in sections:
         r = add_rect(slide, MX, y, CW, Inches(1.05), fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
-        add_text(slide, sec_title, MX + Inches(0.3), y + Inches(0.1),
+        t1 = add_text(slide, sec_title, MX + Inches(0.3), y + Inches(0.1),
                  CW - Inches(0.6), Inches(0.4),
                  size=Pt(22), color=WHITE, bold=True)
-        add_text(slide, desc, MX + Inches(0.3), y + Inches(0.55),
+        t2 = add_text(slide, desc, MX + Inches(0.3), y + Inches(0.55),
                  CW - Inches(0.6), Inches(0.4),
                  size=Pt(13), color=LGRAY)
-        shapes.append(r)
+        card_groups.append([r, t1, t2])
         y += Inches(1.25)
 
     _finish(slide, 3,
@@ -189,7 +189,7 @@ def slide_toc(prs):
         "how the system works. Research findings are the core: our novel "
         "evaluation framework and what we learned. Engineering covers the "
         "production system. Future directions lays out the improvement roadmap.",
-        [[s] for s in shapes], click_reveal=True)
+        card_groups, click_reveal=True)
 
 
 def slide_is_foreshadow(prs):
@@ -326,7 +326,8 @@ def slide_03(prs):
         ("Linear Projection", "1024 → 4096", LGRAY),
         ("LLaMA-2-7B", "4-bit QLoRA, r=16", CORAL),
     ]
-    blocks = []
+    block_groups = []
+    arrows = []
     for i, (name, desc, border) in enumerate(labels):
         x = bx + i * (bw + gap)
         r = add_rect(slide, x, by, bw, bh, fill_color=NAVY2, border_color=border,
@@ -334,13 +335,14 @@ def slide_03(prs):
         tb = add_text(slide, f"{name}\n{desc}", x + Inches(0.1), by + Inches(0.05),
                       bw - Inches(0.2), bh - Inches(0.1),
                       size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
-        blocks.append(r)
+        block_groups.append([r, tb])
 
     # Arrow indicators between blocks
     for i in range(2):
         ax = bx + (i + 1) * bw + i * gap + Inches(0.05)
-        add_text(slide, "→", ax, by + Inches(0.1), gap - Inches(0.1), Inches(0.5),
+        ar = add_text(slide, "→", ax, by + Inches(0.1), gap - Inches(0.1), Inches(0.5),
                  size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+        arrows.append(ar)
 
     # Bottom note
     add_text(slide,
@@ -356,7 +358,7 @@ def slide_03(prs):
         "generates text. Key: only the LoRA adapters and projection layer are "
         "trained — 12.6M of 7B parameters. And the LLM is swappable: Llama 3.1 "
         "8B has the same hidden dimension, making it a trivial 1-2 hour swap.",
-        [[img], blocks], click_reveal=True)
+        [[img], block_groups[0] + [arrows[0]] + block_groups[1] + [arrows[1]] + block_groups[2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 4 — THE BENCHMARK
@@ -566,7 +568,7 @@ def slide_data_flow(prs):
     start_y = CT + Inches(0.1)
     start_x = MX + Inches(0.8)
 
-    step_shapes = []
+    step_groups = []
     for i, (num, name, desc, color) in enumerate(steps):
         y = start_y + i * (step_h + Inches(0.15))
         r = add_rect(slide, start_x, y, step_w, step_h, fill_color=NAVY2,
@@ -579,23 +581,26 @@ def slide_data_flow(prs):
         circle.fill.solid()
         circle.fill.fore_color.rgb = color
         circle.line.fill.background()
-        add_text(slide, num, start_x - Inches(0.7), y + Inches(0.1),
+        num_txt = add_text(slide, num, start_x - Inches(0.7), y + Inches(0.1),
                  Inches(0.55), Inches(0.55),
                  size=Pt(20), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
-        add_rich_text(slide, [
+        rt = add_rich_text(slide, [
             [(name, {"size": Pt(16), "color": WHITE, "bold": True}),
              (f"  \u2014  {desc}", {"size": Pt(13), "color": LGRAY})],
         ], start_x + Inches(0.2), y + Inches(0.1),
            step_w - Inches(0.4), step_h - Inches(0.2))
 
+        group = [r, circle, num_txt, rt]
+
         # Arrow between steps
         if i < len(steps) - 1:
-            add_text(slide, "\u2193", start_x + step_w / 2 - Inches(0.2),
+            arrow = add_text(slide, "\u2193", start_x + step_w / 2 - Inches(0.2),
                      y + step_h - Inches(0.05), Inches(0.4), Inches(0.3),
                      size=Pt(16), color=TEAL, align=PP_ALIGN.CENTER)
+            group.append(arrow)
 
-        step_shapes.append(r)
+        step_groups.append(group)
 
     add_text(slide,
         "Visual encoder is frozen (pre-trained on LRS3). Only projection + LoRA adapters are trained.",
@@ -607,7 +612,7 @@ def slide_data_flow(prs):
         "region. AV-HuBERT extracts 1024-dim visual features. Linear projection "
         "maps to 4096-dim LLM input space. LLaMA-2-7B generates text. The visual "
         "encoder is frozen — only the projection layer and LoRA adapters are trained.",
-        [step_shapes])
+        step_groups)
 
 
 def slide_eval_dataset(prs):

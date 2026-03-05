@@ -220,20 +220,20 @@ def slide_is_signals(prs):
 
         r = add_rect(slide, x, y, bw, bh, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, f"{name} {weight}", x + Inches(0.15), y + Inches(0.06),
+        t1 = add_text(slide, f"{name} {weight}", x + Inches(0.15), y + Inches(0.06),
                  bw - Inches(0.3), Inches(0.28),
                  size=Pt(14), color=color, bold=True)
-        add_text(slide, question, x + Inches(0.15), y + Inches(0.34),
+        t2 = add_text(slide, question, x + Inches(0.15), y + Inches(0.34),
                  bw - Inches(0.3), Inches(0.28),
                  size=Pt(12), color=WHITE)
-        add_text(slide, how, x + Inches(0.15), y + Inches(0.62),
+        t3 = add_text(slide, how, x + Inches(0.15), y + Inches(0.62),
                  bw - Inches(0.3), Inches(0.28),
                  size=Pt(10), color=LGRAY, italic=True)
-        add_text(slide, f"\u25b8 {why_weight}",
+        t4 = add_text(slide, f"\u25b8 {why_weight}",
                  x + Inches(0.15), y + Inches(0.92),
                  bw - Inches(0.3), Inches(0.68),
                  size=Pt(11), color=GOLD)
-        anim_groups.append([r])
+        anim_groups.append([r, t1, t2, t3, t4])
 
     # Formula at bottom
     add_text(slide,
@@ -524,10 +524,11 @@ def slide_07(prs):
         x = bx + i * (bw + gap)
         r = add_rect(slide, x, by, bw, bh, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, f"{label}\n({weight})", x + Inches(0.1), by + Inches(0.1),
+        t = add_text(slide, f"{label}\n({weight})", x + Inches(0.1), by + Inches(0.1),
                  bw - Inches(0.2), bh - Inches(0.2),
                  size=Pt(11), color=WHITE, align=PP_ALIGN.CENTER)
         signal_shapes.append(r)
+        signal_shapes.append(t)
 
     # Key callout
     callout = add_text(slide,
@@ -554,10 +555,11 @@ def slide_07(prs):
     tier_shapes = []
     for i, (label, val, color) in enumerate(tiers):
         y = bar_y + i * (bar_h + bar_gap)
-        add_text(slide, label, MX, y, label_w, bar_h,
+        lbl = add_text(slide, label, MX, y, label_w, bar_h,
                  size=Pt(13), color=WHITE, align=PP_ALIGN.RIGHT)
         w = int(max_w * val / 25.0)  # scale to max
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color)
+        tier_shapes.append(lbl)
         tier_shapes.append(bar)
 
     _finish(slide, 7,
@@ -568,7 +570,7 @@ def slide_07(prs):
         "rubric, selected signals and weights, defined tier boundaries. "
         "Validated across 16 decode configs: LLM heuristic judge r=0.925 "
         "with IS, 88.6% agreement.",
-        None)
+        [signal_shapes, [callout], tier_shapes], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 8 — FAILURE MODE TAXONOMY (BAR CHART)
@@ -602,21 +604,21 @@ def slide_08(prs):
     bar_x = MX + label_w + Inches(0.2)
     start_y = CT + Inches(0.55)
 
-    bar_shapes = []
+    bar_groups = []
     for i, (name, pct, count, color) in enumerate(modes):
         y = start_y + i * (bar_h + bar_gap)
         # Label
-        add_text(slide, name, MX, y, label_w, bar_h,
+        lbl = add_text(slide, name, MX, y, label_w, bar_h,
                  size=Pt(16), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
         # Bar
         w = max(Inches(0.2), int(max_bar_w * pct / 32.0))
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color,
                        corner_radius=True)
-        bar_shapes.append(bar)
         # Value label
-        add_text(slide, f"{pct}% ({count})",
+        val = add_text(slide, f"{pct}% ({count})",
                  bar_x + w + Inches(0.15), y, Inches(1.8), bar_h,
                  size=Pt(14), color=LGRAY)
+        bar_groups.append([lbl, bar, val])
 
     add_text(slide,
              "Failures are diverse — no single fix. Each roadmap phase "
@@ -630,7 +632,7 @@ def slide_08(prs):
         "Hallucination (12.3%) is the most dangerous: fluent, confident, "
         "completely fabricated. Right Topic Wrong Details (22.7%) loses names and "
         "numbers. This taxonomy maps directly to our roadmap.",
-        None)
+        bar_groups)
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — DEFINITIONS & CLASSIFICATION RULES
@@ -695,30 +697,30 @@ def slide_failure_deep_1a(prs):
                      border_color=color, border_width=Pt(2), corner_radius=True)
 
         # Left: category name + percentage
-        add_text(slide, f"{name}  ({pct})",
+        t1 = add_text(slide, f"{name}  ({pct})",
                  MX + Inches(0.2), y + Inches(0.05),
                  name_w - Inches(0.3), Inches(0.3),
                  size=Pt(15), color=color, bold=True)
 
         # Left: one-line description + count
-        add_text(slide, f"{desc}  \u2014  {count}",
+        t2 = add_text(slide, f"{desc}  \u2014  {count}",
                  MX + Inches(0.2), y + Inches(0.38),
                  name_w - Inches(0.3), Inches(0.45),
                  size=Pt(11), color=LGRAY)
 
         # Right: detection rule
-        add_text(slide, f"Rule: {rule}",
+        t3 = add_text(slide, f"Rule: {rule}",
                  MX + name_w, y + Inches(0.06),
                  rule_w - Inches(0.15), Inches(0.35),
                  size=Pt(12), color=WHITE)
 
         # Right: example
-        add_text(slide, f"\u25b8 {example}",
+        t4 = add_text(slide, f"\u25b8 {example}",
                  MX + name_w, y + Inches(0.45),
                  rule_w - Inches(0.15), Inches(0.35),
                  size=Pt(11), color=LGRAY, italic=True)
 
-        anim_groups.append([r])
+        anim_groups.append([r, t1, t2, t3, t4])
 
     # Priority order footer
     add_text(slide,
@@ -1152,61 +1154,59 @@ def slide_tuning_summary(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — What we tested
+    # Left — What we tested (3 short bullets, generous spacing)
     lt = add_text(slide, "What We Tested", MX, CT, col_w, Inches(0.35),
                   size=Pt(18), color=TEAL, bold=True)
     lb = add_bullets(slide, [
-        "4 decode parameters: beam size, length penalty, temperature, sampling",
-        "13 systematic experiments (A\u2013M) on 107 segments",
-        "Best config (J) validated on full 1,497 segments",
-        "Parameters explored: beam 5\u201350, lenpen \u22120.5 to 2.0, temp 0.3\u20131.5",
-    ], MX, CT + Inches(0.45), col_w, Inches(2.5), size=Pt(14))
+        "Beam size, length penalty, temperature, sampling",
+        "13 experiments (A\u2013M) on 107-segment subset",
+        "Best config (J) validated on all 1,497 segments",
+    ], MX, CT + Inches(0.5), col_w, Inches(1.8), size=Pt(14))
 
-    # Callout box
-    r1 = add_rect(slide, MX, CT + Inches(3.1), col_w, Inches(1.8),
+    # Callout box — key finding (more vertical room)
+    r1 = add_rect(slide, MX, CT + Inches(2.6), col_w, Inches(2.2),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
     kf_title = add_text(slide, "Key Finding",
-             MX + Inches(0.2), CT + Inches(3.2), col_w - Inches(0.4), Inches(0.3),
-             size=Pt(14), color=CORAL, bold=True)
+             MX + Inches(0.25), CT + Inches(2.75), col_w - Inches(0.5), Inches(0.3),
+             size=Pt(16), color=CORAL, bold=True)
     kf_bullets = add_bullets(slide, [
-        "Per-segment quality rankings identical across configs (r > 0.92)",
-        "A \u201cgood\u201d segment is good in ALL configs; a \u201cbad\u201d one is always bad",
-        ("The bottleneck is the visual encoder, not decode parameters",
+        "Segment rankings identical across all configs (r > 0.92)",
+        "Good segments stay good; bad ones stay bad regardless",
+        ("Bottleneck = visual encoder, not decode parameters",
          {"bold": True, "color": CORAL}),
-    ], MX + Inches(0.2), CT + Inches(3.55), col_w - Inches(0.4), Inches(1.2),
+    ], MX + Inches(0.25), CT + Inches(3.15), col_w - Inches(0.5), Inches(1.5),
        size=Pt(13))
 
     # Right — What we found
-    rx = MX + col_w + gap  # slide_tuning_summary right col
+    rx = MX + col_w + gap
     rt = add_text(slide, "What We Found", rx, CT, col_w, Inches(0.35),
                   size=Pt(18), color=CORAL, bold=True)
 
-    # Config J definition note
+    # Config J note (shorter)
     j_note = add_text(slide,
-        "Config J = lenpen=1.0, temp=0.5 (length penalty forces output, "
-        "low temperature reduces randomness)",
-        rx, CT + Inches(0.35), col_w, Inches(0.3),
-        size=Pt(11), color=MGRAY, italic=True)
+        "Config J: lenpen=1.0, temp=0.5",
+        rx, CT + Inches(0.4), col_w, Inches(0.25),
+        size=Pt(12), color=MGRAY, italic=True)
 
-    headers = ["Metric", "Baseline", "Best (J)", "\u0394"]
+    headers = ["Metric", "Baseline", "Config J", "\u0394"]
     rows = [
         ["Mean IS", "2.52", "2.60", "+0.08"],
         ["Captured (IS\u22653)", "39.9%", "41.2%", "+1.3pp"],
-        ["Empty outputs", "70 (4.7%)", "0 (0%)", "\u221270"],
-        ["Hallucinations", "307 (20.5%)", "348 (23.2%)", "+41"],
+        ["Empty outputs", "4.7%", "0%", "\u221270"],
+        ["Hallucinations", "20.5%", "23.2%", "+41"],
         ["Mean WWER", "61.9%", "59.8%", "\u22122.1pp"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.75), col_w,
-                    row_height=Inches(0.4),
+                    row_height=Inches(0.38),
                     col_widths=[Inches(1.7), Inches(1.2), Inches(1.2), Inches(1.4)],
-                    text_size=Pt(11))
+                    text_size=Pt(12))
 
-    # Bottom verdict
+    # Verdict — clear of table with breathing room
     verdict = add_text(slide,
-        "Config J eliminates empties but adds hallucinations. "
-        "Net IS gain: +0.08. Tuning is mitigation, not a cure.",
-        rx, CT + Inches(3.3), col_w, Inches(0.7),
+        "Eliminates empties but adds hallucinations.\n"
+        "Net IS gain: +0.08 \u2014 tuning is mitigation, not a cure.",
+        rx, CT + Inches(2.95), col_w, Inches(0.8),
         size=Pt(14), color=LGRAY, italic=True)
 
     _finish(slide, 0,
@@ -1317,36 +1317,36 @@ def slide_is_dimensions(prs):
     cx = (SL_W - total) / 2
     cy = CT + Inches(0.55)
 
-    card_shapes = []
+    card_groups = []
     for i, (name, pct, label, signals, insight, color) in enumerate(dims):
         x = cx + i * (cw_card + gap)
         r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2.5), corner_radius=True)
 
         # Big percentage
-        add_text(slide, pct, x + Inches(0.2), cy + Inches(0.2),
+        t1 = add_text(slide, pct, x + Inches(0.2), cy + Inches(0.2),
                  cw_card - Inches(0.4), Inches(0.6),
                  size=Pt(36), color=color, bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, label, x + Inches(0.2), cy + Inches(0.8),
+        t2 = add_text(slide, label, x + Inches(0.2), cy + Inches(0.8),
                  cw_card - Inches(0.4), Inches(0.35),
                  size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
 
         # Name
-        add_text(slide, name, x + Inches(0.2), cy + Inches(1.3),
+        t3 = add_text(slide, name, x + Inches(0.2), cy + Inches(1.3),
                  cw_card - Inches(0.4), Inches(0.35),
                  size=Pt(16), color=color, bold=True, align=PP_ALIGN.CENTER)
 
         # Signals
-        add_text(slide, signals, x + Inches(0.2), cy + Inches(1.8),
+        t4 = add_text(slide, signals, x + Inches(0.2), cy + Inches(1.8),
                  cw_card - Inches(0.4), Inches(0.8),
                  size=Pt(13), color=WHITE, align=PP_ALIGN.CENTER)
 
         # Insight
-        add_text(slide, insight, x + Inches(0.2), cy + Inches(2.8),
+        t5 = add_text(slide, insight, x + Inches(0.2), cy + Inches(2.8),
                  cw_card - Inches(0.4), Inches(0.8),
                  size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-        card_shapes.append(r)
+        card_groups.append([r, t1, t2, t3, t4, t5])
 
     _finish(slide, 0,
         "PCA analysis reveals three independent dimensions. Word Accuracy "
@@ -1360,7 +1360,7 @@ def slide_is_dimensions(prs):
         "is moderately correlated with word accuracy. Length ratio is the most "
         "independent dimension (9.1% of total variance). This confirms these "
         "are genuinely 3 independent dimensions, not redundant signals.",
-        [[c] for c in card_shapes], click_reveal=True)
+        card_groups, click_reveal=True)
 
 
 def slide_domain_mismatch(prs):
@@ -1450,7 +1450,7 @@ def slide_decode_params(prs):
 
     bw = Inches(5.5)
     bh = Inches(1.1)
-    shapes = []
+    card_groups = []
     for i, (name, desc, analogy, range_str, color) in enumerate(params):
         col = i % 2
         row = i // 2
@@ -1459,17 +1459,17 @@ def slide_decode_params(prs):
 
         r = add_rect(slide, x, y, bw, bh, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, name, x + Inches(0.2), y + Inches(0.08),
+        t1 = add_text(slide, name, x + Inches(0.2), y + Inches(0.08),
                  bw - Inches(0.4), Inches(0.3),
                  size=Pt(15), color=color, bold=True)
-        add_text(slide, desc, x + Inches(0.2), y + Inches(0.4),
+        t2 = add_text(slide, desc, x + Inches(0.2), y + Inches(0.4),
                  bw - Inches(0.4), Inches(0.3),
                  size=Pt(12), color=WHITE)
-        add_text(slide, f"{analogy}  \u2022  Range: {range_str}",
+        t3 = add_text(slide, f"{analogy}  \u2022  Range: {range_str}",
                  x + Inches(0.2), y + Inches(0.72),
                  bw - Inches(0.4), Inches(0.3),
                  size=Pt(11), color=LGRAY, italic=True)
-        shapes.append(r)
+        card_groups.append([r, t1, t2, t3])
 
     # Bottom quote
     add_text(slide,
@@ -1488,7 +1488,7 @@ def slide_decode_params(prs):
         "bias toward longer or shorter. Temperature: randomness. Sampling: greedy "
         "vs stochastic. Like a stereo equalizer — you can adjust the dials but "
         "the speakers (visual encoder) determine the sound quality.",
-        [shapes])
+        card_groups)
 
 
 def slide_research_transition(prs):

@@ -380,17 +380,17 @@ def slide_25b(prs):
     ]
 
     py = CT + Inches(0.55)
-    cat_shapes = []
+    card_groups = []
     for name, count, color, desc in categories:
         r = add_rect(slide, MX, py, CW, Inches(0.7), fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
-        cat_shapes.append(r)
-        add_text(slide, f"{name} ({count})",
+        t1 = add_text(slide, f"{name} ({count})",
                  MX + Inches(0.2), py + Inches(0.05), Inches(3.0), Inches(0.3),
                  size=Pt(13), color=color, bold=True)
-        add_text(slide, desc,
+        t2 = add_text(slide, desc,
                  MX + Inches(3.3), py + Inches(0.08), Inches(8.5), Inches(0.55),
                  size=Pt(11), color=LGRAY)
+        card_groups.append([r, t1, t2])
         py += Inches(0.78)
 
     add_text(slide,
@@ -402,7 +402,7 @@ def slide_25b(prs):
         "6 salvage categories explained in plain English. Phonetic Bridge is "
         "the largest (93 segments). Categories overlap. Each represents a "
         "different mechanism by which meaning survives despite high WER.",
-        [cat_shapes])
+        card_groups)
 
 
 def slide_25c(prs):

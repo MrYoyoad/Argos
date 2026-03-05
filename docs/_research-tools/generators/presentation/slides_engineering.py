@@ -399,18 +399,18 @@ def slide_21(prs):
     cx = (SL_W - total) / 2
     cy = CT + Inches(0.2)
 
-    card_shapes = []
+    card_groups = []
     for i, (title, desc, color) in enumerate(cards):
         x = cx + i * (cw + gap)
         r = add_rect(slide, x, cy, cw, ch, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, title, x + Inches(0.15), cy + Inches(0.3),
+        t1 = add_text(slide, title, x + Inches(0.15), cy + Inches(0.3),
                  cw - Inches(0.3), Inches(0.5),
                  size=Pt(16), color=color, bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, desc, x + Inches(0.15), cy + Inches(0.95),
+        t2 = add_text(slide, desc, x + Inches(0.15), cy + Inches(0.95),
                  cw - Inches(0.3), Inches(2.7),
                  size=Pt(12), color=WHITE)
-        card_shapes.append(r)
+        card_groups.append([r, t1, t2])
 
     _finish(slide, 21,
         "Four intelligent features. Transcription reuse: manual corrections "
@@ -428,7 +428,7 @@ def slide_21(prs):
         "meaning preservation (Semantic, 28.5%), and output sanity (Length, "
         "9.1%). Cross-config validation across 16 decode configs: r=0.925, "
         "88.6% agreement, Cohen's kappa 0.773.",
-        [[c] for c in card_shapes], click_reveal=True)
+        card_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 22 — EVALUATION INFRASTRUCTURE
@@ -533,21 +533,21 @@ def slide_three_repos(prs):
     cx = (SL_W - total) / 2
     cy = CT + Inches(0.2)
 
-    card_shapes = []
+    card_groups = []
     for i, (name, role, desc, color) in enumerate(repos):
         x = cx + i * (cw_card + gap)
         r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2.5), corner_radius=True)
-        add_text(slide, name, x + Inches(0.2), cy + Inches(0.2),
+        t1 = add_text(slide, name, x + Inches(0.2), cy + Inches(0.2),
                  cw_card - Inches(0.4), Inches(0.45),
                  size=Pt(20), color=color, bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, role, x + Inches(0.2), cy + Inches(0.7),
+        t2 = add_text(slide, role, x + Inches(0.2), cy + Inches(0.7),
                  cw_card - Inches(0.4), Inches(0.35),
                  size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
-        add_text(slide, desc, x + Inches(0.2), cy + Inches(1.3),
+        t3 = add_text(slide, desc, x + Inches(0.2), cy + Inches(1.3),
                  cw_card - Inches(0.4), Inches(1.2),
                  size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
-        card_shapes.append(r)
+        card_groups.append([r, t1, t2, t3])
 
     # Bottom bullets
     bul = add_bullets(slide, [
@@ -564,7 +564,7 @@ def slide_three_repos(prs):
         "inference. No documentation, no tests, no integration between them. "
         "Research-grade code with hardcoded paths and no error handling. "
         "Required 37 bug fixes to reach production quality.",
-        [card_shapes, [bul]])
+        [card_groups[0], card_groups[1], card_groups[2], [bul]])
 
 
 def slide_web_ui(prs):
