@@ -394,12 +394,10 @@ def slide_21(prs):
          "Configurable overlap for context preservation across segment "
          "boundaries.", LGRAY),
         ("Intelligibility Score (IS)",
-         "IS = 0-5 composite of 6 signals (semantic, phonetic, WER, WWER, "
-         "NEA, length ratio). Rubric, weights, tiers, "
-         "and failure taxonomy designed at development time — distilled into "
-         "deterministic code (no LLM API calls at runtime). "
-         "Validated: r=0.925 across 16 configs, 88.6% agreement. "
-         "6 signals collapse into 3 independent dimensions (PCA).", GREEN),
+         "0\u20135 composite of 6 signals. Rubric and weights "
+         "designed once, distilled into deterministic code "
+         "(no LLM calls at runtime). Validated: r=0.93, "
+         "\u03baw=0.89 across 16 configs.", GREEN),
     ]
 
     cw = Inches(2.7)

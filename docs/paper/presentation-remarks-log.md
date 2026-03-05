@@ -89,6 +89,7 @@ External review feedback from Gemini, agreed changes implemented.
 | 63 | 20 (slide_is_calc_examples) | "Bulky green and red" — header bars and borders too heavy. Reduced border from Pt(3) to Pt(1.5), header bar from 0.4" to 0.32". | done |
 | 64b | 20 (slide_is_calc_examples) | Green header bar too wide — spans full card width. Narrowed from col_w-0.2" to centered 3.6" strip. | done |
 | 65b | Multiple (IS slides) | Added quadratic weighted κ=0.887 alongside existing binary κ=0.773 in all validation tables and speaker notes. Updated slides_research.py, slides_evaluation.py, slides_engineering.py, slides_future.py. Added full methodology section to is_correlation_analysis.md. | done |
+| 66b | 21 (slide_21, Pipeline Intelligence) | IS card text too long — overflows card, occludes logo and bottom area. Shortened IS description from 7 lines to 4 concise lines. | done |
 
 ---
 
