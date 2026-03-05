@@ -122,3 +122,11 @@ User remark: "many slides have bad animations and occlusions"
 | 80 | slide_24 | slides_future.py | 3 columns total 12.4" — exceeds CW=12.13" by 0.27" | pending |
 | 81 | slide_arabic_roadmap | slides_future.py | Two redundant "total timeline" callouts may overlap | pending |
 | 82 | slide_is_calc_examples | slides_research.py | Two cards exactly at CW=12.13" limit (borderline) | pending |
+
+---
+
+## Batch 5 — 2026-03-05
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 83 | 13 (slide_06) | Change to Admiral McRae example ("same WER, different effects"); mention IS is "our new metric" | done |

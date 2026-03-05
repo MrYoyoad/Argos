@@ -427,7 +427,7 @@ def slide_05(prs):
 
 def slide_06(prs):
     slide = new_slide(prs)
-    add_title(slide, 'WER Is Blind to Meaning')
+    add_title(slide, 'Same WER, Different Effects')
     add_accent_line(slide)
 
     bw = Inches(5.5)
@@ -435,43 +435,65 @@ def slide_06(prs):
     by = CT + Inches(0.1)
     gap = Inches(1.13)
 
-    # Left box — good
+    # Left box — harmless error
     r1 = add_rect(slide, MX, by, bw, bh, fill_color=NAVY2,
                   border_color=GREEN, border_width=Pt(2.5), corner_radius=True)
-    add_text(slide, "WER 29%  •  IS 4.3 — Fully Intelligible",
+    add_text(slide, "WER: 1 substitution  •  Harmless",
              MX + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.4),
              size=Pt(14), color=GREEN, bold=True)
-    add_text(slide, 'Ref: "allow you to work with the team in a more"\n'
-                    'Hyp: "allow you to work with a team and more"',
-             MX + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(2.5),
-             size=Pt(15), color=WHITE)
+    add_rich_text(slide, [
+        [('Ref: "', {"size": Pt(15), "color": LGRAY}),
+         ('the', {"size": Pt(15), "color": GREEN, "bold": True}),
+         (' admiral gave the order"', {"size": Pt(15), "color": WHITE})],
+        [('Hyp: "', {"size": Pt(15), "color": LGRAY}),
+         ('a', {"size": Pt(15), "color": GREEN, "bold": True}),
+         (' admiral gave the order"', {"size": Pt(15), "color": WHITE})],
+    ], MX + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(1.2),
+       space_after=Pt(8))
+    add_text(slide, '"the" → "a"\nFunction word swap — meaning fully preserved.\n'
+                    'The viewer understood the message.',
+             MX + Inches(0.3), by + Inches(2.2), bw - Inches(0.6), Inches(1.2),
+             size=Pt(13), color=LGRAY)
 
-    # Right box — bad
+    # Right box — destructive error
     rx = MX + bw + gap
     r2 = add_rect(slide, rx, by, bw, bh, fill_color=NAVY2,
                   border_color=RED, border_width=Pt(2.5), corner_radius=True)
-    add_text(slide, "WER 58%  •  IS 2.7 — Near-Miss",
+    add_text(slide, "WER: 1 substitution  •  Destructive",
              rx + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.4),
              size=Pt(14), color=RED, bold=True)
-    add_text(slide, 'Ref: "1 billion cfus of probiotics"\n'
-                    'Hyp: "1 million cfus of permafrost"',
-             rx + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(2.5),
-             size=Pt(15), color=WHITE)
+    add_rich_text(slide, [
+        [('Ref: "', {"size": Pt(15), "color": LGRAY}),
+         ('Admiral McRae', {"size": Pt(15), "color": RED, "bold": True}),
+         (' gave the order"', {"size": Pt(15), "color": WHITE})],
+        [('Hyp: "', {"size": Pt(15), "color": LGRAY}),
+         ('animal migration', {"size": Pt(15), "color": RED, "bold": True}),
+         (' gave the order"', {"size": Pt(15), "color": WHITE})],
+    ], rx + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(1.2),
+       space_after=Pt(8))
+    add_text(slide, '"Admiral McRae" → "animal migration"\n'
+                    'Named entity destroyed — identity lost completely.\n'
+                    'The viewer got the wrong person.',
+             rx + Inches(0.3), by + Inches(2.2), bw - Inches(0.6), Inches(1.2),
+             size=Pt(13), color=LGRAY)
 
-    # Bottom
+    # Bottom callout
+    add_rect(slide, MX + Inches(1.5), Inches(5.95), CW - Inches(3.0), Inches(0.7),
+             fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
+             corner_radius=True)
     add_text(slide,
-             "WER says equal. Meaning says opposite. So we built a metric to "
-             "capture this.",
-             MX, Inches(6.3), CW, Inches(0.5),
-             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "WER counts both as 1 error. But one preserves meaning, the other "
+             "destroys it.\nWe needed our own metric — the Intelligibility Score (IS).",
+             MX + Inches(1.7), Inches(6.0), CW - Inches(3.4), Inches(0.6),
+             size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 6,
-        "Same low WER on the left, high WER on the right — but the real "
-        "difference is meaning. Left: minor grammatical change, meaning "
-        "fully preserved at WER 29%. Right: 'probiotics' becomes 'permafrost' — "
-        "phonetically similar but completely wrong product. Structure intact, "
-        "key terms destroyed. This motivated our Intelligibility Score.",
-        None)
+        "The Admiral McRae example. Both cases have the same WER — 1 word "
+        "substitution. But 'the' to 'a' is harmless, while 'Admiral McRae' to "
+        "'animal migration' destroys the speaker's identity. WER treats them "
+        "identically. This is why we built our own metric — the Intelligibility "
+        "Score — which asks: did the viewer get the message?",
+        [[r1], [r2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 7 — THE INTELLIGIBILITY SCORE
