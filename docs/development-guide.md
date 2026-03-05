@@ -19,7 +19,7 @@ This executes all stages:
 3. Manifest and TSV generation
 4. K-means clustering (200 clusters) on AV-HuBERT features
 5. VSP-LLM decoding for final transcription
-6. Client output generation (reports and burned videos)
+6. Client output generation (reports and burned videos; EC2 also computes Intelligibility Scores)
 
 **Important**: Previous run outputs are automatically archived to `~/flat_runs_archive/[timestamp]/` before each pipeline run.
 

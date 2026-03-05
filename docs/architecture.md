@@ -41,6 +41,7 @@ Raw Videos (.mp4)
     Output: flat_runs_archive/[timestamp]/client_outputs/
     - One report entry per segment
     - One burned video per segment
+    - EC2 ONLY: IS score per segment (--compute-is), full IS analysis CSV + JSON
 
 Note: Steps 0.6 and 3.5 implement unified transcription management.
       Whisper only runs ONCE per unique video filename across all pipeline runs!
@@ -119,8 +120,13 @@ Architecture: SEGMENT-FIRST NORMALIZATION (since Feb 2026)
 │   └── [timestamp]/                    # Each run archived by timestamp
 │       ├── flat_txt/, preprocess_ready_flat/, etc.
 │       └── client_outputs/             # Final deliverables
-│           ├── report/                 # JSON transcription reports
-│           └── burned_videos/          # Videos with burned subtitles
+│           ├── report/                 # Transcription reports (CSV, HTML, TXT, ANSI)
+│           │   ├── report.csv          # Per-segment metrics (+ IS columns on EC2)
+│           │   ├── report.html         # Color-coded HTML report (+ IS column on EC2)
+│           │   ├── intelligibility_scores.csv   # EC2 only: full IS analysis
+│           │   └── intelligibility_summary.json # EC2 only: aggregate IS stats
+│           ├── burned_videos/          # Videos with burned subtitles
+│           └── lip_crops/             # Mouth-cropped segment videos
 │
 └── run_flat_english_pipeline.sh        # Master pipeline orchestrator
 ```

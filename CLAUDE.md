@@ -87,7 +87,7 @@ lib/
 ├── manifests.sh           # Manifest and TSV generation
 ├── clustering.sh          # K-means clustering and cluster counts
 ├── decode.sh              # VSP-LLM decode
-├── outputs.sh             # Client reports and burned videos
+├── outputs.sh             # Client reports and burned videos (+ IS scoring on EC2 only)
 └── venv/
     └── venv_utils.sh      # Virtual environment management
 ```
@@ -129,7 +129,7 @@ lib/
   - Container environments require this on first run due to different Python/CPU architecture
   - Checks if `fairseq.data.data_utils_fast` can be imported, builds if missing
   - This step must NEVER be removed - decode will fail without Cython extensions
-- `outputs.sh`: Generate segment-level reports (JSON) and burned videos
+- `outputs.sh`: Generate segment-level reports (CSV/HTML/TXT) and burned videos. **EC2 only**: computes Intelligibility Scores (IS) per segment via `--compute-is` flag (requires sentence-transformers, metaphone). Container version skips IS — this is an intentional version difference, not a sync gap.
 
 ### Virtual Environment Strategy
 

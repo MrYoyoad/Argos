@@ -1343,3 +1343,42 @@ The following changes have been made to the EC2 version and need to be replicate
 **Standalone decode config**: Runs baseline with `do_sample=True` hardcoded (stochastic beam search). EC2 has configurable `do_sample=False` (deterministic beam search) with `temperature` and `top_p` options — to be synced in a future update along with `lenpen` tuning option.
 
 **To deploy**: Extract tarball on client, run `INSTALL.sh` inside Docker container. INSTALL.sh creates backup, installs all components, runs verification + 37 module tests.
+
+### 27. IS + LLM Context Recovery in Pipeline Reports (Mar 5, 2026)
+
+**Date**: 2026-03-05
+**Category**: Pipeline output enhancement — **INTENTIONAL VERSION DIFFERENCE (EC2 vs Container)**
+
+> **This feature is EC2-only by design.** The container version does NOT compute IS scores and should NOT be modified to do so without first installing the required dependencies. This is a deliberate divergence, not a sync gap.
+
+**Why EC2-only**:
+- IS scoring requires `sentence-transformers` (all-MiniLM-L6-v2 model), `metaphone`, `numpy`, and `torch` — heavy dependencies not in the container Python venv
+- Semantic similarity computation loads a ~90MB transformer model into GPU/CPU memory
+- Container deployment prioritizes lean, fast pipeline runs without research tooling overhead
+- The `--compute-is` flag is opt-in and gated by `ENV_TYPE=ec2` in `outputs.sh`
+
+**Version differences**:
+
+| Behavior | EC2 (`ENV_TYPE=ec2`) | Container (`ENV_TYPE=container`) |
+|----------|---------------------|----------------------------------|
+| `make_report.py` invocation | `--compute-is` passed | No `--compute-is` flag |
+| Report CSV columns | Includes `is_score`, `is_tier`, `is_label` | Standard columns only (no IS) |
+| Report HTML table | Has IS column with color coding | No IS column |
+| Report TXT/ANSI | Shows `IS: X.XX/5.0 (Label)` per segment | No IS line |
+| Overall summary | Includes `IS: X.XX/5.0 | Captured: N/M (%)` | Standard WER/WWER/NEA only |
+| Full IS analysis script | `generate_intelligibility_scores.py` runs | Not executed |
+| Extra output files | `intelligibility_scores.csv`, `intelligibility_summary.json` | Not generated |
+
+**Changed files**:
+- `lib/outputs.sh` — Stage 8 now passes `--compute-is` to `make_report.py` only when `ENV_TYPE=ec2`, and runs `generate_intelligibility_scores.py` for full IS analysis (also EC2-only)
+- `VSP-LLM/scripts/make_report.py` — Added `--compute-is` flag: computes per-segment IS score (0-5), tier, and label; adds IS column to HTML report, CSV, and text outputs; imports scoring functions from `docs/_research-tools/generators/generate_intelligibility_scores.py`. Without the flag, behavior is identical to before (backward compatible).
+
+**To enable on container in the future** (not recommended unless research tooling is needed):
+1. Install dependencies: `pip install sentence-transformers metaphone numpy`
+2. Copy `docs/_research-tools/generators/generate_intelligibility_scores.py` to container
+3. Change `ENV_TYPE` check in `outputs.sh` or pass `--compute-is` directly
+
+**Output files added to `client_outputs/report/` (EC2 only)**:
+- `intelligibility_scores.csv` — Full augmented CSV with IS, phonetic/semantic similarity, llm_context_prob, failure modes
+- `intelligibility_summary.json` — Aggregate stats (mean IS, tier distribution, topic analysis)
+- `report.html` now includes IS column per segment (when `--compute-is` is used)
