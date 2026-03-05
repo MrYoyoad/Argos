@@ -537,21 +537,21 @@ def slide_arabic_roadmap(prs):
                     col_widths=[Inches(1.5), Inches(1.3), Inches(2.7)],
                     text_size=Pt(11))
 
-    # Bottom note
-    note = add_text(slide,
-        "Pipeline code is language-agnostic. Main bottlenecks: encoder pre-training "
-        "data and eval dataset collection. No Arabic lip-reading benchmark exists.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
-
-    # Timeline summary callout
-    timeline_box = add_rect(slide, MX, Inches(5.75), CW, Inches(0.55),
+    # Timeline summary callout (below last topic item which extends to ~y=6.05")
+    timeline_box = add_rect(slide, MX, Inches(6.15), CW, Inches(0.55),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
     timeline_txt = add_text(slide,
              "Realistic estimate: 4\u20136 months (encoder pre-training is the bottleneck)",
-             MX + Inches(0.3), Inches(5.8), CW - Inches(0.6), Inches(0.4),
+             MX + Inches(0.3), Inches(6.20), CW - Inches(0.6), Inches(0.4),
              size=Pt(20), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+
+    # Bottom note (below callout box)
+    note = add_text(slide,
+        "Pipeline code is language-agnostic. Main bottlenecks: encoder pre-training "
+        "data and eval dataset collection. No Arabic lip-reading benchmark exists.",
+        MX, Inches(6.75), CW, Inches(0.35),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Animation: title → each topic one by one → right column → callout
     anim = [[lt]] + topic_groups + [[rt, tbl], [timeline_box, timeline_txt, note]]
@@ -739,11 +739,12 @@ def slide_a8(prs):
         [["Word Accuracy", "WER, WWER, Phonetic", "60.0%", "> 0.79"],
          ["Meaning Preservation", "Semantic", "28.5%", "independent"],
          ["Output Sanity", "Length Ratio", "9.1%", "independent"]],
-        MX, CT + Inches(0.5), CW * 0.55, text_size=Pt(11))
+        MX, CT + Inches(0.5), CW * 0.55, text_size=Pt(11),
+        row_height=Inches(0.32))
 
     # Cross-config stability
     add_text(slide, "Cross-Config Stability (16 configs)",
-             SRL, CT + Inches(1.8), SRW, Inches(0.4), size=Pt(14), color=TEAL, bold=True)
+             SRL, CT, SRW, Inches(0.35), size=Pt(14), color=TEAL, bold=True)
 
     tbl2 = add_table(slide,
         ["Signal", "Stability", "Std"],
@@ -752,13 +753,14 @@ def slide_a8(prs):
          ["NEA", "Stable", "0.023"],
          ["WER", "Volatile", "0.165"],
          ["Length", "Volatile", "0.142"]],
-        SRL, CT + Inches(2.3), SRW, text_size=Pt(11),
+        SRL, CT + Inches(0.4), SRW, text_size=Pt(10),
+        row_height=Inches(0.3),
         row_colors={3: {1: CORAL}, 4: {1: CORAL},
                     0: {1: GREEN}, 1: {1: GREEN}, 2: {1: GREEN}})
 
-    # Heuristic validation
+    # Heuristic validation — positioned below tbl2 (top 1.85 + 6*0.3 = 3.65)
     add_text(slide, "Heuristic Validation (no runtime LLM)",
-             SRL, CT + Inches(4.0), SRW, Inches(0.3),
+             SRL, CT + Inches(2.35), SRW, Inches(0.3),
              size=Pt(13), color=TEAL, bold=True)
 
     tbl3 = add_table(slide,
@@ -768,7 +770,8 @@ def slide_a8(prs):
          ["Cohen's κ", "0.773"],
          ["Recall (IS≥3)", "97.6–100%"],
          ["Config range", "κ 0.62–0.86"]],
-        SRL, CT + Inches(4.4), SRW * 0.7, text_size=Pt(10))
+        SRL, CT + Inches(2.75), SRW * 0.7, text_size=Pt(10),
+        row_height=Inches(0.3))
 
     _finish(slide, "A3",
         "IS components collapse into 3 dimensions: word accuracy (60%), "
@@ -1255,14 +1258,14 @@ def slide_a16(prs):
          ["3 \u2014 Fair (2.0\u20132.99)", "25", "7.7%", "167", "51.4%", "133", "40.9%"],
          ["2 \u2014 Poor (1.0\u20131.99)", "14", "4.2%", "115", "34.2%", "207", "61.6%"],
          ["1 \u2014 Failed (0.0\u20130.99)", "5", "2.1%", "41", "17.2%", "193", "80.8%"]],
-        MX, CT + Inches(0.5), CW, text_size=Pt(11),
-        row_height=Inches(0.4),
-        col_widths=[Inches(2.8), Inches(1.1), Inches(0.9),
-                    Inches(1.1), Inches(0.9), Inches(1.1), Inches(0.9)],
+        MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(11),
+        row_height=Inches(0.38),
+        col_widths=[Inches(2.8), Inches(1.2), Inches(1.0),
+                    Inches(1.2), Inches(1.0), Inches(1.2), Inches(1.0)],
         row_colors={0: {2: GREEN}, 4: {6: CORAL}})
 
     # Key observations
-    add_text(slide, "Key Observations:", MX, CT + Inches(3.0), CW, Inches(0.3),
+    add_text(slide, "Key Observations:", MX, CT + Inches(2.95), CW, Inches(0.3),
              size=Pt(15), color=TEAL, bold=True)
     add_bullets(slide, [
         "IS Tier 5: 57% full Y \u2014 strong agreement on excellent output",
@@ -1273,7 +1276,7 @@ def slide_a16(prs):
         ("Y+P peaks at IS \u2265 2.0 (\u03ba=0.82) not IS \u2265 3.0 (\u03ba=0.52) "
          "\u2014 systems agree on ranking, differ on threshold",
          {"color": GOLD}),
-    ], MX, CT + Inches(3.4), CW, Inches(2.0), size=Pt(13))
+    ], MX, CT + Inches(3.35), CW, Inches(2.0), size=Pt(13))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers. Strong agreement at the "
@@ -1344,7 +1347,7 @@ def slide_a17(prs):
         "Context is uniformly stricter across all topics. DIY/Home has the "
         "largest delta (\u22124pp) \u2014 context reveals the most visual-content "
         "vocabulary failures.",
-        rx, CT + Inches(3.5), col_w, Inches(0.6),
+        rx, CT + Inches(3.65), col_w, Inches(0.6),
         size=Pt(12), color=LGRAY, italic=True)
 
     _finish(slide, "A9",
