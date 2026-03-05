@@ -1,0 +1,81 @@
+{
+  "n_segments": 284,
+  "status": "final",
+  "mean_wer_baseline": 86.63,
+  "mean_wer_topic": 87.56,
+  "delta_wer_pp": -0.93,
+  "improved": 47,
+  "degraded": 55,
+  "unchanged": 182,
+  "echo_instruction": 67,
+  "empty_baseline": 0,
+  "empty_topic": 2,
+  "per_topic": {
+    "Other": {
+      "n": 182,
+      "base_wer": 86.5,
+      "topic_wer": 86.7,
+      "delta": -0.3
+    },
+    "Technology": {
+      "n": 22,
+      "base_wer": 83.3,
+      "topic_wer": 82.9,
+      "delta": 0.4
+    },
+    "Cooking/Food": {
+      "n": 20,
+      "base_wer": 89.5,
+      "topic_wer": 99.8,
+      "delta": -10.3
+    },
+    "Sports/Fitness": {
+      "n": 5,
+      "base_wer": 89.8,
+      "topic_wer": 92.3,
+      "delta": -2.5
+    },
+    "Politics/News": {
+      "n": 4,
+      "base_wer": 76.9,
+      "topic_wer": 76.7,
+      "delta": 0.2
+    },
+    "Medical/Health": {
+      "n": 10,
+      "base_wer": 87.8,
+      "topic_wer": 87.7,
+      "delta": 0.1
+    },
+    "Entertainment": {
+      "n": 12,
+      "base_wer": 85.9,
+      "topic_wer": 86.9,
+      "delta": -0.9
+    },
+    "Education/Academic": {
+      "n": 17,
+      "base_wer": 84.7,
+      "topic_wer": 82.9,
+      "delta": 1.8
+    },
+    "DIY/Home": {
+      "n": 4,
+      "base_wer": 89.9,
+      "topic_wer": 89.9,
+      "delta": 0.0
+    },
+    "Business/Finance": {
+      "n": 4,
+      "base_wer": 94.3,
+      "topic_wer": 99.9,
+      "delta": -5.5
+    },
+    "Religion/Spirituality": {
+      "n": 4,
+      "base_wer": 100.0,
+      "topic_wer": 102.3,
+      "delta": -2.3
+    }
+  }
+}

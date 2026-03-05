@@ -159,3 +159,40 @@ User remark: "many slides have bad animations and occlusions"
 | # | Slide | Remark | Status |
 |---|-------|--------|--------|
 | 97 | 19 (Domain Mismatch) | User asked: "how technically would topic label injection work?" and "why 284?" — expanded speaker notes with: (1) origin of 284 (143 Total Topic Drift + 141 Phonetically Similar Wrong Topic), (2) technical mechanism (instruction prefix injection in vsp_llm_dataset.py), (3) actual experiment results showing topic labels do NOT help (-0.8pp WER, 20% instruction echoing), (4) what would actually work (fine-tuning with topic-prefixed instructions) | done |
+
+---
+
+## Batch 8 — 2026-03-05 (User Review Feedback)
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 98 | 9 (slide_04, Benchmark) | Simply emphasize that the dataset is different, more difficult — too much words. Reduced from 6 bullets to 3, removed detailed characteristic lists, kept core contrast (LRS3 curated vs YouTube real-world) and numbers (25.4% vs 64.1%). Simplified bottom text and speaker notes. | done |
+| 99 | 10 (slide_eval_dataset) | Hide | pending |
+| 100 | 12 (slide_wer_explained) | Hide | pending |
+| 101 | 16 (slide_is_intro) | Split into 3 separate slides — one for each metric except WER, WWER and length all in 1 | pending |
+| 102 | 17 (slide_is_signals) | Remove | pending |
+| 103 | 19 (slide_is_dimensions) | Remove | pending |
+| 104 | 21 (slide_is_radar) | Focus on the different models — that is the interesting part (future work) | pending |
+| 105 | 24 (slide_metric_transition) | Review the samples manually — let me see them and decide myself | pending |
+| 106 | 25 (slide_10, Root Causes) | Hide | pending |
+| 107 | 26 (slide_domain_mismatch) | Hide | pending |
+| 108 | 31 (slide_failure_deep_3) | Fix colors and shapes to be consistent | pending |
+| 109 | 32 (slide_tuning_summary) | Hide | pending |
+| 110 | 33 (slide_is_deep_dive) | State the conclusions | pending |
+| 111 | 37 (slide_llm_judge) | Fix the animation/appearance order | pending |
+| 112 | 40 (slide_25, Salvage) | Convey goal is a lower bound for our metric. Use only LLM-as-a-judge, drop the heuristic completely. The more salvageable by LLM is not actually improvement — that's not the message | pending |
+| 113 | 41 (slide_25b) | Hide | pending |
+| 114 | 44 (slide_25c) | Hide | pending |
+| 115 | 55 (slide_dual_env) | Remove the "26" part | pending |
+| 116 | 59, 60 (slide_26, slide_26b) | Show where, how and why metric change is expected and in what magnitude — think about which failure mode each fix addresses, to what extent, and its contribution | pending |
+| 117 | 61, 62 (slide_confidence_scoring, slide_27) | Shorten together — too much detail | pending |
+| 118 | General | Too much text and numbers — provide more conclusions on what actually happened. Almost always one "thing" per slide | pending |
+| 119 | General | Explain the experiment in simple terms — what we did, how, what we got | pending |
+| 120 | General | Test additional language models for replacement | pending |
+| 121 | General | Provide references for future methods suggested — known methods, papers | pending |
+| 122 | 65 (slide_price_tag) | Clarify exactly which training is being discussed | pending |
+| 123 | 66 (slide_29, Fine-Tuning) | Graphs are not visible | pending |
+| 124 | 68 (slide_arabic_roadmap) | Create a more relaxed timeline, give it more thought, unknowns, bottlenecks | pending |
+| 125 | Videos slide (slide_14b) | What is the point of each video? Give more nice examples out of the 6 provided | pending |
+| 126 | Various | Fix occlusions in various places | pending |
+| 127 | 19 (slide_domain_mismatch) | Topic label experiment: updated speaker notes with final 284/284 results + control group (100 good segments). Control shows 0% echo rate vs 24% on bad segments — model only echoes when visual signal is weak | done |

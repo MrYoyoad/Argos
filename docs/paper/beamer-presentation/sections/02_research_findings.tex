@@ -555,15 +555,19 @@
     --- this is a one-line code change in \texttt{vsp\_llm\_dataset.py}, no model
     retraining needed.
     \\[6pt]
-    \textbf{Experiment (March 2026):} We ran this exact experiment on 284 segments.
+    \textbf{Experiment (March 2026):} We ran this exact experiment on all 284 segments.
     Result: \textbf{topic labels do NOT help} without model fine-tuning.
-    Baseline WER 85.1\% vs Topic WER 85.7\% ($-$0.6pp, worse).
-    33 segments improved, 34 degraded, 88 unchanged (out of 155 decoded).
-    Critical failure: 30 segments (19\%) echoed ``the speaker is discussing technology''
-    literally instead of recognizing speech. Cooking/Food labels made things 12.7pp worse
+    Baseline WER 86.6\% vs Topic WER 87.6\% ($-$0.9pp, worse).
+    47 segments improved (17\%), 55 degraded (19\%), 182 unchanged (64\%).
+    Critical failure: 67 segments (24\%) echoed ``the speaker is discussing technology''
+    literally instead of recognizing speech. Cooking/Food labels made things 10.3pp worse
     (mislabeled segments). The model was trained with a fixed instruction format;
     extra tokens shift visual feature positions and break learned attention patterns.
     This is prompt engineering on a model not trained for it.
+    \\[6pt]
+    \textbf{Control group (100 good segments, IS$\geq$3):} Topic labels cause $-$0.6pp
+    degradation (29.3\% $\to$ 30.0\%) but \emph{zero} instruction echoing. When visual
+    signal is strong, the model ignores the extra tokens. Echoing only happens on weak segments.
     \\[6pt]
     \textbf{What would work:} Fine-tune with topic-prefixed instructions in training
     data so the model learns to use topic context. Requires training data augmentation,

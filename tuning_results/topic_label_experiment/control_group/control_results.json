@@ -1,0 +1,10 @@
+{
+  "n_segments": 100,
+  "mean_wer_baseline": 29.34,
+  "mean_wer_topic": 29.98,
+  "delta_wer_pp": -0.64,
+  "improved": 9,
+  "degraded": 18,
+  "unchanged": 73,
+  "echo_instruction": 0
+}

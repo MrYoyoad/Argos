@@ -1,7 +1,7 @@
 # Topic Label Injection Experiment
 
 **Date:** 2026-03-05
-**Status:** Complete (284 segments decoded with topic labels)
+**Status:** Complete (all 284 segments decoded, final results)
 
 ## Hypothesis
 
@@ -59,43 +59,66 @@ The topic label is prepended at the BEGINNING of the instruction, before "Recogn
 | Religion/Spirituality | 4 |
 | DIY/Home | 4 |
 
-## Results (155/284 segments decoded)
+## Results (284/284 segments — final)
 
 | Metric | Baseline | Topic-Labeled | Delta |
 |--------|----------|---------------|-------|
-| Mean WER | 85.1% | 85.7% | -0.6pp (worse) |
-| Improved (>1pp) | -- | 33 (21%) | -- |
-| Degraded (>1pp) | -- | 34 (22%) | -- |
-| Unchanged | -- | 88 (57%) | -- |
-| Echo instruction | 0 | 30 (19%) | new failure |
+| Mean WER | 86.6% | 87.6% | -0.9pp (worse) |
+| Improved (>1pp) | -- | 47 (17%) | -- |
+| Degraded (>1pp) | -- | 55 (19%) | -- |
+| Unchanged | -- | 182 (64%) | -- |
+| Echo instruction | 0 | 67 (24%) | new failure |
 | Empty outputs | 0 | 2 | new failure |
 
 ### Per-topic breakdown
 
 | Topic | N | Base WER | Topic WER | Delta |
 |-------|---|----------|-----------|-------|
-| Politics/News | 3 | 74.7% | 71.7% | +3.0pp |
-| Business/Finance | 2 | 93.2% | 90.2% | +2.9pp |
-| Other | 91 | 85.1% | 83.9% | +1.1pp |
-| Medical/Health | 8 | 86.2% | 86.1% | +0.2pp |
-| Technology | 15 | 80.3% | 80.3% | -0.1pp |
-| Entertainment | 7 | 86.3% | 87.2% | -0.8pp |
-| Education/Academic | 7 | 85.7% | 86.7% | -1.0pp |
-| Cooking/Food | 15 | 88.3% | 101.0% | -12.7pp |
+| Education/Academic | 17 | 84.7% | 82.9% | +1.8pp |
+| Technology | 22 | 83.3% | 82.9% | +0.4pp |
+| Politics/News | 4 | 76.9% | 76.7% | +0.2pp |
+| Medical/Health | 10 | 87.8% | 87.7% | +0.1pp |
+| DIY/Home | 4 | 89.9% | 89.9% | 0.0pp |
+| Other | 182 | 86.5% | 86.7% | -0.3pp |
+| Entertainment | 12 | 85.9% | 86.9% | -0.9pp |
+| Religion/Spirituality | 4 | 100.0% | 102.3% | -2.3pp |
+| Sports/Fitness | 5 | 89.8% | 92.3% | -2.5pp |
+| Business/Finance | 4 | 94.3% | 99.9% | -5.5pp |
+| Cooking/Food | 20 | 89.5% | 99.8% | -10.3pp |
 
 ### Key finding: Topic labels do NOT help
 
 **Naive topic label injection is a wash.** The model was not trained with topic-prefixed instructions, so:
 
-1. **Instruction echoing** (30/155 = 19%): The model literally outputs "the speaker is discussing technology" instead of recognizing speech. The extra tokens in the instruction leak into the output.
+1. **Instruction echoing** (67/284 = 24%): The model literally outputs "the speaker is discussing technology" instead of recognizing speech. The extra tokens in the instruction leak into the output.
 
 2. **Position shift**: The additional topic tokens push visual features to different token positions, misaligning the learned instruction-to-visual mapping. The model was trained with a fixed instruction length.
 
 3. **"Other" is uninformative**: 64% of segments (182/284) have topic "Other", which adds noise without useful context.
 
-4. **Nearly equal improvement/degradation**: 33 improved vs 34 degraded shows no systematic benefit.
+4. **More degradation than improvement**: 55 degraded vs 47 improved shows no systematic benefit.
 
-5. **Cooking/Food actively hurt** (-12.7pp): Many segments labeled "Cooking" are actually about other topics (weather, coding), so the wrong topic label confuses the model further.
+5. **Cooking/Food actively hurt** (-10.3pp): Many segments labeled "Cooking" are actually about other topics (weather, coding), so the wrong topic label confuses the model further.
+
+## Control Group Results (100 good segments)
+
+To test whether topic labels hurt already-good segments, we decoded 100 segments with IS >= 3.0 (baseline WER ~29%) using topic-labeled instructions.
+
+| Metric | Experiment (284 bad) | Control (100 good) |
+|--------|---------------------|-------------------|
+| Baseline WER | 86.6% | 29.3% |
+| Topic WER | 87.6% | 30.0% |
+| Delta | -0.9pp | -0.6pp |
+| Improved (>1pp) | 47 (17%) | 9 (9%) |
+| Degraded (>1pp) | 55 (19%) | 18 (18%) |
+| Unchanged | 182 (64%) | 73 (73%) |
+| Echo instruction | 67 (24%) | 0 (0%) |
+
+### Key control group finding
+
+**Zero instruction echoing on good segments.** When the visual signal is strong enough, the model successfully ignores the extra topic tokens and transcribes normally. Instruction echoing only occurs when the visual features are weak/ambiguous (the bad segments).
+
+However, topic labels still cause net degradation (-0.6pp) even on good segments -- 18 degraded vs 9 improved. The position shift still hurts, just less catastrophically. One perfect segment (0% WER, Politics/News) degraded to 14.3% just from the topic label.
 
 ## Why This Was Expected (in hindsight)
 
