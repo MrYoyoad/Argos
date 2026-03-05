@@ -31,169 +31,126 @@ from .helpers import (
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_17(prs):
-    """8-Stage Pipeline — per-stage wipe reveal with connector arrows."""
+    """8-Stage Pipeline — clean 2-row grid, no clutter."""
     slide = new_slide(prs)
     add_title(slide, "8-Stage Automated Pipeline")
     add_accent_line(slide)
-
-    add_text(slide, "3 research repos \u2192 single orchestrated system",
-             MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
     BLUE   = RGBColor(0x4D, 0xD0, 0xE1)
     SGREEN = RGBColor(0x66, 0xBB, 0x6A)
     SGOLD  = RGBColor(0xFF, 0xCA, 0x28)
     SPINK  = RGBColor(0xEF, 0x9A, 0x9A)
     DARK   = RGBColor(0x0D, 0x1B, 0x2A)
-    DARK2  = RGBColor(0x1A, 0x2A, 0x3A)
 
-    row1_stages = [
-        ("1", "Normalize", "HDR/10-bit\nconversion", BLUE, ".mp4"),
-        ("2", "ASR", "Whisper\ntranscription", BLUE, ".wrd"),
-        ("3", "Mouth Crop", "Face detection\n& ROI extract", BLUE, ".mp4 (crop)"),
-        ("4", "LRS3 Convert", "Flat \u2192 LRS3\nformat", BLUE, "LRS3/"),
+    row1 = [
+        ("1. Normalize", "HDR/10-bit\nconversion", BLUE),
+        ("2. ASR", "Whisper\ntranscription", BLUE),
+        ("3. Mouth Crop", "Face detect\n& ROI", BLUE),
+        ("4. LRS3 Convert", "Flat \u2192 LRS3\nformat", BLUE),
     ]
-    row2_stages = [
-        ("5", "Manifests", "TSV + splits\ngeneration", SGREEN, ".tsv"),
-        ("6", "K-means", "Feature\nextraction", SGREEN, ".npy"),
-        ("7", "LLM Decode", "AV-HuBERT +\nLLaMA-2", SGOLD, "text"),
-        ("8", "Outputs", "Reports &\nburned video", SPINK, ".json"),
+    row2 = [
+        ("5. Manifests", "TSV + splits", SGREEN),
+        ("6. K-means", "Feature\nextraction", SGREEN),
+        ("7. LLM Decode", "AV-HuBERT +\nLLaMA-2", SGOLD),
+        ("8. Outputs", "Reports &\nburned video", SPINK),
     ]
 
-    box_w = Inches(2.65)
-    box_h = Inches(1.6)
-    gap = Inches(0.35)
-    arrow_w = Inches(0.25)
-    total_w = 4 * box_w + 3 * gap
+    # Layout: 4 boxes per row, arrows between, centered
+    box_w = Inches(2.55)
+    box_h = Inches(1.35)
+    h_gap = Inches(0.15)           # space for arrow
+    arrow_w = Inches(0.15)
+    total_w = 4 * box_w + 3 * (h_gap + arrow_w + h_gap)
     start_x = (SL_W - total_w) / 2
-    row1_y = CT + Inches(0.7)
-    row2_y = row1_y + box_h + Inches(0.9)
+    row1_y = CT + Inches(0.3)
+    row2_y = row1_y + box_h + Inches(0.8)  # room for down arrow
 
-    def _draw_one_stage(num, name, sub, color, fmt_label, x, y_top):
-        """Draw one stage box. Returns list of shapes for this stage."""
+    def _box(name, sub, color, x, y):
+        """Draw one stage box. Returns list of shapes."""
         shapes = []
-        shapes.append(add_text(slide, fmt_label,
-                 x, y_top - Inches(0.25), box_w, Inches(0.22),
-                 size=Pt(10), color=LGRAY, align=PP_ALIGN.CENTER))
-        shapes.append(add_rect(slide, x, y_top, box_w, box_h,
+        shapes.append(add_rect(slide, x, y, box_w, box_h,
                      fill_color=color, border_color=None))
-        shapes.append(add_text(slide, f"{num}. {name}",
-                 x + Inches(0.1), y_top + Inches(0.15),
-                 box_w - Inches(0.2), Inches(0.45),
-                 size=Pt(18), color=DARK, bold=True,
+        shapes.append(add_text(slide, name,
+                 x + Inches(0.08), y + Inches(0.1),
+                 box_w - Inches(0.16), Inches(0.4),
+                 size=Pt(16), color=DARK, bold=True,
                  align=PP_ALIGN.CENTER))
         shapes.append(add_text(slide, sub,
-                 x + Inches(0.1), y_top + Inches(0.65),
-                 box_w - Inches(0.2), Inches(0.7),
-                 size=Pt(13), color=DARK2, align=PP_ALIGN.CENTER))
+                 x + Inches(0.08), y + Inches(0.55),
+                 box_w - Inches(0.16), Inches(0.65),
+                 size=Pt(12), color=DARK, align=PP_ALIGN.CENTER))
         return shapes
 
-    def _add_arrow(x, y, direction="right"):
-        """Add connector arrow. Returns list with one shape."""
-        if direction == "right":
-            return [add_text(slide, "\u2192", x, y + box_h / 2 - Inches(0.15),
-                             arrow_w, Inches(0.3), size=Pt(18), color=TEAL,
-                             bold=True, align=PP_ALIGN.CENTER)]
-        else:  # down
-            return [add_text(slide, "\u2193", x, y, Inches(0.3), Inches(0.4),
-                             size=Pt(18), color=TEAL, bold=True,
-                             align=PP_ALIGN.CENTER)]
+    def _h_arrow(x, y):
+        """Right arrow between boxes on the same row."""
+        ax = x + h_gap
+        ay = y + box_h / 2 - Inches(0.12)
+        return [add_text(slide, "\u25b6", ax, ay, arrow_w, Inches(0.24),
+                         size=Pt(12), color=TEAL, bold=True,
+                         align=PP_ALIGN.CENTER)]
 
-    # Build per-stage animation groups
     anim_groups = []
 
-    # Group 0: Input label (visible on entry)
-    input_label = [add_text(slide, ".mp4\n\nVideo\nInput",
-                   MX, row1_y + Inches(0.15),
-                   Inches(0.8), box_h - Inches(0.3),
-                   size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER)]
-    anim_groups.append(input_label)
-
-    # Groups 1-4: Row 1 stages with arrows
-    for i, (num, name, sub, color, fmt) in enumerate(row1_stages):
-        x = start_x + i * (box_w + gap)
-        stage_shapes = _draw_one_stage(num, name, sub, color, fmt, x, row1_y)
+    # Row 1 — each stage is its own animation group
+    for i, (name, sub, color) in enumerate(row1):
+        x = start_x + i * (box_w + h_gap + arrow_w + h_gap)
+        grp = _box(name, sub, color, x, row1_y)
         if i > 0:
-            ax = start_x + (i - 1) * (box_w + gap) + box_w
-            stage_shapes = _add_arrow(ax, row1_y, "right") + stage_shapes
-        anim_groups.append(stage_shapes)
+            ax = start_x + (i - 1) * (box_w + h_gap + arrow_w + h_gap) + box_w
+            grp = _h_arrow(ax, row1_y) + grp
+        anim_groups.append(grp)
 
-    # Group 5: Down arrow + repo labels for row 1
-    down_x = (SL_W - Inches(0.3)) / 2
+    # Down arrow centered between row 1 and row 2
     down_y = row1_y + box_h + Inches(0.15)
-    down_group = _add_arrow(down_x, down_y, "down")
-    down_group.append(add_text(slide, "auto_avsr",
-             start_x + 2 * (box_w + gap), row1_y + box_h + Inches(0.08),
-             2 * box_w + gap, Inches(0.25),
-             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER))
-    anim_groups.append(down_group)
+    down_x = SL_W / 2 - Inches(0.15)
+    down_grp = [add_text(slide, "\u25bc", down_x, down_y,
+                Inches(0.3), Inches(0.35),
+                size=Pt(16), color=TEAL, bold=True, align=PP_ALIGN.CENTER)]
+    anim_groups.append(down_grp)
 
-    # Groups 6-9: Row 2 stages with arrows
-    for i, (num, name, sub, color, fmt) in enumerate(row2_stages):
-        x = start_x + i * (box_w + gap)
-        stage_shapes = _draw_one_stage(num, name, sub, color, fmt, x, row2_y)
+    # Row 2
+    for i, (name, sub, color) in enumerate(row2):
+        x = start_x + i * (box_w + h_gap + arrow_w + h_gap)
+        grp = _box(name, sub, color, x, row2_y)
         if i > 0:
-            ax = start_x + (i - 1) * (box_w + gap) + box_w
-            stage_shapes = _add_arrow(ax, row2_y, "right") + stage_shapes
-        anim_groups.append(stage_shapes)
+            ax = start_x + (i - 1) * (box_w + h_gap + arrow_w + h_gap) + box_w
+            grp = _h_arrow(ax, row2_y) + grp
+        anim_groups.append(grp)
 
-    # Group 10: Output label + repo labels + legend
+    # Bottom: repo labels + legend — single final group
     final_group = []
-    final_group.append(add_text(slide, ".json\n\nReports\n& Videos",
-                    SL_W - MX - Inches(0.8), row2_y + Inches(0.15),
-                    Inches(0.8), box_h - Inches(0.3),
-                    size=Pt(11), color=LGRAY, bold=True, align=PP_ALIGN.CENTER))
-    final_group.append(add_text(slide, "av_hubert",
-             start_x, row2_y + box_h + Inches(0.08),
-             2 * box_w + gap, Inches(0.25),
-             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER))
+    repo_y = row2_y + box_h + Inches(0.15)
+    half_w = total_w / 2
+    final_group.append(add_text(slide, "auto_avsr  \u00b7  av_hubert",
+             start_x, repo_y, half_w, Inches(0.25),
+             size=Pt(10), color=MGRAY, align=PP_ALIGN.CENTER))
     final_group.append(add_text(slide, "VSP-LLM",
-             start_x + 2 * (box_w + gap), row2_y + box_h + Inches(0.08),
-             2 * box_w + gap, Inches(0.25),
-             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER))
+             start_x + half_w, repo_y, half_w, Inches(0.25),
+             size=Pt(10), color=MGRAY, align=PP_ALIGN.CENTER))
 
-    legend_y = Inches(6.8)
+    legend_y = repo_y + Inches(0.35)
     legend_items = [
         ("Preprocessing", BLUE), ("Feature Processing", SGREEN),
         ("LLM Inference", SGOLD), ("Output Generation", SPINK),
     ]
-    leg_w = Inches(0.25)
-    leg_h = Inches(0.25)
+    leg_sz = Inches(0.2)
     leg_gap = Inches(2.8)
     leg_start = (SL_W - 4 * leg_gap) / 2 + Inches(0.3)
     for i, (lbl, clr) in enumerate(legend_items):
         lx = leg_start + i * leg_gap
-        final_group.append(add_rect(slide, lx, legend_y, leg_w, leg_h,
+        final_group.append(add_rect(slide, lx, legend_y, leg_sz, leg_sz,
                                  fill_color=clr))
         final_group.append(add_text(slide, lbl,
-                 lx + Inches(0.35), legend_y - Inches(0.02),
-                 Inches(2.0), Inches(0.3), size=Pt(12), color=WHITE))
+                 lx + Inches(0.3), legend_y - Inches(0.02),
+                 Inches(2.0), Inches(0.25), size=Pt(11), color=WHITE))
     anim_groups.append(final_group)
 
-    # Group 11: Pipeline visual strip — video transformation through stages
-    visual_strip = []
-    vis_img = add_image(slide, "pipeline_visual", MX, row2_y + box_h + Inches(0.45),
-                        width=CW, height=Inches(1.5))
-    if vis_img is not None:
-        visual_strip.append(vis_img)
-        anim_groups.append(visual_strip)
-
-    # Use wipe animation for per-stage sequential reveal
-    _auto_num[0] += 1
-    add_logo(slide)
-    add_slide_num(slide, _auto_num[0])
-    add_fade_transition(slide)
-    try:
-        add_wipe_animation(slide, anim_groups, click_reveal=True, dur_ms=400)
-    except Exception:
-        add_animations(slide, anim_groups, click_reveal=True)
-    set_notes(slide,
-        "8-stage automated pipeline built from 3 research repos. "
-        "Each stage reveals sequentially with a wipe animation. "
-        "Row 1: Normalize, ASR, Mouth Crop, LRS3 Convert (preprocessing). "
-        "Row 2: Manifests, K-means, LLM Decode, Outputs (processing). "
-        "Final click reveals the visual transformation strip showing how a video "
-        "signal flows through the pipeline: raw face → mouth crop → features → "
-        "LLM decode → output text with IS score.")
+    _finish(slide, 0,
+        "8-stage automated pipeline built from 3 research repos (auto_avsr, "
+        "av_hubert, VSP-LLM). Row 1: preprocessing (normalize, ASR, mouth crop, "
+        "LRS3 convert). Row 2: feature processing and inference (manifests, "
+        "K-means, LLM decode, outputs). Each stage click-reveals sequentially.",
+        anim_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 18 — ENGINEERING JOURNEY
