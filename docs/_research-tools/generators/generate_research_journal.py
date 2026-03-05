@@ -3539,8 +3539,9 @@ def chapter_15(doc):
     add_para(doc, (
         "Topic/domain context: ~284 segments (19%) show topic drift or wrong-domain confusion "
         "where the model lip-reads the phonetic shape of domain-specific words correctly but "
-        "resolves them to the wrong vocabulary domain. A simple topic label at decode time would "
-        "constrain the LLM decoder and likely convert many P→Y and some N→P."
+        "resolves them to the wrong vocabulary domain. Note: naive topic label injection at decode "
+        "time was tested (March 2026) and does NOT help (-0.9pp WER, 24% instruction echoing). "
+        "Topic-aware fine-tuning is required to address this."
     ), bold=True)
 
     add_para(doc, "Examples of domain vocabulary confusion:")

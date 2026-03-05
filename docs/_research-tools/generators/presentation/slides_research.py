@@ -1550,7 +1550,7 @@ def slide_domain_mismatch(prs):
          {"color": GREEN}),
         ("DIY content most visual, least verbal \u2192 worst results",
          {"color": CORAL}),
-        "A topic label at decode time would help ~284 segments",
+        "~284 segments need topic-aware fine-tuning (not just labels)",
     ], rx, CT + Inches(2.5), rw, Inches(2.5), size=Pt(13))
 
     _finish(slide, 0,
@@ -1558,15 +1558,15 @@ def slide_domain_mismatch(prs):
         "(57% captured) because it's closest to the TED talk training data. "
         "DIY/Home is worst at IS 2.13 (30% captured) — inherently visual content "
         "that doesn't translate to speech patterns. 19% of segments (~284) show "
-        "domain vocabulary confusion where a topic label would help.\n\n"
-        "WHY DOES A TOPIC LABEL HELP? The model was trained on general "
-        "lip-reading data (TED talks) without topic context. When it encounters "
-        "domain-specific vocabulary (medical, legal, technical), it hallucinates "
-        "common words instead. A topic label (e.g., 'cooking', 'medicine') at "
-        "decode time would constrain the vocabulary space, helping the LLM "
-        "generate domain-appropriate words. The ~284 segments (19%) are those "
-        "where the LLM judge identified domain vocabulary confusion as the "
-        "primary error source.",
+        "domain vocabulary confusion.\n\n"
+        "TOPIC LABEL EXPERIMENT (March 2026): We tested naive topic label "
+        "injection at decode time on all 284 segments. Result: -0.9pp WER "
+        "(worse). 24% of segments echoed the label literally instead of "
+        "transcribing speech. The model treats extra instruction tokens as "
+        "input to complete, not as context. Control group (100 good segments) "
+        "showed 0% echoing but still -0.6pp degradation. Topic-aware "
+        "FINE-TUNING is needed — the model must learn to use topic tokens "
+        "as context during training.",
         [[lt, tbl], []], click_reveal=True)
 
 

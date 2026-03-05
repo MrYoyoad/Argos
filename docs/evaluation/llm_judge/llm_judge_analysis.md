@@ -210,7 +210,7 @@ The gold standard LLM lenient capture rate of 64.9% compares with:
 
 ### 10.1 Topic/Domain Context
 
-The model correctly lip-reads the phonetic shape of domain-specific words but resolves them to the wrong vocabulary domain. ~284 segments (19% of all data) show topic drift or wrong-domain confusion patterns where a simple topic label ("this is a cooking video") would constrain the LLM decoder.
+The model correctly lip-reads the phonetic shape of domain-specific words but resolves them to the wrong vocabulary domain. ~284 segments (19% of all data) show topic drift or wrong-domain confusion patterns. **Note (March 2026):** Naive topic label injection at decode time was tested and does NOT help (-0.9pp WER, 24% instruction echoing). The model treats the label as input to complete, not as context. Topic-aware fine-tuning is required — see `docs/prompts/topic_label_experiment.md`.
 
 **Examples of domain vocabulary confusion:**
 - REF "costal cartilages" → HYP "cause our hormones" (Medical: phonetically close, wrong domain)
@@ -251,11 +251,11 @@ Visual context would instantly disambiguate these — seeing a lab, studio, or f
 
 ### 10.5 Implications for System Improvement
 
-1. **Topic context injection** (easiest win): Providing a topic label at decode time ("cooking", "medical", "technology") would constrain the LLM's vocabulary priors. This aligns with Mission 8 (Prompt Engineering) — topic hints in the system prompt could convert many P→Y and some N→P.
+1. **Topic-aware fine-tuning** (requires training): Naive prompt injection of topic labels was tested (March 2026) and failed — the model echoes the label instead of using it as context. To benefit from topic information, the model must be fine-tuned with topic-prefixed instructions so it learns to treat topic tokens as context, not input. This aligns with Mission 9 (Fine-Tuning), not Mission 8.
 
 2. **Visual scene context** (harder but higher ceiling): Incorporating scene-level features (object detection, scene classification) could provide grounding that pure lip-reading cannot. This is a longer-term architectural change.
 
-3. **Expected impact**: Topic context alone could improve ~284 segments (19%); visual grounding could additionally help DIY/Home (51.9% N-rate) and other visually-dependent content.
+3. **Expected impact**: Topic-aware fine-tuning could improve ~284 segments (19%); visual grounding could additionally help DIY/Home (51.9% N-rate) and other visually-dependent content.
 
 ---
 
