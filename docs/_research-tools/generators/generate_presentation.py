@@ -1586,15 +1586,26 @@ def slide_is_radar(prs):
     img_h = SL_H - img_top - Inches(0.55)
     img_w = Inches(8.5)
     img_l = (SL_W - img_w) / 2
-    img = add_image(slide, "P6_is_radar", img_l, img_top,
+    # Prefer dual radar (LRS3 vs YouTube) if available
+    radar_key = "P6b_radar_dual" if IMG.get("P6b_radar_dual", Path("x")).exists() \
+                else "P6_is_radar"
+    img = add_image(slide, radar_key, img_l, img_top,
                     width=img_w, height=img_h)
     ann_w = Inches(2.5)
-    add_text(slide, "● Captured (IS ≥ 3.0)", MX, SL_H - Inches(0.55),
-             ann_w, Inches(0.3), size=Pt(12), color=GREEN, bold=True)
-    add_text(slide, "● Failed (IS < 3.0)",
-             MX + CW - ann_w, SL_H - Inches(0.55),
-             ann_w, Inches(0.3), size=Pt(12), color=CORAL, bold=True,
-             align=PP_ALIGN.RIGHT)
+    if radar_key == "P6b_radar_dual":
+        add_text(slide, "\u25cf LRS3 Benchmark (WER 25.4%)", MX, SL_H - Inches(0.55),
+                 Inches(3.5), Inches(0.3), size=Pt(12), color=GREEN, bold=True)
+        add_text(slide, "\u25cf Real-World YouTube (WER 64.1%)",
+                 MX + CW - Inches(3.5), SL_H - Inches(0.55),
+                 Inches(3.5), Inches(0.3), size=Pt(12), color=CORAL, bold=True,
+                 align=PP_ALIGN.RIGHT)
+    else:
+        add_text(slide, "\u25cf Captured (IS \u2265 3.0)", MX, SL_H - Inches(0.55),
+                 ann_w, Inches(0.3), size=Pt(12), color=GREEN, bold=True)
+        add_text(slide, "\u25cf Failed (IS < 3.0)",
+                 MX + CW - ann_w, SL_H - Inches(0.55),
+                 ann_w, Inches(0.3), size=Pt(12), color=CORAL, bold=True,
+                 align=PP_ALIGN.RIGHT)
     _finish(slide, 0,
         "Radar chart comparing mean component values for IS >= 3.0 "
         "(green) vs IS < 3.0 (red). Captured segments are strong across "
@@ -1603,6 +1614,24 @@ def slide_is_radar(prs):
         "The biggest gaps between green and red are on Semantic and NEA "
         "axes, confirming these as the primary differentiators.",
         [[img]])
+
+
+def slide_is_wer_scatter(prs):
+    """IS vs WER scatter showing 'the gap'."""
+    build_split(prs, 0,
+        "The Gap: Where WER Lies Most",
+        "P7_is_wer_scatter",
+        notes="Scatter plot of WER vs IS for all 1,497 segments. The green "
+              "highlighted region shows 147 segments where WER > 40% but IS >= 3.0.",
+        big_num="147",
+        num_color=GREEN,
+        num_label="segments in the gap: high WER, useful IS",
+        bullets=[
+            ("WER > 40% but IS \u2265 3.0 \u2014 useful output that WER discards", {"bold": True}),
+            "Synonyms, tense changes, and filler words inflate WER",
+            "Semantic meaning is preserved despite word-level errors",
+            ("Validates IS as a more honest metric for VSP", {"color": TEAL}),
+        ])
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -2288,6 +2317,80 @@ def slide_09(prs):
               "About 11% of segments are always good regardless of parameters, "
               "and about 16% are always bad. The bottleneck is the visual "
               "encoder, not decode strategy.")
+
+
+def slide_metric_transition(prs):
+    """The three numbers: 64.1% -> 39.9% -> 50.9%."""
+    slide = new_slide(prs)
+    add_title(slide, "Three Numbers That Tell the Real Story")
+    add_accent_line(slide)
+
+    card_w = CW - Inches(2.0)
+    card_h = Inches(1.25)
+    card_x = MX + Inches(1.0)
+    arrow_h = Inches(0.4)
+
+    c1_y = CT + Inches(0.2)
+    g1 = []
+    g1.append(add_rect(slide, card_x, c1_y, card_w, card_h,
+                        fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
+                        corner_radius=True))
+    g1.append(add_text(slide, "64.1%", card_x + Inches(0.3), c1_y + Inches(0.1),
+                        Inches(2.5), card_h - Inches(0.2),
+                        size=Pt(48), color=CORAL, bold=True))
+    g1.append(add_text(slide, "What WER reports\n\"Two-thirds of words are wrong\"",
+                        card_x + Inches(3.0), c1_y + Inches(0.15),
+                        card_w - Inches(3.3), card_h - Inches(0.3),
+                        size=Pt(15), color=LGRAY))
+    # Strikethrough line
+    g1.append(add_rect(slide, card_x + Inches(0.4), c1_y + card_h / 2 - Pt(1.5),
+                        Inches(2.3), Pt(3), fill_color=CORAL))
+
+    a1_y = c1_y + card_h + Inches(0.05)
+    g1_arrow = []
+    g1_arrow.append(add_text(slide, "\u25bc", card_x + card_w / 2 - Inches(0.3),
+                              a1_y, Inches(0.6), arrow_h,
+                              size=Pt(20), color=TEAL, align=PP_ALIGN.CENTER))
+
+    c2_y = a1_y + arrow_h
+    g2 = []
+    g2.append(add_rect(slide, card_x, c2_y, card_w, card_h,
+                        fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
+                        corner_radius=True))
+    g2.append(add_text(slide, "39.9%", card_x + Inches(0.3), c2_y + Inches(0.1),
+                        Inches(2.5), card_h - Inches(0.2),
+                        size=Pt(48), color=TEAL, bold=True))
+    g2.append(add_text(slide,
+        "What IS reveals: 597 of 1,497 segments\ndeliver genuinely useful output",
+        card_x + Inches(3.0), c2_y + Inches(0.15),
+        card_w - Inches(3.3), card_h - Inches(0.3),
+        size=Pt(15), color=WHITE))
+
+    a2_y = c2_y + card_h + Inches(0.05)
+    g2_arrow = []
+    g2_arrow.append(add_text(slide, "\u25bc", card_x + card_w / 2 - Inches(0.3),
+                              a2_y, Inches(0.6), arrow_h,
+                              size=Pt(20), color=GREEN, align=PP_ALIGN.CENTER))
+
+    c3_y = a2_y + arrow_h
+    g3 = []
+    g3.append(add_rect(slide, card_x, c3_y, card_w, card_h,
+                        fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
+                        corner_radius=True))
+    g3.append(add_text(slide, "50.9%", card_x + Inches(0.3), c3_y + Inches(0.1),
+                        Inches(2.5), card_h - Inches(0.2),
+                        size=Pt(48), color=GREEN, bold=True))
+    g3.append(add_text(slide,
+        "+ Salvage recovery: 165 additional segments\n1 in 2 segments delivers useful output",
+        card_x + Inches(3.0), c3_y + Inches(0.15),
+        card_w - Inches(3.3), card_h - Inches(0.3),
+        size=Pt(15), color=WHITE))
+
+    _finish(slide, 0,
+        "The three numbers: WER 64.1% (misleading), IS captured 39.9% (real), "
+        "with salvage 50.9% (the full picture).",
+        [g1, g1_arrow + g2, g2_arrow + g3], click_reveal=True)
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 10 — WHY THE GAP: ROOT CAUSES
@@ -4558,19 +4661,36 @@ def slide_visemes(prs):
          ["Labiodental", "f, v"]],
         MX, CT + Inches(2.3), col_w, text_size=Pt(12))
 
-    # Right column — Confusable pairs
+    # Right column — Visual proof + confusable pairs
     rx = MX + col_w + gap
-    rt = add_text(slide, "Confusable Pairs", rx, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=TEAL, bold=True)
+    rt = add_text(slide, "Same Mouth Shape, Different Words", rx, CT, col_w,
+                  Inches(0.4), size=Pt(18), color=TEAL, bold=True)
+
+    # Poster frames side by side — two speakers saying different words
+    poster_shapes = []
+    poster_w = Inches(2.5)
+    poster_h = Inches(1.6)
+    p1_path = POSTER_DIR / "ok_demo.jpg"
+    p2_path = POSTER_DIR / "salvage.jpg"
+    if p1_path.exists():
+        poster_shapes.append(slide.shapes.add_picture(
+            str(p1_path), rx, CT + Inches(0.5), width=poster_w, height=poster_h))
+    if p2_path.exists():
+        poster_shapes.append(slide.shapes.add_picture(
+            str(p2_path), rx + poster_w + Inches(0.3), CT + Inches(0.5),
+            width=poster_w, height=poster_h))
+    poster_shapes.append(add_text(slide,
+        "Different words \u2014 nearly identical mouth shape to the camera",
+        rx, CT + Inches(2.2), col_w, Inches(0.3),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     tbl2 = add_table(slide,
-        ["Word A", "Word B"],
-        [["admiral", "animal"],
-         ["mom", "bomb"],
-         ["pat", "bat"],
-         ["collar", "color"],
-         ["probiotics", "permafrost"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(13))
+        ["Word A", "Word B", "Viseme"],
+        [["pat", "bat", "Bilabial"],
+         ["mom", "bomb", "Bilabial"],
+         ["admiral", "animal", "Alveolar"],
+         ["collar", "color", "Velar"]],
+        rx, CT + Inches(2.7), col_w, text_size=Pt(12))
 
     # Bottom
     add_text(slide,
@@ -4580,10 +4700,11 @@ def slide_visemes(prs):
 
     _finish(slide, 0,
         "50-70% of English sounds are invisible on lips. Multiple sounds produce "
-        "identical mouth shapes called visemes. Admiral and animal look the same. "
-        "Mom and bomb look the same. Context is the only disambiguation signal, "
-        "which is why the LLM component is critical.",
-        [[lt, lb, tbl1], [rt, tbl2]], click_reveal=True)
+        "identical mouth shapes called visemes. The poster frames show two "
+        "different speakers — their mouth shapes look nearly identical despite "
+        "saying completely different words. Context is the only disambiguation "
+        "signal, which is why the LLM component is critical.",
+        [[lt, lb, tbl1], poster_shapes + [rt, tbl2]], click_reveal=True)
 
 
 def slide_data_flow(prs):
@@ -6243,10 +6364,11 @@ def main():
         # --- Section 0: Opening ---
         slide_01,           # Title
         slide_exec_summary, # Executive summary
+        slide_wer_lies,     # [NEW] Side-by-side: WER lies, IS tells truth
         slide_toc,          # Table of contents
         # --- Section 1: Context ---
         slide_02,           # What is VSP? (video)
-        slide_visemes,      # Fundamental challenge
+        slide_visemes,      # [MOD] Fundamental challenge + poster frames
         slide_03,           # Model Architecture
         slide_data_flow,    # How It Works
         slide_04,           # The Benchmark
@@ -6255,66 +6377,69 @@ def main():
         slide_05,           # The Reality Gap (64.1% WER)
         slide_wer_explained,# WER formula and limitations
         slide_06,           # WER Is Blind to Meaning
-        slide_is_foreshadow,# Bridge: We Need a Better Metric (Req #2)
+        slide_is_foreshadow,# Bridge: We Need a Better Metric
         # --- Section 3: Research Findings ---
-        slide_research_transition, # Section divider: RESEARCH FINDINGS
-        slide_is_intro,     # Introducing IS (expanded, Req #6)
-        slide_is_signals,   # IS: Six Signals (SWAPPED, Req #4)
+        slide_research_transition, # Section divider
+        slide_is_intro,     # Introducing IS
+        slide_is_signals,   # IS: Six Signals
         slide_is_weight_rationale, # Why These Weights? 3 Dimensions
-        slide_is_dimensions,# Three quality dimensions (SWAPPED, Req #4)
-        slide_is_calc_examples, # IS in Action: Two Real Segments (Req #5)
-        slide_is_radar,     # IS Radar: Success vs Failure Profile (Req #1)
+        slide_is_dimensions,# Three quality dimensions
+        slide_is_calc_examples, # IS in Action: Two Real Segments
+        slide_is_radar,     # [MOD] IS Radar: dual overlay if available
+        slide_is_wer_scatter, # [NEW] The Gap: WER vs IS scatter
         slide_07,           # IS Results: 39.9% Captured
+        slide_metric_transition, # [NEW] 64.1% → 39.9% → 50.9%
         # --- Section 4: Understanding Why ---
-        slide_10,           # Three Root Causes (text-only, Req #7)
+        slide_10,           # Three Root Causes
         slide_domain_mismatch, # Domain mismatch detail
-        slide_11,           # Named Entity Accuracy (expanded, Req #8)
+        slide_11,           # Named Entity Accuracy
         slide_failure_deep_1a, # Failure Modes: 5-Category Taxonomy
-        slide_failure_deep_2, # Failure Modes: Real Examples (make it concrete)
-        slide_08,           # Failure Mode Taxonomy (now numbers make sense)
-        slide_failure_deep_3, # Failure Modes: Impact & Fixes (what to do)
-        # --- Section 5: Can We Tune It? (condensed, Req #10) ---
-        slide_tuning_summary, # 13 Experiments, Minimal Gain (replaces 5)
+        slide_failure_deep_2, # Failure Modes: Real Examples
+        slide_08,           # Failure Mode Taxonomy
+        slide_failure_deep_3, # Failure Modes: Impact & Fixes
+        # --- Section 5: Can We Tune It? ---
+        slide_tuning_summary, # 13 Experiments, Minimal Gain
         # --- Section 6: The Full Picture ---
-        slide_is_deep_dive, # Why These 6 Signals? Validation (Req #11)
-        slide_metric_disagreement, # When Metrics Disagree (4 patterns)
-        slide_metric_disagreement_2, # When Metrics Disagree pt 2 (4 more)
+        slide_is_deep_dive, # Why These 6 Signals? Validation
+        slide_metric_disagreement, # When Metrics Disagree
+        slide_metric_disagreement_2, # When Metrics Disagree pt 2
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
         slide_context_eval, # Context-aware re-evaluation
-        # --- Salvage (moved here: answers "is 40% really the limit?") ---
+        # --- Salvage ---
         slide_llm_context_engine, # LLM as context engine
         slide_25,           # LLM Salvage overview: 39.9% -> 50.9%
         slide_25b,          # Salvage: 6 Recovery Categories
-        slide_25d,          # Salvage: 3 Real Examples (NEW)
-        slide_25e,          # Salvage: 3 More Examples — Domain Context Recovery
+        slide_25d,          # Salvage: 3 Real Examples
+        slide_25e,          # Salvage: 3 More Examples
         slide_25c,          # Salvage: How Detection Works
-        # --- What good looks like (now after salvage context) ---
-        slide_what_good_looks_like, # What good looks like
-        slide_14b,          # Video Gallery (label fixed, Req #12)
-        slide_15,           # Demo: OK > Near-miss > Hallucination (Req #13)
-        # --- Section 7: Engineering (Req #14: slide_16 removed) ---
-        slide_eng_transition, # Section divider (Req #15)
+        # --- What good looks like ---
+        slide_what_good_looks_like,
+        slide_14b,          # Video Gallery
+        slide_15,           # Demo: OK > Near-miss > Hallucination
+        # --- Section 7: Engineering ---
+        slide_eng_transition, # Section divider
         slide_three_repos,  # Starting point
-        slide_17,           # Pipeline diagram (rebuilt, Req #16)
-        slide_18,           # Engineering Journey (expanded, Req #17)
+        slide_17,           # [MOD] Pipeline: per-stage wipe reveal
+        slide_18,           # Engineering Journey
         slide_19, slide_20,
-        slide_web_ui,       # Web UI (placeholder for screenshot, Req #18)
+        slide_web_ui,       # Web UI
         slide_21,
-        slide_dual_env,     # Two environments (Req #19: slide_22/23 removed)
+        slide_dual_env,     # Two environments
         # --- Section 8: Future Directions ---
         slide_future_transition, # Section divider
         slide_insights,     # Key research insights
         slide_24,           # Starting point better than WER
-        slide_26,           # Five Phases roadmap (GER defined, Req #20)
-        slide_26b,          # IS trajectory roadmap (parallel to WER)
+        slide_26,           # Five Phases roadmap
+        slide_26b,          # IS trajectory roadmap
         slide_confidence_scoring, # Phase 1: Confidence Scoring detail
-        slide_27,           # Phase 1 Confidence (quick summary)
+        slide_27,           # Phase 1 Confidence
         slide_28,           # Phase 2 N-Best
-        slide_data_scaling, # Data scaling evidence
-        slide_29,           # Phase 3-4 Fine-Tuning (clean plot, Req #21)
+        slide_data_scaling, # [MOD] Data scaling with phases + timelines
+        slide_price_tag,    # [NEW] Cost projections: GPU/data/IS
+        slide_29,           # Phase 3-4 Fine-Tuning
         slide_30,           # Phase 5 LLM Upgrade
-        slide_arabic_roadmap, # Arabic Pipeline Roadmap (Req #22)
+        slide_arabic_roadmap, # Arabic Pipeline Roadmap
         slide_31,           # Key Takeaways
         slide_thank_you,    # Thank You & Questions
         # --- Appendix (A1–A9) ---

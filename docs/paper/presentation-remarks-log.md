@@ -46,3 +46,21 @@ Tracks all user feedback, remarks, and requests regarding presentation slides so
 | 36 | 66 | Add "3-5 weeks" into animation at the end | done (added timeline callout box as 3rd animation group) |
 | 37 | 71 | Tables overlap — bad | done (pushed heuristic title +0.4in, tbl3 +0.4in down) |
 | 38 | — | Write current version number to keep it updated | done (v76 slides, 2026-03-05) |
+
+---
+
+## Batch 2 — 2026-03-05 (v76→v80 slides) — Gemini Feedback Implementation
+
+External review feedback from Gemini, agreed changes implemented.
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 39 | NEW: "The Metric That Lies" (after Exec Summary) | Prove WER is misleading with concrete example — side-by-side WER 46.2% "FAILING" vs IS 4.03 "EXCELLENT" cards, word-level ref/hyp comparison, bottom callout. 3-click animation. | done (new `slide_wer_lies`) |
+| 40 | NEW: "Three Numbers That Tell the Real Story" (after IS Results) | Vertical staircase: 64.1% (WER, coral strikethrough) → 39.9% (IS captured, teal) → 50.9% (+ salvage, green). 3-click card reveal with connecting arrows. | done (new `slide_metric_transition`) |
+| 41 | NEW: IS vs WER Scatter (after IS Radar) | Scatter plot showing WER vs IS colored by tier, highlighting "the gap" (WER>40% but IS≥3.0). Separate companion script `generate_is_wer_scatter.py`. 147 gap segments found. | done (new `slide_is_wer_scatter` + plot script) |
+| 42 | NEW: "The Price Tag" (after Data Scaling) | AWS cost projections table: 5 phases from current to 50K hrs. Phase 3 (20K hrs, ~$35K) highlighted as sweet spot. Right-side callout with LLM backbone upgrade options (Llama 3.1 8B / Qwen 2.5 7B). Training follows paper's 2-phase curriculum (freeze encoder → unfreeze). Speaker notes with GPU estimate methodology. | done (new `slide_price_tag`) |
+| 43 | Pipeline (slide 17) | Replace 2-block reveal with per-stage wipe animation — 11 animation groups (input label, 8 stages individually, down arrow, legend). New `add_wipe_animation()` helper using OOXML presetID=10 wipe(right). Connector arrows between stages. | done (rewrote `slide_17` + new animation helper) |
+| 44 | Data Scaling | Expand table from 3 columns to 5: Phase, Data, WER, IS Target, Timeline. Added Phase 1-4 labels with specific timelines (2-4 weeks through 3-4 months). Phase 3 row highlighted green. | done (modified `slide_data_scaling`) |
+| 45 | Visemes | Added poster frame images (`ok_demo.jpg`, `salvage.jpg`) showing speaking faces side-by-side. Caption: "Different words — same mouth shape to the camera." | done (modified `slide_visemes`) |
+| 46 | IS Radar | Dual radar overlay — LRS3 benchmark (green, tight) vs real-world YouTube (coral, jagged) on 6 IS dimensions. Separate companion script `generate_dual_radar.py`. Falls back to single radar if dual not available. | done (modified `slide_is_radar` + plot script) |
+| 47 | — | Version updated to v80 slides, 2026-03-05 | done |
