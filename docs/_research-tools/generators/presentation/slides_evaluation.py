@@ -722,31 +722,36 @@ def slide_25e(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_14b(prs):
-    """14b: 2×4 clickable video grid matching Slide 14 curated examples."""
+    """14b: 2×3 clickable video grid — each video demonstrates a different system behavior."""
     slide = new_slide(prs)
     add_title(slide, "Curated Examples — Video Gallery")
     add_accent_line(slide)
 
-    add_text(slide, "Click any thumbnail to play (PowerPoint / compatible viewer):",
+    add_text(slide, "Click any thumbnail to play — each video demonstrates a different system behavior:",
              MX, CT, CW, Inches(0.35), size=Pt(13), color=LGRAY)
 
-    # Grid layout: 4 cols × 2 rows
-    vid_w  = Inches(2.82)
-    vid_h  = Inches(1.58)   # 16:9
+    # Grid layout: 3 cols × 2 rows
+    vid_w  = Inches(3.82)
+    vid_h  = Inches(2.15)   # 16:9
     gap_x  = Inches(0.23)
-    gap_y  = Inches(0.55)   # space for label below each video
+    gap_y  = Inches(0.65)   # space for descriptive label below each video
     row_y  = [CT + Inches(0.45), CT + Inches(0.45) + vid_h + gap_y]
     start_x = MX
 
+    # 6 videos — each tells a different story about system behavior
     rows = [
-        [("perfect",      "Perfect",     "0%",   GREEN),
-         ("nearmiss",     "Near-Miss",   "58%",  YELLOW),
-         ("halluc",       "Hallucin.",   "100%", RED),
-         ("tuning_fix",   "Tuning Fix\n(baseline: empty)",  "73%",  ORANGE)],
-        [("topic_drift",  "Topic Drift", "97%",  RED),
-         ("salvage",      "Salvage",     "74%",  YELLOW),
-         ("entity_success","Entity OK",  "31%",  GREEN),
-         ("entity_destroy","Entity Lost","100%", RED)],
+        [("perfect",      "System works — 33 words perfectly transcribed",
+          "0%",   GREEN),
+         ("nearmiss",     "Viseme confusion — identical lip shapes, wrong word",
+          "58%",  YELLOW),
+         ("halluc",       "Fluent but fabricated — most dangerous failure mode",
+          "100%", RED)],
+        [("tuning_fix",   "Config J recovers empty output — tuning tradeoff in action",
+          "73%",  ORANGE),
+         ("topic_drift",  "Model generates coherent but completely wrong topic",
+          "97%",  RED),
+         ("salvage",      "WER says 74% failure — but meaning is preserved",
+          "74%",  YELLOW)],
     ]
 
     for r, row in enumerate(rows):
@@ -754,18 +759,25 @@ def slide_14b(prs):
             x = start_x + c * (vid_w + gap_x)
             y = row_y[r]
             add_video(slide, key, x, y, vid_w, vid_h)
-            # WER badge
-            add_text(slide, f"{label}  WER {wer}",
-                     x, y + vid_h + Inches(0.04), vid_w, Inches(0.32),
+            # Descriptive caption + WER badge
+            add_text(slide, f"{label}  (WER {wer})",
+                     x, y + vid_h + Inches(0.04), vid_w, Inches(0.40),
                      size=Pt(9), color=color, bold=False,
                      align=PP_ALIGN.CENTER)
 
     _finish(slide, "14b",
-        "8 videos matching the curated examples on Slide 14. "
-        "Row 1: Perfect transcription, near-miss (probiotics→permafrost), "
-        "full hallucination, Config J tuning fix (empty→output). "
-        "Row 2: Topic drift (#1 failure), salvage hidden gem, entity preserved "
-        "despite wrong numbers, entity completely destroyed. Click each to play.")
+        "Each video demonstrates a different system behavior. "
+        "Row 1: (1) Perfect — proves the system CAN work, 33 words with 0% WER. "
+        "(2) Near-miss — viseme confusion where identical lip shapes produce wrong words "
+        "(e.g. admiral/animal), showing the fundamental lip-reading challenge. "
+        "(3) Hallucination — fluent, grammatical output that is completely fabricated, "
+        "the most dangerous failure because it looks correct. "
+        "Row 2: (4) Tuning fix — Config J recovers a segment that baseline left empty, "
+        "showing the tradeoff between coverage and accuracy. "
+        "(5) Topic drift — model generates coherent text about the wrong subject entirely, "
+        "the #1 failure mode by frequency. "
+        "(6) Salvage — WER reports 74% failure but a human would understand the meaning, "
+        "proving WER alone is insufficient for quality assessment.")
 
 
 # ═══════════════════════════════════════════════════════════════════════

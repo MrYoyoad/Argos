@@ -190,9 +190,11 @@ User remark: "many slides have bad animations and occlusions"
 | 119 | General | Explain the experiment in simple terms — what we did, how, what we got | pending |
 | 120 | General | Test additional language models for replacement | pending |
 | 121 | General | Provide references for future methods suggested — known methods, papers | pending |
-| 122 | 65 (slide_price_tag) | Clarify exactly which training is being discussed | pending |
-| 123 | 66 (slide_29, Fine-Tuning) | Graphs are not visible | pending |
-| 124 | 68 (slide_arabic_roadmap) | Create a more relaxed timeline, give it more thought, unknowns, bottlenecks | pending |
-| 125 | Videos slide (slide_14b) | What is the point of each video? Give more nice examples out of the 6 provided | pending |
+| 122 | 65 (slide_price_tag) | Clarify exactly which training is being discussed | done |
+| 123 | 66 (slide_29, Fine-Tuning) | Graphs are not visible | done |
+| 124 | 68 (slide_arabic_roadmap) | Create a more relaxed timeline, give it more thought, unknowns, bottlenecks | done |
+| 128 | 59-60 (slide_26 + slide_26b) | Show where/how/why each metric improvement is expected — link to failure modes, extent, contribution | done |
+| 129 | 61-62 (slide_confidence_scoring + slide_27) | Shorten together — too much detail; merged key content into confidence_scoring, made slide_27 brief summary | done |
+| 125 | Videos slide (slide_14b) | What is the point of each video? Give more nice examples out of the 6 provided. Reduced from 8 to 6 videos (dropped entity_success/entity_destroy), added descriptive captions explaining what each video demonstrates, updated speaker notes with narrative explanation | done |
 | 126 | Various | Fix occlusions in various places | pending |
 | 127 | 19 (slide_domain_mismatch) | Topic label experiment: updated speaker notes with final 284/284 results + control group (100 good segments). Control shows 0% echo rate vs 24% on bad segments — model only echoes when visual signal is weak | done |
