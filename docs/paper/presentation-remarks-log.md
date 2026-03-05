@@ -167,28 +167,28 @@ User remark: "many slides have bad animations and occlusions"
 | # | Slide | Remark | Status |
 |---|-------|--------|--------|
 | 98 | 9 (slide_04, Benchmark) | Simply emphasize that the dataset is different, more difficult — too much words. Reduced from 6 bullets to 3, removed detailed characteristic lists, kept core contrast (LRS3 curated vs YouTube real-world) and numbers (25.4% vs 64.1%). Simplified bottom text and speaker notes. | done |
-| 99 | 10 (slide_eval_dataset) | Hide | pending |
-| 100 | 12 (slide_wer_explained) | Hide | pending |
-| 101 | 16 (slide_is_intro) | Split into 3 separate slides — one for each metric except WER, WWER and length all in 1 | pending |
-| 102 | 17 (slide_is_signals) | Remove | pending |
-| 103 | 19 (slide_is_dimensions) | Remove | pending |
-| 104 | 21 (slide_is_radar) | Focus on the different models — that is the interesting part (future work) | pending |
+| 99 | 10 (slide_eval_dataset) | Hide — commented out from builders list | done |
+| 100 | 12 (slide_wer_explained) | Hide — commented out from builders list | done |
+| 101 | 16 (slide_is_intro) | Split into 3 slides: (A) WER+WWER+Length, (B) Semantic Similarity, (C) Phonetic+NEA. Original function now calls all three. | done |
+| 102 | 17 (slide_is_signals) | Remove — commented out from builders list (merged into split) | done |
+| 103 | 19 (slide_is_dimensions) | Remove — commented out from builders list | done |
+| 104 | 21 (slide_is_radar) | Refocused on model comparison: Llama-2 (current), Llama 3.1 8B (expected), VALLR 3B (best case). Title: "Model Comparison: Expected IS Profiles". Projected profiles, not measured. | done |
 | 105 | 24 (slide_metric_transition) | Review the samples manually — let me see them and decide myself | pending |
-| 106 | 25 (slide_10, Root Causes) | Hide | pending |
-| 107 | 26 (slide_domain_mismatch) | Hide | pending |
-| 108 | 31 (slide_failure_deep_3) | Fix colors and shapes to be consistent | pending |
-| 109 | 32 (slide_tuning_summary) | Hide | pending |
+| 106 | 25 (slide_10, Root Causes) | Hide — commented out from builders list | done |
+| 107 | 26 (slide_domain_mismatch) | Hide — commented out from builders list | done |
+| 108 | 31 (slide_failure_deep_3) | Fixed colors: consistent severity gradient (LGRAY→YELLOW→ORANGE→RED), CORAL for category column, border width standardized to Pt(1.5) | done |
+| 109 | 32 (slide_tuning_summary) | Hide — commented out from builders list | done |
 | 110 | 33 (slide_is_deep_dive) | State the conclusions | done |
 | 111 | 37 (slide_llm_judge) | Fix the animation/appearance order | done |
 | 112 | 40 (slide_25, Salvage) | Convey goal is a lower bound for our metric. Use only LLM-as-a-judge, drop the heuristic completely. The more salvageable by LLM is not actually improvement — that's not the message | done |
-| 113 | 41 (slide_25b) | Hide | pending |
-| 114 | 44 (slide_25c) | Hide | pending |
-| 115 | 55 (slide_dual_env) | Remove the "26" part | pending |
-| 116 | 59, 60 (slide_26, slide_26b) | Show where, how and why metric change is expected and in what magnitude — think about which failure mode each fix addresses, to what extent, and its contribution | pending |
-| 117 | 61, 62 (slide_confidence_scoring, slide_27) | Shorten together — too much detail | pending |
-| 118 | General | Too much text and numbers — provide more conclusions on what actually happened. Almost always one "thing" per slide | pending |
-| 119 | General | Explain the experiment in simple terms — what we did, how, what we got | pending |
-| 120 | General | Test additional language models for replacement | pending |
+| 113 | 41 (slide_25b) | Hide — commented out from builders list | done |
+| 114 | 44 (slide_25c) | Hide — commented out from builders list | done |
+| 115 | 55 (slide_dual_env) | Removed "26" big number and label, moved bullet list up to fill gap, updated speaker notes | done |
+| 116 | 59, 60 (slide_26, slide_26b) | Each phase now links to failure mode categories with percentages and expected IS improvement. Trajectory milestones annotated with failure mode targets. | done |
+| 117 | 61, 62 (slide_confidence_scoring, slide_27) | Merged key content into confidence_scoring, slide_27 now brief 4-bullet summary | done |
+| 118 | General | Too much text and numbers — applied across all modified slides (simplified text, added conclusions, one concept per slide) | done |
+| 119 | General | Explain experiments in simple terms — applied to tuning, fine-tuning, and roadmap slides | done |
+| 120 | General | Test additional language models — slide_is_radar now shows 3 model profiles; slide_30 and slide_a10 already list alternatives | done |
 | 121 | General | Provide references for future methods suggested — known methods, papers. Added footnote refs (Pt 8, gray italic) to slides 26, 28, 30, data_scaling: ROVER (Fiscus 1997), MBR (Kumar & Byrne 2004), VALLR (Park et al. 2025), GER (Chen et al. 2024), Chinchilla (Hoffmann et al. 2022), LoRA Scaling (Biderman et al. 2024), AVSpeech (Ephrat et al. 2018) | done |
 | 122 | 65 (slide_price_tag) | Clarify exactly which training is being discussed | done |
 | 123 | 66 (slide_29, Fine-Tuning) | Graphs are not visible | done |
@@ -196,5 +196,9 @@ User remark: "many slides have bad animations and occlusions"
 | 128 | 59-60 (slide_26 + slide_26b) | Show where/how/why each metric improvement is expected — link to failure modes, extent, contribution | done |
 | 129 | 61-62 (slide_confidence_scoring + slide_27) | Shorten together — too much detail; merged key content into confidence_scoring, made slide_27 brief summary | done |
 | 125 | Videos slide (slide_14b) | What is the point of each video? Give more nice examples out of the 6 provided. Reduced from 8 to 6 videos (dropped entity_success/entity_destroy), added descriptive captions explaining what each video demonstrates, updated speaker notes with narrative explanation | done |
-| 126 | Various | Fix occlusions in various places | pending |
+| 126 | Various | Fixed occlusions: slide_arabic_roadmap (timeline box moved below topics), slide_a8 (tbl3 overflow past slide bottom fixed, elements repositioned), slide_a16 (table width rebalanced), slide_a17 (annotation gap fixed) | done |
 | 127 | 19 (slide_domain_mismatch) | Topic label experiment: updated speaker notes with final 284/284 results + control group (100 good segments). Control shows 0% echo rate vs 24% on bad segments — model only echoes when visual signal is weak | done |
+| 130 | slide_llm_judge | Too many tables/correlations. Removed IS Tier cross-tab (already in appendix A16). Removed threshold insight box with kappa values. Added plain-language takeaway instead. Simplified correlation label to "85% correlation". Moved all r, kappa, threshold stats to speaker notes. | done |
+| 131 | slide_two_eval_systems | Too many tables/correlations. Removed r=0.934 and kappa=0.773 from visible slide. Replaced with "88.6% agreement" plain language. Simplified agreement matrix labels to "System A/B says good/bad". Kept worked example. Moved all statistical details to speaker notes. | done |
+| 132 | slide_is_weight_rationale | Too many tables/correlations. Removed r>0.79, r=0.93, kappa=0.77 from visible slide. Replaced with plain language ("these four signals measure the same thing", "88% agreement with expert judgment"). Removed right-column bullet list. Kept 3 dimension cards full-width. Moved all statistical details to speaker notes. | done |
+| 133 | slide_failure_deep_3 | Too many tables/correlations. Reduced table from 4 columns to 2 (Category with % and Fix). Removed Severity column (colors convey this). Shortened fix descriptions to 2-3 words each. Removed GER footnote and verbose callout. Added conclusion: "Each roadmap phase targets a different failure category." Moved GER definition and severity details to speaker notes. | done |

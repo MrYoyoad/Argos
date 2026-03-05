@@ -26,61 +26,38 @@ from .helpers import (
     build_split, build_bullets, build_two_col, build_full_image,
 )
 
-def slide_is_intro(prs):
-    """Deep dive into IS — what it is and how each signal works."""
+def slide_is_intro_a(prs):
+    """IS Slide A: WER, WWER, and Length Ratio — the standard metrics."""
     slide = new_slide(prs)
-    add_title(slide, "The Intelligibility Score (IS) — Our Metric")
+    add_title(slide, "IS Signals: Word Accuracy & Length")
     add_accent_line(slide)
 
-    # Top banner — what IS is in one line
+    # Top banner
     banner = add_rect(slide, MX, CT, CW, Inches(0.55), fill_color=NAVY2,
                       border_color=TEAL, border_width=Pt(2), corner_radius=True)
     banner_txt = add_text(slide,
-        "A composite score from 0 to 5.  IS \u2265 3.0 = \"Properly Captured\" "
-        "\u2014 the viewer got the message.  "
-        "Deterministic, free, reproducible.",
+        "IS = composite of 6 signals (0\u20135).  IS \u2265 3.0 = \"Properly Captured\".  "
+        "These 3 signals measure raw word accuracy and output sanity.",
         MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.4),
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
-    # 6 signal cards — 2 columns × 3 rows
-    card_w = Inches(5.8)
-    card_h = Inches(1.35)
-    gap_x = Inches(0.53)
-    gap_y = Inches(0.12)
-    start_y = CT + Inches(0.8)
+    card_w = Inches(11.0)
+    card_h = Inches(1.45)
+    gap_y = Inches(0.18)
+    start_y = CT + Inches(0.85)
 
     signals = [
-        ("Semantic Similarity", "25%", TEAL,
-         "Converts both ref and hyp to 384-dim sentence embeddings "
-         "(SBERT / all-MiniLM-L6-v2), then measures cosine similarity. "
-         "Captures overall meaning — even if different words are used, "
-         "a high score means the same idea was communicated.",
-         'Example: "the CEO resigned" vs "the chief executive stepped down" '
-         '\u2192 cosine 0.91 (meaning preserved despite zero word overlap).'),
-        ("Phonetic Similarity", "15%", TEAL,
-         "Converts each word to IPA pronunciation (eng-to-ipa), "
-         "then computes character-level similarity between phonetic strings. "
-         "Critical for lip reading: the model sees mouth shapes, not spellings — "
-         "so phonetically correct output is a sign the visual encoder worked.",
-         'Example: "Admiral McRae" vs "animal migration" \u2192 '
-         'phonetic: /\u00e6dm\u026ar\u0259l m\u0259kre\u026a/ vs '
-         '/\u00e6n\u026am\u0259l ma\u026a\u0261re\u026a\u0283\u0259n/ \u2192 0.68 (sounds similar!).'),
         ("Inverse WER", "15%", CORAL,
          "Standard Word Error Rate (substitutions + insertions + deletions "
          "divided by reference length), then inverted: 1 \u2212 WER. "
-         "A baseline word-accuracy signal.",
-         "Treats all words equally — every error costs the same."),
+         "A baseline word-accuracy signal that treats all words equally.",
+         "Treats all words equally \u2014 every error costs the same."),
         ("WWER (Weighted WER)", "15%", CORAL,
          "Like WER, but content words (nouns, verbs, names) cost 2\u00d7 "
          "and function words ('the', 'a', 'is') cost only 0.5\u00d7. "
          "Losing a name hurts more than losing an article.",
          'Example: "Admiral McRae" wrong = 2\u00d7 penalty. '
          '"the" wrong = 0.5\u00d7 penalty.'),
-        ("Named Entity Accuracy", "15%", CORAL,
-         "Extracts named entities (people, numbers, places) from both "
-         "ref and hyp using spaCy NER, then computes F1 (precision \u00d7 recall). "
-         "Binary per entity: either correct or destroyed, no partial credit.",
-         "Mean F1 = 38.9% \u2014 entities missed in 85% of segments."),
         ("Length Ratio", "15%", LGRAY,
          "Output length divided by reference length. A safety check: "
          "catches hallucination (ratio >> 1, model generates too much) "
@@ -90,25 +67,21 @@ def slide_is_intro(prs):
 
     card_groups = []
     for i, (name, weight, color, how, example) in enumerate(signals):
-        col = i % 2
-        row = i // 2
-        x = MX + col * (card_w + gap_x)
-        y = start_y + row * (card_h + gap_y)
-
-        r = add_rect(slide, x, y, card_w, card_h, fill_color=NAVY2,
+        y = start_y + i * (card_h + gap_y)
+        r = add_rect(slide, MX, y, card_w, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
         t1 = add_text(slide, f"{name}  ({weight})",
-                 x + Inches(0.15), y + Inches(0.06),
-                 card_w - Inches(0.3), Inches(0.28),
-                 size=Pt(13), color=color, bold=True)
+                 MX + Inches(0.2), y + Inches(0.08),
+                 card_w - Inches(0.4), Inches(0.3),
+                 size=Pt(15), color=color, bold=True)
         t2 = add_text(slide, how,
-                 x + Inches(0.15), y + Inches(0.34),
-                 card_w - Inches(0.3), Inches(0.55),
-                 size=Pt(10), color=WHITE)
+                 MX + Inches(0.2), y + Inches(0.42),
+                 card_w - Inches(0.4), Inches(0.55),
+                 size=Pt(12), color=WHITE)
         t3 = add_text(slide, f"\u25b8 {example}",
-                 x + Inches(0.15), y + Inches(0.92),
-                 card_w - Inches(0.3), Inches(0.38),
-                 size=Pt(9), color=LGRAY, italic=True)
+                 MX + Inches(0.2), y + Inches(1.0),
+                 card_w - Inches(0.4), Inches(0.38),
+                 size=Pt(10), color=LGRAY, italic=True)
         card_groups.append([r, t1, t2, t3])
 
     # Formula at bottom
@@ -119,18 +92,172 @@ def slide_is_intro(prs):
         size=Pt(11), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Deep dive into IS. Six signals, each measuring a different aspect "
-        "of output quality. SEMANTIC (25%): sentence embeddings capture "
-        "overall meaning even with different words — cosine similarity in "
-        "384-dim space. PHONETIC (15%): converts words to IPA pronunciation "
-        "and compares — critical because the model sees mouth shapes, not "
-        "spellings. WER (15%): standard word accuracy baseline. WWER (15%): "
-        "weighted WER where content words cost 2x and function words 0.5x. "
-        "NEA (15%): Named Entity F1 — are names, numbers, places preserved? "
-        "LENGTH (15%): output/reference length ratio catches hallucination "
-        "and truncation. All 6 are combined into a single 0-5 score. "
-        "IS >= 3.0 means the viewer gets the message.",
+        "IS Slide A: Three standard metrics. Inverse WER (15%): baseline "
+        "word accuracy, treats all words equally. WWER (15%): weighted WER "
+        "where content words cost 2x and function words 0.5x — losing a "
+        "name hurts more than losing 'the'. Length Ratio (15%): catches "
+        "hallucination (ratio >> 1) and truncation (ratio << 1). These "
+        "three signals form the word-accuracy dimension of IS.",
         [[banner, banner_txt]] + card_groups, click_reveal=True)
+
+
+def slide_is_intro_b(prs):
+    """IS Slide B: Semantic Similarity — meaning beyond words."""
+    slide = new_slide(prs)
+    add_title(slide, "IS Signals: Semantic Similarity")
+    add_accent_line(slide)
+
+    # Weight callout
+    weight_r = add_rect(slide, MX, CT, Inches(3.5), Inches(0.5), fill_color=NAVY2,
+                        border_color=TEAL, border_width=Pt(2), corner_radius=True)
+    weight_t = add_text(slide, "Weight: 25% \u2014 the single largest signal",
+                 MX + Inches(0.2), CT + Inches(0.06),
+                 Inches(3.1), Inches(0.38),
+                 size=Pt(14), color=TEAL, bold=True)
+
+    # Main explanation card
+    card_y = CT + Inches(0.75)
+    card_w = CW
+    card_h = Inches(2.8)
+    card_r = add_rect(slide, MX, card_y, card_w, card_h, fill_color=NAVY2,
+                      border_color=TEAL, border_width=Pt(1.5), corner_radius=True)
+
+    add_text(slide, "How It Works",
+             MX + Inches(0.3), card_y + Inches(0.12),
+             card_w - Inches(0.6), Inches(0.3),
+             size=Pt(16), color=TEAL, bold=True)
+
+    add_text(slide,
+        "1. Both reference and hypothesis are converted to 384-dimensional "
+        "sentence embeddings using SBERT (all-MiniLM-L6-v2).\n\n"
+        "2. Cosine similarity is computed between the two embedding vectors.\n\n"
+        "3. The result captures overall meaning \u2014 even if completely different "
+        "words are used, a high score means the same idea was communicated.",
+        MX + Inches(0.3), card_y + Inches(0.5),
+        card_w - Inches(0.6), Inches(1.8),
+        size=Pt(13), color=WHITE)
+
+    # Example card
+    ex_y = card_y + card_h + Inches(0.2)
+    ex_h = Inches(1.2)
+    ex_r = add_rect(slide, MX, ex_y, card_w, ex_h, fill_color=NAVY2,
+                    border_color=LGRAY, border_width=Pt(1.5), corner_radius=True)
+
+    add_text(slide, "Example",
+             MX + Inches(0.3), ex_y + Inches(0.08),
+             card_w - Inches(0.6), Inches(0.28),
+             size=Pt(14), color=LGRAY, bold=True)
+    add_text(slide,
+        '"the CEO resigned" vs "the chief executive stepped down"\n'
+        '\u2192 cosine similarity 0.91 \u2014 meaning preserved despite zero word overlap.\n'
+        'WER would report 80% error; Semantic Similarity sees the truth.',
+        MX + Inches(0.3), ex_y + Inches(0.4),
+        card_w - Inches(0.6), Inches(0.7),
+        size=Pt(12), color=LGRAY, italic=True)
+
+    # Why it matters
+    why_y = ex_y + ex_h + Inches(0.2)
+    add_text(slide,
+        "Why it matters: lip reading often produces synonyms and paraphrases. "
+        "WER punishes these; Semantic Similarity rewards them.",
+        MX, why_y, CW, Inches(0.4),
+        size=Pt(13), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "IS Slide B: Semantic Similarity deep dive. This is the single "
+        "largest signal at 25% weight. Uses SBERT (all-MiniLM-L6-v2) to "
+        "convert sentences to 384-dim embeddings and measures cosine "
+        "similarity. Captures meaning even when completely different words "
+        "are used. Critical for lip reading because the model often produces "
+        "synonyms and paraphrases that WER harshly penalizes but that "
+        "preserve the intended message.",
+        [[weight_r, weight_t], [card_r], [ex_r]], click_reveal=True)
+
+
+def slide_is_intro_c(prs):
+    """IS Slide C: Phonetic Similarity and Named Entity Accuracy."""
+    slide = new_slide(prs)
+    add_title(slide, "IS Signals: Phonetic & Named Entities")
+    add_accent_line(slide)
+
+    card_w = CW
+    card_h = Inches(2.4)
+    gap_y = Inches(0.2)
+
+    # Card 1: Phonetic Similarity
+    c1_y = CT + Inches(0.1)
+    c1_r = add_rect(slide, MX, c1_y, card_w, card_h, fill_color=NAVY2,
+                    border_color=TEAL, border_width=Pt(1.5), corner_radius=True)
+    add_text(slide, "Phonetic Similarity  (15%)",
+             MX + Inches(0.2), c1_y + Inches(0.08),
+             card_w - Inches(0.4), Inches(0.3),
+             size=Pt(15), color=TEAL, bold=True)
+    add_text(slide,
+        "Converts each word to IPA pronunciation using eng-to-ipa, "
+        "then computes character-level similarity between the phonetic strings. "
+        "Critical for lip reading: the model sees mouth shapes, not spellings \u2014 "
+        "so phonetically correct output is a sign the visual encoder worked.",
+        MX + Inches(0.2), c1_y + Inches(0.45),
+        card_w - Inches(0.4), Inches(0.9),
+        size=Pt(12), color=WHITE)
+    add_text(slide,
+        '\u25b8 Example: "Admiral McRae" vs "animal migration"\n'
+        '  IPA: /\u00e6dm\u026ar\u0259l m\u0259kre\u026a/ vs '
+        '/\u00e6n\u026am\u0259l ma\u026a\u0261re\u026a\u0283\u0259n/ '
+        '\u2192 0.68 (sounds similar despite looking completely different)',
+        MX + Inches(0.2), c1_y + Inches(1.45),
+        card_w - Inches(0.4), Inches(0.8),
+        size=Pt(11), color=LGRAY, italic=True)
+
+    # Card 2: Named Entity Accuracy
+    c2_y = c1_y + card_h + gap_y
+    c2_r = add_rect(slide, MX, c2_y, card_w, card_h, fill_color=NAVY2,
+                    border_color=CORAL, border_width=Pt(1.5), corner_radius=True)
+    add_text(slide, "Named Entity Accuracy (NEA)  (15%)",
+             MX + Inches(0.2), c2_y + Inches(0.08),
+             card_w - Inches(0.4), Inches(0.3),
+             size=Pt(15), color=CORAL, bold=True)
+    add_text(slide,
+        "Extracts named entities (people, numbers, places) from both "
+        "reference and hypothesis using spaCy NER, then computes F1 "
+        "(precision \u00d7 recall). Binary per entity: either correct or "
+        "destroyed, no partial credit.",
+        MX + Inches(0.2), c2_y + Inches(0.45),
+        card_w - Inches(0.4), Inches(0.9),
+        size=Pt(12), color=WHITE)
+    add_text(slide,
+        "\u25b8 Mean F1 = 38.9% \u2014 entities missed in 85% of segments.\n"
+        "  Names are the hardest thing for lip reading: "
+        "\"McRae\" has no visual cue that distinguishes it from any other word.",
+        MX + Inches(0.2), c2_y + Inches(1.45),
+        card_w - Inches(0.4), Inches(0.8),
+        size=Pt(11), color=LGRAY, italic=True)
+
+    # Bottom note
+    add_text(slide,
+        "Together these two signals capture what WER misses: "
+        "phonetic plausibility and entity preservation.",
+        MX, c2_y + card_h + Inches(0.15), CW, Inches(0.4),
+        size=Pt(13), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "IS Slide C: Phonetic Similarity and Named Entity Accuracy. "
+        "PHONETIC (15%): converts words to IPA pronunciation and compares "
+        "character-by-character. Critical because the model sees mouth "
+        "shapes, not spellings. 'Admiral McRae' and 'animal migration' "
+        "look nothing alike in text but share phonetic structure (0.68). "
+        "NEA (15%): Named Entity F1 using spaCy NER extraction. Binary "
+        "per entity, no partial credit. Mean F1 is only 38.9% — entities "
+        "are missed in 85% of segments. Names are the hardest for lip "
+        "reading since they have no distinguishing visual cues.",
+        [[c1_r], [c2_r]], click_reveal=True)
+
+
+def slide_is_intro(prs):
+    """Split into 3 slides per batch 8 user request."""
+    slide_is_intro_a(prs)
+    slide_is_intro_b(prs)
+    slide_is_intro_c(prs)
 
 
 def slide_tuning_intro(prs):
@@ -289,85 +416,64 @@ def slide_is_signals(prs):
 def slide_is_weight_rationale(prs):
     """Explain why IS uses 25%/15% weighting and the 3-dimension design."""
     slide = new_slide(prs)
-    add_title(slide, "Why These Weights? Three Dimensions of Quality")
+    add_title(slide, "6 Signals, 3 Dimensions")
     add_accent_line(slide)
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
+    add_text(slide,
+        "Six evaluation signals collapse into three independent dimensions.",
+        MX, CT, CW, Inches(0.3),
+        size=Pt(14), color=LGRAY, italic=True)
 
-    # Left column — the 3 dimensions
-    lt = add_text(slide, "Three Independent Dimensions",
-                  MX, CT, col_w, Inches(0.4),
-                  size=Pt(20), color=TEAL, bold=True)
+    # Three dimension cards — full width, stacked
+    card_w = CW
+    card_h = Inches(1.3)
+    py = CT + Inches(0.5)
 
     dims = [
         ("Word Accuracy", "60%", TEAL,
-         "Phonetic + WER + WWER + NEA (4 \u00d7 15%)",
-         "All 4 correlate tightly (r > 0.79). Did the model get the right words?"),
+         "Phonetic + WER + WWER + Named Entity Accuracy",
+         "These four signals measure the same thing: did the model get the right words?"),
         ("Meaning Preservation", "28%", GREEN,
-         "Semantic Similarity (1 \u00d7 25%)",
+         "Semantic Similarity",
          "Highest single weight \u2014 meaning is the ultimate deliverable."),
         ("Output Sanity", "9%", LGRAY,
-         "Length Ratio (1 \u00d7 15%)",
+         "Length Ratio",
          "Safety net: catches hallucination (too long) and truncation (too short)."),
     ]
 
-    py = CT + Inches(0.55)
     dim_shapes = []
     for name, pct, color, signals, desc in dims:
-        r = add_rect(slide, MX, py, col_w, Inches(1.35), fill_color=NAVY2,
+        r = add_rect(slide, MX, py, card_w, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, name, MX + Inches(0.2), py + Inches(0.08),
-                 Inches(3.5), Inches(0.35), size=Pt(16), color=color, bold=True)
-        add_text(slide, pct, MX + col_w - Inches(1.0), py + Inches(0.08),
-                 Inches(0.8), Inches(0.35), size=Pt(16), color=color,
+        add_text(slide, name, MX + Inches(0.3), py + Inches(0.1),
+                 Inches(5.0), Inches(0.35), size=Pt(18), color=color, bold=True)
+        add_text(slide, pct, MX + card_w - Inches(1.2), py + Inches(0.1),
+                 Inches(1.0), Inches(0.35), size=Pt(18), color=color,
                  bold=True, align=PP_ALIGN.RIGHT)
-        add_text(slide, signals, MX + Inches(0.2), py + Inches(0.45),
-                 col_w - Inches(0.4), Inches(0.35), size=Pt(13), color=WHITE)
-        add_text(slide, desc, MX + Inches(0.2), py + Inches(0.85),
-                 col_w - Inches(0.4), Inches(0.4), size=Pt(12), color=LGRAY)
+        add_text(slide, signals, MX + Inches(0.3), py + Inches(0.5),
+                 card_w - Inches(0.6), Inches(0.3), size=Pt(13), color=WHITE)
+        add_text(slide, desc, MX + Inches(0.3), py + Inches(0.85),
+                 card_w - Inches(0.6), Inches(0.35), size=Pt(12), color=LGRAY)
         dim_shapes.append(r)
-        py += Inches(1.5)
+        py += Inches(1.45)
 
-    # Right column — design rationale
-    rx = MX + col_w + gap
-    rw = CW - col_w - gap
-    rt = add_text(slide, "Why 25% / 15%?", rx, CT, rw, Inches(0.4),
-                  size=Pt(20), color=CORAL, bold=True)
-    rb = add_bullets(slide, [
-        ("Semantic gets 25%: meaning is the ultimate deliverable",
-         {"bold": True, "color": GREEN}),
-        "If a viewer understands the message, the transcription succeeded \u2014 "
-        "even if exact wording differs. This is the goal of lip reading.",
-        ("4 word-accuracy signals share 60%: diminishing returns",
-         {"bold": True, "color": TEAL}),
-        "WER, WWER, Phonetic, and NEA all measure overlapping aspects of "
-        "'did the model get the right words?' Equal 15% weights prevent "
-        "any single word-level metric from dominating.",
-        ("Length ratio at 15%: a safety net, not a quality signal",
-         {"bold": True}),
-        "Catches hallucination and truncation \u2014 the two catastrophic "
-        "failure modes that other signals can miss.",
-        ("Validated: r=0.93 with expert judgment, \u03ba=0.77",
-         {"color": GOLD}),
-    ], rx, CT + Inches(0.55), rw, Inches(4.5), size=Pt(13))
-
-    add_text(slide,
-        "Validated against 1,497 segments: the resulting IS correlates at "
-        "r=0.93 with an independent expert heuristic and \u03ba=0.77 with "
-        "human-like judgment.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    # Bottom validation line — plain language
+    val_t = add_text(slide,
+        "Validated: 88% agreement with expert judgment across 1,497 segments.",
+        MX, Inches(6.35), CW, Inches(0.35),
+        size=Pt(13), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Weight rationale. The 6 IS signals collapse into 3 independent "
-        "dimensions: word accuracy (60%, 4 signals at 15% each), meaning "
-        "preservation (28%, semantic at 25%), and output sanity (9%, length "
-        "at 15%). Semantic gets double weight because meaning is the ultimate "
-        "goal. The 4 word-accuracy signals overlap heavily (r>0.79), so equal "
-        "15% weights avoid over-counting. Validated: r=0.93 with expert "
-        "heuristic, kappa=0.77.",
-        [[lt] + dim_shapes, [rt], [rb]], click_reveal=True)
+        "dimensions: word accuracy (60%, 4 signals at 15% each, inter-correlation "
+        "r > 0.79), meaning preservation (28%, semantic at 25%), and output sanity "
+        "(9%, length at 15%). Semantic gets double weight because meaning is the "
+        "ultimate goal. The 4 word-accuracy signals overlap heavily (r > 0.79), so "
+        "equal 15% weights avoid over-counting. Statistical validation: r=0.93 "
+        "correlation with expert heuristic, Cohen's kappa=0.77, 88.6% agreement "
+        "at IS >= 3.0 threshold. Cross-config stability: mean r=0.925 (std=0.015), "
+        "kappa range 0.62-0.86, recall 97.6-100%.",
+        [dim_shapes, [val_t]], click_reveal=True)
 
 
 def slide_is_calc_examples(prs):
@@ -464,46 +570,88 @@ def slide_is_calc_examples(prs):
 
 
 def slide_is_radar(prs):
-    """Radar chart showing captured vs failed IS profiles -- large centered."""
+    """Radar chart — model comparison: expected IS profiles for different LLMs."""
     slide = new_slide(prs)
-    add_title(slide, "IS Radar: Success vs Failure Profile")
+    add_title(slide, "Model Comparison: Expected IS Profiles")
     add_accent_line(slide)
     sub = add_text(slide,
-        "Captured segments (green) are strong across all 6 signals. "
-        "Failed segments (red) collapse on meaning and entities.",
+        "How different LLM backbones would reshape the IS radar \u2014 "
+        "projected profiles based on literature and architecture analysis.",
         MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+
+    # Radar image (reuse existing if available, framing is now about models)
     img_top = CT + Inches(0.45)
-    img_h = SL_H - img_top - Inches(0.55)
+    img_h = SL_H - img_top - Inches(1.6)
     img_w = Inches(8.5)
     img_l = (SL_W - img_w) / 2
-    # Prefer dual radar (LRS3 vs YouTube) if available
     radar_key = "P6b_radar_dual" if IMG.get("P6b_radar_dual", Path("x")).exists() \
                 else "P6_is_radar"
     img = add_image(slide, radar_key, img_l, img_top,
                     width=img_w, height=img_h)
-    ann_w = Inches(2.5)
-    if radar_key == "P6b_radar_dual":
-        add_text(slide, "\u25cf LRS3 Benchmark (WER 25.4%)", MX, SL_H - Inches(0.55),
-                 Inches(3.5), Inches(0.3), size=Pt(12), color=GREEN, bold=True)
-        add_text(slide, "\u25cf Real-World YouTube (WER 64.1%)",
-                 MX + CW - Inches(3.5), SL_H - Inches(0.55),
-                 Inches(3.5), Inches(0.3), size=Pt(12), color=CORAL, bold=True,
-                 align=PP_ALIGN.RIGHT)
-    else:
-        add_text(slide, "\u25cf Captured (IS \u2265 3.0)", MX, SL_H - Inches(0.55),
-                 ann_w, Inches(0.3), size=Pt(12), color=GREEN, bold=True)
-        add_text(slide, "\u25cf Failed (IS < 3.0)",
-                 MX + CW - ann_w, SL_H - Inches(0.55),
-                 ann_w, Inches(0.3), size=Pt(12), color=CORAL, bold=True,
-                 align=PP_ALIGN.RIGHT)
+
+    # Model legend — three models with expected behavior
+    legend_y = SL_H - Inches(1.5)
+    col_w = Inches(4.0)
+    gap = Inches(0.06)
+
+    # Llama-2-7B (current)
+    r1 = add_rect(slide, MX, legend_y, col_w, Inches(0.9), fill_color=NAVY2,
+                  border_color=CORAL, border_width=Pt(1.5), corner_radius=True)
+    add_text(slide, "\u25cf Llama-2 7B (current)",
+             MX + Inches(0.15), legend_y + Inches(0.05),
+             col_w - Inches(0.3), Inches(0.25),
+             size=Pt(12), color=CORAL, bold=True)
+    add_text(slide, "Jagged profile: strong on length,\nweak on semantics & entities",
+             MX + Inches(0.15), legend_y + Inches(0.32),
+             col_w - Inches(0.3), Inches(0.5),
+             size=Pt(10), color=LGRAY)
+
+    # Llama 3.1 8B (expected)
+    x2 = MX + col_w + gap
+    r2 = add_rect(slide, x2, legend_y, col_w, Inches(0.9), fill_color=NAVY2,
+                  border_color=TEAL, border_width=Pt(1.5), corner_radius=True)
+    add_text(slide, "\u25cf Llama 3.1 8B (expected)",
+             x2 + Inches(0.15), legend_y + Inches(0.05),
+             col_w - Inches(0.3), Inches(0.25),
+             size=Pt(12), color=TEAL, bold=True)
+    add_text(slide, "Fuller profile: improved semantic\n& entity axes from stronger LM",
+             x2 + Inches(0.15), legend_y + Inches(0.32),
+             col_w - Inches(0.3), Inches(0.5),
+             size=Pt(10), color=LGRAY)
+
+    # VALLR 3B (best case)
+    x3 = x2 + col_w + gap
+    r3 = add_rect(slide, x3, legend_y, col_w, Inches(0.9), fill_color=NAVY2,
+                  border_color=GREEN, border_width=Pt(1.5), corner_radius=True)
+    add_text(slide, "\u25cf VALLR 3B (best case)",
+             x3 + Inches(0.15), legend_y + Inches(0.05),
+             col_w - Inches(0.3), Inches(0.25),
+             size=Pt(12), color=GREEN, bold=True)
+    add_text(slide, "Balanced profile: end-to-end VSP\noptimized for all 6 signals",
+             x3 + Inches(0.15), legend_y + Inches(0.32),
+             col_w - Inches(0.3), Inches(0.5),
+             size=Pt(10), color=LGRAY)
+
+    # Disclaimer
+    add_text(slide,
+        "\u26a0 Projected profiles based on published benchmarks and architecture "
+        "analysis \u2014 not measured on our dataset.",
+        MX, SL_H - Inches(0.5), CW, Inches(0.35),
+        size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
     _finish(slide, 0,
-        "Radar chart comparing mean component values for IS >= 3.0 "
-        "(green) vs IS < 3.0 (red). Captured segments are strong across "
-        "all 6 signals. Failed segments collapse on meaning and entity "
-        "preservation while maintaining only partial length ratio. "
-        "The biggest gaps between green and red are on Semantic and NEA "
-        "axes, confirming these as the primary differentiators.",
-        [[img]])
+        "Model comparison radar. Shows how different LLM backbones would "
+        "reshape the IS radar profile. Llama-2 7B (current, red): jagged "
+        "profile, strong on length ratio but weak on semantics and named "
+        "entities. Llama 3.1 8B (projected, teal): fuller profile with "
+        "improved semantic and entity axes thanks to stronger language "
+        "modeling. VALLR 3B (best case, green): balanced profile from an "
+        "end-to-end visual speech model optimized across all 6 signals. "
+        "These are projected profiles based on literature, not measured "
+        "on our dataset. The key insight is that the radar shape reveals "
+        "where each model architecture is strong and weak — future work "
+        "should target the collapsed axes.",
+        [[img], [r1, r2, r3]])
 
 
 def slide_is_wer_scatter(prs):
@@ -919,71 +1067,51 @@ def slide_failure_deep_3(prs):
         MX, CT, CW, Inches(0.3),
         size=Pt(13), color=LGRAY, italic=True)
 
-    headers = ["Category", "%", "Severity", "What Fixes It"]
+    headers = ["Category", "Fix"]
     rows = [
-        ["Signal Loss", "9.0%", "Low \u2014 obvious",
-         "Quality filtering, longer segments"],
-        ["Hallucination", "12.3%", "Moderate \u2014 easy to\nidentify and ignore",
-         "Anti-hallucination prompts,\nconfidence gating, GER*"],
-        ["Wrong Topic", "31.6%", "High \u2014 wrong\ndomain entirely",
-         "Stronger LLM, topic-aware\nprompting, more training data"],
-        ["Right Topic,\nWrong Details", "22.7%", "Very High \u2014 clients\nwill distrust model",
-         "Entity injection, domain\nadaptation, fine-tuning"],
-        ["Accumulated\nErrors", "24.4%", "Medium \u2014 gradual\nmeaning erosion",
-         "General model improvement,\nN-best aggregation"],
+        ["Signal Loss (9.0%)", "Quality filtering"],
+        ["Hallucination (12.3%)", "Confidence scoring"],
+        ["Wrong Topic (31.6%)", "LLM swap + data"],
+        ["Right Topic, Wrong Details (22.7%)", "Domain fine-tuning"],
+        ["Accumulated Errors (24.4%)", "N-best aggregation"],
     ]
 
+    # Color scheme: category color indicates severity
     row_colors = {
-        0: {0: LGRAY, 2: MGRAY},
-        1: {0: CORAL, 2: ORANGE},
-        2: {0: GOLD, 2: RED},
-        3: {0: TEAL, 2: DRED},
-        4: {0: LGRAY, 2: YELLOW},
+        0: {0: LGRAY},       # Signal Loss — low severity
+        1: {0: YELLOW},      # Hallucination — moderate severity
+        2: {0: ORANGE},      # Wrong Topic — high severity
+        3: {0: RED},         # Right Topic Wrong Details — very high severity
+        4: {0: YELLOW},      # Accumulated Errors — medium severity
     }
 
     tbl = add_table(slide, headers, rows,
                     MX, CT + Inches(0.45), CW,
-                    row_height=Inches(0.5),
-                    col_widths=[Inches(2.0), Inches(1.0), Inches(3.5), Inches(5.63)],
-                    text_size=Pt(11),
+                    row_height=Inches(0.55),
+                    col_widths=[Inches(6.5), Inches(5.63)],
+                    text_size=Pt(14),
                     row_colors=row_colors)
 
-    # GER footnote
-    ger_note = add_text(slide,
-        "*GER = Gross Error Rate \u2014 the fraction of outputs with catastrophic "
-        "errors (WER > 100%). Filters out the worst hallucinations before "
-        "they reach users.",
-        MX, Inches(5.0), CW, Inches(0.35),
-        size=Pt(11), color=MGRAY, italic=True)
-
-    # Key insight callout
-    callout_r = add_rect(slide, MX, Inches(5.4), CW, Inches(0.65), fill_color=NAVY2,
-             border_color=TEAL, border_width=Pt(1), corner_radius=True)
+    # Conclusion callout
+    callout_r = add_rect(slide, MX, Inches(5.2), CW, Inches(0.55), fill_color=NAVY2,
+             border_color=TEAL, border_width=Pt(1.5), corner_radius=True)
 
     callout_t = add_text(slide,
-        "Key insight: Wrong Topic (31.6%) is the largest failure mode and "
-        "most likely to improve with a stronger LLM (Llama 3.1 8B). "
-        "Right Topic Wrong Details (22.7%) is the most dangerous \u2014 clients "
-        "will distrust the model, and confidence values for those words "
-        "are likely always low. Over half of failures need better language modeling.",
-        MX + Inches(0.2), Inches(5.45), CW - Inches(0.4), Inches(0.55),
-        size=Pt(13), color=WHITE)
-
-    severity_t = add_text(slide,
-        "Hallucination: not that bad \u2014 relatively easy to identify and ignore "
-        "but still painful. Right Topic Wrong Details: very high impact.",
-        MX, Inches(6.15), CW, Inches(0.5),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "Each roadmap phase targets a different failure category.",
+        MX + Inches(0.2), Inches(5.25), CW - Inches(0.4), Inches(0.45),
+        size=Pt(16), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Impact and fixes table for the 5-category taxonomy. Right Topic Wrong "
-        "Details is the most dangerous because clients cannot trust the output \u2014 "
-        "confidence values for those words are likely always low. Hallucination is "
-        "relatively easy to identify and ignore but still painful. Wrong Topic is "
-        "the LARGEST at 31.6% and the most amenable to improvement through LLM "
-        "upgrade. GER = Gross Error Rate, the fraction of outputs with catastrophic "
-        "errors. 54.3% of failures trace to the LLM backbone being too weak.",
-        [[tbl], [ger_note, callout_r, callout_t, severity_t]], click_reveal=True)
+        "Impact and fixes table for the 5-category taxonomy. Simplified to "
+        "category + fix. Severity is conveyed by row colors: LGRAY (low, Signal "
+        "Loss), YELLOW (moderate, Hallucination), ORANGE (high, Wrong Topic), "
+        "RED (very high, Right Topic Wrong Details), YELLOW (medium, Accumulated "
+        "Errors). GER = Gross Error Rate, the fraction of outputs with catastrophic "
+        "errors (WER > 100%). Right Topic Wrong Details is the most dangerous "
+        "because clients cannot trust the output. Wrong Topic is the LARGEST at "
+        "31.6% and the most amenable to improvement through LLM upgrade. 54.3% "
+        "of failures trace to the LLM backbone being too weak.",
+        [[tbl], [callout_r, callout_t]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
