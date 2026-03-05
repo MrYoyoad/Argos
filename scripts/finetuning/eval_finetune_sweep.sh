@@ -28,7 +28,7 @@ CKPT="${1:?Usage: $0 <checkpoint_path> <result_base_dir> <label>}"
 BASE_DIR="${2:?Usage: $0 <checkpoint_path> <result_base_dir> <label>}"
 LABEL="${3:?Usage: $0 <checkpoint_path> <result_base_dir> <label>}"
 
-EVAL_SCRIPT="/home/ubuntu/scripts/eval_finetune.sh"
+EVAL_SCRIPT="/home/ubuntu/scripts/finetuning/eval_finetune.sh"
 
 echo "=== Decode Hyperparameter Sweep ==="
 echo "Label:      ${LABEL}"

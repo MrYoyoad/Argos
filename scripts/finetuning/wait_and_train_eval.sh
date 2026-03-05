@@ -8,8 +8,8 @@
 set -euo pipefail
 
 CORR_PID=342348
-TRAIN_SCRIPT="/home/ubuntu/scripts/run_train_eval.sh"
-LOG="/home/ubuntu/train_eval_watcher.log"
+TRAIN_SCRIPT="/home/ubuntu/scripts/finetuning/run_train_eval.sh"
+LOG="/home/ubuntu/logs/train_eval_watcher.log"
 
 echo "$(date) | Train eval watcher started. Monitoring correlation PID ${CORR_PID}..." | tee -a "${LOG}"
 

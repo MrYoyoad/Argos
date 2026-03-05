@@ -31,8 +31,8 @@ BASELINE_OUT="/home/ubuntu/finetune_eval_baseline_sweep/train_eval"
 EXPA_OUT="/home/ubuntu/finetune_output_r16/eval_sweep/train_eval"
 EXPB_OUT="/home/ubuntu/finetune_output_r64/eval_sweep/train_eval"
 
-EVAL_SCRIPT="/home/ubuntu/scripts/eval_finetune.sh"
-LOG_FILE="/home/ubuntu/train_eval_master.log"
+EVAL_SCRIPT="/home/ubuntu/scripts/finetuning/eval_finetune.sh"
+LOG_FILE="/home/ubuntu/logs/train_eval_master.log"
 
 # ─── Helper Functions ───────────────────────────────────────────────
 

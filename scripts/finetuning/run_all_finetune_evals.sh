@@ -36,11 +36,11 @@ BASELINE_SWEEP_DIR="/home/ubuntu/finetune_eval_baseline_sweep"
 EXPA_SWEEP_DIR="/home/ubuntu/finetune_output_r16/eval_sweep"
 EXPB_SWEEP_DIR="/home/ubuntu/finetune_output_r64/eval_sweep"
 
-SWEEP_SCRIPT="/home/ubuntu/scripts/eval_finetune_sweep.sh"
-COMPARISON_SCRIPT="/home/ubuntu/scripts/generate_finetune_comparison.py"
+SWEEP_SCRIPT="/home/ubuntu/scripts/finetuning/eval_finetune_sweep.sh"
+COMPARISON_SCRIPT="/home/ubuntu/scripts/finetuning/generate_finetune_comparison.py"
 REPORT_DIR="/home/ubuntu/docs/finetuning/experiments"
 
-LOG_FILE="/home/ubuntu/finetune_eval_master.log"
+LOG_FILE="/home/ubuntu/logs/finetune_eval_master.log"
 
 # ─── Helper Functions ───────────────────────────────────────────────
 

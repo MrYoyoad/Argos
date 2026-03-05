@@ -12,8 +12,8 @@ set -euo pipefail
 
 EXPB_CKPT_DIR="/home/ubuntu/finetune_output_r64/checkpoints"
 EXPB_PID_FILE="/home/ubuntu/finetune_output_r64/training.pid"
-EVAL_SCRIPT="/home/ubuntu/scripts/run_all_finetune_evals.sh"
-STATUS_FILE="/home/ubuntu/finetune_eval_status.txt"
+EVAL_SCRIPT="/home/ubuntu/scripts/finetuning/run_all_finetune_evals.sh"
+STATUS_FILE="/home/ubuntu/logs/finetune_eval_status.txt"
 
 echo "=== Eval Watcher Started ==="
 echo "Time: $(date)"

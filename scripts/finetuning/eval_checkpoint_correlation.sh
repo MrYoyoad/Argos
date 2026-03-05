@@ -31,7 +31,7 @@ CKPT_DIR="${2:?Usage: $0 <label> <ckpt_dir> <out_dir> [existing_best_dir]}"
 OUT_DIR="${3:?Usage: $0 <label> <ckpt_dir> <out_dir> [existing_best_dir]}"
 EXISTING_BEST="${4:-}"
 
-EVAL_SCRIPT="/home/ubuntu/scripts/eval_finetune.sh"
+EVAL_SCRIPT="/home/ubuntu/scripts/finetuning/eval_finetune.sh"
 
 # Checkpoints to evaluate (update number → filename)
 # Skip checkpoint_16_2500.pt — 5 data points is enough for correlation

@@ -8,8 +8,8 @@
 set -euo pipefail
 
 MASTER_PID=225763
-CORR_SCRIPT="/home/ubuntu/scripts/run_checkpoint_correlation.sh"
-LOG="/home/ubuntu/correlation_watcher.log"
+CORR_SCRIPT="/home/ubuntu/scripts/finetuning/run_checkpoint_correlation.sh"
+LOG="/home/ubuntu/logs/correlation_watcher.log"
 
 echo "$(date) | Watcher started. Monitoring PID ${MASTER_PID}..." | tee -a "${LOG}"
 

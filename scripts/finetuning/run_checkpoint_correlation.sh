@@ -37,11 +37,11 @@ EXPB_EXISTING_BEST="/home/ubuntu/finetune_output_r64/eval_sweep/default"
 EXPA_LOG="/home/ubuntu/finetune_output_r16/hydra_train.log"
 EXPB_LOG="/home/ubuntu/finetune_output_r64/hydra_train.log"
 
-CORR_SCRIPT="/home/ubuntu/scripts/eval_checkpoint_correlation.sh"
-ANALYSIS_SCRIPT="/home/ubuntu/scripts/generate_checkpoint_correlation.py"
+CORR_SCRIPT="/home/ubuntu/scripts/finetuning/eval_checkpoint_correlation.sh"
+ANALYSIS_SCRIPT="/home/ubuntu/scripts/finetuning/generate_checkpoint_correlation.py"
 REPORT_DIR="/home/ubuntu/docs/finetuning"
 
-LOG_FILE="/home/ubuntu/checkpoint_correlation_master.log"
+LOG_FILE="/home/ubuntu/logs/checkpoint_correlation_master.log"
 
 # ─── Helper Functions ───────────────────────────────────────────────
 
