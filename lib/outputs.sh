@@ -78,14 +78,35 @@ run_client_outputs() {
     echo ">>> [8] Found decode params: $params_json"
   fi
 
+  # EC2-only: compute Intelligibility Scores in reports
+  local is_arg=""
+  if [ "${ENV_TYPE:-}" = "ec2" ]; then
+    is_arg="--compute-is"
+    echo ">>> [8] Intelligibility Scores enabled (EC2)"
+  fi
+
   # Generate report
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
     --out_dir "$report_dir" \
-    $params_arg || {
+    $params_arg $is_arg || {
     log_error "make_report.py failed"
     return 1
   }
+
+  # EC2-only: generate full Intelligibility analysis (augmented CSV + summary JSON)
+  if [ "${ENV_TYPE:-}" = "ec2" ]; then
+    local is_script="${HOME}/docs/_research-tools/generators/generate_intelligibility_scores.py"
+    if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
+      echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
+      python3 "$is_script" \
+        --csv "$report_dir/report.csv" \
+        --out_dir "$report_dir" \
+        --device cpu || {
+        log_warn "Full Intelligibility analysis failed (non-critical) — basic report still available"
+      }
+    fi
+  fi
 
   # Generate burned videos
   python3 "$vsp_dir/scripts/make_burn.py" \
