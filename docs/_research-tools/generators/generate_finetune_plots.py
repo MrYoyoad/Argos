@@ -730,10 +730,11 @@ def plot_ft10_summary_dashboard(train_df, val_epoch_df, inner_df, split_meta):
 # ════════════════════════════════════════════════════════════
 
 def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
-    """Clean 2-panel summary: (left) real loss curves, (right) IS comparison bars.
+    """Generate two separate presentation-ready plots (dark theme).
 
-    Uses real training data when available, falls back to representative values.
-    Fully dark-themed to match presentation navy background.
+    FT_11a_loss.png  — Loss curves (train vs val, overfitting)
+    FT_11b_impact.png — IS impact comparison bars
+    Also generates the combined FT_11_clean_summary.png for backwards compat.
     """
     BG = "#0D1B2A"
     BG2 = "#122236"
@@ -745,21 +746,16 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
     C_LGRAY = "#8899AA"
     C_GRID = "#1E3450"
 
-    fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(16, 7),
-                                             gridspec_kw={"wspace": 0.35})
-    fig.patch.set_facecolor(BG)
-
     def _style_ax(ax):
         ax.set_facecolor(BG2)
-        ax.tick_params(colors=C_LGRAY, labelsize=10)
+        ax.tick_params(colors=C_LGRAY, labelsize=13)
         for spine in ax.spines.values():
             spine.set_color(C_GRID)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.grid(True, alpha=0.15, color=C_LGRAY, linewidth=0.5)
 
-    # ── Left Panel: Train vs Val loss (real data) ──
-    _style_ax(ax_left)
+    # ── Load data ──
     if train_df is not None and val_epoch_df is not None:
         epochs_t = train_df["epoch"].values
         t_loss = train_df["train_loss"].values
@@ -768,7 +764,6 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
         best_ep = val_epoch_df.loc[val_epoch_df["test_loss"].idxmin(), "epoch"]
         best_loss = val_epoch_df["test_loss"].min()
     else:
-        # Representative values from actual training
         epochs_t = np.arange(1, 20)
         t_loss = np.array([4.19, 2.22, 1.56, 1.17, 0.93, 0.77, 0.65, 0.56,
                            0.49, 0.44, 0.40, 0.36, 0.34, 0.31, 0.29, 0.28,
@@ -780,117 +775,120 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
         best_ep = 2
         best_loss = 3.25
 
-    ax_left.plot(epochs_t, t_loss, "o-", color=C_TEAL, linewidth=2.5,
-                 markersize=6, label="Train Loss", zorder=4)
-    ax_left.plot(epochs_v, v_loss, "s-", color=C_CORAL, linewidth=2.5,
-                 markersize=6, label="Val Loss", zorder=4)
+    # ════════════════════════════════════════════
+    # PLOT A: Loss Curves
+    # ════════════════════════════════════════════
+    fig_a, ax = plt.subplots(figsize=(8, 5.5))
+    fig_a.patch.set_facecolor(BG)
+    _style_ax(ax)
 
-    # Overfitting zone shading
-    ax_left.axvspan(best_ep + 0.5, max(epochs_t) + 0.5, alpha=0.08,
-                    color=C_CORAL, zorder=1)
-    ax_left.axvline(x=best_ep, color=C_GOLD, linestyle="--", linewidth=2,
-                    alpha=0.8, zorder=3)
+    ax.plot(epochs_t, t_loss, "o-", color=C_TEAL, linewidth=2.5,
+            markersize=7, label="Train Loss", zorder=4)
+    ax.plot(epochs_v, v_loss, "s-", color=C_CORAL, linewidth=2.5,
+            markersize=7, label="Val Loss", zorder=4)
 
-    # Best checkpoint marker
-    ax_left.plot(best_ep, best_loss, marker="*", color=C_GOLD, markersize=18,
-                 markeredgecolor=BG, markeredgewidth=1.2, zorder=5)
-    ax_left.annotate(f"Best (epoch {best_ep})",
-                     xy=(best_ep, best_loss),
-                     xytext=(best_ep + 3, best_loss + 0.4),
-                     fontsize=11, fontweight="bold", color=C_GOLD,
-                     arrowprops=dict(arrowstyle="->", color=C_GOLD, lw=1.5),
-                     zorder=5)
+    ax.axvspan(best_ep + 0.5, max(epochs_t) + 0.5, alpha=0.08,
+               color=C_CORAL, zorder=1)
+    ax.axvline(x=best_ep, color=C_GOLD, linestyle="--", linewidth=2,
+               alpha=0.8, zorder=3)
+    ax.plot(best_ep, best_loss, marker="*", color=C_GOLD, markersize=22,
+            markeredgecolor=BG, markeredgewidth=1.2, zorder=5)
+    ax.annotate(f"Best (epoch {best_ep})",
+                xy=(best_ep, best_loss),
+                xytext=(best_ep + 3.5, best_loss + 0.35),
+                fontsize=13, fontweight="bold", color=C_GOLD,
+                arrowprops=dict(arrowstyle="->", color=C_GOLD, lw=1.5),
+                zorder=5)
 
-    # Divergence annotation
     final_val = v_loss[-1]
     pct = (final_val - best_loss) / best_loss * 100
-    ax_left.text(0.97, 0.95,
-                 f"Val loss: {best_loss:.2f} \u2192 {final_val:.2f} (+{pct:.0f}%)\n"
-                 f"Train\u2013Val gap widens every epoch\n"
-                 f"Classic overfitting on 1,273 segments",
-                 transform=ax_left.transAxes, fontsize=10, va="top", ha="right",
-                 color=C_WHITE,
-                 bbox=dict(boxstyle="round,pad=0.5", facecolor=BG,
-                           edgecolor=C_LGRAY, alpha=0.95))
+    ax.text(0.97, 0.95,
+            f"Val: {best_loss:.2f} \u2192 {final_val:.2f} (+{pct:.0f}%)\n"
+            f"Overfitting on 1,273 segments",
+            transform=ax.transAxes, fontsize=12, va="top", ha="right",
+            color=C_WHITE,
+            bbox=dict(boxstyle="round,pad=0.5", facecolor=BG,
+                      edgecolor=C_LGRAY, alpha=0.95))
 
-    ax_left.set_xlabel("Epoch", fontsize=12, color=C_WHITE)
-    ax_left.set_ylabel("Loss (log\u2082)", fontsize=12, color=C_WHITE)
-    ax_left.set_title("LoRA r=16: Severe Overfitting After Epoch 2",
-                      fontsize=14, fontweight="bold", color=C_WHITE, pad=12)
-    legend_l = ax_left.legend(fontsize=10, loc="center right",
-                              framealpha=0.95, edgecolor=C_LGRAY)
-    legend_l.get_frame().set_facecolor(BG)
-    for t in legend_l.get_texts():
+    ax.set_xlabel("Epoch", fontsize=14, color=C_WHITE)
+    ax.set_ylabel("Loss (log\u2082)", fontsize=14, color=C_WHITE)
+    ax.set_title("LoRA r=16: Severe Overfitting After Epoch 2",
+                 fontsize=16, fontweight="bold", color=C_WHITE, pad=10)
+    ax.set_xticks([1, 5, 10, 15, 19])
+    leg = ax.legend(fontsize=12, loc="center right",
+                    framealpha=0.95, edgecolor=C_LGRAY)
+    leg.get_frame().set_facecolor(BG)
+    for t in leg.get_texts():
         t.set_color(C_WHITE)
 
-    # ── Right Panel: Horizontal bar comparison (single axis, no dual-y) ──
-    _style_ax(ax_right)
-    ax_right.grid(True, axis="x", alpha=0.15, color=C_LGRAY, linewidth=0.5)
-    ax_right.grid(False, axis="y")
+    plt.tight_layout()
+    out_a = OUTPUT_DIR / "FT_11a_loss.png"
+    fig_a.savefig(out_a, dpi=PLOT_DPI, bbox_inches="tight", facecolor=BG)
+    plt.close(fig_a)
+    print(f"  Saved: FT_11a_loss.png")
+
+    # ════════════════════════════════════════════
+    # PLOT B: IS Impact Comparison
+    # ════════════════════════════════════════════
+    fig_b, ax = plt.subplots(figsize=(8, 5.5))
+    fig_b.patch.set_facecolor(BG)
+    _style_ax(ax)
+    ax.grid(True, axis="x", alpha=0.15, color=C_LGRAY, linewidth=0.5)
+    ax.grid(False, axis="y")
 
     configs = ["Baseline", "Exp A (r=16)", "Exp B (r=64)"]
-    is_scores = [2.487, 2.312, 2.023]
+    is_scores = [2.49, 2.31, 2.02]
     captured = [38.4, 33.5, 25.9]
     empty_pct = [7.1, 12.5, 26.8]
 
     y = np.arange(len(configs))
-    bar_h = 0.22
+    bar_h = 0.25
 
-    # IS bars
-    bars_is = ax_right.barh(y + bar_h, is_scores, bar_h, color=C_TEAL,
-                            edgecolor="none", label="IS Score (/5.0)", zorder=3)
-    # Captured bars (scaled to same axis: divide by 20 to fit ~0-5 range)
+    # Three metric groups: IS, Captured %, Empty %
+    bars_is = ax.barh(y + bar_h, is_scores, bar_h, color=C_TEAL,
+                      edgecolor="none", label="IS Score (/5.0)", zorder=3)
     cap_scaled = [c / 20 for c in captured]
-    bars_cap = ax_right.barh(y, cap_scaled, bar_h, color=C_GREEN,
-                             edgecolor="none", label="Captured % (\u00f720)", zorder=3)
-    # Empty output bars
+    bars_cap = ax.barh(y, cap_scaled, bar_h, color=C_GREEN,
+                       edgecolor="none", label="Captured % (\u00f720)", zorder=3)
     empty_scaled = [e / 20 for e in empty_pct]
-    bars_emp = ax_right.barh(y - bar_h, empty_scaled, bar_h, color=C_CORAL,
-                             edgecolor="none", label="Empty % (\u00f720)", zorder=3)
+    bars_emp = ax.barh(y - bar_h, empty_scaled, bar_h, color=C_CORAL,
+                       edgecolor="none", label="Empty % (\u00f720)", zorder=3)
 
-    # Value labels
     for bar, val in zip(bars_is, is_scores):
-        ax_right.text(bar.get_width() + 0.05, bar.get_y() + bar.get_height() / 2,
-                      f"{val:.2f}", ha="left", va="center", fontsize=11,
-                      fontweight="bold", color=C_TEAL)
+        ax.text(bar.get_width() + 0.06, bar.get_y() + bar.get_height() / 2,
+                f"{val:.2f}", ha="left", va="center", fontsize=14,
+                fontweight="bold", color=C_TEAL)
     for bar, val in zip(bars_cap, captured):
-        ax_right.text(bar.get_width() + 0.05, bar.get_y() + bar.get_height() / 2,
-                      f"{val}%", ha="left", va="center", fontsize=11,
-                      fontweight="bold", color=C_GREEN)
+        ax.text(bar.get_width() + 0.06, bar.get_y() + bar.get_height() / 2,
+                f"{val}%", ha="left", va="center", fontsize=14,
+                fontweight="bold", color=C_GREEN)
     for bar, val in zip(bars_emp, empty_pct):
-        ax_right.text(bar.get_width() + 0.05, bar.get_y() + bar.get_height() / 2,
-                      f"{val}%", ha="left", va="center", fontsize=11,
-                      fontweight="bold", color=C_CORAL)
+        ax.text(bar.get_width() + 0.06, bar.get_y() + bar.get_height() / 2,
+                f"{val}%", ha="left", va="center", fontsize=14,
+                fontweight="bold", color=C_CORAL)
 
-    # Baseline reference line
-    ax_right.axvline(x=is_scores[0], color=C_TEAL, linestyle=":", linewidth=1,
-                     alpha=0.4, zorder=2)
+    ax.axvline(x=is_scores[0], color=C_TEAL, linestyle=":", linewidth=1.5,
+               alpha=0.4, zorder=2)
 
-    ax_right.set_yticks(y)
-    ax_right.set_yticklabels(configs, fontsize=12, color=C_WHITE)
-    ax_right.set_xlabel("Score", fontsize=12, color=C_WHITE)
-    ax_right.set_xlim(0, 3.2)
-    ax_right.set_title("Fine-Tuning Made Everything Worse",
-                       fontsize=14, fontweight="bold", color=C_WHITE, pad=12)
-    ax_right.invert_yaxis()
+    ax.set_yticks(y)
+    ax.set_yticklabels(configs, fontsize=15, color=C_WHITE, fontweight="bold")
+    ax.set_xlabel("Score", fontsize=14, color=C_WHITE)
+    ax.set_xlim(0, 3.2)
+    ax.set_title("Fine-Tuning Made Everything Worse",
+                 fontsize=16, fontweight="bold", color=C_WHITE, pad=10)
+    ax.invert_yaxis()
 
-    legend_r = ax_right.legend(fontsize=10, loc="lower right",
-                               framealpha=0.95, edgecolor=C_LGRAY)
-    legend_r.get_frame().set_facecolor(BG)
-    for t in legend_r.get_texts():
+    leg = ax.legend(fontsize=12, loc="lower right",
+                    framealpha=0.95, edgecolor=C_LGRAY)
+    leg.get_frame().set_facecolor(BG)
+    for t in leg.get_texts():
         t.set_color(C_WHITE)
 
-    # Bottom insight
-    fig.text(0.5, 0.01,
-             "1,273 segments is far below the ~20K minimum for LoRA generalization \u2014 "
-             "these results test the dataset\u2019s limits, not the model\u2019s capacity",
-             fontsize=11, color=C_LGRAY, ha="center", style="italic")
-
-    plt.tight_layout(rect=[0, 0.045, 1, 1])
-    out = OUTPUT_DIR / "FT_11_clean_summary.png"
-    fig.savefig(out, dpi=PLOT_DPI, bbox_inches="tight", facecolor=BG)
-    plt.close(fig)
-    print(f"  Saved: FT_11_clean_summary.png")
+    plt.tight_layout()
+    out_b = OUTPUT_DIR / "FT_11b_impact.png"
+    fig_b.savefig(out_b, dpi=PLOT_DPI, bbox_inches="tight", facecolor=BG)
+    plt.close(fig_b)
+    print(f"  Saved: FT_11b_impact.png")
 
 
 def main():
@@ -929,6 +927,8 @@ def main():
     plot_ft09_wall_clock(train_df)
     plot_ft10_summary_dashboard(train_df, val_epoch_df, inner_df, split_meta)
     plot_FT_11_clean_summary(train_df, val_epoch_df)
+    # Note: FT_11_clean_summary.png no longer generated — replaced by
+    # FT_11a_loss.png and FT_11b_impact.png for better slide readability
 
     print("-" * 40)
     pngs = sorted(OUTPUT_DIR.glob("FT_*.png"))

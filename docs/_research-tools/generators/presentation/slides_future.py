@@ -363,47 +363,45 @@ def slide_29(prs):
     add_title(slide, "Fine-Tuning Experiments: Limited Data, Limited Gains")
     add_accent_line(slide)
 
-    # Dashboard image — top half
-    img = add_image(slide, "ft_clean", MX, CT, width=CW,
-                    height=Inches(2.8))
+    # Two plots side by side — large and readable
+    col_w = Inches(5.9)
+    gap = Inches(0.33)
+    plot_h = Inches(3.4)
+    rx = MX + col_w + gap
 
-    # Two columns below
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
-    col_y = CT + Inches(3.0)
+    img_l = add_image(slide, "ft_loss", MX, CT, width=col_w, height=plot_h)
+    img_r = add_image(slide, "ft_impact", rx, CT, width=col_w, height=plot_h)
 
-    # Left — Exp A/B Results
-    lt = add_text(slide, "What We Tried", MX, col_y, col_w, Inches(0.3),
-                  size=Pt(15), color=CORAL, bold=True)
+    # Key findings below — two columns
+    find_y = CT + plot_h + Inches(0.15)
+    lt = add_text(slide, "What We Tried", MX, find_y, col_w, Inches(0.3),
+                  size=Pt(14), color=CORAL, bold=True)
     lb = add_bullets(slide, [
-        ("Small-scale LoRA fine-tune with only 1,273 segments",
-         {"bold": True}),
-        "Exp A (rank 16): best val accuracy 62.94% at epoch 2",
-        ("Exp B (rank 64): 3.1pp WORSE — more params = faster overfitting",
+        ("LoRA fine-tune on only 1,273 segments", {"bold": True}),
+        "Exp A (r=16): best val at epoch 2, then overfitting",
+        ("Exp B (r=64): 3.1pp worse — more params = faster collapse",
          {"color": CORAL}),
         ("Result: data too limited for LoRA to generalize",
          {"bold": True, "color": GOLD}),
-    ], MX, col_y + Inches(0.35), col_w, Inches(2.0), size=Pt(13))
+    ], MX, find_y + Inches(0.3), col_w, Inches(1.8), size=Pt(12))
 
-    # Right — IS Impact
-    rx = MX + col_w + gap
-    rt = add_text(slide, "Impact on Intelligibility", rx, col_y, col_w,
-                  Inches(0.3), size=Pt(15), color=TEAL, bold=True)
+    rt = add_text(slide, "Impact on Intelligibility", rx, find_y, col_w,
+                  Inches(0.3), size=Pt(14), color=TEAL, bold=True)
     rb = add_bullets(slide, [
-        "Baseline IS: 2.49 — Exp A IS: 2.31 — Exp B IS: 2.02",
+        "IS: 2.49 \u2192 2.31 \u2192 2.02 (baseline \u2192 A \u2192 B)",
         ("Fine-tuning made IS WORSE, not better", {"color": CORAL}),
-        "Empty outputs: 7% → 13% → 27% (identifiable and filterable)",
+        "Empty outputs: 7% \u2192 13% \u2192 27%",
         ("Key insight: need 20K+ segments, not parameter tuning",
          {"bold": True, "color": GREEN}),
-    ], rx, col_y + Inches(0.35), col_w, Inches(2.0), size=Pt(13))
+    ], rx, find_y + Inches(0.3), col_w, Inches(1.8), size=Pt(12))
 
     _finish(slide, 29,
         "Fine-tuning experiments with LoRA on 1,273 segments. Exp A (rank 16): "
         "62.94% val accuracy, severe overfitting. Exp B (rank 64): 3.1pp worse. "
-        "IS scores actually decreased: baseline 2.49, Exp A 2.31, Exp B 2.02. "
-        "Empty outputs increased dramatically. The bottleneck is data quantity "
+        "IS scores decreased: baseline 2.49, Exp A 2.31, Exp B 2.02. "
+        "Empty outputs increased dramatically. Bottleneck is data quantity "
         "(need 20K+), not model capacity or parameter tuning.",
-        [[img], [lt, lb], [rt, rb]], click_reveal=True)
+        [[img_l, img_r], [lt, lb, rt, rb]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 30 — LLM UPGRADE + ADVANCED CAPABILITIES
@@ -428,6 +426,8 @@ def slide_30(prs):
         ("Smart Prompts (force multiplier)", [
             "7 strategies: topic context, word count, anti-hallucination, GER",
             "Llama-2: +5-10pp | Llama 3.1: +12-20pp",
+            ("GER = Generative Error Correction: feed N-best hypotheses "
+             "to a correction LLM that fixes errors", {"color": LGRAY}),
             ("GER post-processing: +8-15pp, no retraining", {"color": GREEN}),
         ], CORAL),
         ("Future", [
@@ -480,26 +480,38 @@ def slide_arabic_roadmap(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — what's needed + how we solve it
+    # Left — what's needed, one topic per animation group
     lt = add_text(slide, "What\u2019s Needed & How We\u2019ll Do It",
                   MX, CT, col_w, Inches(0.35),
                   size=Pt(18), color=TEAL, bold=True)
-    lb = add_bullets(slide, [
-        ("Arabic AV-HuBERT encoder", {"bold": True, "color": TEAL}),
-        "Fine-tune English AV-HuBERT on Arabic visual speech data \u2014 "
-        "AVSpeech dataset has Arabic videos available for training",
-        ("Arabic LLM backend", {"bold": True, "color": TEAL}),
-        "Swap Llama-2 for Arabic-capable LLM (e.g. Jais, AceGPT, "
-        "or Arabic-tuned Llama 3) with Arabic tokenizer",
-        ("Training infrastructure", {"bold": True, "color": GREEN}),
-        "AWS GPU instance (existing) for AV-HuBERT fine-tuning "
-        "and K-means reclustering on Arabic mouth shapes",
-        ("Arabic evaluation dataset", {"bold": True, "color": CORAL}),
-        "Manual transcriptions needed for MSA + dialect coverage \u2014 "
-        "the main bottleneck (requires native speakers)",
-        ("Text normalization", {"bold": True, "color": TEAL}),
-        "spaCy Arabic, diacritic handling, Arabic NER",
-    ], MX, CT + Inches(0.4), col_w, Inches(4.5), size=Pt(13))
+
+    topics = [
+        (TEAL,  "Arabic AV-HuBERT encoder",
+         "Fine-tune English AV-HuBERT on Arabic visual speech data \u2014 "
+         "AVSpeech dataset has Arabic videos available for training"),
+        (TEAL,  "Arabic LLM backend",
+         "Swap Llama-2 for Arabic-capable LLM (e.g. Jais, AceGPT, "
+         "or Arabic-tuned Llama 3) with Arabic tokenizer"),
+        (GREEN, "Training infrastructure",
+         "AWS GPU instance (existing) for AV-HuBERT fine-tuning "
+         "and K-means reclustering on Arabic mouth shapes"),
+        (CORAL, "Arabic evaluation dataset",
+         "Manual transcriptions needed for MSA + dialect coverage \u2014 "
+         "the main bottleneck (requires native speakers)"),
+        (TEAL,  "Text normalization",
+         "spaCy Arabic, diacritic handling, Arabic NER"),
+    ]
+
+    topic_groups = []
+    by = CT + Inches(0.45)
+    for clr, heading, detail in topics:
+        grp = []
+        grp.append(add_bullets(slide, [
+            (heading, {"bold": True, "color": clr}),
+            detail,
+        ], MX, by, col_w, Inches(0.75), size=Pt(13)))
+        topic_groups.append(grp)
+        by += Inches(0.85)
 
     # Right — timeline with practical details
     rx = MX + col_w + gap
@@ -519,10 +531,9 @@ def slide_arabic_roadmap(prs):
                     col_widths=[Inches(1.6), Inches(1.3), Inches(2.6)],
                     text_size=Pt(12))
 
-    # Bottom
-    add_text(slide,
+    # Bottom note
+    note = add_text(slide,
         "Pipeline code is language-agnostic \u2014 no code changes needed. "
-        "AVSpeech Arabic videos + existing AWS GPU cover training. "
         "Main bottleneck: manual Arabic evaluation transcriptions.",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -531,18 +542,19 @@ def slide_arabic_roadmap(prs):
     timeline_box = add_rect(slide, MX, Inches(5.8), CW, Inches(0.55),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                   corner_radius=True)
-    timeline_txt = add_text(slide, "Total estimated timeline: 3–5 weeks",
+    timeline_txt = add_text(slide, "Total estimated timeline: 3\u20135 weeks",
              MX + Inches(0.3), Inches(5.85), CW - Inches(0.6), Inches(0.4),
              size=Pt(22), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
+    # Animation: title → each topic one by one → right column → callout
+    anim = [[lt]] + topic_groups + [[rt, tbl], [timeline_box, timeline_txt, note]]
+
     _finish(slide, 0,
-        "Arabic replication roadmap with practical details. We have AVSpeech "
-        "Arabic videos for training data and an AWS GPU instance for fine-tuning. "
-        "Steps: fine-tune AV-HuBERT on Arabic (1-2 weeks), recluster K-means "
-        "(2-3 days), swap to Arabic LLM (1-2 days), build eval dataset with "
-        "native speakers (1-2 weeks), end-to-end testing (3-5 days). "
-        "Total 3-5 weeks. Pipeline code is language-agnostic.",
-        [[lt, lb], [rt, tbl], [timeline_box, timeline_txt]], click_reveal=True)
+        "Arabic replication roadmap. Steps: fine-tune AV-HuBERT on Arabic "
+        "(1-2 weeks), recluster K-means (2-3 days), swap to Arabic LLM "
+        "(1-2 days), build eval dataset (1-2 weeks), end-to-end testing "
+        "(3-5 days). Total 3-5 weeks. Pipeline is language-agnostic.",
+        anim, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 31 — SUMMARY

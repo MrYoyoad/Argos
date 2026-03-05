@@ -35,6 +35,8 @@ IMG = {
     "cdf_wwer": PLOTS / "15_cdf_wwer_curated.png",
     "ft_dashboard": PLOTS / "finetune" / "FT_10_summary_dashboard.png",
     "ft_clean": PLOTS / "finetune" / "FT_11_clean_summary.png",
+    "ft_loss": PLOTS / "finetune" / "FT_11a_loss.png",
+    "ft_impact": PLOTS / "finetune" / "FT_11b_impact.png",
     "tuning_ba": PLOTS / "P5_tuning_before_after.png",
     "improve_ja": PLOTS / "16_improvement_J_vs_A.png",
     "P6_is_radar": PLOTS / "P6_is_radar.png",
