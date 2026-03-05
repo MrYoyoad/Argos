@@ -42,9 +42,9 @@ def slide_is_intro_a(prs):
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     card_w = Inches(11.0)
-    card_h = Inches(1.45)
-    gap_y = Inches(0.18)
-    start_y = CT + Inches(0.85)
+    card_h = Inches(1.35)
+    gap_y = Inches(0.10)
+    start_y = CT + Inches(0.70)
 
     signals = [
         ("Inverse WER", "15%", CORAL,
@@ -893,7 +893,7 @@ def slide_failure_deep_1a(prs):
     add_text(slide,
         "Priority: Signal Loss \u2192 Hallucination \u2192 Wrong Topic \u2192 "
         "Right Topic Wrong Details \u2192 Accumulated Errors",
-        MX, Inches(6.55), CW, Inches(0.35),
+        MX, Inches(6.75), CW, Inches(0.35),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,

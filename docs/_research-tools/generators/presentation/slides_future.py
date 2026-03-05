@@ -153,7 +153,7 @@ def slide_26(prs):
     add_text(slide,
         "References: ROVER (Fiscus 1997)  |  GER (Chen et al. 2024)  |  "
         "LoRA Scaling (Biderman et al. 2024)",
-        MX, Inches(6.65), CW, Inches(0.25),
+        MX, Inches(6.80), CW, Inches(0.25),
         size=Pt(8), color=MGRAY, italic=True)
 
     _finish(slide, 26,
@@ -728,7 +728,7 @@ def slide_a8(prs):
 
     # Dimension table
     add_text(slide, "The 6 IS signals collapse into 3 independent dimensions:",
-             MX, CT, CW, Inches(0.4), size=Pt(14), color=WHITE)
+             MX, CT, CW * 0.55, Inches(0.4), size=Pt(14), color=WHITE)
 
     tbl1 = add_table(slide,
         ["Dimension", "Signals", "Variance", "Inter-signal r"],

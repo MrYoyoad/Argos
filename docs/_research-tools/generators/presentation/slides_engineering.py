@@ -126,7 +126,7 @@ def slide_17(prs):
 
     # Bottom: repo labels + legend — single final group
     final_group = []
-    repo_y = row2_y + box_h + Inches(0.15)
+    repo_y = row2_y + box_h + Inches(0.45)
     half_w = total_w / 2
     final_group.append(add_text(slide, "auto_avsr  \u00b7  av_hubert",
              start_x, repo_y, half_w, Inches(0.25),

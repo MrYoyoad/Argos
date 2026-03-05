@@ -208,7 +208,7 @@ def slide_is_foreshadow(prs):
 
     add_text(slide,
         "Next: our answer \u2014 the Intelligibility Score.",
-        MX, Inches(5.0), CW, Inches(0.5),
+        MX, Inches(5.3), CW, Inches(0.5),
         size=Pt(16), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -529,14 +529,15 @@ def slide_visemes(prs):
     # Lip-reading GIF — identical mouth shapes, different words
     poster_shapes = []
     gif_w = Inches(5.0)
+    gif_h = Inches(1.5)  # constrain height to prevent overlap with table
     gif_path = PLOTS / "lip_reading_demo.gif"
     if gif_path.exists():
         gif_x = rx + (col_w - gif_w) / 2  # Center in right column
         poster_shapes.append(slide.shapes.add_picture(
-            str(gif_path), gif_x, CT + Inches(0.5), width=gif_w))
+            str(gif_path), gif_x, CT + Inches(0.5), width=gif_w, height=gif_h))
     poster_shapes.append(add_text(slide,
         "Lip reading: identical mouth shapes can produce completely different words",
-        rx, CT + Inches(2.2), col_w, Inches(0.3),
+        rx, CT + Inches(2.1), col_w, Inches(0.3),
         size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     tbl2 = add_table(slide,
@@ -545,7 +546,7 @@ def slide_visemes(prs):
          ["mom", "bomb", "Bilabial"],
          ["admiral", "animal", "Alveolar"],
          ["collar", "color", "Velar"]],
-        rx, CT + Inches(2.7), col_w, text_size=Pt(12))
+        rx, CT + Inches(2.5), col_w, text_size=Pt(12))
 
     # Bottom
     add_text(slide,
