@@ -737,17 +737,16 @@ def slide_a8(prs):
         ["Metric", "Value"],
         [["Mean r", "0.925 (std 0.015)"],
          ["Agreement", "88.6%"],
-         ["Binary κ", "0.773"],
-         ["Weighted κ (quad)", "0.887"],
-         ["Recall (IS≥3)", "97.6–100%"]],
+         ["Cohen's κ", "0.773"],
+         ["Recall (IS≥3)", "97.6–100%"],
+         ["Config range", "κ 0.62–0.86"]],
         SRL, CT + Inches(4.4), SRW * 0.7, text_size=Pt(10))
 
     _finish(slide, "A3",
         "IS components collapse into 3 dimensions: word accuracy (60%), "
         "meaning (28%), output sanity (9%). Cross-config: Semantic, Phonetic, "
         "NEA are stable; WER and Length Ratio are volatile. Heuristic: "
-        "r=0.925, agreement 88.6%, binary kappa 0.773, quadratic weighted "
-        "kappa 0.887 (almost perfect ordinal agreement on 5 tiers).")
+        "r=0.925, agreement 88.6%, kappa 0.773.")
 
 
 def slide_a11(prs):

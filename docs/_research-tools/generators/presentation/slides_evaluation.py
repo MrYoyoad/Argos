@@ -257,8 +257,7 @@ def slide_16(prs):
         ["LLM heuristic vs IS", "r = 0.925"],
         ["Agreement (IS ≥ 3.0)", "88.6%"],
         ["Recall (IS ≥ 3.0)", "97.6–100%"],
-        ["Cohen's κ (binary)", "0.773"],
-        ["Weighted κ (quadratic)", "0.887"],
+        ["Cohen's κ", "0.773"],
         ["Segment ranking stability", "r > 0.92"],
     ]
     add_table(slide, headers, rows, rx, CT + Inches(3.3), col_w,
@@ -285,10 +284,8 @@ def slide_16(prs):
         "-0.95 to -0.45 depending on length penalty. This is why IS was created.\n"
         "6. Length Ratio is nearly useless (9.1%, sign flips). Future versions "
         "could reduce its weight.\n\n"
-        "Cross-config validation: r=0.925, 88.6% agreement, binary κ=0.773, "
-        "weighted κ=0.887 (quadratic, 5 tiers), recall 97.6-100% across 16 "
-        "decode configs. The weighted kappa shows that when disagreements occur, "
-        "they are almost always by 1 tier — large misclassifications never happen.")
+        "Cross-config validation: r=0.925, 88.6% agreement, κ=0.773, "
+        "recall 97.6-100% across 16 decode configs.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 17 — PIPELINE ARCHITECTURE
@@ -453,9 +450,9 @@ def slide_25c(prs):
     rows = [
         ["Correlation with IS", "r = 0.934"],
         ["Agreement (IS \u2265 3.0)", "88.6%"],
-        ["Binary \u03ba", "0.773 (substantial)"],
-        ["Weighted \u03ba (quadratic)", "0.887 (almost perfect)"],
+        ["Cohen\u2019s \u03ba", "0.773 (substantial)"],
         ["Recall", "99.2%"],
+        ["Cross-config stability", "r = 0.925 \u00b1 0.015"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.5), col_w,
                     row_height=Inches(0.4),
@@ -1029,30 +1026,28 @@ def slide_two_eval_systems(prs):
         ["Metric", "Value"],
         [["Pearson r", "0.934"],
          ["Agreement at IS \u2265 3.0", "88.6%"],
-         ["Binary \u03ba", "0.773"],
-         ["Weighted \u03ba (quadratic)", "0.887"],
-         ["Recall (Heuristic)", "99.2%"]],
+         ["Cohen's \u03ba", "0.773"],
+         ["Recall (Heuristic)", "99.2%"],
+         ["Cross-config mean r", "0.925"]],
         rx, CT + Inches(0.5), col_w, text_size=Pt(12))
 
     # Worked example
-    we_t = add_text(slide, "Worked Example:", rx, CT + Inches(2.9), col_w, Inches(0.3),
+    we_t = add_text(slide, "Worked Example:", rx, CT + Inches(2.8), col_w, Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
     we_b = add_text(slide,
         'Ref: "opinions about reason and logic"\n'
         'Hyp: "our opinion is about reasoning and logic"\n'
         'WER: 74% \u2022 IS: 2.92 (failed) \u2022 LLM prob: 0.90 (salvaged)\n'
         'Meaning preserved despite word differences.',
-        rx, CT + Inches(3.3), col_w, Inches(1.5),
+        rx, CT + Inches(3.2), col_w, Inches(1.5),
         size=Pt(12), color=WHITE)
 
     _finish(slide, 0,
         "Two evaluation systems. IS is strict: 39.9% pass at IS >= 3.0. "
         "The expert heuristic is generous: identifies 165 additional segments, "
         "raising effective capture to 50.9%. They agree 88.6% of the time "
-        "(r=0.934, binary kappa=0.773, weighted kappa=0.887). The weighted "
-        "kappa (quadratic) on 5 IS tiers shows almost perfect ordinal agreement "
-        "— misclassifications are nearly always off by just 1 tier. "
-        "The heuristic catches meaning preservation that strict metrics miss.",
+        "(r=0.934, kappa=0.773). The heuristic catches meaning preservation "
+        "that strict metrics miss.",
         [[lt, r1, r1_t, r1_b], [r2, r2_t, r2_b], [rt, tbl, we_t, we_b]], click_reveal=True)
 
 

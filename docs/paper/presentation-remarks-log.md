@@ -135,3 +135,11 @@ User remark: "many slides have bad animations and occlusions"
 | 83 | 13 (slide_06) | Change to Admiral McRae example ("same WER, different effects"); mention IS is "our new metric" | done |
 | 84 | 14 (slide_is_foreshadow) | Content overlap with slide 16 — removed IS details, kept as short bridge ("we need a metric that captures meaning") | done |
 | 85 | 16 (slide_is_intro) | Complete rewrite: deep dive into all 6 IS signals with crystal-clear explanations, especially Phonetic (IPA conversion, mouth-shape relevance) and Semantic (384-dim embeddings, cosine similarity). Each signal gets a card with how-it-works + example. No more "see next slide" deferrals. Title changed to "The Intelligibility Score (IS) — Our Metric" | done |
+
+## Batch 6 — 2026-03-05
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 86 | 21 (slide_is_card) | Fixed κw=0.89 → κ=0.77 (weighted kappa removed from all slides) | done |
+| 87 | All IS validation | Removed weighted kappa (κw=0.887) everywhere — stick with binary κ=0.773 and Pearson r=0.934 only | done |
+| 88 | Research docs | Added Opus per-sample judge threshold sweep analysis (Y+P peaks at IS≥2.0 κ=0.818; Y-only peaks at IS≥3.75-4.0); context-aware judge bug fixed (column name `context` not `context_judge`) | done |

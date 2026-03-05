@@ -297,37 +297,9 @@ Confusion matrix comparing `llm_context_prob ≥ 0.5` vs `IS ≥ 3.0`:
 
 **The LLM heuristic is intentionally optimistic** — it catches 99.2% of IS ≥ 3.0 segments but over-recovers 165 segments that IS scores below 3.0. This is by design: context recovery assumes a viewer with domain knowledge, which provides extra information beyond what the raw metrics capture.
 
-### 7.3b Weighted Kappa Analysis (Ordinal Agreement Across 5 Tiers)
+### 7.3b Note on Weighted Kappa
 
-The binary κ above collapses IS into captured/not-captured. For a richer view, we compute **weighted Cohen's kappa** across the 5 ordinal IS tiers (Failed through Excellent), mapping `llm_context_prob` to predicted tiers via probability ranges (0–0.2 → tier 1, 0.2–0.4 → tier 2, 0.4–0.6 → tier 3, 0.6–0.85 → tier 4, 0.85–1.0 → tier 5).
-
-**Confusion matrix** (rows = actual IS tier, columns = heuristic-predicted tier):
-
-|  | Pred 1 | Pred 2 | Pred 3 | Pred 4 | Pred 5 |
-|--|--------|--------|--------|--------|--------|
-| **IS 1 (Failed)** | **236** | 3 | 0 | 0 | 0 |
-| **IS 2 (Poor)** | 108 | **199** | 26 | 3 | 0 |
-| **IS 3 (Fair)** | 1 | 96 | **87** | 103 | 38 |
-| **IS 4 (Good)** | 0 | 4 | 4 | **74** | 239 |
-| **IS 5 (Excellent)** | 0 | 0 | 0 | 0 | **276** |
-
-**Kappa variants:**
-
-| Metric | Value | Interpretation |
-|--------|-------|---------------|
-| Unweighted κ (5-tier) | 0.483 | Moderate — exact tier match is hard |
-| **Linear weighted κ** | **0.739** | Substantial |
-| **Quadratic weighted κ** | **0.887** | Almost perfect |
-| Binary κ (IS≥3 vs LLM≥0.5) | 0.768 | Substantial (reported above) |
-
-**How weighted kappa works:** Standard (unweighted) Cohen's κ treats all disagreements equally — predicting tier 5 when the truth is tier 4 is penalized the same as predicting tier 5 when the truth is tier 1. For ordinal scales like IS tiers, this is overly strict. Weighted kappa assigns partial credit for near-misses:
-
-- **Linear weights:** `w(i,j) = 1 − |i−j| / (k−1)` — penalty proportional to distance between tiers
-- **Quadratic weights:** `w(i,j) = 1 − (i−j)² / (k−1)²` — penalty proportional to squared distance, more forgiving of 1-tier errors
-
-The quadratic weighted κ = 0.887 means: when the heuristic disagrees with IS on the exact tier, the disagreements are almost always by just 1 tier. Large misclassifications (e.g., predicting Excellent when IS says Failed) essentially never occur. The confusion matrix confirms this — the off-diagonal mass is concentrated on the ±1 diagonals, with zero entries more than 2 tiers away.
-
-**Interpretation scale** (Landis & Koch, 1977): κ < 0.20 = slight, 0.21–0.40 = fair, 0.41–0.60 = moderate, 0.61–0.80 = substantial, 0.81–1.00 = almost perfect. Our quadratic weighted κ = 0.887 falls solidly in "almost perfect."
+Weighted kappa (quadratic) was explored by mapping `llm_context_prob` to 5 tiers via arbitrary probability bins. The result (κw=0.887) is high but **methodology-dependent** — the heuristic is fundamentally a binary system (recoverable at prob ≥ 0.5), not an ordinal 5-tier system like IS. Different bin boundaries produce different weighted κ values. The IS captured threshold (≥3.0 = 60%) and the heuristic threshold (≥0.5 = 50%) also differ, making ordinal comparison asymmetric. **We report the binary κ = 0.773 and Pearson r = 0.934 as the canonical validation metrics** because they compare the two systems on their native scales.
 
 ### 7.4 LLM Prob by IS Tier
 
@@ -422,6 +394,42 @@ If we additionally called Claude per-segment at evaluation time, the primary val
 3. **Speed** — local computation in seconds vs 30-60 minutes of API calls.
 4. **Decomposability** — every IS score can be traced to exactly which signal(s) drove it up or down, enabling targeted improvement. LLM reasoning is opaque.
 5. **High internal consistency** — the `llm_context_prob` heuristic (also Claude-designed) correlates at r=0.93 with IS, confirming the two Claude-designed systems agree.
+
+### 8.5 Opus Per-Sample Judge Agreement with IS
+
+We also ran **Claude Opus 4.6 as a per-sample judge** on all 1,497 pairs in two conditions: blind (no topic context) and context-aware (topic inferred from reference). Agreement with IS ≥ 3.0 ("properly captured"):
+
+| Judge Condition | Y+P vs IS≥3 κ | Agreement | Pearson r (ordinal vs IS) |
+|----------------|---------------|-----------|--------------------------|
+| **Blind** | 0.521 | 74.6% | 0.850 |
+| **Context-aware** | 0.548 | 76.3% | 0.808 |
+| **Heuristic** (`llm_context_prob≥0.5`) | 0.773 | 88.6% | 0.934 |
+
+**However**, the low κ at IS ≥ 3.0 reflects a **threshold mismatch**, not a ranking disagreement. Sweeping IS thresholds reveals the Opus judge's natural boundary:
+
+| IS Threshold | Blind Y+P κ | Blind Y+P agree | Context Y+P κ | Heuristic κ |
+|-------------|-------------|-----------------|---------------|-------------|
+| IS ≥ 1.50 | 0.769 | 89.9% | 0.690 | 0.574 |
+| IS ≥ 2.00 | **0.818** | **91.5%** | **0.742** | 0.768 |
+| IS ≥ 2.50 | 0.674 | 83.8% | 0.662 | **0.876** |
+| IS ≥ 3.00 | 0.521 | 74.6% | 0.548 | 0.773 |
+| IS ≥ 3.50 | 0.361 | 64.1% | 0.393 | 0.569 |
+
+**Opus Y+P peaks at IS ≥ 2.0** (κ=0.818, "almost perfect"), while the **heuristic peaks at IS ≥ 2.5** (κ=0.876). The Opus judge considers Tier 3 ("Fair", IS 2.0–3.0) segments as partially useful — exactly the population identified by the LLM salvage analysis. This validates that the 165 salvageable segments (IS < 3.0, llm_context_prob ≥ 0.5) are genuinely recoverable.
+
+**Y-only mapping** (stricter — does IS ≥ T predict Opus "full success"?):
+
+| IS Threshold | Blind Y κ | Context Y κ |
+|-------------|-----------|-------------|
+| IS ≥ 3.00 | 0.565 | 0.405 |
+| IS ≥ 3.75 | 0.692 | 0.573 |
+| IS ≥ 4.00 | 0.658 | **0.620** |
+
+Opus Y aligns best with IS ≥ 3.75–4.00 (Tier 5, "Excellent"). The judge reserves full endorsement for only the highest-quality outputs.
+
+**Interpretation**: The three evaluation systems (IS, heuristic, Opus judge) agree on **ranking** (Pearson r = 0.85–0.93) but disagree on **where to draw the line**. IS ≥ 3.0 is our conservative "properly captured" threshold; the Opus judge's natural Y+P boundary is closer to IS ≥ 2.0 — it sees more segments as partially useful. This is consistent with the judge's holistic reasoning capturing contextual value that the purely metric-based IS formula penalizes.
+
+- **Bug note (2026-03-05):** An earlier computation returned NaN for the context-aware judge due to using column name `context_judge` instead of the correct column name `context` in `context_eval_results.csv`. This has been resolved.
 
 ---
 

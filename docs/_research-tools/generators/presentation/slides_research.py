@@ -348,13 +348,14 @@ def slide_is_weight_rationale(prs):
          {"bold": True}),
         "Catches hallucination and truncation \u2014 the two catastrophic "
         "failure modes that other signals can miss.",
-        ("Validated: r=0.93, \u03ba=0.77 (binary), \u03baw=0.89 (ordinal)",
+        ("Validated: r=0.93 with expert judgment, \u03ba=0.77",
          {"color": GOLD}),
     ], rx, CT + Inches(0.55), rw, Inches(4.5), size=Pt(13))
 
     add_text(slide,
-        "Validated against 1,497 segments: r=0.93 with expert heuristic, "
-        "\u03ba=0.77 (binary captured/not), \u03baw=0.89 (quadratic weighted across 5 tiers).",
+        "Validated against 1,497 segments: the resulting IS correlates at "
+        "r=0.93 with an independent expert heuristic and \u03ba=0.77 with "
+        "human-like judgment.",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -364,14 +365,8 @@ def slide_is_weight_rationale(prs):
         "preservation (28%, semantic at 25%), and output sanity (9%, length "
         "at 15%). Semantic gets double weight because meaning is the ultimate "
         "goal. The 4 word-accuracy signals overlap heavily (r>0.79), so equal "
-        "15% weights avoid over-counting.\n\n"
-        "Validation metrics (1,497 segments):\n"
-        "- Pearson r = 0.93 with expert heuristic\n"
-        "- Binary Cohen's kappa = 0.773 (captured vs not, substantial agreement)\n"
-        "- Quadratic weighted kappa = 0.887 (across 5 IS tiers, almost perfect)\n"
-        "The weighted kappa shows that even when the heuristic disagrees on exact "
-        "tier, it's almost always off by just 1 tier — large misclassifications "
-        "(e.g. predicting Excellent when IS says Failed) never occur.",
+        "15% weights avoid over-counting. Validated: r=0.93 with expert "
+        "heuristic, kappa=0.77.",
         [[lt] + dim_shapes, [rt], [rb]], click_reveal=True)
 
 

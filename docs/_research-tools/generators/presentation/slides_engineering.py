@@ -397,7 +397,7 @@ def slide_21(prs):
          "0\u20135 composite of 6 signals. Rubric and weights "
          "designed once, distilled into deterministic code "
          "(no LLM calls at runtime). Validated: r=0.93, "
-         "\u03baw=0.89 across 16 configs.", GREEN),
+         "\u03ba=0.77 across 16 configs.", GREEN),
     ]
 
     cw = Inches(2.7)
@@ -435,7 +435,7 @@ def slide_21(prs):
         "dimensions: word accuracy (WER/WWER/Phonetic, r>0.79, ~60% of IS), "
         "meaning preservation (Semantic, 28.5%), and output sanity (Length, "
         "9.1%). Cross-config validation across 16 decode configs: r=0.925, "
-        "88.6% agreement, binary kappa 0.773, weighted kappa 0.887.",
+        "88.6% agreement, Cohen's kappa 0.773.",
         card_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
