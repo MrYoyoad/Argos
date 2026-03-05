@@ -189,7 +189,7 @@ User remark: "many slides have bad animations and occlusions"
 | 118 | General | Too much text and numbers — provide more conclusions on what actually happened. Almost always one "thing" per slide | pending |
 | 119 | General | Explain the experiment in simple terms — what we did, how, what we got | pending |
 | 120 | General | Test additional language models for replacement | pending |
-| 121 | General | Provide references for future methods suggested — known methods, papers | pending |
+| 121 | General | Provide references for future methods suggested — known methods, papers. Added footnote refs (Pt 8, gray italic) to slides 26, 28, 30, data_scaling: ROVER (Fiscus 1997), MBR (Kumar & Byrne 2004), VALLR (Park et al. 2025), GER (Chen et al. 2024), Chinchilla (Hoffmann et al. 2022), LoRA Scaling (Biderman et al. 2024), AVSpeech (Ephrat et al. 2018) | done |
 | 122 | 65 (slide_price_tag) | Clarify exactly which training is being discussed | done |
 | 123 | 66 (slide_29, Fine-Tuning) | Graphs are not visible | done |
 | 124 | 68 (slide_arabic_roadmap) | Create a more relaxed timeline, give it more thought, unknowns, bottlenecks | done |

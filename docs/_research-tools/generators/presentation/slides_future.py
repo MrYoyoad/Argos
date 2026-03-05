@@ -100,16 +100,21 @@ def slide_26(prs):
     add_accent_line(slide)
 
     phases = [
-        ("Phase 1", "Surface the good 40%", "Confidence scoring — attach beam probabilities to outputs (2–4 hrs)",
-         "IS: identify segments already ≥ 3.0", TEAL),
-        ("Phase 2", "Improve the fair 22%", "N-best aggregation — vote across all 20 beam hypotheses (ROVER/MBR)",
-         "IS: +0.3–0.5 from better hypothesis selection", TEAL),
-        ("Phase 3", "LLM swap + smart prompts", "Llama 3.1 8B + context prompts",
-         "IS: +0.5–0.8 from stronger language model", GREEN),
-        ("Phase 4", "Scale data 20K–50K", "Fine-tune with more data",
-         "IS: +0.5–1.0 — biggest single gain", GREEN),
-        ("Phase 5", "Error Correction (GER)", "Second LLM catches hallucinations",
-         "IS: +0.3–0.5 from post-processing cleanup", LGRAY),
+        ("Phase 1", "Surface the good 40%",
+         "Confidence scoring \u2014 flags known-good segments (2\u20134 hrs)",
+         "Targets: Signal Loss (9%) | IS: filters to \u2265 3.0 subset (+0.3 perceived)", TEAL),
+        ("Phase 2", "Fix small & content errors",
+         "N-best aggregation (ROVER/MBR) \u2014 vote across 20 beams",
+         "Targets: Accum. Errors (24.4%) + Content Words (10.7%) | IS: +0.3\u20130.5", TEAL),
+        ("Phase 3", "Better world knowledge",
+         "Llama 3.1 8B + context prompts",
+         "Targets: Hallucination (12.3%) + Wrong Topic (31.6%) | IS: +0.5\u20130.8", GREEN),
+        ("Phase 4", "Scale data 20K\u201350K",
+         "Fine-tune visual encoder + projection on more data",
+         "Targets: ALL categories via better visual features | IS: +0.5\u20131.0", GREEN),
+        ("Phase 5", "Error Correction (GER)",
+         "Second LLM corrects remaining decode errors",
+         "Targets: residual errors post-Phase 1\u20134 | IS: +0.3\u20130.5", LGRAY),
     ]
 
     # Staircase on left side
@@ -144,21 +149,33 @@ def slide_26(prs):
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
+    # Academic references
+    add_text(slide,
+        "References: ROVER (Fiscus 1997)  |  GER (Chen et al. 2024)  |  "
+        "VALLR (Park et al. 2025)  |  LoRA Scaling (Biderman et al. 2024)",
+        MX, Inches(6.65), CW, Inches(0.25),
+        size=Pt(8), color=MGRAY, italic=True)
+
     _finish(slide, 26,
-        "Five phases, each targeting different bottlenecks. Phase 1 is "
-        "immediate: confidence scoring to surface the 40% that's already "
-        "good (2-4 hours). Phase 2: N-best aggregation (ROVER/MBR). Phase 3: swap LLM "
-        "to Llama 3.1 8B plus smart prompts. Phase 4: the biggest gain — "
-        "scale training data. Phase 5: Error Correction (GER) post-processing. "
-        "Key: ICLR 2024 shows these gains are multiplicative.\n\n"
-        "HOW THIS TRANSLATES TO IS:\n"
-        "Current: WER 64.1% -> IS 2.52 (39.9% captured).\n"
-        "Each ~10pp WER reduction typically improves IS by ~0.3-0.5 points "
-        "and captured rate by ~8-12pp.\n"
-        "Phase 3 target (42% WER) would project to roughly IS 3.5-4.0 and "
-        "55-65% captured rate.\n"
-        "The relationship is non-linear — improvements accelerate as more "
-        "segments cross the IS >= 3.0 threshold.",
+        "Five phases, each explicitly targeting failure mode categories from "
+        "our error analysis.\n\n"
+        "FAILURE MODE -> PHASE MAPPING:\n"
+        "Phase 1 (Confidence): Signal Loss accounts for 9% of failures. "
+        "Confidence scoring flags the 40% already good, giving immediate "
+        "perceived improvement (+0.3 IS perceived, 2-4 hours).\n"
+        "Phase 2 (N-Best): Accumulated Small Errors (24.4%) and Content Word "
+        "Errors (10.7%) are exactly what voting/consensus fixes. Each word-level "
+        "error corrected individually yields IS +0.3-0.5.\n"
+        "Phase 3 (LLM Swap): Hallucination (12.3%) and Wrong Topic (31.6%) "
+        "stem from Llama-2's weak world knowledge. Llama 3.1 8B has 3x the "
+        "training data and 128K vocab, directly reducing these. IS +0.5-0.8.\n"
+        "Phase 4 (Data Scaling): All failure categories improve because the "
+        "visual encoder learns better lip representations. Biggest single gain "
+        "IS +0.5-1.0.\n"
+        "Phase 5 (GER): Post-hoc correction of whatever errors remain after "
+        "Phases 1-4. IS +0.3-0.5.\n\n"
+        "Combined target: IS 3.5-4.0 (55-65% captured). "
+        "ICLR 2024 shows gains are multiplicative.",
         [step_shapes, [img, bottom]], click_reveal=True)
 
 
@@ -176,17 +193,20 @@ def slide_26b(prs):
                     MX + Inches(0.5), CT + Inches(0.45),
                     width=Inches(7.0))
 
-    # Key milestones callout (right side)
+    # Key milestones callout (right side) — with failure mode annotations
     rx = MX + Inches(7.8)
     rw = Inches(4.0)
     milestones = [
-        ("Current", "IS 2.52", "39.9% captured", CORAL),
-        ("Phase 1", "IS ~2.85", "~48% captured", TEAL),
-        ("Phase 2", "IS ~3.40", "~58% captured", GREEN),
-        ("Phase 3", "IS ~3.80", "~65% captured", GREEN),
+        ("Current", "IS 2.52", "39.9% captured", "", CORAL),
+        ("Phase 1\u20132", "IS ~2.85",  "~48% captured",
+         "Fixes: Signal Loss (9%), Accum. Errors (24.4%), Content Words (10.7%)", TEAL),
+        ("+ Phase 3", "IS ~3.40", "~58% captured",
+         "Fixes: Hallucination (12.3%), Wrong Topic (31.6%)", GREEN),
+        ("+ Phase 4\u20135", "IS ~3.80", "~65% captured",
+         "Fixes: all remaining via data + post-correction", GREEN),
     ]
     ms_shapes = []
-    for i, (phase, is_val, cap_val, color) in enumerate(milestones):
+    for i, (phase, is_val, cap_val, failure_note, color) in enumerate(milestones):
         y = CT + Inches(0.55) + i * Inches(1.15)
         ms_shapes.append(add_rect(slide, rx, y, rw, Inches(0.95), fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True))
@@ -199,10 +219,10 @@ def slide_26b(prs):
                  size=Pt(16), color=WHITE, bold=True))
         if i > 0:
             delta = float(is_val.replace("IS ~", "")) - 2.52
-            ms_shapes.append(add_text(slide, f"+{delta:.2f} from baseline",
+            ms_shapes.append(add_text(slide, f"+{delta:.2f}  |  {failure_note}",
                      rx + Inches(0.15), y + Inches(0.63),
                      rw - Inches(0.3), Inches(0.25),
-                     size=Pt(10), color=LGRAY, italic=True))
+                     size=Pt(9), color=LGRAY, italic=True))
 
     bottom = add_text(slide,
              "Each ~10pp WER reduction \u2192 ~0.3\u20130.5 IS improvement + ~8\u201312pp captured rate.",
@@ -210,11 +230,16 @@ def slide_26b(prs):
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, "26b",
-        "IS improvement trajectory paralleling the WER reduction roadmap. "
-        "Current IS 2.52 (39.9% captured) \u2192 Phase 3 target IS 3.80 (65% captured). "
-        "The IS \u2265 3.0 threshold marks 'captured' segments. "
-        "Key insight: relationship is non-linear \u2014 improvements accelerate as more "
-        "segments cross the IS \u2265 3.0 threshold.",
+        "IS improvement trajectory with failure mode annotations. "
+        "Current IS 2.52 (39.9% captured). "
+        "Phase 1-2 target IS ~2.85 (48% captured) by fixing Signal Loss (9%), "
+        "Accumulated Errors (24.4%), and Content Word Errors (10.7%). "
+        "Phase 3 target IS ~3.40 (58% captured) by fixing Hallucination (12.3%) "
+        "and Wrong Topic (31.6%) via stronger LLM world knowledge. "
+        "Phase 4-5 target IS ~3.80 (65% captured) by improving visual encoder "
+        "with more data and post-hoc error correction. "
+        "Each phase targets specific failure categories, and the magnitude "
+        "reflects the proportion of errors in that category.",
         [[img], ms_shapes + [bottom]], click_reveal=True)
 
 
@@ -227,59 +252,36 @@ def slide_26b(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_27(prs):
+    """Phase 1 summary — brief recap (detail now on slide_confidence_scoring)."""
     slide = new_slide(prs)
-    add_title(slide, "Phase 1: Confidence Scoring \u2014 Surface the Good 40%")
+    add_title(slide, "Confidence Scoring \u2014 Summary")
     add_accent_line(slide)
 
-    col_w = Inches(5.8)
-    gap = Inches(0.53)
+    # Single concise summary
+    add_bullets(slide, [
+        ("Beam scores are already computed \u2014 just surface them",
+         {"bold": True, "size": Pt(18)}),
+        ("2\u20134 hours to implement, zero retraining",
+         {"color": GREEN, "bold": True, "size": Pt(18)}),
+        ("Perceived error rate: 60% \u2192 ~20%",
+         {"color": TEAL, "bold": True, "size": Pt(18)}),
+        ("Targets Signal Loss failure mode (9% of errors)",
+         {"size": Pt(16)}),
+    ], MX, CT + Inches(0.3), CW, Inches(3.0), size=Pt(16))
 
-    # Left — The Idea
-    lt = add_text(slide, "The Idea", MX, CT, col_w, Inches(0.4),
-                  size=Pt(20), color=TEAL, bold=True)
-    lb = add_bullets(slide, [
-        ("Beam search already computes probability scores "
-         "for every hypothesis", {"bold": True}),
-        "We just don\u2019t expose them yet",
-        "Confidence = attaching these scores to outputs",
-        ("No extra model inference \u2014 scores are a "
-         "free byproduct of decode", {"color": TEAL}),
-    ], MX, CT + Inches(0.5), col_w, Inches(2.5), size=Pt(16))
-
-    # Effort callout
-    r1 = add_rect(slide, MX, CT + Inches(3.2), col_w, Inches(0.6),
+    # Quick visual callout
+    r1 = add_rect(slide, MX + Inches(1.5), CT + Inches(3.5),
+                  CW - Inches(3.0), Inches(0.7),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "Effort: 2\u20134 hours implementation",
-             MX + Inches(0.3), CT + Inches(3.25), col_w - Inches(0.6), Inches(0.5),
-             size=Pt(18), color=GREEN, bold=True)
-
-    # Right — What It Enables
-    rx = MX + col_w + gap
-    rw = CW - col_w - gap
-    rt = add_text(slide, "What It Enables", rx, CT, rw, Inches(0.4),
-                  size=Pt(20), color=CORAL, bold=True)
-    rb = add_bullets(slide, [
-        "Users see only high-confidence segments by default",
-        "Low-confidence segments flagged for human review",
-        ("Reduces perceived error rate from 60% to ~20%",
-         {"bold": True, "color": GREEN}),
-        "Business/Finance segments (57% captured) get highest confidence",
-        "Short segments (<10 words, 32%) need lower thresholds",
-        ("Entity-level: names, numbers, and places missed in 85% of "
-         "segments — confidence scoring can flag these specifically",
-         {"color": CORAL}),
-    ], rx, CT + Inches(0.5), rw, Inches(3.5), size=Pt(14))
+    add_text(slide, "Fastest path to user value \u2014 Phase 1 is a quick win",
+             MX + Inches(1.8), CT + Inches(3.55), CW - Inches(3.6), Inches(0.6),
+             size=Pt(18), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 27,
-        "Phase 1 is the quick win. Beam search already computes probability "
-        "scores for every hypothesis — we just don't surface them. Confidence "
-        "scoring means attaching these scores to outputs so users can trust "
-        "high-confidence results and flag low-confidence for review. No extra "
-        "model inference needed — the scores are a free byproduct of decode. "
-        "2-4 hours of implementation. Entity-level analysis shows names, "
-        "numbers, and places are missed in 85% of segments.",
-        [[lt, lb], [r1], [rt, rb]], click_reveal=True)
+        "Brief summary of confidence scoring. Detail covered in previous slide. "
+        "Key points: beam scores already exist, 2-4 hours implementation, "
+        "perceived error rate drops from 60% to 20%.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 28 — PHASE 2: N-BEST AGGREGATION
@@ -342,6 +344,12 @@ def slide_28(prs):
         "Moves IS 2.0\u20132.9 segments above the 3.0 threshold",
     ], MX, iy, CW, Inches(1.5), size=Pt(14))
 
+    # Academic references
+    add_text(slide,
+        "ROVER: Fiscus (1997), NIST  |  MBR Decoding: Kumar & Byrne (2004), HLT-NAACL",
+        MX, Inches(6.55), CW, Inches(0.3),
+        size=Pt(8), color=MGRAY, italic=True)
+
     _finish(slide, 28,
         "Phase 2 exploits beam search output. Currently we keep only the top "
         "hypothesis and throw away 19 alternatives. ROVER aligns all 20 and "
@@ -360,48 +368,34 @@ def slide_28(prs):
 
 def slide_29(prs):
     slide = new_slide(prs)
-    add_title(slide, "Fine-Tuning Experiments: Limited Data, Limited Gains")
+    add_title(slide, "Fine-Tuning: Limited Data, Limited Gains")
     add_accent_line(slide)
 
-    # Two plots side by side — large and readable
+    # Two plots side by side — LARGER for visibility
     col_w = Inches(5.9)
     gap = Inches(0.33)
-    plot_h = Inches(3.4)
+    plot_h = Inches(4.0)
     rx = MX + col_w + gap
 
     img_l = add_image(slide, "ft_loss", MX, CT, width=col_w, height=plot_h)
     img_r = add_image(slide, "ft_impact", rx, CT, width=col_w, height=plot_h)
 
-    # Key findings below — two columns
-    find_y = CT + plot_h + Inches(0.15)
-    lt = add_text(slide, "What We Tried", MX, find_y, col_w, Inches(0.3),
-                  size=Pt(14), color=CORAL, bold=True)
+    # Compact key findings below — single row, shorter text
+    find_y = CT + plot_h + Inches(0.1)
     lb = add_bullets(slide, [
-        ("LoRA fine-tune on only 1,273 segments", {"bold": True}),
-        "Exp A (r=16): best val at epoch 2, then overfitting",
-        ("Exp B (r=64): 3.1pp worse — more params = faster collapse",
-         {"color": CORAL}),
-        ("Result: data too limited for LoRA to generalize",
-         {"bold": True, "color": GOLD}),
-    ], MX, find_y + Inches(0.3), col_w, Inches(1.8), size=Pt(12))
-
-    rt = add_text(slide, "Impact on Intelligibility", rx, find_y, col_w,
-                  Inches(0.3), size=Pt(14), color=TEAL, bold=True)
-    rb = add_bullets(slide, [
-        "IS: 2.49 \u2192 2.31 \u2192 2.02 (baseline \u2192 A \u2192 B)",
-        ("Fine-tuning made IS WORSE, not better", {"color": CORAL}),
-        "Empty outputs: 7% \u2192 13% \u2192 27%",
-        ("Key insight: need 20K+ segments, not parameter tuning",
+        ("LoRA on 1,273 segments: IS 2.49 \u2192 2.31 (r=16) \u2192 2.02 (r=64) \u2014 "
+         "fine-tuning made IS WORSE", {"bold": True, "color": CORAL}),
+        ("Bottleneck is data quantity (need 20K+), not parameter tuning",
          {"bold": True, "color": GREEN}),
-    ], rx, find_y + Inches(0.3), col_w, Inches(1.8), size=Pt(12))
+    ], MX, find_y, CW, Inches(1.0), size=Pt(14))
 
     _finish(slide, 29,
-        "Fine-tuning experiments with LoRA on 1,273 segments. Exp A (rank 16): "
-        "62.94% val accuracy, severe overfitting. Exp B (rank 64): 3.1pp worse. "
-        "IS scores decreased: baseline 2.49, Exp A 2.31, Exp B 2.02. "
-        "Empty outputs increased dramatically. Bottleneck is data quantity "
-        "(need 20K+), not model capacity or parameter tuning.",
-        [[img_l, img_r], [lt, lb, rt, rb]], click_reveal=True)
+        "Fine-tuning experiments with LoRA on 1,273 segments. Graphs are now "
+        "larger for visibility. Exp A (rank 16): best val at epoch 2, then "
+        "overfitting. Exp B (rank 64): 3.1pp worse. IS decreased: baseline "
+        "2.49, Exp A 2.31, Exp B 2.02. Empty outputs: 7% to 13% to 27%. "
+        "Bottleneck is data quantity (need 20K+).",
+        [[img_l, img_r], [lb]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 30 — LLM UPGRADE + ADVANCED CAPABILITIES
@@ -454,6 +448,14 @@ def slide_30(prs):
                     cw - Inches(0.4), Inches(3.5), size=Pt(13))
         col_groups.append([r, t, b])
 
+    # Academic references
+    add_text(slide,
+        "VALLR: Park et al. (2025), ICCV — 18.7% WER on LRS3, 3B params  |  "
+        "GER: Chen et al. (2024), ICASSP  |  "
+        "Scaling Laws: Hoffmann et al. (2022), NeurIPS (Chinchilla)",
+        MX, Inches(6.55), CW, Inches(0.3),
+        size=Pt(8), color=MGRAY, italic=True)
+
     _finish(slide, 30,
         "Three columns of future capability. Left: LLM swap to Llama 3.1 "
         "8B is trivial — same hidden dimension, 1-2 hours. Center: 7 prompt "
@@ -486,20 +488,23 @@ def slide_arabic_roadmap(prs):
                   size=Pt(18), color=TEAL, bold=True)
 
     topics = [
-        (TEAL,  "Arabic AV-HuBERT encoder",
+        (TEAL,  "Arabic AV-HuBERT encoder (BOTTLENECK)",
          "Fine-tune English AV-HuBERT on Arabic visual speech data \u2014 "
-         "AVSpeech dataset has Arabic videos available for training"),
+         "Arabic visual data availability is UNKNOWN; AVSpeech has some "
+         "Arabic videos but quality/quantity unverified"),
         (TEAL,  "Arabic LLM backend",
          "Swap Llama-2 for Arabic-capable LLM (e.g. Jais, AceGPT, "
-         "or Arabic-tuned Llama 3) with Arabic tokenizer"),
+         "or Arabic-tuned Llama 3) \u2014 Arabic tokenizer quality varies"),
+        (CORAL, "Arabic evaluation dataset (UNKNOWN)",
+         "No Arabic lip-reading benchmark exists. Manual transcriptions "
+         "needed for MSA + dialect coverage \u2014 requires native speakers, "
+         "timeline uncertain"),
         (GREEN, "Training infrastructure",
          "AWS GPU instance (existing) for AV-HuBERT fine-tuning "
          "and K-means reclustering on Arabic mouth shapes"),
-        (CORAL, "Arabic evaluation dataset",
-         "Manual transcriptions needed for MSA + dialect coverage \u2014 "
-         "the main bottleneck (requires native speakers)"),
-        (TEAL,  "Text normalization",
-         "spaCy Arabic, diacritic handling, Arabic NER"),
+        (CORAL,  "RTL text & normalization (RISK)",
+         "RTL text handling may need research; spaCy Arabic, "
+         "diacritic handling, Arabic NER \u2014 maturity unknown"),
     ]
 
     topic_groups = []
@@ -518,42 +523,53 @@ def slide_arabic_roadmap(prs):
     rt = add_text(slide, "Practical Timeline", rx, CT, col_w, Inches(0.35),
                   size=Pt(18), color=GREEN, bold=True)
 
-    headers = ["Step", "Effort", "How"]
+    headers = ["Step", "Effort", "Risks / Unknowns"]
     rows = [
-        ["AV-HuBERT\nfine-tune", "1\u20132 weeks", "AVSpeech Arabic\nvids + AWS GPU"],
-        ["Arabic K-means", "2\u20133 days", "Recluster on\nArabic features"],
-        ["Arabic LLM\nswap", "1\u20132 days", "Config change +\ntokenizer"],
-        ["Eval dataset", "1\u20132 weeks", "Native speaker\ntranscription"],
-        ["Pipeline config\n& testing", "3\u20135 days", "End-to-end\nvalidation"],
+        ["AV-HuBERT\nfine-tune", "4\u20138 weeks", "Arabic visual data\nquality unknown"],
+        ["Arabic K-means", "1\u20132 weeks", "May need multiple\niterations"],
+        ["Arabic LLM\nswap", "1\u20132 weeks", "Tokenizer quality\nvaries by model"],
+        ["Eval dataset", "4\u20138 weeks", "No benchmark exists;\nneeds native speakers"],
+        ["RTL text &\nnormalization", "2\u20134 weeks", "RTL handling may\nneed research"],
+        ["Pipeline config\n& testing", "2\u20134 weeks", "End-to-end\nvalidation"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
-                    row_height=Inches(0.6),
-                    col_widths=[Inches(1.6), Inches(1.3), Inches(2.6)],
-                    text_size=Pt(12))
+                    row_height=Inches(0.55),
+                    col_widths=[Inches(1.5), Inches(1.3), Inches(2.7)],
+                    text_size=Pt(11))
 
     # Bottom note
     note = add_text(slide,
-        "Pipeline code is language-agnostic \u2014 no code changes needed. "
-        "Main bottleneck: manual Arabic evaluation transcriptions.",
+        "Pipeline code is language-agnostic. Main bottlenecks: encoder pre-training "
+        "data and eval dataset collection. No Arabic lip-reading benchmark exists.",
         MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Timeline summary callout
-    timeline_box = add_rect(slide, MX, Inches(5.8), CW, Inches(0.55),
-                  fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
+    timeline_box = add_rect(slide, MX, Inches(5.75), CW, Inches(0.55),
+                  fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
-    timeline_txt = add_text(slide, "Total estimated timeline: 3\u20135 weeks",
-             MX + Inches(0.3), Inches(5.85), CW - Inches(0.6), Inches(0.4),
-             size=Pt(22), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+    timeline_txt = add_text(slide,
+             "Realistic estimate: 4\u20136 months (encoder pre-training is the bottleneck)",
+             MX + Inches(0.3), Inches(5.8), CW - Inches(0.6), Inches(0.4),
+             size=Pt(20), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
 
     # Animation: title → each topic one by one → right column → callout
     anim = [[lt]] + topic_groups + [[rt, tbl], [timeline_box, timeline_txt, note]]
 
     _finish(slide, 0,
-        "Arabic replication roadmap. Steps: fine-tune AV-HuBERT on Arabic "
-        "(1-2 weeks), recluster K-means (2-3 days), swap to Arabic LLM "
-        "(1-2 days), build eval dataset (1-2 weeks), end-to-end testing "
-        "(3-5 days). Total 3-5 weeks. Pipeline is language-agnostic.",
+        "Arabic replication roadmap with realistic, conservative estimates. "
+        "Key unknowns and bottlenecks:\n"
+        "1. Arabic visual data availability is unverified \u2014 AVSpeech has some "
+        "Arabic videos but quality/quantity need assessment.\n"
+        "2. No Arabic lip-reading benchmark exists \u2014 eval dataset must be "
+        "built from scratch with native speakers.\n"
+        "3. RTL text handling and Arabic NER tooling maturity is unknown.\n"
+        "4. Encoder pre-training is the bottleneck (4-8 weeks alone).\n\n"
+        "Steps: fine-tune AV-HuBERT on Arabic (4-8 weeks), recluster K-means "
+        "(1-2 weeks), swap to Arabic LLM (1-2 weeks), build eval dataset "
+        "(4-8 weeks, parallel), RTL normalization (2-4 weeks), end-to-end "
+        "testing (2-4 weeks). Total 4-6 months realistic. Pipeline code "
+        "itself is language-agnostic.",
         anim, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1137,6 +1153,13 @@ def slide_data_scaling(prs):
              rx + Inches(1.5), CT + Inches(3.1), col_w - Inches(1.7),
              Inches(0.7), size=Pt(13), color=WHITE)
 
+    # Academic references
+    add_text(slide,
+        "LoRA Scaling: Biderman et al. (2024), ICLR  |  "
+        "AVSpeech: Ephrat et al. (2018), ACM TOG — 290K video dataset",
+        MX, Inches(6.55), CW, Inches(0.3),
+        size=Pt(8), color=MGRAY, italic=True)
+
     _finish(slide, 0,
         "Data scaling projections based on ICLR 2024 multiplicative scaling "
         "law. Current 1,273 segments is far below minimum. 20K segments with "
@@ -1153,50 +1176,49 @@ def slide_price_tag(prs):
 
     add_text(slide,
         "AWS eu-west-1 (Ireland)  \u2022  p4d.24xlarge (8\u00d7A100) spot  \u2022  "
-        "Paper\u2019s two-phase training curriculum",
+        "Paper\u2019s 2-phase curriculum: freeze encoder \u2192 unfreeze encoder",
         MX, CT, CW, Inches(0.35), size=Pt(12), color=LGRAY, italic=True)
 
-    tbl_w = Inches(7.8)
+    tbl_w = Inches(9.2)
     tbl = add_table(slide,
-        ["Phase", "Data", "Train Cost", "Total Cost", "Timeline", "IS Target"],
-        [["Current", "1.3K segs", "\u2014", "\u2014", "\u2014", "2.52"],
-         ["Phase 1", "5K hrs", "~$3K", "~$8\u201312K", "2\u20134 wks", "~2.9\u20133.1"],
-         ["Phase 2", "10K hrs", "~$6K", "~$15\u201320K", "4\u20136 wks", "~3.2\u20133.5"],
-         ["Phase 3", "20K hrs", "~$13K", "~$30\u201340K", "6\u20138 wks", "~3.5\u20133.8"],
-         ["Phase 4", "50K hrs", "~$32K", "~$70\u2013100K", "3\u20134 mo", "~3.8\u20134.2"]],
-        MX, CT + Inches(0.5), tbl_w, text_size=Pt(11),
-        col_widths=[Inches(1.0), Inches(1.1), Inches(1.1), Inches(1.3),
-                    Inches(1.1), Inches(1.2)],
-        row_colors={3: {3: GREEN, 5: GREEN}})
+        ["Phase", "Training Type", "Data", "Train Cost", "Total Cost", "Timeline", "IS Target"],
+        [["Current", "LoRA r=16 (projection only)", "1.3K segs", "\u2014", "\u2014", "\u2014", "2.52"],
+         ["Phase 1", "Projection retraining (2 hrs)", "5K hrs", "~$3K", "~$8\u201312K", "2\u20134 wks", "~2.9\u20133.1"],
+         ["Phase 2", "Projection + partial encoder", "10K hrs", "~$6K", "~$15\u201320K", "4\u20136 wks", "~3.2\u20133.5"],
+         ["Phase 3", "Full curriculum (freeze\u2192unfreeze)", "20K hrs", "~$13K", "~$30\u201340K", "6\u20138 wks", "~3.5\u20133.8"],
+         ["Phase 4", "Full curriculum + encoder adapt", "50K hrs", "~$32K", "~$70\u2013100K", "3\u20134 mo", "~3.8\u20134.2"]],
+        MX, CT + Inches(0.5), tbl_w, text_size=Pt(10),
+        col_widths=[Inches(1.0), Inches(2.3), Inches(0.9), Inches(0.9), Inches(1.2),
+                    Inches(1.0), Inches(0.9)],
+        row_colors={3: {4: GREEN, 6: GREEN}})
 
-    rx = MX + tbl_w + Inches(0.4)
-    rw = CW - tbl_w - Inches(0.4)
-
-    r1 = add_rect(slide, rx, CT + Inches(0.5), rw, Inches(2.8),
+    # Sweet spot + training type below table
+    sw_y = CT + Inches(3.6)
+    r1 = add_rect(slide, MX, sw_y, Inches(5.5), Inches(1.5),
                    fill_color=NAVY2, border_color=GOLD, border_width=Pt(2),
                    corner_radius=True)
-    add_text(slide, "Sweet Spot", rx + Inches(0.2), CT + Inches(0.6),
-             rw - Inches(0.4), Inches(0.35), size=Pt(16), color=GOLD, bold=True)
-    add_text(slide, "Phase 3: IS ~3.7",
-             rx + Inches(0.2), CT + Inches(1.0),
-             rw - Inches(0.4), Inches(0.35), size=Pt(20), color=GREEN, bold=True)
+    add_text(slide, "Sweet Spot: Phase 3 \u2014 Full Curriculum Training",
+             MX + Inches(0.2), sw_y + Inches(0.1),
+             Inches(5.1), Inches(0.35), size=Pt(15), color=GOLD, bold=True)
     add_bullets(slide, [
-        "20K hrs = ~7% of AVSpeech",
-        "Total ~$35K incl. curation",
-        "Follows paper\u2019s 2-phase\ncurriculum: freeze \u2192 unfreeze",
-    ], rx + Inches(0.15), CT + Inches(1.5), rw - Inches(0.3), Inches(1.2),
-        size=Pt(11))
+        "20K hrs = ~7% of AVSpeech, total ~$35K",
+        "Paper\u2019s curriculum: freeze encoder (phase 1) \u2192 unfreeze (phase 2)",
+        ("NOT LoRA \u2014 full projection + encoder retraining", {"color": CORAL}),
+    ], MX + Inches(0.15), sw_y + Inches(0.5), Inches(5.2), Inches(0.9),
+        size=Pt(12))
 
-    r2 = add_rect(slide, rx, CT + Inches(3.5), rw, Inches(1.3),
+    r2 = add_rect(slide, MX + Inches(6.0), sw_y, Inches(5.8), Inches(1.5),
                    fill_color=NAVY2, border_color=TEAL, border_width=Pt(1),
                    corner_radius=True)
-    add_text(slide, "LLM Backbone Upgrade",
-             rx + Inches(0.2), CT + Inches(3.6),
-             rw - Inches(0.4), Inches(0.3), size=Pt(13), color=TEAL, bold=True)
-    add_text(slide,
-        "Llama 3.1 8B or Qwen 2.5 7B\n+0.3\u20130.5 IS independently\nOnly config change needed",
-        rx + Inches(0.2), CT + Inches(3.95),
-        rw - Inches(0.4), Inches(0.7), size=Pt(11), color=LGRAY)
+    add_text(slide, "LLM Backbone Upgrade (config change only)",
+             MX + Inches(6.2), sw_y + Inches(0.1),
+             Inches(5.4), Inches(0.3), size=Pt(13), color=TEAL, bold=True)
+    add_bullets(slide, [
+        "Llama 3.1 8B or Qwen 2.5 7B",
+        "+0.3\u20130.5 IS independently, no retraining",
+        "Same hidden_size (4096), drop-in swap",
+    ], MX + Inches(6.15), sw_y + Inches(0.45), Inches(5.5), Inches(0.9),
+        size=Pt(11))
 
     add_text(slide,
         "Training cost: p4d spot $9.39/hr (eu-west-1).  "
@@ -1204,9 +1226,14 @@ def slide_price_tag(prs):
         MX, Inches(6.5), CW, Inches(0.35), size=Pt(10), color=MGRAY, italic=True)
 
     _finish(slide, 0,
-        "Cost projections for scaling to IS 3.5-4.0. Based on p4d.24xlarge spot "
-        "pricing in eu-west-1 at $9.39/hr. Phase 3 (20K hours, ~$35K) is the sweet spot. "
-        "LLM backbone upgrade to Llama 3.1 8B or Qwen 2.5 7B adds +0.3-0.5 IS independently.",
+        "Cost projections with explicit training types. Current baseline used "
+        "LoRA r=16 (projection layer only) on 1.3K segments. Phase 1: projection "
+        "retraining (~2 hours per epoch). Phase 2: projection + partial encoder. "
+        "Phase 3 (sweet spot): full curriculum training from the VSP-LLM paper \u2014 "
+        "freeze encoder first, then unfreeze for end-to-end training. This is NOT "
+        "LoRA fine-tuning; it retrains the projection layer and encoder weights. "
+        "Phase 4: full curriculum + encoder adaptation on 50K hours. "
+        "LLM backbone upgrade (Llama 3.1 8B) is orthogonal \u2014 just a config change.",
         [[tbl], [r1, r2]], click_reveal=True)
 
 
@@ -1336,79 +1363,62 @@ def slide_a17(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_confidence_scoring(prs):
-    """Future direction: per-segment confidence probabilities."""
+    """Future direction: per-segment confidence — merged with Phase 1 detail."""
     slide = new_slide(prs)
-    add_title(slide, "Phase 1: Confidence Scoring")
+    add_title(slide, "Phase 1: Confidence Scoring \u2014 Surface the Good 40%")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — what it is
-    lt = add_text(slide, "What Is It?", MX, CT, col_w, Inches(0.35),
+    # Left — What + How (merged, concise)
+    lt = add_text(slide, "How It Works", MX, CT, col_w, Inches(0.35),
                   size=Pt(18), color=TEAL, bold=True)
     lb = add_bullets(slide, [
-        ("Assign a probability (0\u20131.0) to each decoded segment",
-         {"bold": True}),
-        "High confidence (> 0.8): trust the output as-is",
-        "Medium (0.4\u20130.8): flag for human review",
-        "Low (< 0.4): suppress or mark as unreliable",
-        ("Goal: surface the 40% that already works", {"color": GREEN}),
-    ], MX, CT + Inches(0.45), col_w, Inches(2.5), size=Pt(14))
+        ("Beam search already computes probability scores \u2014 "
+         "we just don\u2019t expose them yet", {"bold": True}),
+        "Attach beam score + token entropy to each output segment",
+        "High confidence (\u2265 0.8): trust as-is | "
+        "Low (< 0.4): flag for review",
+        ("No extra inference \u2014 scores are a free byproduct of decode",
+         {"color": TEAL}),
+        ("Effort: 2\u20134 hours implementation", {"color": GREEN, "bold": True}),
+    ], MX, CT + Inches(0.45), col_w, Inches(2.8), size=Pt(14))
 
-    # How it works
-    hwt = add_text(slide, "How It Works", MX, CT + Inches(3.2), col_w, Inches(0.35),
-             size=Pt(16), color=TEAL, bold=True)
-    hwb = add_bullets(slide, [
-        "Combine decode-time signals: beam score, entropy, "
-        "N-best agreement, length ratio",
-        "Train a lightweight classifier on our 1,497 labeled segments",
-        "Output: probability that IS \u2265 3.0 for each segment",
-    ], MX, CT + Inches(3.65), col_w, Inches(2.0), size=Pt(13))
+    # Effort callout
+    r1 = add_rect(slide, MX, CT + Inches(3.5), col_w, Inches(0.5),
+                  fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
+                  corner_radius=True)
+    add_text(slide, "Reduces perceived error rate from 60% to ~20%",
+             MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(0.4),
+             size=Pt(16), color=GREEN, bold=True)
 
-    # Right — impact
+    # Right — What It Enables
     rx = MX + col_w + gap
     rw = CW - col_w - gap
-    rt = add_text(slide, "Impact", rx, CT, rw, Inches(0.35),
-                  size=Pt(18), color=GREEN, bold=True)
-
+    rt = add_text(slide, "What It Enables", rx, CT, rw, Inches(0.35),
+                  size=Pt(18), color=CORAL, bold=True)
     rb = add_bullets(slide, [
-        ("Immediate value: 2\u20134 hours to implement", {"bold": True, "color": GREEN}),
         "Users see only high-confidence segments by default",
-        "Reduces perceived error rate from 60% to ~20%",
-        "No model changes needed \u2014 pure post-processing",
-    ], rx, CT + Inches(0.45), rw, Inches(2.0), size=Pt(14))
-
-    # Right — what we already have
-    waht = add_text(slide, "What We Already Have", rx, CT + Inches(2.7), rw, Inches(0.35),
-             size=Pt(16), color=CORAL, bold=True)
-    headers = ["Signal", "Source"]
-    rows = [
-        ["Beam score", "Available from decode"],
-        ["Token entropy", "Available from decode"],
-        ["N-best agreement", "Requires beam > 1"],
-        ["Length ratio", "Already in IS pipeline"],
-        ["IS sub-scores", "Already computed"],
-    ]
-    tbl = add_table(slide, headers, rows, rx, CT + Inches(3.15), rw,
-                    row_height=Inches(0.35), text_size=Pt(10),
-                    col_widths=[Inches(2.4), Inches(3.0)])
+        "Low-confidence segments flagged for human review",
+        "Business/Finance segments (57% captured) get highest scores",
+        ("Entity-level: names/numbers missed in 85% of segments \u2014 "
+         "confidence can flag these specifically", {"color": CORAL}),
+    ], rx, CT + Inches(0.45), rw, Inches(2.5), size=Pt(14))
 
     bottom = add_text(slide,
-        "The fastest path to user value. No retraining, no new data, "
-        "no infrastructure changes \u2014 just smarter filtering.",
+        "The fastest path to user value \u2014 no retraining, no new data, "
+        "no infrastructure changes.",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Phase 1 of the roadmap: confidence scoring. Assign a probability "
-        "to each decoded segment indicating how likely it is to be correctly "
-        "transcribed (IS >= 3.0). Uses decode-time signals like beam score, "
-        "token entropy, N-best agreement, and length ratio. Can be trained on "
-        "our existing 1,497 labeled segments. Implementation: 2-4 hours. "
-        "Impact: users see only trusted output, perceived error rate drops "
-        "from 60% to ~20%.",
-        [[lt, lb], [rt, rb], [hwt, hwb, waht, tbl], [bottom]], click_reveal=True)
+        "Merged confidence scoring slide. Beam search already computes "
+        "probability scores for every hypothesis. We attach beam score and "
+        "token entropy to each segment. High-confidence outputs are trusted, "
+        "low-confidence flagged for review. 2-4 hours implementation. "
+        "Perceived error rate drops from 60% to ~20%. No retraining needed.",
+        [[lt, lb], [r1], [rt, rb], [bottom]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
