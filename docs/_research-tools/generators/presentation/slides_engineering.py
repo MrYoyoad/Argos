@@ -118,7 +118,7 @@ def slide_17(prs):
         anim_groups.append(stage_shapes)
 
     # Group 5: Down arrow + repo labels for row 1
-    down_x = start_x + 3 * (box_w + gap) + box_w / 2 - Inches(0.15)
+    down_x = (SL_W - Inches(0.3)) / 2
     down_y = row1_y + box_h + Inches(0.15)
     down_group = _add_arrow(down_x, down_y, "down")
     down_group.append(add_text(slide, "auto_avsr",

@@ -824,7 +824,7 @@ def slide_is_deep_dive(prs):
         "Semantic similarity (25% weight) captures 28.5% of IS variance. "
         "Length ratio is weakest at 9.1%. The expert heuristic (15-rule "
         "decision tree) achieves r=0.934.",
-        [[rt, rb], [lt, tbl]], click_reveal=True)
+        [[lt, tbl], [rt, rb]], click_reveal=True)
 
 
 def slide_metric_disagreement(prs):
@@ -870,20 +870,22 @@ def slide_metric_disagreement(prs):
 
     cards = []
     for i, (title, color, subtitle, body) in enumerate(patterns):
+        card_shapes = []
         col = i % 2
         row = i // 2
         x = MX + col * (cw + gap_x)
         y = cy + row * (ch + gap_y)
         r = add_rect(slide, x, y, cw, ch, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        cards.append(r)
-        add_rich_text(slide, [
+        card_shapes.append(r)
+        card_shapes.append(add_rich_text(slide, [
             [(title, {"size": Pt(14), "color": color, "bold": True}),
              (f"  —  {subtitle}", {"size": Pt(12), "color": WHITE})],
-        ], x + Inches(0.2), y + Inches(0.1), cw - Inches(0.4), Inches(0.35))
-        add_text(slide, body, x + Inches(0.2), y + Inches(0.5),
+        ], x + Inches(0.2), y + Inches(0.1), cw - Inches(0.4), Inches(0.35)))
+        card_shapes.append(add_text(slide, body, x + Inches(0.2), y + Inches(0.5),
                  cw - Inches(0.4), ch - Inches(0.6),
-                 size=Pt(11), color=LGRAY)
+                 size=Pt(11), color=LGRAY))
+        cards.append(card_shapes)
 
     add_text(slide,
         "This is why IS uses 6 signals, not just WER — each disagreement pattern "
@@ -896,7 +898,7 @@ def slide_metric_disagreement(prs):
         "are wrong but content preserved. High NEA + high WER means names survived. "
         "High semantic + high WER means paraphrasing. High phonetic + low semantic "
         "is the dangerous case — sounds right but wrong meaning.",
-        [[c] for c in cards], click_reveal=True)
+        [c for c in cards], click_reveal=True)
 
     # Hide slide
     slide._element.set('show', '0')
@@ -926,12 +928,12 @@ def slide_metric_disagreement_2(prs):
          "All signals collapse — nothing to evaluate."),
         ("Length \u226b 1.0, Semantic low", CORAL,
          "Hallucination — fluent fabrication",
-         "Ref: \"carry strap\" → Hyp: 3 paragraphs about history\n"
+         "Ref: \"carry strap\" \u2192 Hyp: 3 paragraphs about history\n"
          "WER 6,833%, length ratio 45\u00d7 — LLM ran unchecked.\n"
          "IS catches via length + semantic: fluent but fabricated."),
         ("NEA low, Semantic moderate", GOLD,
          "Topic right, entities destroyed",
-         "\"the 13th amendment\" → \"the important decision\"\n"
+         "\"the 13th amendment\" \u2192 \"the important decision\"\n"
          "Semantic 0.52 but NEA F1 = 0% — gist right, facts lost.\n"
          "IS penalizes: critical info (names, numbers) irrecoverable."),
         ("All metrics moderate (~0.5)", TEAL,
@@ -943,20 +945,22 @@ def slide_metric_disagreement_2(prs):
 
     cards = []
     for i, (title, color, subtitle, body) in enumerate(patterns):
+        card_shapes = []
         col = i % 2
         row = i // 2
         x = MX + col * (cw + gap_x)
         y = cy + row * (ch + gap_y)
         r = add_rect(slide, x, y, cw, ch, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        cards.append(r)
-        add_rich_text(slide, [
+        card_shapes.append(r)
+        card_shapes.append(add_rich_text(slide, [
             [(title, {"size": Pt(14), "color": color, "bold": True}),
              (f"  —  {subtitle}", {"size": Pt(12), "color": WHITE})],
-        ], x + Inches(0.2), y + Inches(0.1), cw - Inches(0.4), Inches(0.35))
-        add_text(slide, body, x + Inches(0.2), y + Inches(0.5),
+        ], x + Inches(0.2), y + Inches(0.1), cw - Inches(0.4), Inches(0.35)))
+        card_shapes.append(add_text(slide, body, x + Inches(0.2), y + Inches(0.5),
                  cw - Inches(0.4), ch - Inches(0.6),
-                 size=Pt(11), color=LGRAY)
+                 size=Pt(11), color=LGRAY))
+        cards.append(card_shapes)
 
     add_text(slide,
         "8 total diagnostic patterns — IS decomposes quality into actionable signals "
@@ -968,7 +972,7 @@ def slide_metric_disagreement_2(prs):
         "Four more metric disagreement patterns. Length collapse = signal loss. "
         "Length explosion + low semantic = hallucination. Low NEA + moderate semantic = "
         "entity destruction. All-moderate = accumulated errors.",
-        [[c] for c in cards], click_reveal=True)
+        [c for c in cards], click_reveal=True)
 
     # Hide slide
     slide._element.set('show', '0')
@@ -991,10 +995,10 @@ def slide_two_eval_systems(prs):
     r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.6),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "Intelligibility Score (IS)", MX + Inches(0.2),
+    r1_t = add_text(slide, "Intelligibility Score (IS)", MX + Inches(0.2),
              CT + Inches(0.6), col_w - Inches(0.4), Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
-    add_bullets(slide, [
+    r1_b = add_bullets(slide, [
         "Strict metric: composite 0\u20135 score",
         ("IS \u2265 3.0 = Captured: 39.9% (597/1,497)", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(1.0), col_w - Inches(0.4), Inches(0.8),
@@ -1004,10 +1008,10 @@ def slide_two_eval_systems(prs):
     r2 = add_rect(slide, MX, CT + Inches(2.3), col_w, Inches(1.6),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "Expert Heuristic (LLM Salvage)", MX + Inches(0.2),
+    r2_t = add_text(slide, "Expert Heuristic (LLM Salvage)", MX + Inches(0.2),
              CT + Inches(2.4), col_w - Inches(0.4), Inches(0.3),
              size=Pt(14), color=GREEN, bold=True)
-    add_bullets(slide, [
+    r2_b = add_bullets(slide, [
         "Generous: identifies recoverable segments",
         ("IS < 3.0 but salvageable: 50.9% (762/1,497)", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(2.8), col_w - Inches(0.4), Inches(0.8),
@@ -1028,9 +1032,9 @@ def slide_two_eval_systems(prs):
         rx, CT + Inches(0.5), col_w, text_size=Pt(12))
 
     # Worked example
-    add_text(slide, "Worked Example:", rx, CT + Inches(2.8), col_w, Inches(0.3),
+    we_t = add_text(slide, "Worked Example:", rx, CT + Inches(2.8), col_w, Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
-    add_text(slide,
+    we_b = add_text(slide,
         'Ref: "opinions about reason and logic"\n'
         'Hyp: "our opinion is about reasoning and logic"\n'
         'WER: 74% \u2022 IS: 2.92 (failed) \u2022 LLM prob: 0.90 (salvaged)\n'
@@ -1044,7 +1048,7 @@ def slide_two_eval_systems(prs):
         "raising effective capture to 50.9%. They agree 88.6% of the time "
         "(r=0.934, kappa=0.773). The heuristic catches meaning preservation "
         "that strict metrics miss.",
-        [[r1, r2], [rt, tbl]], click_reveal=True)
+        [[lt, r1, r1_t, r1_b], [r2, r2_t, r2_b], [rt, tbl, we_t, we_b]], click_reveal=True)
 
 
 def slide_llm_judge(prs):

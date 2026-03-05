@@ -352,16 +352,16 @@ def slide_is_calc_examples(prs):
         """Draw one calculation card at position x. Returns list of all shapes."""
         shapes = []
         r = add_rect(slide, x, CT, col_w, card_h, fill_color=NAVY2,
-                     border_color=color, border_width=Pt(3), corner_radius=True)
+                     border_color=color, border_width=Pt(1.5), corner_radius=True)
         shapes.append(r)
 
         # Header bar with colored background (reduced height)
         shapes.append(add_rect(slide, x + Inches(0.1), CT + Inches(0.1),
-                 col_w - Inches(0.2), Inches(0.4), fill_color=color,
+                 col_w - Inches(0.2), Inches(0.32), fill_color=color,
                  corner_radius=True))
         shapes.append(add_text(slide, f"{label} \u2014 IS = {is_val}",
                  x + Inches(0.1), CT + Inches(0.1),
-                 col_w - Inches(0.2), Inches(0.4),
+                 col_w - Inches(0.2), Inches(0.32),
                  size=Pt(16), color=BG, bold=True, align=PP_ALIGN.CENTER))
 
         # Ref / Hyp (increased font size)
@@ -907,9 +907,9 @@ def slide_failure_deep_3(prs):
 
     tbl = add_table(slide, headers, rows,
                     MX, CT + Inches(0.45), CW,
-                    row_height=Inches(0.7),
+                    row_height=Inches(0.5),
                     col_widths=[Inches(2.0), Inches(1.0), Inches(3.5), Inches(5.63)],
-                    text_size=Pt(12),
+                    text_size=Pt(11),
                     row_colors=row_colors)
 
     # GER footnote
@@ -917,11 +917,11 @@ def slide_failure_deep_3(prs):
         "*GER = Gross Error Rate \u2014 the fraction of outputs with catastrophic "
         "errors (WER > 100%). Filters out the worst hallucinations before "
         "they reach users.",
-        MX, Inches(5.1), CW, Inches(0.35),
+        MX, Inches(5.0), CW, Inches(0.35),
         size=Pt(11), color=MGRAY, italic=True)
 
     # Key insight callout
-    callout_r = add_rect(slide, MX, Inches(5.5), CW, Inches(0.65), fill_color=NAVY2,
+    callout_r = add_rect(slide, MX, Inches(5.4), CW, Inches(0.65), fill_color=NAVY2,
              border_color=TEAL, border_width=Pt(1), corner_radius=True)
 
     callout_t = add_text(slide,
@@ -930,13 +930,13 @@ def slide_failure_deep_3(prs):
         "Right Topic Wrong Details (22.7%) is the most dangerous \u2014 clients "
         "will distrust the model, and confidence values for those words "
         "are likely always low. Over half of failures need better language modeling.",
-        MX + Inches(0.2), Inches(5.55), CW - Inches(0.4), Inches(0.55),
+        MX + Inches(0.2), Inches(5.45), CW - Inches(0.4), Inches(0.55),
         size=Pt(13), color=WHITE)
 
     severity_t = add_text(slide,
         "Hallucination: not that bad \u2014 relatively easy to identify and ignore "
         "but still painful. Right Topic Wrong Details: very high impact.",
-        MX, Inches(6.25), CW, Inches(0.5),
+        MX, Inches(6.15), CW, Inches(0.5),
         size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,

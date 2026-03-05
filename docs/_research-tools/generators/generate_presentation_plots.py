@@ -207,27 +207,27 @@ def plot_P3b_is_trajectory():
     ax.text(3.15, 3.05, "IS ≥ 3.0 = Captured", fontsize=9, color="#4CAF50",
             fontweight="bold", va="bottom")
 
-    # Labels on points
+    # Labels on points — stagger to avoid overlap
     for i, (mid, lo, hi, cap) in enumerate(zip(is_mid, is_lo, is_hi, captured_mid)):
         if i == 0:
-            ax.text(i, mid + 0.12, f"{mid}", ha="center", fontsize=14, fontweight="bold",
+            ax.text(i, mid + 0.15, f"{mid}", ha="center", fontsize=14, fontweight="bold",
                     color="#cc0000")
-            ax.text(i, mid - 0.18, f"{cap}% captured", ha="center", fontsize=9,
+            ax.text(i - 0.15, mid - 0.25, f"{cap}% captured", ha="center", fontsize=9,
                     color="#cc0000", style="italic")
         else:
-            ax.text(i, mid + 0.12, f"~{mid:.1f}", ha="center", fontsize=13, fontweight="bold",
+            ax.text(i, hi + 0.25, f"~{mid:.1f}", ha="center", fontsize=13, fontweight="bold",
                     color="#ff9800")
-            ax.text(i, hi + 0.18, f"({lo:.1f}–{hi:.1f})", ha="center", fontsize=9,
+            ax.text(i, hi + 0.12, f"({lo:.1f}–{hi:.1f})", ha="center", fontsize=8,
                     color="#666666")
-            ax.text(i, mid - 0.18, f"~{cap}% captured", ha="center", fontsize=9,
+            ax.text(i, mid - 0.22, f"~{cap}% captured", ha="center", fontsize=9,
                     color="#ff9800", style="italic")
 
-    # Mission labels below
+    # Mission labels below — more space from data points
     for i, (m, e) in enumerate(zip(missions, effort)):
         if m:
-            ax.text(i, is_lo[i] - 0.30, m, ha="center", fontsize=9, color="#555555",
+            ax.text(i, is_lo[i] - 0.38, m, ha="center", fontsize=9, color="#555555",
                     fontweight="bold")
-            ax.text(i, is_lo[i] - 0.48, e, ha="center", fontsize=8, color="#888888",
+            ax.text(i, is_lo[i] - 0.55, e, ha="center", fontsize=8, color="#888888",
                     style="italic")
 
     ax.set_xticks(x)
@@ -235,16 +235,16 @@ def plot_P3b_is_trajectory():
     ax.set_ylabel("Intelligibility Score (IS)", fontsize=13)
     ax.set_title("Improvement Roadmap: Projected IS Improvement",
                  fontsize=15, fontweight="bold")
-    ax.set_ylim(1.5, 4.8)
+    ax.set_ylim(1.3, 5.0)
     ax.legend(fontsize=10, loc="upper left")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    # Improvement annotation
+    # Improvement annotation — positioned left of center to avoid data labels
     ax.annotate("", xy=(3, 3.80), xytext=(0, 2.52),
-                arrowprops=dict(arrowstyle="<->", color="#2ca02c", lw=2))
-    ax.text(1.5, 3.05, "+1.28 IS\n(+51% relative)",
-            ha="center", fontsize=11, fontweight="bold", color="#2ca02c")
+                arrowprops=dict(arrowstyle="<->", color="#2ca02c", lw=2, alpha=0.5))
+    ax.text(0.5, 3.55, "+1.28 IS\n(+51% relative)",
+            ha="center", fontsize=10, fontweight="bold", color="#2ca02c")
 
     plt.tight_layout()
     out = OUTPUT_DIR / "P3b_is_trajectory.png"

@@ -723,7 +723,7 @@ def slide_a8(prs):
 
     # Cross-config stability
     add_text(slide, "Cross-Config Stability (16 configs)",
-             SRL, CT, SRW, Inches(0.4), size=Pt(14), color=TEAL, bold=True)
+             SRL, CT + Inches(1.8), SRW, Inches(0.4), size=Pt(14), color=TEAL, bold=True)
 
     tbl2 = add_table(slide,
         ["Signal", "Stability", "Std"],
@@ -732,13 +732,13 @@ def slide_a8(prs):
          ["NEA", "Stable", "0.023"],
          ["WER", "Volatile", "0.165"],
          ["Length", "Volatile", "0.142"]],
-        SRL, CT + Inches(0.5), SRW, text_size=Pt(11),
+        SRL, CT + Inches(2.3), SRW, text_size=Pt(11),
         row_colors={3: {1: CORAL}, 4: {1: CORAL},
                     0: {1: GREEN}, 1: {1: GREEN}, 2: {1: GREEN}})
 
     # Heuristic validation
     add_text(slide, "Heuristic Validation (no runtime LLM)",
-             SRL, CT + Inches(3.2), SRW, Inches(0.3),
+             SRL, CT + Inches(4.0), SRW, Inches(0.3),
              size=Pt(13), color=TEAL, bold=True)
 
     tbl3 = add_table(slide,
@@ -748,7 +748,7 @@ def slide_a8(prs):
          ["Cohen's κ", "0.773"],
          ["Recall (IS≥3)", "97.6–100%"],
          ["Config range", "κ 0.62–0.86"]],
-        SRL, CT + Inches(3.6), SRW * 0.7, text_size=Pt(10))
+        SRL, CT + Inches(4.4), SRW * 0.7, text_size=Pt(10))
 
     _finish(slide, "A3",
         "IS components collapse into 3 dimensions: word accuracy (60%), "

@@ -71,5 +71,19 @@ External review feedback from Gemini, agreed changes implemented.
 
 | # | Slide | Remark | Status |
 |---|-------|--------|--------|
-| 48 | Visemes (slide_visemes) | Replace poster frame images (ok_demo.jpg + salvage.jpg side by side) with single centered lip-reading GIF (`lip_reading_demo.gif`). Updated caption to "Lip reading: identical mouth shapes can produce completely different words". | done |
-| 49 | Appendix A2 (slide_a3) | Remove "A2: Catastrophic lenpen" appendix slide from builders list | done |
+| 48 | ALL slides | Animations broken across many slides (mixed: wrong order + missing). Root cause: `para_build=True` default in `_finish()` caused multi-paragraph text to animate per-paragraph even in entry groups. Fixed by changing default to `para_build=False` in helpers.py. | done |
+| 49 | 6 (Visemes) | Replace poster frame images with lip-reading demo GIF from internet. Downloaded GIF from Giphy, replaced ok_demo.jpg + salvage.jpg with single centered `lip_reading_demo.gif`. | done |
+| 50 | 7 (Model Arch) | Grey dimension labels in figure too small — same problem as previous remark #3. Regenerated `model_architecture.png` with larger bold teal/white labels (13pt). | done |
+| 51 | 28 (slide_failure_deep_3) | Table overlaps GER note and callout below. Reduced row_height from 0.7" to 0.5", text from Pt(12) to Pt(11), shifted GER note/callout/severity text up. | done |
+| 52 | 29 (slide_failure_deep_2) | Card text shapes not included in anim_groups — only rectangles animated, text floated independently. Fixed by collecting all shapes per card into card_shapes list. | done |
+| 53 | 32 (slide_tuning_summary) | Occlusion/placement issues reported | pending review |
+| 54 | 33 (slide_is_deep_dive) | Animation order reversed — right column showed before left. Changed to `[[lt, tbl], [rt, rb]]`. | done |
+| 55 | 34, 35 (metric disagreement 1+2) | Card text not in anim_groups — only rectangles animated. Fixed: each card now collects rect + rich_text + body text. | done |
+| 56 | 36 (slide_two_eval_systems) | Card text not in anim_groups. Fixed: captured all text shapes into variables, grouped with their card rectangles in 3-step animation. | done |
+| 57 | 50 (Pipeline, slide_17) | Down arrow between rows placed at right edge of row 1 but row 2 starts from left — visual disconnect. Centered the down arrow horizontally. | done |
+| 58 | 50 (Pipeline) | User wants "visual effect" through pipeline of a video as in academia slideshows | pending |
+| 59 | 61 (slide_26b) | IS trajectory plot has overlapping text annotations. Regenerated P3b_is_trajectory.png with staggered labels and repositioned improvement annotation. | done |
+| 60 | 67 (slide_29) | Fine-tuning experiments: "figures still look bad" — ft_clean plot. | pending review |
+| 61 | Appendix A2 (slide_a3) | Remove "A2: Catastrophic lenpen" appendix slide from builders list | done |
+| 62 | Appendix A3 (slide_a8) | Overlapping tables/text. Fixed: adjusted y-positions to add proper spacing between sections. | done |
+| 63 | 20 (slide_is_calc_examples) | "Bulky green and red" — header bars and borders too heavy. Reduced border from Pt(3) to Pt(1.5), header bar from 0.4" to 0.32". | done |

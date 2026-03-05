@@ -748,7 +748,7 @@ def add_animations(slide, groups, click_reveal=False, para_build=False):
 # ═══════════════════════════════════════════════════════════════════════
 
 def _finish(slide, num, notes, anim_groups=None, click_reveal=True,
-            para_build=True):
+            para_build=False):
     """Add logo, slide number, transition, animations, and notes.
 
     num: ignored for int values (auto-numbered); string values (e.g. "A1")
