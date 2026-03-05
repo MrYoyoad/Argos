@@ -297,53 +297,59 @@ def slide_16(prs):
 
 def slide_25(prs):
     slide = new_slide(prs)
-    add_title(slide, "LLM Salvage: 1 in 2 Segments Delivers Value")
+    add_title(slide, "IS: A Conservative Lower Bound")
     add_accent_line(slide)
 
     # Big number card — centered, full width
     r1 = add_rect(slide, MX, CT, CW, Inches(4.6), fill_color=NAVY2,
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
-    # Big number
-    add_text(slide, "50.9%", MX + Inches(0.3), CT + Inches(0.2),
-             CW - Inches(0.6), Inches(0.9),
-             size=Pt(64), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
-    add_text(slide, "effective capture rate",
-             MX + Inches(0.3), CT + Inches(1.1),
-             CW - Inches(0.6), Inches(0.4),
-             size=Pt(18), color=WHITE, align=PP_ALIGN.CENTER)
-    add_text(slide, "vs 39.9% from metrics alone (+11pp)",
-             MX + Inches(0.3), CT + Inches(1.55),
+    # IS metric — the lower bound
+    add_text(slide, "IS says 39.9%", MX + Inches(0.3), CT + Inches(0.2),
+             CW - Inches(0.6), Inches(0.7),
+             size=Pt(40), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "of segments pass (IS \u2265 3.0)",
+             MX + Inches(0.3), CT + Inches(0.85),
              CW - Inches(0.6), Inches(0.35),
-             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
 
-    # Key bullets below the big number
+    # LLM Judge — the validation
+    add_text(slide, "LLM Judge says 64.9%", MX + Inches(0.3), CT + Inches(1.5),
+             CW - Inches(0.6), Inches(0.7),
+             size=Pt(40), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "deliver useful output (Y + P)",
+             MX + Inches(0.3), CT + Inches(2.15),
+             CW - Inches(0.6), Inches(0.35),
+             size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    # Key bullets below
     bul = add_bullets(slide, [
-        "165 recoverable from 900 metric-failures (18.3% recovery rate)",
-        "58% of salvageable segments have moderate WER (50\u201370%)",
-        ("Deterministic 15-rule decision tree \u2014 no LLM calls at runtime (r=0.934 with IS)",
+        ("IS conservatively undercounts \u2014 the real quality is higher "
+         "than 39.9% suggests", {"bold": True, "color": WHITE}),
+        "LLM-as-a-Judge (blind, 1,497 pairs) confirms: nearly 2 in 3 "
+         "segments carry useful meaning",
+        ("The gap (39.9% \u2192 64.9%) = segments with partial value "
+         "that strict metrics penalize", {}),
+        ("IS is a floor, not a ceiling \u2014 designed to be cautious",
          {"color": TEAL}),
-        ("LLM Judge confirms: Y+P = 64.9% (5.7\u00d7 WER's 11.4%)",
-         {"color": GREEN, "bold": True}),
-    ], MX + Inches(0.3), CT + Inches(2.2), CW - Inches(0.6),
-       Inches(2.0), size=Pt(14))
+    ], MX + Inches(0.3), CT + Inches(2.8), CW - Inches(0.6),
+       Inches(1.8), size=Pt(14))
 
     # Bottom text
     add_text(slide,
-             "System delivers useful output for 1 in 2 segments \u2014 "
-             "not 2 in 5 as raw metrics suggest.",
+             "Our metric is deliberately conservative. "
+             "An independent LLM judge confirms the true useful rate is 25pp higher.",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 25,
-        "LLM Salvage Analysis: 165 of 900 metric-failed segments (IS < 3.0) "
-        "are recoverable \u2014 meaning a domain-aware viewer would understand them. "
-        "This raises effective capture from 39.9% to 50.9% (+11pp). The recovery "
-        "is identified by a deterministic 15-rule decision tree that correlates "
-        "at r=0.934 with IS.\n\n"
-        "Four levels of measurement: WER says 11.4% usable. IS says 39.9%. "
-        "LLM salvage says 50.9%. And the LLM Judge gold standard confirms: "
-        "Y+P = 64.9% \u2014 5.7x WER's assessment.",
+        "IS provides a conservative lower bound for transcription quality. "
+        "IS says 39.9% of segments are captured (IS >= 3.0). But an independent "
+        "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
+        "Y+P = 64.9% deliver useful output. The 25pp gap shows IS deliberately "
+        "undercounts: many segments with partial value are penalized by strict "
+        "metrics. IS is a floor, not a ceiling \u2014 the real quality of the "
+        "system is higher than our metric reports.",
         [[r1], [bul]], click_reveal=True)
 
 
@@ -767,63 +773,64 @@ def slide_14b(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_is_deep_dive(prs):
-    """IS correlation deep dive — signal relationships."""
+    """IS correlation deep dive — conclusions-focused."""
     slide = new_slide(prs)
-    add_title(slide, "Why These 6 Signals? A Validation")
+    add_title(slide, "IS Validation: What Did We Learn?")
     add_accent_line(slide)
 
     add_text(slide,
-        "Three independent quality dimensions confirm IS captures distinct, "
-        "complementary aspects of transcription quality \u2014 not arbitrary signals.",
+        "We validated IS against signal analysis and cross-configuration testing. "
+        "Here is what the evidence shows.",
         MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY, italic=True)
 
     col_w = Inches(5.8)
     gap = Inches(0.53)
     offset = Inches(0.45)
 
-    # Left — correlation table (larger)
+    # Left — compact correlation table
     lt = add_text(slide, "Signal \u2192 IS Correlation", MX, CT + offset, col_w, Inches(0.4),
-                  size=Pt(20), color=TEAL, bold=True)
+                  size=Pt(17), color=TEAL, bold=True)
 
     tbl = add_table(slide,
-        ["Signal", "r with IS", "Weight", "Variance %"],
-        [["Phonetic Sim", "0.943", "15%", "~18%"],
-         ["Semantic Sim", "0.856", "25%", "28.5%"],
-         ["Inv. WER", "0.834", "15%", "~16%"],
-         ["Inv. WWER", "0.823", "15%", "~15%"],
-         ["NEA F1", "0.748", "15%", "17.3%"],
-         ["Length Ratio", "0.521", "15%", "9.1%"]],
-        MX, CT + offset + Inches(0.5), col_w, text_size=Pt(14),
-        row_height=Inches(0.5),
-        row_colors={0: {1: GREEN}, 5: {1: CORAL, 3: CORAL}})
+        ["Signal", "r with IS", "Dimension"],
+        [["Phonetic Sim", "0.943", "Word Accuracy"],
+         ["Inv. WER", "0.834", "Word Accuracy"],
+         ["Inv. WWER", "0.823", "Word Accuracy"],
+         ["Semantic Sim", "0.856", "Meaning"],
+         ["NEA F1", "0.748", "Entity Accuracy"],
+         ["Length Ratio", "0.521", "Output Sanity"]],
+        MX, CT + offset + Inches(0.5), col_w, text_size=Pt(13),
+        row_height=Inches(0.45),
+        row_colors={0: {1: GREEN}, 5: {1: CORAL}})
 
-    # Right — key insights (larger text)
+    # Right — conclusions (the main point)
     rx = MX + col_w + gap
     rw = CW - col_w - gap
-    rt = add_text(slide, "Key Insights", rx, CT + offset, rw, Inches(0.4),
+    rt = add_text(slide, "Conclusions", rx, CT + offset, rw, Inches(0.4),
                   size=Pt(20), color=CORAL, bold=True)
     rb = add_bullets(slide, [
-        ("Phonetic Sim is strongest predictor (r=0.943) "
-         "despite only 15% weight", {"bold": True}),
-        "WER/WWER/Phonetic are NOT independent \u2014 "
-         "all measure visual encoder quality",
-        "Semantic Sim (25%) drives 28.5% variance \u2014 "
-         "the tiebreaker for similar-accuracy segments",
-        ("NEA punches above weight: 17.3% variance "
-         "\u2014 names are binary (right or wrong)",
-         {"color": TEAL}),
-        ("Length Ratio weakest (9.1%) \u2014 could "
-         "reduce its weight in future", {"color": CORAL}),
-        ("Expert heuristic: r=0.934 with IS", {"bold": True}),
-    ], rx, CT + offset + Inches(0.5), rw, Inches(4.5), size=Pt(15))
+        ("IS captures quality that WER misses",
+         {"bold": True, "color": GREEN}),
+        ("6 signals collapse into 3 independent "
+         "dimensions: word accuracy (~60%), meaning "
+         "(28.5%), output sanity (9.1%)", {}),
+        ("Cross-config validation confirms stability: "
+         "mean r = 0.925 across 16 configurations",
+         {"bold": True, "color": TEAL}),
+        ("WER/WWER/Phonetic are redundant with each "
+         "other (r > 0.79) but IS needs all three "
+         "for robustness", {}),
+        ("Semantic Sim is the tiebreaker \u2014 it "
+         "separates segments with similar WER but "
+         "different meaning preservation", {}),
+    ], rx, CT + offset + Inches(0.5), rw, Inches(4.5), size=Pt(14))
 
     _finish(slide, 0,
-        "Signal correlation analysis. Phonetic similarity is the strongest "
-        "single predictor at r=0.943, despite only 15% weight. This makes "
-        "sense: it's the most direct measure of visual encoder quality. "
-        "Semantic similarity (25% weight) captures 28.5% of IS variance. "
-        "Length ratio is weakest at 9.1%. The expert heuristic (15-rule "
-        "decision tree) achieves r=0.934.",
+        "IS validation conclusions. The 6 signals collapse into 3 independent "
+        "dimensions: word accuracy (WER/WWER/Phonetic, ~60% of IS), meaning "
+        "preservation (Semantic, 28.5%), and output sanity (Length Ratio, 9.1%). "
+        "Cross-config validation across 16 decode configurations confirms "
+        "stability with mean r=0.925. IS captures quality that WER alone misses.",
         [[lt, tbl], [rt, rb]], click_reveal=True)
 
 
@@ -1060,18 +1067,18 @@ def slide_llm_judge(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — protocol + results
-    lt = add_text(slide, "Protocol", MX, CT, col_w, Inches(0.4),
+    # Left — question/setup then methodology
+    lt = add_text(slide, "What Is LLM-as-a-Judge?", MX, CT, col_w, Inches(0.4),
                   size=Pt(17), color=TEAL, bold=True)
     lb = add_bullets(slide, [
-        "Claude Opus evaluated all 1,497 ref+hyp pairs",
-        "Blind (no topic context), 3-level: Y / P / N",
-        "30 duplicate pairs for intra-rater reliability",
-        ("Intra-rater: 86.7% exact agreement", {"bold": True}),
+        "Use a frontier LLM (Claude Opus) as an independent evaluator",
+        "Evaluate every reference+hypothesis pair holistically",
+        "3-level verdict: Y (preserved) / P (partial) / N (not preserved)",
+        ("30 duplicate pairs \u2192 86.7% intra-rater reliability", {"bold": True}),
     ], MX, CT + Inches(0.5), col_w, Inches(1.8), size=Pt(13))
 
     # Results table
-    res_t = add_text(slide, "Results (Blind)", MX, CT + Inches(2.4), col_w, Inches(0.3),
+    res_t = add_text(slide, "Results (Blind, 1,497 Pairs)", MX, CT + Inches(2.4), col_w, Inches(0.3),
              size=Pt(15), color=TEAL, bold=True)
 
     tbl = add_table(slide,
@@ -1088,14 +1095,14 @@ def slide_llm_judge(prs):
     rt = add_text(slide, "Correlation with IS", rx, CT, col_w, Inches(0.4),
                   size=Pt(17), color=CORAL, bold=True)
 
-    add_text(slide, "r = 0.85", rx, CT + Inches(0.6), col_w, Inches(0.7),
+    r_big = add_text(slide, "r = 0.85", rx, CT + Inches(0.6), col_w, Inches(0.7),
              size=Pt(36), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
-    add_text(slide, "Pearson correlation (IS \u2194 LLM Judge)",
+    r_label = add_text(slide, "Pearson correlation (IS \u2194 LLM Judge)",
              rx, CT + Inches(1.2), col_w, Inches(0.3),
              size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
 
     # Tier summary
-    add_text(slide, "LLM Judge \u00d7 IS Tier", rx, CT + Inches(1.8), col_w,
+    tier_t = add_text(slide, "LLM Judge \u00d7 IS Tier", rx, CT + Inches(1.8), col_w,
              Inches(0.3), size=Pt(15), color=TEAL, bold=True)
 
     tbl2 = add_table(slide,
@@ -1109,7 +1116,7 @@ def slide_llm_judge(prs):
         row_colors={0: {1: GREEN}, 4: {3: CORAL}})
 
     # Threshold insight
-    add_text(slide,
+    thresh = add_text(slide,
         "Threshold insight: Judge Y+P aligns best with IS \u2265 2.0 "
         "(\u03ba=0.82, 91.5% agreement), not IS \u2265 3.0 (\u03ba=0.52). "
         "Systems agree on ranking \u2014 differ on where to draw the line.",
@@ -1117,23 +1124,31 @@ def slide_llm_judge(prs):
         size=Pt(11), color=GOLD, italic=True)
 
     # Key takeaway
-    add_text(slide,
+    takeaway = add_text(slide,
         "LLM judge is more conservative for full success (23% vs IS 40%) "
         "but more generous for any useful output (Y+P=65%). "
-        "This validates the salvage zone (IS 2.0\u20133.0).",
+        "IS is a conservative lower bound for real quality.",
         MX, Inches(6.3), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
+    # Animation groups — logical narrative order:
+    # 1. Setup: what is LLM-as-a-Judge?
+    # 2. Methodology: protocol details
+    # 3. Results: Y/P/N percentages
+    # 4. Correlation: IS alignment + tier breakdown
+    # 5. Takeaway: conclusion
     _finish(slide, 0,
         "LLM-as-a-Judge gold standard. Claude Opus evaluated all 1,497 pairs "
         "blind. Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9%. "
         "Intra-rater 86.7%. r=0.85 with IS. "
         "Threshold sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 91.5% agreement), "
-        "not IS>=3.0 (kappa=0.521). The three systems (IS, heuristic, Opus judge) "
-        "agree on RANKING but differ on WHERE to draw the useful/useless line. "
-        "The judge's natural boundary is IS>=2.0, validating that Tier 3 (Fair) "
-        "segments contain genuine partial value — exactly the salvage population.",
-        [[lt, lb, res_t, tbl], [rt, tbl2]], click_reveal=True)
+        "not IS>=3.0 (kappa=0.521). The systems agree on RANKING but differ on "
+        "WHERE to draw the useful/useless line.",
+        [[lt, lb],
+         [res_t, tbl],
+         [rt, r_big, r_label, tier_t, tbl2, thresh],
+         [takeaway]],
+        click_reveal=True)
 
 
 def slide_context_eval(prs):

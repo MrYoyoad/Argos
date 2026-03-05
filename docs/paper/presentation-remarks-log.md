@@ -178,9 +178,9 @@ User remark: "many slides have bad animations and occlusions"
 | 107 | 26 (slide_domain_mismatch) | Hide | pending |
 | 108 | 31 (slide_failure_deep_3) | Fix colors and shapes to be consistent | pending |
 | 109 | 32 (slide_tuning_summary) | Hide | pending |
-| 110 | 33 (slide_is_deep_dive) | State the conclusions | pending |
-| 111 | 37 (slide_llm_judge) | Fix the animation/appearance order | pending |
-| 112 | 40 (slide_25, Salvage) | Convey goal is a lower bound for our metric. Use only LLM-as-a-judge, drop the heuristic completely. The more salvageable by LLM is not actually improvement — that's not the message | pending |
+| 110 | 33 (slide_is_deep_dive) | State the conclusions | done |
+| 111 | 37 (slide_llm_judge) | Fix the animation/appearance order | done |
+| 112 | 40 (slide_25, Salvage) | Convey goal is a lower bound for our metric. Use only LLM-as-a-judge, drop the heuristic completely. The more salvageable by LLM is not actually improvement — that's not the message | done |
 | 113 | 41 (slide_25b) | Hide | pending |
 | 114 | 44 (slide_25c) | Hide | pending |
 | 115 | 55 (slide_dual_env) | Remove the "26" part | pending |
