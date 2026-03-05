@@ -7,6 +7,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - After completing any research, analysis, or investigation, **always** update all relevant files (docs, summaries, JSON data, markdown) with findings — keep updates succinct and factual.
 - After making significant or multi-file changes, **always** git commit with a clear message describing what changed and why.
 
+## Presentation Slide Remarks
+
+- When the user gives feedback, remarks, or requests about presentation slides, **always** log the remark in [docs/paper/presentation-remarks-log.md](docs/paper/presentation-remarks-log.md) in addition to executing the requested changes. This ensures no prior request gets lost.
+
 ## Git Commit Rules
 
 - **NEVER** include `Co-Authored-By` lines in commit messages. No Claude/AI attribution in commits.

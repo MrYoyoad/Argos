@@ -1,0 +1,36 @@
+{
+  "label": "Baseline — 1,396 videos (Feb 2026)",
+  "date": "2026-02-18",
+  "description": "Full English dataset, CPU normalization (no NVENC), 12s segments with 2s overlap. First clean run with correct video encoding.",
+  "dataset": {
+    "input_videos": 1396,
+    "total_segments": 1497,
+    "language": "english"
+  },
+  "kmeans": {
+    "n_clusters": 200,
+    "n_utterances": 1497,
+    "n_frames": 228264,
+    "feature_dim": 1024,
+    "init": "k-means++",
+    "max_iter": 100,
+    "hubert_model": "large_vox_iter5.pt",
+    "hubert_layer": 12
+  },
+  "decode_hyperparams": {
+    "beam": 20,
+    "length_penalty": 0.0,
+    "no_repeat_ngram_size": 3,
+    "repetition_penalty": 1.2,
+    "do_sample": false,
+    "temperature": 1.0,
+    "top_p": 0.9,
+    "model": "checkpoint_finetune.pt",
+    "llm": "Llama-2-7b-hf"
+  },
+  "results": {
+    "segments_decoded": 1497,
+    "empty_predictions": 70,
+    "empty_rate_pct": 4.7
+  }
+}

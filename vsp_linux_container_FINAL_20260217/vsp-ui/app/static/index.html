@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSP Pipeline</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-brand">
+                <img src="logo.jpeg" alt="VSP Logo" class="header-logo">
+                <h1>VSP Pipeline</h1>
+            </div>
+            <span id="status-badge" class="badge">Idle</span>
+        </header>
+
+        <!-- Welcome Screen -->
+        <section id="welcome-screen" class="screen active">
+            <div class="card">
+                <h2>VSP Pipeline</h2>
+                <p>Drag video files directly into this window, or add them to the input folder. The pipeline will segment videos, then let you review and transcribe each segment.</p>
+
+                <div class="input-folder-display">
+                    <code id="input-path">~/vsp_input/</code>
+                    <button id="btn-inspect-videos" class="btn btn-secondary">Inspect Videos</button>
+                </div>
+
+                <div class="video-count">
+                    <span id="video-count-text">Loading...</span>
+                </div>
+
+                <!-- Video Inspection Section (expandable) -->
+                <div id="video-inspection-section" class="video-inspection" style="display: none; margin-top: 16px;">
+                    <div class="inspection-header">
+                        <h3>Videos in Input Folder</h3>
+                        <button id="btn-close-inspection" class="btn btn-text">Close</button>
+                    </div>
+                    <ul id="inspection-videos-list" class="video-list"></ul>
+                </div>
+
+                <!-- Upload Progress Section -->
+                <div id="upload-progress-section" class="upload-progress" style="display: none;">
+                    <h3>Uploading Files</h3>
+                    <div id="upload-status" class="upload-status">Uploading 0 of 0 files...</div>
+                    <div id="upload-files-list" class="upload-files-list">
+                        <!-- Dynamically populated with upload-file-item divs -->
+                    </div>
+                </div>
+
+                <!-- Segmentation Options -->
+                <div class="processing-options" style="margin-top: 24px;">
+                    <h3>Segmentation</h3>
+                    <div class="segmentation-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="segmentation-enabled" checked>
+                            <span>Enable video segmentation</span>
+                            <span class="tooltip-icon" title="Split videos into segments for processing. Uncheck to process videos as whole files.">ℹ️</span>
+                        </label>
+                        <div id="overlap-options-container" class="overlap-options" style="margin-left: 24px; margin-top: 8px;">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="overlap-enabled" checked>
+                                <span id="overlap-label-text">Enable overlapping segments for videos >12s</span>
+                                <span class="tooltip-icon" title="Uses 2-second overlap between segments to prevent word boundary splits">ℹ️</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-start-processing" class="btn btn-primary" style="margin-top: 24px;">Start Processing</button>
+            </div>
+        </section>
+
+        <!-- Segment Review Screen -->
+        <section id="segment-review-screen" class="screen">
+            <div class="card">
+                <h2>Segment Review</h2>
+                <p class="help-text">Videos have been segmented. Review and add transcriptions before continuing the pipeline.</p>
+
+                <!-- Warnings -->
+                <div id="warnings-container" class="warnings" style="display: none;">
+                    <div class="warning-banner">
+                        <strong>Warnings:</strong>
+                        <ul id="warnings-list"></ul>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-row">
+                    <div class="stat">
+                        <span class="stat-value" id="segment-count">0</span>
+                        <span class="stat-label">Total Segments</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="transcribed-count">0</span>
+                        <span class="stat-label">Transcribed</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="total-duration">0s</span>
+                        <span class="stat-label">Total Duration</span>
+                    </div>
+                </div>
+
+                <!-- Segments List -->
+                <div id="segments-section">
+                    <h3>Segments</h3>
+                    <ul id="segments-list" class="video-list"></ul>
+                </div>
+
+                <!-- Orphaned Transcriptions -->
+                <div id="orphaned-section" style="display: none;" class="orphaned-section">
+                    <h3>⚠️ Orphaned Transcriptions</h3>
+                    <p class="help-text">
+                        These transcriptions exist but their videos are not in the input folder.
+                        Keep them if you plan to re-add the videos, or delete them to clean up.
+                    </p>
+                    <ul id="orphaned-list" class="video-list"></ul>
+                </div>
+
+                <!-- Existing Segments (from previous runs) -->
+                <div id="existing-segments-section" style="display: none;">
+                    <h3>📝 Existing Segments (from previous run)</h3>
+                    <p class="help-text">
+                        These are segmented videos from a previous pipeline run. You can add or edit transcriptions before continuing.
+                    </p>
+                    <ul id="existing-segments-list" class="video-list"></ul>
+                </div>
+
+                <!-- Processing Options -->
+                <div class="processing-options">
+                    <h3>K-means Model Options</h3>
+                    <div class="kmeans-options">
+                        <label class="radio-label">
+                            <input type="radio" name="kmeans-mode" value="train" checked>
+                            <span>Train fresh on current videos</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="kmeans-mode" value="existing">
+                            <span>Use existing model (from last run)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="kmeans-mode" value="golden">
+                            <span>Use golden model:</span>
+                        </label>
+                        <select id="golden-model-select" class="golden-model-select" disabled>
+                            <option value="">No golden models available</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="button-row">
+                    <button id="btn-back" class="btn btn-secondary">Back</button>
+                    <button id="btn-continue-pipeline" class="btn btn-primary">Continue Pipeline</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Processing Screen -->
+        <section id="processing-screen" class="screen">
+            <div class="card">
+                <h2>Processing</h2>
+
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span id="progress-percent">0%</span>
+                </div>
+
+                <div class="stage-info">
+                    <div class="current-stage">
+                        <span class="stage-label">Current Stage:</span>
+                        <span id="stage-name">Initializing...</span>
+                    </div>
+                    <p id="stage-description" class="stage-description"></p>
+                </div>
+
+
+
+
+                <!-- Collapsible Logs -->
+                <div class="logs-section">
+                    <button id="btn-toggle-logs" class="btn btn-text">Show Logs</button>
+                    <div id="logs-container" class="logs-container" style="display: none;">
+                        <pre id="logs-output"></pre>
+                    </div>
+                </div>
+
+                <button id="btn-cancel" class="btn btn-danger">Cancel</button>
+            </div>
+        </section>
+
+        <!-- Segment Transcription Screen -->
+        <section id="transcription-screen" class="screen">
+            <div class="card">
+                <h2>Manual Segment Transcription</h2>
+
+                <div class="transcription-header">
+                    <p>Videos have been split into segments. Transcribe each segment below.</p>
+                    <div class="transcription-stats">
+                        <span id="transcription-progress">0 of 0 segments transcribed</span>
+                    </div>
+                </div>
+
+                <div id="segment-list" class="segment-list">
+                    <!-- Segments will be populated dynamically -->
+                </div>
+
+                <div class="button-row">
+                    <button id="btn-save-transcriptions" class="btn btn-primary" disabled>Continue Pipeline</button>
+                    <button id="btn-cancel-transcription" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Complete Screen -->
+        <section id="complete-screen" class="screen">
+            <div class="card success">
+                <h2>Processing Complete!</h2>
+
+                <div class="success-icon">&#10003;</div>
+
+                <p>Your videos have been processed successfully.</p>
+
+                <div id="output-path-display" class="output-path">
+                    <span>Results saved to:</span>
+                    <code id="output-path"></code>
+                </div>
+
+                <div class="button-row">
+                    <button id="btn-download-output" class="btn btn-primary">Download Results</button>
+                    <button id="btn-new" class="btn btn-secondary">Process New Videos</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Screen -->
+        <section id="error-screen" class="screen">
+            <div class="card error">
+                <h2>Error</h2>
+
+                <div class="error-icon">&#10007;</div>
+
+                <p id="error-message">An error occurred during processing.</p>
+
+                <div class="error-details">
+                    <h4>Details:</h4>
+                    <pre id="error-details"></pre>
+                </div>
+
+                <!-- Logs for debugging -->
+                <div class="logs-section">
+                    <button id="btn-show-error-logs" class="btn btn-text">Show Full Logs</button>
+                    <div id="error-logs-container" class="logs-container" style="display: none;">
+                        <pre id="error-logs-output"></pre>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="btn-retry" class="btn btn-primary">Retry</button>
+                    <button id="btn-back-to-start" class="btn btn-secondary">Start Over</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Drop Zone Overlay -->
+    <div id="drop-zone-overlay" class="drop-zone-overlay" style="display: none;">
+        <div class="drop-zone-content">
+            <div class="drop-icon">📁</div>
+            <h2>Drop video files here</h2>
+            <p>Supported: MP4, MKV, WebM, MOV, M4V, AVI</p>
+        </div>
+    </div>
+
+    <!-- Transcription Modal -->
+    <div id="transcription-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <span id="modal-title-text">Transcription</span>
+                    <span id="modal-badge" class="badge-auto" style="display: none;"></span>
+                </h3>
+                <button class="modal-close" onclick="closeTranscriptionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <strong id="transcription-video-name"></strong>
+                    <span id="transcription-meta" class="help-text"></span>
+                </p>
+
+                <!-- Show Video Button -->
+                <button id="show-video-btn" class="btn btn-secondary"
+                        onclick="toggleVideo()"
+                        style="display: none; margin-bottom: 16px;"
+                        data-video-loaded="false">
+                    Show Video
+                </button>
+
+                <!-- Video player for segments -->
+                <div id="transcription-video-container" style="display: none;"></div>
+
+                <p class="help-text">
+                    Enter words (one per line or space-separated).
+                    Text will be normalized to lowercase alphanumeric to match ASR output.
+                </p>
+                <textarea id="transcription-text" rows="12"
+                          placeholder="hello world&#10;this is a test&#10;&#10;or space-separated: the quick brown fox"></textarea>
+                <div id="transcription-preview" class="transcription-preview" style="display: none;">
+                    <strong>Preview (normalized):</strong>
+                    <div id="transcription-preview-text"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeTranscriptionModal()">Cancel</button>
+                <button class="btn btn-danger" id="delete-transcription-btn"
+                        onclick="deleteCurrentTranscription()" style="display: none;">
+                    Delete Transcription
+                </button>
+                <button class="btn btn-primary" onclick="saveTranscription()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

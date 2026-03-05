@@ -64,6 +64,10 @@ auto_avsr/lightning_logs/
 !VSP-LLM/flat_kmeans_200.bin
 !VSP-LLM/*.bin
 
+# ---------- Whisper Model Cache (1.4GB+) ----------
+**/whisper_cache/
+**/medium.pt
+
 # ---------- Docker Build Artifacts ----------
 vsp_docker/galaxy_export/  # Container sync target (generated, not source)
 *.tar
