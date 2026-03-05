@@ -119,7 +119,7 @@ def main():
         slide_metric_disagreement_2, # When Metrics Disagree pt 2
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
-        slide_context_eval, # Context-aware re-evaluation
+        # slide_context_eval, # Context-aware re-evaluation (hidden — too many tables)
         # --- Salvage ---
         slide_llm_context_engine, # LLM as context engine
         slide_25,           # LLM Salvage overview: 39.9% -> 50.9% (reframed: lower bound, LLM-judge only per batch 8)

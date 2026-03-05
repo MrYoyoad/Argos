@@ -740,12 +740,12 @@ def slide_14b(prs):
 
     # 6 videos — each tells a different story about system behavior
     rows = [
-        [("perfect",      "System works — 33 words perfectly transcribed",
-          "0%",   GREEN),
+        [("phonetic_bridge", "Sound-alike confusion — phonetically similar words substituted",
+          "65%",  YELLOW),
          ("nearmiss",     "Viseme confusion — identical lip shapes, wrong word",
           "58%",  YELLOW),
-         ("halluc",       "Fluent but fabricated — most dangerous failure mode",
-          "100%", RED)],
+         ("wer_broken",   "WER over-punishes — meaning preserved despite high error rate",
+          "82%",  ORANGE)],
         [("tuning_fix",   "Config J recovers empty output — tuning tradeoff in action",
           "73%",  ORANGE),
          ("topic_drift",  "Model generates coherent but completely wrong topic",
@@ -767,11 +767,12 @@ def slide_14b(prs):
 
     _finish(slide, "14b",
         "Each video demonstrates a different system behavior. "
-        "Row 1: (1) Perfect — proves the system CAN work, 33 words with 0% WER. "
+        "Row 1: (1) Phonetic bridge — sound-alike confusion where phonetically similar "
+        "words are substituted, showing how the model latches onto acoustic similarity. "
         "(2) Near-miss — viseme confusion where identical lip shapes produce wrong words "
         "(e.g. admiral/animal), showing the fundamental lip-reading challenge. "
-        "(3) Hallucination — fluent, grammatical output that is completely fabricated, "
-        "the most dangerous failure because it looks correct. "
+        "(3) WER over-punishes — high WER but meaning is preserved, demonstrating why "
+        "WER alone is misleading for quality assessment. "
         "Row 2: (4) Tuning fix — Config J recovers a segment that baseline left empty, "
         "showing the tradeoff between coverage and accuracy. "
         "(5) Topic drift — model generates coherent text about the wrong subject entirely, "

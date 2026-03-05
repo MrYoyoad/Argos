@@ -591,8 +591,8 @@ def slide_is_radar(prs):
 
     # Model legend — three models with expected behavior
     legend_y = SL_H - Inches(1.5)
-    col_w = Inches(4.0)
-    gap = Inches(0.06)
+    col_w = Inches(5.5)
+    gap = Inches(0.5)
 
     # Llama-2-7B (current)
     r1 = add_rect(slide, MX, legend_y, col_w, Inches(0.9), fill_color=NAVY2,
@@ -619,19 +619,6 @@ def slide_is_radar(prs):
              col_w - Inches(0.3), Inches(0.5),
              size=Pt(10), color=LGRAY)
 
-    # VALLR 3B (best case)
-    x3 = x2 + col_w + gap
-    r3 = add_rect(slide, x3, legend_y, col_w, Inches(0.9), fill_color=NAVY2,
-                  border_color=GREEN, border_width=Pt(1.5), corner_radius=True)
-    add_text(slide, "\u25cf VALLR 3B (best case)",
-             x3 + Inches(0.15), legend_y + Inches(0.05),
-             col_w - Inches(0.3), Inches(0.25),
-             size=Pt(12), color=GREEN, bold=True)
-    add_text(slide, "Balanced profile: end-to-end VSP\noptimized for all 6 signals",
-             x3 + Inches(0.15), legend_y + Inches(0.32),
-             col_w - Inches(0.3), Inches(0.5),
-             size=Pt(10), color=LGRAY)
-
     # Disclaimer
     add_text(slide,
         "\u26a0 Projected profiles based on published benchmarks and architecture "
@@ -645,13 +632,11 @@ def slide_is_radar(prs):
         "profile, strong on length ratio but weak on semantics and named "
         "entities. Llama 3.1 8B (projected, teal): fuller profile with "
         "improved semantic and entity axes thanks to stronger language "
-        "modeling. VALLR 3B (best case, green): balanced profile from an "
-        "end-to-end visual speech model optimized across all 6 signals. "
-        "These are projected profiles based on literature, not measured "
-        "on our dataset. The key insight is that the radar shape reveals "
-        "where each model architecture is strong and weak — future work "
-        "should target the collapsed axes.",
-        [[img], [r1, r2, r3]])
+        "modeling. These are projected profiles based on literature, not "
+        "measured on our dataset. The key insight is that the radar shape "
+        "reveals where each model architecture is strong and weak — future "
+        "work should target the collapsed axes.",
+        [[img], [r1, r2]])
 
 
 def slide_is_wer_scatter(prs):
@@ -1067,28 +1052,28 @@ def slide_failure_deep_3(prs):
         MX, CT, CW, Inches(0.3),
         size=Pt(13), color=LGRAY, italic=True)
 
-    headers = ["Category", "Fix"]
+    headers = ["Category", "Impact", "Fix"]
     rows = [
-        ["Signal Loss (9.0%)", "Quality filtering"],
-        ["Hallucination (12.3%)", "Confidence scoring"],
-        ["Wrong Topic (31.6%)", "LLM swap + data"],
-        ["Right Topic, Wrong Details (22.7%)", "Domain fine-tuning"],
-        ["Accumulated Errors (24.4%)", "N-best aggregation"],
+        ["Signal Loss (9.0%)", "Low — detectable, filterable", "Quality filtering"],
+        ["Hallucination (12.3%)", "Medium — deceptive but identifiable", "Confidence scoring"],
+        ["Wrong Topic (31.6%)", "Very High — largest category", "LLM swap + data"],
+        ["Right Topic, Wrong Details (22.7%)", "Critical — clients lose trust", "Domain fine-tuning"],
+        ["Accumulated Errors (24.4%)", "Medium — death by 1000 cuts", "N-best aggregation"],
     ]
 
-    # Color scheme: category color indicates severity
+    # Color scheme: category and impact columns share severity color
     row_colors = {
-        0: {0: LGRAY},       # Signal Loss — low severity
-        1: {0: YELLOW},      # Hallucination — moderate severity
-        2: {0: ORANGE},      # Wrong Topic — high severity
-        3: {0: RED},         # Right Topic Wrong Details — very high severity
-        4: {0: YELLOW},      # Accumulated Errors — medium severity
+        0: {0: LGRAY, 1: LGRAY},       # Signal Loss — low severity
+        1: {0: YELLOW, 1: YELLOW},      # Hallucination — moderate severity
+        2: {0: ORANGE, 1: ORANGE},      # Wrong Topic — high severity
+        3: {0: RED, 1: RED},            # Right Topic Wrong Details — very high severity
+        4: {0: YELLOW, 1: YELLOW},      # Accumulated Errors — medium severity
     }
 
     tbl = add_table(slide, headers, rows,
                     MX, CT + Inches(0.45), CW,
                     row_height=Inches(0.55),
-                    col_widths=[Inches(6.5), Inches(5.63)],
+                    col_widths=[Inches(4.0), Inches(3.8), Inches(4.33)],
                     text_size=Pt(14),
                     row_colors=row_colors)
 
@@ -1102,15 +1087,15 @@ def slide_failure_deep_3(prs):
         size=Pt(16), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Impact and fixes table for the 5-category taxonomy. Simplified to "
-        "category + fix. Severity is conveyed by row colors: LGRAY (low, Signal "
-        "Loss), YELLOW (moderate, Hallucination), ORANGE (high, Wrong Topic), "
-        "RED (very high, Right Topic Wrong Details), YELLOW (medium, Accumulated "
-        "Errors). GER = Gross Error Rate, the fraction of outputs with catastrophic "
-        "errors (WER > 100%). Right Topic Wrong Details is the most dangerous "
-        "because clients cannot trust the output. Wrong Topic is the LARGEST at "
-        "31.6% and the most amenable to improvement through LLM upgrade. 54.3% "
-        "of failures trace to the LLM backbone being too weak.",
+        "Impact and fixes table for the 5-category taxonomy. Three columns: "
+        "category, impact level, and fix. Severity is conveyed by row colors on "
+        "both category and impact columns: LGRAY (low, Signal Loss), YELLOW "
+        "(moderate, Hallucination), ORANGE (high, Wrong Topic), RED (critical, "
+        "Right Topic Wrong Details), YELLOW (medium, Accumulated Errors). "
+        "Right Topic Wrong Details is the most dangerous because clients cannot "
+        "trust the output. Wrong Topic is the LARGEST at 31.6% and the most "
+        "amenable to improvement through LLM upgrade. 54.3% of failures trace "
+        "to the LLM backbone being too weak.",
         [[tbl], [callout_r, callout_t]], click_reveal=True)
 
 
