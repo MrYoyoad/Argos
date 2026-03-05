@@ -55,6 +55,8 @@ IMG = {
     "tuning_ba": PLOTS / "P5_tuning_before_after.png",
     "improve_ja": PLOTS / "16_improvement_J_vs_A.png",
     "P6_is_radar": PLOTS / "P6_is_radar.png",
+    "P6b_radar_dual": PLOTS / "P6b_radar_dual.png",
+    "P7_is_wer_scatter": PLOTS / "P7_is_wer_scatter.png",
 }
 
 VID = {
@@ -1007,6 +1009,91 @@ def slide_exec_summary(prs):
         "Score shows 40% of output is properly captured, not the 11% WER suggests. "
         "Complete production system delivered. Clear roadmap to improve further.",
         [[bul]], click_reveal=True)
+
+
+
+def slide_wer_lies(prs):
+    """Side-by-side truth: WER says failure, IS says excellent."""
+    slide = new_slide(prs)
+    add_title(slide, "WER: The Metric That Lies")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+    card_h = Inches(2.8)
+
+    # Left card: WER verdict (CORAL)
+    wer_shapes = []
+    wer_shapes.append(add_rect(slide, MX, CT, col_w, card_h,
+                       fill_color=NAVY2, border_color=CORAL, border_width=Pt(3),
+                       corner_radius=True))
+    wer_shapes.append(add_text(slide, "46.2%", MX + Inches(0.3), CT + Inches(0.2),
+                                col_w - Inches(0.6), Inches(1.0),
+                                size=Pt(64), color=CORAL, bold=True,
+                                align=PP_ALIGN.CENTER))
+    wer_shapes.append(add_text(slide, "Word Error Rate",
+                                MX + Inches(0.3), CT + Inches(1.2),
+                                col_w - Inches(0.6), Inches(0.3),
+                                size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER))
+    wer_shapes.append(add_text(slide, 'Verdict: "FAILING"',
+                                MX + Inches(0.3), CT + Inches(1.6),
+                                col_w - Inches(0.6), Inches(0.35),
+                                size=Pt(18), color=CORAL, bold=True,
+                                align=PP_ALIGN.CENTER))
+    wer_shapes.append(add_text(slide,
+        "6 insertions, 1 deletion\n= nearly half the words are \"wrong\"",
+        MX + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6), Inches(0.6),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+
+    # Right card: IS verdict (GREEN)
+    rx = MX + col_w + gap
+    is_shapes = []
+    is_shapes.append(add_rect(slide, rx, CT, col_w, card_h,
+                      fill_color=NAVY2, border_color=GREEN, border_width=Pt(3),
+                      corner_radius=True))
+    is_shapes.append(add_text(slide, "4.03", rx + Inches(0.3), CT + Inches(0.2),
+                               col_w - Inches(0.6), Inches(1.0),
+                               size=Pt(64), color=GREEN, bold=True,
+                               align=PP_ALIGN.CENTER))
+    is_shapes.append(add_text(slide, "Intelligibility Score (Excellent)",
+                               rx + Inches(0.3), CT + Inches(1.2),
+                               col_w - Inches(0.6), Inches(0.3),
+                               size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER))
+    is_shapes.append(add_text(slide, 'Verdict: "EXCELLENT"',
+                               rx + Inches(0.3), CT + Inches(1.6),
+                               col_w - Inches(0.6), Inches(0.35),
+                               size=Pt(18), color=GREEN, bold=True,
+                               align=PP_ALIGN.CENTER))
+    is_shapes.append(add_text(slide,
+        "Semantic similarity: 0.90\nMeaning fully preserved",
+        rx + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6), Inches(0.6),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+
+    # Bottom: ref/hyp comparison + callout
+    bottom_shapes = []
+    by = CT + card_h + Inches(0.3)
+    bottom_shapes.append(add_rich_text(slide, [
+        [("\u25b6 Reference:  ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+         ("i want you to remember all these i want you to memorize them",
+          {"size": Pt(12), "color": WHITE})],
+        [("\u25b6 Prediction: ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+         ("i want you to remember all the things that i wanted you to memorize in my",
+          {"size": Pt(12), "color": TEAL})],
+    ], MX, by, CW, Inches(0.7), space_after=Pt(4)))
+    cb_y = by + Inches(0.8)
+    bottom_shapes.append(add_rect(slide, MX + Inches(1.5), cb_y,
+                                   CW - Inches(3.0), Inches(0.6),
+                                   fill_color=NAVY2, border_color=TEAL,
+                                   border_width=Pt(2), corner_radius=True))
+    bottom_shapes.append(add_text(slide,
+        "WER counts word edits.  IS asks: did the viewer get the message?  Here \u2014 yes, completely.",
+        MX + Inches(1.7), cb_y + Inches(0.1), CW - Inches(3.4), Inches(0.4),
+        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+
+    _finish(slide, 0,
+        "Side-by-side: same segment scores 46.2% WER (failure) but IS 4.03 "
+        "(excellent). The prediction preserves the complete meaning.",
+        [wer_shapes, is_shapes, bottom_shapes], click_reveal=True)
 
 
 def slide_toc(prs):
@@ -3229,7 +3316,7 @@ def slide_25c(prs):
                     col_widths=[Inches(2.8), Inches(2.7)],
                     text_size=Pt(12))
 
-    add_bullets(slide, [
+    rb = add_bullets(slide, [
         "Stable across all 16 decode configurations",
         "Catches 99.2% of IS \u2265 3.0 segments",
         ("Zero cost: pure Python, no LLM calls at runtime", {"bold": True}),
@@ -3246,7 +3333,7 @@ def slide_25c(prs):
         "How the salvage detection works: a 15-rule deterministic decision tree "
         "that checks 6 linguistic signals and outputs a recovery probability. "
         "Validated at r=0.934 with IS, 88.6% agreement, stable across 16 configs.",
-        [step_shapes, [tbl]])
+        [[lt] + step_shapes, [rt, tbl, rb]])
 
 def slide_25d(prs):
     """Three real salvage examples showing HOW recovery works."""
@@ -3763,7 +3850,7 @@ def slide_29(prs):
     rb = add_bullets(slide, [
         "Baseline IS: 2.49 — Exp A IS: 2.31 — Exp B IS: 2.02",
         ("Fine-tuning made IS WORSE, not better", {"color": CORAL}),
-        "Empty outputs: 7% → 13% → 27% (catastrophic)",
+        "Empty outputs: 7% → 13% → 27% (identifiable and filterable)",
         ("Key insight: need 20K+ segments, not parameter tuning",
          {"bold": True, "color": GREEN}),
     ], rx, col_y + Inches(0.35), col_w, Inches(2.0), size=Pt(13))
@@ -3898,6 +3985,14 @@ def slide_arabic_roadmap(prs):
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
+    # Timeline summary callout
+    timeline_box = add_rect(slide, MX, Inches(5.8), CW, Inches(0.55),
+                  fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
+                  corner_radius=True)
+    timeline_txt = add_text(slide, "Total estimated timeline: 3–5 weeks",
+             MX + Inches(0.3), Inches(5.85), CW - Inches(0.6), Inches(0.4),
+             size=Pt(22), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
     _finish(slide, 0,
         "Arabic replication roadmap with practical details. We have AVSpeech "
         "Arabic videos for training data and an AWS GPU instance for fine-tuning. "
@@ -3905,7 +4000,7 @@ def slide_arabic_roadmap(prs):
         "(2-3 days), swap to Arabic LLM (1-2 days), build eval dataset with "
         "native speakers (1-2 weeks), end-to-end testing (3-5 days). "
         "Total 3-5 weeks. Pipeline code is language-agnostic.",
-        [[lt, lb], [rt, tbl]], click_reveal=True)
+        [[lt, lb], [rt, tbl], [timeline_box, timeline_txt]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 31 — SUMMARY
@@ -4085,7 +4180,7 @@ def slide_a8(prs):
 
     # Heuristic validation
     add_text(slide, "Heuristic Validation (no runtime LLM)",
-             SRL, CT + Inches(2.8), SRW, Inches(0.3),
+             SRL, CT + Inches(3.2), SRW, Inches(0.3),
              size=Pt(13), color=TEAL, bold=True)
 
     tbl3 = add_table(slide,
@@ -4095,7 +4190,7 @@ def slide_a8(prs):
          ["Cohen's κ", "0.773"],
          ["Recall (IS≥3)", "97.6–100%"],
          ["Config range", "κ 0.62–0.86"]],
-        SRL, CT + Inches(3.2), SRW * 0.7, text_size=Pt(10))
+        SRL, CT + Inches(3.6), SRW * 0.7, text_size=Pt(10))
 
     _finish(slide, "A3",
         "IS components collapse into 3 dimensions: word accuracy (60%), "
@@ -5538,7 +5633,7 @@ def slide_dual_env(prs):
     r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.5),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                   corner_radius=True)
-    add_bullets(slide, [
+    b1 = add_bullets(slide, [
         "Full research environment",
         "GPU: Tesla T4 (16GB)",
         "Path: /home/ubuntu/",
@@ -5546,13 +5641,13 @@ def slide_dual_env(prs):
     ], MX + Inches(0.2), CT + Inches(0.6), col_w - Inches(0.4), Inches(1.2),
        size=Pt(13))
 
-    add_text(slide, "Container (Production)", MX, CT + Inches(2.3), col_w,
+    ct_label = add_text(slide, "Container (Production)", MX, CT + Inches(2.3), col_w,
              Inches(0.4), size=Pt(18), color=CORAL, bold=True)
 
     r2 = add_rect(slide, MX, CT + Inches(2.8), col_w, Inches(1.5),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
-    add_bullets(slide, [
+    b2 = add_bullets(slide, [
         "Docker container, no internet",
         "GPU: client hardware",
         "Path: /workspace/",
@@ -5565,9 +5660,9 @@ def slide_dual_env(prs):
     rt = add_text(slide, "Synchronization Challenge", rx, CT, col_w, Inches(0.4),
                   size=Pt(18), color=CORAL, bold=True)
 
-    add_text(slide, "26", rx, CT + Inches(0.6), col_w, Inches(0.7),
+    big_num = add_text(slide, "26", rx, CT + Inches(0.6), col_w, Inches(0.7),
              size=Pt(48), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
-    add_text(slide, "tracked sync items",
+    num_label = add_text(slide, "tracked sync items",
              rx, CT + Inches(1.2), col_w, Inches(0.3),
              size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
 
@@ -5585,7 +5680,9 @@ def slide_dual_env(prs):
         "replicated correctly. Path translations, different Python environments, "
         "different hardware. INSTALL.sh handles deployment with automatic backup "
         "and 13-point verification.",
-        [[r1, r2], [rt, rb]], click_reveal=True)
+        [[lt, r1, b1, ct_label, r2, b2],
+         [rt, big_num, num_label, rb]],
+        click_reveal=True, para_build=False)
 
 
 def slide_future_transition(prs):
@@ -5797,6 +5894,72 @@ def slide_data_scaling(prs):
         "Llama 3.1 8B projects to IS 3.5-4.0 (55-65% captured). AVSpeech has "
         "290K videos available for training data curation.",
         [[lt, lb], [rt, tbl, r1]], click_reveal=True)
+
+
+def slide_price_tag(prs):
+    """Cost projections: GPU, data, timeline to reach IS targets."""
+    slide = new_slide(prs)
+    add_title(slide, "The Price Tag: Cost to Reach IS 3.5\u20134.0")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "AWS eu-west-1 (Ireland)  \u2022  p4d.24xlarge (8\u00d7A100) spot  \u2022  "
+        "Paper\u2019s two-phase training curriculum",
+        MX, CT, CW, Inches(0.35), size=Pt(12), color=LGRAY, italic=True)
+
+    tbl_w = Inches(7.8)
+    tbl = add_table(slide,
+        ["Phase", "Data", "Train Cost", "Total Cost", "Timeline", "IS Target"],
+        [["Current", "1.3K segs", "\u2014", "\u2014", "\u2014", "2.52"],
+         ["Phase 1", "5K hrs", "~$3K", "~$8\u201312K", "2\u20134 wks", "~2.9\u20133.1"],
+         ["Phase 2", "10K hrs", "~$6K", "~$15\u201320K", "4\u20136 wks", "~3.2\u20133.5"],
+         ["Phase 3", "20K hrs", "~$13K", "~$30\u201340K", "6\u20138 wks", "~3.5\u20133.8"],
+         ["Phase 4", "50K hrs", "~$32K", "~$70\u2013100K", "3\u20134 mo", "~3.8\u20134.2"]],
+        MX, CT + Inches(0.5), tbl_w, text_size=Pt(11),
+        col_widths=[Inches(1.0), Inches(1.1), Inches(1.1), Inches(1.3),
+                    Inches(1.1), Inches(1.2)],
+        row_colors={3: {3: GREEN, 5: GREEN}})
+
+    rx = MX + tbl_w + Inches(0.4)
+    rw = CW - tbl_w - Inches(0.4)
+
+    r1 = add_rect(slide, rx, CT + Inches(0.5), rw, Inches(2.8),
+                   fill_color=NAVY2, border_color=GOLD, border_width=Pt(2),
+                   corner_radius=True)
+    add_text(slide, "Sweet Spot", rx + Inches(0.2), CT + Inches(0.6),
+             rw - Inches(0.4), Inches(0.35), size=Pt(16), color=GOLD, bold=True)
+    add_text(slide, "Phase 3: IS ~3.7",
+             rx + Inches(0.2), CT + Inches(1.0),
+             rw - Inches(0.4), Inches(0.35), size=Pt(20), color=GREEN, bold=True)
+    add_bullets(slide, [
+        "20K hrs = ~7% of AVSpeech",
+        "Total ~$35K incl. curation",
+        "Follows paper\u2019s 2-phase\ncurriculum: freeze \u2192 unfreeze",
+    ], rx + Inches(0.15), CT + Inches(1.5), rw - Inches(0.3), Inches(1.2),
+        size=Pt(11))
+
+    r2 = add_rect(slide, rx, CT + Inches(3.5), rw, Inches(1.3),
+                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(1),
+                   corner_radius=True)
+    add_text(slide, "LLM Backbone Upgrade",
+             rx + Inches(0.2), CT + Inches(3.6),
+             rw - Inches(0.4), Inches(0.3), size=Pt(13), color=TEAL, bold=True)
+    add_text(slide,
+        "Llama 3.1 8B or Qwen 2.5 7B\n+0.3\u20130.5 IS independently\nOnly config change needed",
+        rx + Inches(0.2), CT + Inches(3.95),
+        rw - Inches(0.4), Inches(0.7), size=Pt(11), color=LGRAY)
+
+    add_text(slide,
+        "Training cost: p4d spot $9.39/hr (eu-west-1).  "
+        "Curation includes: download, RetinaFace, mouth crop, AV-HuBERT features, Whisper v3 labels.",
+        MX, Inches(6.5), CW, Inches(0.35), size=Pt(10), color=MGRAY, italic=True)
+
+    _finish(slide, 0,
+        "Cost projections for scaling to IS 3.5-4.0. Based on p4d.24xlarge spot "
+        "pricing in eu-west-1 at $9.39/hr. Phase 3 (20K hours, ~$35K) is the sweet spot. "
+        "LLM backbone upgrade to Llama 3.1 8B or Qwen 2.5 7B adds +0.3-0.5 IS independently.",
+        [[tbl], [r1, r2]], click_reveal=True)
+
 
 
 def slide_a16(prs):
