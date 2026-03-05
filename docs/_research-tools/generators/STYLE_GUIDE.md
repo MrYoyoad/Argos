@@ -177,11 +177,49 @@ CH   = Inches(5.55)      # Content height
 | `set_notes(slide, text)` | Add speaker notes |
 | `_fmt(paragraph, ...)` | Paragraph-level formatting utility |
 
+## PPTX Animation Rules
+
+The `add_animations()` function in `helpers.py` creates click-to-advance OOXML entrance animations. The `_finish()` wrapper calls it.
+
+**Critical rules:**
+
+1. **`para_build` must default to `False`** — Only set `True` explicitly when per-paragraph bullet builds are desired. When `True`, multi-paragraph shapes in entry groups get hidden instead of visible on entry.
+
+2. **Card animations must include ALL child shapes** — When creating card layouts (rect + text overlays), collect every shape into the same `anim_groups` entry:
+   ```python
+   card_shapes = []
+   card_shapes.append(add_rect(...))      # background
+   card_shapes.append(add_text(...))      # title
+   card_shapes.append(add_text(...))      # body
+   anim_groups.append(card_shapes)
+   ```
+   Never put only the rectangle in `anim_groups` — text will float independently.
+
+3. **Animation group order = click order** — With `click_reveal=True`, group 0 is visible on entry, group 1 on first click, etc. Left-side content should generally be group 0.
+
+4. **Table height must not overlap downstream content** — Verify: `table_y + (num_rows + 1) * row_height < next_element_y`. Common fix: reduce `row_height` and `text_size`.
+
+5. **Plot text annotations need staggering** — Place IS values above the hi-range line, captured % below the mid-line, and mission labels below the lo-range line with extra spacing.
+
+## PPTX Modular Architecture
+
+**Generator**: `generate_presentation.py` is a slim orchestrator (~90 lines). All logic lives in the `presentation/` package:
+
+| Module | Contents |
+|--------|----------|
+| `config.py` | Paths, colors, layout constants, IMG dictionary |
+| `helpers.py` | Slide setup, text, shapes, animations, `_finish()`, `add_animations()` |
+| `slides_opening.py` | Sections 0-2: Opening, Context, Problem |
+| `slides_research.py` | Sections 3-5: Research Findings, Understanding, Tuning |
+| `slides_evaluation.py` | Section 6 + Salvage + Demos |
+| `slides_engineering.py` | Section 7: Engineering |
+| `slides_future.py` | Section 8: Future Directions + Appendix |
+
 ## PPTX Slide Organization
 
-Each slide is a `slide_*()` function taking `prs` (Presentation) as argument. Auto-numbering via `_auto_num[0]` counter. The `main()` function defines the ordered builder list.
+Each slide is a `slide_*()` function taking `prs` (Presentation) as argument. Auto-numbering via `_auto_num[0]` counter. The `main()` function in the orchestrator defines the ordered builder list.
 
-Images centralized in `IMG` dictionary mapping semantic keys to file paths.
+Images centralized in `IMG` dictionary in `config.py` mapping semantic keys to file paths.
 
 ---
 
