@@ -130,3 +130,5 @@ User remark: "many slides have bad animations and occlusions"
 | # | Slide | Remark | Status |
 |---|-------|--------|--------|
 | 83 | 13 (slide_06) | Change to Admiral McRae example ("same WER, different effects"); mention IS is "our new metric" | done |
+| 84 | 14 (slide_is_foreshadow) | Content overlap with slide 16 — removed IS details, kept as short bridge ("we need a metric that captures meaning") | done |
+| 85 | 16 (slide_is_intro) | Complete rewrite: deep dive into all 6 IS signals with crystal-clear explanations, especially Phonetic (IPA conversion, mouth-shape relevance) and Semantic (384-dim embeddings, cosine similarity). Each signal gets a card with how-it-works + example. No more "see next slide" deferrals. Title changed to "The Intelligibility Score (IS) — Our Metric" | done |

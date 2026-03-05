@@ -27,78 +27,110 @@ from .helpers import (
 )
 
 def slide_is_intro(prs):
-    """Introduce IS concept before showing results."""
+    """Deep dive into IS — what it is and how each signal works."""
     slide = new_slide(prs)
-    add_title(slide, "Introducing the Intelligibility Score")
+    add_title(slide, "The Intelligibility Score (IS) — Our Metric")
     add_accent_line(slide)
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
+    # Top banner — what IS is in one line
+    banner = add_rect(slide, MX, CT, CW, Inches(0.55), fill_color=NAVY2,
+                      border_color=TEAL, border_width=Pt(2), corner_radius=True)
+    banner_txt = add_text(slide,
+        "A composite score from 0 to 5.  IS \u2265 3.0 = \"Properly Captured\" "
+        "\u2014 the viewer got the message.  "
+        "Deterministic, free, reproducible.",
+        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.4),
+        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
-    # Left column — motivation
-    lt = add_text(slide, "Why a new metric?", MX, CT, col_w, Inches(0.4),
-                  size=Pt(20), color=CORAL, bold=True)
-    lb = add_bullets(slide, [
-        "WER counts word errors but ignores meaning",
-        '"admiral" \u2192 "animal" gets same WER as "the" \u2192 "a"',
-        "WER treats all errors equally \u2014 but not all errors matter equally",
-        "We need: does a viewer get the right message?",
-    ], MX, CT + Inches(0.55), col_w, Inches(3.0), size=Pt(15))
+    # 6 signal cards — 2 columns × 3 rows
+    card_w = Inches(5.8)
+    card_h = Inches(1.35)
+    gap_x = Inches(0.53)
+    gap_y = Inches(0.12)
+    start_y = CT + Inches(0.8)
 
-    # Right column — what IS is
-    rx = MX + col_w + gap
-    rw = CW - col_w - gap
-    rt = add_text(slide, "What is IS?", rx, CT, rw, Inches(0.4),
-                  size=Pt(20), color=TEAL, bold=True)
-    rb = add_bullets(slide, [
-        ("Composite score from 0 to 5", {"bold": True}),
-        "Combines 6 complementary quality signals",
-        "Designed at development time, not per-sample",
-        "Fully deterministic at runtime \u2014 no LLM per sample",
-        "Free, reproducible, decomposable",
-        ('IS \u2265 3.0 = "Properly Captured"', {"color": TEAL, "bold": True}),
-    ], rx, CT + Inches(0.55), rw, Inches(3.5), size=Pt(15))
+    signals = [
+        ("Semantic Similarity", "25%", TEAL,
+         "Converts both ref and hyp to 384-dim sentence embeddings "
+         "(SBERT / all-MiniLM-L6-v2), then measures cosine similarity. "
+         "Captures overall meaning — even if different words are used, "
+         "a high score means the same idea was communicated.",
+         'Example: "the CEO resigned" vs "the chief executive stepped down" '
+         '\u2192 cosine 0.91 (meaning preserved despite zero word overlap).'),
+        ("Phonetic Similarity", "15%", TEAL,
+         "Converts each word to IPA pronunciation (eng-to-ipa), "
+         "then computes character-level similarity between phonetic strings. "
+         "Critical for lip reading: the model sees mouth shapes, not spellings — "
+         "so phonetically correct output is a sign the visual encoder worked.",
+         'Example: "Admiral McRae" vs "animal migration" \u2192 '
+         'phonetic: /\u00e6dm\u026ar\u0259l m\u0259kre\u026a/ vs '
+         '/\u00e6n\u026am\u0259l ma\u026a\u0261re\u026a\u0283\u0259n/ \u2192 0.68 (sounds similar!).'),
+        ("Inverse WER", "15%", CORAL,
+         "Standard Word Error Rate (substitutions + insertions + deletions "
+         "divided by reference length), then inverted: 1 \u2212 WER. "
+         "A baseline word-accuracy signal.",
+         "Treats all words equally — every error costs the same."),
+        ("WWER (Weighted WER)", "15%", CORAL,
+         "Like WER, but content words (nouns, verbs, names) cost 2\u00d7 "
+         "and function words ('the', 'a', 'is') cost only 0.5\u00d7. "
+         "Losing a name hurts more than losing an article.",
+         'Example: "Admiral McRae" wrong = 2\u00d7 penalty. '
+         '"the" wrong = 0.5\u00d7 penalty.'),
+        ("Named Entity Accuracy", "15%", CORAL,
+         "Extracts named entities (people, numbers, places) from both "
+         "ref and hyp using spaCy NER, then computes F1 (precision \u00d7 recall). "
+         "Binary per entity: either correct or destroyed, no partial credit.",
+         "Mean F1 = 38.9% \u2014 entities missed in 85% of segments."),
+        ("Length Ratio", "15%", LGRAY,
+         "Output length divided by reference length. A safety check: "
+         "catches hallucination (ratio >> 1, model generates too much) "
+         "and truncation (ratio << 1, model cuts off early).",
+         "Hallucinated segments average ratio 2.8\u00d7."),
+    ]
 
-    # Calculation method details — positioned below right column bullets
-    # Order: WWER first (builds on WER motivation), NEA second (binary metric),
-    # then remaining signals briefly. Phonetic/Semantic detail deferred to slide 16.
-    calc = add_rich_text(slide, [
-        [("How each signal is calculated:", {"size": Pt(13), "color": WHITE, "bold": True})],
-        [("WWER (15%): ", {"size": Pt(11), "color": CORAL, "bold": True}),
-         ("WER weights all words equally \u2014 WWER fixes this. Content words (nouns, verbs, names) "
-          "penalized 2\u00d7, function words ('the', 'a') only 0.5\u00d7. "
-          "Losing 'Admiral McRae' matters more than losing 'the'.",
-          {"size": Pt(11), "color": LGRAY})],
-        [("NEA (15%): ", {"size": Pt(11), "color": CORAL, "bold": True}),
-         ("Named Entity F1 \u2014 are names, numbers, proper nouns preserved? "
-          "Extracted via spaCy NER, scored as precision/recall. "
-          "Binary: entities are either correct or destroyed, no partial credit.",
-          {"size": Pt(11), "color": LGRAY})],
-        [("Semantic (25%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("Sentence-level meaning similarity via embeddings (see next slide for details).",
-          {"size": Pt(11), "color": LGRAY})],
-        [("Phonetic (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("Pronunciation-based similarity \u2014 catches words that sound right but spell differently (details next slide).",
-          {"size": Pt(11), "color": LGRAY})],
-        [("Length (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("Output length vs reference length ratio. Catches truncation (too short) and hallucination (too long).",
-          {"size": Pt(11), "color": LGRAY})],
-    ], MX, CT + Inches(3.8), CW, Inches(2.0))
+    card_groups = []
+    for i, (name, weight, color, how, example) in enumerate(signals):
+        col = i % 2
+        row = i // 2
+        x = MX + col * (card_w + gap_x)
+        y = start_y + row * (card_h + gap_y)
+
+        r = add_rect(slide, x, y, card_w, card_h, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(1.5), corner_radius=True)
+        t1 = add_text(slide, f"{name}  ({weight})",
+                 x + Inches(0.15), y + Inches(0.06),
+                 card_w - Inches(0.3), Inches(0.28),
+                 size=Pt(13), color=color, bold=True)
+        t2 = add_text(slide, how,
+                 x + Inches(0.15), y + Inches(0.34),
+                 card_w - Inches(0.3), Inches(0.55),
+                 size=Pt(10), color=WHITE)
+        t3 = add_text(slide, f"\u25b8 {example}",
+                 x + Inches(0.15), y + Inches(0.92),
+                 card_w - Inches(0.3), Inches(0.38),
+                 size=Pt(9), color=LGRAY, italic=True)
+        card_groups.append([r, t1, t2, t3])
+
+    # Formula at bottom
+    add_text(slide,
+        "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + WWER + NEA + Length)"
+        "   \u2022   Fully deterministic   \u2022   $0 per evaluation",
+        MX, Inches(6.55), CW, Inches(0.4),
+        size=Pt(11), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "IS introduction. WER can't distinguish meaning preservation from "
-        "destruction. First, we introduce WWER: WER treats all words equally, "
-        "but WWER penalizes content words 2x and discounts function words 0.5x, "
-        "so losing a name hurts more than losing 'the'. Second, NEA: Named "
-        "Entity F1 checks whether names, numbers, and proper nouns survive "
-        "the lip-reading process -- binary pass/fail per entity. Third, IS "
-        "itself: a composite 0-5 metric combining 6 signals (WWER, NEA, WER, "
-        "Semantic, Phonetic, Length Ratio) that together capture whether a "
-        "viewer would understand the output. Designed at development time, "
-        "runs as pure deterministic Python at evaluation time. "
-        "IS >= 3.0 means properly captured. Phonetic and Semantic calculation "
-        "details are covered on the next slide.",
-        [[lt, lb], [rt, rb], [calc]], click_reveal=True)
+        "Deep dive into IS. Six signals, each measuring a different aspect "
+        "of output quality. SEMANTIC (25%): sentence embeddings capture "
+        "overall meaning even with different words — cosine similarity in "
+        "384-dim space. PHONETIC (15%): converts words to IPA pronunciation "
+        "and compares — critical because the model sees mouth shapes, not "
+        "spellings. WER (15%): standard word accuracy baseline. WWER (15%): "
+        "weighted WER where content words cost 2x and function words 0.5x. "
+        "NEA (15%): Named Entity F1 — are names, numbers, places preserved? "
+        "LENGTH (15%): output/reference length ratio catches hallucination "
+        "and truncation. All 6 are combined into a single 0-5 score. "
+        "IS >= 3.0 means the viewer gets the message.",
+        [[banner, banner_txt]] + card_groups, click_reveal=True)
 
 
 def slide_tuning_intro(prs):

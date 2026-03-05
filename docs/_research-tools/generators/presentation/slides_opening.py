@@ -193,31 +193,28 @@ def slide_toc(prs):
 
 
 def slide_is_foreshadow(prs):
-    """Brief IS introduction — bridge from WER limitations."""
+    """Brief bridge — WER falls short, we need something better."""
     slide = new_slide(prs)
     add_title(slide, "We Need a Better Metric")
     add_accent_line(slide)
 
     bul = add_bullets(slide, [
-        "WER counts word errors — but ignores whether the viewer understood",
-        ("We created the Intelligibility Score (IS): a composite 0\u20135 metric",
+        "WER counts word edits — but treats every error as equally bad",
+        "It can't tell if the viewer understood the message or not",
+        '"Admiral McRae" \u2192 "animal migration" = same WER cost as "the" \u2192 "a"',
+        ("We need a metric that asks: did the meaning survive?",
          {"bold": True, "color": TEAL}),
-        "Combines 6 quality signals: meaning, phonetics, word accuracy, entities, length",
-        ("IS \u2265 3.0 = \u201cProperly Captured\u201d — the viewer gets the right message",
-         {"color": GREEN, "bold": True}),
     ], MX, CT + Inches(0.2), CW, Inches(3.5), size=Pt(17))
 
     add_text(slide,
-        "Designed at development time, runs as pure "
-        "deterministic Python — $0 per evaluation, 100% reproducible.",
+        "Next: our answer \u2014 the Intelligibility Score.",
         MX, Inches(5.0), CW, Inches(0.5),
-        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(16), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Bridge slide: WER is blind to meaning. We created IS — a composite "
-        "0-5 metric combining 6 quality signals. IS >= 3.0 means the viewer "
-        "gets the right message. Designed at development time, "
-        "runs as deterministic Python at evaluation time.",
+        "Bridge slide. WER treats all errors as equal — a function word swap "
+        "costs the same as destroying a named entity. We need a metric that "
+        "captures whether the viewer actually understood the output.",
         [[bul]], click_reveal=True)
 
 
