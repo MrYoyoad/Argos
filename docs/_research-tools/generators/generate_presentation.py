@@ -942,7 +942,7 @@ def build_two_col(prs, num, title, left_title, left_items, right_title,
     rb = add_bullets(slide, right_items, rx, CT + Inches(0.5), col_w,
                      CH - Inches(0.5))
 
-    _finish(slide, num, notes, [[lt, lb], [rt, rb]], click_reveal=True)
+    _finish(slide, num, notes, [[lt, lb], [rt], [rb]], click_reveal=True)
     return slide
 
 
@@ -995,6 +995,7 @@ def slide_exec_summary(prs):
         "Built a complete production system: 8-stage pipeline, standalone container",
         ("Clear roadmap to IS 3.5\u20134.0 (from 2.52) through data scaling + LLM upgrade",
          {"color": TEAL}),
+        ("Arabic pipeline: replication roadmap established for Arabic lip-reading", {}),
         "Produced 8 comprehensive research reports",
     ]
     bul = add_bullets(slide, items, MX, CT + Inches(0.6), CW, Inches(4.0),
@@ -1028,7 +1029,7 @@ def slide_toc(prs):
          TEAL),
         ("4. Future Directions",
          "Improvement roadmap \u2022 Data scaling \u2022 LLM upgrade \u2022 "
-         "Target: IS 3.5\u20134.0",
+         "Arabic pipeline \u2022 Target: IS 3.5\u20134.0",
          TEAL),
     ]
     shapes = []
@@ -1116,19 +1117,25 @@ def slide_is_intro(prs):
     ], rx, CT + Inches(0.55), rw, Inches(3.5), size=Pt(15))
 
     # Calculation method details — positioned below right column bullets
+    # Order: WWER first (builds on WER motivation), NEA second (binary metric),
+    # then remaining signals briefly. Phonetic/Semantic detail deferred to slide 16.
     calc = add_rich_text(slide, [
         [("How each signal is calculated:", {"size": Pt(13), "color": WHITE, "bold": True})],
-        [("Semantic (25%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("Encode ref & hyp with sentence-transformer (MiniLM), compute cosine similarity. "
-          "Captures whether the overall MEANING is preserved.", {"size": Pt(11), "color": LGRAY})],
-        [("Phonetic (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("Convert text to phoneme sequences (g2p), compute edit-distance similarity. "
-          "Detects when words SOUND right even if spelled differently.", {"size": Pt(11), "color": LGRAY})],
-        [("WWER (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("WER with content words (nouns, verbs, names) penalized 2\u00d7 vs function words ('the', 'a').",
+        [("WWER (15%): ", {"size": Pt(11), "color": CORAL, "bold": True}),
+         ("WER weights all words equally \u2014 WWER fixes this. Content words (nouns, verbs, names) "
+          "penalized 2\u00d7, function words ('the', 'a') only 0.5\u00d7. "
+          "Losing 'Admiral McRae' matters more than losing 'the'.",
           {"size": Pt(11), "color": LGRAY})],
-        [("NEA (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("Named Entity F1 \u2014 are names, numbers, proper nouns preserved? Binary: right or wrong.",
+        [("NEA (15%): ", {"size": Pt(11), "color": CORAL, "bold": True}),
+         ("Named Entity F1 \u2014 are names, numbers, proper nouns preserved? "
+          "Extracted via spaCy NER, scored as precision/recall. "
+          "Binary: entities are either correct or destroyed, no partial credit.",
+          {"size": Pt(11), "color": LGRAY})],
+        [("Semantic (25%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("Sentence-level meaning similarity via embeddings (see next slide for details).",
+          {"size": Pt(11), "color": LGRAY})],
+        [("Phonetic (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("Pronunciation-based similarity \u2014 catches words that sound right but spell differently (details next slide).",
           {"size": Pt(11), "color": LGRAY})],
         [("Length (15%): ", {"size": Pt(11), "color": TEAL, "bold": True}),
          ("Output length vs reference length ratio. Catches truncation (too short) and hallucination (too long).",
@@ -1137,10 +1144,17 @@ def slide_is_intro(prs):
 
     _finish(slide, 0,
         "IS introduction. WER can't distinguish meaning preservation from "
-        "destruction. IS is a composite 0-5 metric combining 6 signals that "
-        "together capture whether a viewer would understand the output. "
-        "Designed at development time, runs as pure deterministic "
-        "Python at evaluation time. IS >= 3.0 means properly captured.",
+        "destruction. First, we introduce WWER: WER treats all words equally, "
+        "but WWER penalizes content words 2x and discounts function words 0.5x, "
+        "so losing a name hurts more than losing 'the'. Second, NEA: Named "
+        "Entity F1 checks whether names, numbers, and proper nouns survive "
+        "the lip-reading process -- binary pass/fail per entity. Third, IS "
+        "itself: a composite 0-5 metric combining 6 signals (WWER, NEA, WER, "
+        "Semantic, Phonetic, Length Ratio) that together capture whether a "
+        "viewer would understand the output. Designed at development time, "
+        "runs as pure deterministic Python at evaluation time. "
+        "IS >= 3.0 means properly captured. Phonetic and Semantic calculation "
+        "details are covered on the next slide.",
         [[lt, lb], [rt, rb], [calc]], click_reveal=True)
 
 
@@ -1378,7 +1392,7 @@ def slide_is_weight_rationale(prs):
         "goal. The 4 word-accuracy signals overlap heavily (r>0.79), so equal "
         "15% weights avoid over-counting. Validated: r=0.93 with expert "
         "heuristic, kappa=0.77.",
-        [[lt] + dim_shapes, [rt, rb]], click_reveal=True)
+        [[lt] + dim_shapes, [rt], [rb]], click_reveal=True)
 
 
 def slide_is_calc_examples(prs):
@@ -1392,45 +1406,47 @@ def slide_is_calc_examples(prs):
     card_h = Inches(4.6)
 
     def _draw_calc_card(slide, x, label, is_val, color, ref, hyp, lines, summary):
-        """Draw one calculation card at position x."""
+        """Draw one calculation card at position x. Returns list of all shapes."""
+        shapes = []
         r = add_rect(slide, x, CT, col_w, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(3), corner_radius=True)
+        shapes.append(r)
 
-        # Header bar with colored background
-        add_rect(slide, x + Inches(0.1), CT + Inches(0.1),
-                 col_w - Inches(0.2), Inches(0.5), fill_color=color,
-                 corner_radius=True)
-        add_text(slide, f"{label} \u2014 IS = {is_val}",
-                 x + Inches(0.1), CT + Inches(0.12),
-                 col_w - Inches(0.2), Inches(0.5),
-                 size=Pt(18), color=BG, bold=True, align=PP_ALIGN.CENTER)
+        # Header bar with colored background (reduced height)
+        shapes.append(add_rect(slide, x + Inches(0.1), CT + Inches(0.1),
+                 col_w - Inches(0.2), Inches(0.4), fill_color=color,
+                 corner_radius=True))
+        shapes.append(add_text(slide, f"{label} \u2014 IS = {is_val}",
+                 x + Inches(0.1), CT + Inches(0.1),
+                 col_w - Inches(0.2), Inches(0.4),
+                 size=Pt(16), color=BG, bold=True, align=PP_ALIGN.CENTER))
 
-        # Ref / Hyp
-        add_rich_text(slide, [
-            [("Ref: ", {"size": Pt(12), "color": LGRAY, "bold": True}),
-             (f"\u201c{ref}\u201d", {"size": Pt(12), "color": WHITE})],
-            [("Hyp: ", {"size": Pt(12), "color": LGRAY, "bold": True}),
-             (f"\u201c{hyp}\u201d", {"size": Pt(12), "color": WHITE})],
-        ], x + Inches(0.25), CT + Inches(0.65), col_w - Inches(0.5), Inches(0.65))
+        # Ref / Hyp (increased font size)
+        shapes.append(add_rich_text(slide, [
+            [("Ref: ", {"size": Pt(14), "color": LGRAY, "bold": True}),
+             (f"\u201c{ref}\u201d", {"size": Pt(14), "color": WHITE})],
+            [("Hyp: ", {"size": Pt(14), "color": LGRAY, "bold": True}),
+             (f"\u201c{hyp}\u201d", {"size": Pt(14), "color": WHITE})],
+        ], x + Inches(0.25), CT + Inches(0.55), col_w - Inches(0.5), Inches(0.65)))
 
-        # Calculation rows
-        cy = CT + Inches(1.45)
+        # Calculation rows (increased font size)
+        cy = CT + Inches(1.35)
         for name, val, mult, result, clr in lines:
-            add_text(slide, name, x + Inches(0.3), cy, Inches(1.8), Inches(0.32),
-                     size=Pt(12), color=LGRAY)
-            add_text(slide, val, x + Inches(2.2), cy, Inches(0.7), Inches(0.32),
-                     size=Pt(12), color=clr, bold=True)
-            add_text(slide, mult, x + Inches(2.9), cy, Inches(0.8), Inches(0.32),
-                     size=Pt(12), color=LGRAY)
-            add_text(slide, result, x + Inches(3.7), cy, Inches(0.9), Inches(0.32),
-                     size=Pt(12), color=WHITE, bold=True)
+            shapes.append(add_text(slide, name, x + Inches(0.3), cy, Inches(1.8), Inches(0.32),
+                     size=Pt(14), color=LGRAY))
+            shapes.append(add_text(slide, val, x + Inches(2.2), cy, Inches(0.7), Inches(0.32),
+                     size=Pt(14), color=clr, bold=True))
+            shapes.append(add_text(slide, mult, x + Inches(2.9), cy, Inches(0.8), Inches(0.32),
+                     size=Pt(14), color=LGRAY))
+            shapes.append(add_text(slide, result, x + Inches(3.7), cy, Inches(0.9), Inches(0.32),
+                     size=Pt(14), color=WHITE, bold=True))
             cy += Inches(0.35)
 
         # Summary
-        add_text(slide, summary,
+        shapes.append(add_text(slide, summary,
                  x + Inches(0.3), cy + Inches(0.2), col_w - Inches(0.6), Inches(0.4),
-                 size=Pt(15), color=color, bold=True)
-        return r
+                 size=Pt(15), color=color, bold=True))
+        return shapes
 
     # --- Left: Good segment ---
     good_lines = [
@@ -1467,19 +1483,39 @@ def slide_is_calc_examples(prs):
         "scores across all signals. Right: hallucination (IS 0.9) where only "
         "length ratio is non-zero — the output is a completely different topic. "
         "The formula is IS = (sum of weighted scores) x 5, mapping to 0-5 scale.",
-        [[r1], [r2]], click_reveal=True)
+        [r1, r2], click_reveal=True)
 
 
 def slide_is_radar(prs):
-    """Radar chart showing captured vs failed IS profiles."""
-    build_full_image(prs, 0,
-        "IS Radar: Success vs Failure Profile", "P6_is_radar",
-        notes="Radar chart comparing mean component values for IS >= 3.0 "
-              "(green) vs IS < 3.0 (red). Captured segments are strong across "
-              "all 6 signals. Failed segments collapse on meaning and entity "
-              "preservation while maintaining only partial length ratio.",
-        subtitle="Captured segments (green) are strong across all 6 signals. "
-                 "Failed segments (red) collapse on meaning and entities.")
+    """Radar chart showing captured vs failed IS profiles -- large centered."""
+    slide = new_slide(prs)
+    add_title(slide, "IS Radar: Success vs Failure Profile")
+    add_accent_line(slide)
+    sub = add_text(slide,
+        "Captured segments (green) are strong across all 6 signals. "
+        "Failed segments (red) collapse on meaning and entities.",
+        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+    img_top = CT + Inches(0.45)
+    img_h = SL_H - img_top - Inches(0.55)
+    img_w = Inches(8.5)
+    img_l = (SL_W - img_w) / 2
+    img = add_image(slide, "P6_is_radar", img_l, img_top,
+                    width=img_w, height=img_h)
+    ann_w = Inches(2.5)
+    add_text(slide, "● Captured (IS ≥ 3.0)", MX, SL_H - Inches(0.55),
+             ann_w, Inches(0.3), size=Pt(12), color=GREEN, bold=True)
+    add_text(slide, "● Failed (IS < 3.0)",
+             MX + CW - ann_w, SL_H - Inches(0.55),
+             ann_w, Inches(0.3), size=Pt(12), color=CORAL, bold=True,
+             align=PP_ALIGN.RIGHT)
+    _finish(slide, 0,
+        "Radar chart comparing mean component values for IS >= 3.0 "
+        "(green) vs IS < 3.0 (red). Captured segments are strong across "
+        "all 6 signals. Failed segments collapse on meaning and entity "
+        "preservation while maintaining only partial length ratio. "
+        "The biggest gaps between green and red are on Semantic and NEA "
+        "axes, confirming these as the primary differentiators.",
+        [[img]])
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1586,7 +1622,7 @@ def slide_03(prs):
                      border_width=Pt(2), corner_radius=True)
         tb = add_text(slide, f"{name}\n{desc}", x + Inches(0.1), by + Inches(0.05),
                       bw - Inches(0.2), bh - Inches(0.1),
-                      size=Pt(12), color=WHITE, align=PP_ALIGN.CENTER)
+                      size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
         blocks.append(r)
 
     # Arrow indicators between blocks
@@ -1600,7 +1636,7 @@ def slide_03(prs):
              "Only 12.6M trainable params (0.19%). LLM is swappable — "
              "Llama 3.1 8B is a drop-in replacement (same 4096 hidden size).",
              MX, Inches(6.3), CW, Inches(0.5),
-             size=Pt(12), color=MGRAY, italic=True)
+             size=Pt(14), color=LGRAY, italic=True)
 
     _finish(slide, 3,
         "Three components. Visual encoder (AV-HuBERT) is frozen — pre-trained "
@@ -1710,7 +1746,7 @@ def slide_06(prs):
         "fully preserved at WER 29%. Right: 'probiotics' becomes 'permafrost' — "
         "phonetically similar but completely wrong product. Structure intact, "
         "key terms destroyed. This motivated our Intelligibility Score.",
-        [[r1], [r2]], click_reveal=True)
+        None)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 7 — THE INTELLIGIBILITY SCORE
@@ -1786,7 +1822,7 @@ def slide_07(prs):
         "rubric, selected signals and weights, defined tier boundaries. "
         "Validated across 16 decode configs: LLM heuristic judge r=0.925 "
         "with IS, 88.6% agreement.",
-        [signal_shapes, [callout], tier_shapes])
+        None)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 8 — FAILURE MODE TAXONOMY (BAR CHART)
@@ -1844,7 +1880,7 @@ def slide_08(prs):
         "Hallucination (12.3%) is the most dangerous: fluent, confident, "
         "completely fabricated. Right Topic Wrong Details (22.7%) loses names and "
         "numbers. This taxonomy maps directly to our roadmap.",
-        [[b] for b in bar_shapes])
+        None)
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — DEFINITIONS & CLASSIFICATION RULES
@@ -2085,13 +2121,13 @@ def slide_failure_deep_3(prs):
 
     headers = ["Category", "%", "Severity", "What Fixes It"]
     rows = [
-        ["Signal Loss", "9.0%", "Low \u2014 obvious,\neasily detected",
+        ["Signal Loss", "9.0%", "Low \u2014 obvious",
          "Quality filtering, longer segments"],
-        ["Hallucination", "12.3%", "Critical \u2014 fluent\nbut fabricated",
-         "Anti-hallucination prompts,\nconfidence gating, GER"],
+        ["Hallucination", "12.3%", "Moderate \u2014 easy to\nidentify and ignore",
+         "Anti-hallucination prompts,\nconfidence gating, GER*"],
         ["Wrong Topic", "31.6%", "High \u2014 wrong\ndomain entirely",
          "Stronger LLM, topic-aware\nprompting, more training data"],
-        ["Right Topic,\nWrong Details", "22.7%", "Medium \u2014 topic\nright, details lost",
+        ["Right Topic,\nWrong Details", "22.7%", "Very High \u2014 clients\nwill distrust model",
          "Entity injection, domain\nadaptation, fine-tuning"],
         ["Accumulated\nErrors", "24.4%", "Medium \u2014 gradual\nmeaning erosion",
          "General model improvement,\nN-best aggregation"],
@@ -2099,48 +2135,55 @@ def slide_failure_deep_3(prs):
 
     row_colors = {
         0: {0: LGRAY, 2: MGRAY},
-        1: {0: CORAL, 2: DRED},
+        1: {0: CORAL, 2: ORANGE},
         2: {0: GOLD, 2: RED},
-        3: {0: TEAL, 2: ORANGE},
+        3: {0: TEAL, 2: DRED},
         4: {0: LGRAY, 2: YELLOW},
     }
 
     tbl = add_table(slide, headers, rows,
                     MX, CT + Inches(0.45), CW,
-                    row_height=Inches(0.75),
+                    row_height=Inches(0.7),
                     col_widths=[Inches(2.0), Inches(1.0), Inches(3.5), Inches(5.63)],
-                    text_size=Pt(11),
+                    text_size=Pt(12),
                     row_colors=row_colors)
 
+    # GER footnote
+    ger_note = add_text(slide,
+        "*GER = Gross Error Rate \u2014 the fraction of outputs with catastrophic "
+        "errors (WER > 100%). Filters out the worst hallucinations before "
+        "they reach users.",
+        MX, Inches(5.1), CW, Inches(0.35),
+        size=Pt(11), color=MGRAY, italic=True)
+
     # Key insight callout
-    add_rect(slide, MX, Inches(5.5), CW, Inches(0.7), fill_color=NAVY2,
+    callout_r = add_rect(slide, MX, Inches(5.5), CW, Inches(0.65), fill_color=NAVY2,
              border_color=TEAL, border_width=Pt(1), corner_radius=True)
 
-    add_text(slide,
-        "Key insight: Wrong Topic (31.6%) is the single largest failure mode \u2014 "
-        "and the one most likely to improve with a stronger LLM backbone "
-        "(e.g., Llama 3.1 8B replacing Llama 2 7B). Combined with Right Topic "
-        "Wrong Details (22.7%), over half of all failures need better language "
-        "modeling and domain adaptation.",
-        MX + Inches(0.2), Inches(5.55), CW - Inches(0.4), Inches(0.6),
-        size=Pt(12), color=WHITE)
+    callout_t = add_text(slide,
+        "Key insight: Wrong Topic (31.6%) is the largest failure mode and "
+        "most likely to improve with a stronger LLM (Llama 3.1 8B). "
+        "Right Topic Wrong Details (22.7%) is the most dangerous \u2014 clients "
+        "will distrust the model, and confidence values for those words "
+        "are likely always low. Over half of failures need better language modeling.",
+        MX + Inches(0.2), Inches(5.55), CW - Inches(0.4), Inches(0.55),
+        size=Pt(13), color=WHITE)
 
-    add_text(slide,
-        "Severity ranked: Hallucination > Wrong Topic > Right Topic Wrong Details "
-        "> Accumulated Errors > Signal Loss",
-        MX, Inches(6.4), CW, Inches(0.35),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    severity_t = add_text(slide,
+        "Hallucination: not that bad \u2014 relatively easy to identify and ignore "
+        "but still painful. Right Topic Wrong Details: very high impact.",
+        MX, Inches(6.25), CW, Inches(0.5),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Impact and fixes table for the 5-category taxonomy. Hallucination is the "
-        "most dangerous because it sounds convincing \u2014 a user cannot tell it is wrong. "
-        "Wrong Topic is the LARGEST at 31.6% and the most amenable to improvement "
-        "through LLM upgrade. Signal Loss is the least dangerous because it is "
-        "obvious (empty output). The key strategic insight: 54.3% of failures "
-        "(Wrong Topic + Right Topic Wrong Details) trace to the LLM backbone "
-        "being too weak for out-of-domain content. A stronger LLM is the single "
-        "highest-leverage intervention.",
-        [[tbl]], click_reveal=True)
+        "Impact and fixes table for the 5-category taxonomy. Right Topic Wrong "
+        "Details is the most dangerous because clients cannot trust the output \u2014 "
+        "confidence values for those words are likely always low. Hallucination is "
+        "relatively easy to identify and ignore but still painful. Wrong Topic is "
+        "the LARGEST at 31.6% and the most amenable to improvement through LLM "
+        "upgrade. GER = Gross Error Rate, the fraction of outputs with catastrophic "
+        "errors. 54.3% of failures trace to the LLM backbone being too weak.",
+        [[tbl], [ger_note, callout_r, callout_t, severity_t]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -2194,8 +2237,8 @@ def slide_11(prs):
     add_title(slide, "Named Entity Accuracy: The Largest Differentiator")
     add_accent_line(slide)
 
-    # Narrower left column, larger image
-    col_w = Inches(4.5)
+    # Left column with bullets, right column with scatter plot
+    col_w = Inches(4.8)
     lt = add_text(slide, "What are named entities?", MX, CT, col_w, Inches(0.35),
                   size=Pt(18), color=TEAL, bold=True)
     lb = add_bullets(slide, [
@@ -2207,11 +2250,11 @@ def slide_11(prs):
         "58pp gap \u2014 largest differentiator of any signal",
         "17.3% of IS variance (highest for 15%-weight signal)",
         'A viewer can guess a missing "the" but not a missing name',
-    ], MX, CT + Inches(0.5), col_w, Inches(4.5), size=Pt(14))
+    ], MX, CT + Inches(0.5), col_w, Inches(3.8), size=Pt(13))
 
-    # Large image on right
-    img_l = MX + col_w + Inches(0.3)
-    img_w = CW - col_w - Inches(0.3)
+    # Large image on right -- increased gap to prevent occlusion with point 4
+    img_l = MX + col_w + Inches(0.5)
+    img_w = CW - col_w - Inches(0.5)
     img = add_image(slide, "nea_scatter", img_l, CT, width=img_w)
 
     _finish(slide, 11,
@@ -2342,10 +2385,10 @@ def slide_tuning_summary(prs):
     r1 = add_rect(slide, MX, CT + Inches(3.1), col_w, Inches(1.8),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "Key Finding",
+    kf_title = add_text(slide, "Key Finding",
              MX + Inches(0.2), CT + Inches(3.2), col_w - Inches(0.4), Inches(0.3),
              size=Pt(14), color=CORAL, bold=True)
-    add_bullets(slide, [
+    kf_bullets = add_bullets(slide, [
         "Per-segment quality rankings identical across configs (r > 0.92)",
         "A \u201cgood\u201d segment is good in ALL configs; a \u201cbad\u201d one is always bad",
         ("The bottleneck is the visual encoder, not decode parameters",
@@ -2354,9 +2397,16 @@ def slide_tuning_summary(prs):
        size=Pt(13))
 
     # Right — What we found
-    rx = MX + col_w + gap
+    rx = MX + col_w + gap  # slide_tuning_summary right col
     rt = add_text(slide, "What We Found", rx, CT, col_w, Inches(0.35),
                   size=Pt(18), color=CORAL, bold=True)
+
+    # Config J definition note
+    j_note = add_text(slide,
+        "Config J = lenpen=1.0, temp=0.5 (length penalty forces output, "
+        "low temperature reduces randomness)",
+        rx, CT + Inches(0.35), col_w, Inches(0.3),
+        size=Pt(11), color=MGRAY, italic=True)
 
     headers = ["Metric", "Baseline", "Best (J)", "\u0394"]
     rows = [
@@ -2366,21 +2416,21 @@ def slide_tuning_summary(prs):
         ["Hallucinations", "307 (20.5%)", "348 (23.2%)", "+41"],
         ["Mean WWER", "61.9%", "59.8%", "\u22122.1pp"],
     ]
-    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
+    tbl = add_table(slide, headers, rows, rx, CT + Inches(0.75), col_w,
                     row_height=Inches(0.4),
                     col_widths=[Inches(1.7), Inches(1.2), Inches(1.2), Inches(1.4)],
                     text_size=Pt(11))
 
     # Bottom verdict
-    add_text(slide,
+    verdict = add_text(slide,
         "Config J eliminates empties but adds hallucinations. "
         "Net IS gain: +0.08. Tuning is mitigation, not a cure.",
-        rx, CT + Inches(3.0), col_w, Inches(0.7),
+        rx, CT + Inches(3.3), col_w, Inches(0.7),
         size=Pt(14), color=LGRAY, italic=True)
 
     _finish(slide, 0,
         "Condensed tuning results. 13 experiments across 4 decode parameters "
-        "showed minimal improvement. Best config (J) eliminates empty outputs "
+        "showed minimal improvement. Best config (J = lenpen=1.0, temp=0.5) eliminates empty outputs "
         "but increases hallucinations by 13%. Net IS gain only +0.08. "
         "Per-segment rankings are identical across configs (r > 0.92), proving "
         "the bottleneck is the visual encoder, not decode parameters.\n\n"
@@ -2392,7 +2442,8 @@ def slide_tuning_summary(prs):
         "fundamental trade-off: length penalty controls whether the model stays "
         "silent (empty) or fabricates (hallucination). Config J chose the sweet "
         "spot — zero empties at the cost of +41 hallucinations.",
-        [[lt, lb], [rt, tbl], [r1]], click_reveal=True)
+        [[lt, lb], [rt, j_note, tbl], [r1, kf_title, kf_bullets, verdict]],
+        click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 14 — CURATED EXAMPLES (TABLE)
@@ -2461,7 +2512,7 @@ def slide_15(prs):
 
     for i, (key, desc, wer, color) in enumerate(vids):
         x = start_x + i * (vid_w + gap)
-        add_video_poster(slide, key, x, vid_y, vid_w, vid_h)
+        add_video(slide, key, x, vid_y, vid_w, vid_h)
         add_text(slide, wer, x, vid_y + vid_h + Inches(0.05), vid_w,
                  Inches(0.3), size=Pt(14), color=color, bold=True,
                  align=PP_ALIGN.CENTER)
@@ -2773,7 +2824,7 @@ def slide_18(prs):
         "migration to Docker (including 1-2 weeks for Web UI migration), and "
         "ongoing bug fixing. 37+ bugs including NVENC silent corruption. "
         "Refactored from 823-line monolith to 11 reusable modules.",
-        card_groups + [[bottom]], click_reveal=True)
+        card_groups + [[bottom]], click_reveal=True, para_build=False)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 19 — MODULAR REFACTORING (BEFORE/AFTER)
@@ -3432,9 +3483,9 @@ def slide_26(prs):
     add_accent_line(slide)
 
     phases = [
-        ("Phase 1", "Surface the good 40%", "Confidence scoring (2–4 hrs)",
+        ("Phase 1", "Surface the good 40%", "Confidence scoring — attach beam probabilities to outputs (2–4 hrs)",
          "IS: identify segments already ≥ 3.0", TEAL),
-        ("Phase 2", "Improve the fair 22%", "N-best aggregation (ROVER/MBR)",
+        ("Phase 2", "Improve the fair 22%", "N-best aggregation — vote across all 20 beam hypotheses (ROVER/MBR)",
          "IS: +0.3–0.5 from better hypothesis selection", TEAL),
         ("Phase 3", "LLM swap + smart prompts", "Llama 3.1 8B + context prompts",
          "IS: +0.5–0.8 from stronger language model", GREEN),
@@ -3594,7 +3645,10 @@ def slide_27(prs):
          {"bold": True, "color": GREEN}),
         "Business/Finance segments (57% captured) get highest confidence",
         "Short segments (<10 words, 32%) need lower thresholds",
-    ], rx, CT + Inches(0.5), rw, Inches(3.0), size=Pt(15))
+        ("Entity-level: names, numbers, and places missed in 85% of "
+         "segments — confidence scoring can flag these specifically",
+         {"color": CORAL}),
+    ], rx, CT + Inches(0.5), rw, Inches(3.5), size=Pt(14))
 
     _finish(slide, 27,
         "Phase 1 is the quick win. Beam search already computes probability "
@@ -3602,8 +3656,9 @@ def slide_27(prs):
         "scoring means attaching these scores to outputs so users can trust "
         "high-confidence results and flag low-confidence for review. No extra "
         "model inference needed — the scores are a free byproduct of decode. "
-        "2-4 hours of implementation.",
-        [[lt, lb, r1], [rt, rb]], click_reveal=True)
+        "2-4 hours of implementation. Entity-level analysis shows names, "
+        "numbers, and places are missed in 85% of segments.",
+        [[lt, lb], [r1], [rt, rb]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 28 — PHASE 2: N-BEST AGGREGATION
@@ -3656,7 +3711,7 @@ def slide_28(prs):
 
     # Impact summary
     iy = cy + ch + Inches(0.3)
-    add_bullets(slide, [
+    impact = add_bullets(slide, [
         ("Expected: 5\u201315% relative IS improvement", {"color": TEAL, "bold": True}),
         "Targets: Accumulated Errors (24.4%) \u2014 the \"death by a thousand cuts\" category",
         "Moves IS 2.0\u20132.9 segments above the 3.0 threshold",
@@ -3668,7 +3723,7 @@ def slide_28(prs):
         "votes word-by-word. MBR picks the hypothesis closest to the consensus. "
         "Both are established ASR techniques with consistent 5-15% gains. "
         "Targets the Accumulated Errors category (24.4% of failures).",
-        [[r1], [r2]], click_reveal=True)
+        [[r1], [r2], [impact]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 29 — FINE-TUNING + DATA SCALING
@@ -4234,7 +4289,7 @@ def slide_14b(prs):
         for c, (key, label, wer, color) in enumerate(row):
             x = start_x + c * (vid_w + gap_x)
             y = row_y[r]
-            add_video_poster(slide, key, x, y, vid_w, vid_h)
+            add_video(slide, key, x, y, vid_w, vid_h)
             # WER badge
             add_text(slide, f"{label}  WER {wer}",
                      x, y + vid_h + Inches(0.04), vid_w, Inches(0.32),
@@ -4483,7 +4538,7 @@ def slide_eval_dataset(prs):
              size=Pt(17), color=CORAL, bold=True)
 
     tbl = add_table(slide,
-        ["Topic", "Segments", "IS"],
+        ["Topic", "Segments", "Quality*"],
         [["Business/Finance", "214", "3.08"],
          ["Education/Lecture", "312", "2.63"],
          ["Entertainment", "198", "2.51"],
@@ -4494,11 +4549,18 @@ def slide_eval_dataset(prs):
         rx, CT + Inches(0.5), col_w, text_size=Pt(12),
         row_colors={0: {2: GREEN}, 6: {2: CORAL}})
 
+    # Footnote explaining Quality* column
+    add_text(slide,
+        "*Quality = our composite metric (0\u20135 scale), introduced in the next section.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(11), color=MGRAY, italic=True)
+
     _finish(slide, 0,
         "1,497 segments from diverse YouTube videos. Not a curated benchmark. "
         "Multiple topics, speakers, accents, lighting conditions. Business and "
-        "Finance has the highest IS (3.08) because it's closest to the TED talk "
-        "training data. DIY/Home is worst (2.13) due to inherently visual content.",
+        "Finance has the highest quality score (3.08) because it's closest to the "
+        "TED talk training data. DIY/Home is worst (2.13) due to inherently visual "
+        "content. The Quality column is our Intelligibility Score, introduced later.",
         [[s1, s2, s3], [tbl]], click_reveal=True)
 
 
@@ -4544,8 +4606,8 @@ def slide_wer_explained(prs):
         "Standard in ASR research",
     ], rx, CT + Inches(0.5), col_w, Inches(1.2), size=Pt(14), bullet_color=GREEN)
 
-    add_text(slide, "What WER Misses", rx, CT + Inches(2.0), col_w, Inches(0.4),
-             size=Pt(18), color=CORAL, bold=True)
+    rm = add_text(slide, "What WER Misses", rx, CT + Inches(2.0), col_w, Inches(0.4),
+                  size=Pt(18), color=CORAL, bold=True)
     rb2 = add_bullets(slide, [
         ("All errors weighted equally", {"color": CORAL}),
         ('"admiral"\u2192"animal" = "the"\u2192"a"', {"color": CORAL}),
@@ -4560,7 +4622,7 @@ def slide_wer_explained(prs):
         "Admiral-to-animal gets the same penalty as the-to-a. No credit for "
         "meaning preservation or phonetic similarity. Can exceed 100% when the "
         "model generates extra words (insertions).",
-        [[lt], [rt, rb1, rb2]], click_reveal=True)
+        [[lt], [rt], [rb1], [rm], [rb2]], click_reveal=True)
 
 
 def slide_design_philosophy(prs):
@@ -4683,11 +4745,16 @@ def slide_is_dimensions(prs):
 
     _finish(slide, 0,
         "PCA analysis reveals three independent dimensions. Word Accuracy "
-        "(60% of variance) combines WER, WWER, and Phonetic — they all measure "
+        "(60% of variance) combines WER, WWER, and Phonetic \u2014 they all measure "
         "the same thing: visual encoder quality. Meaning Preservation (29%) is "
         "the semantic similarity tiebreaker. Output Sanity (9%) is mostly length "
-        "ratio. Four of six signals are redundant — but deliberate: cross-"
-        "validation makes the metric robust.",
+        "ratio. Four of six signals are redundant \u2014 but deliberate: cross-"
+        "validation makes the metric robust.\n\n"
+        "CORRELATION BETWEEN DIMENSIONS: Word accuracy signals (WER, WWER, "
+        "Phonetic) are highly correlated with each other (r > 0.79). Semantic "
+        "is moderately correlated with word accuracy. Length ratio is the most "
+        "independent dimension (9.1% of total variance). This confirms these "
+        "are genuinely 3 independent dimensions, not redundant signals.",
         [[c] for c in card_shapes], click_reveal=True)
 
 
@@ -4739,7 +4806,15 @@ def slide_domain_mismatch(prs):
         "(57% captured) because it's closest to the TED talk training data. "
         "DIY/Home is worst at IS 2.13 (30% captured) — inherently visual content "
         "that doesn't translate to speech patterns. 19% of segments (~284) show "
-        "domain vocabulary confusion where a topic label would help.",
+        "domain vocabulary confusion where a topic label would help.\n\n"
+        "WHY DOES A TOPIC LABEL HELP? The model was trained on general "
+        "lip-reading data (TED talks) without topic context. When it encounters "
+        "domain-specific vocabulary (medical, legal, technical), it hallucinates "
+        "common words instead. A topic label (e.g., 'cooking', 'medicine') at "
+        "decode time would constrain the vocabulary space, helping the LLM "
+        "generate domain-appropriate words. The ~284 segments (19%) are those "
+        "where the LLM judge identified domain vocabulary confusion as the "
+        "primary error source.",
         [[lt, tbl], []], click_reveal=True)
 
 
@@ -4869,7 +4944,7 @@ def slide_is_deep_dive(prs):
         "Semantic similarity (25% weight) captures 28.5% of IS variance. "
         "Length ratio is weakest at 9.1%. The expert heuristic (15-rule "
         "decision tree) achieves r=0.934.",
-        [[lt, tbl], [rt, rb]], click_reveal=True)
+        [[rt, rb], [lt, tbl]], click_reveal=True)
 
 
 def slide_metric_disagreement(prs):
@@ -4943,6 +5018,9 @@ def slide_metric_disagreement(prs):
         "is the dangerous case — sounds right but wrong meaning.",
         [[c] for c in cards], click_reveal=True)
 
+    # Hide slide
+    slide._element.set('show', '0')
+
 
 def slide_metric_disagreement_2(prs):
     """More metric disagreement patterns — part 2."""
@@ -5011,6 +5089,9 @@ def slide_metric_disagreement_2(prs):
         "Length explosion + low semantic = hallucination. Low NEA + moderate semantic = "
         "entity destruction. All-moderate = accumulated errors.",
         [[c] for c in cards], click_reveal=True)
+
+    # Hide slide
+    slide._element.set('show', '0')
 
 
 def slide_two_eval_systems(prs):
@@ -5098,7 +5179,7 @@ def slide_llm_judge(prs):
     # Left — protocol + results
     lt = add_text(slide, "Protocol", MX, CT, col_w, Inches(0.4),
                   size=Pt(17), color=TEAL, bold=True)
-    add_bullets(slide, [
+    lb = add_bullets(slide, [
         "Claude Opus evaluated all 1,497 ref+hyp pairs",
         "Blind (no topic context), 3-level: Y / P / N",
         "30 duplicate pairs for intra-rater reliability",
@@ -5106,7 +5187,7 @@ def slide_llm_judge(prs):
     ], MX, CT + Inches(0.5), col_w, Inches(1.8), size=Pt(13))
 
     # Results table
-    add_text(slide, "Results (Blind)", MX, CT + Inches(2.4), col_w, Inches(0.3),
+    res_t = add_text(slide, "Results (Blind)", MX, CT + Inches(2.4), col_w, Inches(0.3),
              size=Pt(15), color=TEAL, bold=True)
 
     tbl = add_table(slide,
@@ -5155,7 +5236,7 @@ def slide_llm_judge(prs):
         "blind. Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9% — "
         "the LLM says nearly 2 in 3 segments have useful output. Intra-rater "
         "reliability 86.7%. Correlation with IS: r=0.85 (Pearson 0.8495).",
-        [[lt, tbl], [rt, tbl2]], click_reveal=True)
+        [[lt, lb, res_t, tbl], [rt, tbl2]], click_reveal=True)
 
 
 def slide_context_eval(prs):
@@ -5187,9 +5268,9 @@ def slide_context_eval(prs):
         size=Pt(13), color=LGRAY, italic=True)
 
     # Key finding
-    add_text(slide, "Key Finding:", MX, CT + Inches(3.0), col_w, Inches(0.3),
+    kf_t = add_text(slide, "Key Finding:", MX, CT + Inches(3.0), col_w, Inches(0.3),
              size=Pt(15), color=CORAL, bold=True)
-    add_bullets(slide, [
+    kf_b = add_bullets(slide, [
         ("Y drops 8pp: context reveals missed domain vocabulary",
          {"color": CORAL}),
         "Y\u2192P dominant transition (138 of 230 downgrades)",
@@ -5235,7 +5316,7 @@ def slide_context_eval(prs):
         "STRICTER, not lenient. 230 downgrades vs 68 upgrades. Dominant "
         "transition: Y to P (138 cases) — the judge realizes domain vocabulary "
         "was wrong. Only 1 N-to-Y rescue across all 1,497 pairs.",
-        [[lt, tbl], [rt, tbl2, tbl3]], click_reveal=True)
+        [[lt, tbl], [rt, tbl2, tbl3], [kf_t, kf_b]], click_reveal=True)
 
 
 def slide_what_good_looks_like(prs):
@@ -5659,7 +5740,7 @@ def slide_llm_context_engine(prs):
         "context. A stronger LLM means better disambiguation. Llama 3.1 8B "
         "has quality equivalent to LLaMA-2 70B with the same hidden dimension "
         "(4096), making it a trivial 1-2 hour swap.",
-        [[lt, lb], [r1, r2]], click_reveal=True)
+        [[lt, lb], [rt, r1, r2]], click_reveal=True)
 
 
 def slide_data_scaling(prs):
@@ -5675,12 +5756,14 @@ def slide_data_scaling(prs):
     lt = add_text(slide, "Why More Data Is the Answer", MX, CT, col_w, Inches(0.4),
                   size=Pt(17), color=CORAL, bold=True)
     lb = add_bullets(slide, [
-        ("Current: 1,273 segments — far below LoRA minimum", {"bold": True}),
+        ("Current: 1,273 English segments \u2014 far below LoRA minimum", {"bold": True}),
         "Fine-tune experiments confirmed: small data = overfitting",
         "Scaling law (ICLR 2024): data × LLM quality = multiplicative gains",
-        ("AVSpeech: 290K videos available for curation", {"color": TEAL}),
-        ("Next step: curate 20K–50K diverse segments", {"bold": True, "color": GREEN}),
-    ], MX, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(13))
+        ("AVSpeech: 290K English videos available for curation", {"color": TEAL}),
+        ("Data scarcity is a curation bottleneck, not a hard blocker",
+         {"color": LGRAY, "italic": True}),
+        ("Next step: curate 20K\u201350K diverse English segments", {"bold": True, "color": GREEN}),
+    ], MX, CT + Inches(0.5), col_w, Inches(3.5), size=Pt(13))
 
     # Right — projection table with IS
     rx = MX + col_w + gap
@@ -5704,7 +5787,7 @@ def slide_data_scaling(prs):
     add_text(slide, "290K", rx + Inches(0.2), CT + Inches(3.1),
              Inches(1.2), Inches(0.4),
              size=Pt(28), color=TEAL, bold=True)
-    add_text(slide, "AVSpeech videos available\nfor training data curation",
+    add_text(slide, "AVSpeech English videos available\nfor training data curation",
              rx + Inches(1.5), CT + Inches(3.1), col_w - Inches(1.7),
              Inches(0.7), size=Pt(13), color=WHITE)
 
@@ -5851,9 +5934,9 @@ def slide_confidence_scoring(prs):
     ], MX, CT + Inches(0.45), col_w, Inches(2.5), size=Pt(14))
 
     # How it works
-    add_text(slide, "How It Works", MX, CT + Inches(3.2), col_w, Inches(0.35),
+    hwt = add_text(slide, "How It Works", MX, CT + Inches(3.2), col_w, Inches(0.35),
              size=Pt(16), color=TEAL, bold=True)
-    add_bullets(slide, [
+    hwb = add_bullets(slide, [
         "Combine decode-time signals: beam score, entropy, "
         "N-best agreement, length ratio",
         "Train a lightweight classifier on our 1,497 labeled segments",
@@ -5866,7 +5949,7 @@ def slide_confidence_scoring(prs):
     rt = add_text(slide, "Impact", rx, CT, rw, Inches(0.35),
                   size=Pt(18), color=GREEN, bold=True)
 
-    add_bullets(slide, [
+    rb = add_bullets(slide, [
         ("Immediate value: 2\u20134 hours to implement", {"bold": True, "color": GREEN}),
         "Users see only high-confidence segments by default",
         "Reduces perceived error rate from 60% to ~20%",
@@ -5874,7 +5957,7 @@ def slide_confidence_scoring(prs):
     ], rx, CT + Inches(0.45), rw, Inches(2.0), size=Pt(14))
 
     # Right — what we already have
-    add_text(slide, "What We Already Have", rx, CT + Inches(2.7), rw, Inches(0.35),
+    waht = add_text(slide, "What We Already Have", rx, CT + Inches(2.7), rw, Inches(0.35),
              size=Pt(16), color=CORAL, bold=True)
     headers = ["Signal", "Source"]
     rows = [
@@ -5888,7 +5971,7 @@ def slide_confidence_scoring(prs):
                     row_height=Inches(0.35), text_size=Pt(10),
                     col_widths=[Inches(2.4), Inches(3.0)])
 
-    add_text(slide,
+    bottom = add_text(slide,
         "The fastest path to user value. No retraining, no new data, "
         "no infrastructure changes \u2014 just smarter filtering.",
         MX, Inches(6.35), CW, Inches(0.4),
@@ -5902,7 +5985,7 @@ def slide_confidence_scoring(prs):
         "our existing 1,497 labeled segments. Implementation: 2-4 hours. "
         "Impact: users see only trusted output, perceived error rate drops "
         "from 60% to ~20%.",
-        [[lt, lb], [rt, tbl]], click_reveal=True)
+        [[lt, lb], [rt, rb], [hwt, hwb, waht, tbl], [bottom]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -6000,7 +6083,6 @@ def main():
         slide_25c,          # Salvage: How Detection Works
         # --- What good looks like (now after salvage context) ---
         slide_what_good_looks_like, # What good looks like
-        slide_14,           # Curated Examples (table)
         slide_14b,          # Video Gallery (label fixed, Req #12)
         slide_15,           # Demo: OK > Near-miss > Hallucination (Req #13)
         # --- Section 7: Engineering (Req #14: slide_16 removed) ---
