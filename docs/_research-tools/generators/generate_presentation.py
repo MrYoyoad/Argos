@@ -561,13 +561,14 @@ def _fix_pptx_video_compat(pptx_path):
     PowerPoint expects these wrapped in mc:AlternateContent (Choice/Fallback)
     per ISO/IEC 29500.  Without the wrapper, PowerPoint shows a repair dialog.
 
-    This function opens the saved PPTX zip, fixes affected slide XMLs, and
-    writes the corrected file back.
+    Uses lxml for proper XML manipulation instead of regex.
     """
-    import zipfile, io, re as _re, copy, shutil, tempfile
+    import zipfile, shutil, tempfile, copy as _copy
 
     MC_NS = "http://schemas.openxmlformats.org/markup-compatibility/2006"
     P14_NS = "http://schemas.microsoft.com/office/powerpoint/2010/main"
+    A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
+    P_NS = "http://schemas.openxmlformats.org/presentationml/2006/main"
 
     tmp_fd, tmp_path = tempfile.mkstemp(suffix='.pptx')
     os.close(tmp_fd)
@@ -578,59 +579,70 @@ def _fix_pptx_video_compat(pptx_path):
         for item in zin.infolist():
             raw = zin.read(item.filename)
 
-            # Only process slide XMLs that contain videoFile
             if (item.filename.startswith('ppt/slides/slide') and
                     item.filename.endswith('.xml') and
                     b'videoFile' in raw):
-                text = raw.decode('utf-8')
+                tree = etree.fromstring(raw)
+                root = tree  # <p:sld ...>
 
-                # Ensure mc namespace is declared on root element
-                if 'xmlns:mc=' not in text:
-                    text = text.replace(
-                        'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"',
-                        'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" '
-                        f'xmlns:mc="{MC_NS}" mc:Ignorable="p14"',
-                        1)
-                elif 'mc:Ignorable' not in text:
-                    # mc namespace declared but no Ignorable — add it
-                    text = _re.sub(
-                        r'(xmlns:mc="[^"]*")',
-                        r'\1 mc:Ignorable="p14"', text, count=1)
+                # Register mc and p14 namespaces on root
+                nsmap = dict(root.nsmap)
+                need_update = False
+                if 'mc' not in nsmap:
+                    nsmap['mc'] = MC_NS
+                    need_update = True
+                if 'p14' not in nsmap:
+                    nsmap['p14'] = P14_NS
+                    need_update = True
 
-                # Ensure p14 namespace is declared on root element
-                if 'xmlns:p14=' not in text:
-                    text = text.replace(
-                        f'xmlns:mc="{MC_NS}"',
-                        f'xmlns:mc="{MC_NS}" xmlns:p14="{P14_NS}"',
-                        1)
+                if need_update:
+                    # Rebuild root with updated nsmap (lxml requires this)
+                    new_root = etree.Element(root.tag, root.attrib, nsmap=nsmap)
+                    for child in root:
+                        new_root.append(child)
+                    root = new_root
 
-                # Wrap each video p:pic in mc:AlternateContent
-                # Match <p:pic>...</p:pic> blocks containing videoFile
-                def _wrap_video_pic(m):
-                    pic_xml = m.group(0)
-                    if 'videoFile' not in pic_xml:
-                        return pic_xml
-                    # Build fallback: same pic but without videoFile and p14:media
-                    fallback = _re.sub(
-                        r'<a:videoFile[^/]*/>', '', pic_xml)
-                    fallback = _re.sub(
-                        r'<p:extLst>.*?</p:extLst>', '', fallback,
-                        flags=_re.DOTALL)
-                    # Keep inline p14 namespace decls in Choice version
-                    # (removing them can break namespace resolution)
-                    choice_xml = pic_xml
-                    return (f'<mc:AlternateContent>'
-                            f'<mc:Choice Requires="p14">{choice_xml}</mc:Choice>'
-                            f'<mc:Fallback>{fallback}</mc:Fallback>'
-                            f'</mc:AlternateContent>')
+                # Set mc:Ignorable="p14" on root
+                mc_ign = root.get(f'{{{MC_NS}}}Ignorable', '')
+                if 'p14' not in mc_ign.split():
+                    root.set(f'{{{MC_NS}}}Ignorable',
+                             (mc_ign + ' p14').strip())
 
-                new_text = _re.sub(
-                    r'<p:pic>.*?</p:pic>', _wrap_video_pic, text,
-                    flags=_re.DOTALL)
+                # Find all p:pic elements containing a:videoFile
+                video_pics = []
+                for pic in root.iter(f'{{{P_NS}}}pic'):
+                    if pic.find(f'.//{{{A_NS}}}videoFile') is not None:
+                        video_pics.append(pic)
 
-                if new_text != text:
+                for pic in video_pics:
+                    parent = pic.getparent()
+                    idx = list(parent).index(pic)
+
+                    # Build mc:AlternateContent wrapper
+                    ac = etree.Element(f'{{{MC_NS}}}AlternateContent')
+                    choice = etree.SubElement(ac, f'{{{MC_NS}}}Choice')
+                    choice.set('Requires', 'p14')
+                    fallback = etree.SubElement(ac, f'{{{MC_NS}}}Fallback')
+
+                    # Choice gets the original pic (with videoFile + p14:media)
+                    choice.append(pic)  # moves pic out of parent
+
+                    # Fallback gets a deep copy without videoFile and p:extLst
+                    fb_pic = _copy.deepcopy(pic)
+                    for vf in fb_pic.findall(f'.//{{{A_NS}}}videoFile'):
+                        vf.getparent().remove(vf)
+                    # Remove p:extLst containing p14:media from nvPr
+                    for ext_lst in fb_pic.findall(f'.//{{{P_NS}}}extLst'):
+                        ext_lst.getparent().remove(ext_lst)
+                    fallback.append(fb_pic)
+
+                    # Insert wrapper where pic was
+                    parent.insert(idx, ac)
                     changed = True
-                raw = new_text.encode('utf-8')
+
+                if video_pics:
+                    raw = etree.tostring(root, xml_declaration=True,
+                                         encoding='UTF-8', standalone=True)
 
             zout.writestr(item, raw)
 
@@ -6465,10 +6477,7 @@ def main():
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT))
-    # _fix_pptx_video_compat disabled — was causing PowerPoint repair
-    # dialog and destroying video slide content. The minor repair warning
-    # from bare p:pic elements is preferable to blank slides.
-    # _fix_pptx_video_compat(str(OUTPUT))
+    _fix_pptx_video_compat(str(OUTPUT))
     print(f"\nSaved: {OUTPUT}")
     print(f"Slides: {len(prs.slides)}")
 
