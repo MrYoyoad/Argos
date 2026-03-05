@@ -1,0 +1,732 @@
+"""
+Slide builders — Sections 0-2: Opening, Context, The Problem
+"""
+
+from pathlib import Path
+from pptx.util import Inches, Pt, Emu
+from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.oxml.ns import qn
+from lxml import etree
+
+from .config import (
+    IMG, VID, POSTER_DIR,
+    SL_W, SL_H, BG, WHITE, TEAL, CORAL, LGRAY, MGRAY, DGRAY,
+    GREEN, YELLOW, GOLD, ORANGE, RED, DRED, NAVY2, NAVY3,
+    FONT, _auto_num,
+    MX, MY, CT, CW, CH, SLW, SRG, SRL, SRW,
+)
+from .helpers import (
+    new_slide, set_notes, add_logo, add_slide_num, add_accent_line,
+    _fmt, add_title, add_text, add_rich_text, add_bullets,
+    add_rect, add_image, add_play_button, add_video_poster, add_video,
+    add_table, _shade_cell, _rgb_hex,
+    add_fade_transition, add_animations, _finish,
+    build_split, build_bullets, build_two_col, build_full_image,
+)
+
+# ═══════════════════════════════════════════════════════════════════════
+# NEW SLIDES — EXECUTIVE SUMMARY, TOC, IS BUILD-UP
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_exec_summary(prs):
+    """Executive summary — bottom-line-up-front overview."""
+    slide = new_slide(prs)
+    add_title(slide, "Executive Summary")
+    add_accent_line(slide)
+
+    add_text(slide, "Three months of research and engineering on visual speech processing:",
+             MX, CT, CW, Inches(0.4), size=Pt(16), color=LGRAY, italic=True)
+
+    items = [
+        ("Evaluated a lip-reading AI on 1,497 real-world YouTube segments",
+         {"bold": True}),
+        "Standard metric (WER) reports 64.1% error — 2.5\u00d7 worse than benchmark",
+        ("Our new Intelligibility Score (IS) reveals 40% is actually useful — "
+         "3.5\u00d7 more than WER admits", {"color": TEAL, "bold": True}),
+        "Built a complete production system: 8-stage pipeline, standalone container",
+        ("Clear roadmap to IS 3.5\u20134.0 (from 2.52) through data scaling + LLM upgrade",
+         {"color": TEAL}),
+        ("Arabic pipeline: replication roadmap established for Arabic lip-reading", {}),
+        "Produced 8 comprehensive research reports",
+    ]
+    bul = add_bullets(slide, items, MX, CT + Inches(0.6), CW, Inches(4.0),
+                      size=Pt(17), spacing=Pt(14))
+
+    _finish(slide, 2,
+        "Executive summary. Three months of work on visual speech processing. "
+        "Key finding: WER dramatically overstates failure. Our Intelligibility "
+        "Score shows 40% of output is properly captured, not the 11% WER suggests. "
+        "Complete production system delivered. Clear roadmap to improve further.",
+        [[bul]], click_reveal=True)
+
+
+
+def slide_wer_lies(prs):
+    """Side-by-side truth: WER says failure, IS says excellent."""
+    slide = new_slide(prs)
+    add_title(slide, "WER: The Metric That Lies")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+    card_h = Inches(2.8)
+
+    # Left card: WER verdict (CORAL)
+    wer_shapes = []
+    wer_shapes.append(add_rect(slide, MX, CT, col_w, card_h,
+                       fill_color=NAVY2, border_color=CORAL, border_width=Pt(3),
+                       corner_radius=True))
+    wer_shapes.append(add_text(slide, "46.2%", MX + Inches(0.3), CT + Inches(0.2),
+                                col_w - Inches(0.6), Inches(1.0),
+                                size=Pt(64), color=CORAL, bold=True,
+                                align=PP_ALIGN.CENTER))
+    wer_shapes.append(add_text(slide, "Word Error Rate",
+                                MX + Inches(0.3), CT + Inches(1.2),
+                                col_w - Inches(0.6), Inches(0.3),
+                                size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER))
+    wer_shapes.append(add_text(slide, 'Verdict: "FAILING"',
+                                MX + Inches(0.3), CT + Inches(1.6),
+                                col_w - Inches(0.6), Inches(0.35),
+                                size=Pt(18), color=CORAL, bold=True,
+                                align=PP_ALIGN.CENTER))
+    wer_shapes.append(add_text(slide,
+        "6 insertions, 1 deletion\n= nearly half the words are \"wrong\"",
+        MX + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6), Inches(0.6),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+
+    # Right card: IS verdict (GREEN)
+    rx = MX + col_w + gap
+    is_shapes = []
+    is_shapes.append(add_rect(slide, rx, CT, col_w, card_h,
+                      fill_color=NAVY2, border_color=GREEN, border_width=Pt(3),
+                      corner_radius=True))
+    is_shapes.append(add_text(slide, "4.03", rx + Inches(0.3), CT + Inches(0.2),
+                               col_w - Inches(0.6), Inches(1.0),
+                               size=Pt(64), color=GREEN, bold=True,
+                               align=PP_ALIGN.CENTER))
+    is_shapes.append(add_text(slide, "Intelligibility Score (Excellent)",
+                               rx + Inches(0.3), CT + Inches(1.2),
+                               col_w - Inches(0.6), Inches(0.3),
+                               size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER))
+    is_shapes.append(add_text(slide, 'Verdict: "EXCELLENT"',
+                               rx + Inches(0.3), CT + Inches(1.6),
+                               col_w - Inches(0.6), Inches(0.35),
+                               size=Pt(18), color=GREEN, bold=True,
+                               align=PP_ALIGN.CENTER))
+    is_shapes.append(add_text(slide,
+        "Semantic similarity: 0.90\nMeaning fully preserved",
+        rx + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6), Inches(0.6),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+
+    # Bottom: ref/hyp comparison + callout
+    bottom_shapes = []
+    by = CT + card_h + Inches(0.3)
+    bottom_shapes.append(add_rich_text(slide, [
+        [("\u25b6 Reference:  ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+         ("i want you to remember all these i want you to memorize them",
+          {"size": Pt(12), "color": WHITE})],
+        [("\u25b6 Prediction: ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+         ("i want you to remember all the things that i wanted you to memorize in my",
+          {"size": Pt(12), "color": TEAL})],
+    ], MX, by, CW, Inches(0.7), space_after=Pt(4)))
+    cb_y = by + Inches(0.8)
+    bottom_shapes.append(add_rect(slide, MX + Inches(1.5), cb_y,
+                                   CW - Inches(3.0), Inches(0.6),
+                                   fill_color=NAVY2, border_color=TEAL,
+                                   border_width=Pt(2), corner_radius=True))
+    bottom_shapes.append(add_text(slide,
+        "WER counts word edits.  IS asks: did the viewer get the message?  Here \u2014 yes, completely.",
+        MX + Inches(1.7), cb_y + Inches(0.1), CW - Inches(3.4), Inches(0.4),
+        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+
+    _finish(slide, 0,
+        "Side-by-side: same segment scores 46.2% WER (failure) but IS 4.03 "
+        "(excellent). The prediction preserves the complete meaning.",
+        [wer_shapes, is_shapes, bottom_shapes], click_reveal=True)
+
+
+def slide_toc(prs):
+    """Table of contents — 4-section overview."""
+    slide = new_slide(prs)
+    add_title(slide, "Presentation Overview")
+    add_accent_line(slide)
+
+    sections = [
+        ("1. Context",
+         "What is lip reading? \u2022 How does the system work? \u2022 What's the benchmark?",
+         TEAL),
+        ("2. Research Findings",
+         "Real-world evaluation \u2022 Intelligibility Score metric \u2022 Failure analysis "
+         "\u2022 Tuning experiments",
+         TEAL),
+        ("3. Engineering",
+         "8-stage pipeline \u2022 Modular refactoring \u2022 Standalone container "
+         "\u2022 Evaluation infrastructure",
+         TEAL),
+        ("4. Future Directions",
+         "Improvement roadmap \u2022 Data scaling \u2022 LLM upgrade \u2022 "
+         "Arabic pipeline \u2022 Target: IS 3.5\u20134.0",
+         TEAL),
+    ]
+    shapes = []
+    y = CT + Inches(0.1)
+    for sec_title, desc, color in sections:
+        r = add_rect(slide, MX, y, CW, Inches(1.05), fill_color=NAVY2,
+                     border_color=color, border_width=Pt(1.5), corner_radius=True)
+        add_text(slide, sec_title, MX + Inches(0.3), y + Inches(0.1),
+                 CW - Inches(0.6), Inches(0.4),
+                 size=Pt(22), color=WHITE, bold=True)
+        add_text(slide, desc, MX + Inches(0.3), y + Inches(0.55),
+                 CW - Inches(0.6), Inches(0.4),
+                 size=Pt(13), color=LGRAY)
+        shapes.append(r)
+        y += Inches(1.25)
+
+    _finish(slide, 3,
+        "Four sections. Context sets the stage — what is lip reading, "
+        "how the system works. Research findings are the core: our novel "
+        "evaluation framework and what we learned. Engineering covers the "
+        "production system. Future directions lays out the improvement roadmap.",
+        [[s] for s in shapes], click_reveal=True)
+
+
+def slide_is_foreshadow(prs):
+    """Brief IS introduction — bridge from WER limitations."""
+    slide = new_slide(prs)
+    add_title(slide, "We Need a Better Metric")
+    add_accent_line(slide)
+
+    bul = add_bullets(slide, [
+        "WER counts word errors — but ignores whether the viewer understood",
+        ("We created the Intelligibility Score (IS): a composite 0\u20135 metric",
+         {"bold": True, "color": TEAL}),
+        "Combines 6 quality signals: meaning, phonetics, word accuracy, entities, length",
+        ("IS \u2265 3.0 = \u201cProperly Captured\u201d — the viewer gets the right message",
+         {"color": GREEN, "bold": True}),
+    ], MX, CT + Inches(0.2), CW, Inches(3.5), size=Pt(17))
+
+    add_text(slide,
+        "Designed at development time, runs as pure "
+        "deterministic Python — $0 per evaluation, 100% reproducible.",
+        MX, Inches(5.0), CW, Inches(0.5),
+        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Bridge slide: WER is blind to meaning. We created IS — a composite "
+        "0-5 metric combining 6 quality signals. IS >= 3.0 means the viewer "
+        "gets the right message. Designed at development time, "
+        "runs as deterministic Python at evaluation time.",
+        [[bul]], click_reveal=True)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 1 — TITLE
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_01(prs):
+    slide = new_slide(prs)
+
+    # Logo top-right
+    logo = add_image(slide, "logo", SL_W - MX - Inches(0.9),
+                     Inches(0.3), height=Inches(0.9))
+
+    # Title
+    t1 = add_text(slide, "Argos VSP", MX, Inches(2.0), CW, Inches(1.0),
+                  size=Pt(48), color=WHITE, bold=True, align=PP_ALIGN.LEFT)
+    t2 = add_text(slide, "Research Findings and Production Roadmap",
+                  MX, Inches(3.0), CW, Inches(0.7),
+                  size=Pt(28), color=TEAL, bold=False, align=PP_ALIGN.LEFT)
+    t3 = add_text(slide, "Visual Speech Processing — Project Review",
+                  MX, Inches(3.8), CW, Inches(0.5),
+                  size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.LEFT)
+
+    # Accent line
+    shp = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE,
+                                  MX, Inches(4.5), Inches(3), Pt(2))
+    shp.fill.solid()
+    shp.fill.fore_color.rgb = TEAL
+    shp.line.fill.background()
+
+    # Date & author
+    add_text(slide, "February 2026", MX, Inches(5.2), Inches(4), Inches(0.4),
+             size=Pt(16), color=LGRAY)
+    add_text(slide, "Yoad Oxman  •  The Orchard", MX, Inches(5.6),
+             Inches(5), Inches(0.4), size=Pt(14), color=MGRAY)
+
+    add_slide_num(slide, 1)
+    add_fade_transition(slide)
+    add_animations(slide, [[t1], [t2, t3]])
+    set_notes(slide,
+        "Welcome. This presentation covers 3 months of research and engineering "
+        "on a visual speech processing system — reading lips from video, no audio. "
+        "We'll cover what we found, what we built, and where we go next.")
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 2 — WHAT IS VSP? (VIDEO)
+# ═══════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 2 — WHAT IS VSP? (VIDEO)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_02(prs):
+    slide = new_slide(prs)
+    add_title(slide, "What is Visual Speech Processing?")
+    add_accent_line(slide)
+
+    add_text(slide, "A system that reads lips from video — no audio needed.",
+             MX, Inches(1.55), CW, Inches(0.4),
+             size=Pt(20), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    # Embedded video — click to play directly in PowerPoint
+    vid_w = Inches(8.5)
+    vid_h = Inches(4.3)
+    vid_x = (SL_W - vid_w) // 2
+    add_video(slide, "perfect", vid_x, Inches(2.1), vid_w, vid_h)
+
+    add_text(slide, "33 words about health insurance — WER 0%, IS 5.0. "
+             "Click the video to play.",
+             MX, Inches(6.6), CW, Inches(0.4),
+             size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 2,
+        "PLAY VIDEO: IEa7qEkMvfQ_3__c5447488_with_hyp.mp4 — 33 words about "
+        "health insurance, WER 0%. Play the video first, then explain: this is "
+        "the best case. The system perfectly reads 33 consecutive words from lip "
+        "movement alone. Now let's see how it works.")
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 3 — MODEL ARCHITECTURE
+# ═══════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 3 — MODEL ARCHITECTURE
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_03(prs):
+    slide = new_slide(prs)
+    add_title(slide, "How It Works: Three Components")
+    add_accent_line(slide)
+
+    # Model architecture diagram (AV-HuBERT → Projection → LLaMA-2-7B flow)
+    img = add_image(slide, "model_arch", MX, CT, width=CW, height=Inches(3.6))
+
+    # Three component blocks
+    bw = Inches(3.5)
+    bh = Inches(0.7)
+    by = Inches(5.4)
+    gap = Inches(0.4)
+    total = 3 * bw + 2 * gap
+    bx = (SL_W - total) / 2
+
+    labels = [
+        ("AV-HuBERT", "Visual Encoder, frozen, 1024-dim", TEAL),
+        ("Linear Projection", "1024 → 4096", LGRAY),
+        ("LLaMA-2-7B", "4-bit QLoRA, r=16", CORAL),
+    ]
+    blocks = []
+    for i, (name, desc, border) in enumerate(labels):
+        x = bx + i * (bw + gap)
+        r = add_rect(slide, x, by, bw, bh, fill_color=NAVY2, border_color=border,
+                     border_width=Pt(2), corner_radius=True)
+        tb = add_text(slide, f"{name}\n{desc}", x + Inches(0.1), by + Inches(0.05),
+                      bw - Inches(0.2), bh - Inches(0.1),
+                      size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
+        blocks.append(r)
+
+    # Arrow indicators between blocks
+    for i in range(2):
+        ax = bx + (i + 1) * bw + i * gap + Inches(0.05)
+        add_text(slide, "→", ax, by + Inches(0.1), gap - Inches(0.1), Inches(0.5),
+                 size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+
+    # Bottom note
+    add_text(slide,
+             "Only 12.6M trainable params (0.19%). LLM is swappable — "
+             "Llama 3.1 8B is a drop-in replacement (same 4096 hidden size).",
+             MX, Inches(6.3), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True)
+
+    _finish(slide, 3,
+        "Three components. Visual encoder (AV-HuBERT) is frozen — pre-trained "
+        "on LRS3 lip-reading data. It outputs 1024-dim features per frame. A "
+        "linear projection maps to 4096-dim (LLM input space). Then LLaMA-2-7B "
+        "generates text. Key: only the LoRA adapters and projection layer are "
+        "trained — 12.6M of 7B parameters. And the LLM is swappable: Llama 3.1 "
+        "8B has the same hidden dimension, making it a trivial 1-2 hour swap.",
+        [[img], blocks], click_reveal=True)
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 4 — THE BENCHMARK
+# ═══════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 4 — THE BENCHMARK
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_04(prs):
+    build_split(prs, 4, "The Benchmark: Paper vs Reality", "P2_paper",
+        big_num="25.4%", num_color=TEAL,
+        num_label="WER on LRS3 (TED Talks)",
+        bullets=[
+            ("LRS3: 1,000+ hours of TED talks", {"bold": True}),
+            "Controlled studio lighting, frontal face, professional speakers",
+            "High-quality audio alignment, clean transcripts",
+            ("Our dataset: 1,497 YouTube segments", {"color": CORAL}),
+            "Uncontrolled conditions, diverse topics, multiple accents",
+            ("Real-world YouTube: 64.1% WER \u2014 2.5\u00d7 worse",
+             {"color": CORAL, "bold": True}),
+        ],
+        bottom_text="Two questions: How does this hold on real-world video? "
+                    "And is WER even the right metric?",
+        notes="The paper claims 25.4% Word Error Rate on LRS3 — a curated dataset "
+              "of 1,000+ hours of TED talks with controlled studio lighting, "
+              "frontal faces, professional speakers, and high-quality audio "
+              "alignment. Our dataset: 1,497 segments from diverse YouTube "
+              "videos — uncontrolled conditions, multiple accents, varied topics. "
+              "Result: 64.1% WER, 2.5x worse. And more importantly — is WER "
+              "even the right way to measure this?")
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 5 — THE REALITY GAP
+# ═══════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 5 — THE REALITY GAP
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_05(prs):
+    build_split(prs, 5, "The Reality Gap", "P1_quality",
+        big_num="64.1%", num_color=CORAL,
+        num_label="Mean WER across 1,497 real-world segments",
+        bullets=[
+            ("11.4% Usable (<30%)", {"bullet": "●", "bullet_color": GREEN}),
+            ("17.4% Marginal (30-50%)", {"bullet": "●", "bullet_color": YELLOW}),
+            ("17.8% Poor (50-75%)", {"bullet": "●", "bullet_color": ORANGE}),
+            ("32.8% Unusable (75-100%)", {"bullet": "●", "bullet_color": RED}),
+            ("20.6% Hallucinated (>100%)", {"bullet": "●", "bullet_color": DRED}),
+        ],
+        bottom_text="But WER overstates failure — see next slide.",
+        notes="1,497 diverse YouTube segments. 64.1% mean WER — 2.5x worse than "
+              "the paper's 25.4%. Only 11.4% usable by WER standards. And 20.6% "
+              "are hallucinations — fluent text that's completely fabricated. This "
+              "is the most dangerous failure mode. But WER is misleading — it "
+              "treats all errors equally.")
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 6 — WER IS BLIND
+# ═══════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 6 — WER IS BLIND
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_06(prs):
+    slide = new_slide(prs)
+    add_title(slide, 'WER Is Blind to Meaning')
+    add_accent_line(slide)
+
+    bw = Inches(5.5)
+    bh = Inches(3.8)
+    by = CT + Inches(0.1)
+    gap = Inches(1.13)
+
+    # Left box — good
+    r1 = add_rect(slide, MX, by, bw, bh, fill_color=NAVY2,
+                  border_color=GREEN, border_width=Pt(2.5), corner_radius=True)
+    add_text(slide, "WER 29%  •  IS 4.3 — Fully Intelligible",
+             MX + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.4),
+             size=Pt(14), color=GREEN, bold=True)
+    add_text(slide, 'Ref: "allow you to work with the team in a more"\n'
+                    'Hyp: "allow you to work with a team and more"',
+             MX + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(2.5),
+             size=Pt(15), color=WHITE)
+
+    # Right box — bad
+    rx = MX + bw + gap
+    r2 = add_rect(slide, rx, by, bw, bh, fill_color=NAVY2,
+                  border_color=RED, border_width=Pt(2.5), corner_radius=True)
+    add_text(slide, "WER 58%  •  IS 2.7 — Near-Miss",
+             rx + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.4),
+             size=Pt(14), color=RED, bold=True)
+    add_text(slide, 'Ref: "1 billion cfus of probiotics"\n'
+                    'Hyp: "1 million cfus of permafrost"',
+             rx + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(2.5),
+             size=Pt(15), color=WHITE)
+
+    # Bottom
+    add_text(slide,
+             "WER says equal. Meaning says opposite. So we built a metric to "
+             "capture this.",
+             MX, Inches(6.3), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 6,
+        "Same low WER on the left, high WER on the right — but the real "
+        "difference is meaning. Left: minor grammatical change, meaning "
+        "fully preserved at WER 29%. Right: 'probiotics' becomes 'permafrost' — "
+        "phonetically similar but completely wrong product. Structure intact, "
+        "key terms destroyed. This motivated our Intelligibility Score.",
+        None)
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 7 — THE INTELLIGIBILITY SCORE
+# ═══════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════
+# NEW SLIDES — DEEP DIVES, CONTEXT, ENGINEERING, APPENDIX
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_visemes(prs):
+    """Fundamental viseme challenge — why lip reading is hard."""
+    slide = new_slide(prs)
+    add_title(slide, "The Invisible Problem: Visemes")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left column — The problem
+    lt = add_text(slide, "The Invisible Problem", MX, CT, col_w, Inches(0.4),
+                  size=Pt(18), color=CORAL, bold=True)
+    lb = add_bullets(slide, [
+        ("50\u201370% of English sounds are invisible on lips", {"bold": True}),
+        "Multiple sounds produce identical mouth shapes (visemes)",
+        "Context is the ONLY disambiguation signal",
+    ], MX, CT + Inches(0.5), col_w, Inches(1.5), size=Pt(15))
+
+    # Viseme table
+    tbl1 = add_table(slide,
+        ["Viseme Group", "Sounds"],
+        [["Bilabial", "p, b, m"],
+         ["Alveolar", "t, d, n, s, z, l"],
+         ["Velar", "k, g, ng"],
+         ["Labiodental", "f, v"]],
+        MX, CT + Inches(2.3), col_w, text_size=Pt(12))
+
+    # Right column — Visual proof + confusable pairs
+    rx = MX + col_w + gap
+    rt = add_text(slide, "Same Mouth Shape, Different Words", rx, CT, col_w,
+                  Inches(0.4), size=Pt(18), color=TEAL, bold=True)
+
+    # Poster frames side by side — two speakers saying different words
+    poster_shapes = []
+    poster_w = Inches(2.5)
+    poster_h = Inches(1.6)
+    p1_path = POSTER_DIR / "ok_demo.jpg"
+    p2_path = POSTER_DIR / "salvage.jpg"
+    if p1_path.exists():
+        poster_shapes.append(slide.shapes.add_picture(
+            str(p1_path), rx, CT + Inches(0.5), width=poster_w, height=poster_h))
+    if p2_path.exists():
+        poster_shapes.append(slide.shapes.add_picture(
+            str(p2_path), rx + poster_w + Inches(0.3), CT + Inches(0.5),
+            width=poster_w, height=poster_h))
+    poster_shapes.append(add_text(slide,
+        "Different words \u2014 nearly identical mouth shape to the camera",
+        rx, CT + Inches(2.2), col_w, Inches(0.3),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
+
+    tbl2 = add_table(slide,
+        ["Word A", "Word B", "Viseme"],
+        [["pat", "bat", "Bilabial"],
+         ["mom", "bomb", "Bilabial"],
+         ["admiral", "animal", "Alveolar"],
+         ["collar", "color", "Velar"]],
+        rx, CT + Inches(2.7), col_w, text_size=Pt(12))
+
+    # Bottom
+    add_text(slide,
+        "Context is the ONLY disambiguation signal \u2014 this is why the LLM matters.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(14), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "50-70% of English sounds are invisible on lips. Multiple sounds produce "
+        "identical mouth shapes called visemes. The poster frames show two "
+        "different speakers — their mouth shapes look nearly identical despite "
+        "saying completely different words. Context is the only disambiguation "
+        "signal, which is why the LLM component is critical.",
+        [[lt, lb, tbl1], poster_shapes + [rt, tbl2]], click_reveal=True)
+
+
+def slide_data_flow(prs):
+    """5-step pipeline data flow."""
+    slide = new_slide(prs)
+    add_title(slide, "How It Works: Data Flow")
+    add_accent_line(slide)
+
+    steps = [
+        ("1", "Video Frames", "25 fps raw video input", TEAL),
+        ("2", "Mouth Crop", "96\u00d796 pixel region around lips", TEAL),
+        ("3", "Visual Features", "AV-HuBERT encoder \u2192 1024-dim vectors", TEAL),
+        ("4", "Projection", "Linear layer: 1024 \u2192 4096-dim (LLM input space)", CORAL),
+        ("5", "LLM Generates Text", "LLaMA-2-7B decodes features into words", CORAL),
+    ]
+
+    step_w = Inches(10.5)
+    step_h = Inches(0.75)
+    start_y = CT + Inches(0.1)
+    start_x = MX + Inches(0.8)
+
+    step_shapes = []
+    for i, (num, name, desc, color) in enumerate(steps):
+        y = start_y + i * (step_h + Inches(0.15))
+        r = add_rect(slide, start_x, y, step_w, step_h, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+
+        # Step number circle
+        circle = slide.shapes.add_shape(
+            MSO_SHAPE.OVAL, start_x - Inches(0.7), y + Inches(0.1),
+            Inches(0.55), Inches(0.55))
+        circle.fill.solid()
+        circle.fill.fore_color.rgb = color
+        circle.line.fill.background()
+        add_text(slide, num, start_x - Inches(0.7), y + Inches(0.1),
+                 Inches(0.55), Inches(0.55),
+                 size=Pt(20), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+
+        add_rich_text(slide, [
+            [(name, {"size": Pt(16), "color": WHITE, "bold": True}),
+             (f"  \u2014  {desc}", {"size": Pt(13), "color": LGRAY})],
+        ], start_x + Inches(0.2), y + Inches(0.1),
+           step_w - Inches(0.4), step_h - Inches(0.2))
+
+        # Arrow between steps
+        if i < len(steps) - 1:
+            add_text(slide, "\u2193", start_x + step_w / 2 - Inches(0.2),
+                     y + step_h - Inches(0.05), Inches(0.4), Inches(0.3),
+                     size=Pt(16), color=TEAL, align=PP_ALIGN.CENTER)
+
+        step_shapes.append(r)
+
+    add_text(slide,
+        "Visual encoder is frozen (pre-trained on LRS3). Only projection + LoRA adapters are trained.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Five-step data flow. Raw video at 25fps is cropped to 96x96 mouth "
+        "region. AV-HuBERT extracts 1024-dim visual features. Linear projection "
+        "maps to 4096-dim LLM input space. LLaMA-2-7B generates text. The visual "
+        "encoder is frozen — only the projection layer and LoRA adapters are trained.",
+        [step_shapes])
+
+
+def slide_eval_dataset(prs):
+    """Our 1,497-segment evaluation dataset."""
+    slide = new_slide(prs)
+    add_title(slide, "Our Evaluation: 1,497 Real-World Segments")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left — big number + bullets
+    s1 = add_text(slide, "1,497", MX, CT, col_w, Inches(1.0),
+                  size=Pt(64), color=TEAL, bold=True)
+    s2 = add_text(slide, "segments from diverse YouTube videos",
+                  MX, CT + Inches(1.0), col_w, Inches(0.4),
+                  size=Pt(16), color=WHITE)
+    s3 = add_bullets(slide, [
+        "Uncontrolled lighting, angles, occlusions",
+        "Multiple speakers and accents",
+        "Diverse topics: business to DIY to gaming",
+        ("Not a curated benchmark \u2014 real-world difficulty", {"bold": True}),
+    ], MX, CT + Inches(1.6), col_w, Inches(2.5), size=Pt(14))
+
+    # Right — topic categories table
+    rx = MX + col_w + gap
+    add_text(slide, "Topic Distribution", rx, CT, col_w, Inches(0.4),
+             size=Pt(17), color=CORAL, bold=True)
+
+    tbl = add_table(slide,
+        ["Topic", "Segments", "Quality*"],
+        [["Business/Finance", "214", "3.08"],
+         ["Education/Lecture", "312", "2.63"],
+         ["Entertainment", "198", "2.51"],
+         ["News/Politics", "267", "2.48"],
+         ["Tech/Science", "186", "2.43"],
+         ["Sports/Health", "153", "2.38"],
+         ["DIY/Home", "167", "2.13"]],
+        rx, CT + Inches(0.5), col_w, text_size=Pt(12),
+        row_colors={0: {2: GREEN}, 6: {2: CORAL}})
+
+    # Footnote explaining Quality* column
+    add_text(slide,
+        "*Quality = our composite metric (0\u20135 scale), introduced in the next section.",
+        MX, Inches(6.35), CW, Inches(0.4),
+        size=Pt(11), color=MGRAY, italic=True)
+
+    _finish(slide, 0,
+        "1,497 segments from diverse YouTube videos. Not a curated benchmark. "
+        "Multiple topics, speakers, accents, lighting conditions. Business and "
+        "Finance has the highest quality score (3.08) because it's closest to the "
+        "TED talk training data. DIY/Home is worst (2.13) due to inherently visual "
+        "content. The Quality column is our Intelligibility Score, introduced later.",
+        [[s1, s2, s3], [tbl]], click_reveal=True)
+
+
+def slide_wer_explained(prs):
+    """WER formula and its limitations."""
+    slide = new_slide(prs)
+    add_title(slide, "Word Error Rate: What It Measures (and Misses)")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left — formula + example
+    lt = add_text(slide, "The Formula", MX, CT, col_w, Inches(0.4),
+                  size=Pt(18), color=TEAL, bold=True)
+
+    add_text(slide, "WER = (S + D + I) / N",
+             MX + Inches(0.3), CT + Inches(0.55), col_w - Inches(0.6), Inches(0.5),
+             size=Pt(22), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+
+    add_bullets(slide, [
+        "S = substitutions (wrong word)",
+        "D = deletions (missing word)",
+        "I = insertions (extra word)",
+        "N = total words in reference",
+    ], MX, CT + Inches(1.2), col_w, Inches(1.5), size=Pt(14))
+
+    add_text(slide, "Example:", MX, CT + Inches(2.8), col_w, Inches(0.3),
+             size=Pt(15), color=TEAL, bold=True)
+    add_text(slide, 'Ref: "the admiral gave orders"\n'
+                    'Hyp: "the animal gave water"\n'
+                    'WER = 2/4 = 50% (2 substitutions)',
+             MX + Inches(0.2), CT + Inches(3.2), col_w - Inches(0.4), Inches(1.2),
+             size=Pt(13), color=WHITE)
+
+    # Right — what it captures vs misses
+    rx = MX + col_w + gap
+    rt = add_text(slide, "What WER Captures", rx, CT, col_w, Inches(0.4),
+                  size=Pt(18), color=GREEN, bold=True)
+    rb1 = add_bullets(slide, [
+        "Exact word-level accuracy",
+        "Simple, widely understood",
+        "Standard in ASR research",
+    ], rx, CT + Inches(0.5), col_w, Inches(1.2), size=Pt(14), bullet_color=GREEN)
+
+    rm = add_text(slide, "What WER Misses", rx, CT + Inches(2.0), col_w, Inches(0.4),
+                  size=Pt(18), color=CORAL, bold=True)
+    rb2 = add_bullets(slide, [
+        ("All errors weighted equally", {"color": CORAL}),
+        ('"admiral"\u2192"animal" = "the"\u2192"a"', {"color": CORAL}),
+        "No meaning preservation signal",
+        "No phonetic similarity credit",
+        ("Can exceed 100% (insertions)", {"color": CORAL}),
+    ], rx, CT + Inches(2.5), col_w, Inches(2.5), size=Pt(14), bullet_color=CORAL)
+
+    _finish(slide, 0,
+        "WER formula: substitutions plus deletions plus insertions divided by "
+        "reference word count. Simple and standard, but treats all errors equally. "
+        "Admiral-to-animal gets the same penalty as the-to-a. No credit for "
+        "meaning preservation or phonetic similarity. Can exceed 100% when the "
+        "model generates extra words (insertions).",
+        [[lt], [rt], [rb1], [rm], [rb2]], click_reveal=True)
+
+
