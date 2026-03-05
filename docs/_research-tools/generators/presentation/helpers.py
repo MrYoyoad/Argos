@@ -186,11 +186,14 @@ def add_bullets(slide, items, left, top, width, height, size=Pt(15),
 
 def add_rect(slide, left, top, width, height, fill_color=NAVY2,
              border_color=None, border_width=Pt(1), corner_radius=None):
-    """Add a filled rectangle (optionally rounded)."""
+    """Add a rectangle (optionally rounded). fill_color=None for transparent."""
     shape_type = MSO_SHAPE.ROUNDED_RECTANGLE if corner_radius else MSO_SHAPE.RECTANGLE
     shp = slide.shapes.add_shape(shape_type, left, top, width, height)
-    shp.fill.solid()
-    shp.fill.fore_color.rgb = fill_color
+    if fill_color is None:
+        shp.fill.background()           # transparent / no fill
+    else:
+        shp.fill.solid()
+        shp.fill.fore_color.rgb = fill_color
     if border_color:
         shp.line.color.rgb = border_color
         shp.line.width = border_width

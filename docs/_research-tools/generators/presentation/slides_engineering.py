@@ -100,13 +100,20 @@ def slide_17(prs):
             grp = _h_arrow(ax, row1_y) + grp
         anim_groups.append(grp)
 
-    # Down arrow centered between row 1 and row 2
+    # Flow arrow: right end of row 1 → down → left into row 2
+    r4_right = start_x + 3 * (box_w + h_gap + arrow_w + h_gap) + box_w
     down_y = row1_y + box_h + Inches(0.15)
-    down_x = SL_W / 2 - Inches(0.15)
-    down_grp = [add_text(slide, "\u25bc", down_x, down_y,
-                Inches(0.3), Inches(0.35),
-                size=Pt(16), color=TEAL, bold=True, align=PP_ALIGN.CENTER)]
-    anim_groups.append(down_grp)
+    turn_grp = []
+    # Down arrow aligned with stage 4 (right side of grid)
+    turn_grp.append(add_text(slide, "\u25bc", r4_right - box_w / 2 - Inches(0.15),
+                    down_y, Inches(0.3), Inches(0.35),
+                    size=Pt(16), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+    # Left-pointing arrow at start of row 2 (before stage 5)
+    turn_grp.append(add_text(slide, "\u25c0", start_x - arrow_w - h_gap,
+                    row2_y + box_h / 2 - Inches(0.12),
+                    arrow_w, Inches(0.24),
+                    size=Pt(12), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+    anim_groups.append(turn_grp)
 
     # Row 2
     for i, (name, sub, color) in enumerate(row2):
@@ -145,11 +152,29 @@ def slide_17(prs):
                  Inches(2.0), Inches(0.25), size=Pt(11), color=WHITE))
     anim_groups.append(final_group)
 
+    # Red outline highlighting stages 6-7 (existed in academic repo)
+    s6_x = start_x + 1 * (box_w + h_gap + arrow_w + h_gap)
+    s7_x = start_x + 2 * (box_w + h_gap + arrow_w + h_gap)
+    red_box_x = s6_x - Inches(0.08)
+    red_box_w = (s7_x + box_w) - s6_x + Inches(0.16)
+    red_box = add_rect(slide, red_box_x, row2_y - Inches(0.08),
+                       red_box_w, box_h + Inches(0.16),
+                       fill_color=None, border_color=RED, border_width=Pt(3),
+                       corner_radius=True)
+    red_label = add_text(slide, "Existed in academic repo",
+                         red_box_x, row2_y + box_h + Inches(0.12),
+                         red_box_w, Inches(0.25),
+                         size=Pt(11), color=RED, bold=True,
+                         align=PP_ALIGN.CENTER)
+    anim_groups.append([red_box, red_label])
+
     _finish(slide, 0,
         "8-stage automated pipeline built from 3 research repos (auto_avsr, "
         "av_hubert, VSP-LLM). Row 1: preprocessing (normalize, ASR, mouth crop, "
         "LRS3 convert). Row 2: feature processing and inference (manifests, "
-        "K-means, LLM decode, outputs). Each stage click-reveals sequentially.",
+        "K-means, LLM decode, outputs). Stages 6-7 (K-means and LLM Decode) "
+        "existed in the academic git repo; remaining stages were engineered. "
+        "Each stage click-reveals sequentially.",
         anim_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
