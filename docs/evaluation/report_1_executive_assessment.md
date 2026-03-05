@@ -255,7 +255,7 @@ An independent gold standard evaluation using Claude Opus 4.6 judged all 1,497 b
 | LLM judge strict (Y only) | 345 | 23.0% |
 | LLM judge lenient (Y+P) | 971 | 64.9% |
 
-The LLM judge is more conservative for "full success" (Y = 23% vs IS ≥ 3.0 = 40%) but more generous for "any useful output" (Y+P = 65% vs IS = 40%). The 3×5 confusion matrix shows clean tier separation — Y concentrates in IS tiers 4–5, N in tiers 1–2, with only 22 boundary disagreements.
+The LLM judge is more conservative for "full success" (Y = 23% vs IS ≥ 3.0 = 40%) but more generous for "any useful output" (Y+P = 65% vs IS = 40%). The 3×5 confusion matrix shows clean tier separation — Y concentrates in IS tiers 4–5, N in tiers 1–2, with only 22 boundary disagreements. Threshold sweep analysis shows the judge's Y+P boundary naturally aligns with IS ≥ 2.0 (κ=0.818, 91.5% agreement) rather than IS ≥ 3.0 (κ=0.521) — the systems agree on ranking (r=0.85) but differ on where to draw the useful/useless line. This validates the LLM salvage finding that Tier 3 ("Fair") segments contain genuine partial value.
 
 **Cross-configuration stability:** Tested across 16 decode configurations, the `llm_context_prob` heuristic's correlation with IS holds at mean r = 0.925 (std = 0.015), confirming both systems are robust to decode parameter changes.
 

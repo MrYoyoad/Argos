@@ -101,6 +101,8 @@ Hallucinated segments (WER ≥ 100%) were already caught at a very high blind ra
 
 4. **Effective capture rate revision:** Using blind as the primary standard (conservative, domain-agnostic), the gold standard capture rates remain Y=23.0%, Y+P=64.9%. Context-aware figures (Y=15.0%, Y+P=62.1%) represent a more stringent domain-expert benchmark. Both are valid reference points for different use cases.
 
+5. **Threshold alignment with IS:** Both blind and context-aware judges agree best with IS at a lower threshold than IS ≥ 3.0. Blind Y+P peaks at IS ≥ 2.0 (κ=0.818, 91.5% agreement); context Y+P also peaks at IS ≥ 2.0 (κ=0.742, 87.8%). The three systems agree strongly on **ranking** (Pearson r 0.81–0.85) but disagree on **where to draw the useful/useless line**. Our IS ≥ 3.0 threshold is deliberately conservative; the Opus judge's natural boundary is one tier lower.
+
 ---
 
 ## Relationship to Other Evaluations

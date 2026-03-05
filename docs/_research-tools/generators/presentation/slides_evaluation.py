@@ -1108,18 +1108,31 @@ def slide_llm_judge(prs):
         rx, CT + Inches(2.2), col_w, text_size=Pt(11),
         row_colors={0: {1: GREEN}, 4: {3: CORAL}})
 
+    # Threshold insight
+    add_text(slide,
+        "Threshold insight: Judge Y+P aligns best with IS \u2265 2.0 "
+        "(\u03ba=0.82, 91.5% agreement), not IS \u2265 3.0 (\u03ba=0.52). "
+        "Systems agree on ranking \u2014 differ on where to draw the line.",
+        rx, CT + Inches(4.4), col_w, Inches(0.6),
+        size=Pt(11), color=GOLD, italic=True)
+
     # Key takeaway
     add_text(slide,
         "LLM judge is more conservative for full success (23% vs IS 40%) "
-        "but more generous for any useful output (Y+P=65%).",
+        "but more generous for any useful output (Y+P=65%). "
+        "This validates the salvage zone (IS 2.0\u20133.0).",
         MX, Inches(6.3), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "LLM-as-a-Judge gold standard. Claude Opus evaluated all 1,497 pairs "
-        "blind. Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9% — "
-        "the LLM says nearly 2 in 3 segments have useful output. Intra-rater "
-        "reliability 86.7%. Correlation with IS: r=0.85 (Pearson 0.8495).",
+        "blind. Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9%. "
+        "Intra-rater 86.7%. r=0.85 with IS. "
+        "Threshold sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 91.5% agreement), "
+        "not IS>=3.0 (kappa=0.521). The three systems (IS, heuristic, Opus judge) "
+        "agree on RANKING but differ on WHERE to draw the useful/useless line. "
+        "The judge's natural boundary is IS>=2.0, validating that Tier 3 (Fair) "
+        "segments contain genuine partial value — exactly the salvage population.",
         [[lt, lb, res_t, tbl], [rt, tbl2]], click_reveal=True)
 
 

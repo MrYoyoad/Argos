@@ -128,7 +128,7 @@ def main():
         slide_25e,          # Salvage: 3 More Examples
         slide_25c,          # Salvage: How Detection Works
         # --- What good looks like ---
-        slide_what_good_looks_like,
+        # slide_what_good_looks_like,  # hidden per user request
         slide_14b,          # Video Gallery
         slide_15,           # Demo: OK > Near-miss > Hallucination
         # --- Section 7: Engineering ---

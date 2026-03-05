@@ -143,3 +143,7 @@ User remark: "many slides have bad animations and occlusions"
 | 86 | 21 (slide_is_card) | Fixed κw=0.89 → κ=0.77 (weighted kappa removed from all slides) | done |
 | 87 | All IS validation | Removed weighted kappa (κw=0.887) everywhere — stick with binary κ=0.773 and Pearson r=0.934 only | done |
 | 88 | Research docs | Added Opus per-sample judge threshold sweep analysis (Y+P peaks at IS≥2.0 κ=0.818; Y-only peaks at IS≥3.75-4.0); context-aware judge bug fixed (column name `context` not `context_judge`) | done |
+| 89 | LLM Judge slide | Added threshold insight box: "Y+P aligns best with IS≥2.0 (κ=0.82, 91.5%), not IS≥3.0 (κ=0.52). Systems agree on ranking — differ on where to draw the line." Updated takeaway to reference salvage zone validation. Expanded speaker notes with full threshold sweep. | done |
+| 90 | Appendix A8 | Added gold bullet: "Y+P peaks at IS≥2.0 (κ=0.82) not IS≥3.0 (κ=0.52) — systems agree on ranking, differ on threshold". Expanded speaker notes with salvage validation. | done |
+| 91 | "What Good Looks Like: IS Tier 5" | Hidden slide per user request (commented out in generate_presentation.py). 79→78 slides. | done |
+| 92 | Research docs | Updated llm_judge_analysis.md (threshold sensitivity table), context_eval_analysis.md (threshold alignment finding), report_1_executive_assessment.md (threshold sweep summary), is_correlation_analysis.md (Section 8.5 sweep tables). | done |

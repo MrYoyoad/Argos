@@ -74,6 +74,19 @@ tier, or other metrics were visible during judging to prevent anchoring bias.
 - F1: 0.758
 - Cohen's kappa: 0.5211
 
+### Threshold Sensitivity
+
+The moderate κ at IS ≥ 3.0 reflects a **threshold mismatch**, not a ranking disagreement. The Opus judge's Y+P boundary naturally aligns with a lower IS threshold:
+
+| IS Threshold | Y+P κ | Agreement |
+|-------------|-------|-----------|
+| IS ≥ 1.50 | 0.769 | 89.9% |
+| **IS ≥ 2.00** | **0.818** | **91.5%** |
+| IS ≥ 2.50 | 0.674 | 83.8% |
+| IS ≥ 3.00 | 0.521 | 74.6% |
+
+Peak agreement is at **IS ≥ 2.0** (κ=0.818, "almost perfect"). The judge considers Tier 3 ("Fair", IS 2.0–3.0) segments as partially useful — the same population identified by the LLM salvage analysis. IS ≥ 3.0 is our conservative threshold; the judge's natural boundary is one tier lower.
+
 ### 3x5 Breakdown: LLM Judge x IS Tier
 
 | LLM | Tier 1 (Failed) | Tier 2 (Poor) | Tier 3 (Fair) | Tier 4 (Good) | Tier 5 (Excellent) |

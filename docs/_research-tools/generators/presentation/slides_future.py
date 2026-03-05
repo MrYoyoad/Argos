@@ -1229,15 +1229,22 @@ def slide_a16(prs):
         "IS Tier 5: 57% full Y \u2014 strong agreement on excellent output",
         "IS Tiers 2-3: majority P not N \u2014 judge sees partial value metrics miss",
         "IS Tier 1: 81% N \u2014 strong agreement on complete failure",
-        ("Pearson r = 0.8495 between IS and judge verdict (coded Y=3, P=2, N=1)",
+        ("Pearson r = 0.85 between IS and judge verdict (coded Y=3, P=2, N=1)",
          {"color": TEAL}),
+        ("Y+P peaks at IS \u2265 2.0 (\u03ba=0.82) not IS \u2265 3.0 (\u03ba=0.52) "
+         "\u2014 systems agree on ranking, differ on threshold",
+         {"color": GOLD}),
     ], MX, CT + Inches(3.4), CW, Inches(2.0), size=Pt(13))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers. Strong agreement at the "
         "extremes: 57% Y for Tier 5, 81% N for Tier 1. The interesting "
         "middle: Tiers 2-3 get majority P verdicts — the LLM sees partial "
-        "meaning preservation that strict metrics miss. Pearson r=0.8495.")
+        "meaning preservation that strict metrics miss. Pearson r=0.85. "
+        "Threshold sweep: Y+P aligns best with IS>=2.0 (kappa=0.818, "
+        "91.5% agreement). The judge's natural boundary is one IS tier "
+        "lower than our conservative IS>=3.0 cutoff, validating that "
+        "the salvage zone (IS 2.0-3.0) contains genuinely useful output.")
 
 
 def slide_a17(prs):
