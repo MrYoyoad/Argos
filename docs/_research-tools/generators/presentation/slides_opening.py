@@ -11,7 +11,7 @@ from pptx.oxml.ns import qn
 from lxml import etree
 
 from .config import (
-    IMG, VID, POSTER_DIR,
+    IMG, VID, POSTER_DIR, PLOTS,
     SL_W, SL_H, BG, WHITE, TEAL, CORAL, LGRAY, MGRAY, DGRAY,
     GREEN, YELLOW, GOLD, ORANGE, RED, DRED, NAVY2, NAVY3,
     FONT, _auto_num,
@@ -511,21 +511,16 @@ def slide_visemes(prs):
     rt = add_text(slide, "Same Mouth Shape, Different Words", rx, CT, col_w,
                   Inches(0.4), size=Pt(18), color=TEAL, bold=True)
 
-    # Poster frames side by side — two speakers saying different words
+    # Lip-reading GIF — identical mouth shapes, different words
     poster_shapes = []
-    poster_w = Inches(2.5)
-    poster_h = Inches(1.6)
-    p1_path = POSTER_DIR / "ok_demo.jpg"
-    p2_path = POSTER_DIR / "salvage.jpg"
-    if p1_path.exists():
+    gif_w = Inches(5.0)
+    gif_path = PLOTS / "lip_reading_demo.gif"
+    if gif_path.exists():
+        gif_x = rx + (col_w - gif_w) / 2  # Center in right column
         poster_shapes.append(slide.shapes.add_picture(
-            str(p1_path), rx, CT + Inches(0.5), width=poster_w, height=poster_h))
-    if p2_path.exists():
-        poster_shapes.append(slide.shapes.add_picture(
-            str(p2_path), rx + poster_w + Inches(0.3), CT + Inches(0.5),
-            width=poster_w, height=poster_h))
+            str(gif_path), gif_x, CT + Inches(0.5), width=gif_w))
     poster_shapes.append(add_text(slide,
-        "Different words \u2014 nearly identical mouth shape to the camera",
+        "Lip reading: identical mouth shapes can produce completely different words",
         rx, CT + Inches(2.2), col_w, Inches(0.3),
         size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 

@@ -158,7 +158,7 @@ def main():
         slide_thank_you,    # Thank You & Questions
         # --- Appendix (A1-A9) ---
         slide_a1,           # A1: Homophenes
-        slide_a3,           # A2: Catastrophic lenpen
+        # slide_a3,         # A2: Catastrophic lenpen (removed)
         slide_a8,           # A3: IS Component Correlation
         slide_a11,          # A4: LLM Salvage Recoverable
         slide_a11b,         # A5: LLM Salvage Examples

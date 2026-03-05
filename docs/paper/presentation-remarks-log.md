@@ -64,3 +64,12 @@ External review feedback from Gemini, agreed changes implemented.
 | 45 | Visemes | Added poster frame images (`ok_demo.jpg`, `salvage.jpg`) showing speaking faces side-by-side. Caption: "Different words — same mouth shape to the camera." | done (modified `slide_visemes`) |
 | 46 | IS Radar | Dual radar overlay — LRS3 benchmark (green, tight) vs real-world YouTube (coral, jagged) on 6 IS dimensions. Separate companion script `generate_dual_radar.py`. Falls back to single radar if dual not available. | done (modified `slide_is_radar` + plot script) |
 | 47 | — | Version updated to v80 slides, 2026-03-05 | done |
+
+---
+
+## Batch 3 — 2026-03-05
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 48 | Visemes (slide_visemes) | Replace poster frame images (ok_demo.jpg + salvage.jpg side by side) with single centered lip-reading GIF (`lip_reading_demo.gif`). Updated caption to "Lip reading: identical mouth shapes can produce completely different words". | done |
+| 49 | Appendix A2 (slide_a3) | Remove "A2: Catastrophic lenpen" appendix slide from builders list | done |
