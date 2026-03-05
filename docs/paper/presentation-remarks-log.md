@@ -87,3 +87,38 @@ External review feedback from Gemini, agreed changes implemented.
 | 61 | Appendix A2 (slide_a3) | Remove "A2: Catastrophic lenpen" appendix slide from builders list | done |
 | 62 | Appendix A3 (slide_a8) | Overlapping tables/text. Fixed: adjusted y-positions to add proper spacing between sections. | done |
 | 63 | 20 (slide_is_calc_examples) | "Bulky green and red" — header bars and borders too heavy. Reduced border from Pt(3) to Pt(1.5), header bar from 0.4" to 0.32". | done |
+
+---
+
+## Batch 4 — 2026-03-05 (Full Animation & Occlusion Audit)
+
+User remark: "many slides have bad animations and occlusions"
+
+**Animation issues** (16 slides where `anim_groups` only includes rect, not text overlays):
+
+| # | Slide Function | File | Problem | Status |
+|---|---|---|---|---|
+| 64 | slide_toc | slides_opening.py | Only rects in groups, title/description text always visible | pending |
+| 65 | slide_03 | slides_opening.py | blocks only has rects, not text labels or arrows | pending |
+| 66 | slide_data_flow | slides_opening.py | step_shapes only has rects; circles, text, arrows unanimated | pending |
+| 67 | slide_is_signals | slides_research.py | Only rect per signal card, 5 text elements visible | pending |
+| 68 | slide_failure_deep_1a | slides_research.py | Only rect per failure mode card | pending |
+| 69 | slide_is_dimensions | slides_research.py | Only rects for 3 dimension cards | pending |
+| 70 | slide_decode_params | slides_research.py | All 4 rects in one group, text always visible | pending |
+| 71 | slide_07 | slides_research.py | anim_groups=None — no animations | pending |
+| 72 | slide_08 | slides_research.py | anim_groups=None — no animations | pending |
+| 73 | slide_25b | slides_evaluation.py | Only rects for 6 category cards | pending |
+| 74 | slide_21 | slides_engineering.py | Only rects for 4 feature cards | pending |
+| 75 | slide_three_repos | slides_engineering.py | card_shapes only rects, not text | pending |
+| 76 | slide_17 | slides_engineering.py | Calls undefined add_wipe_animation(), falls back | pending |
+| 77 | slide_30 | slides_future.py | Only rects for 3 column cards | pending |
+| 78 | slide_insights | slides_future.py | Only circles, not text content | pending |
+| 79 | slide_31 | slides_future.py | Only rects, not number circles or text | pending |
+
+**Occlusion issues** (2-3 slides):
+
+| # | Slide Function | File | Problem | Status |
+|---|---|---|---|---|
+| 80 | slide_24 | slides_future.py | 3 columns total 12.4" — exceeds CW=12.13" by 0.27" | pending |
+| 81 | slide_arabic_roadmap | slides_future.py | Two redundant "total timeline" callouts may overlap | pending |
+| 82 | slide_is_calc_examples | slides_research.py | Two cards exactly at CW=12.13" limit (borderline) | pending |
