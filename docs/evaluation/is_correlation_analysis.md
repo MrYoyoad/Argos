@@ -297,6 +297,38 @@ Confusion matrix comparing `llm_context_prob ≥ 0.5` vs `IS ≥ 3.0`:
 
 **The LLM heuristic is intentionally optimistic** — it catches 99.2% of IS ≥ 3.0 segments but over-recovers 165 segments that IS scores below 3.0. This is by design: context recovery assumes a viewer with domain knowledge, which provides extra information beyond what the raw metrics capture.
 
+### 7.3b Weighted Kappa Analysis (Ordinal Agreement Across 5 Tiers)
+
+The binary κ above collapses IS into captured/not-captured. For a richer view, we compute **weighted Cohen's kappa** across the 5 ordinal IS tiers (Failed through Excellent), mapping `llm_context_prob` to predicted tiers via probability ranges (0–0.2 → tier 1, 0.2–0.4 → tier 2, 0.4–0.6 → tier 3, 0.6–0.85 → tier 4, 0.85–1.0 → tier 5).
+
+**Confusion matrix** (rows = actual IS tier, columns = heuristic-predicted tier):
+
+|  | Pred 1 | Pred 2 | Pred 3 | Pred 4 | Pred 5 |
+|--|--------|--------|--------|--------|--------|
+| **IS 1 (Failed)** | **236** | 3 | 0 | 0 | 0 |
+| **IS 2 (Poor)** | 108 | **199** | 26 | 3 | 0 |
+| **IS 3 (Fair)** | 1 | 96 | **87** | 103 | 38 |
+| **IS 4 (Good)** | 0 | 4 | 4 | **74** | 239 |
+| **IS 5 (Excellent)** | 0 | 0 | 0 | 0 | **276** |
+
+**Kappa variants:**
+
+| Metric | Value | Interpretation |
+|--------|-------|---------------|
+| Unweighted κ (5-tier) | 0.483 | Moderate — exact tier match is hard |
+| **Linear weighted κ** | **0.739** | Substantial |
+| **Quadratic weighted κ** | **0.887** | Almost perfect |
+| Binary κ (IS≥3 vs LLM≥0.5) | 0.768 | Substantial (reported above) |
+
+**How weighted kappa works:** Standard (unweighted) Cohen's κ treats all disagreements equally — predicting tier 5 when the truth is tier 4 is penalized the same as predicting tier 5 when the truth is tier 1. For ordinal scales like IS tiers, this is overly strict. Weighted kappa assigns partial credit for near-misses:
+
+- **Linear weights:** `w(i,j) = 1 − |i−j| / (k−1)` — penalty proportional to distance between tiers
+- **Quadratic weights:** `w(i,j) = 1 − (i−j)² / (k−1)²` — penalty proportional to squared distance, more forgiving of 1-tier errors
+
+The quadratic weighted κ = 0.887 means: when the heuristic disagrees with IS on the exact tier, the disagreements are almost always by just 1 tier. Large misclassifications (e.g., predicting Excellent when IS says Failed) essentially never occur. The confusion matrix confirms this — the off-diagonal mass is concentrated on the ±1 diagonals, with zero entries more than 2 tiers away.
+
+**Interpretation scale** (Landis & Koch, 1977): κ < 0.20 = slight, 0.21–0.40 = fair, 0.41–0.60 = moderate, 0.61–0.80 = substantial, 0.81–1.00 = almost perfect. Our quadratic weighted κ = 0.887 falls solidly in "almost perfect."
+
 ### 7.4 LLM Prob by IS Tier
 
 | Tier | N | Mean LLM Prob | % Flagged Recoverable |

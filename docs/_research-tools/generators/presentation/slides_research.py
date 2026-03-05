@@ -348,14 +348,13 @@ def slide_is_weight_rationale(prs):
          {"bold": True}),
         "Catches hallucination and truncation \u2014 the two catastrophic "
         "failure modes that other signals can miss.",
-        ("Validated: r=0.93 with expert judgment, \u03ba=0.77",
+        ("Validated: r=0.93, \u03ba=0.77 (binary), \u03baw=0.89 (ordinal)",
          {"color": GOLD}),
     ], rx, CT + Inches(0.55), rw, Inches(4.5), size=Pt(13))
 
     add_text(slide,
-        "Validated against 1,497 segments: the resulting IS correlates at "
-        "r=0.93 with an independent expert heuristic and \u03ba=0.77 with "
-        "human-like judgment.",
+        "Validated against 1,497 segments: r=0.93 with expert heuristic, "
+        "\u03ba=0.77 (binary captured/not), \u03baw=0.89 (quadratic weighted across 5 tiers).",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -365,8 +364,14 @@ def slide_is_weight_rationale(prs):
         "preservation (28%, semantic at 25%), and output sanity (9%, length "
         "at 15%). Semantic gets double weight because meaning is the ultimate "
         "goal. The 4 word-accuracy signals overlap heavily (r>0.79), so equal "
-        "15% weights avoid over-counting. Validated: r=0.93 with expert "
-        "heuristic, kappa=0.77.",
+        "15% weights avoid over-counting.\n\n"
+        "Validation metrics (1,497 segments):\n"
+        "- Pearson r = 0.93 with expert heuristic\n"
+        "- Binary Cohen's kappa = 0.773 (captured vs not, substantial agreement)\n"
+        "- Quadratic weighted kappa = 0.887 (across 5 IS tiers, almost perfect)\n"
+        "The weighted kappa shows that even when the heuristic disagrees on exact "
+        "tier, it's almost always off by just 1 tier — large misclassifications "
+        "(e.g. predicting Excellent when IS says Failed) never occur.",
         [[lt] + dim_shapes, [rt], [rb]], click_reveal=True)
 
 
@@ -387,13 +392,15 @@ def slide_is_calc_examples(prs):
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
         shapes.append(r)
 
-        # Header bar with colored background (reduced height)
-        shapes.append(add_rect(slide, x + Inches(0.1), CT + Inches(0.1),
-                 col_w - Inches(0.2), Inches(0.32), fill_color=color,
+        # Header bar — narrower centered strip
+        bar_w = Inches(3.6)
+        bar_x = x + (col_w - bar_w) / 2
+        shapes.append(add_rect(slide, bar_x, CT + Inches(0.1),
+                 bar_w, Inches(0.32), fill_color=color,
                  corner_radius=True))
         shapes.append(add_text(slide, f"{label} \u2014 IS = {is_val}",
-                 x + Inches(0.1), CT + Inches(0.1),
-                 col_w - Inches(0.2), Inches(0.32),
+                 bar_x, CT + Inches(0.1),
+                 bar_w, Inches(0.32),
                  size=Pt(16), color=BG, bold=True, align=PP_ALIGN.CENTER))
 
         # Ref / Hyp (increased font size)

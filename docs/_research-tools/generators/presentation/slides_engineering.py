@@ -437,7 +437,7 @@ def slide_21(prs):
         "dimensions: word accuracy (WER/WWER/Phonetic, r>0.79, ~60% of IS), "
         "meaning preservation (Semantic, 28.5%), and output sanity (Length, "
         "9.1%). Cross-config validation across 16 decode configs: r=0.925, "
-        "88.6% agreement, Cohen's kappa 0.773.",
+        "88.6% agreement, binary kappa 0.773, weighted kappa 0.887.",
         card_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
