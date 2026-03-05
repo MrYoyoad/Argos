@@ -40,6 +40,7 @@ IMG = {
     "P6_is_radar": PLOTS / "P6_is_radar.png",
     "P6b_radar_dual": PLOTS / "P6b_radar_dual.png",
     "P7_is_wer_scatter": PLOTS / "P7_is_wer_scatter.png",
+    "pipeline_visual": PLOTS / "pipeline_visual_strip.png",
 }
 
 VID = {

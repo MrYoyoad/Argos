@@ -169,6 +169,14 @@ def slide_17(prs):
                  Inches(2.0), Inches(0.3), size=Pt(12), color=WHITE))
     anim_groups.append(final_group)
 
+    # Group 11: Pipeline visual strip — video transformation through stages
+    visual_strip = []
+    vis_img = add_image(slide, "pipeline_visual", MX, row2_y + box_h + Inches(0.45),
+                        width=CW, height=Inches(1.5))
+    if vis_img is not None:
+        visual_strip.append(vis_img)
+        anim_groups.append(visual_strip)
+
     # Use wipe animation for per-stage sequential reveal
     _auto_num[0] += 1
     add_logo(slide)
@@ -183,7 +191,9 @@ def slide_17(prs):
         "Each stage reveals sequentially with a wipe animation. "
         "Row 1: Normalize, ASR, Mouth Crop, LRS3 Convert (preprocessing). "
         "Row 2: Manifests, K-means, LLM Decode, Outputs (processing). "
-        "Click through to reveal each stage one by one.")
+        "Final click reveals the visual transformation strip showing how a video "
+        "signal flows through the pipeline: raw face → mouth crop → features → "
+        "LLM decode → output text with IS score.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 18 — ENGINEERING JOURNEY

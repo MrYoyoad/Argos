@@ -76,14 +76,14 @@ External review feedback from Gemini, agreed changes implemented.
 | 50 | 7 (Model Arch) | Grey dimension labels in figure too small — same problem as previous remark #3. Regenerated `model_architecture.png` with larger bold teal/white labels (13pt). | done |
 | 51 | 28 (slide_failure_deep_3) | Table overlaps GER note and callout below. Reduced row_height from 0.7" to 0.5", text from Pt(12) to Pt(11), shifted GER note/callout/severity text up. | done |
 | 52 | 29 (slide_failure_deep_2) | Card text shapes not included in anim_groups — only rectangles animated, text floated independently. Fixed by collecting all shapes per card into card_shapes list. | done |
-| 53 | 32 (slide_tuning_summary) | Occlusion/placement issues reported | pending review |
+| 53 | 32 (slide_tuning_summary) | Occlusion/placement issues reported. Fixed: shortened bullets (4→3), expanded callout box (1.8→2.2"), shortened J note, increased table row height (0.35→0.38") and text (Pt(11)→Pt(12)), pushed verdict below table with breathing room. | done |
 | 54 | 33 (slide_is_deep_dive) | Animation order reversed — right column showed before left. Changed to `[[lt, tbl], [rt, rb]]`. | done |
 | 55 | 34, 35 (metric disagreement 1+2) | Card text not in anim_groups — only rectangles animated. Fixed: each card now collects rect + rich_text + body text. | done |
 | 56 | 36 (slide_two_eval_systems) | Card text not in anim_groups. Fixed: captured all text shapes into variables, grouped with their card rectangles in 3-step animation. | done |
 | 57 | 50 (Pipeline, slide_17) | Down arrow between rows placed at right edge of row 1 but row 2 starts from left — visual disconnect. Centered the down arrow horizontally. | done |
-| 58 | 50 (Pipeline) | User wants "visual effect" through pipeline of a video as in academia slideshows | pending |
+| 58 | 50 (Pipeline) | User wants "visual effect" through pipeline of a video as in academia slideshows. Added pipeline_visual_strip.png (5-panel: raw face → mouth crop → features heatmap → LLM decode tokens → output text with IS score). Registered in config.py IMG map. Added as final animation group (Group 11) in slide_17 — appears on last click after all 8 stages are revealed. | done |
 | 59 | 61 (slide_26b) | IS trajectory plot has overlapping text annotations. Regenerated P3b_is_trajectory.png with staggered labels and repositioned improvement annotation. | done |
-| 60 | 67 (slide_29) | Fine-tuning experiments: "figures still look bad" — ft_clean plot. | pending review |
+| 60 | 67 (slide_29) | Fine-tuning experiments: "figures still look bad" — ft_clean plot. Redesigned FT_11_clean_summary.png: (1) left panel now uses real 19-epoch training data instead of fake 5-epoch, (2) fully dark-themed matching presentation navy BG, (3) right panel changed from confusing dual-axis vertical bars to clean horizontal bars with 3 metrics (IS, Captured %, Empty %) on single axis, (4) improved annotation box and bottom insight text. | done |
 | 61 | Appendix A2 (slide_a3) | Remove "A2: Catastrophic lenpen" appendix slide from builders list | done |
 | 62 | Appendix A3 (slide_a8) | Overlapping tables/text. Fixed: adjusted y-positions to add proper spacing between sections. | done |
 | 63 | 20 (slide_is_calc_examples) | "Bulky green and red" — header bars and borders too heavy. Reduced border from Pt(3) to Pt(1.5), header bar from 0.4" to 0.32". | done |
