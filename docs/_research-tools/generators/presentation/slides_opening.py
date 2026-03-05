@@ -370,23 +370,17 @@ def slide_04(prs):
         big_num="25.4%", num_color=TEAL,
         num_label="WER on LRS3 (TED Talks)",
         bullets=[
-            ("LRS3: 1,000+ hours of TED talks", {"bold": True}),
-            "Controlled studio lighting, frontal face, professional speakers",
-            "High-quality audio alignment, clean transcripts",
-            ("Our dataset: 1,497 YouTube segments", {"color": CORAL}),
-            "Uncontrolled conditions, diverse topics, multiple accents",
-            ("Real-world YouTube: 64.1% WER \u2014 2.5\u00d7 worse",
+            ("LRS3 benchmark: curated TED talks, ideal conditions", {"bold": True}),
+            ("Our dataset: 1,497 real YouTube segments \u2014 nothing is controlled",
+             {"color": CORAL, "bold": True}),
+            ("Result: 64.1% WER \u2014 2.5\u00d7 worse",
              {"color": CORAL, "bold": True}),
         ],
-        bottom_text="Two questions: How does this hold on real-world video? "
-                    "And is WER even the right metric?",
-        notes="The paper claims 25.4% Word Error Rate on LRS3 — a curated dataset "
-              "of 1,000+ hours of TED talks with controlled studio lighting, "
-              "frontal faces, professional speakers, and high-quality audio "
-              "alignment. Our dataset: 1,497 segments from diverse YouTube "
-              "videos — uncontrolled conditions, multiple accents, varied topics. "
-              "Result: 64.1% WER, 2.5x worse. And more importantly — is WER "
-              "even the right way to measure this?")
+        bottom_text="Different dataset, fundamentally harder problem.",
+        notes="The paper reports 25.4% WER on LRS3 — a curated TED talks dataset "
+              "with ideal conditions. Our 1,497 YouTube segments are fundamentally "
+              "harder: diverse speakers, topics, lighting, angles. Result: 64.1% "
+              "WER, 2.5x worse. The dataset is different, and that explains the gap.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 5 — THE REALITY GAP

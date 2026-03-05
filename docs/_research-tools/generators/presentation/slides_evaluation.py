@@ -1041,14 +1041,19 @@ def slide_two_eval_systems(prs):
     rt = add_text(slide, "Agreement Between Systems", rx, CT, col_w, Inches(0.4),
                   size=Pt(17), color=CORAL, bold=True)
 
+    agree_txt = add_text(slide,
+        "88.6% agreement \u2014 both systems identify\n"
+        "the same segments as good or bad.",
+        rx, CT + Inches(0.5), col_w, Inches(0.6),
+        size=Pt(15), color=WHITE, bold=True)
+
+    # Simplified agreement matrix
     tbl = add_table(slide,
-        ["Metric", "Value"],
-        [["Pearson r", "0.934"],
-         ["Agreement at IS \u2265 3.0", "88.6%"],
-         ["Cohen's \u03ba", "0.773"],
-         ["Recall (Heuristic)", "99.2%"],
-         ["Cross-config mean r", "0.925"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(12))
+        ["", "System B: Good", "System B: Bad"],
+        [["System A: Good", "597", "0"],
+         ["System A: Bad", "165", "735"]],
+        rx, CT + Inches(1.3), col_w, text_size=Pt(12),
+        row_colors={0: {1: GREEN}, 1: {2: CORAL}})
 
     # Worked example
     we_t = add_text(slide, "Worked Example:", rx, CT + Inches(2.8), col_w, Inches(0.3),
@@ -1064,10 +1069,11 @@ def slide_two_eval_systems(prs):
     _finish(slide, 0,
         "Two evaluation systems. IS is strict: 39.9% pass at IS >= 3.0. "
         "The expert heuristic is generous: identifies 165 additional segments, "
-        "raising effective capture to 50.9%. They agree 88.6% of the time "
-        "(r=0.934, kappa=0.773). The heuristic catches meaning preservation "
-        "that strict metrics miss.",
-        [[lt, r1, r1_t, r1_b], [r2, r2_t, r2_b], [rt, tbl, we_t, we_b]], click_reveal=True)
+        "raising effective capture to 50.9%. They agree 88.6% of the time. "
+        "Statistical details: r=0.934, Cohen's kappa=0.773, recall=99.2%, "
+        "cross-config mean r=0.925 (std=0.015). The heuristic catches meaning "
+        "preservation that strict metrics miss.",
+        [[lt, r1, r1_t, r1_b], [r2, r2_t, r2_b], [rt, agree_txt, tbl, we_t, we_b]], click_reveal=True)
 
 
 def slide_llm_judge(prs):
@@ -1102,38 +1108,28 @@ def slide_llm_judge(prs):
         MX, CT + Inches(2.8), col_w, text_size=Pt(12),
         row_colors={0: {2: GREEN}, 2: {2: CORAL}, 3: {2: TEAL}})
 
-    # Right — IS correlation
+    # Right — IS correlation + takeaway
     rx = MX + col_w + gap
-    rt = add_text(slide, "Correlation with IS", rx, CT, col_w, Inches(0.4),
+    rt = add_text(slide, "Correlation with Our Metric", rx, CT, col_w, Inches(0.4),
                   size=Pt(17), color=CORAL, bold=True)
 
-    r_big = add_text(slide, "r = 0.85", rx, CT + Inches(0.6), col_w, Inches(0.7),
+    r_big = add_text(slide, "85% correlation", rx, CT + Inches(0.6), col_w, Inches(0.7),
              size=Pt(36), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
-    r_label = add_text(slide, "Pearson correlation (IS \u2194 LLM Judge)",
+    r_label = add_text(slide, "with our Intelligibility Score",
              rx, CT + Inches(1.2), col_w, Inches(0.3),
-             size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+             size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER)
 
-    # Tier summary
-    tier_t = add_text(slide, "LLM Judge \u00d7 IS Tier", rx, CT + Inches(1.8), col_w,
-             Inches(0.3), size=Pt(15), color=TEAL, bold=True)
-
-    tbl2 = add_table(slide,
-        ["IS Tier", "Y%", "P%", "N%"],
-        [["5 (Excellent)", "57%", "38%", "5%"],
-         ["4 (Good)", "21%", "59%", "20%"],
-         ["3 (Fair)", "8%", "51%", "41%"],
-         ["2 (Poor)", "4%", "34%", "62%"],
-         ["1 (Failed)", "2%", "17%", "81%"]],
-        rx, CT + Inches(2.2), col_w, text_size=Pt(11),
-        row_colors={0: {1: GREEN}, 4: {3: CORAL}})
-
-    # Threshold insight
-    thresh = add_text(slide,
-        "Threshold insight: Judge Y+P aligns best with IS \u2265 2.0 "
-        "(\u03ba=0.82, 91.5% agreement), not IS \u2265 3.0 (\u03ba=0.52). "
-        "Systems agree on ranking \u2014 differ on where to draw the line.",
-        rx, CT + Inches(4.4), col_w, Inches(0.6),
-        size=Pt(11), color=GOLD, italic=True)
+    # Plain-language takeaway box
+    tk_box = add_rect(slide, rx, CT + Inches(2.0), col_w, Inches(1.8),
+                  fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
+                  corner_radius=True)
+    tk_txt = add_text(slide,
+        "Systems agree on extremes \u2014 perfect segments\n"
+        "always Y, failed always N.\n\n"
+        "Borderline cases (Fair tier) are where\n"
+        "judgment differs.",
+        rx + Inches(0.2), CT + Inches(2.1), col_w - Inches(0.4), Inches(1.6),
+        size=Pt(14), color=WHITE)
 
     # Key takeaway
     takeaway = add_text(slide,
@@ -1145,20 +1141,20 @@ def slide_llm_judge(prs):
 
     # Animation groups — logical narrative order:
     # 1. Setup: what is LLM-as-a-Judge?
-    # 2. Methodology: protocol details
-    # 3. Results: Y/P/N percentages
-    # 4. Correlation: IS alignment + tier breakdown
-    # 5. Takeaway: conclusion
+    # 2. Results: Y/P/N percentages
+    # 3. Correlation + takeaway insight
+    # 4. Bottom-line takeaway
     _finish(slide, 0,
         "LLM-as-a-Judge gold standard. Claude Opus evaluated all 1,497 pairs "
         "blind. Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9%. "
-        "Intra-rater 86.7%. r=0.85 with IS. "
+        "Intra-rater 86.7%. Pearson r=0.85 with IS. "
         "Threshold sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 91.5% agreement), "
-        "not IS>=3.0 (kappa=0.521). The systems agree on RANKING but differ on "
-        "WHERE to draw the useful/useless line.",
+        "not IS>=3.0 (kappa=0.521). IS tier cross-tab: Excellent tier 57% Y, "
+        "Failed tier 81% N, Fair tier is the split point (8% Y, 51% P, 41% N). "
+        "Full cross-tab in appendix slide A16.",
         [[lt, lb],
          [res_t, tbl],
-         [rt, r_big, r_label, tier_t, tbl2, thresh],
+         [rt, r_big, r_label, tk_box, tk_txt],
          [takeaway]],
         click_reveal=True)
 

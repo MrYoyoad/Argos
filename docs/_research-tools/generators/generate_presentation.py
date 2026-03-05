@@ -87,32 +87,32 @@ def main():
         slide_data_flow,    # How It Works
         slide_04,           # The Benchmark
         # --- Section 2: The Problem ---
-        slide_eval_dataset, # Our evaluation dataset
+        # slide_eval_dataset, # Our evaluation dataset (hidden per batch 8)
         slide_05,           # The Reality Gap (64.1% WER)
-        slide_wer_explained,# WER formula and limitations
+        # slide_wer_explained,# WER formula and limitations (hidden per batch 8)
         slide_06,           # WER Is Blind to Meaning
         slide_is_foreshadow,# Bridge: We Need a Better Metric
         # --- Section 3: Research Findings ---
         slide_research_transition, # Section divider
-        slide_is_intro,     # Introducing IS
-        slide_is_signals,   # IS: Six Signals
+        slide_is_intro,     # Introducing IS (split into 3 per batch 8)
+        # slide_is_signals,   # IS: Six Signals (removed per batch 8 — merged into split)
         slide_is_weight_rationale, # Why These Weights? 3 Dimensions
-        slide_is_dimensions,# Three quality dimensions
+        # slide_is_dimensions,# Three quality dimensions (removed per batch 8)
         slide_is_calc_examples, # IS in Action: Two Real Segments
         slide_is_radar,     # [MOD] IS Radar: dual overlay if available
         slide_is_wer_scatter, # [NEW] The Gap: WER vs IS scatter
         slide_07,           # IS Results: 39.9% Captured
         slide_metric_transition, # [NEW] 64.1% -> 39.9% -> 50.9%
         # --- Section 4: Understanding Why ---
-        slide_10,           # Three Root Causes
-        slide_domain_mismatch, # Domain mismatch detail
+        # slide_10,           # Three Root Causes (hidden per batch 8)
+        # slide_domain_mismatch, # Domain mismatch detail (hidden per batch 8)
         slide_11,           # Named Entity Accuracy
         slide_failure_deep_1a, # Failure Modes: 5-Category Taxonomy
         slide_failure_deep_2, # Failure Modes: Real Examples
         slide_08,           # Failure Mode Taxonomy
         slide_failure_deep_3, # Failure Modes: Impact & Fixes
         # --- Section 5: Can We Tune It? ---
-        slide_tuning_summary, # 13 Experiments, Minimal Gain
+        # slide_tuning_summary, # 13 Experiments, Minimal Gain (hidden per batch 8)
         # --- Section 6: The Full Picture ---
         slide_is_deep_dive, # Why These 6 Signals? Validation
         slide_metric_disagreement, # When Metrics Disagree
@@ -122,11 +122,11 @@ def main():
         slide_context_eval, # Context-aware re-evaluation
         # --- Salvage ---
         slide_llm_context_engine, # LLM as context engine
-        slide_25,           # LLM Salvage overview: 39.9% -> 50.9%
-        slide_25b,          # Salvage: 6 Recovery Categories
+        slide_25,           # LLM Salvage overview: 39.9% -> 50.9% (reframed: lower bound, LLM-judge only per batch 8)
+        # slide_25b,          # Salvage: 6 Recovery Categories (hidden per batch 8)
         slide_25d,          # Salvage: 3 Real Examples
         slide_25e,          # Salvage: 3 More Examples
-        slide_25c,          # Salvage: How Detection Works
+        # slide_25c,          # Salvage: How Detection Works (hidden per batch 8)
         # --- What good looks like ---
         # slide_what_good_looks_like,  # hidden per user request
         slide_14b,          # Video Gallery

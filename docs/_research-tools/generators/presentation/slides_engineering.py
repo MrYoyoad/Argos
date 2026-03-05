@@ -615,28 +615,22 @@ def slide_dual_env(prs):
     rt = add_text(slide, "Synchronization Challenge", rx, CT, col_w, Inches(0.4),
                   size=Pt(18), color=CORAL, bold=True)
 
-    big_num = add_text(slide, "26", rx, CT + Inches(0.6), col_w, Inches(0.7),
-             size=Pt(48), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
-    num_label = add_text(slide, "tracked sync items",
-             rx, CT + Inches(1.2), col_w, Inches(0.3),
-             size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
-
     rb = add_bullets(slide, [
         "Every EC2 change must be replicated to container",
         "Path translations (/home/ubuntu/ \u2192 /workspace/)",
         "Different Python environments and dependencies",
         ("Detailed sync changelog with exact code diffs", {"color": TEAL}),
         "INSTALL.sh overlay with 13-point verification",
-    ], rx, CT + Inches(1.8), col_w, Inches(3.0), size=Pt(13))
+    ], rx, CT + Inches(0.6), col_w, Inches(3.0), size=Pt(13))
 
     _finish(slide, 0,
         "Two environments: EC2 for development and research, Docker container "
-        "for production deployment. 26 tracked sync items ensure changes are "
-        "replicated correctly. Path translations, different Python environments, "
+        "for production deployment. Changes are tracked and replicated via a "
+        "detailed sync changelog. Path translations, different Python environments, "
         "different hardware. INSTALL.sh handles deployment with automatic backup "
         "and 13-point verification.",
         [[lt, r1, b1, ct_label, r2, b2],
-         [rt, big_num, num_label, rb]],
+         [rt, rb]],
         click_reveal=True, para_build=False)
 
 
