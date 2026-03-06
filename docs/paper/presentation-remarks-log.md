@@ -249,7 +249,7 @@ User performed a density audit of slides with too many elements, tables, or bull
 
 | # | Slide | Remark | Status |
 |---|-------|--------|--------|
-| 158 | 15 (slide_is_intro_b) | "Weight: 25% — the single largest signal" text dropping row, occluded by frame | in progress |
+| 158 | 15 (slide_is_intro_b) | "Weight: 25%" callout box widened from 3.5"/3.1" to 4.8"/4.4" to prevent text clipping | done |
 | 159 | 20 (slide_is_wer_scatter) | Make the scatter plot larger — custom layout with 7.7" plot area | done |
 | 160 | 23 (slide_failure_deep_1a) | Split into 2 slides (1a: categories 1-3, 1b: categories 4-5 + salvage insight bar) | done |
 | 161 | slide_metric_disagreement | Restore only slide_metric_disagreement (When Metrics Disagree: WER>>WWER patterns). Removed show='0' hide flag. Other slides (slide_11, slide_is_dimensions, slide_tuning_summary) kept hidden per batch 8 | done |
