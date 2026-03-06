@@ -44,13 +44,13 @@ def slide_17(prs):
 
     row1 = [
         ("1. Normalize", "HDR/10-bit\nconversion", BLUE),
-        ("2. ASR", "Whisper\ntranscription", BLUE),
-        ("3. Mouth Crop", "Face detect\n& ROI", BLUE),
+        ("2. Mouth Crop", "Face detect\n& ROI", BLUE),
+        ("3. ASR", "Whisper\ntranscription", BLUE),
         ("4. LRS3 Convert", "Flat \u2192 LRS3\nformat", BLUE),
     ]
     row2 = [
         ("5. Manifests", "TSV + splits", SGREEN),
-        ("6. K-means", "Feature\nextraction", SGREEN),
+        ("6. K-means", "Feature\nclustering", SGREEN),
         ("7. LLM Decode", "AV-HuBERT +\nLLaMA-2", SGOLD),
         ("8. Outputs", "Reports &\nburned video", SPINK),
     ]
@@ -100,13 +100,29 @@ def slide_17(prs):
             grp = _h_arrow(ax, row1_y) + grp
         anim_groups.append(grp)
 
-    # Connector: single clean down-arrow between rows (centered under row 1)
-    center_x = (start_x + start_x + 3 * step + box_w) / 2
-    down_y = row1_y + box_h + Inches(0.05)
-    turn_grp = [add_text(slide, "\u2193",
-                center_x - Inches(0.2), down_y,
-                Inches(0.4), Inches(0.5),
-                size=Pt(24), color=TEAL, bold=True, align=PP_ALIGN.CENTER)]
+    # Connector: L-shaped path from stage 4 (end of row 1) to stage 5 (start of row 2)
+    r1_end_cx = start_x + 3 * step + box_w / 2   # center-x of stage 4
+    r2_start_cx = start_x + box_w / 2             # center-x of stage 5
+    elbow_y = row1_y + box_h + Inches(0.2)        # horizontal line position
+    lw = Inches(0.035)                             # line width
+    turn_grp = []
+    # Vertical: bottom of stage 4 down to elbow
+    turn_grp.append(add_rect(slide, r1_end_cx - lw / 2, row1_y + box_h,
+                             lw, elbow_y - (row1_y + box_h),
+                             fill_color=TEAL, border_color=None))
+    # Horizontal: stage 4 center left to stage 5 center
+    turn_grp.append(add_rect(slide, r2_start_cx - lw / 2, elbow_y - lw / 2,
+                             r1_end_cx - r2_start_cx + lw, lw,
+                             fill_color=TEAL, border_color=None))
+    # Vertical: elbow down toward stage 5
+    turn_grp.append(add_rect(slide, r2_start_cx - lw / 2, elbow_y,
+                             lw, row2_y - elbow_y - Inches(0.18),
+                             fill_color=TEAL, border_color=None))
+    # Arrowhead pointing into stage 5
+    turn_grp.append(add_text(slide, "\u25BC",
+                    r2_start_cx - Inches(0.1), row2_y - Inches(0.24),
+                    Inches(0.2), Inches(0.24),
+                    size=Pt(10), color=TEAL, align=PP_ALIGN.CENTER))
     anim_groups.append(turn_grp)
 
     # Row 2
@@ -162,9 +178,9 @@ def slide_17(prs):
 
     _finish(slide, 0,
         "8-stage automated pipeline built from 3 research repos (auto_avsr, "
-        "av_hubert, VSP-LLM). Row 1: preprocessing (normalize, ASR, mouth crop, "
+        "av_hubert, VSP-LLM). Row 1: preprocessing (normalize, mouth crop, ASR, "
         "LRS3 convert). Row 2: feature processing and inference (manifests, "
-        "K-means, LLM decode, outputs). Stages 6-7 (K-means and LLM Decode) "
+        "K-means clustering, LLM decode, outputs). Stages 6-7 (K-means and LLM Decode) "
         "existed in the academic repo; all other stages were engineered from scratch. "
         "Each stage click-reveals sequentially.",
         anim_groups, click_reveal=True)

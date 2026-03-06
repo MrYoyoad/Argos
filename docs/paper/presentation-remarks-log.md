@@ -259,3 +259,4 @@ User performed a density audit of slides with too many elements, tables, or bull
 | 165 | slide_26b (IS Improvement) | Increased card spacing, taller annotation cards (1.05"), text Pt(11)/WHITE instead of Pt(9)/LGRAY | done |
 | 166 | slide_price_tag | Table widened to 11.8", text Pt(12), row_height 0.48". Added 5-point cost methodology in speaker notes | done |
 | 167 | FT_11a_loss.png | Annotation box "Val: 2.39 → 4.12 (+72%)" occluded by legend — moved down to y=0.72 | done |
+| 168 | slide_17 (Pipeline) | Fix stage order: swap ASR/Mouth Crop to match real pipeline (Normalize→Mouth Crop→ASR→LRS3). Change K-means subtitle from "Feature extraction" to "Feature clustering". Replace centered ↓ with L-shaped connector (thin teal lines + ▼ arrowhead) flowing from stage 4 to stage 5. Update speaker notes | done |
