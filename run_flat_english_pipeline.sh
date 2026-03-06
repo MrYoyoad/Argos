@@ -16,6 +16,11 @@ RAW_DIR="$(realpath "$RAW_DIR")"
 
 HOME_DIR="${HOME}"
 
+# Source environment detection from config module (sets ENV_TYPE=ec2 or container).
+# This is required by lib/outputs.sh to enable IS scoring on EC2.
+# We only use ENV_TYPE from config.sh — all paths are set explicitly below.
+source "${HOME}/lib/config.sh"
+
 AUTO_AVSR="${HOME_DIR}/auto_avsr"
 VSP="${HOME_DIR}/VSP-LLM"
 AVH="${HOME_DIR}/av_hubert"

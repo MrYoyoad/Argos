@@ -105,7 +105,7 @@ lib/
 
 **Phase 1.1: Infrastructure**
 - `common.sh`: Logging (`log_info`, `log_error`, `log_stage`), validation (`validate_directory`)
-- `config.sh`: Environment detection, path configuration, derived path functions
+- `config.sh`: Environment detection (`ENV_TYPE`), path configuration, derived path functions. **Sourced by `run_flat_english_pipeline.sh`** to provide `ENV_TYPE` for `outputs.sh` IS scoring.
 - `venv_utils.sh`: Virtual environment activation/deactivation with error handling
 
 **Phase 1.2: Normalization**

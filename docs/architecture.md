@@ -42,6 +42,7 @@ Raw Videos (.mp4)
     - One report entry per segment
     - One burned video per segment
     - EC2 ONLY: IS score per segment (--compute-is), full IS analysis CSV + JSON
+      Requires ENV_TYPE=ec2 (set by lib/config.sh, sourced at pipeline start)
 
 Note: Steps 0.6 and 3.5 implement unified transcription management.
       Whisper only runs ONCE per unique video filename across all pipeline runs!

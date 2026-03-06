@@ -214,3 +214,31 @@ User remark: "many slides have bad animations and occlusions"
 | 143 | Pipeline / Live Demo | Add IS + LLM-as-a-Judge scoring to pipeline output (Stage 8). IS score now appears in HTML report per-segment with color coding. Full IS analysis (intelligibility_scores.csv + intelligibility_summary.json) generated automatically after decode. | done |
 | 144 | Pipeline Reports | Make IS scoring EC2-only: `--compute-is` flag added to make_report.py, passed only when ENV_TYPE=ec2 in outputs.sh. Full IS analysis also gated to EC2. Container version unaffected. | done |
 | 145 | 19, future_directions, generators | Reframe "topic label would help" claim — experiment proved it doesn't help without fine-tuning. Changed to "topic-aware fine-tuning needed" across slides, analysis docs, and generators | done |
+
+---
+
+## Batch 10 — 2026-03-05 (Density Audit Fixes)
+
+User performed a density audit of slides with too many elements, tables, or bullets.
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 146 | slide_context_eval (hidden) | Decluttered from 3 tables to 1: removed comparison table (blind vs context) and summary stats table. Transition matrix enlarged (7" wide, Pt(14), centered) as hero element. Added headline stat above ("Y+P: 64.9% → 62.1%"). 3 key-finding bullets below at Pt(14). Moved full comparison data to speaker notes. Fixed float EMU from centering math. Slide remains hidden per user request. | done |
+| 147 | slide_data_scaling | Trimmed left-column bullets from 6 to 4: dropped "Fine-tune experiments confirmed: small data = overfitting" (redundant with table) and "Data scarcity is a curation bottleneck" (weakens momentum). Bumped remaining bullets from Pt(13) to Pt(14), reduced height allocation (3.5" → 3.0") for breathing room. | done |
+| 148 | slide_11 (Named Entity Accuracy) | Hidden — commented out from builders list. Removed click-reveal animations (anim_groups set to None). 70→69 slides. | done |
+| 149 | slide_metric_disagreement (When Metrics Disagree) | Hidden — commented out from builders list. 69→68 slides. | done |
+| 150 | slides 31-32 (slide_25 + slide_llm_context_engine) | Swapped order: slide_25 (IS lower bound / salvage overview) now comes before slide_llm_context_engine (LLM as context engine). First explains the judge, then explains why LLM context matters. | done |
+| 151 | slide_14b (Video Gallery) | Replaced "nearmiss" (probiotics segment) with "admiral" (Admiral McRae → animal migratory, WER 33%). Added "admiral" video key to config.py. Updated caption and speaker notes. | done |
+| 152 | slide_15 (Demo Trio) | Replaced "nearmiss" video with "vitamin_d" ("vitamin d deficiency" → "empathy deficiency", WER 50%) — better near-miss example with phonetically plausible substitution that changes meaning. Added "vitamin_d" video key to config.py. | done |
+| 153 | slide_17 (8-Stage Pipeline) | Full redesign: rounded-corner boxes, larger arrows (Pt(14)), ▼ connector properly centered under stage 4, ↳ flow indicator at row 2 start, "Existed in academic repo" label moved ABOVE red outline (no longer crowds legend), repo attribution merged to single centered line, cleaner legend spacing. | done |
+| 154 | slide_26b (IS Roadmap) | Enlarged trajectory plot from 7.0" to 8.0" width, shifted milestones right to accommodate. | done |
+
+---
+
+## Pipeline Bug Reports — 2026-03-06
+
+| # | Area | Remark | Status |
+|---|------|--------|--------|
+| 155 | Pipeline / IS Scoring | No IS column in UI report — `ENV_TYPE` never set because `run_flat_english_pipeline.sh` didn't source `lib/config.sh`. Fixed: added `source "${HOME}/lib/config.sh"` at pipeline start. | done |
+| 156 | Pipeline / Springer Fox | `springer_fox_with_hyp.mp4` in vsp_input is a burned lip-crop output (224x224), not a raw source video. Face detector can't find a face in a mouth crop → empty hypothesis. User needs to replace with the original raw video. | noted |
+| 157 | Pipeline / Overlap Selection | Overlapping 2s segments produce different decode quality in overlap zones. Analysis of 33 Obama segments: 13/21 overlaps have a clear quality winner (7 prev, 6 next). A post-decode "best-of overlap" merge step could improve output. Related to Mission 6 (ROVER/MBR). | noted |

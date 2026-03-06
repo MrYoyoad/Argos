@@ -1382,3 +1382,22 @@ The following changes have been made to the EC2 version and need to be replicate
 - `intelligibility_scores.csv` — Full augmented CSV with IS, phonetic/semantic similarity, llm_context_prob, failure modes
 - `intelligibility_summary.json` — Aggregate stats (mean IS, tier distribution, topic analysis)
 - `report.html` now includes IS column per segment (when `--compute-is` is used)
+
+---
+
+### 27. Bug Fix: ENV_TYPE Not Set in Pipeline Script (Mar 6, 2026)
+
+**Problem**: `lib/outputs.sh` gates IS scoring on `ENV_TYPE=ec2`, but the main pipeline script (`run_flat_english_pipeline.sh`) never sourced `lib/config.sh` — so `ENV_TYPE` was always empty and IS was silently skipped on every run.
+
+**EC2 fix**: Added `source "${HOME}/lib/config.sh"` near the top of `run_flat_english_pipeline.sh`, right after `HOME_DIR` is set. This sets `ENV_TYPE=ec2` (and other exports from config.sh, which are then overridden by the pipeline's own explicit variable assignments).
+
+**Container action**: Add `source "${BASE_DIR}/lib/config.sh"` after `BASE_DIR` is set in the container's `run_flat_english_pipeline.sh`. This will set `ENV_TYPE=container`, which correctly keeps IS disabled on the container (intentional version difference per item 26).
+
+**Changed files**:
+- `run_flat_english_pipeline.sh` — Added `source "${HOME}/lib/config.sh"` after line 17 (`HOME_DIR="${HOME}"`), with comment explaining it provides `ENV_TYPE` for `lib/outputs.sh`
+
+**Container equivalent**:
+```bash
+# After BASE_DIR="$SCRIPT_DIR" (around line 20):
+source "${BASE_DIR}/lib/config.sh"
+```
