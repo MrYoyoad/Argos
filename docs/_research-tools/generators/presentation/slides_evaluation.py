@@ -918,9 +918,6 @@ def slide_metric_disagreement(prs):
         "is the dangerous case — sounds right but wrong meaning.",
         [c for c in cards], click_reveal=True)
 
-    # Hide slide
-    slide._element.set('show', '0')
-
 
 def slide_metric_disagreement_2(prs):
     """More metric disagreement patterns — part 2."""

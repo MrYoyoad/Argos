@@ -250,12 +250,12 @@ User performed a density audit of slides with too many elements, tables, or bull
 | # | Slide | Remark | Status |
 |---|-------|--------|--------|
 | 158 | 15 (slide_is_intro_b) | "Weight: 25% — the single largest signal" text dropping row, occluded by frame | in progress |
-| 159 | 20 (slide_is_wer_scatter) | Make the scatter plot larger | in progress |
-| 160 | 23 (slide_failure_deep_1a) | "Roughly right but names/content words lost — 204 segments" obscured. Split slide to 2 slides to reduce density | in progress |
-| 161 | Hidden slides | Missing metric slides that were hidden — restore all 4: slide_11, slide_metric_disagreement, slide_is_dimensions, slide_tuning_summary | in progress |
-| 162 | slide_14b (Video Gallery) | Put better examples with high IS — more positive stuff in the 6-video grid | in progress |
-| 163 | slide_17 (Pipeline) | Arrows are ugly — replace with better styled arrows like the beginning pipeline. Extra unneeded arrow on right side | in progress |
-| 164 | 48 (slide_24) | Make the figure larger | in progress |
-| 165 | slide_26b (IS Improvement) | Grey text too small and occluded by boxes — fix | in progress |
-| 166 | slide_price_tag | Make the table larger. Add explanation in speaker notes on how costs were assessed | in progress |
+| 159 | 20 (slide_is_wer_scatter) | Make the scatter plot larger — custom layout with 7.7" plot area | done |
+| 160 | 23 (slide_failure_deep_1a) | Split into 2 slides (1a: categories 1-3, 1b: categories 4-5 + salvage insight bar) | done |
+| 161 | slide_metric_disagreement | Restore only slide_metric_disagreement (When Metrics Disagree: WER>>WWER patterns). Removed show='0' hide flag. Other slides (slide_11, slide_is_dimensions, slide_tuning_summary) kept hidden per batch 8 | done |
+| 162 | slide_14b (Video Gallery) | Row 1 changed to bogo/nearmiss/entity_success (positive examples, no reuse from opening). Row 2 kept phonetic_bridge/admiral/topic_drift | done |
+| 163 | slide_17 (Pipeline) | Replaced ▶ with → arrows, removed extra chevrons mid/right, single centered ↓ between rows | done |
+| 164 | 48 (slide_24) | Narrowed text 3.4", enlarged image to 5.2" | done |
+| 165 | slide_26b (IS Improvement) | Increased card spacing, taller annotation cards (1.05"), text Pt(11)/WHITE instead of Pt(9)/LGRAY | done |
+| 166 | slide_price_tag | Table widened to 11.8", text Pt(12), row_height 0.48". Added 5-point cost methodology in speaker notes | done |
 | 167 | FT_11a_loss.png | Annotation box "Val: 2.39 → 4.12 (+72%)" occluded by legend — moved down to y=0.72 | done |
