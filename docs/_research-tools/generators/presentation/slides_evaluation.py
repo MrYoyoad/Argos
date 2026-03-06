@@ -160,9 +160,9 @@ def slide_15(prs):
 
     # Three embedded videos side by side — click each to play
     # VID dict mapping (confirmed correct):
-    #   "ok_demo"   -> 8SMYkCQkT4Q_0  (sheetaro -> just hara, gist right)
-    #   "nearmiss"  -> -WQZsfHcPDM_7  (probiotics -> permafrost)
-    #   "halluc"    -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
+    #   "ok_demo"    -> 8SMYkCQkT4Q_0  (sheetaro -> just hara, gist right)
+    #   "vitamin_d"  -> 2dwUMlphEnI_5  (vitamin d deficiency -> empathy deficiency)
+    #   "halluc"     -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
     vid_w = Inches(3.6)
     vid_h = Inches(2.7)
     gap = Inches(0.4)
@@ -172,7 +172,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("nearmiss", '"probiotics" \u2192 "permafrost"\nStructure right, key terms garbled', "WER 58%  IS 2.7", YELLOW),
+        ("vitamin_d", '"vitamin d deficiency" \u2192 "empathy deficiency"\nPhonetically plausible, totally different meaning', "WER 50%  IS 2.5", YELLOW),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -193,8 +193,9 @@ def slide_15(prs):
     _finish(slide, 15,
         "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
         "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'probiotics' becomes 'permafrost' (near-miss, IS 2.7 — sentence "
-        "structure preserved but key terms phonetically garbled). "
+        "'vitamin d deficiency' becomes 'empathy deficiency' (near-miss, "
+        "WER 50% — phonetically plausible substitution that completely "
+        "changes the meaning, classic lip-reading failure). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
 
@@ -738,20 +739,21 @@ def slide_14b(prs):
     row_y  = [CT + Inches(0.45), CT + Inches(0.45) + vid_h + gap_y]
     start_x = MX
 
-    # 6 videos — each tells a different story about system behavior
+    # 6 videos — balanced: 3 positive high-IS examples + 3 failure modes
+    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, vitamin_d, halluc)
     rows = [
-        [("phonetic_bridge", "Sound-alike confusion — phonetically similar words substituted",
+        [("bogo",          "Strong decode — meaning fully captured with minor word changes",
+          "18%",  GREEN),
+         ("nearmiss",      "Near-miss — almost perfect, small substitutions only",
+          "22%",  GREEN),
+         ("entity_success","Named entities correctly captured — proper nouns intact",
+          "19%",  GREEN)],
+        [("phonetic_bridge","Sound-alike confusion — phonetically similar words substituted",
           "65%",  YELLOW),
-         ("nearmiss",     "Viseme confusion — identical lip shapes, wrong word",
-          "58%",  YELLOW),
-         ("wer_broken",   "WER over-punishes — meaning preserved despite high error rate",
-          "82%",  ORANGE)],
-        [("tuning_fix",   "Config J recovers empty output — tuning tradeoff in action",
-          "73%",  ORANGE),
+         ("admiral",      "Admiral McRae \u2192 animal migratory — classic viseme swap",
+          "33%",  YELLOW),
          ("topic_drift",  "Model generates coherent but completely wrong topic",
-          "97%",  RED),
-         ("salvage",      "WER says 74% failure — but meaning is preserved",
-          "74%",  YELLOW)],
+          "97%",  RED)],
     ]
 
     for r, row in enumerate(rows):
@@ -766,19 +768,15 @@ def slide_14b(prs):
                      align=PP_ALIGN.CENTER)
 
     _finish(slide, "14b",
-        "Each video demonstrates a different system behavior. "
-        "Row 1: (1) Phonetic bridge — sound-alike confusion where phonetically similar "
-        "words are substituted, showing how the model latches onto acoustic similarity. "
-        "(2) Near-miss — viseme confusion where identical lip shapes produce wrong words "
-        "(e.g. admiral/animal), showing the fundamental lip-reading challenge. "
-        "(3) WER over-punishes — high WER but meaning is preserved, demonstrating why "
-        "WER alone is misleading for quality assessment. "
-        "Row 2: (4) Tuning fix — Config J recovers a segment that baseline left empty, "
-        "showing the tradeoff between coverage and accuracy. "
-        "(5) Topic drift — model generates coherent text about the wrong subject entirely, "
-        "the #1 failure mode by frequency. "
-        "(6) Salvage — WER reports 74% failure but a human would understand the meaning, "
-        "proving WER alone is insufficient for quality assessment.")
+        "Balanced video gallery: 3 positive + 3 failure modes. "
+        "Row 1 (positive): (1) Near-perfect transcription showing the system at its "
+        "best with very low WER. (2) Good output with minor word-level errors but "
+        "meaning fully preserved. (3) Named entities correctly captured — proper "
+        "nouns like names and places come through intact. "
+        "Row 2 (failure modes): (4) Phonetic bridge — sound-alike confusion where "
+        "phonetically similar words substitute. (5) Admiral McRae — classic viseme "
+        "swap where identical lip shapes produce wrong words. (6) Topic drift — "
+        "model generates coherent text about the wrong subject entirely.")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1166,68 +1164,40 @@ def slide_context_eval(prs):
     add_title(slide, "Context Makes the Judge Stricter, Not Lenient")
     add_accent_line(slide)
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
+    # Headline stat — centered, full width
+    hl = add_text(slide,
+        "Y+P (useful output): 64.9% \u2192 62.1%  (\u22122.7pp when judge knows the topic)",
+        MX, CT, CW, Inches(0.4),
+        size=Pt(18), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
 
-    # Left — comparison table
-    lt = add_text(slide, "Blind vs Context-Aware", MX, CT, col_w, Inches(0.4),
-                  size=Pt(17), color=TEAL, bold=True)
-
-    tbl = add_table(slide,
-        ["Verdict", "Blind", "Context", "\u0394"],
-        [["Y (fully preserved)", "23.0% (345)", "15.0% (225)", "\u22128.0pp"],
-         ["P (partially)", "41.8% (626)", "47.1% (705)", "+5.3pp"],
-         ["N (not preserved)", "35.1% (526)", "37.9% (567)", "+2.8pp"],
-         ["Y+P (useful)", "64.9% (971)", "62.1% (930)", "\u22122.7pp"]],
-        MX, CT + Inches(0.5), col_w, text_size=Pt(11),
-        col_widths=[Inches(1.5), Inches(1.5), Inches(1.5), Inches(1.0)],
-        row_colors={0: {3: CORAL}, 3: {3: CORAL}})
-
-    add_text(slide,
-        "Context reveals vocabulary failures that blind evaluation misses.",
-        MX, CT + Inches(2.4), col_w, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True)
-
-    # Key finding
-    kf_t = add_text(slide, "Key Finding:", MX, CT + Inches(3.0), col_w, Inches(0.3),
-             size=Pt(15), color=CORAL, bold=True)
-    kf_b = add_bullets(slide, [
-        ("Y drops 8pp: context reveals missed domain vocabulary",
-         {"color": CORAL}),
-        "Y\u2192P dominant transition (138 of 230 downgrades)",
-        ("Only 1 N\u2192Y rescue across all 1,497 pairs", {"bold": True}),
-    ], MX, CT + Inches(3.4), col_w, Inches(1.5), size=Pt(13))
-
-    # Right — transition matrix
-    rx = MX + col_w + gap
-    rt = add_text(slide, "Transition Matrix", rx, CT, col_w, Inches(0.4),
-                  size=Pt(17), color=CORAL, bold=True)
+    # Transition matrix — centered, the star of the slide
+    tbl_w = Inches(7.0)
+    tbl_x = int((SL_W - tbl_w) / 2)
+    rt = add_text(slide, "Transition Matrix (1,497 pairs)",
+                  tbl_x, CT + Inches(0.7), tbl_w, Inches(0.35),
+                  size=Pt(16), color=TEAL, bold=True)
 
     tbl2 = add_table(slide,
         ["", "Ctx Y", "Ctx P", "Ctx N"],
-        [["Blind Y", "207", "138", "0"],
-         ["Blind P", "17", "519", "90"],
-         ["Blind N", "1", "48", "477"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(12),
+        [["Blind Y (345)", "207", "138", "0"],
+         ["Blind P (626)", "17", "519", "90"],
+         ["Blind N (526)", "1", "48", "477"]],
+        tbl_x, CT + Inches(1.15), tbl_w, text_size=Pt(14),
+        col_widths=[Inches(2.0), Inches(1.67), Inches(1.67), Inches(1.67)],
         row_colors={0: {2: CORAL}, 1: {3: CORAL}})
 
-    # Summary stats
-    add_text(slide, "Summary", rx, CT + Inches(2.3), col_w, Inches(0.3),
-             size=Pt(15), color=TEAL, bold=True)
-
-    tbl3 = add_table(slide,
-        ["Direction", "Count"],
-        [["Downgrades (stricter)", "230"],
-         ["Upgrades (lenient)", "68"],
-         ["Unchanged", "1,199"],
-         ["Cross-condition agreement", "80.0%"]],
-        rx, CT + Inches(2.7), col_w, text_size=Pt(11),
-        row_colors={0: {1: CORAL}, 1: {1: GREEN}})
+    # Key findings — below matrix, full width
+    kf_b = add_bullets(slide, [
+        ("230 downgrades vs 68 upgrades \u2014 context is 3.4\u00d7 more likely to penalize",
+         {"color": CORAL, "bold": True}),
+        "Y\u2192P is the dominant transition (138 cases): judge realizes domain vocabulary was wrong",
+        ("Only 1 N\u2192Y rescue across all 1,497 pairs \u2014 context almost never saves a failure",
+         {"bold": True}),
+    ], MX, CT + Inches(3.2), CW, Inches(1.8), size=Pt(14), spacing=Pt(10))
 
     # Bottom
     add_text(slide,
-        "Context is STRICTER not lenient \u2014 230 downgrades vs 68 upgrades. "
-        "Domain knowledge reveals vocabulary failures.",
+        "Domain knowledge reveals vocabulary failures that surface-level evaluation misses.",
         MX, Inches(6.3), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1236,8 +1206,14 @@ def slide_context_eval(prs):
         "from 23% to 15% (-8pp). Y+P drops from 64.9% to 62.1%. Context is "
         "STRICTER, not lenient. 230 downgrades vs 68 upgrades. Dominant "
         "transition: Y to P (138 cases) — the judge realizes domain vocabulary "
-        "was wrong. Only 1 N-to-Y rescue across all 1,497 pairs.",
-        [[lt, tbl], [rt, tbl2, tbl3], [kf_t, kf_b]], click_reveal=True)
+        "was wrong. Only 1 N-to-Y rescue across all 1,497 pairs.\n\n"
+        "FULL COMPARISON (for reference):\n"
+        "Y: 23.0% (345) -> 15.0% (225), delta -8.0pp\n"
+        "P: 41.8% (626) -> 47.1% (705), delta +5.3pp\n"
+        "N: 35.1% (526) -> 37.9% (567), delta +2.8pp\n"
+        "Y+P: 64.9% (971) -> 62.1% (930), delta -2.7pp\n"
+        "Cross-condition agreement: 80.0%",
+        [[hl], [rt, tbl2], [kf_b]], click_reveal=True)
 
 
 def slide_what_good_looks_like(prs):

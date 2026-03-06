@@ -107,12 +107,12 @@ def slide_is_intro_b(prs):
     add_title(slide, "IS Signals: Semantic Similarity")
     add_accent_line(slide)
 
-    # Weight callout
-    weight_r = add_rect(slide, MX, CT, Inches(3.5), Inches(0.5), fill_color=NAVY2,
+    # Weight callout — wide enough so text stays on one line
+    weight_r = add_rect(slide, MX, CT, Inches(4.8), Inches(0.5), fill_color=NAVY2,
                         border_color=TEAL, border_width=Pt(2), corner_radius=True)
     weight_t = add_text(slide, "Weight: 25% \u2014 the single largest signal",
                  MX + Inches(0.2), CT + Inches(0.06),
-                 Inches(3.1), Inches(0.38),
+                 Inches(4.4), Inches(0.38),
                  size=Pt(14), color=TEAL, bold=True)
 
     # Main explanation card
@@ -640,21 +640,34 @@ def slide_is_radar(prs):
 
 
 def slide_is_wer_scatter(prs):
-    """IS vs WER scatter showing 'the gap'."""
-    build_split(prs, 0,
-        "The Gap: Where WER Lies Most",
-        "P7_is_wer_scatter",
-        notes="Scatter plot of WER vs IS for all 1,497 segments. The green "
-              "highlighted region shows 147 segments where WER > 40% but IS >= 3.0.",
-        big_num="147",
-        num_color=GREEN,
-        num_label="segments in the gap: high WER, useful IS",
-        bullets=[
-            ("WER > 40% but IS \u2265 3.0 \u2014 useful output that WER discards", {"bold": True}),
-            "Synonyms, tense changes, and filler words inflate WER",
-            "Semantic meaning is preserved despite word-level errors",
-            ("Validates IS as a more honest metric for VSP", {"color": TEAL}),
-        ])
+    """IS vs WER scatter showing 'the gap' — large plot layout."""
+    slide = new_slide(prs)
+    add_title(slide, "The Gap: Where WER Lies Most")
+    add_accent_line(slide)
+
+    # Left column — big number + bullets (narrower to give plot more room)
+    left_w = Inches(4.2)
+    num_s = add_text(slide, "147", MX, CT, left_w, Inches(1.1),
+                     size=Pt(72), color=GREEN, bold=True)
+    lbl_s = add_text(slide, "segments in the gap: high WER, useful IS",
+                     MX, CT + Inches(1.1), left_w, Inches(0.5),
+                     size=Pt(15), color=LGRAY)
+    bul = add_bullets(slide, [
+        ("WER > 40% but IS \u2265 3.0 \u2014 useful output that WER discards", {"bold": True}),
+        "Synonyms, tense changes, and filler words inflate WER",
+        "Semantic meaning is preserved despite word-level errors",
+        ("Validates IS as a more honest metric for VSP", {"color": TEAL}),
+    ], MX, CT + Inches(1.65), left_w, Inches(3.0))
+
+    # Right — larger scatter plot
+    img = add_image(slide, "P7_is_wer_scatter",
+                    MX + left_w + Inches(0.2), CT - Inches(0.2),
+                    width=CW - left_w - Inches(0.2))
+
+    _finish(slide, 0,
+        "Scatter plot of WER vs IS for all 1,497 segments. The green "
+        "highlighted region shows 147 segments where WER > 40% but IS >= 3.0.",
+        [[num_s, lbl_s, bul], [img]], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -810,9 +823,9 @@ def slide_08(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_failure_deep_1a(prs):
-    """Failure mode taxonomy: 5 academically-grounded categories as animated cards."""
+    """Failure mode taxonomy Part 1: categories 1-3 (Signal Loss, Hallucination, Wrong Topic)."""
     slide = new_slide(prs)
-    add_title(slide, "Failure Mode Taxonomy: 5 Categories")
+    add_title(slide, "Failure Mode Taxonomy (1/2): Signal Loss \u2192 Wrong Topic")
     add_accent_line(slide)
 
     add_text(slide,
@@ -826,7 +839,7 @@ def slide_failure_deep_1a(prs):
         MX, CT + Inches(0.28), CW, Inches(0.22),
         size=Pt(10), color=MGRAY, italic=True)
 
-    modes = [
+    modes_1 = [
         ("1. Signal Loss", "9.0%", "81 segments", LGRAY,
          "Nothing came out",
          "Empty output OR length ratio < 0.3",
@@ -839,6 +852,58 @@ def slide_failure_deep_1a(prs):
          "Mouth shapes decoded to wrong domain",
          "Semantic < 0.2 (phonetic-matched or not)",
          "Ref: \u201cweight loss and diet\u201d \u2192 Hyp: \u201cwanted to be a princess\u201d"),
+    ]
+
+    card_h = Inches(1.35)
+    gap = Inches(0.15)
+    y0 = CT + Inches(0.65)
+    name_w = Inches(3.8)
+    rule_w = CW - name_w - Inches(0.1)
+
+    anim_groups = []
+    for i, (name, pct, count, color, desc, rule, example) in enumerate(modes_1):
+        y = y0 + i * (card_h + gap)
+
+        r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+        t1 = add_text(slide, f"{name}  ({pct})",
+                 MX + Inches(0.2), y + Inches(0.08),
+                 name_w - Inches(0.3), Inches(0.35),
+                 size=Pt(17), color=color, bold=True)
+        t2 = add_text(slide, f"{desc}  \u2014  {count}",
+                 MX + Inches(0.2), y + Inches(0.48),
+                 name_w - Inches(0.3), Inches(0.45),
+                 size=Pt(13), color=LGRAY)
+        t3 = add_text(slide, f"Rule: {rule}",
+                 MX + name_w, y + Inches(0.08),
+                 rule_w - Inches(0.15), Inches(0.45),
+                 size=Pt(14), color=WHITE)
+        t4 = add_text(slide, f"\u25b8 {example}",
+                 MX + name_w, y + Inches(0.60),
+                 rule_w - Inches(0.15), Inches(0.55),
+                 size=Pt(12), color=LGRAY, italic=True)
+        anim_groups.append([r, t1, t2, t3, t4])
+
+    add_text(slide,
+        "Priority order: 1 \u2192 2 \u2192 3 (continued on next slide)",
+        MX, Inches(6.65), CW, Inches(0.35),
+        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Failure taxonomy Part 1. Signal Loss (9%): empty or near-empty output. "
+        "Hallucination (12.3%): model invents fluent but fake text, the most "
+        "dangerous mode. Wrong Topic (31.6%): the LARGEST category — mouth shapes "
+        "decoded to completely wrong domain.",
+        anim_groups, click_reveal=True)
+
+
+def slide_failure_deep_1b(prs):
+    """Failure mode taxonomy Part 2: categories 4-5 (Right Topic Wrong Details, Accumulated)."""
+    slide = new_slide(prs)
+    add_title(slide, "Failure Mode Taxonomy (2/2): Detail Loss \u2192 Accumulated")
+    add_accent_line(slide)
+
+    modes_2 = [
         ("4. Right Topic, Wrong Details", "22.7%", "204 segments", TEAL,
          "Roughly right but names/content words lost",
          "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
@@ -849,62 +914,63 @@ def slide_failure_deep_1a(prs):
          "Many words slightly wrong throughout, meaning erodes"),
     ]
 
-    card_h = Inches(0.88)
-    gap = Inches(0.08)
-    y0 = CT + Inches(0.55)
-    name_w = Inches(3.5)
+    card_h = Inches(1.8)
+    gap = Inches(0.25)
+    y0 = CT + Inches(0.15)
+    name_w = Inches(3.8)
     rule_w = CW - name_w - Inches(0.1)
 
     anim_groups = []
-    for i, (name, pct, count, color, desc, rule, example) in enumerate(modes):
+    for i, (name, pct, count, color, desc, rule, example) in enumerate(modes_2):
         y = y0 + i * (card_h + gap)
 
-        # Card background
         r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-
-        # Left: category name + percentage
         t1 = add_text(slide, f"{name}  ({pct})",
-                 MX + Inches(0.2), y + Inches(0.05),
-                 name_w - Inches(0.3), Inches(0.3),
-                 size=Pt(15), color=color, bold=True)
-
-        # Left: one-line description + count
+                 MX + Inches(0.2), y + Inches(0.1),
+                 name_w - Inches(0.3), Inches(0.4),
+                 size=Pt(18), color=color, bold=True)
         t2 = add_text(slide, f"{desc}  \u2014  {count}",
-                 MX + Inches(0.2), y + Inches(0.38),
-                 name_w - Inches(0.3), Inches(0.45),
-                 size=Pt(11), color=LGRAY)
-
-        # Right: detection rule
+                 MX + Inches(0.2), y + Inches(0.55),
+                 name_w - Inches(0.3), Inches(0.55),
+                 size=Pt(14), color=LGRAY)
         t3 = add_text(slide, f"Rule: {rule}",
-                 MX + name_w, y + Inches(0.06),
-                 rule_w - Inches(0.15), Inches(0.35),
-                 size=Pt(12), color=WHITE)
-
-        # Right: example
+                 MX + name_w, y + Inches(0.1),
+                 rule_w - Inches(0.15), Inches(0.55),
+                 size=Pt(14), color=WHITE)
         t4 = add_text(slide, f"\u25b8 {example}",
-                 MX + name_w, y + Inches(0.45),
-                 rule_w - Inches(0.15), Inches(0.35),
-                 size=Pt(11), color=LGRAY, italic=True)
-
+                 MX + name_w, y + Inches(0.75),
+                 rule_w - Inches(0.15), Inches(0.65),
+                 size=Pt(13), color=LGRAY, italic=True)
         anim_groups.append([r, t1, t2, t3, t4])
 
-    # Priority order footer
+    # Summary bar
+    sum_y = y0 + 2 * (card_h + gap) + Inches(0.1)
+    sr = add_rect(slide, MX, sum_y, CW, Inches(1.0), fill_color=NAVY2,
+                  border_color=GOLD, border_width=Pt(2), corner_radius=True)
+    add_text(slide, "Key Insight: Categories 4 & 5 account for 47.1% of failures",
+             MX + Inches(0.3), sum_y + Inches(0.1), CW - Inches(0.6), Inches(0.35),
+             size=Pt(16), color=GOLD, bold=True)
     add_text(slide,
-        "Priority: Signal Loss \u2192 Hallucination \u2192 Wrong Topic \u2192 "
+        "These are the salvageable segments \u2014 the model is in the right neighborhood "
+        "but loses details or accumulates small errors. N-best aggregation (ROVER/MBR) "
+        "and stronger LLM are the primary fixes.",
+        MX + Inches(0.3), sum_y + Inches(0.5), CW - Inches(0.6), Inches(0.45),
+        size=Pt(13), color=WHITE)
+    anim_groups.append([sr])
+
+    add_text(slide,
+        "Full priority: Signal Loss \u2192 Hallucination \u2192 Wrong Topic \u2192 "
         "Right Topic Wrong Details \u2192 Accumulated Errors",
-        MX, Inches(6.75), CW, Inches(0.35),
+        MX, Inches(6.65), CW, Inches(0.35),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Five-category failure taxonomy grounded in ASR error research "
-        "(Fosler-Lussier 2004) and LLM hallucination analysis (ACL 2025). "
-        "Key insight: Wrong Topic is the LARGEST category at 31.6% — it merges "
-        "the old Topic Drift and Phonetic Wrong Topic categories because the fix "
-        "is the same (stronger LLM, more training data). Signal Loss and "
-        "Accumulated Errors are the bookends: one produces nothing, the other "
-        "produces something but death-by-a-thousand-cuts erodes meaning. "
-        "Each segment gets exactly one label, checked in priority order 1 through 5.",
+        "Failure taxonomy Part 2. Right Topic Wrong Details (22.7%): the model "
+        "gets the subject right but loses names and content words — 204 segments. "
+        "Accumulated Errors (24.4%): death by a thousand cuts, 220 segments. "
+        "Together 47.1% of failures are in the 'almost right' zone, making them "
+        "prime targets for N-best aggregation and LLM upgrade.",
         anim_groups, click_reveal=True)
 
 
@@ -1282,7 +1348,7 @@ def slide_11(prs):
         "loss is catastrophic and independent of general word accuracy. This is "
         "why NEA accounts for 17.3% of IS variance despite only 15% weight \u2014 "
         "it's the single most discriminating signal between captured and failed.",
-        [[lt, lb], [img]], click_reveal=True)
+        None)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 12 — 13 TUNING EXPERIMENTS

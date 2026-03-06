@@ -35,9 +35,9 @@ def slide_24(prs):
     add_title(slide, "Starting from 40%, Not 11%")
     add_accent_line(slide)
 
-    col_w = Inches(3.6)
-    img_w = Inches(4.0)
-    gap = Inches(0.3)
+    col_w = Inches(3.4)
+    img_w = Inches(5.2)
+    gap = Inches(0.25)
 
     # Left column — WER Says (coral)
     r1 = add_rect(slide, MX, CT, col_w, Inches(2.2), fill_color=NAVY2,
@@ -60,7 +60,7 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
-        ("39.9% properly captured (IS ≥ 3.0)", {"bold": True}),
+        ("39.9% properly captured (IS \u2265 3.0)", {"bold": True}),
         ("50.9% with LLM salvage (165 recoverable segments)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
@@ -68,8 +68,8 @@ def slide_24(prs):
     ], mx2 + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(1.2), size=Pt(13), bullet_color=TEAL)
 
-    # Right — image
-    img = add_image(slide, "P1_quality", MX + 2 * col_w + 2 * gap, CT,
+    # Right — larger image
+    img = add_image(slide, "P1_quality", MX + 2 * col_w + 2 * gap, CT - Inches(0.1),
                     width=img_w)
 
     # Bottom
@@ -188,14 +188,14 @@ def slide_26b(prs):
     add_text(slide, "Projected Intelligibility Score improvement per phase",
              MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
-    # IS trajectory plot (right side, large)
+    # IS trajectory plot (left side, large)
     img = add_image(slide, "P3b_is_trajectory",
-                    MX + Inches(0.5), CT + Inches(0.45),
-                    width=Inches(7.0))
+                    MX, CT + Inches(0.45),
+                    width=Inches(8.0))
 
     # Key milestones callout (right side) — with failure mode annotations
-    rx = MX + Inches(7.8)
-    rw = Inches(4.0)
+    rx = MX + Inches(8.3)
+    rw = Inches(3.8)
     milestones = [
         ("Current", "IS 2.52", "39.9% captured", "", CORAL),
         ("Phase 1\u20132", "IS ~2.85",  "~48% captured",
@@ -207,8 +207,9 @@ def slide_26b(prs):
     ]
     ms_shapes = []
     for i, (phase, is_val, cap_val, failure_note, color) in enumerate(milestones):
-        y = CT + Inches(0.55) + i * Inches(1.15)
-        ms_shapes.append(add_rect(slide, rx, y, rw, Inches(0.95), fill_color=NAVY2,
+        y = CT + Inches(0.55) + i * Inches(1.2)
+        card_h = Inches(1.05) if i > 0 else Inches(0.85)
+        ms_shapes.append(add_rect(slide, rx, y, rw, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True))
         ms_shapes.append(add_text(slide, phase, rx + Inches(0.15), y + Inches(0.05),
                  rw - Inches(0.3), Inches(0.3),
@@ -220,9 +221,9 @@ def slide_26b(prs):
         if i > 0:
             delta = float(is_val.replace("IS ~", "")) - 2.52
             ms_shapes.append(add_text(slide, f"+{delta:.2f}  |  {failure_note}",
-                     rx + Inches(0.15), y + Inches(0.63),
-                     rw - Inches(0.3), Inches(0.25),
-                     size=Pt(9), color=LGRAY, italic=True))
+                     rx + Inches(0.15), y + Inches(0.65),
+                     rw - Inches(0.3), Inches(0.35),
+                     size=Pt(11), color=WHITE, italic=True))
 
     bottom = add_text(slide,
              "Each ~10pp WER reduction \u2192 ~0.3\u20130.5 IS improvement + ~8\u201312pp captured rate.",
@@ -1117,13 +1118,10 @@ def slide_data_scaling(prs):
                   size=Pt(17), color=CORAL, bold=True)
     lb = add_bullets(slide, [
         ("Current: 1,273 English segments \u2014 far below LoRA minimum", {"bold": True}),
-        "Fine-tune experiments confirmed: small data = overfitting",
-        "Scaling law (ICLR 2024): data × LLM quality = multiplicative gains",
+        "Scaling law (ICLR 2024): data \u00d7 LLM quality = multiplicative gains",
         ("AVSpeech: 290K English videos available for curation", {"color": TEAL}),
-        ("Data scarcity is a curation bottleneck, not a hard blocker",
-         {"color": LGRAY, "italic": True}),
         ("Next step: curate 20K\u201350K diverse English segments", {"bold": True, "color": GREEN}),
-    ], MX, CT + Inches(0.5), col_w, Inches(3.5), size=Pt(13))
+    ], MX, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(14))
 
     # Right — projection table with IS
     rx = MX + col_w + gap
@@ -1184,7 +1182,7 @@ def slide_price_tag(prs):
         "Paper\u2019s 2-phase curriculum: freeze encoder \u2192 unfreeze encoder",
         MX, CT, CW, Inches(0.35), size=Pt(12), color=LGRAY, italic=True)
 
-    tbl_w = Inches(9.2)
+    tbl_w = Inches(11.8)
     tbl = add_table(slide,
         ["Phase", "Training Type", "Data", "Train Cost", "Total Cost", "Timeline", "IS Target"],
         [["Current", "LoRA r=16 (projection only)", "1.3K segs", "\u2014", "\u2014", "\u2014", "2.52"],
@@ -1192,9 +1190,10 @@ def slide_price_tag(prs):
          ["Phase 2", "Projection + partial encoder", "10K hrs", "~$6K", "~$15\u201320K", "4\u20136 wks", "~3.2\u20133.5"],
          ["Phase 3", "Full curriculum (freeze\u2192unfreeze)", "20K hrs", "~$13K", "~$30\u201340K", "6\u20138 wks", "~3.5\u20133.8"],
          ["Phase 4", "Full curriculum + encoder adapt", "50K hrs", "~$32K", "~$70\u2013100K", "3\u20134 mo", "~3.8\u20134.2"]],
-        MX, CT + Inches(0.5), tbl_w, text_size=Pt(10),
-        col_widths=[Inches(1.0), Inches(2.3), Inches(0.9), Inches(0.9), Inches(1.2),
-                    Inches(1.0), Inches(0.9)],
+        MX, CT + Inches(0.5), tbl_w, text_size=Pt(12),
+        col_widths=[Inches(1.2), Inches(3.0), Inches(1.1), Inches(1.2), Inches(1.5),
+                    Inches(1.3), Inches(1.2)],
+        row_height=Inches(0.48),
         row_colors={3: {4: GREEN, 6: GREEN}})
 
     # Sweet spot + training type below table
@@ -1238,7 +1237,21 @@ def slide_price_tag(prs):
         "freeze encoder first, then unfreeze for end-to-end training. This is NOT "
         "LoRA fine-tuning; it retrains the projection layer and encoder weights. "
         "Phase 4: full curriculum + encoder adaptation on 50K hours. "
-        "LLM backbone upgrade (Llama 3.1 8B) is orthogonal \u2014 just a config change.",
+        "LLM backbone upgrade (Llama 3.1 8B) is orthogonal \u2014 just a config change.\n\n"
+        "HOW THESE COSTS WERE ASSESSED:\n"
+        "1. GPU costs: AWS p4d.24xlarge (8xA100 80GB) spot pricing at $9.39/hr in "
+        "eu-west-1 (Ireland). Spot prices verified February 2026. Training time "
+        "estimates from VSP-LLM paper (Table 3): ~2 hrs/epoch for projection, "
+        "~8 hrs/epoch for full curriculum.\n"
+        "2. Data curation costs: AVSpeech download + RetinaFace + mouth crop + "
+        "AV-HuBERT features + Whisper v3 labels. Estimated at ~$5-8K for 20K hrs "
+        "based on our pipeline throughput (~50 segments/hr on single GPU).\n"
+        "3. Total cost = training + curation + storage + failed runs (~20% overhead).\n"
+        "4. IS targets: extrapolated from (a) our fine-tune experiments (1.3K segs), "
+        "(b) VSP-LLM paper results on LRS3 (25.4% WER with full training), "
+        "(c) published scaling laws (Biderman et al. 2024, LoRA vs full fine-tune), "
+        "and (d) AVSpeech dataset characteristics (300K hrs total, ~7% = 20K hrs).\n"
+        "5. Timeline includes data curation, training, evaluation, and iteration.",
         [[tbl], [r1, r2]], click_reveal=True)
 
 

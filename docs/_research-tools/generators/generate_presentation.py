@@ -40,7 +40,7 @@ from presentation.slides_research import (
     slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter,
     slide_07, slide_metric_transition,
     slide_10, slide_domain_mismatch, slide_11,
-    slide_failure_deep_1a, slide_failure_deep_2, slide_08,
+    slide_failure_deep_1a, slide_failure_deep_1b, slide_failure_deep_2, slide_08,
     slide_failure_deep_3, slide_tuning_summary,
 )
 from presentation.slides_evaluation import (
@@ -97,7 +97,7 @@ def main():
         slide_is_intro,     # Introducing IS (split into 3 per batch 8)
         # slide_is_signals,   # IS: Six Signals (removed per batch 8 — merged into split)
         slide_is_weight_rationale, # Why These Weights? 3 Dimensions
-        # slide_is_dimensions,# Three quality dimensions (removed per batch 8)
+        slide_is_dimensions,# Three quality dimensions (restored per batch 11)
         slide_is_calc_examples, # IS in Action: Two Real Segments
         slide_is_radar,     # [MOD] IS Radar: dual overlay if available
         slide_is_wer_scatter, # [NEW] The Gap: WER vs IS scatter
@@ -106,23 +106,24 @@ def main():
         # --- Section 4: Understanding Why ---
         # slide_10,           # Three Root Causes (hidden per batch 8)
         # slide_domain_mismatch, # Domain mismatch detail (hidden per batch 8)
-        slide_11,           # Named Entity Accuracy
-        slide_failure_deep_1a, # Failure Modes: 5-Category Taxonomy
+        slide_11,           # Named Entity Accuracy (restored per batch 11)
+        slide_failure_deep_1a, # Failure Modes: 5-Category Taxonomy (1/2)
+        slide_failure_deep_1b, # Failure Modes: 5-Category Taxonomy (2/2)
         slide_failure_deep_2, # Failure Modes: Real Examples
         slide_08,           # Failure Mode Taxonomy
         slide_failure_deep_3, # Failure Modes: Impact & Fixes
         # --- Section 5: Can We Tune It? ---
-        # slide_tuning_summary, # 13 Experiments, Minimal Gain (hidden per batch 8)
+        slide_tuning_summary, # 13 Experiments, Minimal Gain (restored per batch 11)
         # --- Section 6: The Full Picture ---
         slide_is_deep_dive, # Why These 6 Signals? Validation
-        slide_metric_disagreement, # When Metrics Disagree
+        slide_metric_disagreement, # When Metrics Disagree (restored per batch 11)
         slide_metric_disagreement_2, # When Metrics Disagree pt 2
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
-        # slide_context_eval, # Context-aware re-evaluation (hidden — too many tables)
+        # slide_context_eval, # Context-aware re-evaluation (decluttered: 1 table + bullets)
         # --- Salvage ---
-        slide_llm_context_engine, # LLM as context engine
         slide_25,           # LLM Salvage overview: 39.9% -> 50.9% (reframed: lower bound, LLM-judge only per batch 8)
+        slide_llm_context_engine, # LLM as context engine
         # slide_25b,          # Salvage: 6 Recovery Categories (hidden per batch 8)
         slide_25d,          # Salvage: 3 Real Examples
         slide_25e,          # Salvage: 3 More Examples

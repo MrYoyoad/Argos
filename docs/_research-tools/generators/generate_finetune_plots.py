@@ -802,7 +802,7 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
 
     final_val = v_loss[-1]
     pct = (final_val - best_loss) / best_loss * 100
-    ax.text(0.97, 0.95,
+    ax.text(0.97, 0.72,
             f"Val: {best_loss:.2f} \u2192 {final_val:.2f} (+{pct:.0f}%)\n"
             f"Overfitting on 1,273 segments",
             transform=ax.transAxes, fontsize=12, va="top", ha="right",

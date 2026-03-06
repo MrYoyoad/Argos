@@ -242,3 +242,20 @@ User performed a density audit of slides with too many elements, tables, or bull
 | 155 | Pipeline / IS Scoring | No IS column in UI report — `ENV_TYPE` never set because `run_flat_english_pipeline.sh` didn't source `lib/config.sh`. Fixed: added `source "${HOME}/lib/config.sh"` at pipeline start. | done |
 | 156 | Pipeline / Springer Fox | `springer_fox_with_hyp.mp4` in vsp_input is a burned lip-crop output (224x224), not a raw source video. Face detector can't find a face in a mouth crop → empty hypothesis. User needs to replace with the original raw video. | noted |
 | 157 | Pipeline / Overlap Selection | Overlapping 2s segments produce different decode quality in overlap zones. Analysis of 33 Obama segments: 13/21 overlaps have a clear quality winner (7 prev, 6 next). A post-decode "best-of overlap" merge step could improve output. Related to Mission 6 (ROVER/MBR). | noted |
+
+---
+
+## Batch 11 — 2026-03-06
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 158 | 15 (slide_is_intro_b) | "Weight: 25% — the single largest signal" text dropping row, occluded by frame | in progress |
+| 159 | 20 (slide_is_wer_scatter) | Make the scatter plot larger | in progress |
+| 160 | 23 (slide_failure_deep_1a) | "Roughly right but names/content words lost — 204 segments" obscured. Split slide to 2 slides to reduce density | in progress |
+| 161 | Hidden slides | Missing metric slides that were hidden — restore all 4: slide_11, slide_metric_disagreement, slide_is_dimensions, slide_tuning_summary | in progress |
+| 162 | slide_14b (Video Gallery) | Put better examples with high IS — more positive stuff in the 6-video grid | in progress |
+| 163 | slide_17 (Pipeline) | Arrows are ugly — replace with better styled arrows like the beginning pipeline. Extra unneeded arrow on right side | in progress |
+| 164 | 48 (slide_24) | Make the figure larger | in progress |
+| 165 | slide_26b (IS Improvement) | Grey text too small and occluded by boxes — fix | in progress |
+| 166 | slide_price_tag | Make the table larger. Add explanation in speaker notes on how costs were assessed | in progress |
+| 167 | FT_11a_loss.png | Annotation box "Val: 2.39 → 4.12 (+72%)" occluded by legend — moved down to y=0.72 | done |
