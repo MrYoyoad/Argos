@@ -276,20 +276,17 @@ def slide_16(prs):
         "time — rubric, 6 signals with weights, tier boundaries, failure mode "
         "taxonomy, success patterns. These were then encoded into deterministic "
         "formulas. No LLM is called per sample at runtime.\n\n"
-        "KEY CORRELATION FINDINGS:\n"
+        "PCA RESULTS (Kaiser criterion, 2 PCs retained):\n"
+        "PC1 (68.4%): Signal Quality — all 5 content signals load equally "
+        "(0.43-0.47). Semantic is NOT independent of word accuracy.\n"
+        "PC2 (19.5%): Output Length — Length Ratio dominates (0.91). "
+        "Independent of content quality.\n"
+        "Together: 87.9% of variance. The visual encoder drives PC1.\n\n"
+        "KEY FINDINGS:\n"
         "1. Phonetic Sim is the strongest single predictor (r=0.943) despite "
-        "15% weight — it's the most direct measure of visual encoder quality.\n"
-        "2. The 6 signals collapse into 3 dimensions: word accuracy "
-        "(WER/WWER/Phonetic, ~60%), meaning (Semantic, 28.5%), output sanity "
-        "(Length, 9.1%). Four of six signals measure the same thing.\n"
-        "3. Semantic Sim (25% weight) drives the most IS variance (28.5%) — "
-        "it's the tiebreaker that separates segments with similar word accuracy.\n"
-        "4. NEA F1 punches above its weight: 17.3% variance from 15% weight. "
-        "Names/numbers are binary — either preserved or not.\n"
-        "5. WER is UNRELIABLE across configs — correlation with IS swings from "
-        "-0.95 to -0.45 depending on length penalty. This is why IS was created.\n"
-        "6. Length Ratio is nearly useless (9.1%, sign flips). Future versions "
-        "could reduce its weight.\n\n"
+        "15% weight — most direct measure of visual encoder quality.\n"
+        "2. WER is UNRELIABLE across configs — correlation with IS swings from "
+        "-0.95 to -0.45 depending on length penalty. This is why IS was created.\n\n"
         "Cross-config validation: r=0.925, 88.6% agreement, κ=0.773, "
         "recall 97.6-100% across 16 decode configs.")
 
@@ -827,26 +824,26 @@ def slide_is_deep_dive(prs):
     rb = add_bullets(slide, [
         ("IS captures quality that WER misses",
          {"bold": True, "color": GREEN}),
-        ("6 signals collapse into 3 independent "
-         "dimensions: word accuracy (~60%), meaning "
-         "(28.5%), output sanity (9.1%)", {}),
+        ("PCA reveals 2 dimensions: signal quality "
+         "(68.4%, all 5 content signals) and output "
+         "length (19.5%, Length Ratio)", {}),
         ("Cross-config validation confirms stability: "
          "mean r = 0.925 across 16 configurations",
          {"bold": True, "color": TEAL}),
-        ("WER/WWER/Phonetic are redundant with each "
-         "other (r > 0.79) but IS needs all three "
-         "for robustness", {}),
-        ("Semantic Sim is the tiebreaker \u2014 it "
-         "separates segments with similar WER but "
-         "different meaning preservation", {}),
+        ("All 5 content signals load equally on PC1 "
+         "(0.43\u20130.47) \u2014 one general quality factor "
+         "driven by visual encoder", {}),
+        ("Semantic gets higher weight (25%) because it "
+         "captures paraphrasing that word metrics miss", {}),
     ], rx, CT + offset + Inches(0.5), rw, Inches(4.5), size=Pt(14))
 
     _finish(slide, 0,
-        "IS validation conclusions. The 6 signals collapse into 3 independent "
-        "dimensions: word accuracy (WER/WWER/Phonetic, ~60% of IS), meaning "
-        "preservation (Semantic, 28.5%), and output sanity (Length Ratio, 9.1%). "
-        "Cross-config validation across 16 decode configurations confirms "
-        "stability with mean r=0.925. IS captures quality that WER alone misses.",
+        "IS validation conclusions. PCA retains 2 principal components: "
+        "signal quality (68.4%, all 5 content signals load equally) and "
+        "output length (19.5%, Length Ratio dominates). Semantic is NOT "
+        "an independent dimension \u2014 it loads on PC1 alongside word-accuracy "
+        "signals. Cross-config validation across 16 decode configurations "
+        "confirms stability with mean r=0.925.",
         [[lt, tbl], [rt, rb]], click_reveal=True)
 
 

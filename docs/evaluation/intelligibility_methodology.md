@@ -578,10 +578,11 @@ Semantic dominates variance (28.5%) due to its higher weight and substantial spr
 | **NEA F1** | 0.75 | 0.75 | -0.69 | -0.75 | 1.00 | 0.13 |
 | **Length** | 0.19 | 0.36 | 0.22 | -0.10 | 0.13 | 1.00 |
 
-**Three independent dimensions emerge:**
-1. **Word accuracy** (WER, WWER, Phonetic — all r > 0.79 with each other) → ~60% of IS weight
-2. **Meaning preservation** (Semantic — partially redundant with word accuracy at r=0.82) → ~25% of IS weight
-3. **Output sanity** (Length Ratio — largely independent, r ≤ 0.36) → ~15% of IS weight
+**PCA reveals 2 principal components** (Kaiser criterion, eigenvalue > 1):
+1. **PC1: Signal quality** (68.4% of variance) — all 5 content signals load equally (0.43–0.47). Semantic is NOT independent; it loads alongside word-accuracy signals.
+2. **PC2: Output length** (19.5% of variance) — Length Ratio dominates (loading 0.91), independent of content quality.
+
+Together: 87.9% of total variance. See [is_pca_analysis.md](is_pca_analysis.md) for full PCA results.
 
 ### Per-Tier Dominant Signals
 

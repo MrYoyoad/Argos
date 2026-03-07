@@ -214,18 +214,17 @@
 % ----------------------------------------------------------
 \begin{frame}[shrink=10]{A8: IS Component Correlation}
   \vspace{2pt}
-  {\small The 6 IS signals collapse into \keyword{3 independent dimensions}:}
+  {\small PCA retains \keyword{2 principal components} (Kaiser criterion, eigenvalue $>$ 1):}
 
   \vspace{6pt}
 
   \centering
   \begin{tabular}{@{}lccc@{}}
     \toprule
-    \textbf{Dimension} & \textbf{Signals} & \textbf{Variance} & \textbf{Inter-signal r} \\
+    \textbf{PC} & \textbf{Top Loadings} & \textbf{Variance} & \textbf{Interpretation} \\
     \midrule
-    \cellcolor{ArgosTeal!10} Word Accuracy & WER, WWER, Phonetic & 60.0\% & $>$ 0.79 \\
-    \cellcolor{ArgosOrange!10} Meaning Preservation & Semantic & 28.5\% & independent \\
-    \cellcolor{ArgosGray!10} Output Sanity & Length Ratio & 9.1\% & independent \\
+    \cellcolor{ArgosTeal!10} PC1: Signal Quality & All 5 content signals (0.43--0.47) & 68.4\% & Visual encoder quality \\
+    \cellcolor{ArgosGray!10} PC2: Output Length & Length Ratio (0.91) & 19.5\% & Hallucination / truncation \\
     \bottomrule
   \end{tabular}
 
@@ -259,7 +258,8 @@
 
   \note{
     Q\&A backup for ``how was the IS validated?''
-    6 signals collapse into 3 independent dimensions via PCA.
+    PCA retains 2 PCs: signal quality (68.4\%, all 5 content signals equal) and output length (19.5\%, Length Ratio).
+    Semantic loads equally with word-accuracy signals on PC1 --- it is NOT an independent dimension.
     Cross-config stability: IS rankings hold across all 16 decode configs (mean r=0.925).
     Expert heuristic agrees with IS at 88.6\% (Cohen's $\kappa$=0.773) --- no runtime LLM needed.
   }

@@ -448,4 +448,22 @@ Opus Y aligns best with IS ≥ 3.75–4.00 (Tier 5, "Excellent"). The judge rese
 
 ---
 
-*Sections 10-13 (cross-config validation, salvage analysis, methodology notes, LLM judge validation) have been moved to [is_cross_config_validation.md](is_cross_config_validation.md) for easier navigation.*
+## 10. Principal Component Analysis (PCA)
+
+*(Added 2026-03-07. Full analysis: [is_pca_analysis.md](is_pca_analysis.md))*
+
+PCA on the 6 standardized IS signals reveals **2 principal components** (Kaiser criterion: eigenvalue > 1):
+
+| PC | Eigenvalue | % Variance | Cumulative % | Interpretation |
+|----|-----------|------------|-------------|----------------|
+| **PC1** | **4.107** | **68.4%** | 68.4% | General signal quality — all 5 content signals load equally (0.43-0.47) |
+| **PC2** | **1.168** | **19.5%** | 87.9% | Output length — Length Ratio dominates (0.91) |
+| PC3 | 0.309 | 5.1% | 93.0% | Entity swing — NEA F1 dominates (0.83) |
+
+**Key finding:** Semantic Similarity loads on PC1 at 0.445 — virtually identical to the word-accuracy signals. It is **not** an independent dimension. The earlier claim that the 6 signals form "3 independent dimensions" (word accuracy 60%, meaning 28%, sanity 9%) was based on correlation clustering and covariance decomposition, not PCA. The actual PCA shows 2 dimensions: signal quality (68.4%) and output length (19.5%).
+
+**Correction (2026-03-07):** All references to "PCA analysis reveals 3 independent dimensions" in presentations and documentation have been corrected to describe the actual PCA results. The covariance decomposition (Section 3) remains valid as a separate analysis of variance contribution within the IS formula — it describes how much each weighted component contributes to IS spread, not how many independent dimensions exist.
+
+---
+
+*Sections 11-14 (cross-config validation, salvage analysis, methodology notes, LLM judge validation) have been moved to [is_cross_config_validation.md](is_cross_config_validation.md) for easier navigation.*

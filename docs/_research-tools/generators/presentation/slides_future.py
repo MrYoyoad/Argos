@@ -971,14 +971,13 @@ def slide_a8(prs):
     add_accent_line(slide)
 
     # Dimension table
-    add_text(slide, "The 6 IS signals collapse into 3 independent dimensions:",
+    add_text(slide, "PCA retains 2 principal components (Kaiser criterion):",
              MX, CT, CW * 0.55, Inches(0.4), size=Pt(14), color=WHITE)
 
     tbl1 = add_table(slide,
-        ["Dimension", "Signals", "Variance", "Inter-signal r"],
-        [["Word Accuracy", "WER, WWER, Phonetic", "60.0%", "> 0.79"],
-         ["Meaning Preservation", "Semantic", "28.5%", "independent"],
-         ["Output Sanity", "Length Ratio", "9.1%", "independent"]],
+        ["PC", "Top Loadings", "Variance", "Interpretation"],
+        [["PC1: Signal Quality", "All 5 content (0.43\u20130.47)", "68.4%", "Visual encoder quality"],
+         ["PC2: Output Length", "Length Ratio (0.91)", "19.5%", "Hallucination / truncation"]],
         MX, CT + Inches(0.5), CW * 0.55, text_size=Pt(11),
         row_height=Inches(0.32))
 
@@ -1014,10 +1013,10 @@ def slide_a8(prs):
         row_height=Inches(0.3))
 
     _finish(slide, "A3",
-        "IS components collapse into 3 dimensions: word accuracy (60%), "
-        "meaning (28%), output sanity (9%). Cross-config: Semantic, Phonetic, "
-        "NEA are stable; WER and Length Ratio are volatile. Heuristic: "
-        "r=0.925, agreement 88.6%, kappa 0.773.")
+        "PCA retains 2 PCs: signal quality (68.4%, all 5 content signals load "
+        "equally) and output length (19.5%, Length Ratio). Cross-config: "
+        "Semantic, Phonetic, NEA are stable; WER and Length Ratio are volatile. "
+        "Heuristic: r=0.925, agreement 88.6%, kappa 0.773.")
 
 
 def slide_a11(prs):

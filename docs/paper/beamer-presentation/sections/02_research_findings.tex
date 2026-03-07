@@ -273,49 +273,47 @@
 % ----------------------------------------------------------
 % Three Dimensions of Quality
 % ----------------------------------------------------------
-\begin{frame}{Three Dimensions of Quality}
+\begin{frame}{Two Dimensions of Quality (PCA)}
   \vspace{2pt}
-  {\small PCA analysis reveals the 6 IS signals collapse into \keyword{3 independent dimensions}:}
+  {\small PCA on the 6 standardized IS signals retains \keyword{2 principal components} (Kaiser criterion):}
 
   \vspace{8pt}
 
   \begin{columns}[T]
-    \begin{column}{0.30\textwidth}
+    \begin{column}{0.45\textwidth}
       \centering
-      \metricbox{60\%}{Word Accuracy}
+      \metricbox{68\%}{Signal Quality}
       \vspace{4pt}
-      {\scriptsize WER, WWER, Phonetic\\(all r $>$ 0.79 with each other)\\[4pt]
-      ``Did it get the words right?''\\
-      Dominated by visual encoder quality.}
+      {\scriptsize All 5 content signals load equally (0.43--0.47)\\
+      Semantic, Phonetic, WER, WWER, NEA F1\\[4pt]
+      ``Did the visual encoder capture the speech?''\\
+      One general quality factor --- not 5 independent things.}
     \end{column}
-    \begin{column}{0.30\textwidth}
+    \begin{column}{0.45\textwidth}
       \centering
-      \metricbox{29\%}{Meaning Preservation}
+      \metricbox{19\%}{Output Length}
       \vspace{4pt}
-      {\scriptsize Semantic Similarity\\(partially independent)\\[4pt]
-      ``Does it mean the same thing?''\\
-      The tiebreaker for borderline cases.}
-    \end{column}
-    \begin{column}{0.30\textwidth}
-      \centering
-      \metricbox{9\%}{Output Sanity}
-      \vspace{4pt}
-      {\scriptsize Length Ratio\\(largely independent)\\[4pt]
-      ``Is the output the right length?''\\
+      {\scriptsize Length Ratio dominates (loading 0.91)\\
+      Independent of content quality\\[4pt]
+      ``Did the model generate the right amount of text?''\\
       Catches hallucination and truncation.}
     \end{column}
   \end{columns}
 
   \vspace{8pt}
   \centering
+  {\scriptsize Together: 87.9\% of total variance. PC3 (entity swing, 5.1\%) is below Kaiser threshold.}
+
+  \vspace{4pt}
   \notetext{Next: the 6 individual signals and how they combine.}
 
   \note{
-    Before diving into 6 signals, the audience needs the big picture.
-    PCA reveals 3 independent dimensions: word accuracy (60\%), meaning (29\%), sanity (9\%).
-    Word accuracy is dominated by the visual encoder --- this is why it is the bottleneck.
-    Meaning preservation is the tiebreaker for borderline cases.
-    Output sanity catches pathological outputs but has low discriminative power.
+    PCA shows the 6 IS signals really measure 2 things, not 3.
+    PC1 (68\%): general signal quality --- all 5 content signals load equally.
+    Semantic is NOT independent of word accuracy (loading 0.445 vs 0.43--0.47 for others).
+    PC2 (19\%): output length --- Length Ratio dominates at 0.91.
+    Kaiser criterion retains only 2 PCs (eigenvalues 4.11 and 1.17).
+    The visual encoder quality drives PC1 --- this is why it is the bottleneck.
   }
 \end{frame}
 

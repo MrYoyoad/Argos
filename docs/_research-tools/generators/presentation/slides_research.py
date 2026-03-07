@@ -403,42 +403,39 @@ def slide_is_signals(prs):
 
     _finish(slide, 0,
         "Six signals with weight rationale. Semantic (25%) gets the highest "
-        "weight because meaning preservation is the ultimate goal \u2014 it drives "
-        "28.5% of IS variance. The other 5 signals each get 15%. Phonetic, WER, "
-        "WWER, and NEA form a 'word accuracy' cluster (60% total weight) that "
-        "measures whether the encoder decoded the right words. Length ratio is "
-        "a safety check for hallucination and truncation. The 3 independent "
-        "dimensions: word accuracy (~60%), meaning preservation (~28%), "
-        "output sanity (~9%).",
+        "weight because meaning preservation is the ultimate goal. The other "
+        "5 signals each get 15%. PCA shows all 5 content signals load equally "
+        "on PC1 (0.43-0.47) \u2014 one general quality factor (68.4% of variance). "
+        "Length Ratio is independent (PC2, 19.5%). Semantic's higher weight is "
+        "justified because it captures paraphrasing that word metrics miss.",
         anim_groups)
 
 
 def slide_is_weight_rationale(prs):
-    """Explain why IS uses 25%/15% weighting and the 3-dimension design."""
+    """Explain why IS uses 25%/15% weighting and the PCA-validated structure."""
     slide = new_slide(prs)
-    add_title(slide, "6 Signals, 3 Dimensions")
+    add_title(slide, "6 Signals, 2 Dimensions (PCA)")
     add_accent_line(slide)
 
     add_text(slide,
-        "Six evaluation signals collapse into three independent dimensions.",
+        "PCA reveals 2 principal components (Kaiser criterion: eigenvalue > 1).",
         MX, CT, CW, Inches(0.3),
         size=Pt(14), color=LGRAY, italic=True)
 
-    # Three dimension cards — full width, stacked
+    # Two PCA dimension cards — full width, stacked
     card_w = CW
-    card_h = Inches(1.3)
+    card_h = Inches(1.6)
     py = CT + Inches(0.5)
 
     dims = [
-        ("Word Accuracy", "60%", TEAL,
-         "Phonetic + WER + WWER + Named Entity Accuracy",
-         "These four signals measure the same thing: did the model get the right words?"),
-        ("Meaning Preservation", "28%", GREEN,
-         "Semantic Similarity",
-         "Highest single weight \u2014 meaning is the ultimate deliverable."),
-        ("Output Sanity", "9%", LGRAY,
-         "Length Ratio",
-         "Safety net: catches hallucination (too long) and truncation (too short)."),
+        ("PC1: Signal Quality", "68.4%", TEAL,
+         "Semantic + Phonetic + WER + WWER + NEA F1 (all load 0.43\u20130.47)",
+         "One general quality factor \u2014 the visual encoder either captures "
+         "the speech or it doesn't. All 5 content signals move together."),
+        ("PC2: Output Length", "19.5%", LGRAY,
+         "Length Ratio dominates (loading 0.91)",
+         "Independent of content quality. Catches hallucination (too long) "
+         "and truncation (too short)."),
     ]
 
     dim_shapes = []
@@ -453,27 +450,33 @@ def slide_is_weight_rationale(prs):
         add_text(slide, signals, MX + Inches(0.3), py + Inches(0.5),
                  card_w - Inches(0.6), Inches(0.3), size=Pt(13), color=WHITE)
         add_text(slide, desc, MX + Inches(0.3), py + Inches(0.85),
-                 card_w - Inches(0.6), Inches(0.35), size=Pt(12), color=LGRAY)
+                 card_w - Inches(0.6), Inches(0.55), size=Pt(12), color=LGRAY)
         dim_shapes.append(r)
-        py += Inches(1.45)
+        py += Inches(1.8)
 
-    # Bottom validation line — plain language
+    # Semantic weight justification
+    sem_t = add_text(slide,
+        "Semantic gets 25% weight (vs 15% for others) because it captures "
+        "paraphrasing that word-level metrics miss \u2014 different words, same meaning.",
+        MX, py + Inches(0.1), CW, Inches(0.5),
+        size=Pt(13), color=GREEN, italic=True)
+
+    # Bottom validation line
     val_t = add_text(slide,
         "Validated: 88% agreement with expert judgment across 1,497 segments.",
         MX, Inches(6.35), CW, Inches(0.35),
         size=Pt(13), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Weight rationale. The 6 IS signals collapse into 3 independent "
-        "dimensions: word accuracy (60%, 4 signals at 15% each, inter-correlation "
-        "r > 0.79), meaning preservation (28%, semantic at 25%), and output sanity "
-        "(9%, length at 15%). Semantic gets double weight because meaning is the "
-        "ultimate goal. The 4 word-accuracy signals overlap heavily (r > 0.79), so "
-        "equal 15% weights avoid over-counting. Statistical validation: r=0.93 "
-        "correlation with expert heuristic, Cohen's kappa=0.77, 88.6% agreement "
-        "at IS >= 3.0 threshold. Cross-config stability: mean r=0.925 (std=0.015), "
-        "kappa range 0.62-0.86, recall 97.6-100%.",
-        [dim_shapes, [val_t]], click_reveal=True)
+        "PCA weight rationale. Kaiser criterion retains 2 PCs: signal quality "
+        "(68.4%, all 5 content signals load equally at 0.43-0.47) and output "
+        "length (19.5%, Length Ratio at 0.91). Semantic is NOT an independent "
+        "dimension \u2014 it loads on PC1 alongside word-accuracy signals. Its "
+        "higher weight (25% vs 15%) is justified because it captures meaning "
+        "preservation (paraphrasing) that pure word metrics miss. Statistical "
+        "validation: r=0.93 with expert heuristic, Cohen's kappa=0.77, 88.6% "
+        "agreement at IS >= 3.0. Cross-config: mean r=0.925 (std=0.015).",
+        [dim_shapes, [sem_t, val_t]], click_reveal=True)
 
 
 def slide_is_calc_examples(prs):
@@ -1477,31 +1480,28 @@ def slide_design_philosophy(prs):
 
 
 def slide_is_dimensions(prs):
-    """Three quality dimensions from PCA analysis."""
+    """Two quality dimensions from PCA analysis."""
     slide = new_slide(prs)
-    add_title(slide, "Three Dimensions of Quality")
+    add_title(slide, "Two Dimensions of Quality (PCA)")
     add_accent_line(slide)
 
-    add_text(slide, "PCA reveals the 6 IS signals collapse into 3 independent dimensions:",
+    add_text(slide, "PCA retains 2 principal components (Kaiser criterion: eigenvalue > 1):",
              MX, CT, CW, Inches(0.4), size=Pt(15), color=LGRAY)
 
-    # Three cards
+    # Two cards
     dims = [
-        ("Word Accuracy", "60%", "of IS variance",
-         "WER + WWER + Phonetic\n(r > 0.79 between them)",
-         "The visual encoder\u2019s core capability", TEAL),
-        ("Meaning Preservation", "29%", "of IS variance",
-         "Semantic similarity\n(sentence embeddings)",
-         "Tiebreaker between\nsimilar-accuracy segments", GREEN),
-        ("Output Sanity", "9%", "of IS variance",
-         "Length ratio\n(hyp vs ref word count)",
-         "Catches hallucination\nand truncation", LGRAY),
+        ("PC1: Signal Quality", "68.4%", "of total variance",
+         "All 5 content signals load equally\n(0.43\u20130.47 each)",
+         "One general quality factor\ndriven by visual encoder", TEAL),
+        ("PC2: Output Length", "19.5%", "of total variance",
+         "Length Ratio dominates\n(loading 0.91)",
+         "Independent of content quality\nCatches hallucination & truncation", LGRAY),
     ]
 
-    cw_card = Inches(3.6)
+    cw_card = Inches(5.4)
     ch_card = Inches(4.0)
     gap = Inches(0.5)
-    total = 3 * cw_card + 2 * gap
+    total = 2 * cw_card + gap
     cx = (SL_W - total) / 2
     cy = CT + Inches(0.55)
 
@@ -1537,17 +1537,12 @@ def slide_is_dimensions(prs):
         card_groups.append([r, t1, t2, t3, t4, t5])
 
     _finish(slide, 0,
-        "PCA analysis reveals three independent dimensions. Word Accuracy "
-        "(60% of variance) combines WER, WWER, and Phonetic \u2014 they all measure "
-        "the same thing: visual encoder quality. Meaning Preservation (29%) is "
-        "the semantic similarity tiebreaker. Output Sanity (9%) is mostly length "
-        "ratio. Four of six signals are redundant \u2014 but deliberate: cross-"
-        "validation makes the metric robust.\n\n"
-        "CORRELATION BETWEEN DIMENSIONS: Word accuracy signals (WER, WWER, "
-        "Phonetic) are highly correlated with each other (r > 0.79). Semantic "
-        "is moderately correlated with word accuracy. Length ratio is the most "
-        "independent dimension (9.1% of total variance). This confirms these "
-        "are genuinely 3 independent dimensions, not redundant signals.",
+        "PCA retains 2 principal components. PC1 (68.4%): all 5 content signals "
+        "load equally (0.43-0.47) \u2014 one general quality factor driven by the "
+        "visual encoder. Semantic is NOT independent; it loads on PC1 just like "
+        "word-accuracy signals. PC2 (19.5%): Length Ratio dominates (0.91), "
+        "truly independent of content quality. Together: 87.9% of variance. "
+        "PC3 (entity swing, 5.1%) is below Kaiser threshold.",
         card_groups, click_reveal=True)
 
 

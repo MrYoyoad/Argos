@@ -383,4 +383,4 @@ The radar template is **reusable for comparing LLM performance profiles**:
 | **Font** | Calibri for PPTX/docx, Fira Sans for Beamer |
 | **Numbers** | All formats must use same canonical numbers (see MEMORY.md) |
 | **Design-time LLM** | Always clarify: "Claude designed the rubric; no LLM runs at eval time" |
-| **IS explanation** | 6 signals with weight rationale; 3 independent dimensions (word accuracy 60%, meaning 28%, sanity 9%) |
+| **IS explanation** | 6 signals with weight rationale; PCA shows 2 dimensions: signal quality (68.4%, all 5 content signals) and output length (19.5%, Length Ratio) |
