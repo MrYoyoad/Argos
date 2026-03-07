@@ -273,47 +273,55 @@
 % ----------------------------------------------------------
 % Three Dimensions of Quality
 % ----------------------------------------------------------
-\begin{frame}{Two Dimensions of Quality (PCA)}
+\begin{frame}{PCA: What IS Really Measures}
   \vspace{2pt}
-  {\small PCA on the 6 standardized IS signals retains \keyword{2 principal components} (Kaiser criterion):}
+  {\small PCA on the 6 standardized IS signals (Kaiser criterion: eigenvalue $>$ 1):}
 
-  \vspace{8pt}
+  \vspace{6pt}
 
   \begin{columns}[T]
-    \begin{column}{0.45\textwidth}
+    \begin{column}{0.30\textwidth}
       \centering
       \metricbox{68\%}{Signal Quality}
       \vspace{4pt}
-      {\scriptsize All 5 content signals load equally (0.43--0.47)\\
-      Semantic, Phonetic, WER, WWER, NEA F1\\[4pt]
+      {\scriptsize All 5 content signals load equally (0.43--0.47)\\[4pt]
       ``Did the visual encoder capture the speech?''\\
-      One general quality factor --- not 5 independent things.}
+      One general quality factor.}
     \end{column}
-    \begin{column}{0.45\textwidth}
+    \begin{column}{0.30\textwidth}
       \centering
       \metricbox{19\%}{Output Length}
       \vspace{4pt}
-      {\scriptsize Length Ratio dominates (loading 0.91)\\
-      Independent of content quality\\[4pt]
-      ``Did the model generate the right amount of text?''\\
-      Catches hallucination and truncation.}
+      {\scriptsize Length Ratio dominates (0.91)\\[4pt]
+      ``Right amount of text?''\\
+      Independent of content quality.}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \centering
+      \metricbox{5\%}{Entity Swing}
+      \vspace{4pt}
+      {\scriptsize NEA F1 dominates (0.83)\\[4pt]
+      Names right, words wrong\\
+      (or vice versa). Below Kaiser.}
     \end{column}
   \end{columns}
 
-  \vspace{8pt}
+  \vspace{6pt}
   \centering
-  {\scriptsize Together: 87.9\% of total variance. PC3 (entity swing, 5.1\%) is below Kaiser threshold.}
+  {\scriptsize Together: 93\%. Weights barely matter --- equal weights correlate at r\,=\,0.999 with current IS.}
 
   \vspace{4pt}
   \notetext{Next: the 6 individual signals and how they combine.}
 
   \note{
-    PCA shows the 6 IS signals really measure 2 things, not 3.
+    PCA shows the 6 IS signals really measure 2+1 things.
     PC1 (68\%): general signal quality --- all 5 content signals load equally.
-    Semantic is NOT independent of word accuracy (loading 0.445 vs 0.43--0.47 for others).
+    Semantic is NOT independent (loading 0.445 vs 0.43--0.47 for others).
     PC2 (19\%): output length --- Length Ratio dominates at 0.91.
-    Kaiser criterion retains only 2 PCs (eigenvalues 4.11 and 1.17).
-    The visual encoder quality drives PC1 --- this is why it is the bottleneck.
+    PC3 (5\%): entity swing --- NEA F1 at 0.83. Below Kaiser but captures
+    when names/numbers diverge from general word accuracy.
+    Weight sensitivity: equal weights produce r=0.999 with current IS.
+    Removing Length Ratio: r=0.996, only 13.6\% of tiers change.
   }
 \end{frame}
 
