@@ -76,16 +76,27 @@ tier, or other metrics were visible during judging to prevent anchoring bias.
 
 ### Threshold Sensitivity
 
-The moderate κ at IS ≥ 3.0 reflects a **threshold mismatch**, not a ranking disagreement. The Opus judge's Y+P boundary naturally aligns with a lower IS threshold:
+The moderate κ at IS ≥ 3.0 reflects a **threshold mismatch**, not a ranking disagreement. Full threshold sweep across IS, WER, and Semantic Similarity: [threshold_calibration_vs_opus.md](../threshold_calibration_vs_opus.md).
 
-| IS Threshold | Y+P κ | Agreement |
-|-------------|-------|-----------|
-| IS ≥ 1.50 | 0.769 | 89.9% |
-| **IS ≥ 2.00** | **0.818** | **91.5%** |
-| IS ≥ 2.50 | 0.674 | 83.8% |
-| IS ≥ 3.00 | 0.521 | 74.6% |
+**Optimal thresholds for Y (meaning clearly conveyed):**
 
-Peak agreement is at **IS ≥ 2.0** (κ=0.818, "almost perfect"). The judge considers Tier 3 ("Fair", IS 2.0–3.0) segments as partially useful — the same population identified by the LLM salvage analysis. IS ≥ 3.0 is our conservative threshold; the judge's natural boundary is one tier lower.
+| Metric | Optimal Threshold | κ | Agreement |
+|--------|-------------------|-------|-----------|
+| Semantic Sim | >= 0.70 | **0.714** | 89.7% |
+| IS | >= 3.70 | 0.694 | 88.8% |
+| WER | <= 34% | 0.629 | 86.4% |
+| IS (ours) | >= 3.00 | 0.565 | 80.6% |
+
+**Optimal thresholds for Y+P (any useful meaning):**
+
+| Metric | Optimal Threshold | κ | Agreement |
+|--------|-------------------|-------|-----------|
+| IS | >= 1.95 | **0.822** | 91.8% |
+| WER | <= 77% | 0.777 | 89.8% |
+| Semantic Sim | >= 0.25 | 0.761 | 89.2% |
+| IS (ours) | >= 3.00 | 0.521 | 74.6% |
+
+IS ≥ 3.0 sits between the two optimal IS thresholds: too lenient for Y-only (includes 271 P/N segments), too strict for Y+P (misses 377 useful segments). It is a conservative design-time choice, not an empirical optimum. The IS **ranking** is strongly validated (Pearson r=0.85 with judge).
 
 ### 3x5 Breakdown: LLM Judge x IS Tier
 

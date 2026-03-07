@@ -289,7 +289,7 @@ All signals scaled to 0-5 before combining. Final IS range: 0.0 to 5.0.
 
 **"Properly captured" = IS >= 3.0** (Tier 4: Good + Tier 5: Excellent)
 
-These are the segments where a human could understand what was actually said from the lip-reading output.
+These are the segments where a human could understand what was actually said from the lip-reading output. Note: IS >= 3.0 is a conservative design-time choice. Calibration against the Opus-as-a-Judge gold standard shows the optimal threshold for "meaning clearly conveyed" (Y) is IS >= 3.70 (κ=0.694), and for "any useful meaning" (Y+P) is IS >= 1.95 (κ=0.822). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md) for full analysis.
 
 ---
 
