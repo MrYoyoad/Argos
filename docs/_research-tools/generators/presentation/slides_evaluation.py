@@ -161,7 +161,7 @@ def slide_15(prs):
     # Three embedded videos side by side — click each to play
     # VID dict mapping (confirmed correct):
     #   "ok_demo"    -> 8SMYkCQkT4Q_0  (sheetaro -> just hara, gist right)
-    #   "vitamin_d"  -> 2dwUMlphEnI_5  (vitamin d deficiency -> empathy deficiency)
+    #   "hypertension" -> 0v2N6w4m46s_0  (hypertension topic nailed, IS 4.5)
     #   "halluc"     -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
     vid_w = Inches(3.6)
     vid_h = Inches(2.7)
@@ -172,7 +172,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("vitamin_d", '"vitamin d deficiency" \u2192 "empathy deficiency"\nStructure perfect, domain words wrong (IS 2.4)', "WER 50%  IS 2.4", CORAL),
+        ("hypertension", '"the topic is hypertension" \u2014 nailed it\nMedical domain captured nearly verbatim (IS 4.5)', "WER 23%  IS 4.5", GREEN),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -193,9 +193,9 @@ def slide_15(prs):
     _finish(slide, 15,
         "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
         "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'vitamin d deficiency' becomes 'empathy deficiency' (IS 2.4 — "
-        "sentence structure perfectly preserved but domain vocabulary wrong, "
-        "classic domain mismatch failure). "
+        "'the topic is hypertension' captured nearly verbatim (IS 4.5 — "
+        "this is what the system looks like when the domain matches: "
+        "medical vocabulary comes through accurately). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
 
@@ -740,20 +740,20 @@ def slide_14b(prs):
     start_x = MX
 
     # 6 videos — balanced: 3 positive high-IS examples + 3 failure modes
-    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, vitamin_d, halluc)
+    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, hypertension, halluc)
     rows = [
-        [("bogo",          "Strong decode — meaning fully captured with minor word changes",
-          "18%",  GREEN),
-         ("nearmiss",      "Near-miss — almost perfect, small substitutions only",
-          "22%",  GREEN),
-         ("entity_success","Named entities correctly captured — proper nouns intact",
-          "19%",  GREEN)],
-        [("phonetic_bridge","Sound-alike confusion — phonetically similar words substituted",
-          "65%",  YELLOW),
+        [("convention",   "Convention & books — meaning fully captured, minor word drops",
+          "31%",  GREEN),
+         ("marilyn",      "Marilyn Monroe wallpaper — proper nouns + context intact",
+          "36%",  GREEN),
+         ("music_play",   "Music discussion — gist preserved, phrasing changed",
+          "34%",  GREEN)],
+        [("spelling_smell","Spelling \u2192 smelling — phonetic confusion swaps entire domain",
+          "59%",  YELLOW),
          ("admiral",      "Admiral McRae \u2192 animal migratory — classic viseme swap",
           "33%",  YELLOW),
-         ("topic_drift",  "Model generates coherent but completely wrong topic",
-          "97%",  RED)],
+         ("doxology",     "Doxology \u2192 fabricated story — total hallucination",
+          "172%", RED)],
     ]
 
     for r, row in enumerate(rows):
@@ -769,14 +769,14 @@ def slide_14b(prs):
 
     _finish(slide, "14b",
         "Balanced video gallery: 3 positive + 3 failure modes. "
-        "Row 1 (positive): (1) Near-perfect transcription showing the system at its "
-        "best with very low WER. (2) Good output with minor word-level errors but "
-        "meaning fully preserved. (3) Named entities correctly captured — proper "
-        "nouns like names and places come through intact. "
-        "Row 2 (failure modes): (4) Phonetic bridge — sound-alike confusion where "
-        "phonetically similar words substitute. (5) Admiral McRae — classic viseme "
-        "swap where identical lip shapes produce wrong words. (6) Topic drift — "
-        "model generates coherent text about the wrong subject entirely.")
+        "Row 1 (positive): (1) Convention — person describes selling books at a "
+        "convention, meaning fully captured with minor word drops. (2) Marilyn "
+        "Monroe — proper noun preserved, wallpaper context intact. (3) Music — "
+        "gist of playing a song preserved, phrasing changed. "
+        "Row 2 (failure modes): (4) Spelling-to-smelling — phonetic confusion "
+        "swaps the entire domain from literacy to odors. (5) Admiral McRae — "
+        "classic viseme swap, identical lip shapes produce wrong words. "
+        "(6) Doxology — total hallucination, model fabricates an unrelated story.")
 
 
 # ═══════════════════════════════════════════════════════════════════════

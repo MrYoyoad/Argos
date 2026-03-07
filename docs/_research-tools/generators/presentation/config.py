@@ -60,7 +60,16 @@ VID = {
     "wer_broken":     VIDEOS / "0FUlRjBcGGE_21__8fc418e2_with_hyp.mp4",
     "entity_success": VIDEOS / "BS4kTgaiydQ_0__10c532bb_with_hyp.mp4",
     "entity_destroy": VIDEOS / "EMfcKvHA5Uc_0__b74dba61_with_hyp.mp4",
+    "admiral":        VIDEOS / "-POZpyVCN8k_9__c7b26ea8_with_hyp.mp4",
+    "vitamin_d":      VIDEOS / "2dwUMlphEnI_5__c6ce8f09_with_hyp.mp4",
     "ok_demo":        VIDEOS / "8SMYkCQkT4Q_0__fdf516a0_with_hyp.mp4",
+    # New batch (36 videos burned 2026-03-07)
+    "hypertension":   VIDEOS / "0v2N6w4m46s_0__964e9355_with_hyp.mp4",
+    "convention":     VIDEOS / "MoaWM3RwJAM_7__f04f26c6_with_hyp.mp4",
+    "marilyn":        VIDEOS / "-n1y0QwPq1I_1__d2eebee8_with_hyp.mp4",
+    "music_play":     VIDEOS / "elY8NW20jQ0_1__e07d6605_with_hyp.mp4",
+    "spelling_smell": VIDEOS / "eUIoJsvKJ4E_0__f480a719_with_hyp.mp4",
+    "doxology":       VIDEOS / "tOWDLscXYGI_0__ec79306b_with_hyp.mp4",
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"
