@@ -549,22 +549,22 @@ def slide_is_calc_examples(prs):
     # --- Right: Bad segment ---
     bad_lines = [
         ("Semantic Sim", "0.04", "\u00d7 0.25", "= 0.010", CORAL),
-        ("Phonetic Sim", "0.12", "\u00d7 0.15", "= 0.018", CORAL),
+        ("Phonetic Sim", "0.20", "\u00d7 0.15", "= 0.029", CORAL),
         ("Inverse WER", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
-        ("Inverse WWER", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
+        ("Inverse WWER", "0.03", "\u00d7 0.15", "= 0.004", CORAL),
         ("NEA F1", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
-        ("Length Ratio", "1.00", "\u00d7 0.15", "= 0.150", LGRAY),
+        ("Length Ratio", "0.78", "\u00d7 0.15", "= 0.117", CORAL),
     ]
     r2 = _draw_calc_card(slide, MX + col_w + gap,
-        "Bad Segment", "0.9", CORAL,
+        "Bad Segment", "0.8", CORAL,
         "carry strap",
         "holocaust denier explanation of the final act",
-        bad_lines, "Sum \u00d7 5 = 0.89 \u2192 IS 0.9 (Failed)")
+        bad_lines, "Sum \u00d7 5 = 0.80 \u2192 IS 0.8 (Failed)")
 
     _finish(slide, 0,
         "Two IS calculation examples. Left: good segment (IS 4.2) with high "
-        "scores across all signals. Right: hallucination (IS 0.9) where only "
-        "length ratio is non-zero — the output is a completely different topic. "
+        "scores across all signals. Right: hallucination (IS 0.8) where only "
+        "length ratio and phonetic similarity are non-trivial — the output is a completely different topic. "
         "The formula is IS = (sum of weighted scores) x 5, mapping to 0-5 scale.",
         [r1, r2], click_reveal=True)
 
@@ -978,7 +978,7 @@ def slide_failure_deep_2(prs):
             "color": CORAL,
             "ref": "carry strap",
             "hyp": "holocaust denier explanation\nof the final act",
-            "wer": "100%", "is_score": "0.1",
+            "wer": "100%", "is_score": "0.8",
             "why_label": "Why this category?",
             "why": "The model generated 8 words from\n"
                    "a 2-word input. The LLM\u2019s language\n"

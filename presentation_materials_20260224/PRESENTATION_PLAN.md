@@ -150,7 +150,7 @@ Each example demonstrates a specific point about the system's behavior.
 - Shows the technology fundamentally works on complex domain-specific content.
 
 **2. Hallucination — the core failure mode (Slide 13)**
-- `00MUdHQ7GGY_8__b1480c7a` — REF: "carry strap" → HYP: "holocaust denier" (WER 100%, IS 0.7)
+- `00MUdHQ7GGY_8__b1480c7a` — REF: "carry strap" → HYP: "holocaust denier" (WER 100%, IS 0.8)
 - The model fabricates coherent but fictional text. Shows why confidence scoring matters — the output reads fluently but is entirely fabricated.
 
 **3. Phonetic near-misses — demonstrates why lip reading is hard (Slide 13)**

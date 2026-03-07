@@ -121,7 +121,7 @@ def slide_14(prs):
         ["Perfect", "health insurance company they pay...", "[exact match]", "0%", "5.0"],
         ["WER Misleads", "work with the team in a more", "work with a team and more", "29%", "4.3"],
         ["Near-Miss", "1 billion cfus of probiotics", "1 million cfus of permafrost", "58%", "2.7"],
-        ["Hallucinated", "carry strap", "holocaust denier", "100%", "0.7"],
+        ["Hallucinated", "carry strap", "holocaust denier", "100%", "0.8"],
     ]
     # Color IS column by value
     row_colors = {
@@ -233,23 +233,25 @@ def slide_16(prs):
 
     # Right: Correlation analysis + validation
     rx = MX + col_w + gap
-    rt = add_text(slide, "Correlation Analysis (PCA)", rx, CT, col_w,
+    rt = add_text(slide, "PCA: 2 Dimensions of Quality", rx, CT, col_w,
                   Inches(0.35), size=Pt(17), color=CORAL, bold=True)
 
-    # Three dimensions
+    # Two PCA dimensions (actual PCA results)
     dims = [
-        ("Word Accuracy", "WER + WWER + Phonetic (r > 0.79)", "~60% of IS", TEAL),
-        ("Meaning Preservation", "Semantic similarity", "28.5%", GREEN),
-        ("Output Sanity", "Length ratio", "9.1%", LGRAY),
+        ("PC1: Signal Quality", "All 5 content signals load equally (0.43\u20130.47)", "68.4%", TEAL),
+        ("PC2: Output Length", "Length Ratio dominates (loading 0.91)", "19.5%", LGRAY),
     ]
     dim_y = CT + Inches(0.5)
     for i, (name, signals, pct, color) in enumerate(dims):
         y = dim_y + i * Inches(0.75)
         add_text(slide, name, rx, y, col_w, Inches(0.3),
                  size=Pt(14), color=color, bold=True)
-        add_text(slide, f"{signals} — {pct} of variance",
+        add_text(slide, f"{signals} \u2014 {pct} of variance",
                  rx + Inches(0.15), y + Inches(0.3), col_w - Inches(0.15),
                  Inches(0.3), size=Pt(11), color=LGRAY)
+    add_text(slide, "Together: 87.9% of total variance (Kaiser criterion)",
+             rx + Inches(0.15), dim_y + 2 * Inches(0.75) + Inches(0.1),
+             col_w - Inches(0.15), Inches(0.3), size=Pt(11), color=LGRAY)
 
     # Cross-config validation stats
     add_text(slide, "Cross-Config Validation (16 configs)",
@@ -1338,3 +1340,268 @@ def slide_llm_context_engine(prs):
         [[lt, lb], [rt, r1, r2]], click_reveal=True)
 
 
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE — LLM JUDGE 30-SAMPLE OVERVIEW
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_llm_judge_30(prs):
+    """30-sample LLM-as-a-Judge overview — summary stats + what the sample shows."""
+    slide = new_slide(prs)
+    add_title(slide, "LLM Judge: 30-Sample Deep Dive")
+    add_accent_line(slide)
+
+    col_w = Inches(5.5)
+    gap = Inches(1.13)
+
+    # Left — summary stats
+    lt = add_text(slide, "30 Representative Segments", MX, CT, col_w, Inches(0.35),
+                  size=Pt(17), color=TEAL, bold=True)
+
+    tbl = add_table(slide,
+        ["Metric", "Value"],
+        [["Segments", "30 (stratified sample)"],
+         ["Mean WER", "61.4%"],
+         ["Mean IS", "2.67 / 5.0"],
+         ["LLM Judge: Y", "7  (23.3%)"],
+         ["LLM Judge: P", "12  (40.0%)"],
+         ["LLM Judge: N", "11  (36.7%)"],
+         ["Y + P", "19  (63.3%)"]],
+        MX, CT + Inches(0.5), col_w, text_size=Pt(13),
+        row_height=Inches(0.42),
+        row_colors={3: {1: GREEN}, 5: {1: CORAL}, 6: {1: TEAL}})
+
+    # Right — what this sample shows
+    rx = MX + col_w + gap
+    rt = add_text(slide, "What the Sample Reveals", rx, CT, col_w, Inches(0.35),
+                  size=Pt(17), color=CORAL, bold=True)
+    rb = add_bullets(slide, [
+        ("Distribution mirrors the full 1,497-segment dataset",
+         {"bold": True}),
+        "IS spans 0.00 (empty output) to 5.00 (perfect match)",
+        ("Middle zone (IS 2\u20134) is where the interesting "
+         "cases live \u2014 partial captures, phonetic bridges, "
+         "domain confusion", {}),
+        ("6 videos on the next slides walk through these "
+         "cases one by one", {"color": TEAL}),
+    ], rx, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(14))
+
+    # Bottom takeaway
+    bk = add_text(slide,
+        "Each video has burned-in subtitles showing reference (top) and "
+        "hypothesis (bottom) \u2014 watch the lip movements and compare.",
+        MX, Inches(6.2), CW, Inches(0.4),
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "30-sample overview: stratified sample from the 1,497-segment dataset. "
+        "Distribution matches full dataset closely: Y=23%, P=40%, N=37%. "
+        "Mean WER 61.4% vs 64.1% full. The interesting middle zone (IS 2-4) "
+        "is where partial captures, phonetic bridges, and domain confusion live. "
+        "The next 6 slides show one video each, spanning IS 4.55 down to 1.79.",
+        [[lt, tbl], [rt, rb, bk]], click_reveal=True)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDES — 6 LLM JUDGE VIDEO EXAMPLES
+# ═══════════════════════════════════════════════════════════════════════
+
+def _judge_video_slide(prs, *, vid_key, title, ref, hyp, wer, wwer, is_score,
+                       is_tier, judge, category, annotation, notes):
+    """Reusable builder: single video left, ref/hyp/metrics right."""
+    slide = new_slide(prs)
+    add_title(slide, title)
+    add_accent_line(slide)
+
+    # Left — large video
+    vid_w = Inches(6.0)
+    vid_h = Inches(4.5)  # ~16:9 with margin
+    vid = add_video(slide, vid_key, MX, CT + Inches(0.1), vid_w, vid_h)
+
+    # Right — content card
+    rx = MX + vid_w + Inches(0.4)
+    rw = CW - vid_w - Inches(0.4)
+
+    # Judge badge color
+    badge_colors = {"Y": GREEN, "P": YELLOW, "N": RED}
+    badge_col = badge_colors.get(judge, LGRAY)
+
+    # Metrics row
+    metrics_text = (f"WER {wer}   WWER {wwer}   IS {is_score} ({is_tier})   "
+                    f"Judge: {judge}")
+    mt = add_text(slide, metrics_text, rx, CT, rw, Inches(0.4),
+                  size=Pt(13), color=badge_col, bold=True)
+
+    # Reference
+    rl = add_text(slide, "Reference:", rx, CT + Inches(0.5), rw, Inches(0.25),
+                  size=Pt(10), color=LGRAY, bold=True)
+    rt = add_text(slide, f"\u201c{ref}\u201d", rx, CT + Inches(0.75), rw, Inches(1.0),
+                  size=Pt(12), color=WHITE, italic=True)
+
+    # Hypothesis
+    hl = add_text(slide, "Prediction:", rx, CT + Inches(1.85), rw, Inches(0.25),
+                  size=Pt(10), color=LGRAY, bold=True)
+    ht = add_text(slide, f"\u201c{hyp}\u201d", rx, CT + Inches(2.1), rw, Inches(1.0),
+                  size=Pt(12), color=CORAL, italic=True)
+
+    # Category badge
+    cb = add_rect(slide, rx, CT + Inches(3.2), rw, Inches(0.35),
+                  fill_color=NAVY3, corner_radius=True)
+    add_text(slide, category, rx + Inches(0.15), CT + Inches(3.22),
+             rw - Inches(0.3), Inches(0.3),
+             size=Pt(11), color=TEAL, bold=True)
+
+    # Annotation
+    at = add_text(slide, annotation, rx, CT + Inches(3.7), rw, Inches(1.5),
+                  size=Pt(11), color=WHITE)
+
+    _finish(slide, 0, notes,
+            [[vid, mt], [rl, rt, hl, ht, cb, at]], click_reveal=True)
+
+
+def slide_judge_ex1(prs):
+    """Judge example 1: Named entity swap — bernreuter → rogers (IS 4.55)."""
+    _judge_video_slide(prs,
+        vid_key="judge_entity",
+        title="Judge Example 1: Named Entity Swap",
+        ref="market research firm bernreuter research is "
+            "forecasting pv installations could reach",
+        hyp="market research firm rogers research is "
+            "forecasting pv installations will reach",
+        wer="18.2%", wwer="15.0%", is_score="4.55",
+        is_tier="Excellent", judge="Y",
+        category="Named Entity Swap — meaning fully preserved",
+        annotation="Only the company name changed (bernreuter \u2192 rogers) "
+                   "and 'could' \u2192 'will'. The forecast about PV installations "
+                   "is perfectly captured. WER penalizes the name error equally "
+                   "to any other word, but a viewer gets the full message.",
+        notes="Named entity swap: 'bernreuter' becomes 'rogers' — visually "
+              "similar lip patterns for proper nouns. Despite 18% WER, the "
+              "core message about PV installation forecasts is fully preserved. "
+              "LLM judge rates Y. IS 4.55 (Excellent).")
+
+
+def slide_judge_ex2(prs):
+    """Judge example 2: Truncated but core preserved — 1980s film (IS 3.69)."""
+    _judge_video_slide(prs,
+        vid_key="judge_film",
+        title="Judge Example 2: Truncated but Core Preserved",
+        ref="as this new home video market matured in the 1980s "
+            "a number of film companies decided they could bypass "
+            "the theatrical distribution system altogether and market their",
+        hyp="in the 1980s when film companies decided they could "
+            "bypass the theatrical distribution system altogether "
+            "among other",
+        wer="48.1%", wwer="41.7%", is_score="3.69",
+        is_tier="Good", judge="P",
+        category="Truncation \u2014 beginning and end lost, core intact",
+        annotation="The opening context ('home video market matured') and "
+                   "the trailing clause are lost, but the core argument "
+                   "\u2014 1980s film companies bypassing theatrical distribution "
+                   "\u2014 is captured verbatim. WER is 48% because of the "
+                   "missing words, but meaning is substantially there.",
+        notes="Truncation example: opening and trailing clauses lost, but "
+              "the core argument about 1980s film companies bypassing "
+              "theatrical distribution is captured verbatim. 48% WER "
+              "overstates the damage. LLM judge rates P. IS 3.69 (Good).")
+
+
+def slide_judge_ex3(prs):
+    """Judge example 3: Tech vocabulary drift — routers → roads (IS 3.02)."""
+    _judge_video_slide(prs,
+        vid_key="judge_router",
+        title="Judge Example 3: Technical Vocabulary Drift",
+        ref="we need a radically different approach we basically "
+            "need to find a way how we can take existing routers "
+            "existing switches existing links and enable them for research",
+        hyp="we need a radically different approach we must indeed "
+            "find a way we can design existing roads to exist with "
+            "existing structures and enable them for reuse",
+        wer="51.5%", wwer="47.1%", is_score="3.02",
+        is_tier="Good", judge="P",
+        category="Domain Vocabulary Drift \u2014 structure intact, terms swapped",
+        annotation="The argument structure is perfect: 'radically different "
+                   "approach' \u2192 'find a way' \u2192 'existing X' \u2192 'enable for Y'. "
+                   "But networking terms (routers, switches, links, research) "
+                   "become civil terms (roads, structures, reuse). Without "
+                   "domain context, the model picks the most likely words.",
+        notes="Technical vocabulary drift: the argument structure is perfectly "
+              "preserved but networking terms (routers, switches, links) become "
+              "civil engineering terms (roads, structures). The model lacks "
+              "domain context. LLM judge rates P. IS 3.02 (Good).")
+
+
+def slide_judge_ex4(prs):
+    """Judge example 4: Scientific vocabulary lost — cortisol → stops (IS 2.67)."""
+    _judge_video_slide(prs,
+        vid_key="judge_cortisol",
+        title="Judge Example 4: Scientific Vocabulary Lost",
+        ref="couples us to light cycles in our environment "
+            "tells us when to sleep tells us when to make "
+            "cortisol tells us when to make testosterone "
+            "basically switches on",
+        hyp="takes into account our environment tells us what "
+            "to eat tells us where to make turns tells us when "
+            "to make stops basically switches on",
+        wer="43.3%", wwer="56.8%", is_score="2.67",
+        is_tier="Fair", judge="P",
+        category="Scientific Terms Lost \u2014 repetitive structure preserved",
+        annotation="The 'tells us when to X' pattern is captured perfectly "
+                   "\u2014 all three repetitions preserved. But every scientific "
+                   "term is wrong: cortisol \u2192 turns, testosterone \u2192 stops, "
+                   "light cycles \u2192 (gone). WWER (56.8%) is higher than WER "
+                   "(43.3%) because high-value content words are wrong.",
+        notes="Scientific vocabulary destroyed: cortisol becomes 'turns', "
+              "testosterone becomes 'stops', light cycles dropped entirely. "
+              "But the repetitive rhetorical structure ('tells us when to X') "
+              "is perfectly preserved. WWER > WER because high-value content "
+              "words are wrong. LLM judge: P. IS 2.67 (Fair).")
+
+
+def slide_judge_ex5(prs):
+    """Judge example 5: Cooking domain confusion — jalapeno → banana (IS 2.07)."""
+    _judge_video_slide(prs,
+        vid_key="judge_jalapeno",
+        title="Judge Example 5: Cooking Domain Confusion",
+        ref="and i have a tablespoon of jalapeno fresh jalapeno",
+        hyp="and i have a dietary smoothie i've got the "
+            "banana called fresh banana",
+        wer="88.9%", wwer="43.8%", is_score="2.07",
+        is_tier="Fair", judge="P",
+        category="Domain Confusion \u2014 food context right, ingredients wrong",
+        annotation="The model knows it's a cooking video: 'dietary smoothie', "
+                   "'banana', 'fresh' are all food words. But the specific "
+                   "ingredient is completely wrong: jalapeno \u2192 banana. A viewer "
+                   "watching the video would see a pepper and immediately "
+                   "override the garbled text \u2014 multimodal context helps.",
+        notes="Cooking domain confusion: model correctly identifies food "
+              "context (smoothie, banana, fresh) but wrong ingredient — "
+              "jalapeno becomes banana. 89% WER but the domain is right. "
+              "A viewer watching would see the pepper and recover. "
+              "LLM judge: P. IS 2.07 (Fair).")
+
+
+def slide_judge_ex6(prs):
+    """Judge example 6: Topic hijack — overhead lights → ghost whisperer (IS 1.79)."""
+    _judge_video_slide(prs,
+        vid_key="judge_lights",
+        title="Judge Example 6: Topic Hijack",
+        ref="i actually use the overhead lights which are "
+            "mostly fluorescent which i know is a big no no "
+            "but this camera",
+        hyp="i actually used the overheard ghost whisperer "
+            "music for that scene which i know is about to "
+            "go on but the scene runs",
+        wer="73.9%", wwer="68.8%", is_score="1.79",
+        is_tier="Poor", judge="P",
+        category="Topic Hijack \u2014 grammatically fluent, completely wrong topic",
+        annotation="'Overhead lights' \u2192 'overheard ghost whisperer' is a "
+                   "phonetic cascade: similar mouth shapes trigger a plausible "
+                   "but wrong continuation. The sentence is grammatically "
+                   "perfect and internally consistent \u2014 this is what makes "
+                   "hallucinations dangerous. The original topic (camera "
+                   "lighting) is entirely replaced (TV production).",
+        notes="Topic hijack: 'overhead lights' sounds like 'overheard ghost "
+              "whisperer' to the visual encoder. The model then generates a "
+              "grammatically perfect continuation about TV production. This is "
+              "a classic hallucination pattern — fluent, coherent, completely "
+              "wrong. LLM judge: P (the model produces something). IS 1.79 (Poor).")

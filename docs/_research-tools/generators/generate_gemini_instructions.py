@@ -530,8 +530,8 @@ Create a table with columns: Category | Reference | Hypothesis | WER | IS
 Row 1 (green IS): Perfect | "health insurance company they pay..." | [exact match] | 0% | 5.0
 Row 2 (green IS): WER Misleads | "work with the team in a more" | "work with a team and more" | 29% | 4.3
 Row 3 (yellow IS): Entity Lost | "talking with admiral mcrae" | "talking with animal migratory" | 33% | 3.0
-Row 4 (red IS): Hallucinated | "carry strap" | "holocaust denier" | 100% | 0.7
-Color the IS column: 5.0 and 4.3 in green, 3.0 in yellow, 0.7 in red.
+Row 4 (red IS): Hallucinated | "carry strap" | "holocaust denier" | 100% | 0.8
+Color the IS column: 5.0 and 4.3 in green, 3.0 in yellow, 0.8 in red.
 SPEAKER NOTES: "Four examples spanning the quality range. Row 1: perfect lip-reading. Row 2: WER says 29% error but the meaning is fully preserved \u2014 IS 4.3. Row 3: same WER range but a name destroyed, meaning lost. Row 4: complete hallucination \u2014 \u2018carry strap\u2019 becomes \u2018holocaust denier.\u2019 This is why WER alone is insufficient. [ANIMATION: Table rows build one at a time, top to bottom. Transition: Fade 0.5s.]"
 
 ---
