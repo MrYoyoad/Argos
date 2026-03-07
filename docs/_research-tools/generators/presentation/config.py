@@ -70,6 +70,7 @@ VID = {
     "music_play":     VIDEOS / "elY8NW20jQ0_1__e07d6605_with_hyp.mp4",
     "spelling_smell": VIDEOS / "eUIoJsvKJ4E_0__f480a719_with_hyp.mp4",
     "doxology":       VIDEOS / "tOWDLscXYGI_0__ec79306b_with_hyp.mp4",
+    "street_photo":   VIDEOS / "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4",
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"

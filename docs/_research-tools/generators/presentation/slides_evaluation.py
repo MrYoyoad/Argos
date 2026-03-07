@@ -161,7 +161,7 @@ def slide_15(prs):
     # Three embedded videos side by side — click each to play
     # VID dict mapping (confirmed correct):
     #   "ok_demo"    -> 8SMYkCQkT4Q_0  (sheetaro -> just hara, gist right)
-    #   "hypertension" -> 0v2N6w4m46s_0  (hypertension topic nailed, IS 4.5)
+    #   "street_photo" -> 2HddWQse8Mw_0  (street photography topic right, names lost, IS 2.9)
     #   "halluc"     -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
     vid_w = Inches(3.6)
     vid_h = Inches(2.7)
@@ -172,7 +172,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("hypertension", '"the topic is hypertension" \u2014 nailed it\nMedical domain captured nearly verbatim (IS 4.5)', "WER 23%  IS 4.5", GREEN),
+        ("street_photo", '"james and will talk about street photography"\n\u2192 "i\'m here to talk about street photography"\nTopic right, speaker names lost (IS 2.9)', "WER 56%  IS 2.9", CORAL),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -193,9 +193,10 @@ def slide_15(prs):
     _finish(slide, 15,
         "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
         "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'the topic is hypertension' captured nearly verbatim (IS 4.5 — "
-        "this is what the system looks like when the domain matches: "
-        "medical vocabulary comes through accurately). "
+        "'james and will talk about street photography' becomes "
+        "'i'm here to talk about street photography' (IS 2.9 — "
+        "the topic 'street photography' is captured perfectly, but "
+        "the speaker names are lost. This is the near-miss zone). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
 
