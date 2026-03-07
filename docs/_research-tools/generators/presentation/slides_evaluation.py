@@ -160,9 +160,9 @@ def slide_15(prs):
 
     # Three embedded videos side by side — click each to play
     # VID dict mapping (confirmed correct):
-    #   "ok_demo"    -> 8SMYkCQkT4Q_0  (sheetaro -> just hara, gist right)
+    #   "smartphone"   -> ktMebjnZiSE_3  (consumers want bigger smartphone, IS 4.1)
     #   "street_photo" -> 2HddWQse8Mw_0  (street photography topic right, names lost, IS 2.9)
-    #   "halluc"     -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
+    #   "halluc"       -> 00MUdHQ7GGY_8  (carry strap -> holocaust denier)
     vid_w = Inches(3.6)
     vid_h = Inches(2.7)
     gap = Inches(0.4)
@@ -171,7 +171,7 @@ def slide_15(prs):
     vid_y = CT + Inches(0.1)
 
     vids = [
-        ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
+        ("smartphone", '"consumers want a bigger smartphone"\n\u2192 "consumers will not upgrade their smartphone"\nMeaning close, key verb flipped (IS 4.1)', "WER 28%  IS 4.1", TEAL),
         ("street_photo", '"james and will talk about street photography"\n\u2192 "i\'m here to talk about street photography"\nTopic right, speaker names lost (IS 2.9)', "WER 56%  IS 2.9", CORAL),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
@@ -191,12 +191,14 @@ def slide_15(prs):
              size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 15,
-        "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
-        "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'james and will talk about street photography' becomes "
+        "Three demos side by side. Left: 'consumers want a bigger smartphone' "
+        "becomes 'consumers will not upgrade their smartphone' (IS 4.1 — "
+        "meaning is close but the key verb is flipped: 'want' to 'will not'. "
+        "This is what good output looks like — mostly right, small errors). "
+        "Center: 'james and will talk about street photography' becomes "
         "'i'm here to talk about street photography' (IS 2.9 — "
-        "the topic 'street photography' is captured perfectly, but "
-        "the speaker names are lost. This is the near-miss zone). "
+        "the topic is captured perfectly but speaker names are lost. "
+        "This is the near-miss zone). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
 
