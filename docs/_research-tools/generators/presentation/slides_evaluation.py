@@ -173,7 +173,7 @@ def slide_15(prs):
     vids = [
         ("smartphone", '"consumers want a bigger smartphone"\n\u2192 "consumers will not upgrade their smartphone"\nMeaning close, key verb flipped (IS 4.1)', "WER 28%  IS 4.1", TEAL),
         ("street_photo", '"james and will talk about street photography"\n\u2192 "i\'m here to talk about street photography"\nTopic right, speaker names lost (IS 2.9)', "WER 56%  IS 2.9", CORAL),
-        ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
+        ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.8", RED),
     ]
 
     for i, (key, desc, wer, color) in enumerate(vids):
@@ -200,7 +200,7 @@ def slide_15(prs):
         "the topic is captured perfectly but speaker names are lost. "
         "This is the near-miss zone). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
-        "IS 0.1). Click each video to play.")
+        "IS 0.8 — fluent but completely fabricated). Click each video to play.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 16 — IS VALIDATION: CLAUDE-AS-JUDGE
@@ -743,7 +743,7 @@ def slide_14b(prs):
     start_x = MX
 
     # 6 videos — balanced: 3 positive high-IS examples + 3 failure modes
-    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, hypertension, halluc)
+    # NOTE: avoid reusing videos from opening (perfect) or demo trio (smartphone, street_photo, halluc)
     rows = [
         [("convention",   "Convention & books — meaning fully captured, minor word drops",
           "31%",  GREEN),
