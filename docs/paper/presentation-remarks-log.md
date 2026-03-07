@@ -284,5 +284,5 @@ User performed a density audit of slides with too many elements, tables, or bull
 | 183 | 59 (slide_30) | Added speaker note explaining why 3-8pp from LLM change: 128K vocab (4x), 15T tokens (7.5x), better disambiguation of homophenes, stronger world knowledge | done |
 | 184 | ALL | Made slide numbering consistent — section dividers now auto-numbered so PPTX position = displayed number | done |
 | 185 | 6 (slide_visemes) | Changed GIF from lip_reading_demo.gif to mom-yelling.gif (user uploaded) | done |
-| 186 | 14b (slide_video_gallery) | Admiral video used twice (also on slide 15 demo trio) — replaced with entity_destroy video | done |
+| 186 | 15 + 14b | Admiral video used twice — keep admiral on gallery (slide 14b), replaced with vitamin_d on demo trio (slide 15) | done |
 | 187 | 58 (slide_29) | Fine-tune plot (FT_11b_impact) text covered by legend — moved legend to lower-left; also moved "Best (epoch 2)" annotation in FT_11a_loss below trendlines | done |

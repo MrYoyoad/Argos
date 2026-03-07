@@ -172,7 +172,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("admiral", '"admiral mcrae" \u2192 "animal migratory"\nPhonetically close, almost captured (IS 2.96)', "WER 33%  IS 2.96", GREEN),
+        ("vitamin_d", '"vitamin d deficiency" \u2192 "empathy deficiency"\nDomain swap, structure preserved (IS 2.1)', "WER 60%  IS 2.1", GREEN),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -193,9 +193,9 @@ def slide_15(prs):
     _finish(slide, 15,
         "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
         "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'admiral mcrae' becomes 'animal migratory' (IS 2.96 — almost "
-        "captured, phonetically very close, just 0.04 below the IS 3.0 "
-        "threshold — this is what 'near-success' looks like). "
+        "'vitamin d deficiency' becomes 'empathy deficiency' (IS 2.1 — "
+        "sentence structure preserved but domain vocabulary swapped, "
+        "classic domain mismatch failure). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
 
@@ -740,7 +740,7 @@ def slide_14b(prs):
     start_x = MX
 
     # 6 videos — balanced: 3 positive high-IS examples + 3 failure modes
-    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, admiral, halluc)
+    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, vitamin_d, halluc)
     rows = [
         [("bogo",          "Strong decode — meaning fully captured with minor word changes",
           "18%",  GREEN),
@@ -750,8 +750,8 @@ def slide_14b(prs):
           "19%",  GREEN)],
         [("phonetic_bridge","Sound-alike confusion — phonetically similar words substituted",
           "65%",  YELLOW),
-         ("entity_destroy","Named entities destroyed — proper nouns mangled beyond recovery",
-          "85%",  YELLOW),
+         ("admiral",      "Admiral McRae \u2192 animal migratory — classic viseme swap",
+          "33%",  YELLOW),
          ("topic_drift",  "Model generates coherent but completely wrong topic",
           "97%",  RED)],
     ]
@@ -774,8 +774,8 @@ def slide_14b(prs):
         "meaning fully preserved. (3) Named entities correctly captured — proper "
         "nouns like names and places come through intact. "
         "Row 2 (failure modes): (4) Phonetic bridge — sound-alike confusion where "
-        "phonetically similar words substitute. (5) Entity destruction — proper nouns "
-        "mangled beyond recovery, losing critical information. (6) Topic drift — "
+        "phonetically similar words substitute. (5) Admiral McRae — classic viseme "
+        "swap where identical lip shapes produce wrong words. (6) Topic drift — "
         "model generates coherent text about the wrong subject entirely.")
 
 
