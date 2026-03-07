@@ -281,7 +281,8 @@ def weighted_wer(ref: str, hyp: str) -> float:
     - Low (function words): 0.5x
     """
     ref_tokens = classify_tokens(ref)
-    hyp_words = toks(hyp)
+    hyp_tokens = classify_tokens(hyp)
+    hyp_words = [w for w, _ in hyp_tokens]
 
     if not ref_tokens:
         return 0.0

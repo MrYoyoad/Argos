@@ -1401,3 +1401,30 @@ The following changes have been made to the EC2 version and need to be replicate
 # After BASE_DIR="$SCRIPT_DIR" (around line 20):
 source "${BASE_DIR}/lib/config.sh"
 ```
+
+---
+
+### 28. WWER Tokenizer Mismatch Bug Fix (Mar 7, 2026)
+
+**Problem**: `weighted_wer()` in `make_report.py` used `classify_tokens(ref)` (spaCy tokenization) for the reference but `toks(hyp)` (regex split) for the hypothesis. spaCy splits contractions like `"i'm"` into `["i", "'m"]` (2 tokens) while `toks()` keeps it as one token `["i'm"]`. This caused non-zero WWER for identical ref/hyp pairs containing contractions.
+
+**Fix**: Use `classify_tokens()` for both ref and hyp so both sides use the same tokenizer.
+
+**Changed files** (all three copies):
+- `VSP-LLM/scripts/make_report.py`
+- `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_report.py`
+- `vsp_docker/galaxy_export/VSP-LLM/scripts/make_report.py`
+
+**Code change** (in `weighted_wer()` function):
+```python
+# BEFORE (line ~299-300):
+ref_tokens = classify_tokens(ref)
+hyp_words = toks(hyp)
+
+# AFTER:
+ref_tokens = classify_tokens(ref)
+hyp_tokens = classify_tokens(hyp)
+hyp_words = [w for w, _ in hyp_tokens]
+```
+
+**Container action**: Replace the same two lines in `/workspace/VSP-LLM/scripts/make_report.py`.
