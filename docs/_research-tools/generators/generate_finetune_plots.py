@@ -795,7 +795,7 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
             markeredgecolor=BG, markeredgewidth=1.2, zorder=5)
     ax.annotate(f"Best (epoch {best_ep})",
                 xy=(best_ep, best_loss),
-                xytext=(best_ep + 3.5, best_loss + 0.35),
+                xytext=(best_ep + 5.5, best_loss - 1.4),
                 fontsize=13, fontweight="bold", color=C_GOLD,
                 arrowprops=dict(arrowstyle="->", color=C_GOLD, lw=1.5),
                 zorder=5)
@@ -878,7 +878,7 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
                  fontsize=16, fontweight="bold", color=C_WHITE, pad=10)
     ax.invert_yaxis()
 
-    leg = ax.legend(fontsize=12, loc="lower right",
+    leg = ax.legend(fontsize=11, loc="lower left",
                     framealpha=0.95, edgecolor=C_LGRAY)
     leg.get_frame().set_facecolor(BG)
     for t in leg.get_texts():

@@ -740,7 +740,7 @@ def slide_14b(prs):
     start_x = MX
 
     # 6 videos — balanced: 3 positive high-IS examples + 3 failure modes
-    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, vitamin_d, halluc)
+    # NOTE: avoid reusing videos from opening (perfect) or demo trio (ok_demo, admiral, halluc)
     rows = [
         [("bogo",          "Strong decode — meaning fully captured with minor word changes",
           "18%",  GREEN),
@@ -750,8 +750,8 @@ def slide_14b(prs):
           "19%",  GREEN)],
         [("phonetic_bridge","Sound-alike confusion — phonetically similar words substituted",
           "65%",  YELLOW),
-         ("admiral",      "Admiral McRae \u2192 animal migratory — classic viseme swap",
-          "33%",  YELLOW),
+         ("entity_destroy","Named entities destroyed — proper nouns mangled beyond recovery",
+          "85%",  YELLOW),
          ("topic_drift",  "Model generates coherent but completely wrong topic",
           "97%",  RED)],
     ]
@@ -774,8 +774,8 @@ def slide_14b(prs):
         "meaning fully preserved. (3) Named entities correctly captured — proper "
         "nouns like names and places come through intact. "
         "Row 2 (failure modes): (4) Phonetic bridge — sound-alike confusion where "
-        "phonetically similar words substitute. (5) Admiral McRae — classic viseme "
-        "swap where identical lip shapes produce wrong words. (6) Topic drift — "
+        "phonetically similar words substitute. (5) Entity destruction — proper nouns "
+        "mangled beyond recovery, losing critical information. (6) Topic drift — "
         "model generates coherent text about the wrong subject entirely.")
 
 
