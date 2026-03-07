@@ -306,7 +306,8 @@ The relative trend (longer = better) holds, but the absolute performance is dram
 
 8. **Domain adaptation:** Fine-tune the model on in-domain data representative of the target use case (YouTube-like content, diverse speakers, varied conditions).
 9. **Hallucination mitigation:** Implement constrained decoding, confidence thresholds, or a separate hallucination detector.
-10. **Alternative models:** Evaluate newer visual speech recognition models that may have addressed the domain generalization gap.
+10. **LLM backbone upgrade:** Replace Llama-2-7B with Llama 3.1 8B (drop-in swap, same hidden dimension 4096). Expected -3 to -8 pp WER from better language prior alone; unlocks prompt strategies (topic context, anti-hallucination, vocabulary lists) worth an additional -5 to -15 pp. VALLR (ICCV 2025) demonstrated that Llama 3.2-3B achieves 18.7% WER on LRS3 vs our 25.4% with Llama-2-7B. See [LLM Upgrade Analysis](llm_upgrade_analysis.md) for full quantified projections.
+11. **Alternative models:** Evaluate newer visual speech recognition models that may have addressed the domain generalization gap.
 
 ---
 

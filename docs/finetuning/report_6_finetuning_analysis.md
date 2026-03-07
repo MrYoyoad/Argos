@@ -299,6 +299,7 @@ These can be combined with fine-tuning for cumulative improvement:
 
 | Method | Source | Data Required | Expected Impact |
 |--------|--------|---------------|-----------------|
+| **LLM backbone upgrade (Llama 3.1 8B)** | [LLM Upgrade Analysis](../evaluation/llm_upgrade_analysis.md) | Drop-in swap (1-2 hrs) | -3 to -8 pp WER alone; unlocks prompt strategies for -5 to -15 pp more. VALLR proved Llama 3.2-3B beats our 7B on LRS3 (18.7% vs 25.4%) |
 | **Whisper knowledge distillation** | Prajwal et al., Interspeech 2024 | Unlabeled AV data | 5-10 WER points (complementary to QLoRA) |
 | **Speaker-adaptive prompt tuning** | Shin et al., AAAI 2025 | 5 min per speaker | Significant per-speaker gains |
 | **MultiVSR dataset fine-tuning** | Prajwal et al., ICASSP 2025 | 12k hrs labeled | Potentially stronger than AVSpeech (pre-labeled) |

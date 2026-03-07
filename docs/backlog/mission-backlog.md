@@ -178,9 +178,9 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - **Phase 2: Unfreeze encoder** — adapt top AV-HuBERT layers with discriminative LR (needs gradient checkpointing or multi-GPU)
   - **Phase 3: Label quality** — manually verify 224 val transcriptions; use Whisper large-v3 for better training labels
   - Data curation: filter face detection confidence >0.9, remove extreme head pose >30°
-- **Expected Impact**: With proper data scaling (20K-50K segments) + stronger LLM (Llama 3.1 8B) + smart prompts, target 30-40% WER is realistic. Encoder adaptation for sub-30% WER
+- **Expected Impact**: With proper data scaling (20K-50K segments) + stronger LLM (Llama 3.1 8B) + smart prompts, target 30-40% WER is realistic. Encoder adaptation for sub-30% WER. VALLR (ICCV 2025) showed Llama 3.2-3B achieves 18.7% WER on LRS3 vs our 25.4% — proving the Llama 3 family is fundamentally better for this task
 - **GPU Requirements**: Data expansion works on T4; encoder unfreezing needs V100+ or gradient checkpointing
-- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md) (Sections 6-9), [Comparison Report](../finetuning/experiments/comparison_report.md)
+- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md) (Sections 6-9), [Comparison Report](../finetuning/experiments/comparison_report.md), [LLM Upgrade Analysis](../evaluation/llm_upgrade_analysis.md)
 
 ---
 

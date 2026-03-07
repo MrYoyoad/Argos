@@ -404,6 +404,14 @@ Full comparison report: `docs/finetuning/llm_judge/finetune_llm_judge_comparison
 - [ ] If T4 insufficient: use p3.2xlarge (V100 16GB) or p3.8xlarge (4x V100)
 - [ ] Two-stage schedule: warm up encoder gradually (freeze_finetune_updates=200)
 
+### Phase 2b: LLM Backbone Upgrade (Complementary to Data + Encoder)
+- [ ] Swap Llama-2-7B for Llama 3.1 8B (same hidden_size 4096, drop-in replacement)
+- [ ] Retrain LoRA adapters on new base model (same training config)
+- [ ] Expected: -3 to -8 pp WER from better language prior alone
+- [ ] Unlocks prompt strategies (topic context, anti-hallucination, vocabulary hints) worth -5 to -15 pp additional
+- [ ] VALLR (ICCV 2025) proved Llama 3.2-3B achieves 18.7% WER on LRS3 vs our 25.4% — smaller but better
+- [ ] Full analysis: [LLM Upgrade Analysis](../evaluation/llm_upgrade_analysis.md)
+
 ### Phase 3: Label Quality (Manual Effort)
 - [ ] Manually verify/correct transcriptions for the 224 validation segments
 - [ ] Use corrected val set to measure true model accuracy (not Whisper-corrupted)
