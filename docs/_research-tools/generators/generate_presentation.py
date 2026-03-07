@@ -59,7 +59,7 @@ from presentation.slides_future import (
     slide_future_transition, slide_insights, slide_24,
     slide_26, slide_26b, slide_confidence_scoring,
     slide_27, slide_28, slide_data_scaling, slide_price_tag,
-    slide_29, slide_30, slide_30b, slide_arabic_roadmap, slide_31, slide_thank_you,
+    slide_29, slide_30, slide_30b, slide_30c, slide_arabic_roadmap, slide_31, slide_thank_you,
     slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b,
     slide_a13, slide_a15, slide_a16, slide_a17,
 )
@@ -156,6 +156,7 @@ def main():
         slide_29,           # Phase 3-4 Fine-Tuning
         slide_30,           # Phase 5 LLM Upgrade
         slide_30b,          # LLM Upgrade: Quantified Impact
+        # slide_30c,         # LLM Upgrade: Failure Mode Detail (hidden backup)
         slide_arabic_roadmap, # Arabic Pipeline Roadmap
         slide_31,           # Key Takeaways
         slide_thank_you,    # Thank You & Questions

@@ -618,6 +618,100 @@ def slide_30b(prs):
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# SLIDE 30c — LLM UPGRADE: FAILURE MODE DETAIL (hidden backup)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_30c(prs):
+    """Backup slide: per-failure-mode recovery estimates + key insight."""
+    slide = new_slide(prs)
+    add_title(slide, "LLM Upgrade: Failure Mode Recovery Detail")
+    add_accent_line(slide)
+
+    # ── Full-width failure mode table ──
+    tbl_w = CW
+    ft = add_text(slide, "Expected Recovery by Failure Category (900 failed segments)",
+                  MX, CT, tbl_w, Inches(0.35),
+                  size=Pt(16), color=TEAL, bold=True)
+
+    headers = ["Failure Mode", "Segments", "% of Failures",
+               "LLM Impact", "Expected Recovery"]
+    rows = [
+        ["Right Topic, Wrong Details", "204", "22.7%",
+         "Highest \u2014 entity/vocabulary disambiguation", "25\u201335%"],
+        ["Accumulated Errors", "220", "24.4%",
+         "High \u2014 context catches cascading errors", "20\u201330%"],
+        ["Hallucination", "111", "12.3%",
+         "Moderate-High \u2014 better calibration", "15\u201325%"],
+        ["Wrong Topic (phonetic)", "141", "15.7%",
+         "Moderate \u2014 better vocabulary prior", "10\u201320%"],
+        ["Wrong Topic (total drift)", "143", "15.9%",
+         "Low \u2014 no visual signal to decode", "<5%"],
+        ["Signal Loss / Empty", "81", "9.0%",
+         "None \u2014 encoder failure", "<5%"],
+    ]
+    tbl = add_table(slide, headers, rows,
+                    MX, CT + Inches(0.50), tbl_w,
+                    row_height=Inches(0.50),
+                    col_widths=[Inches(2.2), Inches(1.0), Inches(1.2),
+                                Inches(4.5), Inches(1.4)],
+                    text_size=Pt(12))
+
+    # ── Key insight box ──
+    iy = CT + Inches(3.85)
+    insight_box = add_rect(slide, MX, iy, CW, Inches(1.0),
+                           fill_color=NAVY2, border_color=TEAL,
+                           border_width=Pt(2), corner_radius=True)
+    insight_title = add_text(slide, "Why These Categories?",
+                             MX + Inches(0.3), iy + Inches(0.10),
+                             CW - Inches(0.6), Inches(0.30),
+                             size=Pt(15), color=TEAL, bold=True)
+    insight_text = add_text(slide,
+        "The LLM\u2019s job is disambiguation: when lips show /p/, /b/, or /m/ "
+        "(identical mouth shape), the LLM picks the right word using language "
+        "context. \u201cRight Topic Wrong Details\u201d is where this matters most "
+        "\u2014 the encoder captured the domain, but Llama-2\u2019s weaker prior "
+        "picked \u201cadmiral\u201d \u2192 \u201canimal\u201d. A model with "
+        "61% higher MMLU and 4\u00d7 vocabulary resolves these directly.",
+        MX + Inches(0.3), iy + Inches(0.40),
+        CW - Inches(0.6), Inches(0.55),
+        size=Pt(13), color=WHITE)
+
+    # ── Bottom: multiplicative scaling note ──
+    note_text = add_text(slide,
+        "Multiplicative scaling law (ICLR 2024): better model \u00d7 more data "
+        "= compounding gains. The LLM upgrade is most valuable when combined "
+        "with 20K+ training segments.",
+        MX, Inches(6.30), CW, Inches(0.35),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # References
+    add_text(slide,
+        "VALLR: Thomas et al. (ICCV 2025)  |  "
+        "Scaling Laws: Zhang et al. (ICLR 2024)  |  "
+        "Full analysis: docs/evaluation/llm_upgrade_analysis.md",
+        MX, Inches(6.65), CW, Inches(0.25),
+        size=Pt(8), color=MGRAY, italic=True)
+
+    _finish(slide, 0,
+        "Backup detail slide for Q&A. Shows per-failure-mode recovery "
+        "estimates with the full 6-row table.\n\n"
+        "Key point: 'Right Topic Wrong Details' (204 segments) is the "
+        "sweet spot for LLM improvement because the visual encoder "
+        "captured the right domain but the LLM picked wrong words. "
+        "Examples: 'admiral McRae' -> 'animal migratory', "
+        "'pro controller' -> 'broken dollar'.\n\n"
+        "The insight box explains WHY: the LLM disambiguates homophenes "
+        "(identical lip shapes for different sounds). A stronger language "
+        "prior with 61% higher MMLU and 4x vocabulary directly fixes "
+        "entity names and content words.\n\n"
+        "Total estimated recovery: ~155-235 of 900 failed segments, "
+        "pushing capture rate from 39.9% to ~50-56%.",
+        [[ft, tbl],
+         [insight_box, insight_title, insight_text],
+         [note_text]])
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # ARABIC PIPELINE ROADMAP
 # ═══════════════════════════════════════════════════════════════════════
 
