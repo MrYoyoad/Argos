@@ -11,7 +11,7 @@ from pptx.oxml.ns import qn
 from lxml import etree
 
 from .config import (
-    IMG, VID, POSTER_DIR, PLOTS,
+    IMG, VID, POSTER_DIR, PLOTS, MATERIALS,
     SL_W, SL_H, BG, WHITE, TEAL, CORAL, LGRAY, MGRAY, DGRAY,
     GREEN, YELLOW, GOLD, ORANGE, RED, DRED, NAVY2, NAVY3,
     FONT, _auto_num,
@@ -530,7 +530,7 @@ def slide_visemes(prs):
     poster_shapes = []
     gif_w = Inches(5.0)
     gif_h = Inches(1.5)  # constrain height to prevent overlap with table
-    gif_path = PLOTS / "lip_reading_demo.gif"
+    gif_path = MATERIALS / "mom-yelling.gif"
     if gif_path.exists():
         gif_x = rx + (col_w - gif_w) / 2  # Center in right column
         poster_shapes.append(slide.shapes.add_picture(

@@ -260,3 +260,27 @@ User performed a density audit of slides with too many elements, tables, or bull
 | 166 | slide_price_tag | Table widened to 11.8", text Pt(12), row_height 0.48". Added 5-point cost methodology in speaker notes | done |
 | 167 | FT_11a_loss.png | Annotation box "Val: 2.39 → 4.12 (+72%)" occluded by legend — moved down to y=0.72 | done |
 | 168 | slide_17 (Pipeline) | Fix stage order: swap ASR/Mouth Crop to match real pipeline (Normalize→Mouth Crop→ASR→LRS3). Change K-means subtitle from "Feature extraction" to "Feature clustering". Replace centered ↓ with L-shaped connector (thin teal lines + ▼ arrowhead) flowing from stage 4 to stage 5. Update speaker notes | done |
+
+---
+
+## Batch 12 — 2026-03-07
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 169 | 22 (slide_metric_transition) | Last number should be Opus-as-a-Judge Y+P=64.9%, not heuristic 50.9%. Changed third card to "64.9%" with "Opus-as-a-Judge confirms: Y+P = 971/1,497" | done |
+| 170 | 19 (slide_is_radar) | Remove model description cards below radar, just put inline legend. Move full model descriptions to speaker notes | done |
+| 171 | 23-24 (failure_deep_1a/1b) | Reorder failure categories by impact (from slide 27 table): Right Topic Wrong Details → Wrong Topic → Hallucination → Accumulated → Signal Loss. Updated colors to match severity gradient. Also reordered slide 27 table to match | done |
+| 172 | 29 (slide_metric_disagreement) | Hide — commented out from builders list | done |
+| 173 | 31 (slide_two_eval_systems) | Replace expert heuristic with Opus-as-a-Judge throughout. Changed card title, bullets (Y+P=64.9%), agreement table (Opus Y/P vs N), worked example, speaker notes | done |
+| 174 | 38 (slide_15) | Change near-miss from vitamin_d (IS 2.5) to admiral (IS 2.96) — closer to success threshold. Updated title to "OK → Almost There → Hallucination" | done |
+| 175 | 45 (slide_web_ui) | Replaced placeholder with demo announcement — big play icon, "We will now run the full pipeline live", three feature cards (Drag & Drop, 8 Stages, IS Scoring) | done |
+| 176 | 43 (slide_19) | Hide — commented out from builders list | done |
+| 177 | 46 (slide_21) | Replaced speaker notes with detailed explanation of smart overlap handling: 2s configurable overlap, best-of-overlap merge by beam score, Obama analysis (13/21 overlaps had clear winner) | done |
+| 178 | 50 (slide_24) | Replace heuristic numbers with Opus-as-a-Judge: "64.9% useful per Opus-as-a-Judge (Y+P = 971/1,497)", "85% correlation between IS and Opus verdicts" | done |
+| 179 | 52 (slide_26b) | Fixed milestone card spacing: increased vertical spacing (1.2→1.25"), taller cards (1.05→1.10"), shifted start up (0.55→0.45") | done |
+| 180 | 53 (slide_confidence_scoring) | Removed "Business/Finance segments (57% captured) get highest scores" bullet | done |
+| 181 | 57 (slide_price_tag) | Simplified: 7-col table → 5-col table (Investment/Data/Cost/Timeline/IS), 5 rows → 4 rows. Renamed phases to plain language (Quick win/Medium/Full/Maximum). Simplified speaker notes to 4 clear tiers with plain explanation | done |
+| 182 | 58 (slide_29) | Fine-tune figure text hidden — reduced plot height (4.0→3.5"), increased text area, bumped font (14→15pt) | done |
+| 183 | 59 (slide_30) | Added speaker note explaining why 3-8pp from LLM change: 128K vocab (4x), 15T tokens (7.5x), better disambiguation of homophenes, stronger world knowledge | done |
+| 184 | ALL | Made slide numbering consistent — section dividers now auto-numbered so PPTX position = displayed number | done |
+| 185 | 6 (slide_visemes) | Changed GIF from lip_reading_demo.gif to mom-yelling.gif (user uploaded) | done |

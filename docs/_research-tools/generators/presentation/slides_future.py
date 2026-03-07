@@ -61,10 +61,10 @@ def slide_24(prs):
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
         ("39.9% properly captured (IS \u2265 3.0)", {"bold": True}),
-        ("50.9% with LLM salvage (165 recoverable segments)",
+        ("64.9% useful per Opus-as-a-Judge (Y+P = 971/1,497)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
-        "Expert heuristic: 88.6% agreement, r=0.925 (no runtime LLM)",
+        "85% correlation between IS and Opus verdicts",
     ], mx2 + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(1.2), size=Pt(13), bullet_color=TEAL)
 
@@ -74,16 +74,16 @@ def slide_24(prs):
 
     # Bottom
     add_text(slide,
-             "The gap is real — but WER dramatically overstates failure. "
-             "40% works, 51% with LLM salvage.",
+             "The gap is real \u2014 but WER dramatically overstates failure. "
+             "40% captured by IS, 65% useful per Opus-as-a-Judge.",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 24,
         "This is the turning point. WER says 11.4% usable. Our "
         "Intelligibility Score says 39.9% properly captured — 3.5x more. "
-        "LLM salvage analysis identified 165 additional recoverable segments, "
-        "raising effective capture to 50.9%. Validated across 16 configs.",
+        "Opus-as-a-Judge confirms 64.9% useful output (Y+P = 971/1,497). "
+        "Validated across 16 decode configs with 85% correlation.",
         [[r1], [r2, img]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -207,8 +207,8 @@ def slide_26b(prs):
     ]
     ms_shapes = []
     for i, (phase, is_val, cap_val, failure_note, color) in enumerate(milestones):
-        y = CT + Inches(0.55) + i * Inches(1.2)
-        card_h = Inches(1.05) if i > 0 else Inches(0.85)
+        y = CT + Inches(0.45) + i * Inches(1.25)
+        card_h = Inches(1.10) if i > 0 else Inches(0.85)
         ms_shapes.append(add_rect(slide, rx, y, rw, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True))
         ms_shapes.append(add_text(slide, phase, rx + Inches(0.15), y + Inches(0.05),
@@ -372,23 +372,23 @@ def slide_29(prs):
     add_title(slide, "Fine-Tuning: Limited Data, Limited Gains")
     add_accent_line(slide)
 
-    # Two plots side by side — LARGER for visibility
+    # Two plots side by side — reduced height to leave room for text
     col_w = Inches(5.9)
     gap = Inches(0.33)
-    plot_h = Inches(4.0)
+    plot_h = Inches(3.5)
     rx = MX + col_w + gap
 
     img_l = add_image(slide, "ft_loss", MX, CT, width=col_w, height=plot_h)
     img_r = add_image(slide, "ft_impact", rx, CT, width=col_w, height=plot_h)
 
-    # Compact key findings below — single row, shorter text
-    find_y = CT + plot_h + Inches(0.1)
+    # Key findings below plots — with more room
+    find_y = CT + plot_h + Inches(0.15)
     lb = add_bullets(slide, [
         ("LoRA on 1,273 segments: IS 2.49 \u2192 2.31 (r=16) \u2192 2.02 (r=64) \u2014 "
          "fine-tuning made IS WORSE", {"bold": True, "color": CORAL}),
         ("Bottleneck is data quantity (need 20K+), not parameter tuning",
          {"bold": True, "color": GREEN}),
-    ], MX, find_y, CW, Inches(1.0), size=Pt(14))
+    ], MX, find_y, CW, Inches(1.2), size=Pt(15))
 
     _finish(slide, 29,
         "Fine-tuning experiments with LoRA on 1,273 segments. Graphs are now "
@@ -461,7 +461,23 @@ def slide_30(prs):
         "strategies are a force multiplier — more effective on stronger "
         "models. GER uses N-best hypotheses + correction LLM for +8-15pp "
         "with no retraining. Right: Arabic support planned, multi-speaker "
-        "and streaming as future extensions.",
+        "and streaming as future extensions.\n\n"
+        "WHY 3-8pp WER IMPROVEMENT JUST FROM CHANGING THE LLM:\n"
+        "The visual encoder outputs ambiguous feature sequences — multiple "
+        "English words look identical on the lips (homophenes). The LLM's job "
+        "is to disambiguate using language context. Llama-2 7B has a 32K "
+        "vocabulary and was trained on older data. Llama 3.1 8B has 128K "
+        "vocabulary (4x), trained on 15T tokens (7.5x more), and vastly better "
+        "instruction following. This means:\n"
+        "- Better vocabulary coverage → fewer unknown-word hallucinations\n"
+        "- Stronger language model → better disambiguation of homophenes\n"
+        "- More world knowledge → correct entity names more often\n"
+        "- The 3-8pp range comes from published ASR/NLP benchmarks showing "
+        "Llama 3 8B performs at roughly Llama-2 70B level. Since the visual "
+        "encoder is unchanged, the improvement is purely from better language "
+        "decoding of the same visual features. The lower end (3pp) assumes "
+        "the visual bottleneck limits gains; the upper end (8pp) assumes "
+        "language disambiguation is the primary bottleneck for our failure modes.",
         col_groups)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1036,7 +1052,7 @@ def slide_future_transition(prs):
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
 
-    _finish(slide, None,
+    _finish(slide, 0,
         "Section transition: we now move from what we found to what we "
         "recommend doing about it. Five key insights lead to a five-phase "
         "improvement roadmap.")
@@ -1172,86 +1188,72 @@ def slide_data_scaling(prs):
 
 
 def slide_price_tag(prs):
-    """Cost projections: GPU, data, timeline to reach IS targets."""
+    """Cost projections: simplified 3-tier view."""
     slide = new_slide(prs)
-    add_title(slide, "The Price Tag: Cost to Reach IS 3.5\u20134.0")
+    add_title(slide, "The Price Tag: What It Costs to Improve")
     add_accent_line(slide)
 
     add_text(slide,
-        "AWS eu-west-1 (Ireland)  \u2022  p4d.24xlarge (8\u00d7A100) spot  \u2022  "
-        "Paper\u2019s 2-phase curriculum: freeze encoder \u2192 unfreeze encoder",
-        MX, CT, CW, Inches(0.35), size=Pt(12), color=LGRAY, italic=True)
+        "AWS 8\u00d7A100 spot pricing  \u2022  Includes data curation + training + overhead",
+        MX, CT, CW, Inches(0.3), size=Pt(12), color=LGRAY, italic=True)
 
+    # Simplified 3-tier table
     tbl_w = Inches(11.8)
     tbl = add_table(slide,
-        ["Phase", "Training Type", "Data", "Train Cost", "Total Cost", "Timeline", "IS Target"],
-        [["Current", "LoRA r=16 (projection only)", "1.3K segs", "\u2014", "\u2014", "\u2014", "2.52"],
-         ["Phase 1", "Projection retraining (2 hrs)", "5K hrs", "~$3K", "~$8\u201312K", "2\u20134 wks", "~2.9\u20133.1"],
-         ["Phase 2", "Projection + partial encoder", "10K hrs", "~$6K", "~$15\u201320K", "4\u20136 wks", "~3.2\u20133.5"],
-         ["Phase 3", "Full curriculum (freeze\u2192unfreeze)", "20K hrs", "~$13K", "~$30\u201340K", "6\u20138 wks", "~3.5\u20133.8"],
-         ["Phase 4", "Full curriculum + encoder adapt", "50K hrs", "~$32K", "~$70\u2013100K", "3\u20134 mo", "~3.8\u20134.2"]],
-        MX, CT + Inches(0.5), tbl_w, text_size=Pt(12),
-        col_widths=[Inches(1.2), Inches(3.0), Inches(1.1), Inches(1.2), Inches(1.5),
-                    Inches(1.3), Inches(1.2)],
-        row_height=Inches(0.48),
-        row_colors={3: {4: GREEN, 6: GREEN}})
+        ["Investment", "Data", "Total Cost", "Timeline", "Expected IS"],
+        [["Quick win: LLM swap only", "\u2014", "~$0", "1\u20132 hours", "~2.8\u20133.0"],
+         ["Medium: retrain projection layer", "5\u201310K hrs", "~$10\u201320K", "4\u20136 weeks", "~3.0\u20133.5"],
+         ["Full: paper\u2019s curriculum training", "20K hrs", "~$30\u201340K", "6\u20138 weeks", "~3.5\u20133.8"],
+         ["Maximum: + encoder adaptation", "50K hrs", "~$70\u2013100K", "3\u20134 months", "~3.8\u20134.2"]],
+        MX, CT + Inches(0.45), tbl_w, text_size=Pt(13),
+        col_widths=[Inches(3.2), Inches(1.5), Inches(2.0), Inches(2.0), Inches(2.0)],
+        row_height=Inches(0.52),
+        row_colors={2: {2: GREEN, 4: GREEN}})
 
-    # Sweet spot + training type below table
-    sw_y = CT + Inches(3.6)
-    r1 = add_rect(slide, MX, sw_y, Inches(5.5), Inches(1.5),
+    # Two callout boxes below
+    sw_y = CT + Inches(3.2)
+    r1 = add_rect(slide, MX, sw_y, Inches(5.8), Inches(1.6),
                    fill_color=NAVY2, border_color=GOLD, border_width=Pt(2),
                    corner_radius=True)
-    add_text(slide, "Sweet Spot: Phase 3 \u2014 Full Curriculum Training",
+    add_text(slide, "Sweet Spot: ~$35K for IS 3.5\u20133.8",
              MX + Inches(0.2), sw_y + Inches(0.1),
-             Inches(5.1), Inches(0.35), size=Pt(15), color=GOLD, bold=True)
+             Inches(5.4), Inches(0.35), size=Pt(16), color=GOLD, bold=True)
     add_bullets(slide, [
-        "20K hrs = ~7% of AVSpeech, total ~$35K",
-        "Paper\u2019s curriculum: freeze encoder (phase 1) \u2192 unfreeze (phase 2)",
-        ("NOT LoRA \u2014 full projection + encoder retraining", {"color": CORAL}),
-    ], MX + Inches(0.15), sw_y + Inches(0.5), Inches(5.2), Inches(0.9),
-        size=Pt(12))
+        "20K hrs of AVSpeech (~7% of the dataset)",
+        "Full 2-phase training: freeze encoder, then unfreeze",
+        ("NOT LoRA \u2014 real retraining of projection + encoder", {"color": CORAL}),
+    ], MX + Inches(0.15), sw_y + Inches(0.5), Inches(5.5), Inches(1.0),
+        size=Pt(13))
 
-    r2 = add_rect(slide, MX + Inches(6.0), sw_y, Inches(5.8), Inches(1.5),
+    r2 = add_rect(slide, MX + Inches(6.3), sw_y, Inches(5.5), Inches(1.6),
                    fill_color=NAVY2, border_color=TEAL, border_width=Pt(1),
                    corner_radius=True)
-    add_text(slide, "LLM Backbone Upgrade (config change only)",
-             MX + Inches(6.2), sw_y + Inches(0.1),
-             Inches(5.4), Inches(0.3), size=Pt(13), color=TEAL, bold=True)
+    add_text(slide, "Free upgrade: swap LLM backbone",
+             MX + Inches(6.5), sw_y + Inches(0.1),
+             Inches(5.1), Inches(0.3), size=Pt(14), color=TEAL, bold=True)
     add_bullets(slide, [
-        "Llama 3.1 8B or Qwen 2.5 7B",
-        "+0.3\u20130.5 IS independently, no retraining",
-        "Same hidden_size (4096), drop-in swap",
-    ], MX + Inches(6.15), sw_y + Inches(0.45), Inches(5.5), Inches(0.9),
-        size=Pt(11))
-
-    add_text(slide,
-        "Training cost: p4d spot $9.39/hr (eu-west-1).  "
-        "Curation includes: download, RetinaFace, mouth crop, AV-HuBERT features, Whisper v3 labels.",
-        MX, Inches(6.5), CW, Inches(0.35), size=Pt(10), color=MGRAY, italic=True)
+        "Llama 3.1 8B: same architecture, drop-in swap",
+        "+0.3\u20130.5 IS improvement, no retraining",
+        "Stacks with any training investment",
+    ], MX + Inches(6.45), sw_y + Inches(0.45), Inches(5.2), Inches(1.0),
+        size=Pt(12))
 
     _finish(slide, 0,
-        "Cost projections with explicit training types. Current baseline used "
-        "LoRA r=16 (projection layer only) on 1.3K segments. Phase 1: projection "
-        "retraining (~2 hours per epoch). Phase 2: projection + partial encoder. "
-        "Phase 3 (sweet spot): full curriculum training from the VSP-LLM paper \u2014 "
-        "freeze encoder first, then unfreeze for end-to-end training. This is NOT "
-        "LoRA fine-tuning; it retrains the projection layer and encoder weights. "
-        "Phase 4: full curriculum + encoder adaptation on 50K hours. "
-        "LLM backbone upgrade (Llama 3.1 8B) is orthogonal \u2014 just a config change.\n\n"
-        "HOW THESE COSTS WERE ASSESSED:\n"
-        "1. GPU costs: AWS p4d.24xlarge (8xA100 80GB) spot pricing at $9.39/hr in "
-        "eu-west-1 (Ireland). Spot prices verified February 2026. Training time "
-        "estimates from VSP-LLM paper (Table 3): ~2 hrs/epoch for projection, "
-        "~8 hrs/epoch for full curriculum.\n"
-        "2. Data curation costs: AVSpeech download + RetinaFace + mouth crop + "
-        "AV-HuBERT features + Whisper v3 labels. Estimated at ~$5-8K for 20K hrs "
-        "based on our pipeline throughput (~50 segments/hr on single GPU).\n"
-        "3. Total cost = training + curation + storage + failed runs (~20% overhead).\n"
-        "4. IS targets: extrapolated from (a) our fine-tune experiments (1.3K segs), "
-        "(b) VSP-LLM paper results on LRS3 (25.4% WER with full training), "
-        "(c) published scaling laws (Biderman et al. 2024, LoRA vs full fine-tune), "
-        "and (d) AVSpeech dataset characteristics (300K hrs total, ~7% = 20K hrs).\n"
-        "5. Timeline includes data curation, training, evaluation, and iteration.",
+        "Simplified cost overview. Four tiers of investment:\n\n"
+        "1. FREE: Just swap Llama-2 for Llama 3.1 8B. Same hidden dimension "
+        "(4096), takes 1-2 hours. Expected ~0.3-0.5 IS improvement alone.\n\n"
+        "2. MEDIUM ($10-20K): Retrain the projection layer that connects the "
+        "visual encoder to the LLM. Uses 5-10K hours of AVSpeech data. "
+        "4-6 weeks including data preparation.\n\n"
+        "3. SWEET SPOT ($30-40K): Follow the VSP-LLM paper's training recipe — "
+        "first freeze the visual encoder and train the projection layer, then "
+        "unfreeze everything for end-to-end training. 20K hours of data. "
+        "This is real retraining, not LoRA fine-tuning.\n\n"
+        "4. MAXIMUM ($70-100K): Same as above but with 50K hours and encoder "
+        "adaptation. 3-4 months.\n\n"
+        "The LLM swap is independent and stacks with any training investment. "
+        "GPU cost basis: AWS p4d.24xlarge spot at $9.39/hr (Ireland). "
+        "Data curation: download + face detection + mouth crop + features + labels.",
         [[tbl], [r1, r2]], click_reveal=True)
 
 
@@ -1419,7 +1421,6 @@ def slide_confidence_scoring(prs):
     rb = add_bullets(slide, [
         "Users see only high-confidence segments by default",
         "Low-confidence segments flagged for human review",
-        "Business/Finance segments (57% captured) get highest scores",
         ("Entity-level: names/numbers missed in 85% of segments \u2014 "
          "confidence can flag these specifically", {"color": CORAL}),
     ], rx, CT + Inches(0.45), rw, Inches(2.5), size=Pt(14))

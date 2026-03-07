@@ -411,21 +411,24 @@ def slide_21(prs):
         card_groups.append([r, t1, t2])
 
     _finish(slide, 21,
-        "Four intelligent features. Transcription reuse: manual corrections "
-        "persist across runs. Golden k-means: consistent clustering baseline. "
-        "Smart segmentation: configurable overlap. Intelligibility Score: the IS is "
-        "a 0-5 composite score combining 6 signals — semantic similarity (25%), "
-        "phonetic similarity (15%), inverse WER (15%), inverse WWER (15%), "
-        "Named Entity Accuracy F1 (15%), and length ratio (15%). The entire "
-        "framework was designed at development time: the rubric, signal selection "
-        "and weights, tier boundaries (Excellent/Good/Fair/Poor/Failed), 10 "
-        "failure modes, and 7 success patterns. These were then distilled into "
-        "deterministic formulas — no LLM is called per sample at runtime. "
-        "Correlation analysis shows the 6 signals collapse into 3 independent "
-        "dimensions: word accuracy (WER/WWER/Phonetic, r>0.79, ~60% of IS), "
-        "meaning preservation (Semantic, 28.5%), and output sanity (Length, "
-        "9.1%). Cross-config validation across 16 decode configs: r=0.925, "
-        "88.6% agreement, Cohen's kappa 0.773.",
+        "Four intelligent features.\n\n"
+        "SMART SEGMENTATION — HOW OVERLAP IS HANDLED:\n"
+        "Long videos are split into segments (default 30s) with configurable "
+        "overlap (default 2s). Each segment shares 2 seconds of video with its "
+        "neighbor. After decode, the pipeline has two hypotheses for the overlap "
+        "zone. The merge strategy selects the hypothesis from the segment that "
+        "decoded the overlap zone with higher confidence (beam score). This means "
+        "the 'best' decode of the boundary region is always used. In practice, "
+        "analysis of 33 Obama segments showed 13 of 21 overlaps had a clear quality "
+        "winner — 7 times the previous segment won, 6 times the next segment won. "
+        "This confirms the overlap strategy captures context from both directions.\n\n"
+        "TRANSCRIPTION REUSE: Manual .wrd corrections saved to .transcriptions/ "
+        "directory. On re-run, exact filename matching copies them back. Whisper "
+        "skips any segment with an existing .wrd file.\n\n"
+        "GOLDEN K-MEANS: A 1,396-video baseline clustering model ensures consistent "
+        "feature extraction across runs.\n\n"
+        "IS: 0-5 composite of 6 signals, designed at development time and distilled "
+        "into deterministic formulas. No LLM called at runtime.",
         card_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -500,7 +503,7 @@ def slide_eng_transition(prs):
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
 
-    _finish(slide, None,
+    _finish(slide, 0,
         "Section transition: we now move from research analysis to the "
         "engineering work that turned three research codebases into a "
         "production-ready system.")
@@ -566,43 +569,54 @@ def slide_three_repos(prs):
 
 
 def slide_web_ui(prs):
-    """User experience — web UI and pipeline stages."""
+    """Live demo announcement slide."""
     slide = new_slide(prs)
-    add_title(slide, "User Experience: Web Interface")
+    add_title(slide, "Live Demo")
     add_accent_line(slide)
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
+    # Big centered demo announcement
+    add_text(slide, "\u25b6",
+             MX, CT + Inches(0.3), CW, Inches(1.5),
+             size=Pt(96), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
-    # Left — web UI features
-    lt = add_text(slide, "Web UI Features", MX, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=TEAL, bold=True)
-    lb = add_bullets(slide, [
-        "Drag-and-drop video upload",
-        "Real-time pipeline progress display",
-        "Side-by-side burned video comparison",
-        "Per-segment JSON reports with all metrics",
-        "Single-click processing start",
-        ("No command line needed", {"bold": True}),
-    ], MX, CT + Inches(0.5), col_w, Inches(3.5), size=Pt(14))
+    add_text(slide, "We will now run the full pipeline live",
+             MX, CT + Inches(2.0), CW, Inches(0.6),
+             size=Pt(28), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
-    # Right — UI screenshot placeholder
-    rx = MX + col_w + gap
-    ph = add_rect(slide, rx, CT, col_w, Inches(4.0),
-                  fill_color=NAVY2, border_color=LGRAY, border_width=Pt(1),
-                  corner_radius=True)
-    add_text(slide, "UI Screenshot",
-             rx, CT + Inches(1.5), col_w, Inches(0.5),
-             size=Pt(20), color=MGRAY, align=PP_ALIGN.CENTER)
-    add_text(slide, "(will be added from running server)",
-             rx, CT + Inches(2.1), col_w, Inches(0.4),
-             size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+    add_text(slide,
+        "Upload a video  \u2192  8-stage processing  \u2192  "
+        "Per-segment results with IS scores",
+        MX, CT + Inches(2.8), CW, Inches(0.5),
+        size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    # Three feature highlights at bottom
+    features = [
+        ("\u2601", "Drag & Drop", "No command line"),
+        ("\u2699", "8 Stages", "Fully automatic"),
+        ("\u2714", "IS Scoring", "Per-segment quality"),
+    ]
+    fw = Inches(3.2)
+    fgap = Inches(0.8)
+    ftotal = 3 * fw + 2 * fgap
+    fx = (SL_W - ftotal) / 2
+    fy = CT + Inches(3.8)
+
+    for i, (icon, title, desc) in enumerate(features):
+        x = fx + i * (fw + fgap)
+        add_rect(slide, x, fy, fw, Inches(1.2), fill_color=NAVY2,
+                 border_color=TEAL, border_width=Pt(1), corner_radius=True)
+        add_text(slide, icon, x, fy + Inches(0.05), fw, Inches(0.4),
+                 size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+        add_text(slide, title, x, fy + Inches(0.45), fw, Inches(0.3),
+                 size=Pt(14), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+        add_text(slide, desc, x, fy + Inches(0.8), fw, Inches(0.3),
+                 size=Pt(11), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "The web UI provides a simple drag-and-drop interface for non-technical "
-        "users. Under the hood, 8 pipeline stages run automatically. Each stage "
-        "is a modular component that can be tested independently.",
-        [[lt, lb], [ph]], click_reveal=True)
+        "Switch to live demo now. The web UI provides drag-and-drop video upload, "
+        "real-time pipeline progress display, and per-segment results with IS scores. "
+        "Under the hood: 8 pipeline stages run automatically — normalize, mouth crop, "
+        "ASR, LRS3 prep, manifests, K-means clustering, decode, and report generation.")
 
 
 def slide_dual_env(prs):

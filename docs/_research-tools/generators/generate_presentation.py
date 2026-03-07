@@ -116,7 +116,7 @@ def main():
         # slide_tuning_summary, # 13 Experiments, Minimal Gain (hidden per batch 8)
         # --- Section 6: The Full Picture ---
         slide_is_deep_dive, # Why These 6 Signals? Validation
-        slide_metric_disagreement, # When Metrics Disagree (restored per batch 11)
+        # slide_metric_disagreement, # When Metrics Disagree (hidden per batch 12)
         slide_metric_disagreement_2, # When Metrics Disagree pt 2
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
@@ -137,7 +137,8 @@ def main():
         slide_three_repos,  # Starting point
         slide_17,           # [MOD] Pipeline: per-stage wipe reveal
         slide_18,           # Engineering Journey
-        slide_19, slide_20,
+        # slide_19,           # 52% Code Reduction (hidden per batch 12)
+        slide_20,
         slide_web_ui,       # Web UI
         slide_21,
         slide_dual_env,     # Two environments

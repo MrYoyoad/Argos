@@ -589,54 +589,30 @@ def slide_is_radar(prs):
     img = add_image(slide, radar_key, img_l, img_top,
                     width=img_w, height=img_h)
 
-    # Model legend — three models with expected behavior
-    legend_y = SL_H - Inches(1.5)
-    col_w = Inches(5.5)
-    gap = Inches(0.5)
-
-    # Llama-2-7B (current)
-    r1 = add_rect(slide, MX, legend_y, col_w, Inches(0.9), fill_color=NAVY2,
-                  border_color=CORAL, border_width=Pt(1.5), corner_radius=True)
-    add_text(slide, "\u25cf Llama-2 7B (current)",
-             MX + Inches(0.15), legend_y + Inches(0.05),
-             col_w - Inches(0.3), Inches(0.25),
-             size=Pt(12), color=CORAL, bold=True)
-    add_text(slide, "Jagged profile: strong on length,\nweak on semantics & entities",
-             MX + Inches(0.15), legend_y + Inches(0.32),
-             col_w - Inches(0.3), Inches(0.5),
-             size=Pt(10), color=LGRAY)
-
-    # Llama 3.1 8B (expected)
-    x2 = MX + col_w + gap
-    r2 = add_rect(slide, x2, legend_y, col_w, Inches(0.9), fill_color=NAVY2,
-                  border_color=TEAL, border_width=Pt(1.5), corner_radius=True)
-    add_text(slide, "\u25cf Llama 3.1 8B (expected)",
-             x2 + Inches(0.15), legend_y + Inches(0.05),
-             col_w - Inches(0.3), Inches(0.25),
-             size=Pt(12), color=TEAL, bold=True)
-    add_text(slide, "Fuller profile: improved semantic\n& entity axes from stronger LM",
-             x2 + Inches(0.15), legend_y + Inches(0.32),
-             col_w - Inches(0.3), Inches(0.5),
-             size=Pt(10), color=LGRAY)
-
-    # Disclaimer
+    # Clean legend — just color key, no description cards
+    legend_y = SL_H - Inches(0.65)
     add_text(slide,
-        "\u26a0 Projected profiles based on published benchmarks and architecture "
-        "analysis \u2014 not measured on our dataset.",
-        MX, SL_H - Inches(0.5), CW, Inches(0.35),
-        size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "\u25cf Llama-2 7B (current, coral)     \u25cf Llama 3.1 8B (projected, teal)"
+        "     \u26a0 Projected — not measured on our dataset",
+        MX, legend_y, CW, Inches(0.35),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Model comparison radar. Shows how different LLM backbones would "
-        "reshape the IS radar profile. Llama-2 7B (current, red): jagged "
-        "profile, strong on length ratio but weak on semantics and named "
-        "entities. Llama 3.1 8B (projected, teal): fuller profile with "
-        "improved semantic and entity axes thanks to stronger language "
-        "modeling. These are projected profiles based on literature, not "
-        "measured on our dataset. The key insight is that the radar shape "
-        "reveals where each model architecture is strong and weak — future "
-        "work should target the collapsed axes.",
-        [[img], [r1, r2]])
+        "reshape the IS radar profile.\n\n"
+        "Llama-2 7B (current, coral): Jagged profile — strong on length "
+        "ratio but weak on semantics and named entities. The visual encoder "
+        "delivers adequate mouth-shape features, but the LLM lacks the world "
+        "knowledge to fill in vocabulary gaps.\n\n"
+        "Llama 3.1 8B (projected, teal): Fuller profile — improved semantic "
+        "and entity axes thanks to stronger language modeling, 128K vocabulary "
+        "(vs 32K), and better instruction following. Expected to close the "
+        "semantic gap that accounts for ~28% of IS variance.\n\n"
+        "These are projected profiles based on published benchmarks and "
+        "architecture analysis, not measured on our dataset. The key insight "
+        "is that the radar shape reveals where each model is strong and weak "
+        "— future work should target the collapsed axes.",
+        [[img]])
 
 
 def slide_is_wer_scatter(prs):
@@ -823,9 +799,9 @@ def slide_08(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_failure_deep_1a(prs):
-    """Failure mode taxonomy Part 1: categories 1-3 (Signal Loss, Hallucination, Wrong Topic)."""
+    """Failure mode taxonomy Part 1: categories 1-3 by impact (Details, Wrong Topic, Hallucination)."""
     slide = new_slide(prs)
-    add_title(slide, "Failure Mode Taxonomy (1/2): Signal Loss \u2192 Wrong Topic")
+    add_title(slide, "Failure Mode Taxonomy (1/2): Highest Impact First")
     add_accent_line(slide)
 
     add_text(slide,
@@ -840,18 +816,18 @@ def slide_failure_deep_1a(prs):
         size=Pt(10), color=MGRAY, italic=True)
 
     modes_1 = [
-        ("1. Signal Loss", "9.0%", "81 segments", LGRAY,
-         "Nothing came out",
-         "Empty output OR length ratio < 0.3",
-         "Ref: \u201cthe thirteenth amendment\u201d \u2192 Hyp: \u201c\u201d"),
-        ("2. Hallucination", "12.3%", "111 segments", CORAL,
-         "Model invented fake text",
-         "WER \u2265 100% (output longer than reference)",
-         "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier explanation of the final act\u201d"),
-        ("3. Wrong Topic", "31.6%", "284 segments", GOLD,
+        ("1. Right Topic, Wrong Details", "22.7%", "204 segments", RED,
+         "Roughly right but names/content words lost",
+         "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
+         "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
+        ("2. Wrong Topic", "31.6%", "284 segments", ORANGE,
          "Mouth shapes decoded to wrong domain",
          "Semantic < 0.2 (phonetic-matched or not)",
          "Ref: \u201cweight loss and diet\u201d \u2192 Hyp: \u201cwanted to be a princess\u201d"),
+        ("3. Hallucination", "12.3%", "111 segments", YELLOW,
+         "Model invented fake text",
+         "WER \u2265 100% (output longer than reference)",
+         "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier explanation of the final act\u201d"),
     ]
 
     card_h = Inches(1.35)
@@ -885,33 +861,34 @@ def slide_failure_deep_1a(prs):
         anim_groups.append([r, t1, t2, t3, t4])
 
     add_text(slide,
-        "Priority order: 1 \u2192 2 \u2192 3 (continued on next slide)",
+        "Ordered by impact \u2014 highest to lowest (continued on next slide)",
         MX, Inches(6.65), CW, Inches(0.35),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Failure taxonomy Part 1. Signal Loss (9%): empty or near-empty output. "
-        "Hallucination (12.3%): model invents fluent but fake text, the most "
-        "dangerous mode. Wrong Topic (31.6%): the LARGEST category — mouth shapes "
-        "decoded to completely wrong domain.",
+        "Failure taxonomy Part 1, ordered by impact. Right Topic Wrong Details "
+        "(22.7%): clients lose trust when output looks right but details are wrong. "
+        "Wrong Topic (31.6%): the LARGEST category — mouth shapes decoded to "
+        "completely wrong domain. Hallucination (12.3%): model invents fake text, "
+        "deceptive but identifiable by length.",
         anim_groups, click_reveal=True)
 
 
 def slide_failure_deep_1b(prs):
-    """Failure mode taxonomy Part 2: categories 4-5 (Right Topic Wrong Details, Accumulated)."""
+    """Failure mode taxonomy Part 2: categories 4-5 (Accumulated, Signal Loss)."""
     slide = new_slide(prs)
-    add_title(slide, "Failure Mode Taxonomy (2/2): Detail Loss \u2192 Accumulated")
+    add_title(slide, "Failure Mode Taxonomy (2/2): Accumulated \u2192 Signal Loss")
     add_accent_line(slide)
 
     modes_2 = [
-        ("4. Right Topic, Wrong Details", "22.7%", "204 segments", TEAL,
-         "Roughly right but names/content words lost",
-         "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
-         "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
-        ("5. Accumulated Errors", "24.4%", "220 segments", LGRAY,
+        ("4. Accumulated Errors", "24.4%", "220 segments", YELLOW,
          "Many small errors compound",
-         "IS < 3.0 and doesn\u2019t match categories 1\u20134",
+         "IS < 3.0 and doesn\u2019t match categories 1\u20133",
          "Many words slightly wrong throughout, meaning erodes"),
+        ("5. Signal Loss", "9.0%", "81 segments", LGRAY,
+         "Nothing came out",
+         "Empty output OR length ratio < 0.3",
+         "Ref: \u201cthe thirteenth amendment\u201d \u2192 Hyp: \u201c\u201d"),
     ]
 
     card_h = Inches(1.8)
@@ -948,29 +925,27 @@ def slide_failure_deep_1b(prs):
     sum_y = y0 + 2 * (card_h + gap) + Inches(0.1)
     sr = add_rect(slide, MX, sum_y, CW, Inches(1.0), fill_color=NAVY2,
                   border_color=GOLD, border_width=Pt(2), corner_radius=True)
-    add_text(slide, "Key Insight: Categories 4 & 5 account for 47.1% of failures",
+    add_text(slide, "Key Insight: Categories 4 & 5 are lower impact but still 33.4% of failures",
              MX + Inches(0.3), sum_y + Inches(0.1), CW - Inches(0.6), Inches(0.35),
              size=Pt(16), color=GOLD, bold=True)
     add_text(slide,
-        "These are the salvageable segments \u2014 the model is in the right neighborhood "
-        "but loses details or accumulates small errors. N-best aggregation (ROVER/MBR) "
-        "and stronger LLM are the primary fixes.",
+        "Accumulated errors respond to N-best aggregation (ROVER/MBR). "
+        "Signal loss is detectable and filterable \u2014 lowest priority to fix.",
         MX + Inches(0.3), sum_y + Inches(0.5), CW - Inches(0.6), Inches(0.45),
         size=Pt(13), color=WHITE)
     anim_groups.append([sr])
 
     add_text(slide,
-        "Full priority: Signal Loss \u2192 Hallucination \u2192 Wrong Topic \u2192 "
-        "Right Topic Wrong Details \u2192 Accumulated Errors",
+        "Impact order: Right Topic Wrong Details \u2192 Wrong Topic \u2192 "
+        "Hallucination \u2192 Accumulated Errors \u2192 Signal Loss",
         MX, Inches(6.65), CW, Inches(0.35),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Failure taxonomy Part 2. Right Topic Wrong Details (22.7%): the model "
-        "gets the subject right but loses names and content words — 204 segments. "
-        "Accumulated Errors (24.4%): death by a thousand cuts, 220 segments. "
-        "Together 47.1% of failures are in the 'almost right' zone, making them "
-        "prime targets for N-best aggregation and LLM upgrade.",
+        "Failure taxonomy Part 2. Accumulated Errors (24.4%): death by a "
+        "thousand cuts, 220 segments — responds to N-best aggregation. "
+        "Signal Loss (9.0%): empty or near-empty output, 81 segments — "
+        "detectable and filterable, lowest impact.",
         anim_groups, click_reveal=True)
 
 
@@ -1120,20 +1095,20 @@ def slide_failure_deep_3(prs):
 
     headers = ["Category", "Impact", "Fix"]
     rows = [
-        ["Signal Loss (9.0%)", "Low — detectable, filterable", "Quality filtering"],
-        ["Hallucination (12.3%)", "Medium — deceptive but identifiable", "Confidence scoring"],
-        ["Wrong Topic (31.6%)", "Very High — largest category", "LLM swap + data"],
         ["Right Topic, Wrong Details (22.7%)", "Critical — clients lose trust", "Domain fine-tuning"],
+        ["Wrong Topic (31.6%)", "Very High — largest category", "LLM swap + data"],
+        ["Hallucination (12.3%)", "Medium — deceptive but identifiable", "Confidence scoring"],
         ["Accumulated Errors (24.4%)", "Medium — death by 1000 cuts", "N-best aggregation"],
+        ["Signal Loss (9.0%)", "Low — detectable, filterable", "Quality filtering"],
     ]
 
     # Color scheme: category and impact columns share severity color
     row_colors = {
-        0: {0: LGRAY, 1: LGRAY},       # Signal Loss — low severity
-        1: {0: YELLOW, 1: YELLOW},      # Hallucination — moderate severity
-        2: {0: ORANGE, 1: ORANGE},      # Wrong Topic — high severity
-        3: {0: RED, 1: RED},            # Right Topic Wrong Details — very high severity
-        4: {0: YELLOW, 1: YELLOW},      # Accumulated Errors — medium severity
+        0: {0: RED, 1: RED},            # Right Topic Wrong Details — very high severity
+        1: {0: ORANGE, 1: ORANGE},      # Wrong Topic — high severity
+        2: {0: YELLOW, 1: YELLOW},      # Hallucination — moderate severity
+        3: {0: YELLOW, 1: YELLOW},      # Accumulated Errors — medium severity
+        4: {0: LGRAY, 1: LGRAY},        # Signal Loss — low severity
     }
 
     tbl = add_table(slide, headers, rows,
@@ -1244,18 +1219,18 @@ def slide_metric_transition(prs):
     g3.append(add_rect(slide, card_x, c3_y, card_w, card_h,
                         fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                         corner_radius=True))
-    g3.append(add_text(slide, "50.9%", card_x + Inches(0.3), c3_y + Inches(0.1),
+    g3.append(add_text(slide, "64.9%", card_x + Inches(0.3), c3_y + Inches(0.1),
                         Inches(2.5), card_h - Inches(0.2),
                         size=Pt(48), color=GREEN, bold=True))
     g3.append(add_text(slide,
-        "+ Salvage recovery: 165 additional segments\n1 in 2 segments delivers useful output",
+        "Opus-as-a-Judge confirms: Y+P = 971/1,497\n2 in 3 segments deliver useful output",
         card_x + Inches(3.0), c3_y + Inches(0.15),
         card_w - Inches(3.3), card_h - Inches(0.3),
         size=Pt(15), color=WHITE))
 
     _finish(slide, 0,
         "The three numbers: WER 64.1% (misleading), IS captured 39.9% (real), "
-        "with salvage 50.9% (the full picture).",
+        "Opus-as-a-Judge Y+P 64.9% (the full picture).",
         [g1, g1_arrow + g2, g2_arrow + g3], click_reveal=True)
 
 
@@ -1723,7 +1698,7 @@ def slide_research_transition(prs):
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
 
-    _finish(slide, None,
+    _finish(slide, 0,
         "Section transition: we now present the research findings — our novel "
         "Intelligibility Score metric, root cause analysis, failure mode taxonomy, "
         "and decode tuning experiments.")

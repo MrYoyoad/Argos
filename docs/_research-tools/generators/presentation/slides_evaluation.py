@@ -155,7 +155,7 @@ def slide_14(prs):
 
 def slide_15(prs):
     slide = new_slide(prs)
-    add_title(slide, "Demo: OK → Near-miss → Hallucination")
+    add_title(slide, "Demo: OK \u2192 Almost There \u2192 Hallucination")
     add_accent_line(slide)
 
     # Three embedded videos side by side — click each to play
@@ -172,7 +172,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("vitamin_d", '"vitamin d deficiency" \u2192 "empathy deficiency"\nPhonetically plausible, totally different meaning', "WER 50%  IS 2.5", YELLOW),
+        ("admiral", '"admiral mcrae" \u2192 "animal migratory"\nPhonetically close, almost captured (IS 2.96)', "WER 33%  IS 2.96", GREEN),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -193,9 +193,9 @@ def slide_15(prs):
     _finish(slide, 15,
         "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
         "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'vitamin d deficiency' becomes 'empathy deficiency' (near-miss, "
-        "WER 50% — phonetically plausible substitution that completely "
-        "changes the meaning, classic lip-reading failure). "
+        "'admiral mcrae' becomes 'animal migratory' (IS 2.96 — almost "
+        "captured, phonetically very close, just 0.04 below the IS 3.0 "
+        "threshold — this is what 'near-success' looks like). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
 
@@ -994,7 +994,7 @@ def slide_metric_disagreement_2(prs):
 
 
 def slide_two_eval_systems(prs):
-    """Two evaluation systems — IS and expert heuristic."""
+    """Two evaluation systems — IS and Opus-as-a-Judge."""
     slide = new_slide(prs)
     add_title(slide, "Two Evaluation Systems, One Framework")
     add_accent_line(slide)
@@ -1002,7 +1002,7 @@ def slide_two_eval_systems(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — IS (strict) + Expert Heuristic (generous)
+    # Left — IS (strict) + Opus-as-Judge (generous)
     lt = add_text(slide, "The Two Systems", MX, CT, col_w, Inches(0.4),
                   size=Pt(17), color=TEAL, bold=True)
 
@@ -1019,16 +1019,16 @@ def slide_two_eval_systems(prs):
     ], MX + Inches(0.2), CT + Inches(1.0), col_w - Inches(0.4), Inches(0.8),
        size=Pt(13))
 
-    # Expert heuristic card
+    # Opus-as-Judge card
     r2 = add_rect(slide, MX, CT + Inches(2.3), col_w, Inches(1.6),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
-    r2_t = add_text(slide, "Expert Heuristic (LLM Salvage)", MX + Inches(0.2),
+    r2_t = add_text(slide, "Opus-as-a-Judge (LLM Gold Standard)", MX + Inches(0.2),
              CT + Inches(2.4), col_w - Inches(0.4), Inches(0.3),
              size=Pt(14), color=GREEN, bold=True)
     r2_b = add_bullets(slide, [
-        "Generous: identifies recoverable segments",
-        ("IS < 3.0 but salvageable: 50.9% (762/1,497)", {"bold": True}),
+        "Holistic: Y/P/N per ref+hyp pair (1,497 pairs)",
+        ("Y+P = 64.9% useful output (971/1,497)", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(2.8), col_w - Inches(0.4), Inches(0.8),
        size=Pt(13))
 
@@ -1038,16 +1038,16 @@ def slide_two_eval_systems(prs):
                   size=Pt(17), color=CORAL, bold=True)
 
     agree_txt = add_text(slide,
-        "88.6% agreement \u2014 both systems identify\n"
+        "85% correlation \u2014 both systems identify\n"
         "the same segments as good or bad.",
         rx, CT + Inches(0.5), col_w, Inches(0.6),
         size=Pt(15), color=WHITE, bold=True)
 
     # Simplified agreement matrix
     tbl = add_table(slide,
-        ["", "System B: Good", "System B: Bad"],
-        [["System A: Good", "597", "0"],
-         ["System A: Bad", "165", "735"]],
+        ["", "Opus: Y or P", "Opus: N"],
+        [["IS \u2265 3.0", "554", "43"],
+         ["IS < 3.0", "417", "483"]],
         rx, CT + Inches(1.3), col_w, text_size=Pt(12),
         row_colors={0: {1: GREEN}, 1: {2: CORAL}})
 
@@ -1057,18 +1057,18 @@ def slide_two_eval_systems(prs):
     we_b = add_text(slide,
         'Ref: "opinions about reason and logic"\n'
         'Hyp: "our opinion is about reasoning and logic"\n'
-        'WER: 74% \u2022 IS: 2.92 (failed) \u2022 LLM prob: 0.90 (salvaged)\n'
+        'WER: 74% \u2022 IS: 2.92 (failed) \u2022 Opus: P (partial)\n'
         'Meaning preserved despite word differences.',
         rx, CT + Inches(3.2), col_w, Inches(1.5),
         size=Pt(12), color=WHITE)
 
     _finish(slide, 0,
         "Two evaluation systems. IS is strict: 39.9% pass at IS >= 3.0. "
-        "The expert heuristic is generous: identifies 165 additional segments, "
-        "raising effective capture to 50.9%. They agree 88.6% of the time. "
-        "Statistical details: r=0.934, Cohen's kappa=0.773, recall=99.2%, "
-        "cross-config mean r=0.925 (std=0.015). The heuristic catches meaning "
-        "preservation that strict metrics miss.",
+        "Opus-as-a-Judge is more generous: Y+P = 64.9% (971/1,497). "
+        "85% Pearson correlation between IS and Opus verdicts. "
+        "The LLM judge is more conservative for full success (Y=23% vs IS 40%) "
+        "but more generous for any useful output (Y+P=65%). "
+        "IS is a conservative lower bound for real quality.",
         [[lt, r1, r1_t, r1_b], [r2, r2_t, r2_b], [rt, agree_txt, tbl, we_t, we_b]], click_reveal=True)
 
 
