@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 """
-Generate IS vs WER scatter plot for presentation.
+Generate IS vs WER scatter plot for presentation — NIV thresholds.
 
 Reads intelligibility_scores.csv and produces a dark-themed scatter plot
-showing WER (x-axis) vs IS (y-axis), colored by IS tier. Highlights
-"the gap" region where WER > 40% but IS >= 3.0.
+showing WER (x-axis) vs IS (y-axis), colored by IS tier. Shows two NIV
+gap regions:
+  - Y gap: IS >= 3.80 AND WER > 34% (meaning clearly conveyed, WER rejects)
+  - Y+P gap: IS >= 2.00 AND WER > 77% (any useful meaning, even generous WER rejects)
+Also highlights the large "conventional gap": IS >= 2.00 AND WER > 40%.
+
+NIV thresholds (March 2026): empirically calibrated against Opus-as-a-Judge.
+  IS >= 3.80 for Y (κ=0.690), IS >= 2.00 for Y+P (κ=0.818).
+  WER <= 34% for Y (κ=0.629), WER <= 77% for Y+P (κ=0.777).
 
 Output: presentation_materials_20260224/01_plots_for_slides/P7_is_wer_scatter.png
 """
@@ -29,6 +36,7 @@ CORAL = "#E06C75"
 GREEN = "#4CAF50"
 GOLD = "#FFD54F"
 RED = "#F44336"
+AMBER = "#FFA726"
 
 # IS tier colors (5=excellent to 1=failed)
 TIER_COLORS = {
@@ -46,6 +54,12 @@ TIER_LABELS = {
     1: "Failed (0.0-0.99)",
 }
 
+# NIV thresholds
+NIV_Y_IS = 3.80
+NIV_Y_WER = 34
+NIV_YP_IS = 2.00
+NIV_YP_WER = 77
+
 
 def main():
     df = pd.read_csv(DATA)
@@ -53,24 +67,40 @@ def main():
     fig, ax = plt.subplots(figsize=(10, 7), facecolor=BG)
     ax.set_facecolor(BG)
 
-    # Plot "the gap" region first (background)
-    gap_rect = mpatches.FancyBboxPatch(
-        (40, 3.0), 160, 2.0,  # x, y, width, height
+    # --- Gap region 1: Y gap (IS >= 3.80 AND WER > 34%) ---
+    gap_y_rect = mpatches.FancyBboxPatch(
+        (NIV_Y_WER, NIV_Y_IS), 170, 5.0 - NIV_Y_IS,
         boxstyle="round,pad=0.02",
-        facecolor=GREEN, alpha=0.08, edgecolor=GREEN, linewidth=1.5,
+        facecolor=GREEN, alpha=0.10, edgecolor=GREEN, linewidth=1.5,
         linestyle="--", zorder=1)
-    ax.add_patch(gap_rect)
+    ax.add_patch(gap_y_rect)
 
-    # Count points in the gap
-    gap_mask = (df["wer_%"] > 40) & (df["intelligibility_score"] >= 3.0)
-    gap_count = gap_mask.sum()
+    gap_y_mask = (df["wer_%"] > NIV_Y_WER) & (df["intelligibility_score"] >= NIV_Y_IS)
+    gap_y_count = gap_y_mask.sum()
 
-    # Label the gap region
-    ax.text(120, 4.7, f"\"The Gap\": {gap_count} segments",
-            color=GREEN, fontsize=13, fontweight="bold",
+    ax.text(120, 4.7, f"Y gap: {gap_y_count} segments",
+            color=GREEN, fontsize=12, fontweight="bold",
             ha="center", va="center", zorder=5)
-    ax.text(120, 4.4, "High WER but genuinely useful output",
-            color=GREEN, fontsize=10, alpha=0.8,
+    ax.text(120, 4.45, "Clearly conveyed but WER > 34%",
+            color=GREEN, fontsize=9, alpha=0.8,
+            ha="center", va="center", zorder=5)
+
+    # --- Gap region 2: Y+P conventional gap (IS >= 2.00 AND WER > 40%) ---
+    gap_yp_rect = mpatches.FancyBboxPatch(
+        (40, NIV_YP_IS), 160, NIV_Y_IS - NIV_YP_IS,
+        boxstyle="round,pad=0.02",
+        facecolor=AMBER, alpha=0.06, edgecolor=AMBER, linewidth=1.2,
+        linestyle=":", zorder=1)
+    ax.add_patch(gap_yp_rect)
+
+    gap_yp_mask = (df["wer_%"] > 40) & (df["intelligibility_score"] >= NIV_YP_IS) & (df["intelligibility_score"] < NIV_Y_IS)
+    gap_yp_count = gap_yp_mask.sum()
+
+    ax.text(130, 2.85, f"Y+P gap: {gap_yp_count} segments",
+            color=AMBER, fontsize=11, fontweight="bold",
+            ha="center", va="center", zorder=5)
+    ax.text(130, 2.60, "Useful meaning but WER > 40%",
+            color=AMBER, fontsize=9, alpha=0.8,
             ha="center", va="center", zorder=5)
 
     # Scatter by tier (plot lower tiers first so higher tiers are on top)
@@ -83,13 +113,21 @@ def main():
             label=f"Tier {tier}: {TIER_LABELS[tier]} (n={len(subset)})",
             zorder=2 + tier)
 
-    # IS = 3.0 threshold line
-    ax.axhline(y=3.0, color=LGRAY, linewidth=0.8, linestyle=":", alpha=0.5, zorder=1)
-    ax.text(2, 3.1, "IS = 3.0 (Captured threshold)", color=LGRAY,
-            fontsize=9, alpha=0.7, va="bottom")
+    # NIV Y threshold line (IS = 3.80)
+    ax.axhline(y=NIV_Y_IS, color=GREEN, linewidth=1.0, linestyle="--", alpha=0.6, zorder=1)
+    ax.text(2, NIV_Y_IS + 0.08, f"NIV Y: IS = {NIV_Y_IS} (κ=0.690)",
+            color=GREEN, fontsize=9, alpha=0.8, va="bottom")
 
-    # WER = 40% line
-    ax.axvline(x=40, color=LGRAY, linewidth=0.8, linestyle=":", alpha=0.5, zorder=1)
+    # NIV Y+P threshold line (IS = 2.00)
+    ax.axhline(y=NIV_YP_IS, color=AMBER, linewidth=1.0, linestyle="--", alpha=0.6, zorder=1)
+    ax.text(2, NIV_YP_IS + 0.08, f"NIV Y+P: IS = {NIV_YP_IS} (κ=0.818)",
+            color=AMBER, fontsize=9, alpha=0.8, va="bottom")
+
+    # NIV WER lines
+    ax.axvline(x=NIV_Y_WER, color=GREEN, linewidth=0.8, linestyle=":", alpha=0.4, zorder=1)
+    ax.axvline(x=40, color=LGRAY, linewidth=0.8, linestyle=":", alpha=0.3, zorder=1)
+    ax.text(41, 0.15, "WER 40%\n(conventional)", color=LGRAY,
+            fontsize=7, alpha=0.5, va="bottom")
 
     # Formatting
     ax.set_xlabel("Word Error Rate (%)", color=WHITE, fontsize=13, labelpad=10)
@@ -113,7 +151,8 @@ def main():
     fig.savefig(OUT, dpi=200, facecolor=BG, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved: {OUT}")
-    print(f"Gap segments (WER>40%, IS>=3.0): {gap_count}")
+    print(f"Y gap (IS>={NIV_Y_IS}, WER>{NIV_Y_WER}%): {gap_y_count}")
+    print(f"Y+P gap (IS>={NIV_YP_IS}, WER>40%, IS<{NIV_Y_IS}): {gap_yp_count}")
 
 
 if __name__ == "__main__":

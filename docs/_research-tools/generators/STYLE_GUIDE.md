@@ -342,7 +342,9 @@ Arrow/flow color (matplotlib only): `#6BAED6`
 
 # Spider/Radar Chart Conventions
 
-**Current use**: P6 IS radar chart comparing captured (IS >= 3.0) vs failed (IS < 3.0) profiles
+**Current use**: P6 IS radar chart comparing captured vs failed profiles.
+
+**NIV thresholds** (adopted March 2026): IS >= 3.80 for Y (clearly conveyed, κ=0.690), IS >= 2.00 for Y+P (any useful meaning, κ=0.818). WER <= 34% for Y, <= 77% for Y+P. Calibrated against Opus-as-a-Judge. Supersede legacy IS >= 3.0. All presentation numbers use NIV. See [docs/evaluation/threshold_calibration_vs_opus.md](../../evaluation/threshold_calibration_vs_opus.md)
 
 ## 6-Axis IS Profile Template
 

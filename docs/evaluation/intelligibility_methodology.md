@@ -287,9 +287,16 @@ IS = 0.25 x Semantic_Sim + 0.15 x Phonetic_Sim + 0.15 x (1-WER) + 0.15 x (1-WWER
 
 All signals scaled to 0-5 before combining. Final IS range: 0.0 to 5.0.
 
-**"Properly captured" = IS >= 3.0** (Tier 4: Good + Tier 5: Excellent)
+**NIV Thresholds** (empirically calibrated against Opus-as-a-Judge, adopted March 2026):
 
-These are the segments where a human could understand what was actually said from the lip-reading output. Note: IS >= 3.0 is a conservative design-time choice. Calibration against the Opus-as-a-Judge gold standard shows the optimal threshold for "meaning clearly conveyed" (Y) is IS >= 3.70 (κ=0.694), and for "any useful meaning" (Y+P) is IS >= 1.95 (κ=0.822). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md) for full analysis.
+| Target | IS Threshold | κ | Captures | Judge rate |
+|--------|-------------|------|----------|-----------|
+| **Y** ("meaning clearly conveyed") | **IS >= 3.80** | 0.690 | 346 (23.1%) | 345 (23.0%) |
+| **Y+P** ("any useful meaning") | **IS >= 2.00** | 0.818 | 922 (61.6%) | 971 (64.9%) |
+
+IS beats WER at both operating points: +0.061 for Y (vs WER <= 34%), +0.041 for Y+P (vs WER <= 77%). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md) for full analysis.
+
+*Legacy: IS >= 3.0 was the original design-time threshold ("properly captured"). NIV thresholds supersede it for presentation and reporting.*
 
 ---
 

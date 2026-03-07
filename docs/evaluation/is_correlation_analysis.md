@@ -115,7 +115,7 @@ Correlation analysis reveals that the 6 signals collapse into **3 independent di
 2. **Meaning preservation** (Semantic — partially redundant with word accuracy at r=0.82) → ~28% of IS variance
 3. **Output sanity** (Length Ratio — largely independent of other signals) → ~9% of IS variance
 
-The heuristic LLM-knowledge-based judge (`llm_context_prob`) correlates at **r=0.93** with IS and achieves **88.6% agreement** with the IS ≥ 3.0 "properly captured" threshold.
+The heuristic LLM-knowledge-based judge (`llm_context_prob`) correlates at **r=0.93** with IS and achieves **88.6% agreement** with the legacy IS ≥ 3.0 threshold. **NIV thresholds** (March 2026) supersede IS ≥ 3.0: IS ≥ 3.80 for Y (κ=0.690 vs Opus judge), IS ≥ 2.00 for Y+P (κ=0.818). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
 
 ---
 

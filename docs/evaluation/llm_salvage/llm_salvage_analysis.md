@@ -8,6 +8,8 @@
 
 Traditional metrics (WER, WWER, IS) classify 900 of 1,497 segments as failures (IS < 3.0). However, the `llm_context_prob` heuristic — a deterministic 15-rule decision tree designed by Claude at design time (no LLM API calls at runtime) — identifies **165 of these 900 segments** as having recoverable meaning. These are cases where a viewer with domain context would understand the lip-reading output despite high word error rates.
 
+> **Note (March 2026):** NIV thresholds supersede IS >= 3.0. IS >= 2.00 (NIV Y+P, κ=0.818 vs Opus judge) captures 922 segments (61.6%), which already includes many segments this salvage analysis identified. The salvage concept remains valid for the gap between NIV Y (IS >= 3.80, 346 segments) and NIV Y+P (IS >= 2.00, 922 segments). See [threshold_calibration_vs_opus.md](../threshold_calibration_vs_opus.md).
+
 This represents an **18.3% recovery rate** among segments that metrics mark as failed. If we include these, the effective intelligibility rate rises from 39.9% to **50.9%** of all segments.
 
 ### Key Numbers

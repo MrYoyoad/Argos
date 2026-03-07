@@ -35,7 +35,9 @@ tier, or other metrics were visible during judging to prevent anchoring bias.
 |--------|-------|------|
 | **LLM Judge: Y (strict)** | 345 | **23.0%** |
 | **LLM Judge: Y+P (lenient)** | 971 | **64.9%** |
-| IS >= 3.0 | 597 | 39.9% |
+| IS >= 3.0 (legacy) | 597 | 39.9% |
+| **IS >= 3.80 (NIV Y)** | **346** | **23.1%** |
+| **IS >= 2.00 (NIV Y+P)** | **922** | **61.6%** |
 | IS + salvage (llm_prob >= 0.5) | 762 | 50.9% |
 
 ### Judgment Distribution
@@ -74,29 +76,20 @@ tier, or other metrics were visible during judging to prevent anchoring bias.
 - F1: 0.758
 - Cohen's kappa: 0.5211
 
-### Threshold Sensitivity
+### Threshold Sensitivity & NIV Thresholds
 
-The moderate κ at IS ≥ 3.0 reflects a **threshold mismatch**, not a ranking disagreement. Full threshold sweep across IS, WER, and Semantic Similarity: [threshold_calibration_vs_opus.md](../threshold_calibration_vs_opus.md).
+Full threshold sweep: [threshold_calibration_vs_opus.md](../threshold_calibration_vs_opus.md).
 
-**Optimal thresholds for Y (meaning clearly conveyed):**
+**NIV thresholds** (adopted standard, March 2026):
 
-| Metric | Optimal Threshold | κ | Agreement |
-|--------|-------------------|-------|-----------|
-| Semantic Sim | >= 0.70 | **0.714** | 89.7% |
-| IS | >= 3.70 | 0.694 | 88.8% |
-| WER | <= 34% | 0.629 | 86.4% |
-| IS (ours) | >= 3.00 | 0.565 | 80.6% |
+| Target | IS (NIV) | WER (NIV) | IS κ | WER κ | IS wins by |
+|--------|----------|-----------|------|-------|-----------|
+| **Y** (clearly conveyed) | **>= 3.80** | <= 34% | **0.690** | 0.629 | +0.061 |
+| **Y+P** (any useful meaning) | **>= 2.00** | <= 77% | **0.818** | 0.777 | +0.041 |
 
-**Optimal thresholds for Y+P (any useful meaning):**
+IS >= 3.80 captures 346 segments (23.1%), matching judge's 345 Y (23.0%). IS >= 2.00 captures 922 (61.6%), strictly below judge's 971 Y+P (64.9%). IS beats WER at both operating points.
 
-| Metric | Optimal Threshold | κ | Agreement |
-|--------|-------------------|-------|-----------|
-| IS | >= 1.95 | **0.822** | 91.8% |
-| WER | <= 77% | 0.777 | 89.8% |
-| Semantic Sim | >= 0.25 | 0.761 | 89.2% |
-| IS (ours) | >= 3.00 | 0.521 | 74.6% |
-
-IS ≥ 3.0 sits between the two optimal IS thresholds: too lenient for Y-only (includes 271 P/N segments), too strict for Y+P (misses 377 useful segments). It is a conservative design-time choice, not an empirical optimum. The IS **ranking** is strongly validated (Pearson r=0.85 with judge).
+Legacy IS >= 3.0 (κ_Y=0.565, κ_YP=0.521) is superseded — it sits between the two natural decision boundaries and does not maximize agreement for either target. The IS **ranking** is strongly validated (Pearson r=0.85).
 
 ### 3x5 Breakdown: LLM Judge x IS Tier
 
@@ -199,19 +192,15 @@ See `examples/` directory for curated disagreement examples:
 
 ## Section 9: Implications
 
-### IS Threshold Calibration
+### IS Threshold Calibration (NIV)
 
-The IS >= 3.0 threshold captures 39.9% of segments as 'properly captured.' 
-The LLM judge assigns Y (clear meaning) to 23.0% and Y+P to 64.9%.
+NIV thresholds replace the legacy IS >= 3.0 for presentation and reporting:
 
-The LLM strict rate is **lower** than IS >= 3.0, suggesting IS may be slightly generous 
-at the boundary. However, including P judgments (lenient) likely aligns more closely.
-
-### Effective Capture Rate
-
-The gold standard LLM lenient capture rate of 64.9% compares with:
-- IS >= 3.0: 39.9%
-- IS + salvage: 50.9%
+| Threshold | Captures | Judge rate | κ |
+|-----------|----------|-----------|------|
+| IS >= 3.80 (NIV Y) | 346 (23.1%) | 345 Y (23.0%) | 0.690 |
+| IS >= 2.00 (NIV Y+P) | 922 (61.6%) | 971 Y+P (64.9%) | 0.818 |
+| IS >= 3.0 (legacy) | 597 (39.9%) | — | 0.565 / 0.521 |
 
 ## Section 10: Visual and Topic Context Analysis
 

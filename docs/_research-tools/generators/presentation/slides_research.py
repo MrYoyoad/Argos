@@ -619,23 +619,24 @@ def slide_is_radar(prs):
 
 
 def slide_is_wer_scatter(prs):
-    """IS vs WER scatter showing 'the gap' — large plot layout."""
+    """IS vs WER scatter showing 'the gap' — NIV thresholds."""
     slide = new_slide(prs)
     add_title(slide, "The Gap: Where WER Lies Most")
     add_accent_line(slide)
 
-    # Left column — big number + bullets (narrower to give plot more room)
+    # Left column — two gap numbers + bullets (narrower to give plot more room)
     left_w = Inches(4.2)
-    num_s = add_text(slide, "147", MX, CT, left_w, Inches(1.1),
-                     size=Pt(72), color=GREEN, bold=True)
-    lbl_s = add_text(slide, "segments in the gap: high WER, useful IS",
+    num_s = add_text(slide, "42 + 437", MX, CT, left_w, Inches(1.1),
+                     size=Pt(56), color=GREEN, bold=True)
+    lbl_s = add_text(slide, "segments WER wrongly discards (NIV thresholds)",
                      MX, CT + Inches(1.1), left_w, Inches(0.5),
                      size=Pt(15), color=LGRAY)
     bul = add_bullets(slide, [
-        ("WER > 40% but IS \u2265 3.0 \u2014 useful output that WER discards", {"bold": True}),
-        "Synonyms, tense changes, and filler words inflate WER",
-        "Semantic meaning is preserved despite word-level errors",
-        ("Validates IS as a more honest metric for VSP", {"color": TEAL}),
+        ("42 clearly conveyed (IS \u2265 3.80) but WER > 34%", {"bold": True, "color": GREEN}),
+        ("437 useful meaning (IS \u2265 2.00) but WER > 40%", {"bold": True, "color": GOLD}),
+        "NIV: calibrated against Opus-as-a-Judge (blind eval)",
+        "IS \u2265 3.80 matches judge Y rate exactly (\u03ba=0.690)",
+        ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),
     ], MX, CT + Inches(1.65), left_w, Inches(3.0))
 
     # Right — larger scatter plot
@@ -644,8 +645,13 @@ def slide_is_wer_scatter(prs):
                     width=CW - left_w - Inches(0.2))
 
     _finish(slide, 0,
-        "Scatter plot of WER vs IS for all 1,497 segments. The green "
-        "highlighted region shows 147 segments where WER > 40% but IS >= 3.0.",
+        "Scatter plot of WER vs IS for all 1,497 segments with NIV thresholds. "
+        "Green region: 42 segments clearly conveyed (IS >= 3.80) but WER > 34%. "
+        "Amber region: 437 segments with useful meaning (IS >= 2.00) but WER > 40%. "
+        "NIV thresholds calibrated against Opus-as-a-Judge: IS >= 3.80 for Y "
+        "(\u03ba=0.690, captures 23.1% vs judge 23.0%), IS >= 2.00 for Y+P "
+        "(\u03ba=0.818, captures 61.6% vs judge 64.9%). IS beats WER at both "
+        "operating points (+0.061 for Y, +0.041 for Y+P).",
         [[num_s, lbl_s, bul], [img]], click_reveal=True)
 
 
