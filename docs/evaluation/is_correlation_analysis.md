@@ -83,6 +83,23 @@ WER's correlation with IS swings from r = -0.949 to r = -0.453 across 16 decode 
 
 **Implication:** WER alone is misleading for comparing configurations. Config J has 12pp higher WER than baseline but +0.08 higher IS. This is the core reason IS was created — it captures quality dimensions that WER misses. When evaluating the system, IS should be the primary metric, not WER.
 
+### Finding 8: WER correlates strongly with IS (r = −0.849) but poorly with human-like judgment (r = −0.660)
+
+Direct correlation analysis between WER and the two quality frameworks:
+
+| Correlation | r value | Interpretation |
+|---|---|---|
+| WER vs IS | −0.849 | Strong negative — higher WER = lower IS. But r² = 0.72 means 28% of IS variance is NOT explained by WER |
+| WER vs LLM Judge (Y=1, P=0.5, N=0) | −0.714 | Moderate-strong — WER tracks the judge, but with major disagreements |
+| WER vs LLM Judge (Y+P=1, N=0) | −0.660 | Weaker — WER is particularly bad at distinguishing Partial from No |
+
+Mean WER by LLM Judge verdict:
+- **Y (full success):** mean WER = 26.1%, median = 24.1% (n=345)
+- **P (partial success):** mean WER = 55.4%, median = 52.9% (n=626)
+- **N (failure):** mean WER = 99.3%, median = 100.0% (n=526)
+
+**Implication:** The gap between r = −0.849 (WER→IS) and r = −0.660 (WER→Judge binary) quantifies exactly how much information WER misses. The Partial category (41.8% of all segments) spans WER 10%–100%+, meaning WER alone cannot distinguish "useful partial output" from "failure." This is the fundamental limitation that IS and the LLM judge address — they capture semantic and contextual quality dimensions that word-level error rates miss entirely.
+
 ---
 
 ## 1. Executive Summary
