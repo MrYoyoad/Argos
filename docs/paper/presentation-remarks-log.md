@@ -292,3 +292,8 @@ User performed a density audit of slides with too many elements, tables, or bull
 | 185 | 6 (slide_visemes) | Changed GIF from lip_reading_demo.gif to mom-yelling.gif (user uploaded) | done |
 | 186 | 15 + 14b | Admiral video used twice — keep admiral on gallery (slide 14b), replaced with vitamin_d on demo trio (slide 15). Fixed WER/IS numbers (WER 50%, IS 2.4), improved description, used CORAL color for middle slot | done |
 | 187 | 58 (slide_29) | Fine-tune plot (FT_11b_impact) text covered by legend — moved legend to lower-left; also moved "Best (epoch 2)" annotation in FT_11a_loss below trendlines | done |
+| 188 | ALL | Generated 36 new demo videos with burned hypothesis overlay from 1,497 segments (8 per IS tier). Total pool now 50 videos | done |
+| 189 | slide_30b | Decluttered: removed dense 5-row failure mode table (multiline cells clipped), bottom insight paragraph, and reference line. Replaced right column with clean WER waterfall (5 stacked cards). Left column: capability table + compact VALLR box + drop-in note | done |
+| 190 | NEW (slide_30c) | Hidden backup slide with full failure mode recovery detail: 6-row table (segments, %, LLM impact, expected recovery per category), insight box explaining disambiguation, scaling law note, references. Commented out in builders list for Q&A backup | done |
+| 189 | 15 (trio) | Replaced vitamin_d with hypertension (IS 4.5, WER 23%) — more optimistic center example showing system nailing a medical topic | done |
+| 190 | 14b (gallery) | Swapped 5 of 6 videos (kept admiral): convention (IS 4.1), marilyn (IS 3.9), music_play (IS 3.9), spelling_smell (IS 1.9), doxology (IS 0.2) | done |
