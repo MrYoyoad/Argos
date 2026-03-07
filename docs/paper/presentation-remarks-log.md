@@ -283,6 +283,12 @@ User performed a density audit of slides with too many elements, tables, or bull
 | 182 | 58 (slide_29) | Fine-tune figure text hidden — reduced plot height (4.0→3.5"), increased text area, bumped font (14→15pt) | done |
 | 183 | 59 (slide_30) | Added speaker note explaining why 3-8pp from LLM change: 128K vocab (4x), 15T tokens (7.5x), better disambiguation of homophenes, stronger world knowledge | done |
 | 184 | ALL | Made slide numbering consistent — section dividers now auto-numbered so PPTX position = displayed number | done |
+
+## Batch 13 — 2026-03-07
+
+| # | Slide | Remark | Status |
+|---|-------|--------|--------|
+| 185 | NEW (slide_30b) | Add detailed LLM upgrade analysis slide after slide_30: capability gap table (MMLU, vocab, context, training data), VALLR evidence (18.7% WER with smaller Llama 3), failure mode recovery estimates per category, combined WER projections. PPTX only (no beamer). Also wrote full analysis doc at docs/evaluation/llm_upgrade_analysis.md | done |
 | 185 | 6 (slide_visemes) | Changed GIF from lip_reading_demo.gif to mom-yelling.gif (user uploaded) | done |
 | 186 | 15 + 14b | Admiral video used twice — keep admiral on gallery (slide 14b), replaced with vitamin_d on demo trio (slide 15). Fixed WER/IS numbers (WER 50%, IS 2.4), improved description, used CORAL color for middle slot | done |
 | 187 | 58 (slide_29) | Fine-tune plot (FT_11b_impact) text covered by legend — moved legend to lower-left; also moved "Best (epoch 2)" annotation in FT_11a_loss below trendlines | done |

@@ -480,9 +480,133 @@ def slide_30(prs):
         "language disambiguation is the primary bottleneck for our failure modes.",
         col_groups)
 
+
 # ═══════════════════════════════════════════════════════════════════════
-# ARABIC PIPELINE ROADMAP
+# SLIDE 30b — LLM UPGRADE: QUANTIFIED IMPACT
 # ═══════════════════════════════════════════════════════════════════════
+
+def slide_30b(prs):
+    """Why upgrading from Llama-2-7B to Llama 3.1 8B matters — quantified."""
+    slide = new_slide(prs)
+    add_title(slide, "LLM Upgrade: Quantified Impact Analysis")
+    add_accent_line(slide)
+
+    col_w = Inches(5.8)
+    gap = Inches(0.5)
+
+    # ── Left column: capability gap + VALLR evidence ──
+    lt = add_text(slide, "The Capability Gap",
+                  MX, CT, col_w, Inches(0.35),
+                  size=Pt(18), color=TEAL, bold=True)
+
+    tbl_headers = ["Metric", "Llama-2 7B", "Llama 3.1 8B", "Change"]
+    tbl_rows = [
+        ["MMLU",       "45.3%",  "73.0%",  "+61%"],
+        ["Vocabulary",  "32K",    "128K",   "4\u00d7"],
+        ["Context",     "4K",     "128K",   "32\u00d7"],
+        ["Training data", "2T tokens", "15T tokens", "7.5\u00d7"],
+    ]
+    tbl = add_table(slide, tbl_headers, tbl_rows,
+                    MX, CT + Inches(0.45), col_w,
+                    row_height=Inches(0.40),
+                    col_widths=[Inches(1.4), Inches(1.3), Inches(1.5), Inches(1.6)],
+                    text_size=Pt(12))
+
+    # VALLR evidence box
+    vallr_box = add_rect(slide, MX, CT + Inches(2.55), col_w, Inches(1.05),
+                         fill_color=NAVY2, border_color=GREEN,
+                         border_width=Pt(2), corner_radius=True)
+    vallr_title = add_text(slide, "External Proof: VALLR (ICCV 2025)",
+                           MX + Inches(0.2), CT + Inches(2.60),
+                           col_w - Inches(0.4), Inches(0.30),
+                           size=Pt(14), color=GREEN, bold=True)
+    vallr_text = add_text(slide,
+        "Llama 3.2-3B (half our model size) achieved 18.7% WER on LRS3\n"
+        "vs VSP-LLM\u2019s 25.4% with Llama-2-7B \u2014 smaller but better",
+        MX + Inches(0.2), CT + Inches(2.95),
+        col_w - Inches(0.4), Inches(0.55),
+        size=Pt(13), color=WHITE)
+
+    # ── Right column: failure mode recovery + projections ──
+    rx = MX + col_w + gap
+    rw = CW - col_w - gap
+
+    rt = add_text(slide, "Which Failures Get Fixed?",
+                  rx, CT, rw, Inches(0.35),
+                  size=Pt(18), color=CORAL, bold=True)
+
+    fail_headers = ["Failure Mode", "Count", "Recovery"]
+    fail_rows = [
+        ["Right Topic\nWrong Details", "204",  "25\u201335%"],
+        ["Accumulated\nErrors",         "220",  "20\u201330%"],
+        ["Hallucination",               "111",  "15\u201325%"],
+        ["Wrong Topic",                 "284",  "10\u201320%"],
+        ["Signal Loss",                 "81",   "<5%"],
+    ]
+    fail_tbl = add_table(slide, fail_headers, fail_rows,
+                         rx, CT + Inches(0.45), rw,
+                         row_height=Inches(0.45),
+                         col_widths=[Inches(1.8), Inches(0.9), Inches(1.3)],
+                         text_size=Pt(11))
+
+    # Projection box
+    proj_box = add_rect(slide, rx, CT + Inches(3.3), rw, Inches(1.15),
+                        fill_color=NAVY2, border_color=TEAL,
+                        border_width=Pt(2), corner_radius=True)
+    proj_title = add_text(slide, "Combined Projections",
+                          rx + Inches(0.2), CT + Inches(3.35),
+                          rw - Inches(0.4), Inches(0.25),
+                          size=Pt(14), color=TEAL, bold=True)
+    proj_bullets = add_bullets(slide, [
+        "LLM swap alone: WER 64% \u2192 56\u201361%",
+        "+ Smart prompts: WER \u2192 45\u201352%",
+        ("+ 20K data + prompts: WER \u2192 35\u201340%", {"bold": True, "color": GREEN}),
+    ], rx + Inches(0.2), CT + Inches(3.65), rw - Inches(0.4), Inches(0.7),
+       size=Pt(13))
+
+    # Bottom key insight
+    insight = add_text(slide,
+        "The real value: a stronger LLM unlocks prompt strategies "
+        "(topic context, anti-hallucination, GER) that Llama-2 cannot use. "
+        "Multiplicative scaling law: better model \u00d7 more data = compounding gains.",
+        MX, Inches(6.25), CW, Inches(0.4),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # References
+    add_text(slide,
+        "VALLR: Thomas et al. (ICCV 2025)  |  "
+        "Scaling Laws: Zhang et al. (ICLR 2024)  |  "
+        "Llama 3: Meta (2024)",
+        MX, Inches(6.65), CW, Inches(0.25),
+        size=Pt(8), color=MGRAY, italic=True)
+
+    _finish(slide, 0,
+        "Detailed LLM upgrade analysis slide. Key points:\n\n"
+        "CAPABILITY GAP: Llama 3.1 8B has 4x vocabulary, 32x context, "
+        "7.5x training data, and +61% on MMLU. Same hidden dimension "
+        "(4096) so it's a drop-in replacement.\n\n"
+        "VALLR PROOF: A smaller Llama 3 model (3B) already beat our "
+        "7B Llama 2 on the same LRS3 benchmark (18.7% vs 25.4% WER). "
+        "This is the strongest evidence that the Llama 3 family is "
+        "fundamentally better for visual speech.\n\n"
+        "FAILURE MODE RECOVERY: The biggest gains come from 'Right Topic "
+        "Wrong Details' (204 segments) where the visual encoder captured "
+        "the right domain but the LLM picked wrong words. Entity names, "
+        "technical vocabulary, and content words are where a stronger "
+        "language prior has the most impact. Hallucinations (111 segments) "
+        "also reduce because better-calibrated models are less likely to "
+        "'run ahead' of the visual signal.\n\n"
+        "PROJECTIONS: LLM swap alone gives modest 3-8pp WER improvement "
+        "because the visual encoder is still the primary bottleneck. "
+        "But the LLM upgrade UNLOCKS prompt strategies (topic context, "
+        "anti-hallucination, vocabulary hints) that Llama-2 cannot follow. "
+        "Combined with 20K+ training segments (multiplicative scaling law), "
+        "the target is WER 35-40% — roughly halving the current error rate.",
+        [[lt, tbl], [vallr_box, vallr_title, vallr_text],
+         [rt, fail_tbl], [proj_box, proj_title, proj_bullets],
+         [insight]],
+        click_reveal=True)
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # ARABIC PIPELINE ROADMAP
