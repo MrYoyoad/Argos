@@ -33,15 +33,18 @@ LABELS = [
     "Length\nRatio",
 ]
 
-# LRS3 benchmark profile (paper: WER 25.4%, estimated high-quality metrics)
-# These represent what IS components would look like on clean TED talk data
+# LRS3 benchmark profile — MEASURED from real LRS3 decode (March 2026)
+# Decoded 197 LRS3 pretrain segments through our pipeline (VSP-LLM + flat k-means).
+# Overall WER was 36.5% (vs paper's 25.4% — due to YouTube-trained k-means model).
+# Values below are from 33 segments with WER 20-30% (mean 24.5%), closest to paper WER.
+# Source: /tmp/lrs3_decode/is_v1/intelligibility_scores.csv
 LRS3_VALUES = [
-    0.92,   # Semantic similarity (high — clean speech, good context)
-    0.88,   # Phonetic similarity (high — clear articulation)
-    0.75,   # 1 - WER (1 - 0.254 = 0.746)
-    0.78,   # 1 - WWER (slightly better than WER)
-    0.85,   # Named entity accuracy (good — known vocabulary)
-    0.95,   # Length ratio (close to 1.0)
+    0.868,  # Semantic similarity (measured, n=33 LRS3 TED talk segments at WER ~25%)
+    0.857,  # Phonetic similarity (measured)
+    0.755,  # 1 - WER (measured mean 24.5%)
+    0.744,  # 1 - WWER (measured mean 25.6%)
+    0.795,  # Named entity F1 (measured mean 79.5%)
+    0.988,  # Length ratio (measured mean)
 ]
 
 # Real-world YouTube profile (our baseline: WER 64.1%, IS 2.52)
