@@ -244,7 +244,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Folder | Contents | Backlog Mission |
 |--------|----------|-----------------|
-| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0), IS correlation analysis + [cross-config validation](docs/evaluation/is_cross_config_validation.md), [extended analysis](docs/evaluation/intelligibility_extended_analysis.md), [LLM salvage](docs/evaluation/llm_salvage/) (165 recoverable segments + [example gallery](docs/evaluation/llm_salvage/salvage_example_gallery.md)), [LLM-as-a-Judge](docs/evaluation/llm_judge/) gold standard (1,497 pairs, Y/P/N + [context eval](docs/evaluation/llm_judge/context_eval/)) | M5: Expanded Metrics |
+| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.53/5.0), IS correlation analysis + [cross-config validation](docs/evaluation/is_cross_config_validation.md), [extended analysis](docs/evaluation/intelligibility_extended_analysis.md), [LLM salvage](docs/evaluation/llm_salvage/) (165 recoverable segments + [example gallery](docs/evaluation/llm_salvage/salvage_example_gallery.md)), [LLM-as-a-Judge](docs/evaluation/llm_judge/) gold standard (1,497 pairs, Y/P/N + [context eval](docs/evaluation/llm_judge/context_eval/)) | M5: Expanded Metrics |
 | [docs/tuning/](docs/tuning/) | Report 2 (hyperparameter tuning), metrics explainer, 13 experiments, HTML reports | M7: Hyperparams, M14: Auto-tuning |
 | [docs/confidence/](docs/confidence/) | Report 4 (confidence scoring & quality filtering) | M4: Confidence Scoring |
 | [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR) | M6: Beam Aggregation |
@@ -274,7 +274,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Directory | Contents |
 |-----------|----------|
-| `english_full_results/` | 1497 segments, WER 64.1%, WWER 61.9%, IS 2.52/5.0, full report suite |
+| `english_full_results/` | 1497 segments, WER 64.1%, WWER 60.5%, IS 2.53/5.0, full report suite |
 | `tuning_results/` | 13 decode parameter experiments (beam, lenpen, sampling, greedy) |
 
 ### Baseline Evaluation Results (February 2026)
@@ -284,10 +284,10 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | Metric | Value | Notes |
 |--------|-------|-------|
 | **Mean WER** | 64.1% | Segment-level; 2.5x worse than paper's 25.4% on LRS3 |
-| **Mean WWER** | 61.9% | Weighted WER — high-value tokens penalized 2x |
+| **Mean WWER** | 60.5% | Weighted WER — high-value tokens penalized 2x |
 | **Named Entity F1** | 38.9% | Entities missed in 85% of segments |
-| **Intelligibility Score** | 2.52/5.0 | Composite metric (semantic, phonetic, WER, WWER, NEA, length) |
-| **Properly Captured (IS ≥ 3)** | 597/1,497 (39.9%) | Only 4 in 10 segments convey intelligible meaning |
+| **Intelligibility Score** | 2.53/5.0 | Composite metric (semantic, phonetic, WER, WWER, NEA, length) |
+| **Properly Captured (IS ≥ 3)** | 601/1,497 (40.1%) | Only 4 in 10 segments convey intelligible meaning |
 | **Hallucinated (WER ≥ 100%)** | 307/1,497 (20.5%) | Fluent but fabricated text — most dangerous failure mode |
 
 **Intelligibility Score (IS) Tier Distribution:**
@@ -302,7 +302,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 **IS Component Correlation Analysis** (March 2026): The 6 IS signals collapse into 3 independent dimensions — word accuracy (WER/WWER/Phonetic, r > 0.79 with each other, ~60% of IS weight), meaning preservation (Semantic, 28.5% of variance), and output sanity (Length Ratio, 9.1% of variance). The IS framework uses a **design-time LLM-distilled** approach: Claude (Anthropic) designed the rubric, selected the 6 signals and weights, defined tier boundaries, and built the `llm_context_prob` decision tree — all at design time. **No LLM is called at evaluation time.** The resulting metrics are fully deterministic, free, and reproducible. The `llm_context_prob` heuristic (a 15-rule decision tree, not an LLM API call) correlates at r=0.93 with IS (88.6% agreement with IS ≥ 3.0, Cohen's κ = 0.773). Cross-config stability validated across 16 decode configurations: mean r=0.925 (std=0.015), κ range 0.62–0.86, recall 97.6–100%. Full analysis: [docs/evaluation/is_correlation_analysis.md](docs/evaluation/is_correlation_analysis.md).
 
-**LLM Salvage Analysis** (March 2026): 165 of 900 metric-failed segments (18.3%) have meaning that the Claude-designed `llm_context_prob` heuristic (a deterministic decision tree — no runtime LLM calls) identifies as recoverable (llm_context_prob ≥ 0.5, IS < 3.0). Including these, the effective capture rate rises from 39.9% to **50.9%** — roughly 1 in 2 segments delivers useful output rather than 2 in 5. Segments categorized into 6 recovery types: hidden gems (54), semantic preservation (57), phonetic bridge (93), entity-preserved (44), structure match (74), WER over-punishment (27). Full analysis with curated examples: [docs/evaluation/llm_salvage/llm_salvage_analysis.md](docs/evaluation/llm_salvage/llm_salvage_analysis.md).
+**LLM Salvage Analysis** (March 2026): 165 of 900 metric-failed segments (18.3%) have meaning that the Claude-designed `llm_context_prob` heuristic (a deterministic decision tree — no runtime LLM calls) identifies as recoverable (llm_context_prob ≥ 0.5, IS < 3.0). Including these, the effective capture rate rises from 40.1% to **51.1%** — roughly 1 in 2 segments delivers useful output rather than 2 in 5. Segments categorized into 6 recovery types: hidden gems (54), semantic preservation (57), phonetic bridge (93), entity-preserved (44), structure match (74), WER over-punishment (27). Full analysis with curated examples: [docs/evaluation/llm_salvage/llm_salvage_analysis.md](docs/evaluation/llm_salvage/llm_salvage_analysis.md).
 
 **LLM-as-a-Judge Gold Standard** (March 2026): Claude Opus 4.6 evaluated all 1,497 pairs using holistic LLM reasoning (blind, 3-level Y/P/N). Results: Y=345 (23.0%), P=626 (41.8%), N=526 (35.1%). Intra-rater reliability: 86.7% exact (30 duplicates). The LLM judge is more conservative for "full success" (23% vs IS 40%) but more generous for "any useful output" (Y+P=65%). Structure is preserved in 88.8% of partial cases; detail and semantic meaning are lost most often (~55% each). Visual/topic context analysis: ~284 segments (19%) show domain vocabulary confusion where a topic label at decode time would help. DIY/Home has the highest N-rate (51.9%) due to inherently visual content. **Context-aware re-evaluation** (March 2026, all 1,497 pairs, judge infers topic from reference text): Y drops to 15.0% (−8pp), P rises to 47.1% (+5.3pp), N rises to 37.9% (+2.8pp). Y+P = 62.1% (−2.7pp vs blind 64.9%). Context is STRICTER not lenient — 230 downgrades vs 68 upgrades, dominant transition Y→P (138 cases, domain knowledge reveals vocabulary failures). Only 1 N→Y rescue across all pairs. Full analysis: [docs/evaluation/llm_judge/llm_judge_analysis.md](docs/evaluation/llm_judge/llm_judge_analysis.md), [docs/evaluation/llm_judge/context_eval/context_eval_analysis.md](docs/evaluation/llm_judge/context_eval/context_eval_analysis.md).
 
