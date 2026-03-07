@@ -172,7 +172,7 @@ def slide_15(prs):
 
     vids = [
         ("ok_demo", '"sheetaro" \u2192 "just hara"\nGist right, names garbled', "WER 33%  IS 3.8", TEAL),
-        ("vitamin_d", '"vitamin d deficiency" \u2192 "empathy deficiency"\nDomain swap, structure preserved (IS 2.1)', "WER 60%  IS 2.1", GREEN),
+        ("vitamin_d", '"vitamin d deficiency" \u2192 "empathy deficiency"\nStructure perfect, domain words wrong (IS 2.4)', "WER 50%  IS 2.4", CORAL),
         ("halluc", '"carry strap" \u2192 "holocaust denier"', "WER 100%  IS 0.1", RED),
     ]
 
@@ -193,8 +193,8 @@ def slide_15(prs):
     _finish(slide, 15,
         "Three demos side by side. Left: 'sheetaro' becomes 'just hara' "
         "(IS 3.8 — gist right but names garbled, OK quality). Center: "
-        "'vitamin d deficiency' becomes 'empathy deficiency' (IS 2.1 — "
-        "sentence structure preserved but domain vocabulary swapped, "
+        "'vitamin d deficiency' becomes 'empathy deficiency' (IS 2.4 — "
+        "sentence structure perfectly preserved but domain vocabulary wrong, "
         "classic domain mismatch failure). "
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.1). Click each video to play.")
