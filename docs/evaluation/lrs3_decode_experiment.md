@@ -111,12 +111,13 @@ At the same WER level (~25%), LRS3 TED talk data shows **significantly higher se
 
 ### Values Used for Dual Radar Chart
 
-Updated `generate_dual_radar.py` with the WER 20-30% band values (n=35):
+Updated `generate_dual_radar.py` with V1 all non-empty segment means (n=170):
 ```python
-LRS3_VALUES = [0.875, 0.859, 0.755, 0.764, 0.772, 0.987]
+LRS3_VALUES = [0.779, 0.794, 0.689, 0.662, 0.683, 0.971]
 ```
 
-Previous estimated values were: `[0.92, 0.88, 0.75, 0.78, 0.85, 0.95]`
+Previous values (WER 20-30% band, n=35): `[0.875, 0.859, 0.755, 0.764, 0.772, 0.987]`
+Original estimated values: `[0.92, 0.88, 0.75, 0.78, 0.85, 0.95]`
 
 ## V3: Full auto_avsr Pipeline Preprocessing
 
@@ -164,7 +165,7 @@ The 224x224 videos in the LRS3 pretrain tar are already **mouth-centered crops**
 
 V3 is much better than V2 (37.8% vs 44.4% WER) because auto_avsr uses proper per-frame tracking and affine alignment, but V1 remains best because the source data is already optimally cropped.
 
-**Conclusion**: V4 (V1 videos + LRS3-trained k-means) provides the canonical measured LRS3 IS components for the radar chart.
+**Conclusion**: V1 without empties (n=170, all non-empty segments) provides the canonical measured LRS3 IS components for the radar chart. V4 marginally improved WER (36.0% vs 36.5%) but the k-means mismatch was not the dominant factor.
 
 ## Files
 
@@ -180,6 +181,24 @@ V3 is much better than V2 (37.8% vs 44.4% WER) because auto_avsr uses proper per
 - Pipeline-cropped videos: `/tmp/lrs3_decode/pipeline_crops/`
 - Updated radar script: `docs/_research-tools/generators/generate_dual_radar.py`
 - Updated radar plot: `presentation_materials_20260224/01_plots_for_slides/P6b_radar_dual.png`
+
+## Empty Output Analysis
+
+### Cross-version comparison (V1 vs V4)
+
+| Category | Count | Details |
+|----------|-------|---------|
+| Empty in both V1 and V4 | 6 | Consistently hard segments — model cannot decode regardless of k-means |
+| Empty in V1 only | 4 | V4's LRS3 k-means recovered these |
+| Empty in V4 only | 1 | Regression from V4 k-means |
+
+5 of 6 persistent empties come from speaker `01GWGmg5jn8`, suggesting this speaker's lip movements are particularly hard for the model.
+
+### Root cause
+
+Visual inspection of all empty-output videos confirms they are **well-cropped** — faces clearly visible, 224x224 resolution, 25fps, proper mouth regions. The empty outputs are NOT a preprocessing or crop quality issue.
+
+The cause is **beam search behavior with `lenpen=0`**: when the visual signal is ambiguous, there is no penalty for generating nothing, so the decoder converges to an empty string. This is a known model/decode characteristic, not a data problem.
 
 ## Limitations
 

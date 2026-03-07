@@ -35,16 +35,16 @@ LABELS = [
 
 # LRS3 benchmark profile — MEASURED from real LRS3 decode (March 2026)
 # Decoded 197 LRS3 pretrain segments through our pipeline (VSP-LLM + flat k-means).
-# V4: LRS3-trained k-means (no domain mismatch). Overall WER 36.0%.
-# Values below are from 35 non-empty segments with WER 20-30% (mean 24.5%).
-# Source: /tmp/lrs3_decode/is_v4/intelligibility_scores.csv
+# V1: 224x224 LRS3 videos with YouTube-trained k-means. Overall WER 36.5%.
+# Values below are means across all 170 non-empty segments (empties excluded).
+# Source: /tmp/lrs3_decode/is_v1/intelligibility_scores.csv
 LRS3_VALUES = [
-    0.875,  # Semantic similarity (measured, n=35 LRS3 TED talk segments at WER ~25%)
-    0.859,  # Phonetic similarity (measured)
-    0.755,  # 1 - WER (measured mean 24.5%)
-    0.764,  # 1 - WWER (measured mean 23.6%)
-    0.772,  # Named entity F1 (measured mean 77.2%)
-    0.987,  # Length ratio (measured mean)
+    0.779,  # Semantic similarity (measured, n=170 LRS3 TED talk segments)
+    0.794,  # Phonetic similarity (measured)
+    0.689,  # 1 - WER (measured)
+    0.662,  # 1 - WWER (measured)
+    0.683,  # Named entity F1 (measured)
+    0.971,  # Length ratio (measured)
 ]
 
 # Real-world YouTube profile (our baseline: WER 64.1%, IS 2.52)
