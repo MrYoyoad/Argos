@@ -927,6 +927,25 @@ def expand_arabic_analysis(prs):
         "or cross-lingual pretraining strategies.")
 
 
+def delete_slide(prs, title_fragment):
+    """Delete a slide found by title fragment."""
+    for i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            if shape.has_text_frame and title_fragment in shape.text_frame.text:
+                sld_id_lst = prs.slides._sldIdLst
+                sld_ids = list(sld_id_lst)
+                sld_id_lst.remove(sld_ids[i])
+                # Also remove the slide part from the presentation
+                rId = sld_ids[i].get(
+                    '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id'
+                )
+                prs.part.drop_rel(rId)
+                print(f"  Deleted slide {i+1} ('{title_fragment}')")
+                return True
+    print(f"  WARNING: Could not find slide with '{title_fragment}'")
+    return False
+
+
 def move_slide(prs, from_title_fragment, after_title_fragment):
     """Move a slide (found by title fragment) to after another slide (found by title fragment).
 
@@ -1773,11 +1792,23 @@ def main():
     add_disagreement_slide(prs)        # Item 9
     add_30_sample_slide(prs)           # Item 23
 
-    # Group 5: Slide reordering
+    # Group 5: Slide deletion
+    print("Item 25: Removing 'Five Insights That Inform the Roadmap' slide...")
+    delete_slide(prs, "Five Insights That Inform the Roadmap")
+
+    # Group 6: Slide reordering and hiding
     print("Item 24: Moving 'Failure Modes: Impact' after 'LLM Upgrade: Why It Matters'...")
     move_slide(prs, "Failure Modes: Impact", "LLM Upgrade: Why It Matters")
 
-    # Group 6: Page numbering — MUST BE LAST
+    print("Item 26: Hiding 'LLM Upgrade: Why It Matters'...")
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "LLM Upgrade: Why It Matters" in shape.text_frame.text:
+                hide_slide(slide)
+                print("  Hidden.")
+                break
+
+    # Group 7: Page numbering — MUST BE LAST
     fix_page_numbers(prs)              # Item 2
 
     print(f"\nSaving to {OUTPUT_PATH}...")
