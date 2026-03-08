@@ -333,4 +333,12 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 215 | 66 | Key takeaways — updated 4 points, de-emphasized data bottleneck, added IS vs WER comparison | done |
 | 216 | 58 | Price tag — "Free upgrade: swap LLM" → "LLM upgrade + adapter retraining" | done |
 | 217 | 24, 40, 54 | Fix 3 page-number overlaps — moved bottom-row content up ~0.3" to clear page numbers on radar legend (S24), gallery captions (S40), and roadmap insight (S54) | done |
+
+## Batch 15 — 2026-03-08 (PCA Story Slide + Radar Fix)
+
+| # | Slide(s) | Remark | Status |
+|---|----------|--------|--------|
+| 218 | 22 | Replace "6 Signals, 2 Dimensions (PCA)" content with the PCA story: title → "Do 6 Signals Actually Measure 6 Things?", reframed as a question/answer narrative. Same layout (2 stacked cards + green italic + gold bottom). Updated PC descriptions, key implication ("weights barely matter, r=0.999"), and speaker notes with full PCA story | done |
+| 219 | Radar (Model Comparison) | Grey subtitle text covered by radar graph — moved image down 0.2" | done |
 | 218 | IS in Action (two segments) | Bad segment arithmetic wrong: Phonetic 0.029→0.030, Inv WWER 0.004→0.005, sum 0.80→0.81 | done |
+| 220 | 2 (What is VSP?) | Yellow and grey text overlapping — deleted grey subtitle and grey caption, enlarged video (4.3→4.8"), moved up to y=1.8" | done |

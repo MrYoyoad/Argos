@@ -273,20 +273,11 @@ def slide_02(prs):
     add_title(slide, "What is Visual Speech Processing?")
     add_accent_line(slide)
 
-    add_text(slide, "A system that reads lips from video — no audio needed.",
-             MX, Inches(1.55), CW, Inches(0.4),
-             size=Pt(20), color=LGRAY, align=PP_ALIGN.CENTER)
-
     # Embedded video — click to play directly in PowerPoint
     vid_w = Inches(8.5)
-    vid_h = Inches(4.3)
+    vid_h = Inches(4.8)
     vid_x = (SL_W - vid_w) // 2
-    add_video(slide, "perfect", vid_x, Inches(2.1), vid_w, vid_h)
-
-    add_text(slide, "33 words about health insurance — WER 0%, IS 5.0. "
-             "Click the video to play.",
-             MX, Inches(6.6), CW, Inches(0.4),
-             size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+    add_video(slide, "perfect", vid_x, Inches(1.8), vid_w, vid_h)
 
     _finish(slide, 2,
         "PLAY VIDEO: IEa7qEkMvfQ_3__c5447488_with_hyp.mp4 — 33 words about "
