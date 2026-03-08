@@ -1423,18 +1423,18 @@ def slide_price_tag(prs):
         "AWS 8\u00d7A100 spot pricing  \u2022  Includes data curation + training + overhead",
         MX, CT, CW, Inches(0.3), size=Pt(12), color=LGRAY, italic=True)
 
-    # Simplified 3-tier table
+    # Simplified 3-tier table — emphasize that data scale is the real variable
     tbl_w = Inches(11.8)
     tbl = add_table(slide,
-        ["Investment", "Data", "Total Cost", "Timeline", "Expected IS"],
-        [["Quick win: LLM swap only", "\u2014", "~$0", "1\u20132 hours", "~2.8\u20133.0"],
-         ["Medium: retrain projection layer", "5\u201310K hrs", "~$10\u201320K", "4\u20136 weeks", "~3.0\u20133.5"],
-         ["Full: paper\u2019s curriculum training", "20K hrs", "~$30\u201340K", "6\u20138 weeks", "~3.5\u20133.8"],
-         ["Maximum: + encoder adaptation", "50K hrs", "~$70\u2013100K", "3\u20134 months", "~3.8\u20134.2"]],
+        ["Investment", "What Changes", "Data Scale", "Cost", "Expected IS"],
+        [["Quick win: LLM swap only", "Better LLM backbone", "\u2014", "~$0", "~2.8\u20133.0"],
+         ["Medium: projection layer only", "New bridge, encoder frozen", "5\u201310K hrs", "~$10\u201320K", "~3.0\u20133.5"],
+         ["Full: paper\u2019s recipe \u00d746 data", "Freeze \u2192 unfreeze encoder", "20K hrs", "~$30\u201340K", "~3.5\u20133.8"],
+         ["Scale: paper\u2019s recipe \u00d7115 data", "Same recipe, more data", "50K hrs", "~$70\u2013100K", "~3.8\u20134.2"]],
         MX, CT + Inches(0.45), tbl_w, text_size=Pt(13),
-        col_widths=[Inches(3.2), Inches(1.5), Inches(2.0), Inches(2.0), Inches(2.0)],
+        col_widths=[Inches(3.2), Inches(2.8), Inches(1.5), Inches(1.7), Inches(1.8)],
         row_height=Inches(0.52),
-        row_colors={2: {2: GREEN, 4: GREEN}})
+        row_colors={2: {3: GREEN, 4: GREEN}})
 
     # Two callout boxes below
     sw_y = CT + Inches(3.2)
@@ -1445,9 +1445,9 @@ def slide_price_tag(prs):
              MX + Inches(0.2), sw_y + Inches(0.1),
              Inches(5.4), Inches(0.35), size=Pt(16), color=GOLD, bold=True)
     add_bullets(slide, [
-        "20K hrs of AVSpeech (~7% of the dataset)",
-        "Full 2-phase training: freeze encoder, then unfreeze",
-        ("NOT LoRA \u2014 real retraining of projection + encoder", {"color": CORAL}),
+        "Paper\u2019s exact recipe: freeze 18K steps, unfreeze 12K",
+        ("Paper used 433 hrs \u2014 we use 20K hrs (46\u00d7 more data)", {"color": CORAL}),
+        "NOT LoRA \u2014 real retraining of projection + encoder",
     ], MX + Inches(0.15), sw_y + Inches(0.5), Inches(5.5), Inches(1.0),
         size=Pt(13))
 
@@ -1465,18 +1465,21 @@ def slide_price_tag(prs):
         size=Pt(12))
 
     _finish(slide, 0,
-        "Simplified cost overview. Four tiers of investment:\n\n"
+        "Simplified cost overview. Four tiers of investment.\n\n"
+        "Key insight: the VSP-LLM paper already fine-tuned AV-HuBERT using a "
+        "two-stage curriculum — freeze the encoder for the first 18K steps, then "
+        "unfreeze for the last 12K steps. This achieved 25.4% WER on LRS3 "
+        "(vs 26.7% frozen). So encoder adaptation is not new — the paper did it. "
+        "What changes across our tiers is DATA SCALE.\n\n"
         "1. FREE: Just swap Llama-2 for Llama 3.1 8B. Same hidden dimension "
         "(4096), takes 1-2 hours. Expected ~0.3-0.5 IS improvement alone.\n\n"
-        "2. MEDIUM ($10-20K): Retrain the projection layer that connects the "
-        "visual encoder to the LLM. Uses 5-10K hours of AVSpeech data. "
-        "4-6 weeks including data preparation.\n\n"
-        "3. SWEET SPOT ($30-40K): Follow the VSP-LLM paper's training recipe — "
-        "first freeze the visual encoder and train the projection layer, then "
-        "unfreeze everything for end-to-end training. 20K hours of data. "
-        "This is real retraining, not LoRA fine-tuning.\n\n"
-        "4. MAXIMUM ($70-100K): Same as above but with 50K hours and encoder "
-        "adaptation. 3-4 months.\n\n"
+        "2. MEDIUM ($10-20K): Retrain only the projection layer (encoder stays "
+        "frozen). 5-10K hours of AVSpeech data. 4-6 weeks.\n\n"
+        "3. SWEET SPOT ($30-40K): Follow the paper's exact training recipe — "
+        "freeze then unfreeze — but with 20K hours instead of the paper's 433 "
+        "hours. That's 46\u00d7 more data. This is what actually changes.\n\n"
+        "4. MAXIMUM ($70-100K): Same recipe, 50K hours (115\u00d7 the paper's data). "
+        "More data lets the encoder adapt more deeply to wild video content.\n\n"
         "The LLM swap is independent and stacks with any training investment. "
         "GPU cost basis: AWS p4d.24xlarge spot at $9.39/hr (Ireland). "
         "Data curation: download + face detection + mouth crop + features + labels.",

@@ -355,3 +355,10 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 224 | When Metrics Disagree / AV-HuBERT / Arabic Adaptation | All three slides had white background (unreadable white text on white). Fixed `clear_slide_content` to explicitly set navy background after clearing shapes | done |
 | 225 | Five Insights That Inform the Roadmap | Remove this slide entirely — removed from slide list in generate_presentation.py (77→76 slides) | done |
 | 226 | slide_17 (8-Stage Pipeline) | ASR as side-branch: moved "3. ASR" out of main row 1 flow. Row 1 now: Normalize → Mouth Crop →→ LRS3 Convert (long arrow). ASR drops from branch point between slots 2-3, with coral-colored L-connector going to Outputs + "evaluation only" annotation. L-connector from LRS3 to Manifests routes below ASR. Speaker notes explain ASR provides reference transcriptions for evaluation only | done |
+
+## Batch 17 — 2026-03-08 (Cost Slide: Emphasize Data Scale)
+
+| # | Slide(s) | Remark | Status |
+|---|----------|--------|--------|
+| 227 | The Price Tag: What It Costs to Improve | User noted the VSP-LLM paper already fine-tuned AV-HuBERT (freeze 18K steps, unfreeze 12K steps — 25.4% WER). Tier 3 "sweet spot" was described as if encoder adaptation was new, but it's the paper's existing recipe. Restructured table: "What Changes" column replaces "Timeline", tiers 3-4 now framed as "paper's recipe ×46 data" and "paper's recipe ×115 data" to emphasize data scale is the real variable. Sweet spot callout updated to reference paper's exact recipe (433 hrs → 20K hrs = 46×). Speaker notes rewritten with key insight that encoder adaptation is not new | done |
+| 228 | Arabic Adaptation: What Changes (update_niv script) | Two empty bullet strings ("") creating blank bullet points between the component list and phase list, and between phase list and bottleneck line. Removed both empty bullets | done |
