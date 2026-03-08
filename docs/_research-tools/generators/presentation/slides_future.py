@@ -1414,76 +1414,69 @@ def slide_data_scaling(prs):
 
 
 def slide_price_tag(prs):
-    """Cost projections: simplified 3-tier view."""
+    """Cost projections: data scale is the only variable."""
     slide = new_slide(prs)
     add_title(slide, "The Price Tag: What It Costs to Improve")
     add_accent_line(slide)
 
+    # Framing: the paper's training recipe already exists — we just need more data
     add_text(slide,
-        "AWS 8\u00d7A100 spot pricing  \u2022  Includes data curation + training + overhead",
-        MX, CT, CW, Inches(0.3), size=Pt(12), color=LGRAY, italic=True)
+        "The paper\u2019s training recipe already works (25.4% WER on LRS3). "
+        "The only variable is data scale.",
+        MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
 
-    # Simplified 3-tier table — emphasize that data scale is the real variable
-    tbl_w = Inches(11.8)
+    # Simple 3-column table: Data → Cost → Expected IS
+    tbl_w = Inches(9.0)
+    tbl_x = (SL_W - tbl_w) / 2
     tbl = add_table(slide,
-        ["Investment", "What Changes", "Data Scale", "Cost", "Expected IS"],
-        [["Quick win: LLM swap only", "Better LLM backbone", "\u2014", "~$0", "~2.8\u20133.0"],
-         ["Medium: projection layer only", "New bridge, encoder frozen", "5\u201310K hrs", "~$10\u201320K", "~3.0\u20133.5"],
-         ["Full: paper\u2019s recipe \u00d746 data", "Freeze \u2192 unfreeze encoder", "20K hrs", "~$30\u201340K", "~3.5\u20133.8"],
-         ["Scale: paper\u2019s recipe \u00d7115 data", "Same recipe, more data", "50K hrs", "~$70\u2013100K", "~3.8\u20134.2"]],
-        MX, CT + Inches(0.45), tbl_w, text_size=Pt(13),
-        col_widths=[Inches(3.2), Inches(2.8), Inches(1.5), Inches(1.7), Inches(1.8)],
-        row_height=Inches(0.52),
-        row_colors={2: {3: GREEN, 4: GREEN}})
+        ["Training Data", "Cost (AWS spot)", "Expected IS"],
+        [["5\u201310K hrs  (10\u201320\u00d7 paper)", "~$10\u201320K", "~3.0\u20133.5"],
+         ["20K hrs  (46\u00d7 paper)", "~$30\u201340K", "~3.5\u20133.8"],
+         ["50K hrs  (115\u00d7 paper)", "~$70\u2013100K", "~3.8\u20134.2"]],
+        tbl_x, CT + Inches(0.55), tbl_w, text_size=Pt(15),
+        col_widths=[Inches(3.8), Inches(2.4), Inches(2.8)],
+        row_height=Inches(0.6),
+        row_colors={1: {1: GREEN, 2: GREEN}})
 
-    # Two callout boxes below
-    sw_y = CT + Inches(3.2)
-    r1 = add_rect(slide, MX, sw_y, Inches(5.8), Inches(1.6),
+    # Key insight callout
+    ins_y = CT + Inches(2.8)
+    r1 = add_rect(slide, MX, ins_y, CW, Inches(1.3),
                    fill_color=NAVY2, border_color=GOLD, border_width=Pt(2),
                    corner_radius=True)
-    add_text(slide, "Sweet Spot: ~$35K for IS 3.5\u20133.8",
-             MX + Inches(0.2), sw_y + Inches(0.1),
-             Inches(5.4), Inches(0.35), size=Pt(16), color=GOLD, bold=True)
+    add_text(slide, "Key insight",
+             MX + Inches(0.25), ins_y + Inches(0.12),
+             Inches(3.0), Inches(0.3), size=Pt(16), color=GOLD, bold=True)
     add_bullets(slide, [
-        "Paper\u2019s exact recipe: freeze 18K steps, unfreeze 12K",
-        ("Paper used 433 hrs \u2014 we use 20K hrs (46\u00d7 more data)", {"color": CORAL}),
-        "NOT LoRA \u2014 real retraining of projection + encoder",
-    ], MX + Inches(0.15), sw_y + Inches(0.5), Inches(5.5), Inches(1.0),
-        size=Pt(13))
+        "Paper used only 433 hrs of LRS3 \u2014 we need 20\u201350K hrs of diverse data",
+        ("Same training recipe, same model architecture \u2014 just more data",
+         {"color": TEAL}),
+        "Current IS 2.53 \u2192 target IS 3.5\u20134.0 requires ~46\u2013115\u00d7 data scale-up",
+    ], MX + Inches(0.2), ins_y + Inches(0.45), CW - Inches(0.4), Inches(0.8),
+        size=Pt(14))
 
-    r2 = add_rect(slide, MX + Inches(6.3), sw_y, Inches(5.5), Inches(1.6),
+    # LLM swap — independent free upgrade
+    llm_y = ins_y + Inches(1.55)
+    r2 = add_rect(slide, MX, llm_y, CW, Inches(0.8),
                    fill_color=NAVY2, border_color=TEAL, border_width=Pt(1),
                    corner_radius=True)
-    add_text(slide, "Free upgrade: swap LLM backbone",
-             MX + Inches(6.5), sw_y + Inches(0.1),
-             Inches(5.1), Inches(0.3), size=Pt(14), color=TEAL, bold=True)
-    add_bullets(slide, [
-        "Llama 3.1 8B: same architecture, drop-in swap",
-        "+0.3\u20130.5 IS improvement, no retraining",
-        "Stacks with any training investment",
-    ], MX + Inches(6.45), sw_y + Inches(0.45), Inches(5.2), Inches(1.0),
-        size=Pt(12))
+    add_text(slide, "Free bonus: swap Llama-2 \u2192 Llama 3.1 8B  "
+             "(+0.3\u20130.5 IS, no retraining, stacks with any tier above)",
+             MX + Inches(0.25), llm_y + Inches(0.2),
+             CW - Inches(0.5), Inches(0.4),
+             size=Pt(14), color=TEAL)
 
     _finish(slide, 0,
-        "Simplified cost overview. Four tiers of investment.\n\n"
-        "Key insight: the VSP-LLM paper already fine-tuned AV-HuBERT using a "
-        "two-stage curriculum — freeze the encoder for the first 18K steps, then "
-        "unfreeze for the last 12K steps. This achieved 25.4% WER on LRS3 "
-        "(vs 26.7% frozen). So encoder adaptation is not new — the paper did it. "
-        "What changes across our tiers is DATA SCALE.\n\n"
-        "1. FREE: Just swap Llama-2 for Llama 3.1 8B. Same hidden dimension "
-        "(4096), takes 1-2 hours. Expected ~0.3-0.5 IS improvement alone.\n\n"
-        "2. MEDIUM ($10-20K): Retrain only the projection layer (encoder stays "
-        "frozen). 5-10K hours of AVSpeech data. 4-6 weeks.\n\n"
-        "3. SWEET SPOT ($30-40K): Follow the paper's exact training recipe — "
-        "freeze then unfreeze — but with 20K hours instead of the paper's 433 "
-        "hours. That's 46\u00d7 more data. This is what actually changes.\n\n"
-        "4. MAXIMUM ($70-100K): Same recipe, 50K hours (115\u00d7 the paper's data). "
-        "More data lets the encoder adapt more deeply to wild video content.\n\n"
-        "The LLM swap is independent and stacks with any training investment. "
-        "GPU cost basis: AWS p4d.24xlarge spot at $9.39/hr (Ireland). "
-        "Data curation: download + face detection + mouth crop + features + labels.",
-        [[tbl], [r1, r2]], click_reveal=True)
+        "Cost projection focused on data scale as the single variable.\n\n"
+        "The VSP-LLM paper already fine-tuned AV-HuBERT using a two-stage "
+        "curriculum (freeze encoder 18K steps, unfreeze 12K steps) \u2014 this is "
+        "the paper's existing recipe, not something new. It achieved 25.4% WER "
+        "on LRS3. The method works; it just needs more diverse data.\n\n"
+        "Three data tiers: 5-10K hrs ($10-20K), 20K hrs ($30-40K sweet spot), "
+        "50K hrs ($70-100K). Paper trained on only 433 hrs of LRS3.\n\n"
+        "LLM backbone swap (Llama-2 \u2192 Llama 3.1 8B) is free and independent \u2014 "
+        "same hidden dimension (4096), stacks with any training investment.\n\n"
+        "GPU cost basis: AWS p4d.24xlarge 8\u00d7A100 spot at ~$9.39/hr.",
+        [[tbl], [r1], [r2]], click_reveal=True)
 
 
 
