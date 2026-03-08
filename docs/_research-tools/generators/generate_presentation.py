@@ -51,6 +51,7 @@ from presentation.slides_evaluation import (
     slide_what_good_looks_like, slide_14b, slide_15,
     slide_llm_judge_30, slide_judge_ex1, slide_judge_ex2,
     slide_judge_ex3, slide_judge_ex4, slide_judge_ex5, slide_judge_ex6,
+    slide_judge_report_screenshot,
 )
 from presentation.slides_engineering import (
     slide_eng_transition, slide_three_repos,
@@ -145,6 +146,7 @@ def main():
         slide_judge_ex4,    # Scientific vocabulary lost (IS 2.67)
         slide_judge_ex5,    # Cooking domain confusion (IS 2.07)
         slide_judge_ex6,    # Topic hijack (IS 1.79)
+        # slide_judge_report_screenshot, # [HIDDEN] HTML report screenshot (show if needed)
         # --- Salvage ---
         slide_25,           # LLM Salvage overview: 40.1% -> 51.1% (reframed: lower bound, LLM-judge only per batch 8)
         slide_llm_context_engine, # LLM as context engine

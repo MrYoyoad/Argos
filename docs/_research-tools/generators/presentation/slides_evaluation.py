@@ -1606,3 +1606,25 @@ def slide_judge_ex6(prs):
               "grammatically perfect continuation about TV production. This is "
               "a classic hallucination pattern — fluent, coherent, completely "
               "wrong. LLM judge: P (the model produces something). IS 1.79 (Poor).")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE — LLM JUDGE HTML REPORT SCREENSHOT (HIDDEN BACKUP)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_judge_report_screenshot(prs):
+    """Hidden slide: full-page screenshot of the 30-sample HTML report."""
+    slide = new_slide(prs)
+    add_title(slide, "LLM-as-a-Judge Report (30 Samples)")
+    add_accent_line(slide)
+
+    # Full-width report screenshot
+    img = add_image(slide, "llm_judge_report", MX, CT, width=CW, height=Inches(5.4))
+
+    _finish(slide, 0,
+        "Screenshot of the interactive HTML report (30 stratified samples from "
+        "1,497-segment dataset). Color-coded word diffs: green = match, "
+        "yellow = substitution, red = insertion. Columns: WER, WWER, NEA F1, IS, "
+        "LLM Judge verdict (Y/P/N). Distribution: Y=23.3%, P=40.0%, N=36.7%, "
+        "Y+P=63.3%. Mean WER 61.4%, Mean IS 2.67/5.0.",
+        [[img]])
