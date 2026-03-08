@@ -1012,14 +1012,15 @@ def slide_two_eval_systems(prs):
     r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.6),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                   corner_radius=True)
-    r1_t = add_text(slide, "Intelligibility Score (IS)", MX + Inches(0.2),
+    r1_t = add_text(slide, "Intelligibility Score (IS) \u2014 NIV Thresholds", MX + Inches(0.2),
              CT + Inches(0.6), col_w - Inches(0.4), Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
     r1_b = add_bullets(slide, [
-        "Strict metric: composite 0\u20135 score",
-        ("IS \u2265 3.0 = Captured: 40.1% (601/1,497)", {"bold": True}),
+        "Strict metric: composite 0\u20135 score, two operating points",
+        ("IS \u2265 3.80 = Clearly conveyed: 23.1% (346/1,497)", {"bold": True}),
+        ("IS \u2265 2.00 = Any useful meaning: 61.6% (922/1,497)", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(1.0), col_w - Inches(0.4), Inches(0.8),
-       size=Pt(13))
+       size=Pt(12))
 
     # Opus-as-Judge card
     r2 = add_rect(slide, MX, CT + Inches(2.3), col_w, Inches(1.6),
@@ -1030,7 +1031,7 @@ def slide_two_eval_systems(prs):
              size=Pt(14), color=GREEN, bold=True)
     r2_b = add_bullets(slide, [
         "Holistic: Y/P/N per ref+hyp pair (1,497 pairs)",
-        ("Y+P = 64.9% useful output (971/1,497)", {"bold": True}),
+        ("Y = 23.0% clearly conveyed, Y+P = 64.9% useful", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(2.8), col_w - Inches(0.4), Inches(0.8),
        size=Pt(13))
 
@@ -1040,37 +1041,40 @@ def slide_two_eval_systems(prs):
                   size=Pt(17), color=CORAL, bold=True)
 
     agree_txt = add_text(slide,
-        "85% correlation \u2014 both systems identify\n"
-        "the same segments as good or bad.",
+        "\u03ba = 0.818 (almost perfect agreement)\n"
+        "IS undercounts: 61.6% vs judge 64.9%.",
         rx, CT + Inches(0.5), col_w, Inches(0.6),
         size=Pt(15), color=WHITE, bold=True)
 
-    # Simplified agreement matrix
+    # NIV Y+P agreement matrix (IS >= 2.00 vs Opus Y+P)
     tbl = add_table(slide,
         ["", "Opus: Y or P", "Opus: N"],
-        [["IS \u2265 3.0", "554", "43"],
-         ["IS < 3.0", "417", "483"]],
+        [["IS \u2265 2.00", "883", "39"],
+         ["IS < 2.00", "88", "487"]],
         rx, CT + Inches(1.3), col_w, text_size=Pt(12),
         row_colors={0: {1: GREEN}, 1: {2: CORAL}})
 
-    # Worked example
-    we_t = add_text(slide, "Worked Example:", rx, CT + Inches(2.8), col_w, Inches(0.3),
+    # Worked examples
+    we_t = add_text(slide, "Worked Examples:", rx, CT + Inches(2.6), col_w, Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
     we_b = add_text(slide,
+        'Ref: "what does this chord sound like to you"\n'
+        'Hyp: "what does this court sound like to you"\n'
+        'WER: 12% \u2022 IS: 3.84 \u2022 NIV Y \u2714 \u2022 Opus: Y\n\n'
         'Ref: "opinions about reason and logic"\n'
         'Hyp: "our opinion is about reasoning and logic"\n'
-        'WER: 74% \u2022 IS: 2.92 (failed) \u2022 Opus: P (partial)\n'
-        'Meaning preserved despite word differences.',
-        rx, CT + Inches(3.2), col_w, Inches(1.5),
-        size=Pt(12), color=WHITE)
+        'WER: 74% \u2022 IS: 2.94 \u2022 NIV Y+P \u2714 \u2022 Opus: P\n'
+        'Old IS \u2265 3.0 wrongly rejected this segment.',
+        rx, CT + Inches(2.95), col_w, Inches(1.7),
+        size=Pt(11), color=WHITE)
 
     _finish(slide, 0,
-        "Two evaluation systems. IS is strict: 40.1% pass at IS >= 3.0. "
-        "Opus-as-a-Judge is more generous: Y+P = 64.9% (971/1,497). "
-        "85% Pearson correlation between IS and Opus verdicts. "
-        "The LLM judge is more conservative for full success (Y=23% vs IS 40%) "
-        "but more generous for any useful output (Y+P=65%). "
-        "IS is a conservative lower bound for real quality.",
+        "Two evaluation systems with NIV thresholds. "
+        "IS >= 3.80 for clearly conveyed (23.1%, matches judge Y rate 23.0%, kappa=0.690). "
+        "IS >= 2.00 for any useful meaning (61.6%, kappa=0.818, almost perfect). "
+        "Opus-as-a-Judge: Y=23.0%, Y+P=64.9%. "
+        "IS is a strict estimator — undercounts at both operating points. "
+        "Old IS >= 3.0 threshold is superseded: it sat in no-man's land (kappa=0.565 for Y, 0.521 for Y+P).",
         [[lt, r1, r1_t, r1_b], [r2, r2_t, r2_b], [rt, agree_txt, tbl, we_t, we_b]], click_reveal=True)
 
 

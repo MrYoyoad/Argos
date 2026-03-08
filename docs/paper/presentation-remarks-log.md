@@ -348,3 +348,4 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | # | Slide(s) | Remark | Status |
 |---|----------|--------|--------|
 | 221 | 20 (The Gap: Where WER Lies Most) | PPTX had stale embedded scatter plot showing old IS >= 3.0 threshold ("147 segments"). Regenerated P7_is_wer_scatter.png and rebuilt PPTX — now shows NIV thresholds (IS >= 3.80 Y gap: 42 segments, IS >= 2.00 Y+P gap: 437 segments) | done |
+| 222 | Two Evaluation Systems, One Framework | Update from old IS >= 3.0 confusion matrix to NIV thresholds. IS card now shows two operating points (IS >= 3.80 = 23.1%, IS >= 2.00 = 61.6%). Agreement matrix updated to NIV Y+P (883/39/88/487, κ=0.818). Two worked examples: NIV Y ("chord"→"court", IS 3.84) and NIV Y+P ("reason and logic", IS 2.94 — old threshold wrongly rejected). Speaker notes updated with NIV rationale | done |
