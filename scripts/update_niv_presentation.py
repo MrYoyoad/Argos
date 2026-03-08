@@ -800,6 +800,148 @@ def clarify_llm_swap_training(prs):
         "LLM is upgradeable — Llama 3.1 8B has the same 4096 hidden size. Requires LoRA adapter retraining.")
 
 
+# ─── Rebuild Price Tag Slide (remark #236) ───────────────────────────────────
+
+def rebuild_price_tag(prs):
+    """Rebuild Price Tag slide: simplified 3-col table, data-scale emphasis."""
+    print("Rebuilding Price Tag slide...")
+
+    for i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Price Tag" in shape.text_frame.text:
+                # Clear all shapes including tables (graphicFrame)
+                sp_tree = slide.shapes._spTree
+                for sp in list(sp_tree):
+                    if (sp.tag.endswith('}sp') or sp.tag.endswith('}pic')
+                            or sp.tag.endswith('}grpSp') or sp.tag.endswith('}graphicFrame')):
+                        sp_tree.remove(sp)
+                bg_fill = slide.background.fill
+                bg_fill.solid()
+                bg_fill.fore_color.rgb = NAVY
+
+                # Title
+                add_textbox(slide, "The Price Tag: What It Costs to Improve",
+                            MX, Inches(0.35), CW, Inches(0.65),
+                            size=Pt(32), color=WHITE, bold=True)
+
+                # Accent line
+                ln = slide.shapes.add_shape(1, MX, Inches(1.05), CW, Inches(0.02))
+                ln.fill.solid()
+                ln.fill.fore_color.rgb = TEAL
+                ln.line.fill.background()
+
+                # Framing line
+                add_textbox(slide,
+                    "The paper\u2019s training recipe already works (25.4% WER on LRS3). "
+                    "The only variable is data scale.",
+                    MX, CT, CW, Inches(0.35),
+                    size=Pt(14), color=LGRAY, italic=True)
+
+                # Simple 3-column table
+                tbl_w = Inches(9.0)
+                tbl_x = int((SLIDE_W - tbl_w) / 2)
+                tbl_y = CT + Inches(0.55)
+                headers = ["Training Data", "Cost (AWS spot)", "Expected IS"]
+                rows = [
+                    ["5\u201310K hrs  (10\u201320\u00d7 paper)", "~$10\u201320K", "~3.0\u20133.5"],
+                    ["20K hrs  (46\u00d7 paper)", "~$30\u201340K", "~3.5\u20133.8"],
+                    ["50K hrs  (115\u00d7 paper)", "~$70\u2013100K", "~3.8\u20134.2"],
+                ]
+                n_rows = len(rows) + 1  # +1 for header
+                tbl_shape = slide.shapes.add_table(n_rows, 3, tbl_x, tbl_y, tbl_w, Inches(0.6 * n_rows))
+                tbl = tbl_shape.table
+                tbl.columns[0].width = Inches(3.8)
+                tbl.columns[1].width = Inches(2.4)
+                tbl.columns[2].width = Inches(2.8)
+
+                # Header row
+                for c, h in enumerate(headers):
+                    cell = tbl.cell(0, c)
+                    cell.text = h
+                    p = cell.text_frame.paragraphs[0]
+                    p.font.size = Pt(15)
+                    p.font.color.rgb = WHITE
+                    p.font.bold = True
+                    p.font.name = "Calibri"
+                    p.alignment = PP_ALIGN.CENTER
+                    cell.fill.solid()
+                    cell.fill.fore_color.rgb = NAVY2
+
+                # Data rows
+                for r, row in enumerate(rows):
+                    for c, val in enumerate(row):
+                        cell = tbl.cell(r + 1, c)
+                        cell.text = val
+                        p = cell.text_frame.paragraphs[0]
+                        p.font.size = Pt(15)
+                        p.font.name = "Calibri"
+                        p.alignment = PP_ALIGN.CENTER
+                        cell.fill.solid()
+                        cell.fill.fore_color.rgb = NAVY2
+                        # Highlight sweet spot row (row index 1 = 20K hrs)
+                        if r == 1 and c >= 1:
+                            p.font.color.rgb = GREEN
+                            p.font.bold = True
+                        else:
+                            p.font.color.rgb = WHITE
+
+                # Key insight box
+                ins_y = CT + Inches(2.8)
+                ins_w = CW
+                ins_h = Inches(1.3)
+                box = slide.shapes.add_shape(
+                    1, MX, ins_y, ins_w, ins_h)
+                box.fill.solid()
+                box.fill.fore_color.rgb = NAVY2
+                box.line.color.rgb = GOLD
+                box.line.width = Pt(2)
+
+                add_textbox(slide, "Key insight",
+                            MX + Inches(0.25), ins_y + Inches(0.12),
+                            Inches(3.0), Inches(0.3),
+                            size=Pt(16), color=GOLD, bold=True)
+
+                add_bullet_textbox(slide, [
+                    "Paper used only 433 hrs of LRS3 \u2014 we need 20\u201350K hrs of diverse data",
+                    "Same training recipe, same model architecture \u2014 just more data",
+                    "Current IS 2.53 \u2192 target IS 3.5\u20134.0 requires ~46\u2013115\u00d7 data scale-up",
+                ], MX + Inches(0.2), ins_y + Inches(0.45), CW - Inches(0.4), Inches(0.8),
+                    size=Pt(14), color=WHITE)
+
+                # LLM upgrade callout
+                llm_y = ins_y + Inches(1.55)
+                llm_box = slide.shapes.add_shape(
+                    1, MX, llm_y, CW, Inches(0.8))
+                llm_box.fill.solid()
+                llm_box.fill.fore_color.rgb = NAVY2
+                llm_box.line.color.rgb = TEAL
+                llm_box.line.width = Pt(1)
+
+                add_textbox(slide,
+                    "LLM upgrade: Llama-2 \u2192 Llama 3.1 8B  "
+                    "(+0.3\u20130.5 IS, requires adapter retraining, stacks with data investment)",
+                    MX + Inches(0.25), llm_y + Inches(0.2),
+                    CW - Inches(0.5), Inches(0.4),
+                    size=Pt(14), color=TEAL)
+
+                # Speaker notes
+                set_notes(slide,
+                    "Cost projection focused on data scale as the single variable.\n\n"
+                    "The VSP-LLM paper already fine-tuned AV-HuBERT using a two-stage "
+                    "curriculum (freeze encoder 18K steps, unfreeze 12K steps) \u2014 this is "
+                    "the paper's existing recipe, not something new. It achieved 25.4% WER "
+                    "on LRS3. The method works; it just needs more diverse data.\n\n"
+                    "Three data tiers: 5-10K hrs ($10-20K), 20K hrs ($30-40K sweet spot), "
+                    "50K hrs ($70-100K). Paper trained on only 433 hrs of LRS3.\n\n"
+                    "LLM upgrade (Llama-2 \u2192 Llama 3.1 8B) requires adapter retraining "
+                    "but stacks with any data investment. Same hidden dimension (4096).\n\n"
+                    "GPU cost basis: AWS p4d.24xlarge 8\u00d7A100 spot at ~$9.39/hr.")
+
+                print(f"  Rebuilt slide {i+1}")
+                return
+    print("  WARNING: Price Tag slide not found!")
+
+
 # ─── Item 17: Arabic Risk Downgrade ──────────────────────────────────────────
 
 def downgrade_arabic_risk(prs):
@@ -1806,6 +1948,7 @@ def main():
     add_lrs3_comment(prs)              # Item 11
     reframe_three_numbers(prs)          # Item 13
     clarify_llm_swap_training(prs)     # Item 16
+    rebuild_price_tag(prs)             # Remark #236
     downgrade_arabic_risk(prs)          # Item 17
     add_human_expert_animation(prs)     # Item 20
     expand_arabic_analysis(prs)         # Item 21

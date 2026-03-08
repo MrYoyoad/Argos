@@ -1454,13 +1454,13 @@ def slide_price_tag(prs):
     ], MX + Inches(0.2), ins_y + Inches(0.45), CW - Inches(0.4), Inches(0.8),
         size=Pt(14))
 
-    # LLM swap — independent free upgrade
+    # LLM upgrade — requires adapter retraining but stacks with data investment
     llm_y = ins_y + Inches(1.55)
     r2 = add_rect(slide, MX, llm_y, CW, Inches(0.8),
                    fill_color=NAVY2, border_color=TEAL, border_width=Pt(1),
                    corner_radius=True)
-    add_text(slide, "Free bonus: swap Llama-2 \u2192 Llama 3.1 8B  "
-             "(+0.3\u20130.5 IS, no retraining, stacks with any tier above)",
+    add_text(slide, "LLM upgrade: Llama-2 \u2192 Llama 3.1 8B  "
+             "(+0.3\u20130.5 IS, requires adapter retraining, stacks with data investment)",
              MX + Inches(0.25), llm_y + Inches(0.2),
              CW - Inches(0.5), Inches(0.4),
              size=Pt(14), color=TEAL)
@@ -1473,8 +1473,8 @@ def slide_price_tag(prs):
         "on LRS3. The method works; it just needs more diverse data.\n\n"
         "Three data tiers: 5-10K hrs ($10-20K), 20K hrs ($30-40K sweet spot), "
         "50K hrs ($70-100K). Paper trained on only 433 hrs of LRS3.\n\n"
-        "LLM backbone swap (Llama-2 \u2192 Llama 3.1 8B) is free and independent \u2014 "
-        "same hidden dimension (4096), stacks with any training investment.\n\n"
+        "LLM upgrade (Llama-2 \u2192 Llama 3.1 8B) requires adapter retraining "
+        "but stacks with any data investment. Same hidden dimension (4096).\n\n"
         "GPU cost basis: AWS p4d.24xlarge 8\u00d7A100 spot at ~$9.39/hr.",
         [[tbl], [r1], [r2]], click_reveal=True)
 
