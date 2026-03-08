@@ -342,3 +342,9 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 219 | Radar (Model Comparison) | Grey subtitle text covered by radar graph — moved image down 0.2" | done |
 | 218 | IS in Action (two segments) | Bad segment arithmetic wrong: Phonetic 0.029→0.030, Inv WWER 0.004→0.005, sum 0.80→0.81 | done |
 | 220 | 2 (What is VSP?) | Yellow and grey text overlapping — deleted grey subtitle and grey caption, enlarged video (4.3→4.8"), moved up to y=1.8" | done |
+
+## Batch 16 — 2026-03-08 (Stale PPTX Image Fix)
+
+| # | Slide(s) | Remark | Status |
+|---|----------|--------|--------|
+| 221 | 20 (The Gap: Where WER Lies Most) | PPTX had stale embedded scatter plot showing old IS >= 3.0 threshold ("147 segments"). Regenerated P7_is_wer_scatter.png and rebuilt PPTX — now shows NIV thresholds (IS >= 3.80 Y gap: 42 segments, IS >= 2.00 Y+P gap: 437 segments) | done |
