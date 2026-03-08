@@ -891,7 +891,7 @@
 \begin{frame}[shrink=10]{IS Deep Dive: What Drives Quality?}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
-      \begin{block}{\small 6 Signals $\rightarrow$ 2 PCA Dimensions (87.9\%)}
+      \begin{block}{\small 6 Signals $\rightarrow$ 3 Principal Components (93\%)}
         {\scriptsize
         \begin{tabular}{@{}lcc@{}}
           \textbf{Signal} & \textbf{r with IS} & \textbf{PC1 loading} \\
@@ -903,10 +903,12 @@
           WER & $-$0.849 & 0.44 \\
           Length Ratio & 0.226 & \textit{PC2: 0.91} \\
         \end{tabular}\\[4pt]
-        \textbf{Principal Components (Kaiser):}\\
+        \textbf{Principal Components:}\\
         1. \keyword{PC1: Signal Quality} (68.4\%) --- all 5 content signals\\
         \quad Semantic is NOT independent; loads with word accuracy\\
-        2. \keyword{PC2: Output Length} (19.5\%) --- Length Ratio only}
+        2. \keyword{PC2: Output Length} (19.5\%) --- Length Ratio only\\
+        3. \keyword{PC3: Entity Swing} (5.1\%) --- NEA F1 refinement\\
+        \quad Below Kaiser threshold ($\lambda$=0.31); names/numbers nuance}
       \end{block}
     \end{column}
     \begin{column}{0.48\textwidth}
