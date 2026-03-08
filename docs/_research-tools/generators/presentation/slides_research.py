@@ -36,7 +36,7 @@ def slide_is_intro_a(prs):
     banner = add_rect(slide, MX, CT, CW, Inches(0.55), fill_color=NAVY2,
                       border_color=TEAL, border_width=Pt(2), corner_radius=True)
     banner_txt = add_text(slide,
-        "IS = composite of 6 signals (0\u20135).  IS \u2265 3.0 = \"Properly Captured\".  "
+        "IS = composite of 6 signals (0\u20135).  IS \u2265 2.00 = \"Useful Output\" (Y+P).  "
         "These 3 signals measure raw word accuracy and output sanity.",
         MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.4),
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
@@ -576,7 +576,7 @@ def slide_is_radar(prs):
     add_accent_line(slide)
     sub = add_text(slide,
         "How different LLM backbones would reshape the IS radar \u2014 "
-        "projected profiles based on literature and architecture analysis.",
+        "measured profiles from LRS3 benchmark and YouTube evaluation.",
         MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
     # Radar image (reuse existing if available, framing is now about models)
@@ -592,26 +592,21 @@ def slide_is_radar(prs):
     # Clean legend — just color key, no description cards
     legend_y = SL_H - Inches(0.65)
     add_text(slide,
-        "\u25cf Llama-2 7B (current, coral)     \u25cf Llama 3.1 8B (projected, teal)"
-        "     \u26a0 Projected — not measured on our dataset",
+        "\u25cf LRS3 benchmark (YouTube baseline, coral)     \u25cf YouTube real-world (target profile, teal)",
         MX, legend_y, CW, Inches(0.35),
         size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Model comparison radar. Shows how different LLM backbones would "
-        "reshape the IS radar profile.\n\n"
-        "Llama-2 7B (current, coral): Jagged profile — strong on length "
-        "ratio but weak on semantics and named entities. The visual encoder "
-        "delivers adequate mouth-shape features, but the LLM lacks the world "
-        "knowledge to fill in vocabulary gaps.\n\n"
-        "Llama 3.1 8B (projected, teal): Fuller profile — improved semantic "
-        "and entity axes thanks to stronger language modeling, 128K vocabulary "
-        "(vs 32K), and better instruction following. Expected to close the "
-        "semantic gap that accounts for ~28% of IS variance.\n\n"
-        "These are projected profiles based on published benchmarks and "
-        "architecture analysis, not measured on our dataset. The key insight "
-        "is that the radar shape reveals where each model is strong and weak "
-        "— future work should target the collapsed axes.",
+        "Dual radar chart: LRS3 benchmark (measured, n=170) vs YouTube real-world "
+        "(measured, n=1,497).\n\n"
+        "LRS3 values (all measured): Semantic 0.779, Phonetic 0.794, "
+        "1-WER 0.689, 1-WWER 0.662, NEA 0.683, LenRatio 0.971.\n"
+        "YouTube values (all measured): Semantic 0.58, Phonetic 0.52, "
+        "1-WER 0.36, 1-WWER 0.38, NEA 0.39, LenRatio 0.72.\n\n"
+        "Key insight: the radar shape reveals where each condition is "
+        "strong and weak. Length Ratio stays high even for YouTube "
+        "(model generates correct amount of text). The collapsed axes "
+        "(WER, WWER, NEA) are where the domain gap hits hardest.",
         [[img]])
 
 
@@ -662,7 +657,7 @@ def slide_is_wer_scatter(prs):
 
 def slide_07(prs):
     slide = new_slide(prs)
-    add_title(slide, "Intelligibility Score: 40.1% Properly Captured")
+    add_title(slide, "Intelligibility Score: 61.6% Useful Output")
     add_accent_line(slide)
 
     # 6 signal blocks
@@ -694,7 +689,7 @@ def slide_07(prs):
 
     # Key callout
     callout = add_text(slide,
-        "IS ≥ 3.0 = Properly Captured: 40.1% — 3.5× more than WER's 11.4%\n"
+        "IS ≥ 2.00 = Useful (Y+P): 61.6% — 2.4× what WER suggests (25.5%)\n"
         "Phonetic similarity: 41.5% mean, r=0.943 with IS (strongest single signal)",
         MX, by + bh + Inches(0.2), CW, Inches(0.55),
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
@@ -726,8 +721,8 @@ def slide_07(prs):
 
     _finish(slide, 7,
         "The Intelligibility Score combines 6 signals into a 0-5 composite. "
-        "Key insight: 40.1% of segments are properly captured (IS >= 3.0) — "
-        "3.5x more than WER's 11.4% 'usable.' WER dramatically overstates "
+        "Key insight: 61.6% of segments deliver useful output (IS >= 2.00, NIV Y+P) — "
+        "2.4x what WER suggests (25.5%). WER dramatically overstates "
         "failure. Methodology: LLM-distilled evaluation — the "
         "rubric, selected signals and weights, defined tier boundaries. "
         "Validated across 16 decode configs: LLM heuristic judge r=0.925 "
@@ -1162,7 +1157,7 @@ def slide_09(prs):
 
 
 def slide_metric_transition(prs):
-    """The three numbers: 64.1% -> 40.1% -> 51.1%."""
+    """The three numbers: 25.5% -> 61.6% -> 64.9%."""
     slide = new_slide(prs)
     add_title(slide, "Three Numbers That Tell the Real Story")
     add_accent_line(slide)
@@ -1177,16 +1172,14 @@ def slide_metric_transition(prs):
     g1.append(add_rect(slide, card_x, c1_y, card_w, card_h,
                         fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                         corner_radius=True))
-    g1.append(add_text(slide, "64.1%", card_x + Inches(0.3), c1_y + Inches(0.1),
+    g1.append(add_text(slide, "25.5%", card_x + Inches(0.3), c1_y + Inches(0.1),
                         Inches(2.5), card_h - Inches(0.2),
                         size=Pt(48), color=CORAL, bold=True))
-    g1.append(add_text(slide, "What WER reports\n\"Two-thirds of words are wrong\"",
+    g1.append(add_text(slide, "By WER (\u226434%)\n381 of 1,497 videos appear useful\nWER says only 1 in 4 works",
                         card_x + Inches(3.0), c1_y + Inches(0.15),
                         card_w - Inches(3.3), card_h - Inches(0.3),
                         size=Pt(15), color=LGRAY))
-    # Strikethrough line
-    g1.append(add_rect(slide, card_x + Inches(0.4), c1_y + card_h / 2 - Pt(1.5),
-                        Inches(2.3), Pt(3), fill_color=CORAL))
+    # No strikethrough — WER is still valid, just pessimistic
 
     a1_y = c1_y + card_h + Inches(0.05)
     g1_arrow = []
@@ -1199,11 +1192,11 @@ def slide_metric_transition(prs):
     g2.append(add_rect(slide, card_x, c2_y, card_w, card_h,
                         fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                         corner_radius=True))
-    g2.append(add_text(slide, "40.1%", card_x + Inches(0.3), c2_y + Inches(0.1),
+    g2.append(add_text(slide, "61.6%", card_x + Inches(0.3), c2_y + Inches(0.1),
                         Inches(2.5), card_h - Inches(0.2),
                         size=Pt(48), color=TEAL, bold=True))
     g2.append(add_text(slide,
-        "What IS reveals: 601 of 1,497 segments\ndeliver genuinely useful output",
+        "By IS (\u22652.00): 922 of 1,497 videos\ndeliver useful meaning\nIS reveals 3 in 5 carry meaning",
         card_x + Inches(3.0), c2_y + Inches(0.15),
         card_w - Inches(3.3), card_h - Inches(0.3),
         size=Pt(15), color=WHITE))
@@ -1223,14 +1216,17 @@ def slide_metric_transition(prs):
                         Inches(2.5), card_h - Inches(0.2),
                         size=Pt(48), color=GREEN, bold=True))
     g3.append(add_text(slide,
-        "Opus-as-a-Judge confirms: Y+P = 971/1,497\n2 in 3 segments deliver useful output",
+        "By LLM Judge (Y+P): 971 of 1,497\nconfirmed useful\nExpert judgment confirms 2 in 3 work",
         card_x + Inches(3.0), c3_y + Inches(0.15),
         card_w - Inches(3.3), card_h - Inches(0.3),
         size=Pt(15), color=WHITE))
 
     _finish(slide, 0,
-        "The three numbers: WER 64.1% (misleading), IS captured 40.1% (real), "
-        "Opus-as-a-Judge Y+P 64.9% (the full picture).",
+        "Three numbers answering the same question: 'How many videos are useful?' "
+        "WER (≤34%): 25.5% (381/1,497) — most pessimistic, uses NIV-calibrated threshold. "
+        "IS (≥2.00): 61.6% (922/1,497) — captures useful meaning. "
+        "LLM Judge (Y+P): 64.9% (971/1,497) — expert confirms. "
+        "Progressive revelation: WER dramatically understates quality.",
         [g1, g1_arrow + g2, g2_arrow + g3], click_reveal=True)
 
 
@@ -1380,7 +1376,7 @@ def slide_tuning_summary(prs):
     headers = ["Metric", "Baseline", "Config J", "\u0394"]
     rows = [
         ["Mean IS", "2.53", "2.60", "+0.07"],
-        ["Captured (IS\u22653)", "40.1%", "41.2%", "+1.1pp"],
+        ["Useful (IS\u22652)", "61.6%", "62.8%", "+1.2pp"],
         ["Empty outputs", "4.7%", "0%", "\u221270"],
         ["Hallucinations", "20.5%", "23.2%", "+41"],
         ["Mean WWER", "60.5%", "59.8%", "\u22120.7pp"],

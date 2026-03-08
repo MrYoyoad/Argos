@@ -300,7 +300,7 @@ def slide_16(prs):
 
 def slide_25(prs):
     slide = new_slide(prs)
-    add_title(slide, "IS: A Conservative Lower Bound")
+    add_title(slide, "IS: A Calibrated Surrogate Metric")
     add_accent_line(slide)
 
     # Big number card — centered, full width
@@ -346,7 +346,7 @@ def slide_25(prs):
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 25,
-        "IS provides a conservative lower bound for transcription quality. "
+        "IS is a calibrated surrogate metric for transcription quality. "
         "IS says 40.1% of segments are captured (IS >= 3.0). But an independent "
         "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
         "Y+P = 64.9% deliver useful output. The 25pp gap shows IS deliberately "
@@ -1137,7 +1137,7 @@ def slide_llm_judge(prs):
     takeaway = add_text(slide,
         "LLM judge is more conservative for full success (23% vs IS 40%) "
         "but more generous for any useful output (Y+P=65%). "
-        "IS is a conservative lower bound for real quality.",
+        "IS is a calibrated surrogate for real quality.",
         MX, Inches(6.3), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1327,8 +1327,8 @@ def slide_llm_context_engine(prs):
     add_bullets(slide, [
         "128K vocab, 128K context",
         "Quality \u2248 LLaMA-2 70B",
-        ("Same hidden_size (4096) = drop-in swap", {"color": GREEN}),
-        ("Setup: 1\u20132 hours", {"bold": True}),
+        ("Same hidden_size (4096) = architecture-compatible", {"color": GREEN}),
+        ("Requires adapter retraining (~2\u20134 weeks)", {"bold": True}),
     ], rx + Inches(0.2), CT + Inches(3.0), col_w - Inches(0.4), Inches(1.2),
        size=Pt(12), bullet_color=GREEN)
 
@@ -1337,7 +1337,7 @@ def slide_llm_context_engine(prs):
         "can't distinguish visemes. The LLM resolves ambiguity using language "
         "context. A stronger LLM means better disambiguation. Llama 3.1 8B "
         "has quality equivalent to LLaMA-2 70B with the same hidden dimension "
-        "(4096), making it a trivial 1-2 hour swap.",
+        "(4096), architecture-compatible but requires adapter retraining.",
         [[lt, lb], [rt, r1, r2]], click_reveal=True)
 
 

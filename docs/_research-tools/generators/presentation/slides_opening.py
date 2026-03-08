@@ -283,7 +283,14 @@ def slide_02(prs):
         "PLAY VIDEO: IEa7qEkMvfQ_3__c5447488_with_hyp.mp4 — 33 words about "
         "health insurance, WER 0%. Play the video first, then explain: this is "
         "the best case. The system perfectly reads 33 consecutive words from lip "
-        "movement alone. Now let's see how it works.")
+        "movement alone. Now let's see how it works.\n\n"
+        "AFTER VIDEO: System + human reader outperforms expert lip readers. "
+        "Expert lip readers achieve ~45-52% word accuracy on unconstrained speech "
+        "(Auer & Bernstein 2007). Model + context-aware human: estimated 55-70% "
+        "word accuracy, 75-85% meaning capture. Key insight: the model provides "
+        "candidate text (the hardest part of lip reading). The human's job becomes "
+        "verification, not generation — dramatically easier. Hallucination risk "
+        "drops from 20.5% to <5% with human filtering.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 3 — MODEL ARCHITECTURE
@@ -334,8 +341,8 @@ def slide_03(prs):
 
     # Bottom note
     add_text(slide,
-             "Only 12.6M trainable params (0.19%). LLM is swappable — "
-             "Llama 3.1 8B is a drop-in replacement (same 4096 hidden size).",
+             "Only 12.6M trainable params (0.19%). LLM is upgradeable — "
+             "Llama 3.1 8B is architecture-compatible (same 4096 hidden size, requires adapter retraining).",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True)
 
@@ -344,8 +351,8 @@ def slide_03(prs):
         "on LRS3 lip-reading data. It outputs 1024-dim features per frame. A "
         "linear projection maps to 4096-dim (LLM input space). Then LLaMA-2-7B "
         "generates text. Key: only the LoRA adapters and projection layer are "
-        "trained — 12.6M of 7B parameters. And the LLM is swappable: Llama 3.1 "
-        "8B has the same hidden dimension, making it a trivial 1-2 hour swap.",
+        "trained — 12.6M of 7B parameters. The LLM is upgradeable: Llama 3.1 "
+        "8B has the same hidden dimension (requires adapter retraining).",
         [[img], block_groups[0] + [arrows[0]] + block_groups[1] + [arrows[1]] + block_groups[2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -371,7 +378,10 @@ def slide_04(prs):
         notes="The paper reports 25.4% WER on LRS3 — a curated TED talks dataset "
               "with ideal conditions. Our 1,497 YouTube segments are fundamentally "
               "harder: diverse speakers, topics, lighting, angles. Result: 64.1% "
-              "WER, 2.5x worse. The dataset is different, and that explains the gap.")
+              "WER, 2.5x worse. The dataset is different, and that explains the gap.\n\n"
+              "Note: Our best LRS3 reproduction achieved 32% WER — gap from paper's "
+              "25.4% likely due to pretrain vs test split differences. "
+              "Details in docs/evaluation/lrs3_decode_experiment.md.")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 5 — THE REALITY GAP

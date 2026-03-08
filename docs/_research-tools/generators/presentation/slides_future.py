@@ -60,8 +60,8 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
-        ("40.1% properly captured (IS \u2265 3.0)", {"bold": True}),
-        ("64.9% useful per Opus-as-a-Judge (Y+P = 971/1,497)",
+        ("61.6% useful output (IS \u2265 2.00, NIV Y+P)", {"bold": True}),
+        ("64.9% confirmed by Opus-as-a-Judge (Y+P = 971/1,497)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
         "85% correlation between IS and Opus verdicts",
@@ -81,7 +81,7 @@ def slide_24(prs):
 
     _finish(slide, 24,
         "This is the turning point. WER says 11.4% usable. Our "
-        "Intelligibility Score says 40.1% properly captured — 3.5x more. "
+        "Intelligibility Score says 61.6% useful output (NIV Y+P) — 2.4x more. "
         "Opus-as-a-Judge confirms 64.9% useful output (Y+P = 971/1,497). "
         "Validated across 16 decode configs with 85% correlation.",
         [[r1], [r2, img]], click_reveal=True)
@@ -197,7 +197,7 @@ def slide_26b(prs):
     rx = MX + Inches(8.3)
     rw = Inches(3.8)
     milestones = [
-        ("Current", "IS 2.53", "40.1% captured", "", CORAL),
+        ("Current", "IS 2.53", "61.6% useful", "", CORAL),
         ("Phase 1\u20132", "IS ~2.85",  "~48% captured",
          "Fixes: Signal Loss (9%), Accum. Errors (24.4%), Content Words (10.7%)", TEAL),
         ("+ Phase 3", "IS ~3.40", "~58% captured",
@@ -232,7 +232,7 @@ def slide_26b(prs):
 
     _finish(slide, "26b",
         "IS improvement trajectory with failure mode annotations. "
-        "Current IS 2.53 (40.1% captured). "
+        "Current IS 2.53 (61.6% useful). "
         "Phase 1-2 target IS ~2.85 (48% captured) by fixing Signal Loss (9%), "
         "Accumulated Errors (24.4%), and Content Word Errors (10.7%). "
         "Phase 3 target IS ~3.40 (58% captured) by fixing Hallucination (12.3%) "
@@ -412,10 +412,10 @@ def slide_30(prs):
     add_accent_line(slide)
 
     cols = [
-        ("LLM Swap (immediate)", [
-            "Llama 3.1 8B: drop-in (same hidden_size 4096)",
+        ("LLM Upgrade (requires training)", [
+            "Llama 3.1 8B: architecture-compatible (same hidden_size 4096)",
             "Quality ≈ Llama-2 70B, 128K vocab, 128K context",
-            ("Setup: 1-2 hours", {"bold": True}),
+            ("Requires adapter retraining (~2\u20134 weeks)", {"bold": True}),
             "Alone: -3 to -8pp WER",
         ], TEAL),
         ("Smart Prompts (force multiplier)", [
@@ -457,7 +457,7 @@ def slide_30(prs):
 
     _finish(slide, 30,
         "Three columns of future capability. Left: LLM swap to Llama 3.1 "
-        "8B is trivial — same hidden dimension, 1-2 hours. Center: 7 prompt "
+        "8B is architecture-compatible — same hidden dimension, requires adapter retraining. Center: 7 prompt "
         "strategies are a force multiplier — more effective on stronger "
         "models. GER uses N-best hypotheses + correction LLM for +8-15pp "
         "with no retraining. Right: Arabic support planned, multi-speaker "
@@ -529,7 +529,7 @@ def slide_30b(prs):
     # Drop-in callout
     drop_y = CT + Inches(3.85)
     drop_text = add_text(slide,
-        "Same hidden dimension (4096) = drop-in swap, 1\u20132 hours setup",
+        "Same hidden dimension (4096) = architecture-compatible, requires adapter retraining",
         MX, drop_y, left_w, Inches(0.35),
         size=Pt(14), color=LGRAY, italic=True)
 
@@ -581,7 +581,7 @@ def slide_30b(prs):
         "LLM upgrade analysis — simplified view.\n\n"
         "LEFT: Capability gap table. Llama 3.1 8B has 4x vocabulary, "
         "32x context, 7.5x training data, +61% on MMLU. Same hidden "
-        "dimension (4096) = trivial drop-in swap.\n\n"
+        "dimension (4096) = architecture-compatible upgrade (requires adapter retraining).\n\n"
         "VALLR PROOF (ICCV 2025): Llama 3.2-3B (only 3B params) achieved "
         "18.7% WER on LRS3 vs our 25.4% with Llama-2-7B. A smaller Llama 3 "
         "model beats a bigger Llama 2 — proves the architecture upgrade "
@@ -705,7 +705,7 @@ def slide_30c(prs):
         "prior with 61% higher MMLU and 4x vocabulary directly fixes "
         "entity names and content words.\n\n"
         "Total estimated recovery: ~155-235 of 900 failed segments, "
-        "pushing capture rate from 40.1% to ~50-56%.",
+        "pushing useful output rate from 61.6% to ~70-75%.",
         [[ft, tbl],
          [insight_box, insight_title, insight_text],
          [note_text]])
@@ -744,7 +744,7 @@ def slide_arabic_roadmap(prs):
         (GREEN, "Training infrastructure",
          "AWS GPU instance (existing) for AV-HuBERT fine-tuning "
          "and K-means reclustering on Arabic mouth shapes"),
-        (CORAL,  "RTL text & normalization (RISK)",
+        (CORAL,  "RTL text & normalization (minor integration)",
          "RTL text handling may need research; spaCy Arabic, "
          "diacritic handling, Arabic NER \u2014 maturity unknown"),
     ]
@@ -782,7 +782,7 @@ def slide_arabic_roadmap(prs):
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
     timeline_txt = add_text(slide,
-             "Realistic estimate: 3\u20135 months (encoder pre-training is the bottleneck)",
+             "Realistic estimate: 2\u20133 months (encoder pre-training is the bottleneck)",
              MX + Inches(0.3), Inches(5.90), CW - Inches(0.6), Inches(0.4),
              size=Pt(20), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
 
@@ -808,7 +808,7 @@ def slide_arabic_roadmap(prs):
         "3. RTL text handling and Arabic NER tooling maturity is unknown.\n\n"
         "Steps: fine-tune AV-HuBERT + recluster K-means (5-10 weeks), swap to "
         "Arabic LLM (1-2 weeks), build eval dataset (4-8 weeks, parallel), "
-        "RTL normalization + end-to-end testing (3-6 weeks). Total 3-5 months "
+        "RTL normalization + end-to-end testing (3-6 weeks). Total 2-3 months "
         "realistic. Pipeline code itself is language-agnostic.",
         anim, click_reveal=True)
 
@@ -903,8 +903,8 @@ def slide_31(prs):
 
     takeaways = [
         ("1", "Rigorous assessment: 2.5\u00d7 WER gap on 1,497 segments. "
-              "Novel IS metric reveals 40% properly captured, 51% with "
-              "LLM salvage. 5 classified failure categories."),
+              "Novel IS metric reveals 61.6% useful output (NIV Y+P), "
+              "confirmed by LLM judge at 64.9%. 5 classified failure categories."),
         ("2", "Production system delivered: standalone container, 37 bugs "
               "fixed, 8-stage pipeline, 37 tests, 8 research reports."),
         ("3", "Data is the bottleneck: fine-tuning experiments (Exp A/B) "
@@ -1109,9 +1109,9 @@ def slide_a11(prs):
         ["Metric", "Value"],
         [["Metric-failed segments", "900"],
          ["LLM-recoverable", "165 (18.3%)"],
-         ["Metric capture (IS ≥ 3.0)", "40.1%"],
-         ["Effective capture", "51.1%"],
-         ["Uplift", "+11.0pp (+27.6% rel.)"]],
+         ["Useful output (IS ≥ 2.00)", "61.6%"],
+         ["LLM Judge (Y+P)", "64.9%"],
+         ["Agreement (κ)", "0.818"]],
         MX, CT + Inches(0.4), SLW, text_size=Pt(11),
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
 
@@ -1141,7 +1141,7 @@ def slide_a11(prs):
 
     _finish(slide, "A4",
         "165 of 900 metric-failed segments are recoverable by the LLM "
-        "heuristic. Effective capture rises from 40.1% to 51.1%. "
+        "heuristic. Useful output rate is 61.6% (NIV Y+P). "
         "6 recovery categories (overlap, not disjoint). "
         "58% have moderate WER (50-70%).")
 
