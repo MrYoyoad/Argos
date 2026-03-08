@@ -418,24 +418,27 @@ def slide_is_weight_rationale(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "PCA on 1,497 segments reveals the answer: No \u2014 just 2 independent dimensions.",
+        "PCA on 1,497 segments reveals where the variance actually lives.",
         MX, CT, CW, Inches(0.3),
         size=Pt(14), color=LGRAY, italic=True)
 
-    # Two PCA dimension cards — full width, stacked
+    # Three PCA dimension cards — full width, stacked
     card_w = CW
-    card_h = Inches(1.6)
+    card_h = Inches(1.3)
     py = CT + Inches(0.5)
 
     dims = [
         ("PC1: Signal Quality", "68.4%", TEAL,
-         "All 5 content signals load equally (0.43\u20130.47) \u2014 they rise and fall together",
-         "The visual encoder either captures the speech or it doesn\u2019t. "
-         "When it does, words, sounds, meaning, and entities are ALL correct."),
-        ("PC2: Output Length", "19.5%", LGRAY,
+         "Semantic + Phonetic + WER + WWER + Named Entity Accuracy",
+         "All 5 content signals load equally (0.43\u20130.47). Semantic is NOT "
+         "independent \u2014 it measures the same underlying quality as word accuracy."),
+        ("PC2: Output Length", "19.5%", GREEN,
          "Length Ratio dominates (loading 0.91) \u2014 independent of content quality",
-         "Did the model produce the right amount of text? "
-         "Too long = hallucination. Too short = signal loss."),
+         "Catches hallucination (too long) and truncation (too short)."),
+        ("PC3: Entity Swing", "5.1%", GOLD,
+         "NEA F1 loads here (below Kaiser threshold, eigenvalue 0.31)",
+         "Minor refinement axis \u2014 names and numbers that diverge "
+         "from the main quality signal."),
     ]
 
     dim_shapes = []
@@ -447,36 +450,30 @@ def slide_is_weight_rationale(prs):
         add_text(slide, pct, MX + card_w - Inches(1.2), py + Inches(0.1),
                  Inches(1.0), Inches(0.35), size=Pt(18), color=color,
                  bold=True, align=PP_ALIGN.RIGHT)
-        add_text(slide, signals, MX + Inches(0.3), py + Inches(0.5),
+        add_text(slide, signals, MX + Inches(0.3), py + Inches(0.45),
                  card_w - Inches(0.6), Inches(0.3), size=Pt(13), color=WHITE)
-        add_text(slide, desc, MX + Inches(0.3), py + Inches(0.85),
-                 card_w - Inches(0.6), Inches(0.55), size=Pt(12), color=LGRAY)
+        add_text(slide, desc, MX + Inches(0.3), py + Inches(0.75),
+                 card_w - Inches(0.6), Inches(0.45), size=Pt(12), color=LGRAY)
         dim_shapes.append(r)
-        py += Inches(1.8)
-
-    # Key implication
-    sem_t = add_text(slide,
-        "This is good news: the weighted sum is reliable because all signals "
-        "point the same direction. Changing the weights barely matters (r = 0.999).",
-        MX, py + Inches(0.1), CW, Inches(0.5),
-        size=Pt(13), color=GREEN, italic=True)
+        py += Inches(1.5)
 
     # Bottom takeaway
     val_t = add_text(slide,
-        "Together: 87.9% of variance explained. The IS formula is robust by design.",
+        "Together: 93% of variance in 3 components. "
+        "Kaiser retains 2 (87.9%); PC3 adds nuance.",
         MX, Inches(6.35), CW, Inches(0.35),
         size=Pt(13), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "PCA story. We asked: do 6 signals actually measure 6 independent things? "
-        "No \u2014 Kaiser criterion retains only 2 principal components. PC1 (68.4%): "
-        "all 5 content signals load equally at 0.43-0.47, forming one general "
-        "quality factor driven by the visual encoder. Semantic is NOT independent "
-        "\u2014 it moves with word-accuracy signals. PC2 (19.5%): Length Ratio "
-        "dominates at 0.91, truly independent of content. Together 87.9%. "
+        "PCA story. Kaiser criterion PCA on 6 standardized IS signals. "
+        "PC1 (68.4%): all 5 content signals load equally at 0.43-0.47 \u2014 one general "
+        "quality factor. Semantic is NOT independent; it loads on PC1 with word-accuracy. "
+        "PC2 (19.5%): Length Ratio dominates at 0.91, independent of content. "
+        "PC3 (5.1%): Entity Swing, NEA F1 refinement, below Kaiser threshold "
+        "(eigenvalue 0.31 < 1.0). Together 93%. "
         "Weight sensitivity: current vs equal weights correlate at r=0.999 \u2014 "
         "only 5.4% of segments change tier. The formula is robust to perturbation.",
-        [dim_shapes, [sem_t, val_t]], click_reveal=True)
+        [dim_shapes, [val_t]], click_reveal=True)
 
 
 def slide_is_calc_examples(prs):
