@@ -27,6 +27,81 @@ from .helpers import (
 )
 
 # ═══════════════════════════════════════════════════════════════════════
+# WHAT WAS DONE (1/2 and 2/2)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_what_was_done_1(prs):
+    """What was done? (1/2) — four months of research and engineering."""
+    slide = new_slide(prs)
+    add_title(slide, "What was done? (1/2)")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "Four months of research and engineering on visual speech processing:",
+        MX, CT, CW, Inches(0.35), size=Pt(15), color=LGRAY, italic=True)
+
+    bullets = [
+        "Started from a research paper with no working environment, "
+        "no documentation, and no pipeline",
+        "Standard metric (WER) proved insufficient for measuring "
+        "actual output quality",
+        "Built a complete end-to-end pipeline, including preprocessing "
+        "(STT, face crop) and post-processing",
+        "Created a working environment and deployed to a standalone "
+        "container with a professional UI",
+        "Evaluated the model extensively, including designing a new metric "
+        "that measures whether meaning is preserved",
+        "Started fine-tuning the model, including environment setup "
+        "and data preparation",
+        "Created a clear plan to improve performance and generalize "
+        "from English to Arabic",
+    ]
+
+    add_bullets(slide, bullets, MX, CT + Inches(0.45), CW, Inches(4.0),
+                size=Pt(14), bullet_color=TEAL)
+
+    _finish(slide, 0,
+        "Overview slide 1/2. Four months of work: went from a research paper "
+        "with no environment to a full pipeline, standalone container with UI, "
+        "new evaluation metric (IS), fine-tuning experiments, and Arabic roadmap.")
+
+
+def slide_what_was_done_2(prs):
+    """What was done? (2/2) — key findings and outcomes."""
+    slide = new_slide(prs)
+    add_title(slide, "What was done? (2/2)")
+    add_accent_line(slide)
+
+    add_text(slide,
+        "Four months of research and engineering on visual speech processing:",
+        MX, CT, CW, Inches(0.35), size=Pt(15), color=LGRAY, italic=True)
+
+    bullets = [
+        "Proved the model performs well \u2014 about 65% of videos are "
+        "useful by LLM judge assessment",
+        "The IS metric shows high agreement with the LLM judge and "
+        "can be computed on the standalone computer",
+        "Semantic meaning, phonetic similarity, and named entity accuracy "
+        "are the critical factors in understanding model performance",
+        "Full failure analysis completed with suggested improvements",
+        "Fully reproducible container build and model deployment "
+        "between AWS and standalone computer",
+        "Close to improving the base model through confidence scoring, "
+        "output aggregation, and a stronger LLM",
+        "Full plan to replicate the approach for an Arabic model "
+        "in 2\u20133 months",
+    ]
+
+    add_bullets(slide, bullets, MX, CT + Inches(0.45), CW, Inches(4.0),
+                size=Pt(14), bullet_color=TEAL)
+
+    _finish(slide, 0,
+        "Overview slide 2/2. Key findings: 65% useful output by LLM judge, "
+        "IS metric validated, failure analysis complete, reproducible deployment, "
+        "and clear path forward for model improvement and Arabic adaptation.")
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # NEW SLIDES — EXECUTIVE SUMMARY, TOC, IS BUILD-UP
 # ═══════════════════════════════════════════════════════════════════════
 

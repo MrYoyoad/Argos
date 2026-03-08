@@ -697,7 +697,7 @@ def slide_is_wer_scatter(prs):
                      size=Pt(15), color=LGRAY)
     bul = add_bullets(slide, [
         ("42 clearly conveyed (IS \u2265 3.80) but WER > 34%", {"bold": True, "color": GREEN}),
-        ("437 useful meaning (IS \u2265 2.00) but WER > 40%", {"bold": True, "color": GOLD}),
+        ("437 useful meaning (IS \u2265 2.00) but WER > 77%", {"bold": True, "color": GOLD}),
         "NIV: calibrated against Opus-as-a-Judge (blind eval)",
         "IS \u2265 3.80 matches judge Y rate exactly (\u03ba=0.690)",
         ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),

@@ -29,7 +29,8 @@ from presentation.config import SL_W, SL_H, OUTPUT, _auto_num
 from presentation.helpers import _fix_pptx_video_compat
 
 from presentation.slides_opening import (
-    slide_01, slide_exec_summary, slide_wer_lies, slide_toc,
+    slide_01, slide_what_was_done_1, slide_what_was_done_2,
+    slide_exec_summary, slide_wer_lies, slide_toc,
     slide_02, slide_visemes, slide_03, slide_data_flow,
     slide_04, slide_eval_dataset, slide_05, slide_wer_explained,
     slide_06, slide_is_foreshadow,
@@ -95,6 +96,8 @@ def main():
     builders = [
         # --- Section 0: Opening ---
         slide_01,           # Title
+        slide_what_was_done_1, # What was done? (1/2)
+        slide_what_was_done_2, # What was done? (2/2)
         slide_exec_summary, # Executive summary
         slide_wer_lies,     # [NEW] Side-by-side: WER lies, IS tells truth
         slide_toc,          # Table of contents
