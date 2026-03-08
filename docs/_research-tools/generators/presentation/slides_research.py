@@ -412,13 +412,13 @@ def slide_is_signals(prs):
 
 
 def slide_is_weight_rationale(prs):
-    """Explain why IS uses 25%/15% weighting and the PCA-validated structure."""
+    """PCA story: 6 signals collapse into 2 dimensions, validating the IS design."""
     slide = new_slide(prs)
-    add_title(slide, "6 Signals, 2 Dimensions (PCA)")
+    add_title(slide, "Do 6 Signals Actually Measure 6 Things?")
     add_accent_line(slide)
 
     add_text(slide,
-        "PCA reveals 2 principal components (Kaiser criterion: eigenvalue > 1).",
+        "PCA on 1,497 segments reveals the answer: No \u2014 just 2 independent dimensions.",
         MX, CT, CW, Inches(0.3),
         size=Pt(14), color=LGRAY, italic=True)
 
@@ -429,13 +429,13 @@ def slide_is_weight_rationale(prs):
 
     dims = [
         ("PC1: Signal Quality", "68.4%", TEAL,
-         "Semantic + Phonetic + WER + WWER + NEA F1 (all load 0.43\u20130.47)",
-         "One general quality factor \u2014 the visual encoder either captures "
-         "the speech or it doesn't. All 5 content signals move together."),
+         "All 5 content signals load equally (0.43\u20130.47) \u2014 they rise and fall together",
+         "The visual encoder either captures the speech or it doesn\u2019t. "
+         "When it does, words, sounds, meaning, and entities are ALL correct."),
         ("PC2: Output Length", "19.5%", LGRAY,
-         "Length Ratio dominates (loading 0.91)",
-         "Independent of content quality. Catches hallucination (too long) "
-         "and truncation (too short)."),
+         "Length Ratio dominates (loading 0.91) \u2014 independent of content quality",
+         "Did the model produce the right amount of text? "
+         "Too long = hallucination. Too short = signal loss."),
     ]
 
     dim_shapes = []
@@ -454,28 +454,28 @@ def slide_is_weight_rationale(prs):
         dim_shapes.append(r)
         py += Inches(1.8)
 
-    # Semantic weight justification
+    # Key implication
     sem_t = add_text(slide,
-        "Semantic gets 25% weight (vs 15% for others) because it captures "
-        "paraphrasing that word-level metrics miss \u2014 different words, same meaning.",
+        "This is good news: the weighted sum is reliable because all signals "
+        "point the same direction. Changing the weights barely matters (r = 0.999).",
         MX, py + Inches(0.1), CW, Inches(0.5),
         size=Pt(13), color=GREEN, italic=True)
 
-    # Bottom validation line
+    # Bottom takeaway
     val_t = add_text(slide,
-        "Validated: 88% agreement with expert judgment across 1,497 segments.",
+        "Together: 87.9% of variance explained. The IS formula is robust by design.",
         MX, Inches(6.35), CW, Inches(0.35),
         size=Pt(13), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "PCA weight rationale. Kaiser criterion retains 2 PCs: signal quality "
-        "(68.4%, all 5 content signals load equally at 0.43-0.47) and output "
-        "length (19.5%, Length Ratio at 0.91). Semantic is NOT an independent "
-        "dimension \u2014 it loads on PC1 alongside word-accuracy signals. Its "
-        "higher weight (25% vs 15%) is justified because it captures meaning "
-        "preservation (paraphrasing) that pure word metrics miss. Statistical "
-        "validation: r=0.93 with expert heuristic, Cohen's kappa=0.77, 88.6% "
-        "agreement at IS >= 3.0. Cross-config: mean r=0.925 (std=0.015).",
+        "PCA story. We asked: do 6 signals actually measure 6 independent things? "
+        "No \u2014 Kaiser criterion retains only 2 principal components. PC1 (68.4%): "
+        "all 5 content signals load equally at 0.43-0.47, forming one general "
+        "quality factor driven by the visual encoder. Semantic is NOT independent "
+        "\u2014 it moves with word-accuracy signals. PC2 (19.5%): Length Ratio "
+        "dominates at 0.91, truly independent of content. Together 87.9%. "
+        "Weight sensitivity: current vs equal weights correlate at r=0.999 \u2014 "
+        "only 5.4% of segments change tier. The formula is robust to perturbation.",
         [dim_shapes, [sem_t, val_t]], click_reveal=True)
 
 
@@ -583,7 +583,7 @@ def slide_is_radar(prs):
         MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
     # Radar image (reuse existing if available, framing is now about models)
-    img_top = CT + Inches(0.45)
+    img_top = CT + Inches(0.65)
     img_h = SL_H - img_top - Inches(1.6)
     img_w = Inches(8.5)
     img_l = (SL_W - img_w) / 2
@@ -842,7 +842,7 @@ def slide_failure_deep_1a(prs):
     card_h = Inches(1.35)
     gap = Inches(0.15)
     y0 = CT + Inches(0.65)
-    name_w = Inches(3.8)
+    name_w = Inches(4.8)
     rule_w = CW - name_w - Inches(0.1)
 
     anim_groups = []
@@ -856,7 +856,7 @@ def slide_failure_deep_1a(prs):
                  name_w - Inches(0.3), Inches(0.35),
                  size=Pt(17), color=color, bold=True)
         t2 = add_text(slide, f"{desc}  \u2014  {count}",
-                 MX + Inches(0.2), y + Inches(0.48),
+                 MX + Inches(0.2), y + Inches(0.52),
                  name_w - Inches(0.3), Inches(0.45),
                  size=Pt(13), color=LGRAY)
         t3 = add_text(slide, f"Rule: {rule}",
@@ -943,12 +943,6 @@ def slide_failure_deep_1b(prs):
         MX + Inches(0.3), sum_y + Inches(0.5), CW - Inches(0.6), Inches(0.45),
         size=Pt(13), color=WHITE)
     anim_groups.append([sr])
-
-    add_text(slide,
-        "Impact order: Right Topic Wrong Details \u2192 Wrong Topic \u2192 "
-        "Hallucination \u2192 Accumulated Errors \u2192 Signal Loss",
-        MX, Inches(6.65), CW, Inches(0.35),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Failure taxonomy Part 2. Accumulated Errors (24.4%): death by a "
