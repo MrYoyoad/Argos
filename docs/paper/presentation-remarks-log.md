@@ -332,3 +332,4 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 214 | NEW (64-65) | Arabic deep-dive — 2 new slides: AV-HuBERT language explanation + What Changes table | done |
 | 215 | 66 | Key takeaways — updated 4 points, de-emphasized data bottleneck, added IS vs WER comparison | done |
 | 216 | 58 | Price tag — "Free upgrade: swap LLM" → "LLM upgrade + adapter retraining" | done |
+| 217 | 24, 40, 54 | Fix 3 page-number overlaps — moved bottom-row content up ~0.3" to clear page numbers on radar legend (S24), gallery captions (S40), and roadmap insight (S54) | done |
