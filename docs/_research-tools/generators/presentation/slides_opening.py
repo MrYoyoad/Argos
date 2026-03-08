@@ -396,15 +396,15 @@ def slide_05(prs):
         big_num="64.1%", num_color=CORAL,
         num_label="Mean WER across 1,497 real-world segments",
         bullets=[
-            ("11.4% Usable (<30%)", {"bullet": "●", "bullet_color": GREEN}),
-            ("17.4% Marginal (30-50%)", {"bullet": "●", "bullet_color": YELLOW}),
-            ("17.8% Poor (50-75%)", {"bullet": "●", "bullet_color": ORANGE}),
-            ("32.8% Unusable (75-100%)", {"bullet": "●", "bullet_color": RED}),
-            ("20.6% Hallucinated (>100%)", {"bullet": "●", "bullet_color": DRED}),
+            ("25.5% Useful by WER (\u226434%)", {"bullet": "\u25cf", "bullet_color": GREEN}),
+            ("17.4% Marginal (34-50%)", {"bullet": "\u25cf", "bullet_color": YELLOW}),
+            ("17.8% Poor (50-75%)", {"bullet": "\u25cf", "bullet_color": ORANGE}),
+            ("18.7% Unusable (75-100%)", {"bullet": "\u25cf", "bullet_color": RED}),
+            ("20.6% Hallucinated (>100%)", {"bullet": "\u25cf", "bullet_color": DRED}),
         ],
         bottom_text="But WER overstates failure — see next slide.",
         notes="1,497 diverse YouTube segments. 64.1% mean WER — 2.5x worse than "
-              "the paper's 25.4%. Only 11.4% usable by WER standards. And 20.6% "
+              "the paper's 25.4%. Only 25.5% useful by WER (\u226434%). And 20.6% "
               "are hallucinations — fluent text that's completely fabricated. This "
               "is the most dangerous failure mode. But WER is misleading — it "
               "treats all errors equally.")

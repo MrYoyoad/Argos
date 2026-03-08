@@ -46,8 +46,8 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=CORAL, bold=True)
     add_bullets(slide, [
-        "11.4% usable",
-        "9 out of 10 segments fail",
+        "25.5% useful (\u226434% WER)",
+        "3 out of 4 segments fail",
         "Ignores phonetic preservation (41.5%)",
     ], MX + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(1.2), size=Pt(13), bullet_color=CORAL)
@@ -80,7 +80,7 @@ def slide_24(prs):
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 24,
-        "This is the turning point. WER says 11.4% usable. Our "
+        "This is the turning point. WER says 25.5% useful. Our "
         "Intelligibility Score says 61.6% useful output (NIV Y+P) — 2.4x more. "
         "Opus-as-a-Judge confirms 64.9% useful output (Y+P = 971/1,497). "
         "Validated across 16 decode configs with 85% correlation.",
@@ -629,7 +629,7 @@ def slide_30c(prs):
 
     # ── Full-width failure mode table ──
     tbl_w = CW
-    ft = add_text(slide, "Expected Recovery by Failure Category (900 failed segments)",
+    ft = add_text(slide, "Expected Recovery by Failure Category (575 below-threshold segments)",
                   MX, CT, tbl_w, Inches(0.35),
                   size=Pt(16), color=TEAL, bold=True)
 
@@ -704,7 +704,7 @@ def slide_30c(prs):
         "(identical lip shapes for different sounds). A stronger language "
         "prior with 61% higher MMLU and 4x vocabulary directly fixes "
         "entity names and content words.\n\n"
-        "Total estimated recovery: ~155-235 of 900 failed segments, "
+        "Total estimated recovery: ~155-235 of 575 below-threshold segments, "
         "pushing useful output rate from 61.6% to ~70-75%.",
         [[ft, tbl],
          [insight_box, insight_title, insight_text],
@@ -1152,7 +1152,7 @@ def slide_a11b(prs):
     add_title(slide, "A5: LLM Salvage — Curated Examples")
     add_accent_line(slide)
 
-    add_text(slide, "One real example per recovery category — all IS < 3.0 "
+    add_text(slide, "One real example per recovery category — all IS < 2.0 "
              '(metrics say "failed") but heuristic says recoverable:',
              MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY)
 
@@ -1188,7 +1188,7 @@ def slide_a11b(prs):
 
     _finish(slide, "A5",
         "Curated examples showing each of the 6 recovery categories. "
-        "All have IS < 3.0 but the heuristic identifies recoverable meaning. "
+        "All have IS < 2.0 but the heuristic identifies recoverable meaning. "
         "Categories overlap: a segment can exhibit multiple recovery signals.")
 
 

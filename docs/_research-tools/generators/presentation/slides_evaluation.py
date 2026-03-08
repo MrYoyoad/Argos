@@ -261,8 +261,8 @@ def slide_16(prs):
     headers = ["Metric", "Value"]
     rows = [
         ["LLM heuristic vs IS", "r = 0.925"],
-        ["Agreement (IS ≥ 3.0)", "88.6%"],
-        ["Recall (IS ≥ 3.0)", "97.6–100%"],
+        ["Agreement (IS ≥ 2.00)", "κ = 0.818"],
+        ["Recall (IS ≥ 2.00)", "97.6–100%"],
         ["Cohen's κ", "0.773"],
         ["Segment ranking stability", "r > 0.92"],
     ]
@@ -308,10 +308,10 @@ def slide_25(prs):
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
     # IS metric — the lower bound
-    add_text(slide, "IS says 40.1%", MX + Inches(0.3), CT + Inches(0.2),
+    add_text(slide, "IS says 61.6%", MX + Inches(0.3), CT + Inches(0.2),
              CW - Inches(0.6), Inches(0.7),
-             size=Pt(40), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
-    add_text(slide, "of segments pass (IS \u2265 3.0)",
+             size=Pt(40), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "of segments deliver useful output (IS \u2265 2.00)",
              MX + Inches(0.3), CT + Inches(0.85),
              CW - Inches(0.6), Inches(0.35),
              size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
@@ -327,12 +327,12 @@ def slide_25(prs):
 
     # Key bullets below
     bul = add_bullets(slide, [
-        ("IS conservatively undercounts \u2014 the real quality is higher "
-         "than 40.1% suggests", {"bold": True, "color": WHITE}),
+        ("IS closely tracks LLM judge \u2014 61.6% vs 64.9% "
+         "(\u03ba = 0.818)", {"bold": True, "color": WHITE}),
         "LLM-as-a-Judge (blind, 1,497 pairs) confirms: nearly 2 in 3 "
          "segments carry useful meaning",
-        ("The gap (40.1% \u2192 64.9%) = segments with partial value "
-         "that strict metrics penalize", {}),
+        ("The 3pp gap (61.6% \u2192 64.9%) = IS is a calibrated "
+         "surrogate, not an overcount", {}),
         ("IS is a floor, not a ceiling \u2014 designed to be cautious",
          {"color": TEAL}),
     ], MX + Inches(0.3), CT + Inches(2.8), CW - Inches(0.6),
@@ -347,7 +347,7 @@ def slide_25(prs):
 
     _finish(slide, 25,
         "IS is a calibrated surrogate metric for transcription quality. "
-        "IS says 40.1% of segments are captured (IS >= 3.0). But an independent "
+        "IS says 61.6% of segments deliver useful output (IS >= 2.00). An independent "
         "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
         "Y+P = 64.9% deliver useful output. The 25pp gap shows IS deliberately "
         "undercounts: many segments with partial value are penalized by strict "
@@ -363,7 +363,7 @@ def slide_25b(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "165 segments that metrics call \u201cfailed\u201d (IS < 3.0) actually deliver "
+        "165 segments that metrics call \u201cfailed\u201d (IS < 2.0) actually deliver "
         "useful meaning. They fall into 6 overlapping categories:",
         MX, CT, CW, Inches(0.45), size=Pt(14), color=LGRAY, italic=True)
 

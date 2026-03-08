@@ -26,6 +26,78 @@ from .helpers import (
     build_split, build_bullets, build_two_col, build_full_image,
 )
 
+def slide_is_motivation(prs):
+    """Why LLM as a Judge Is Not Enough — 5 reasons for the IS framework."""
+    slide = new_slide(prs)
+    add_title(slide, "Why LLM as a Judge Is Not Enough")
+    add_accent_line(slide)
+
+    sub = add_text(slide,
+        "Five reasons we built the Intelligibility Score (IS) framework",
+        MX, CT, CW, Inches(0.35), size=Pt(15), color=MGRAY, italic=True)
+
+    reasons = [
+        ("\u2460 Deployment Constraint",
+         "IS runs offline \u2014 no API, no GPU, no internet.\n"
+         "Essential for air-gapped container deployment."),
+        ("\u2461 Determinism",
+         "IS produces identical scores every time.\n"
+         "LLM judges vary ~13% on re-evaluation."),
+        ("\u2462 Continuous Signal",
+         "IS is 0.0\u20135.0 continuous from 6 signals.\n"
+         "LLM judge outputs coarse Y/P/N categories."),
+        ("\u2463 Known Biases",
+         "12+ documented systematic biases in LLM judges.\n"
+         "IS is a fixed formula with none."),
+        ("\u2464 Decomposability",
+         "IS breaks into 6 named signals \u2192 diagnose\n"
+         "exactly what failed. LLM returns verdict only."),
+    ]
+
+    col_w = Inches(5.85)
+    card_h = Inches(1.05)
+    row_gap = Inches(0.12)
+    col_gap = Inches(0.43)
+    start_y = CT + Inches(0.5)
+
+    card_groups = []
+    for i, (title, body) in enumerate(reasons):
+        row = i // 2
+        col = i % 2
+        if i == 4:
+            x = MX + (CW - col_w) / 2
+        else:
+            x = MX + col * (col_w + col_gap)
+        y = start_y + row * (card_h + row_gap)
+
+        r = add_rect(slide, x, y, col_w, card_h, fill_color=NAVY2,
+                     corner_radius=True)
+        t1 = add_text(slide, title,
+                      x + Inches(0.20), y + Inches(0.10),
+                      col_w - Inches(0.40), Inches(0.30),
+                      size=Pt(16), color=TEAL, bold=True)
+        t2 = add_text(slide, body,
+                      x + Inches(0.20), y + Inches(0.42),
+                      col_w - Inches(0.40), Inches(0.55),
+                      size=Pt(13), color=LGRAY)
+        card_groups.append([r, t1, t2])
+
+    takeaway = add_text(slide,
+        "IS runs in production; LLM-as-a-Judge audits the IS framework. You need both.",
+        MX, Inches(5.85), CW, Inches(0.40),
+        size=Pt(15), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Why IS, not just LLM judge? Five reasons:\n"
+        "1. Deployment: IS runs on bare Python, no GPU/API/internet.\n"
+        "2. Determinism: IS gives exact same score every time.\n"
+        "3. Continuous signal: IS is 0-5 continuous vs coarse Y/P/N.\n"
+        "4. Known biases: 12+ documented LLM judge biases. IS has none.\n"
+        "5. Decomposability: IS breaks into 6 components mapping to specific "
+        "failure modes. Bottom line: IS is operational, LLM judge is validation.",
+        [[sub]] + card_groups + [[takeaway]], click_reveal=True)
+
+
 def slide_is_intro_a(prs):
     """IS Slide A: WER, WWER, and Length Ratio — the standard metrics."""
     slide = new_slide(prs)
@@ -743,7 +815,7 @@ def slide_08(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "900 segments failed (IS < 3.0) \u2014 how often does each mode occur?",
+        "575 segments below useful threshold (IS < 2.00) \u2014 how often does each mode occur?",
         MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
 
     modes = [
@@ -784,7 +856,7 @@ def slide_08(prs):
              size=Pt(13), color=LGRAY, italic=True)
 
     _finish(slide, 8,
-        "900 failed segments classified into 5 failure categories. Wrong Topic "
+        "575 below-threshold segments classified into 5 failure categories. Wrong Topic "
         "is the largest (31.6%), combining topic drift and phonetic confusion. "
         "Hallucination (12.3%) is the most dangerous: fluent, confident, "
         "completely fabricated. Right Topic Wrong Details (22.7%) loses names and "
@@ -806,7 +878,7 @@ def slide_failure_deep_1a(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "900 failed segments (IS < 3.0) classified into 5 mutually exclusive "
+        "575 below-threshold segments (IS < 2.0) classified into 5 mutually exclusive "
         "categories \u2014 each segment gets exactly one label, checked 1\u21925.",
         MX, CT, CW, Inches(0.28), size=Pt(13), color=LGRAY, italic=True)
 
@@ -884,7 +956,7 @@ def slide_failure_deep_1b(prs):
     modes_2 = [
         ("4. Accumulated Errors", "24.4%", "220 segments", YELLOW,
          "Many small errors compound",
-         "IS < 3.0 and doesn\u2019t match categories 1\u20133",
+         "IS < 2.0 and doesn\u2019t match categories 1\u20133",
          "Many words slightly wrong throughout, meaning erodes"),
         ("5. Signal Loss", "9.0%", "81 segments", LGRAY,
          "Nothing came out",

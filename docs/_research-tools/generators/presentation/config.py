@@ -16,7 +16,7 @@ MATERIALS = Path("/home/ubuntu/presentation_materials_20260224")
 PLOTS = MATERIALS / "01_plots_for_slides"
 BRANDING = MATERIALS / "08_branding"
 VIDEOS = MATERIALS / "06_demo_videos"
-OUTPUT = MATERIALS / "Argos_VSP_Project_Review.pptx"
+OUTPUT = MATERIALS / "Argos_VSP_Final.pptx"
 
 # Image map
 IMG = {

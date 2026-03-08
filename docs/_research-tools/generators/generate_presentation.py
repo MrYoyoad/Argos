@@ -35,7 +35,7 @@ from presentation.slides_opening import (
     slide_06, slide_is_foreshadow,
 )
 from presentation.slides_research import (
-    slide_research_transition, slide_is_intro, slide_is_signals,
+    slide_research_transition, slide_is_motivation, slide_is_intro, slide_is_signals,
     slide_is_weight_rationale, slide_is_dimensions,
     slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter,
     slide_07, slide_metric_transition,
@@ -112,6 +112,7 @@ def main():
         slide_is_foreshadow,# Bridge: We Need a Better Metric
         # --- Section 3: Research Findings ---
         slide_research_transition, # Section divider
+        slide_is_motivation, # Why LLM Judge Is Not Enough (5 reasons for IS)
         slide_is_intro,     # Introducing IS (split into 3 per batch 8)
         # slide_is_signals,   # IS: Six Signals (removed per batch 8 — merged into split)
         slide_is_weight_rationale, # Why These Weights? 3 Dimensions
@@ -179,7 +180,7 @@ def main():
         slide_data_scaling, # [MOD] Data scaling with phases + timelines
         slide_price_tag,    # [NEW] Cost projections: GPU/data/IS
         slide_29,           # Phase 3-4 Fine-Tuning
-        slide_30,           # Phase 5 LLM Upgrade
+        # slide_30,           # Phase 5 LLM Upgrade (hidden per NIV item 26)
         # slide_30b,          # LLM Upgrade: Quantified Impact (hidden per batch 15)
         slide_failure_deep_3, # Failure Modes: Impact & Fixes (moved here from Section 4)
         # slide_30c,         # LLM Upgrade: Failure Mode Detail (hidden backup)
