@@ -341,6 +341,7 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 218 | 22 | Replace "6 Signals, 2 Dimensions (PCA)" content with the PCA story: title → "Do 6 Signals Actually Measure 6 Things?", reframed as a question/answer narrative. Same layout (2 stacked cards + green italic + gold bottom). Updated PC descriptions, key implication ("weights barely matter, r=0.999"), and speaker notes with full PCA story | done |
 | 219 | Radar (Model Comparison) | Grey subtitle text covered by radar graph — moved image down 0.2" | done |
 | 220 | Failure Taxonomy (2/2) | Remove "Impact order: Right Topic Wrong Details → ..." grey bottom text | done |
+| 221 | Failure Modes: Impact & Fixes | Move slide from after taxonomy (Section 4) to after "LLM Upgrade: Why It Matters" (Section 8) | done |
 | 218 | IS in Action (two segments) | Bad segment arithmetic wrong: Phonetic 0.029→0.030, Inv WWER 0.004→0.005, sum 0.80→0.81 | done |
 | 220 | 2 (What is VSP?) | Yellow and grey text overlapping — deleted grey subtitle and grey caption, enlarged video (4.3→4.8"), moved up to y=1.8" | done |
 
@@ -351,3 +352,4 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 221 | 20 (The Gap: Where WER Lies Most) | PPTX had stale embedded scatter plot showing old IS >= 3.0 threshold ("147 segments"). Regenerated P7_is_wer_scatter.png and rebuilt PPTX — now shows NIV thresholds (IS >= 3.80 Y gap: 42 segments, IS >= 2.00 Y+P gap: 437 segments) | done |
 | 222 | Two Evaluation Systems, One Framework | Update from old IS >= 3.0 confusion matrix to NIV thresholds. IS card now shows two operating points (IS >= 3.80 = 23.1%, IS >= 2.00 = 61.6%). Agreement matrix updated to NIV Y+P (883/39/88/487, κ=0.818). Two worked examples: NIV Y ("chord"→"court", IS 3.84) and NIV Y+P ("reason and logic", IS 2.94 — old threshold wrongly rejected). Speaker notes updated with NIV rationale | done |
 | 223 | Failure Taxonomy (1/2) | Title "1. Right Topic, Wrong Details (22.7%)" wrapping to 2nd row — widened name column 3.8→4.8", moved grey description text down 0.04" | done |
+| 224 | When Metrics Disagree / AV-HuBERT / Arabic Adaptation | All three slides had white background (unreadable white text on white). Fixed `clear_slide_content` to explicitly set navy background after clearing shapes | done |

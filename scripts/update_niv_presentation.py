@@ -942,11 +942,15 @@ def duplicate_slide(prs, source_idx):
 
 
 def clear_slide_content(slide):
-    """Remove all shapes from a slide."""
+    """Remove all shapes from a slide and set navy background."""
     sp_tree = slide.shapes._spTree
     for sp in list(sp_tree):
         if sp.tag.endswith('}sp') or sp.tag.endswith('}pic') or sp.tag.endswith('}grpSp'):
             sp_tree.remove(sp)
+    # Ensure navy background (duplicated slides may inherit white from layout)
+    bg_fill = slide.background.fill
+    bg_fill.solid()
+    bg_fill.fore_color.rgb = NAVY
 
 
 # ─── Item 22: Key Takeaways ──────────────────────────────────────────────────
