@@ -3,7 +3,7 @@
 **Document Classification:** Technical Research Report
 **Date:** February 17, 2026
 **Scope:** Analysis of how hyperparameter changes could affect VSP-LLM performance on real-world data
-**Current Performance Baseline:** Mean WER 67.0%, WWER 59.5%, IS 2.52/5.0 on english_full (1,497 segments)
+**Current Performance Baseline:** Mean WER 67.0%, WWER 59.5%, IS 2.53/5.0 on english_full (1,497 segments)
 
 ---
 

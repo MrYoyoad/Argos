@@ -10,18 +10,18 @@ Traditional metrics (WER, WWER, IS) classify 900 of 1,497 segments as failures (
 
 > **Note (March 2026):** NIV thresholds supersede IS >= 3.0. IS >= 2.00 (NIV Y+P, κ=0.818 vs Opus judge) captures 922 segments (61.6%), which already includes many segments this salvage analysis identified. The salvage concept remains valid for the gap between NIV Y (IS >= 3.80, 346 segments) and NIV Y+P (IS >= 2.00, 922 segments). See [threshold_calibration_vs_opus.md](../threshold_calibration_vs_opus.md).
 
-This represents an **18.3% recovery rate** among segments that metrics mark as failed. If we include these, the effective intelligibility rate rises from 39.9% to **50.9%** of all segments.
+This represents an **18.3% recovery rate** among segments that metrics mark as failed. If we include these, the effective intelligibility rate rises from 40.1% to **51.1%** of all segments.
 
 ### Key Numbers
 
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | Total segments | 1497 | 100% |
-| IS >= 3.0 (metrics say captured) | 597 | 39.9% |
-| IS < 3.0 (metrics say failed) | 900 | 60.1% |
+| IS >= 3.0 (metrics say captured) | 601 | 40.1% |
+| IS < 3.0 (metrics say failed) | 896 | 59.9% |
 | LLM prob >= 0.5 (Claude-designed heuristic says recoverable) | 757 | 50.6% |
-| **Divergent: LLM salvages from IS failures** | **165** | **18.3% of failures** |
-| **Effective capture rate (IS + LLM salvage)** | **762** | **50.9%** |
+| **Divergent: LLM salvages from IS failures** | **165** | **18.4% of failures** |
+| **Effective capture rate (IS + LLM salvage)** | **766** | **51.1%** |
 
 ### Divergent Segment Profile
 
@@ -85,9 +85,9 @@ A domain-aware viewer (e.g., someone watching a cooking tutorial) can often fill
 
 ### 3. Effective System Value Is Higher Than Metrics Suggest
 
-- **Metric-based capture rate**: 39.9% (IS >= 3.0)
-- **LLM-adjusted capture rate**: 50.9% (IS >= 3.0 OR LLM-salvageable)
-- **Uplift**: +11.0 percentage points (+28% relative improvement)
+- **Metric-based capture rate**: 40.1% (IS >= 3.0)
+- **LLM-adjusted capture rate**: 51.1% (IS >= 3.0 OR LLM-salvageable)
+- **Uplift**: +11.0 percentage points (+27% relative improvement)
 
 This means the VSP-LLM system delivers useful output for roughly **1 in 2 segments** rather than the **2 in 5** that metrics alone suggest.
 

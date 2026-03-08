@@ -31,7 +31,7 @@
 | Failure mode taxonomy (5 categories) | Slides 19a-19b | Slides ~18-19 | Signal Loss, Hallucination, Wrong Topic, Right Topic Wrong Details, Accumulated Errors |
 | Hallucination vs topic drift | Slides 19a-19b | Slides ~18-19 | Explicit detection rules |
 | Tuning experiments (13 configs) | Slides 16-17 | Slide ~15 | Condensed in PPTX |
-| LLM Salvage (165 segments, 50.9%) | Slide 21, A11-A11b | Slides ~22-26, A4-A5 | Domain context examples |
+| LLM Salvage (165 segments, 51.1%) | Slide 21, A11-A11b | Slides ~22-26, A4-A5 | Domain context examples |
 | LLM Judge blind (Y+P=65%) | Slide 22, A16 | Slide ~21, A8 | Agreement matrices |
 | LLM Judge context (Y+P=62%) | Slide 23, A17 | A9 | 230 downgrades vs 68 upgrades |
 | Fine-tuning Exp A/B | Slide 40-41, A2 | Slides ~30-31 | Data-limited framing |

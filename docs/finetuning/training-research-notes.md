@@ -2,7 +2,7 @@
 
 Research thoughts on improving VSP-LLM for domain-specific AVSpeech fine-tuning. The pretrained model was trained on LRS3 (433h TED talks) and is applied to AVSpeech-style YouTube videos.
 
-**Current baseline**: WER 64.1%, WWER 61.9%, NEA Recall 39% on 1497 segments (english_full run using `checkpoint_finetune.pt`).
+**Current baseline**: WER 64.1%, WWER 60.5%, NEA Recall 39% on 1497 segments (english_full run using `checkpoint_finetune.pt`).
 
 ## Key References
 

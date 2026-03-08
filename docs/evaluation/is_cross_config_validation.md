@@ -90,7 +90,7 @@ The LLM heuristic's high recall (99.2%) and intentional optimism (precision 78.2
 | Metric | Value |
 |--------|-------|
 | Divergent segments (LLM >= 0.5, IS < 3.0) | 165 / 900 failed (18.3%) |
-| Effective capture rate (IS + salvage) | 762 / 1,497 (50.9%) vs 597 (39.9%) |
+| Effective capture rate (IS + salvage) | 766 / 1,497 (51.1%) vs 601 (40.1%) |
 | Uplift | +11.0 percentage points (+27.6% relative) |
 
 The 165 segments break down into 6 recovery categories: hidden gems (54), semantic preservation (57), phonetic bridge (93), entity-preserved (44), structure match (74), WER over-punishment (27). Categories overlap as segments can exhibit multiple recovery signals simultaneously.
@@ -126,8 +126,8 @@ Claude Opus 4.6 evaluated all 1,497 hypothesis-reference pairs using holistic LL
 |--------|-------|
 | **LLM strict capture (Y only)** | 345 / 1,497 (23.0%) |
 | **LLM lenient capture (Y + P)** | 971 / 1,497 (64.9%) |
-| IS >= 3.0 capture | 597 / 1,497 (39.9%) |
-| IS + salvage capture | 762 / 1,497 (50.9%) |
+| IS >= 3.0 capture | 601 / 1,497 (40.1%) |
+| IS + salvage capture | 766 / 1,497 (51.1%) |
 | **Intra-rater reliability** | 86.7% exact, 100% lenient (30 duplicates) |
 
 ### Agreement with IS

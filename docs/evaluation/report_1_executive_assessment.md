@@ -226,10 +226,10 @@ Subsequent analysis using the Claude-designed Intelligibility Score (IS) framewo
 | Assessment Method | Segments Useful | Rate |
 |-------------------|-----------------|------|
 | WER-only (WER ≤ 20%) | ~98 | 11.4% |
-| IS (IS ≥ 3.0) | 597 | 39.9% |
-| **IS + LLM salvage** | **762** | **50.9%** |
+| IS (IS ≥ 3.0) | 601 | 40.1% |
+| **IS + LLM salvage** | **766** | **51.1%** |
 
-The 165 salvageable segments include cases where high phonetic similarity (natural lip-reading confusions), preserved semantic meaning, or intact named entities make the output usable despite high WER. This raises the effective capture rate from 39.9% to 50.9% — roughly 1 in 2 segments rather than 2 in 5.
+The 165 salvageable segments include cases where high phonetic similarity (natural lip-reading confusions), preserved semantic meaning, or intact named entities make the output usable despite high WER. This raises the effective capture rate from 40.1% to 51.1% — roughly 1 in 2 segments rather than 2 in 5.
 
 Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md)
 
@@ -250,8 +250,8 @@ An independent gold standard evaluation using Claude Opus 4.6 judged all 1,497 b
 | Method | Useful Segments | Rate |
 |--------|-----------------|------|
 | WER-only (WER ≤ 20%) | ~98 | 11.4% |
-| IS (IS ≥ 3.0) | 597 | 39.9% |
-| IS + LLM salvage | 762 | 50.9% |
+| IS (IS ≥ 3.0) | 601 | 40.1% |
+| IS + LLM salvage | 766 | 51.1% |
 | LLM judge strict (Y only) | 345 | 23.0% |
 | LLM judge lenient (Y+P) | 971 | 64.9% |
 

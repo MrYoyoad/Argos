@@ -73,12 +73,12 @@ All other parameters identical (beam=20, top_p=0.9, rep_penalty=1.2, no_repeat_n
 
 | Metric | Baseline | Config J | Config C |
 |--------|----------|----------|----------|
-| Mean IS | 2.52 | **2.60** | 2.57 |
-| Properly Captured (IS >= 3) | 597 (39.9%) | **622 (41.5%)** | 594 (39.7%) |
+| Mean IS | 2.53 | **2.60** | 2.57 |
+| Properly Captured (IS >= 3) | 601 (40.1%) | **622 (41.5%)** | 594 (39.7%) |
 | Empty Predictions | 70 (4.7%) | **0** | **0** |
 | Hallucinations (WER >= 100%) | 307 (20.5%) | 348 (23.2%) | 360 (24.0%) |
 | Mean WER | **64.1%** | 78.9% | 79.3% |
-| Mean WWER | **61.9%** | 62.8% | 63.8% |
+| Mean WWER | **60.5%** | 62.8% | 63.8% |
 | NEA F1 | 38.9% | **43.4%** | 39.7% |
 
 ### What Changed
@@ -264,7 +264,7 @@ These are complementary — Config J's lenpen=1.0 could be combined with word co
 
 *(Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md))*
 
-Traditional metrics classify 900 of 1,497 segments as failures (IS < 3.0). The LLM heuristic identifies **165 of these 900 segments (18.3%)** as having recoverable meaning, raising effective capture from 39.9% to **50.9%**.
+Traditional metrics classify 900 of 1,497 segments as failures (IS < 3.0). The LLM heuristic identifies **165 of these 900 segments (18.3%)** as having recoverable meaning, raising effective capture from 40.1% to **51.1%**.
 
 6 recovery categories: Phonetic Bridge (93), Structure Match (74), Semantic Preservation (57), Hidden Gems (54), Entity-Preserved (44), WER Over-Punishment (27).
 

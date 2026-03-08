@@ -35,10 +35,10 @@ tier, or other metrics were visible during judging to prevent anchoring bias.
 |--------|-------|------|
 | **LLM Judge: Y (strict)** | 345 | **23.0%** |
 | **LLM Judge: Y+P (lenient)** | 971 | **64.9%** |
-| IS >= 3.0 (legacy) | 597 | 39.9% |
+| IS >= 3.0 (legacy) | 601 | 40.1% |
 | **IS >= 3.80 (NIV Y)** | **346** | **23.1%** |
 | **IS >= 2.00 (NIV Y+P)** | **922** | **61.6%** |
-| IS + salvage (llm_prob >= 0.5) | 762 | 50.9% |
+| IS + salvage (llm_prob >= 0.5) | 766 | 51.1% |
 
 ### Judgment Distribution
 

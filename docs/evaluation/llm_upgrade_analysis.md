@@ -2,7 +2,7 @@
 
 ## Context
 
-The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 64.1%, IS 2.52/5.0**. The original paper reports 25.4% WER on clean LRS3 TED talks. This analysis quantifies the expected improvement from upgrading to Llama 3.1 8B.
+The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 64.1%, IS 2.53/5.0**. The original paper reports 25.4% WER on clean LRS3 TED talks. This analysis quantifies the expected improvement from upgrading to Llama 3.1 8B.
 
 ---
 
@@ -143,8 +143,8 @@ Extrapolating: Llama 3.1 8B (2.7x larger than 3B, same architecture family) shou
 | Metric | Current (Llama-2-7B) | Projected (Llama 3.1 8B) | Change |
 |--------|---------------------|--------------------------|--------|
 | **WER** | 64.1% | ~56-61% | **-3 to -8 pp** |
-| **IS** | 2.52/5.0 | ~2.7-2.9 | **+0.2-0.4** |
-| **Capture rate** (IS ≥ 3.0) | 39.9% | ~44-48% | **+4-8 pp** |
+| **IS** | 2.53/5.0 | ~2.7-2.9 | **+0.2-0.4** |
+| **Capture rate** (IS ≥ 3.0) | 40.1% | ~44-48% | **+4-8 pp** |
 | **Hallucination rate** | 20.5% | ~15-18% | **-2-5 pp** |
 | **Empty outputs** | 4.7% (70 segments) | ~3-4% | **-1 pp** |
 
