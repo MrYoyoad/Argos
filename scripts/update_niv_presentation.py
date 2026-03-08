@@ -927,6 +927,48 @@ def expand_arabic_analysis(prs):
         "or cross-lingual pretraining strategies.")
 
 
+def move_slide(prs, from_title_fragment, after_title_fragment):
+    """Move a slide (found by title fragment) to after another slide (found by title fragment).
+
+    Works by manipulating the sldIdLst XML ordering.
+    """
+    from_idx = None
+    after_idx = None
+    for i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            if shape.has_text_frame and from_title_fragment in shape.text_frame.text:
+                from_idx = i
+                break
+        for shape in slide.shapes:
+            if shape.has_text_frame and after_title_fragment in shape.text_frame.text:
+                after_idx = i
+                break
+
+    if from_idx is None:
+        print(f"  WARNING: Could not find slide with '{from_title_fragment}'")
+        return
+    if after_idx is None:
+        print(f"  WARNING: Could not find slide with '{after_title_fragment}'")
+        return
+    if from_idx == after_idx:
+        print(f"  WARNING: Source and target are the same slide ({from_idx+1})")
+        return
+
+    sld_id_lst = prs.slides._sldIdLst
+    sld_ids = list(sld_id_lst)
+    moving = sld_ids[from_idx]
+    sld_id_lst.remove(moving)
+
+    # Recalculate after_idx since removing shifted indices
+    if from_idx < after_idx:
+        insert_pos = after_idx  # shifted left by 1 after removal, but we insert AFTER so +1 = after_idx
+    else:
+        insert_pos = after_idx + 1
+
+    sld_id_lst.insert(insert_pos, moving)
+    print(f"  Moved slide {from_idx+1} ('{from_title_fragment}') to after slide with '{after_title_fragment}' (position {insert_pos+1})")
+
+
 def duplicate_slide(prs, source_idx):
     """Duplicate a slide and insert it after the source. Returns the new slide."""
     template = prs.slides[source_idx]
@@ -1128,8 +1170,8 @@ def fix_pca_narrative(prs):
     #   14: box3 title, 15: box3 %, 16: box3 detail, 17: box3 desc,
     #   18: validation line
     shape_updates = {
-        0: "6 Signals, 2 Dimensions",
-        2: "PCA (Kaiser criterion) reveals two principal components explaining 87.9% of variance.",
+        0: "6 Signals, 3 Principal Components",
+        2: "PCA on the six IS signals reveals where the variance actually lives.",
         4: "PC1: Signal Quality",
         5: "68.4%",
         6: "Semantic + Phonetic + WER + WWER + Named Entity Accuracy",
@@ -1138,11 +1180,11 @@ def fix_pca_narrative(prs):
         10: "19.5%",
         11: "Length Ratio dominates (loading = 0.91)",
         12: "Independent of content quality. Catches hallucination (too long) and truncation (too short).",
-        14: "Key Insight",
-        15: "87.9%",
-        16: "Combined variance explained",
-        17: "The IS formula is validated: one quality axis + one sanity axis. No hidden dimensions.",
-        18: "Validated: \u03ba=0.818 agreement with expert judgment across 1,497 segments.",
+        14: "PC3: Entity Swing",
+        15: "5.1%",
+        16: "NEA F1 loads here (below Kaiser threshold, eigenvalue 0.31)",
+        17: "Minor refinement axis \u2014 names and numbers that diverge from the main quality signal.",
+        18: "Together: 93% of variance in 3 components. Kaiser retains 2 (87.9%); PC3 adds nuance.",
     }
 
     for idx, new_text in shape_updates.items():
@@ -1731,7 +1773,11 @@ def main():
     add_disagreement_slide(prs)        # Item 9
     add_30_sample_slide(prs)           # Item 23
 
-    # Group 5: Page numbering — MUST BE LAST
+    # Group 5: Slide reordering
+    print("Item 24: Moving 'Failure Modes: Impact' after 'LLM Upgrade: Why It Matters'...")
+    move_slide(prs, "Failure Modes: Impact", "LLM Upgrade: Why It Matters")
+
+    # Group 6: Page numbering — MUST BE LAST
     fix_page_numbers(prs)              # Item 2
 
     print(f"\nSaving to {OUTPUT_PATH}...")
