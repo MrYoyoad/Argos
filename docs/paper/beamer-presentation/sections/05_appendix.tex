@@ -278,9 +278,9 @@
     \toprule
     \textbf{Metric} & \textbf{Baseline (A)} & \textbf{Config C} & \textbf{Config J} \\
     \midrule
-    Mean IS & 2.52 & 2.57 & \keyword{2.60} \\
-    Captured (IS$\geq$3) & 597 & 594 & \keyword{622} \\
-    Captured \% & 39.9\% & 39.7\% & \keyword{41.5\%} \\
+    Mean IS & 2.53 & 2.57 & \keyword{2.60} \\
+    Captured (IS$\geq$3) & 601 & 594 & \keyword{622} \\
+    Captured \% & 40.1\% & 39.7\% & \keyword{41.5\%} \\
     Mean WER & 64.1\% & 79.3\% & 78.9\% \\
     Empties & 70 & 0 & \keyword{0} \\
     Hallucinations & 307 & 360 & \alert{348} \\
@@ -389,8 +389,8 @@
       \begin{tabular}{@{}lr@{}}
         Metric-failed segments & 900 \\
         LLM-recoverable & \keyword{165 (18.3\%)} \\
-        Metric capture (IS $\geq$ 3.0) & 39.9\% \\
-        \textbf{Effective capture} & \keyword{50.9\%} \\
+        Metric capture (IS $\geq$ 3.0) & 40.1\% \\
+        \textbf{Effective capture} & \keyword{51.1\%} \\
         Uplift & +11.0pp (+27.6\% rel.) \\
       \end{tabular}}
     \end{block}
@@ -424,10 +424,10 @@
   }
 
   \note{
-    Q\&A backup for ``how did you get 50.9\%?''
+    Q\&A backup for ``how did you get 51.1\%?''
     165 of 900 metric-failed segments are LLM-recoverable.
     15-rule decision tree (no runtime LLM), r=0.934 with IS.
-    6 overlapping categories. Effective capture: 39.9\% $\rightarrow$ 50.9\%.
+    6 overlapping categories. Effective capture: 40.1\% $\rightarrow$ 51.1\%.
     See A11b for one real example per category.
   }
 \end{frame}

@@ -342,7 +342,7 @@ Every segment scoring IS >= 3.0 is classified by what made it succeed.
 | **Combined Semantic + Phonetic Bridge** | Semantic > 0.4, Phonetic > 0.5 | Both signals combine |
 | **Multiple Partial Signals** | Default | No single strong signal, but enough combined |
 
-### Baseline Results (1497 segments, 597 successes)
+### Baseline Results (1497 segments, 601 successes)
 
 | Pattern | Count | % of Successes |
 |---------|-------|---------------|
@@ -462,12 +462,12 @@ All other parameters identical (beam=20, top_p=0.9, rep_penalty=1.2, no_repeat_n
 
 | Metric | Baseline | Config J | Config C |
 |--------|----------|----------|----------|
-| Mean IS | 2.52 | **2.60** | 2.57 |
-| Properly Captured (IS >= 3) | 597 (39.9%) | **622 (41.5%)** | 594 (39.7%) |
+| Mean IS | 2.53 | **2.60** | 2.57 |
+| Properly Captured (IS >= 3) | 601 (40.1%) | **622 (41.5%)** | 594 (39.7%) |
 | Empty Predictions | 70 (4.7%) | **0** | **0** |
 | Hallucinations (WER >= 100%) | 307 (20.5%) | 348 (23.2%) | 360 (24.0%) |
 | Mean WER | **64.1%** | 78.9% | 79.3% |
-| Mean WWER | **61.9%** | 62.8% | 63.8% |
+| Mean WWER | **60.5%** | 62.8% | 63.8% |
 | NEA F1 | 38.9% | **43.4%** | 39.7% |
 
 ### What Changed
@@ -616,9 +616,9 @@ Already at correct length, word choice problems. ~0% improvement from word count
 
 | Metric | Current | Fine-Tuned w/ Word Count | Change |
 |---|---|---|---|
-| Properly captured (IS >= 3.0) | 597 (39.9%) | ~640-660 (42.7-44.1%) | **+43 to +63 (+3-4pp)** |
+| Properly captured (IS >= 3.0) | 601 (40.1%) | ~640-660 (42.7-44.1%) | **+39 to +59 (+3-4pp)** |
 | Hallucinated segments | 111 (7.4%) | ~80-90 (5.3-6.0%) | **-21 to -31 (-1.4-2.1pp)** |
-| Mean IS | 2.52 | ~2.60-2.65 | **+0.08-0.13** |
+| Mean IS | 2.53 | ~2.60-2.65 | **+0.07-0.12** |
 | Short segment (5-10w) captured% | 31.7% | ~38-42% | **+6-10pp** |
 | Long segment (20+w) captured% | 48.6% | ~50-52% | **+1.4-3.4pp** |
 

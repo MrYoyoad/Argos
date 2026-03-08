@@ -52,11 +52,11 @@
 
       \vspace{4pt}
 
-      \successmetric{39.9\%}{IS says ``captured''}
+      \successmetric{40.1\%}{IS says ``captured''}
 
       \vspace{4pt}
 
-      \metricbox{50.9\%}{With LLM Salvage}
+      \metricbox{51.1\%}{With LLM Salvage}
 
       \vspace{4pt}
 
@@ -80,8 +80,8 @@
   \note{
     KEY TRANSITION SLIDE. Three levels of assessment:
     1. WER says 11.4\% usable (too pessimistic).
-    2. IS says 39.9\% properly captured (3.5x more).
-    3. LLM salvage analysis: 165 more segments recoverable = 50.9\% effective capture.
+    2. IS says 40.1\% properly captured (3.5x more).
+    3. LLM salvage analysis: 165 more segments recoverable = 51.1\% effective capture.
     Claude heuristic (r=0.934 with IS) finds meaning in 18.3\% of ``failed'' segments.
     Recovery types: good overlap, phonetic bridge, semantic preservation, structure match.
     ``Half the output works. IS + salvage proves it. The starting point is much better than WER says.''
@@ -163,7 +163,7 @@
     \begin{exampleblock}{\small Realistic Target}
       \centering
       {\large\keyword{IS 3.5--4.0}}\\
-      {\scriptsize from current 2.52 (55--65\% captured)}
+      {\scriptsize from current 2.53 (55--65\% captured)}
     \end{exampleblock}
   }{0.57}{
     \halfwidthfig{P3_wer_trajectory.png}
@@ -175,7 +175,7 @@
   \note{
     5 phases, each targeting specific failure categories.
     Multiplicative scaling: stronger LLM extracts more from same data.
-    Combined target: IS 3.5--4.0 (from 2.52), roughly 55--65\% captured.
+    Combined target: IS 3.5--4.0 (from 2.53), roughly 55--65\% captured.
     Each phase is independently valuable --- gains stack.
   }
 \end{frame}
@@ -471,7 +471,7 @@
     Stronger models unlock more strategies: Llama-2 +5--10pp, Llama 3.1 +12--20pp.
     GER: N-best + correction LLM, no retraining, can use external API.
     VALLR (ICCV 2025): 18.7\% WER on LRS3 with only 3B params --- architecture matters.
-    Combined target: IS 3.5--4.0 from current 2.52 (55--65\% captured).
+    Combined target: IS 3.5--4.0 from current 2.53 (55--65\% captured).
   }
 \end{frame}
 

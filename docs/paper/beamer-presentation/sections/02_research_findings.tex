@@ -400,7 +400,7 @@
 \begin{frame}[shrink=15]{The Intelligibility Score (IS)}
   \begin{columns}[T]
     \begin{column}{0.40\textwidth}
-      \metricbox{39.9\%}{Properly Captured (IS $\geq$ 3.0)}
+      \metricbox{40.1\%}{Properly Captured (IS $\geq$ 3.0)}
 
       \vspace{3pt}
 
@@ -432,14 +432,14 @@
 
   \note{
     THIS IS THE MAIN RESEARCH CONTRIBUTION.
-    IS reveals 39.9\% properly captured vs 11.4\% by WER --- 3.5x more.
+    IS reveals 40.1\% properly captured vs 11.4\% by WER --- 3.5x more.
     Claude (Anthropic) used as the evaluation designer (at design time only): designed the
     rubric, selected signal weights, defined tier boundaries. Then distilled into
     deterministic, reproducible code --- NO LLM is called per sample at evaluation time.
     The IS pipeline is pure Python math. Free, decomposable, stable.
     Cross-config: r=0.925 across 16 decode configurations, recall 97.6--100\%.
     Phonetic preservation is \#1 IS correlate (r=0.943).
-    See A11 for LLM Salvage analysis (165 recoverable segments raise effective capture to 50.9\%).
+    See A11 for LLM Salvage analysis (165 recoverable segments raise effective capture to 51.1\%).
     See A14 for Metric Mismatch Guide (8 diagnostic patterns for interpreting IS signals).
   }
 \end{frame}
@@ -811,8 +811,8 @@
         {\scriptsize
         \begin{tabular}{@{}lcc@{}}
           & \textbf{Baseline} & \textbf{Config J} \\
-          IS & 2.52 & \keyword{2.60} \\
-          Captured & 597 & \keyword{622 (+25)} \\
+          IS & 2.53 & \keyword{2.60} \\
+          Captured & 601 & \keyword{622 (+21)} \\
           Empties & 70 & \keyword{0} \\
         \end{tabular}}
       \end{block}
@@ -834,7 +834,7 @@
 
   \note{
     13 experiments: beam, lenpen, sampling, temperature.
-    Config J (lenpen=1.0, temp=0.5): IS 2.60 vs 2.52, empties eliminated.
+    Config J (lenpen=1.0, temp=0.5): IS 2.60 vs 2.53, empties eliminated.
     But hallucinations increase by 41 segments --- fundamental tradeoff.
     Net IS gain only +0.08 --- tuning has reached diminishing returns.
   }
@@ -966,7 +966,7 @@
       {\scriptsize 6 weighted signals $\rightarrow$ single score:\\
       IS = 0.25$\times$Sem + 0.15$\times$(Phon + InvWER + InvWWER + NEA + LR)\\[2pt]
       Threshold: IS $\geq$ 3.0 = ``captured''\\
-      Result: \keyword{39.9\%} of segments captured}
+      Result: \keyword{40.1\%} of segments captured}
     \end{block}
 
     \vspace{4pt}
@@ -977,7 +977,7 @@
       phonetic plausibility, length sanity,\\
       semantic coherence, information density\\[2pt]
       Threshold: prob $\geq$ 0.5 = ``recoverable''\\
-      Result: \keyword{50.9\%} of segments recoverable}
+      Result: \keyword{51.1\%} of segments recoverable}
     \end{block}
 
     \vspace{4pt}
@@ -1010,8 +1010,8 @@
 
   \note{
     TWO complementary evaluation systems, both designed by Claude:
-    1. IS: strict, signal-weighted formula. Threshold IS >= 3.0. Result: 39.9\%.
-    2. Expert heuristic: generous, meaning-focused 15-rule decision tree. Result: 50.9\%.
+    1. IS: strict, signal-weighted formula. Threshold IS >= 3.0. Result: 40.1\%.
+    2. Expert heuristic: generous, meaning-focused 15-rule decision tree. Result: 51.1\%.
     Agreement 88.6\%, kappa 0.773. The 165 divergent segments: heuristic finds meaning that IS misses.
     Worked example: football/protest content preserved despite 57\% WER.
   }
@@ -1150,11 +1150,11 @@
 
     \vspace{4pt}
 
-    \successmetric{39.9\%}{IS: properly captured (3.5$\times$)}
+    \successmetric{40.1\%}{IS: properly captured (3.5$\times$)}
 
     \vspace{4pt}
 
-    \metricbox{50.9\%}{+ Expert heuristic (4.5$\times$)}
+    \metricbox{51.1\%}{+ Expert heuristic (4.5$\times$)}
 
     \vspace{4pt}
 
@@ -1189,8 +1189,8 @@
   \note{
     Three levels of assessment, each more generous:
     1. WER: 11.4\% ``usable'' (too pessimistic).
-    2. IS: 39.9\% captured (3.5x more).
-    3. Expert heuristic: 50.9\% meaningful (4.5x more than WER).
+    2. IS: 40.1\% captured (3.5x more).
+    3. Expert heuristic: 51.1\% meaningful (4.5x more than WER).
     58\% of salvageable segments have moderate WER (50--70\%).
     6 recovery categories --- these overlap, not disjoint.
     ``Every other segment delivers useful information.''

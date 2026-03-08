@@ -38,15 +38,15 @@ Both are independently maintained — changes in one do NOT propagate to the oth
 | Metric | Value | Source |
 |--------|-------|--------|
 | Baseline WER | 64.1% (1,497 segments) | english_full_results |
-| IS mean | 2.52/5.0 | intelligibility_summary.json |
-| Properly captured (IS >= 3.0) | 39.9% (597/1,497) | intelligibility_scores.csv |
-| Effective capture (IS + salvage) | 50.9% (762/1,497) | llm_salvage_segments.json |
+| IS mean | 2.53/5.0 | intelligibility_summary.json |
+| Properly captured (IS >= 3.0) | 40.1% (601/1,497) | intelligibility_scores.csv |
+| Effective capture (IS + salvage) | 51.1% (766/1,497) | llm_salvage_segments.json |
 | LLM Judge blind (Y+P) | 64.9% | llm_judge_results.csv |
 | LLM Judge context (Y+P) | 62.1% (stricter) | context_eval_results.csv |
 | Finetune: Baseline IS | 2.487 | checkpoint_correlation.csv |
 | Finetune: Exp A IS | 2.312 | checkpoint_correlation.csv |
 | Cross-config r | 0.925 (16 configs) | is_correlation_analysis.md |
-| Roadmap target | IS 3.5-4.0 (from 2.52) | llm_upgrade_analysis.md |
+| Roadmap target | IS 3.5-4.0 (from 2.53) | llm_upgrade_analysis.md |
 
 ---
 

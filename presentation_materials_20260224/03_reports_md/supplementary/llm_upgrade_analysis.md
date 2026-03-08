@@ -2,7 +2,7 @@
 
 ## Context
 
-The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 67.0%, IS 2.52/5.0**. The original paper reports 25.4% WER on clean LRS3 TED talks. The user wants to understand what a stronger LLM would change, what alternatives exist, and how data scaling and multilingual models factor in.
+The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 67.0%, IS 2.53/5.0**. The original paper reports 25.4% WER on clean LRS3 TED talks. The user wants to understand what a stronger LLM would change, what alternatives exist, and how data scaling and multilingual models factor in.
 
 ---
 
