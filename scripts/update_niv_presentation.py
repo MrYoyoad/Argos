@@ -1443,72 +1443,210 @@ def add_30_sample_slide(prs):
 
     slide = prs.slides[16]  # 0-indexed
 
-    # Remove existing content (it's just an image placeholder)
+    # Remove existing content and rebuild
     clear_slide_content(slide)
 
     # Title
     add_textbox(slide, "LLM Judge: 30-Sample Deep Dive",
-                MX, Inches(0.40), CW, Inches(0.75),
+                MX, Inches(0.35), CW, Inches(0.65),
                 size=Pt(32), color=WHITE, bold=True)
 
     # Accent line
-    slide.shapes.add_shape(1, MX, Inches(1.20), CW, Inches(0.02)).fill.solid()
-    slide.shapes[-1].fill.fore_color.rgb = TEAL
-    slide.shapes[-1].line.fill.background()
+    ln = slide.shapes.add_shape(1, MX, Inches(1.05), CW, Inches(0.02))
+    ln.fill.solid()
+    ln.fill.fore_color.rgb = TEAL
+    ln.line.fill.background()
 
-    col_w = Inches(5.5)
-    gap = Inches(1.13)
+    # ── Left column: Summary stats ──
+    lx = MX
+    left_w = Inches(3.6)
+    stats_y = Inches(1.25)
 
-    # Left — 30 Representative Segments header
-    add_textbox(slide, "30 Representative Segments",
-                MX, CT, col_w, Inches(0.35),
-                size=Pt(17), color=TEAL, bold=True)
+    add_textbox(slide, "30 Stratified Samples",
+                lx, stats_y, left_w, Inches(0.30),
+                size=Pt(16), color=TEAL, bold=True)
 
-    # Left — summary table (as text since python-pptx tables are complex)
-    table_text = (
-        "Segments:       30 (stratified sample)\n"
-        "Mean WER:      61.4%\n"
-        "Mean IS:         2.67 / 5.0\n"
-        "LLM Judge Y:  7  (23.3%)\n"
-        "LLM Judge P:  12  (40.0%)\n"
-        "LLM Judge N:  11  (36.7%)\n"
-        "Y + P:            19  (63.3%)"
-    )
-    add_textbox(slide, table_text,
-                MX, CT + Inches(0.5), col_w, Inches(3.0),
-                size=Pt(13), color=LGRAY)
+    # Summary stats as a proper table
+    stats_rows = [
+        ("Mean WER", "61.4%"),
+        ("Mean IS", "2.67 / 5.0"),
+        ("Judge Y", "7  (23.3%)"),
+        ("Judge P", "12  (40.0%)"),
+        ("Judge N", "11  (36.7%)"),
+        ("Y + P", "19  (63.3%)"),
+    ]
+    stats_tbl = slide.shapes.add_table(len(stats_rows), 2,
+                                        lx, stats_y + Inches(0.40),
+                                        left_w, Inches(2.10)).table
+    stats_tbl.columns[0].width = Inches(1.5)
+    stats_tbl.columns[1].width = Inches(2.1)
 
-    # Right — What the Sample Reveals
-    rx = MX + col_w + gap
-    add_textbox(slide, "What the Sample Reveals",
-                rx, CT, col_w, Inches(0.35),
-                size=Pt(17), color=CORAL, bold=True)
+    for r, (label, val) in enumerate(stats_rows):
+        for c, txt in enumerate([label, val]):
+            cell = stats_tbl.cell(r, c)
+            cell.text = txt
+            p = cell.text_frame.paragraphs[0]
+            p.font.size = Pt(13)
+            p.font.name = "Calibri"
+            p.font.color.rgb = WHITE if c == 1 else LGRAY
+            p.font.bold = (c == 1)
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = NAVY2
 
-    add_bullet_textbox(slide, [
-        "Distribution mirrors the full 1,497-segment dataset",
-        "IS spans 0.00 (empty output) to 5.00 (perfect match)",
-        "Middle zone (IS 2\u20134) is where the interesting cases live \u2014 "
-        "partial captures, phonetic bridges, domain confusion",
-        "Video examples on the following slides walk through these cases",
-    ], rx, CT + Inches(0.5), col_w, Inches(3.0),
-    size=Pt(14), color=LGRAY)
+    add_textbox(slide, "Distribution mirrors full 1,497-segment dataset",
+                lx, stats_y + Inches(2.60), left_w, Inches(0.30),
+                size=Pt(11), color=MGRAY, italic=True)
 
-    # Bottom takeaway
+    # ── Right column: Example table with ref/hyp ──
+    rx = lx + left_w + Inches(0.30)
+    tbl_w = CW - left_w - Inches(0.30)
+
+    add_textbox(slide, "Representative Examples \u2014 Reference vs. Hypothesis",
+                rx, stats_y, tbl_w, Inches(0.30),
+                size=Pt(16), color=CORAL, bold=True)
+
+    # Example segments: 2 Y, 2 P, 2 N showing interesting disagreements
+    examples = [
+        ("Y", GREEN,
+         "\"...unite your empire well I can tell you what Constantine wanted...\"",
+         "\"...unite your empire well I can tell you we lost he wanted...\"",
+         "14.3%", "4.60"),
+        ("Y", GREEN,
+         "\"...talking about gruselcoin and I'm gonna break the video down...\"",
+         "\"...talking about crucial coins and I'm going to break the video down...\"",
+         "50.0%", "2.45"),
+        ("P", GOLD,
+         "\"popular with republican presidential candidates\"",
+         "\"unpopular with republican presidential candidates\"",
+         "20.0%", "4.54"),
+        ("P", GOLD,
+         "\"...syllables you may remember from our episode about syllable structure...\"",
+         "\"...sentences you may remember from our episode about sentence structure...\"",
+         "10.5%", "4.57"),
+        ("N", CORAL,
+         "\"all you have to do is unscrew\"",
+         "\"all you have to do is not to\"",
+         "28.6%", "3.42"),
+        ("N", CORAL,
+         "\"blood extraction first before going to x ray...\"",
+         "\"cut your hair first before going to ashram...\"",
+         "35.7%", "3.14"),
+    ]
+
+    # Build example table: Verdict | Reference / Hypothesis | WER | IS
+    n_rows = len(examples) * 2  # 2 rows per example (ref + hyp)
+    tbl_shape = slide.shapes.add_table(n_rows + 1, 4,
+                                        rx, stats_y + Inches(0.40),
+                                        tbl_w, Inches(4.70))
+    tbl = tbl_shape.table
+    tbl.columns[0].width = Inches(0.55)
+    tbl.columns[1].width = Inches(6.15)
+    tbl.columns[2].width = Inches(0.70)
+    tbl.columns[3].width = Inches(0.68)
+
+    # Header row
+    headers = ["", "Reference (top) / Hypothesis (bottom)", "WER", "IS"]
+    for c, hdr in enumerate(headers):
+        cell = tbl.cell(0, c)
+        cell.text = hdr
+        p = cell.text_frame.paragraphs[0]
+        p.font.size = Pt(10)
+        p.font.name = "Calibri"
+        p.font.color.rgb = TEAL
+        p.font.bold = True
+        cell.fill.solid()
+        cell.fill.fore_color.rgb = NAVY2
+
+    for i, (verdict, v_color, ref, hyp, wer, is_val) in enumerate(examples):
+        ref_row = 1 + i * 2
+        hyp_row = ref_row + 1
+
+        # Merge verdict cell across 2 rows
+        v_cell = tbl.cell(ref_row, 0)
+        v_cell_merged = tbl.cell(hyp_row, 0)
+        v_cell.merge(v_cell_merged)
+        v_cell.text = verdict
+        p = v_cell.text_frame.paragraphs[0]
+        p.font.size = Pt(14)
+        p.font.name = "Calibri"
+        p.font.color.rgb = v_color
+        p.font.bold = True
+        p.alignment = PP_ALIGN.CENTER
+        v_cell.fill.solid()
+        v_cell.fill.fore_color.rgb = NAVY2
+
+        # WER cell (merged)
+        w_cell = tbl.cell(ref_row, 2)
+        w_cell_merged = tbl.cell(hyp_row, 2)
+        w_cell.merge(w_cell_merged)
+        w_cell.text = wer
+        p = w_cell.text_frame.paragraphs[0]
+        p.font.size = Pt(11)
+        p.font.name = "Calibri"
+        p.font.color.rgb = WHITE
+        p.alignment = PP_ALIGN.CENTER
+        w_cell.fill.solid()
+        w_cell.fill.fore_color.rgb = NAVY2
+
+        # IS cell (merged)
+        is_cell = tbl.cell(ref_row, 3)
+        is_cell_merged = tbl.cell(hyp_row, 3)
+        is_cell.merge(is_cell_merged)
+        is_cell.text = is_val
+        p = is_cell.text_frame.paragraphs[0]
+        p.font.size = Pt(11)
+        p.font.name = "Calibri"
+        p.font.color.rgb = WHITE
+        p.alignment = PP_ALIGN.CENTER
+        is_cell.fill.solid()
+        is_cell.fill.fore_color.rgb = NAVY2
+
+        # Ref text row
+        ref_cell = tbl.cell(ref_row, 1)
+        ref_cell.text = "REF: " + ref
+        p = ref_cell.text_frame.paragraphs[0]
+        p.font.size = Pt(10)
+        p.font.name = "Calibri"
+        p.font.color.rgb = WHITE
+        ref_cell.fill.solid()
+        ref_cell.fill.fore_color.rgb = NAVY2
+
+        # Hyp text row
+        hyp_cell = tbl.cell(hyp_row, 1)
+        hyp_cell.text = "HYP: " + hyp
+        p = hyp_cell.text_frame.paragraphs[0]
+        p.font.size = Pt(10)
+        p.font.name = "Calibri"
+        p.font.color.rgb = LGRAY
+        hyp_cell.fill.solid()
+        hyp_cell.fill.fore_color.rgb = NAVY2
+
+    # Bottom — insight callouts
     add_textbox(slide,
-        "Each video has burned-in subtitles showing reference (top) and "
-        "hypothesis (bottom) \u2014 watch the lip movements and compare.",
-        MX, Inches(6.2), CW, Inches(0.4),
-        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "Y with WER 50% \u2014 LLM sees meaning IS misses  |  "
+        "P flips meaning with 1 word (\"un\")  |  "
+        "N at IS 3.4 \u2014 structure preserved but key verb lost",
+        MX, Inches(6.35), CW, Inches(0.35),
+        size=Pt(12), color=GOLD, italic=True, align=PP_ALIGN.CENTER)
 
-    # Page number placeholder
-    add_textbox(slide, "", MX, Inches(7.12), Inches(0.5), Inches(0.25),
-                size=Pt(9), color=DGRAY)
+    # Bottom subtitle guidance
+    add_textbox(slide,
+        "Each video has burned-in subtitles: reference (top) and hypothesis (bottom)",
+        MX, Inches(6.70), CW, Inches(0.30),
+        size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     set_notes(slide,
         "30-sample overview: stratified sample from the 1,497-segment dataset. "
         "Distribution matches full dataset closely: Y=23%, P=40%, N=37%. "
-        "Mean WER 61.4% vs 64.1% full. The interesting middle zone (IS 2-4) "
-        "is where partial captures, phonetic bridges, and domain confusion live.")
+        "Mean WER 61.4% vs 64.1% full.\n\n"
+        "Example highlights:\n"
+        "- Y at WER 50%: 'gruselcoin' \u2192 'crucial coins' \u2014 LLM sees the meaning is preserved "
+        "even though half the words differ. IS only gives 2.45.\n"
+        "- P with 1-word flip: 'popular' \u2192 'unpopular' \u2014 single negation destroys meaning. "
+        "LLM correctly flags as partial despite low WER.\n"
+        "- N at IS 3.4: 'unscrew' \u2192 'not to' \u2014 structure is preserved but the key action verb "
+        "is lost, making the instruction useless. LLM sees this, IS doesn't.\n\n"
+        "These disagreements justify having BOTH metrics.")
 
 
 # ─── Item 2: Page Numbering ──────────────────────────────────────────────────
