@@ -61,14 +61,29 @@ from presentation.slides_future import (
     slide_future_transition, slide_24,
     slide_26, slide_26b, slide_confidence_scoring,
     slide_27, slide_28, slide_data_scaling, slide_price_tag,
-    slide_29, slide_30, slide_30b, slide_30c, slide_arabic_roadmap, slide_31, slide_thank_you,
+    slide_29, slide_30, slide_30b, slide_30c,
+    slide_arabic_roadmap, slide_arabic_avhubert, slide_arabic_changes,
+    slide_31, slide_thank_you,
     slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b,
     slide_a13, slide_a15, slide_a16, slide_a17,
 )
 
 
+def _regenerate_plots():
+    """Re-generate derived plot PNGs before building the PPTX."""
+    import subprocess, sys
+    scripts = [
+        "docs/_research-tools/generators/generate_is_wer_scatter.py",
+    ]
+    for script in scripts:
+        print(f"  Pre-generating: {script}")
+        subprocess.run([sys.executable, script], check=True)
+
+
 def main():
     _auto_num[0] = 0  # Reset auto-numbering
+
+    _regenerate_plots()
 
     prs = Presentation()
     prs.slide_width = SL_W
@@ -163,10 +178,12 @@ def main():
         slide_price_tag,    # [NEW] Cost projections: GPU/data/IS
         slide_29,           # Phase 3-4 Fine-Tuning
         slide_30,           # Phase 5 LLM Upgrade
-        slide_30b,          # LLM Upgrade: Quantified Impact
+        # slide_30b,          # LLM Upgrade: Quantified Impact (hidden per batch 15)
         slide_failure_deep_3, # Failure Modes: Impact & Fixes (moved here from Section 4)
         # slide_30c,         # LLM Upgrade: Failure Mode Detail (hidden backup)
         slide_arabic_roadmap, # Arabic Pipeline Roadmap
+        slide_arabic_avhubert, # AV-HuBERT: Why It's Not Language-Locked
+        slide_arabic_changes,  # Arabic Adaptation: What Changes
         slide_31,           # Key Takeaways
         slide_thank_you,    # Thank You & Questions
         # --- Appendix (A1-A9) ---

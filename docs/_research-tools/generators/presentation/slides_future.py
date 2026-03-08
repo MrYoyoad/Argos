@@ -812,9 +812,85 @@ def slide_arabic_roadmap(prs):
         "realistic. Pipeline code itself is language-agnostic.",
         anim, click_reveal=True)
 
-# ═══════════════════════════════════════════════════════════════════════
-# SLIDE 31 — SUMMARY
-# ═══════════════════════════════════════════════════════════════════════
+
+def slide_arabic_avhubert(prs):
+    """AV-HuBERT: Why It's Not Language-Locked — individual animated bullets."""
+    slide = new_slide(prs)
+    add_title(slide, "AV-HuBERT: Why It\u2019s Not Language-Locked")
+    add_accent_line(slide)
+
+    bullets_data = [
+        "AV-HuBERT is a self-supervised visual feature extractor",
+        "Pretrained on LRS3 (English TED talks) \u2014 but not language-encoded",
+        "Training loop: MFCC \u2192 K-means \u2192 pseudo-labels \u2192 masked prediction \u2192 iterate",
+        'The "English-ness" is in which visual distinctions the model learned to care about',
+        "Low-level features are mostly universal: lip shape, mouth opening, jaw movement",
+        "Visual features are ~80% language-agnostic (mouth geometry is universal)",
+        "Language specificity lives in downstream components, not the visual encoder",
+    ]
+
+    by = CT + Inches(0.05)
+    line_h = Inches(0.60)
+    anim_groups = []
+    for bullet in bullets_data:
+        t = add_text(slide, "\u25b8  " + bullet,
+                     MX, by, CW, line_h,
+                     size=Pt(15), color=WHITE)
+        anim_groups.append([t])
+        by += line_h
+
+    _finish(slide, 0,
+        "AV-HuBERT self-supervised training: starts with MFCC features as initial targets, "
+        "runs K-means clustering to create pseudo-labels, trains masked prediction of those labels "
+        "from visual input, then iterates with better pseudo-labels. After multiple iterations, "
+        "the visual encoder has learned which lip movements correspond to which sound clusters. "
+        "The 'English-ness' lives in which visual distinctions the model learned to care about \u2014 "
+        "e.g., it never learned to distinguish Arabic emphatics (\u0635 vs \u0633) which involve "
+        "visible pharyngeal constriction. But this is an optimization target, not a hard blocker.",
+        anim_groups, click_reveal=True)
+
+
+def slide_arabic_changes(prs):
+    """Arabic Adaptation: What Changes — individual animated bullets."""
+    slide = new_slide(prs)
+    add_title(slide, "Arabic Adaptation: What Changes")
+    add_accent_line(slide)
+
+    bullets_data = [
+        "K-means clustering \u2014 retrain on Arabic audio features (already retrains per-dataset)",
+        "LLM backbone \u2014 replace with Arabic-capable LLM (Jais, AceGPT, or multilingual Llama 3)",
+        "Q-Former bridge + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
+        "AV-HuBERT encoder \u2014 can reuse frozen; fine-tune later as optimization step",
+        "Phase 1: Frozen AV-HuBERT + Arabic K-means + Arabic LLM + retrained Q-Former",
+        "Phase 2: Fine-tune AV-HuBERT on Arabic video for language-specific distinctions",
+        "Phase 3: Scale with more Arabic training data",
+        "Biggest bottleneck: training data (no Arabic LRS3 equivalent at scale)",
+    ]
+
+    by = CT + Inches(0.05)
+    line_h = Inches(0.55)
+    anim_groups = []
+    for bullet in bullets_data:
+        t = add_text(slide, "\u25b8  " + bullet,
+                     MX, by, CW, line_h,
+                     size=Pt(14), color=WHITE)
+        anim_groups.append([t])
+        by += line_h
+
+    _finish(slide, 0,
+        "Arabic adaptation practical bottleneck sequence:\n"
+        "1. K-means: Retrain on Arabic audio features \u2014 this already retrains per-dataset "
+        "in our pipeline, so Arabic clusters are essentially 'free'.\n"
+        "2. LLM: Replace with Arabic-capable model. The LLM swap is the most impactful single change.\n"
+        "3. Q-Former + LoRA: Retrain on Arabic video-transcript pairs. This is where the authors' "
+        "actual novel contribution was.\n"
+        "4. AV-HuBERT: Frozen English encoder is the starting point. Fine-tuning is Phase 2 optimization.\n\n"
+        "Arabic emphatics example: \u0635 (emphatic S) vs \u0633 (plain S) have visible pharyngeal constriction "
+        "that the English-pretrained encoder never learned to distinguish. Fine-tuning would teach this.\n\n"
+        "Data challenge: No Arabic equivalent of LRS3. Options include custom collection from Arabic "
+        "broadcast/YouTube, or cross-lingual pretraining strategies.",
+        anim_groups, click_reveal=True)
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 31 — SUMMARY
