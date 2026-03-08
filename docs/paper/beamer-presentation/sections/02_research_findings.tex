@@ -891,22 +891,22 @@
 \begin{frame}[shrink=10]{IS Deep Dive: What Drives Quality?}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
-      \begin{block}{\small 6 Signals $\rightarrow$ 3 Independent Dimensions}
+      \begin{block}{\small 6 Signals $\rightarrow$ 2 PCA Dimensions (87.9\%)}
         {\scriptsize
         \begin{tabular}{@{}lcc@{}}
-          \textbf{Signal} & \textbf{r with IS} & \textbf{Variance} \\
+          \textbf{Signal} & \textbf{r with IS} & \textbf{PC1 loading} \\
           \midrule
-          Phonetic Sim & \keyword{0.943} & 14.2\% \\
-          Semantic Sim & 0.921 & 28.5\% \\
-          WWER & $-$0.881 & 15.2\% \\
-          NEA F1 & 0.864 & 17.3\% \\
-          WER & $-$0.849 & 15.7\% \\
-          Length Ratio & 0.226 & 9.1\% \\
+          Phonetic Sim & \keyword{0.943} & 0.47 \\
+          Semantic Sim & 0.921 & 0.45 \\
+          WWER & $-$0.881 & 0.45 \\
+          NEA F1 & 0.864 & 0.43 \\
+          WER & $-$0.849 & 0.44 \\
+          Length Ratio & 0.226 & \textit{PC2: 0.91} \\
         \end{tabular}\\[4pt]
-        \textbf{Dimensions:}\\
-        1. \keyword{Word accuracy} (WER, WWER, Phonetic) --- 60\%\\
-        2. \keyword{Meaning} (Semantic) --- 28\%\\
-        3. \keyword{Output sanity} (Length Ratio) --- 9\%}
+        \textbf{Principal Components (Kaiser):}\\
+        1. \keyword{PC1: Signal Quality} (68.4\%) --- all 5 content signals\\
+        \quad Semantic is NOT independent; loads with word accuracy\\
+        2. \keyword{PC2: Output Length} (19.5\%) --- Length Ratio only}
       \end{block}
     \end{column}
     \begin{column}{0.48\textwidth}
@@ -937,23 +937,20 @@
   {\scriptsize\textbf{Formula:} IS = 0.25$\times$Semantic + 0.15$\times$(Phonetic + InvWER + InvWWER + NEA + LengthRatio)}
 
   \note{
-    KEY CORRELATION FINDINGS:
-    1. Phonetic Sim: strongest single predictor (r=0.943) despite 15\% weight ---
-    most direct measure of visual encoder quality.
-    2. 4 of 6 signals measure the same thing (word accuracy cluster, r > 0.79) ---
-    60\% of IS is ``did the model get the words right?''
-    3. Semantic Sim (25\% weight) drives most IS variance (28.5\%) ---
-    the tiebreaker signal separating segments with similar word accuracy.
-    4. NEA F1 punches above its weight: 17.3\% variance from 15\% weight.
-    Names/numbers are binary --- either preserved or not.
-    5. WER is UNRELIABLE across configs: correlation swings from -0.95 to -0.45
-    with length penalty changes. This is why IS was created over raw WER.
-    6. Length Ratio nearly useless (9.1\%, sign flips across configs).
-    Claude designed the entire framework at design time. At run time: fully
-    deterministic, free, reproducible. R-squared = 1.0.
+    PCA STORY (Kaiser criterion on 6 standardized IS signals):
+    PC1 (68.4\%): Signal Quality --- all 5 content signals load equally (0.43--0.47).
+    Semantic is NOT independent --- it loads on PC1 alongside word-accuracy signals.
+    PC2 (19.5\%): Output Length --- Length Ratio dominates (loading 0.91).
+    PC3 (5.1\%): Entity Swing --- below Kaiser threshold (eigenvalue 0.31 < 1.0).
+    Together: 87.9\% of variance in 2 dimensions.
+
+    The old ``3 dimensions'' claim was from covariance clustering, not PCA.
+    PCA validates the IS formula: all 5 content signals measure the same
+    underlying quality (PC1), so the weighted sum is a reliable composite.
+    Phonetic Sim: strongest single predictor (r=0.943) despite 15\% weight.
+    WER is UNRELIABLE across configs: correlation swings from -0.95 to -0.45.
     Cross-config: r=0.925 mean, recall 97.6--100\% across 16 decode configs.
-    See A14 for Metric Mismatch Guide --- 8 diagnostic patterns for interpreting signal combinations.
-    See A11 for LLM Salvage analysis of segments where metrics understate true quality.
+    See A14 for Metric Mismatch Guide, A11 for LLM Salvage analysis.
   }
 \end{frame}
 

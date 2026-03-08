@@ -570,74 +570,82 @@ def fill_is_motivation_slide(prs):
 
     slide = prs.slides[17]  # 0-indexed
 
-    # Add 5 reason cards as bullet text
-    # Find the main content area or add a new text box
-    content_shape = None
-    for shape in slide.shapes:
-        if shape.has_text_frame and shape.text_frame.text.strip() == "":
-            if shape.width > Inches(5):  # Large empty text box
-                content_shape = shape
-                break
+    # Clear everything and rebuild cleanly
+    clear_slide_content(slide)
 
-    if content_shape is None:
-        # Add new text box below the title area
-        content_shape = slide.shapes.add_textbox(
-            MX, Inches(1.45), CW, Inches(5.0)
-        )
+    # Title
+    add_textbox(slide, "Why LLM as a Judge Is Not Enough",
+                MX, Inches(0.35), CW, Inches(0.65),
+                size=Pt(32), color=WHITE, bold=True)
 
-    tf = content_shape.text_frame
-    tf.word_wrap = True
-    tf.clear()
+    # Subtitle
+    add_textbox(slide, "Five reasons we built the Intelligibility Score (IS) framework",
+                MX, Inches(0.95), CW, Inches(0.35),
+                size=Pt(15), color=MGRAY, italic=True)
 
+    # Accent line
+    line = slide.shapes.add_shape(1, MX, Inches(1.32), CW, Inches(0.02))
+    line.fill.solid()
+    line.fill.fore_color.rgb = TEAL
+    line.line.fill.background()
+
+    # 5 reason cards — two columns
     reasons = [
-        ("\u2460 Deployment Constraint", TEAL,
-         "IS runs offline \u2014 no API, no GPU, no internet. Essential for air-gapped container deployment."),
-        ("\u2461 Determinism", TEAL,
-         "IS produces identical scores every time. LLM judges vary ~13% on re-evaluation."),
-        ("\u2462 Continuous Signal", TEAL,
-         "IS is 0.0\u20135.0 continuous from 6 signals. LLM judge outputs coarse Y/P/N categories."),
-        ("\u2463 Known Biases", TEAL,
-         "12+ documented systematic biases in LLM judges. IS is a fixed formula with none."),
-        ("\u2464 Decomposability", TEAL,
-         "IS breaks into 6 named signals \u2192 diagnose exactly what failed. LLM returns verdict only."),
+        ("\u2460 Deployment Constraint",
+         "IS runs offline — no API, no GPU, no internet.\nEssential for air-gapped container deployment."),
+        ("\u2461 Determinism",
+         "IS produces identical scores every time.\nLLM judges vary ~13% on re-evaluation."),
+        ("\u2462 Continuous Signal",
+         "IS is 0.0–5.0 continuous from 6 signals.\nLLM judge outputs coarse Y/P/N categories."),
+        ("\u2463 Known Biases",
+         "12+ documented systematic biases in LLM judges.\nIS is a fixed formula with none."),
+        ("\u2464 Decomposability",
+         "IS breaks into 6 named signals → diagnose\nexactly what failed. LLM returns verdict only."),
     ]
 
-    for i, (title, color, body) in enumerate(reasons):
-        # Title line
-        if i == 0:
-            p = tf.paragraphs[0] if tf.paragraphs else tf.add_paragraph()
-        else:
-            p = tf.add_paragraph()
-        p.text = title
-        p.font.size = Pt(15)
-        p.font.color.rgb = color
-        p.font.bold = True
-        p.font.name = "Calibri"
-        p.space_before = Pt(10) if i > 0 else Pt(0)
-        p.space_after = Pt(2)
+    # Layout: 2 columns, 3 rows (last row has 1 centered card)
+    col_w = Inches(5.85)
+    card_h = Inches(1.25)
+    row_gap = Inches(0.15)
+    col_gap = Inches(0.43)
+    start_y = Inches(1.55)
 
-        # Body line
-        p2 = tf.add_paragraph()
-        p2.text = body
-        p2.font.size = Pt(13)
-        p2.font.color.rgb = LGRAY
-        p2.font.name = "Calibri"
-        p2.space_after = Pt(6)
+    for i, (title, body) in enumerate(reasons):
+        row = i // 2
+        col = i % 2
+        if i == 4:
+            # Center the 5th card
+            x = MX + (CW - col_w) / 2
+        else:
+            x = MX + col * (col_w + col_gap)
+        y = start_y + row * (card_h + row_gap)
+
+        # Card background
+        card = slide.shapes.add_shape(1, x, y, col_w, card_h)
+        card.fill.solid()
+        card.fill.fore_color.rgb = NAVY2
+        card.line.fill.background()
+
+        # Card title
+        add_textbox(slide, title,
+                    x + Inches(0.20), y + Inches(0.12), col_w - Inches(0.40), Inches(0.30),
+                    size=Pt(16), color=TEAL, bold=True)
+
+        # Card body
+        add_textbox(slide, body,
+                    x + Inches(0.20), y + Inches(0.45), col_w - Inches(0.40), Inches(0.75),
+                    size=Pt(13), color=LGRAY)
 
     # Bottom takeaway
-    p_bottom = tf.add_paragraph()
-    p_bottom.text = "IS runs in production; LLM-as-a-Judge audits the IS framework. You need both."
-    p_bottom.font.size = Pt(14)
-    p_bottom.font.color.rgb = GOLD
-    p_bottom.font.bold = True
-    p_bottom.font.italic = True
-    p_bottom.font.name = "Calibri"
-    p_bottom.space_before = Pt(16)
+    add_textbox(slide,
+        "IS runs in production; LLM-as-a-Judge audits the IS framework. You need both.",
+        MX, Inches(5.85), CW, Inches(0.40),
+        size=Pt(15), color=GOLD, bold=True, italic=True, align=PP_ALIGN.CENTER)
 
     # Speaker notes
     set_notes(slide,
         "Why IS, not just LLM judge? Five reasons from our analysis doc:\n"
-        "1. Deployment: IS runs on bare Python, no GPU/API/internet \u2014 essential for standalone container.\n"
+        "1. Deployment: IS runs on bare Python, no GPU/API/internet — essential for standalone container.\n"
         "2. Determinism: IS gives exact same score every time. LLM judges have ~13% inconsistency.\n"
         "3. Continuous signal: IS is 0-5 continuous vs coarse Y/P/N. Enables statistical testing.\n"
         "4. Known biases: 12+ documented LLM judge biases (position, verbosity, self-enhancement). IS has none.\n"
@@ -896,11 +904,9 @@ def expand_arabic_analysis(prs):
         "LLM backbone \u2014 replace with Arabic-capable LLM (Jais, AceGPT, or multilingual Llama 3)",
         "Q-Former bridge + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
         "AV-HuBERT encoder \u2014 can reuse frozen; fine-tune later as optimization step",
-        "",
         "Phase 1: Frozen AV-HuBERT + Arabic K-means + Arabic LLM + retrained Q-Former",
         "Phase 2: Fine-tune AV-HuBERT on Arabic video for language-specific distinctions",
         "Phase 3: Scale with more Arabic training data",
-        "",
         "Biggest bottleneck: training data (no Arabic LRS3 equivalent at scale)",
     ], MX, Inches(1.50), CW, Inches(4.8),
     size=Pt(14), color=LGRAY)
@@ -1109,27 +1115,71 @@ def update_wer_is_gap(prs):
 # ─── Item 6: PCA Narrative Correction (Slide 22) ─────────────────────────────
 
 def fix_pca_narrative(prs):
-    """Item 6: Fix PCA narrative in slide 22 speaker notes."""
-    print("Item 6: Fixing PCA narrative in slide 22 notes...")
+    """Item 6: Fix PCA narrative — visual content AND speaker notes on slide 22."""
+    print("Item 6: Fixing PCA narrative (visual + notes) on slide 22...")
 
     slide = prs.slides[21]  # 0-indexed
 
+    # --- Rewrite visual content using existing shapes ---
+    # Shape indices from slide inspection:
+    #   0: title, 2: subtitle,
+    #   4: box1 title, 5: box1 %, 6: box1 detail, 7: box1 desc,
+    #   9: box2 title, 10: box2 %, 11: box2 detail, 12: box2 desc,
+    #   14: box3 title, 15: box3 %, 16: box3 detail, 17: box3 desc,
+    #   18: validation line
+    shape_updates = {
+        0: "6 Signals, 2 Dimensions",
+        2: "PCA (Kaiser criterion) reveals two principal components explaining 87.9% of variance.",
+        4: "PC1: Signal Quality",
+        5: "68.4%",
+        6: "Semantic + Phonetic + WER + WWER + Named Entity Accuracy",
+        7: "All five content signals load equally (0.43\u20130.47). Semantic is NOT independent \u2014 it measures the same underlying quality as word accuracy.",
+        9: "PC2: Output Length",
+        10: "19.5%",
+        11: "Length Ratio dominates (loading = 0.91)",
+        12: "Independent of content quality. Catches hallucination (too long) and truncation (too short).",
+        14: "Key Insight",
+        15: "87.9%",
+        16: "Combined variance explained",
+        17: "The IS formula is validated: one quality axis + one sanity axis. No hidden dimensions.",
+        18: "Validated: \u03ba=0.818 agreement with expert judgment across 1,497 segments.",
+    }
+
+    for idx, new_text in shape_updates.items():
+        shape = slide.shapes[idx]
+        if shape.has_text_frame:
+            # Preserve formatting of first run, replace text
+            first_para = shape.text_frame.paragraphs[0]
+            if first_para.runs:
+                first_para.runs[0].text = new_text
+                # Clear any additional runs
+                for run in first_para.runs[1:]:
+                    run.text = ""
+            else:
+                first_para.text = new_text
+            # Clear any additional paragraphs
+            for para in shape.text_frame.paragraphs[1:]:
+                for run in para.runs:
+                    run.text = ""
+
+    # Change box 3 title color to gold (was green for "Output Sanity")
+    for para in slide.shapes[14].text_frame.paragraphs:
+        for run in para.runs:
+            run.font.color.rgb = GOLD
+
+    # --- Speaker notes ---
     set_notes(slide,
-        "Weight rationale and PCA correction.\n\n"
-        "CORRECTED NARRATIVE (from docs/evaluation/is_pca_analysis.md):\n"
-        "The '3 dimensions' claim was from covariance clustering, NOT PCA. Actual PCA (Kaiser criterion) "
-        "shows 2 true dimensions explaining 87.9% of variance:\n"
+        "PCA STORY (from docs/evaluation/is_pca_analysis.md):\n\n"
+        "Kaiser criterion PCA on 6 standardized IS signals retains 2 principal components:\n"
         "- PC1 (68.4%): Signal Quality \u2014 all 5 content signals load equally (0.43-0.47). "
         "Semantic is NOT independent \u2014 it loads on PC1 alongside word-accuracy signals.\n"
         "- PC2 (19.5%): Output Length \u2014 Length Ratio dominates (0.91), independent of content quality.\n"
-        "- PC3 (5.1%): Entity Swing \u2014 below Kaiser threshold (eigenvalue 0.31 < 1.0), minor refinement.\n\n"
-        "The 3-dimension framing is a DESIGN RATIONALE for weight allocation, not a statistical independence claim. "
+        "- PC3 (5.1%): Entity Swing \u2014 below Kaiser threshold (eigenvalue 0.31 < 1.0), minor.\n\n"
+        "Together: 87.9% of variance. The old '3 dimensions' claim was from covariance clustering, "
+        "not PCA. This slide now shows the correct statistical story.\n\n"
         "PCA validates the IS formula: all 5 content signals measure the same underlying quality (PC1), "
-        "so the weighted sum is a reliable composite.\n\n"
-        "Sensitivity analysis: varying weights across reasonable ranges changes IS by <0.15 on average. "
-        "The specific allocation (25/15/15/15/15/15) is robust \u2014 what matters is that semantic gets "
-        "elevated weight and the 4 word-accuracy signals share weight to avoid over-counting their "
-        "mutual correlation (r > 0.79). Equal weighting gives r=0.999 with current weights.")
+        "so the weighted sum is a reliable composite. The specific allocation (25/15/15/15/15/15) is "
+        "robust \u2014 equal weighting gives r=0.999 with current weights.")
 
 
 # ─── Item 7: Bad IS Sample Fix (Slide 23) ────────────────────────────────────
