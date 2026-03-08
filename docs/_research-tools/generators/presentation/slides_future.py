@@ -75,6 +75,8 @@ def slide_24(prs):
     # Bottom
     add_text(slide,
              "The gap is real \u2014 but WER dramatically overstates failure. "
+             "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 it misses "
+             "phonetic and semantic preservation, making it insufficient alone. "
              "40% captured by IS, 65% useful per Opus-as-a-Judge.",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -82,6 +84,8 @@ def slide_24(prs):
     _finish(slide, 24,
         "This is the turning point. WER says 25.5% useful. Our "
         "Intelligibility Score says 61.6% useful output (NIV Y+P) — 2.4x more. "
+        "WER correlates with IS but not perfectly — it misses phonetic and "
+        "semantic preservation, so it is not good enough as a sole metric. "
         "Opus-as-a-Judge confirms 64.9% useful output (Y+P = 971/1,497). "
         "Validated across 16 decode configs with 85% correlation.",
         [[r1], [r2, img]], click_reveal=True)
@@ -102,13 +106,13 @@ def slide_26(prs):
     phases = [
         ("Phase 1", "Surface the good 40%",
          "Confidence scoring \u2014 flags known-good segments (2\u20134 hrs)",
-         "Targets: Signal Loss (9%) | IS: filters to \u2265 3.0 subset (+0.3 perceived)", TEAL),
+         "Targets: Signal Loss (13.9%) | IS: filters to \u2265 3.0 subset (+0.3 perceived)", TEAL),
         ("Phase 2", "Fix small & content errors",
          "N-best aggregation (ROVER/MBR) \u2014 vote across 20 beams",
-         "Targets: Accum. Errors (24.4%) + Content Words (10.7%) | IS: +0.3\u20130.5", TEAL),
+         "Targets: Accum. Errors (9.1%) + Details (13.8%) | IS: +0.3\u20130.5", TEAL),
         ("Phase 3", "Better world knowledge",
          "Llama 3.1 8B + context prompts",
-         "Targets: Hallucination (12.3%) + Wrong Topic (31.6%) | IS: +0.5\u20130.8", GREEN),
+         "Targets: Hallucination (18.8%) + Wrong Topic (44.4%) | IS: +0.5\u20130.8", GREEN),
         ("Phase 4", "Scale data 20K\u201350K",
          "Fine-tune visual encoder + projection on more data",
          "Targets: ALL categories via better visual features | IS: +0.5\u20131.0", GREEN),
@@ -160,13 +164,13 @@ def slide_26(prs):
         "Five phases, each explicitly targeting failure mode categories from "
         "our error analysis.\n\n"
         "FAILURE MODE -> PHASE MAPPING:\n"
-        "Phase 1 (Confidence): Signal Loss accounts for 9% of failures. "
+        "Phase 1 (Confidence): Signal Loss accounts for 13.9% of failures. "
         "Confidence scoring flags the 40% already good, giving immediate "
         "perceived improvement (+0.3 IS perceived, 2-4 hours).\n"
-        "Phase 2 (N-Best): Accumulated Small Errors (24.4%) and Content Word "
-        "Errors (10.7%) are exactly what voting/consensus fixes. Each word-level "
+        "Phase 2 (N-Best): Accumulated Errors (9.1%) and Right Topic Wrong Details "
+        "(13.8%) are exactly what voting/consensus fixes. Each word-level "
         "error corrected individually yields IS +0.3-0.5.\n"
-        "Phase 3 (LLM Swap): Hallucination (12.3%) and Wrong Topic (31.6%) "
+        "Phase 3 (LLM Swap): Hallucination (18.8%) and Wrong Topic (44.4%) "
         "stem from Llama-2's weak world knowledge. Llama 3.1 8B has 3x the "
         "training data and 128K vocab, directly reducing these. IS +0.5-0.8.\n"
         "Phase 4 (Data Scaling): All failure categories improve because the "
@@ -199,9 +203,9 @@ def slide_26b(prs):
     milestones = [
         ("Current", "IS 2.53", "61.6% useful", "", CORAL),
         ("Phase 1\u20132", "IS ~2.85",  "~48% captured",
-         "Fixes: Signal Loss (9%), Accum. Errors (24.4%), Content Words (10.7%)", TEAL),
+         "Fixes: Signal Loss (13.9%), Accum. Errors (9.1%), Details (13.8%)", TEAL),
         ("+ Phase 3", "IS ~3.40", "~58% captured",
-         "Fixes: Hallucination (12.3%), Wrong Topic (31.6%)", GREEN),
+         "Fixes: Hallucination (18.8%), Wrong Topic (44.4%)", GREEN),
         ("+ Phase 4\u20135", "IS ~3.80", "~65% captured",
          "Fixes: all remaining via data + post-correction", GREEN),
     ]
@@ -233,10 +237,10 @@ def slide_26b(prs):
     _finish(slide, "26b",
         "IS improvement trajectory with failure mode annotations. "
         "Current IS 2.53 (61.6% useful). "
-        "Phase 1-2 target IS ~2.85 (48% captured) by fixing Signal Loss (9%), "
-        "Accumulated Errors (24.4%), and Content Word Errors (10.7%). "
-        "Phase 3 target IS ~3.40 (58% captured) by fixing Hallucination (12.3%) "
-        "and Wrong Topic (31.6%) via stronger LLM world knowledge. "
+        "Phase 1-2 target IS ~2.85 (48% captured) by fixing Signal Loss (13.9%), "
+        "Accumulated Errors (9.1%), and Right Topic Wrong Details (13.8%). "
+        "Phase 3 target IS ~3.40 (58% captured) by fixing Hallucination (18.8%) "
+        "and Wrong Topic (44.4%) via stronger LLM world knowledge. "
         "Phase 4-5 target IS ~3.80 (65% captured) by improving visual encoder "
         "with more data and post-hoc error correction. "
         "Each phase targets specific failure categories, and the magnitude "
@@ -266,7 +270,7 @@ def slide_27(prs):
          {"color": GREEN, "bold": True, "size": Pt(18)}),
         ("Perceived error rate: 60% \u2192 ~20%",
          {"color": TEAL, "bold": True, "size": Pt(18)}),
-        ("Targets Signal Loss failure mode (9% of errors)",
+        ("Targets Signal Loss failure mode (13.9% of errors)",
          {"size": Pt(16)}),
     ], MX, CT + Inches(0.3), CW, Inches(3.0), size=Pt(16))
 
@@ -595,17 +599,16 @@ def slide_30b(prs):
         "- + 20K segments: -10 to -15pp (multiplicative scaling law from "
         "ICLR 2024 — better model extracts MORE from same data)\n"
         "- Combined target: 35-40% WER = roughly halving the error rate\n\n"
-        "FAILURE MODES MOST HELPED:\n"
-        "- Right Topic Wrong Details (204 segments, 25-35% recovery): "
-        "encoder captured the right domain but LLM picked wrong words — "
-        "stronger language prior fixes entity names and content words\n"
-        "- Accumulated Errors (220 segments, 20-30% recovery): many small "
-        "substitutions that compound — better context modeling catches them\n"
-        "- Hallucination (111 segments, 15-25% recovery): better calibrated "
+        "FAILURE MODES MOST HELPED (574 below-threshold, IS < 2.00):\n"
+        "- Wrong Topic (255 segments, 10-20% recovery): dominant category "
+        "(44.4%), only helps when some visual signal exists; total drift = encoder failure\n"
+        "- Hallucination (108 segments, 15-25% recovery): better calibrated "
         "model less likely to 'run ahead' of visual signal\n"
-        "- Wrong Topic (284 segments, 10-20% recovery): only helps when "
-        "some visual signal exists; total drift = encoder failure\n"
-        "- Signal Loss (81 segments, <5%): encoder-level, LLM cannot help\n\n"
+        "- Signal Loss (80 segments, <5%): encoder-level, LLM cannot help\n"
+        "- Right Topic Wrong Details (79 segments, 25-35% recovery): "
+        "encoder captured the right domain but LLM picked wrong words\n"
+        "- Accumulated Errors (52 segments, 20-30% recovery): many small "
+        "substitutions that compound — better context modeling catches them\n\n"
         "REFERENCES: VALLR (Thomas et al., ICCV 2025), "
         "Scaling Laws (Zhang et al., ICLR 2024), Llama 3 (Meta, 2024).",
         [[lt, tbl],
@@ -629,25 +632,25 @@ def slide_30c(prs):
 
     # ── Full-width failure mode table ──
     tbl_w = CW
-    ft = add_text(slide, "Expected Recovery by Failure Category (575 below-threshold segments)",
+    ft = add_text(slide, "Expected Recovery by Failure Category (574 below-threshold segments)",
                   MX, CT, tbl_w, Inches(0.35),
                   size=Pt(16), color=TEAL, bold=True)
 
     headers = ["Failure Mode", "Segments", "% of Failures",
                "LLM Impact", "Expected Recovery"]
     rows = [
-        ["Right Topic, Wrong Details", "204", "22.7%",
-         "Highest \u2014 entity/vocabulary disambiguation", "25\u201335%"],
-        ["Accumulated Errors", "220", "24.4%",
-         "High \u2014 context catches cascading errors", "20\u201330%"],
-        ["Hallucination", "111", "12.3%",
-         "Moderate-High \u2014 better calibration", "15\u201325%"],
-        ["Wrong Topic (phonetic)", "141", "15.7%",
-         "Moderate \u2014 better vocabulary prior", "10\u201320%"],
-        ["Wrong Topic (total drift)", "143", "15.9%",
+        ["Wrong Topic (total drift)", "143", "24.9%",
          "Low \u2014 no visual signal to decode", "<5%"],
-        ["Signal Loss / Empty", "81", "9.0%",
+        ["Wrong Topic (phonetic)", "112", "19.5%",
+         "Moderate \u2014 better vocabulary prior", "10\u201320%"],
+        ["Hallucination", "108", "18.8%",
+         "Moderate-High \u2014 better calibration", "15\u201325%"],
+        ["Right Topic, Wrong Details", "79", "13.8%",
+         "Highest \u2014 entity/vocabulary disambiguation", "25\u201335%"],
+        ["Signal Loss / Empty", "80", "13.9%",
          "None \u2014 encoder failure", "<5%"],
+        ["Accumulated Errors", "52", "9.1%",
+         "High \u2014 context catches cascading errors", "20\u201330%"],
     ]
     tbl = add_table(slide, headers, rows,
                     MX, CT + Inches(0.50), tbl_w,
@@ -695,16 +698,15 @@ def slide_30c(prs):
     _finish(slide, 0,
         "Backup detail slide for Q&A. Shows per-failure-mode recovery "
         "estimates with the full 6-row table.\n\n"
-        "Key point: 'Right Topic Wrong Details' (204 segments) is the "
-        "sweet spot for LLM improvement because the visual encoder "
-        "captured the right domain but the LLM picked wrong words. "
-        "Examples: 'admiral McRae' -> 'animal migratory', "
-        "'pro controller' -> 'broken dollar'.\n\n"
+        "Key point: Wrong Topic dominates at 44.4% (255 segments combined). "
+        "'Right Topic Wrong Details' (79 segments) is the sweet spot for "
+        "LLM improvement — encoder captured right domain but LLM picked "
+        "wrong words. Examples: 'admiral McRae' -> 'animal migratory'.\n\n"
         "The insight box explains WHY: the LLM disambiguates homophenes "
         "(identical lip shapes for different sounds). A stronger language "
         "prior with 61% higher MMLU and 4x vocabulary directly fixes "
         "entity names and content words.\n\n"
-        "Total estimated recovery: ~155-235 of 575 below-threshold segments, "
+        "Total estimated recovery from 574 below-threshold segments, "
         "pushing useful output rate from 61.6% to ~70-75%.",
         [[ft, tbl],
          [insight_box, insight_title, insight_text],
@@ -904,16 +906,18 @@ def slide_31(prs):
     takeaways = [
         ("1", "Rigorous assessment: 2.5\u00d7 WER gap on 1,497 segments. "
               "Novel IS metric reveals 61.6% useful output (NIV Y+P), "
-              "confirmed by LLM judge at 64.9%. 5 classified failure categories."),
-        ("2", "Production system delivered: standalone container, 37 bugs "
-              "fixed, 8-stage pipeline, 37 tests, 8 research reports."),
-        ("3", "Data is the bottleneck: fine-tuning experiments (Exp A/B) "
-              "proved 1,273 segments too small. Multiplicative scaling law: "
-              "stronger LLM + more data compounds."),
-        ("4", "Actionable roadmap to IS 3.5\u20134.0 (from 2.53): "
-              "confidence scoring + N-best aggregation + LLM upgrade + "
-              "data scaling + GER. Each phase targets a different failure "
-              "category."),
+              "confirmed by LLM judge at 64.9%. Full failure analysis "
+              "with improvement suggestions."),
+        ("2", "Production system delivered: standalone container with "
+              "professional UI, 37 bugs fixed, 8-stage pipeline, 37 tests, "
+              "8 research reports \u2014 all from a paper with no working "
+              "environment."),
+        ("3", "Model performs well: ~65% of videos produce useful output. "
+              "IS metric shows high agreement with LLM judge and runs "
+              "entirely on the standalone computer \u2014 no cloud dependency."),
+        ("4", "Clear path forward: confidence scoring + N-best aggregation "
+              "+ LLM upgrade to improve English performance. Full plan to "
+              "replicate the approach for an Arabic model in 2\u20133 months."),
     ]
 
     card_h = Inches(1.05)
@@ -947,10 +951,10 @@ def slide_31(prs):
         card_groups.append([r, circle, nt, tb])
 
     _finish(slide, 31,
-        "Four takeaways. One: rigorous assessment with novel IS metric. "
-        "Two: production system delivered. Three: data is the bottleneck "
-        "(fine-tuning proved it). Four: clear roadmap from IS 2.53 to "
-        "3.5-4.0, each phase targeting a different failure category.",
+        "Four takeaways. One: rigorous assessment with novel IS metric and "
+        "full failure analysis. Two: production system built from scratch. "
+        "Three: model performs well, 65% useful, IS runs locally. "
+        "Four: clear path forward for English improvement and Arabic adaptation.",
         card_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════

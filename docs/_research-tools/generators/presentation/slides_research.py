@@ -815,15 +815,15 @@ def slide_08(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "575 segments below useful threshold (IS < 2.00) \u2014 how often does each mode occur?",
+        "574 segments below useful threshold (IS < 2.00) \u2014 how often does each mode occur?",
         MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
 
     modes = [
-        ("Wrong Topic", 31.6, 284, GOLD),
-        ("Accumulated Errors", 24.4, 220, LGRAY),
-        ("Right Topic, Wrong Details", 22.7, 204, TEAL),
-        ("Hallucination", 12.3, 111, CORAL),
-        ("Signal Loss", 9.0, 81, MGRAY),
+        ("Wrong Topic", 44.4, 255, GOLD),
+        ("Hallucination", 18.8, 108, CORAL),
+        ("Signal Loss", 13.9, 80, MGRAY),
+        ("Right Topic, Wrong Details", 13.8, 79, TEAL),
+        ("Accumulated Errors", 9.1, 52, LGRAY),
     ]
 
     bar_h = Inches(0.65)
@@ -840,7 +840,7 @@ def slide_08(prs):
         lbl = add_text(slide, name, MX, y, label_w, bar_h,
                  size=Pt(16), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
         # Bar
-        w = max(Inches(0.2), int(max_bar_w * pct / 32.0))
+        w = max(Inches(0.2), int(max_bar_w * pct / 45.0))
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color,
                        corner_radius=True)
         # Value label
@@ -856,11 +856,12 @@ def slide_08(prs):
              size=Pt(13), color=LGRAY, italic=True)
 
     _finish(slide, 8,
-        "575 below-threshold segments classified into 5 failure categories. Wrong Topic "
-        "is the largest (31.6%), combining topic drift and phonetic confusion. "
-        "Hallucination (12.3%) is the most dangerous: fluent, confident, "
-        "completely fabricated. Right Topic Wrong Details (22.7%) loses names and "
-        "numbers. This taxonomy maps directly to our roadmap.",
+        "574 below-threshold segments (IS < 2.00) classified into 5 failure categories. "
+        "Wrong Topic dominates at 44.4% (255 segments), combining topic drift and "
+        "phonetic confusion. Hallucination is second at 18.8% (108). Signal Loss "
+        "and Right Topic Wrong Details are roughly tied at ~14% each. Accumulated "
+        "Errors drops to just 9.1% — most mild-error segments now fall above the "
+        "IS 2.00 threshold. This taxonomy maps directly to our roadmap.",
         bar_groups)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -878,7 +879,7 @@ def slide_failure_deep_1a(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "575 below-threshold segments (IS < 2.0) classified into 5 mutually exclusive "
+        "574 below-threshold segments (IS < 2.0) classified into 5 mutually exclusive "
         "categories \u2014 each segment gets exactly one label, checked 1\u21925.",
         MX, CT, CW, Inches(0.28), size=Pt(13), color=LGRAY, italic=True)
 
@@ -889,18 +890,18 @@ def slide_failure_deep_1a(prs):
         size=Pt(10), color=MGRAY, italic=True)
 
     modes_1 = [
-        ("1. Right Topic, Wrong Details", "22.7%", "204 segments", RED,
-         "Roughly right but names/content words lost",
-         "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
-         "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
-        ("2. Wrong Topic", "31.6%", "284 segments", ORANGE,
+        ("1. Wrong Topic", "44.4%", "255 segments", ORANGE,
          "Mouth shapes decoded to wrong domain",
          "Semantic < 0.2 (phonetic-matched or not)",
          "Ref: \u201cweight loss and diet\u201d \u2192 Hyp: \u201cwanted to be a princess\u201d"),
-        ("3. Hallucination", "12.3%", "111 segments", YELLOW,
+        ("2. Hallucination", "18.8%", "108 segments", YELLOW,
          "Model invented fake text",
          "WER \u2265 100% (output longer than reference)",
          "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier explanation of the final act\u201d"),
+        ("3. Right Topic, Wrong Details", "13.8%", "79 segments", RED,
+         "Roughly right but names/content words lost",
+         "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
+         "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
     ]
 
     card_h = Inches(1.35)
@@ -939,11 +940,11 @@ def slide_failure_deep_1a(prs):
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Failure taxonomy Part 1, ordered by impact. Right Topic Wrong Details "
-        "(22.7%): clients lose trust when output looks right but details are wrong. "
-        "Wrong Topic (31.6%): the LARGEST category — mouth shapes decoded to "
-        "completely wrong domain. Hallucination (12.3%): model invents fake text, "
-        "deceptive but identifiable by length.",
+        "Failure taxonomy Part 1, ordered by impact. Wrong Topic (44.4%): the "
+        "LARGEST category — mouth shapes decoded to completely wrong domain. "
+        "Hallucination (18.8%): model invents fake text, deceptive but identifiable "
+        "by length. Right Topic Wrong Details (13.8%): clients lose trust when "
+        "output looks right but details are wrong.",
         anim_groups, click_reveal=True)
 
 
@@ -954,14 +955,14 @@ def slide_failure_deep_1b(prs):
     add_accent_line(slide)
 
     modes_2 = [
-        ("4. Accumulated Errors", "24.4%", "220 segments", YELLOW,
-         "Many small errors compound",
-         "IS < 2.0 and doesn\u2019t match categories 1\u20133",
-         "Many words slightly wrong throughout, meaning erodes"),
-        ("5. Signal Loss", "9.0%", "81 segments", LGRAY,
+        ("4. Signal Loss", "13.9%", "80 segments", LGRAY,
          "Nothing came out",
          "Empty output OR length ratio < 0.3",
          "Ref: \u201cthe thirteenth amendment\u201d \u2192 Hyp: \u201c\u201d"),
+        ("5. Accumulated Errors", "9.1%", "52 segments", YELLOW,
+         "Many small errors compound",
+         "IS < 2.0 and doesn\u2019t match categories 1\u20133",
+         "Many words slightly wrong throughout, meaning erodes"),
     ]
 
     card_h = Inches(1.8)
@@ -998,7 +999,7 @@ def slide_failure_deep_1b(prs):
     sum_y = y0 + 2 * (card_h + gap) + Inches(0.1)
     sr = add_rect(slide, MX, sum_y, CW, Inches(1.0), fill_color=NAVY2,
                   border_color=GOLD, border_width=Pt(2), corner_radius=True)
-    add_text(slide, "Key Insight: Categories 4 & 5 are lower impact but still 33.4% of failures",
+    add_text(slide, "Key Insight: Categories 4 & 5 are lower impact but still 23.0% of failures",
              MX + Inches(0.3), sum_y + Inches(0.1), CW - Inches(0.6), Inches(0.35),
              size=Pt(16), color=GOLD, bold=True)
     add_text(slide,
@@ -1162,20 +1163,20 @@ def slide_failure_deep_3(prs):
 
     headers = ["Category", "Impact", "Fix"]
     rows = [
-        ["Right Topic, Wrong Details (22.7%)", "Critical — clients lose trust", "Domain fine-tuning"],
-        ["Wrong Topic (31.6%)", "Very High — largest category", "LLM swap + data"],
-        ["Hallucination (12.3%)", "Medium — deceptive but identifiable", "Confidence scoring"],
-        ["Accumulated Errors (24.4%)", "Medium — death by 1000 cuts", "N-best aggregation"],
-        ["Signal Loss (9.0%)", "Low — detectable, filterable", "Quality filtering"],
+        ["Wrong Topic (44.4%)", "Very High — largest category", "LLM swap + data"],
+        ["Hallucination (18.8%)", "High — deceptive but identifiable", "Confidence scoring"],
+        ["Signal Loss (13.9%)", "Medium — detectable, filterable", "Quality filtering"],
+        ["Right Topic, Wrong Details (13.8%)", "Medium — clients lose trust", "Domain fine-tuning"],
+        ["Accumulated Errors (9.1%)", "Lower — death by 1000 cuts", "N-best aggregation"],
     ]
 
     # Color scheme: category and impact columns share severity color
     row_colors = {
-        0: {0: RED, 1: RED},            # Right Topic Wrong Details — very high severity
-        1: {0: ORANGE, 1: ORANGE},      # Wrong Topic — high severity
-        2: {0: YELLOW, 1: YELLOW},      # Hallucination — moderate severity
-        3: {0: YELLOW, 1: YELLOW},      # Accumulated Errors — medium severity
-        4: {0: LGRAY, 1: LGRAY},        # Signal Loss — low severity
+        0: {0: ORANGE, 1: ORANGE},      # Wrong Topic — highest severity
+        1: {0: RED, 1: RED},            # Hallucination — high severity
+        2: {0: LGRAY, 1: LGRAY},        # Signal Loss — medium severity
+        3: {0: YELLOW, 1: YELLOW},      # Right Topic Wrong Details — medium severity
+        4: {0: YELLOW, 1: YELLOW},      # Accumulated Errors — lower severity
     }
 
     tbl = add_table(slide, headers, rows,
@@ -1201,7 +1202,7 @@ def slide_failure_deep_3(prs):
         "(moderate, Hallucination), ORANGE (high, Wrong Topic), RED (critical, "
         "Right Topic Wrong Details), YELLOW (medium, Accumulated Errors). "
         "Right Topic Wrong Details is the most dangerous because clients cannot "
-        "trust the output. Wrong Topic is the LARGEST at 31.6% and the most "
+        "trust the output. Wrong Topic is the LARGEST at 44.4% and the most "
         "amenable to improvement through LLM upgrade. 54.3% of failures trace "
         "to the LLM backbone being too weak.",
         [[tbl], [callout_r, callout_t]], click_reveal=True)
