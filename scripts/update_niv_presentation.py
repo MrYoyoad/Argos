@@ -208,6 +208,41 @@ def add_bullet_textbox(slide, bullets, left, top, width, height,
     return txBox
 
 
+def add_animated_bullets(slide, bullets, left, top, width, line_height=Inches(0.55),
+                         size=Pt(15), text_color=WHITE, bullet_color=None,
+                         font_name="Calibri"):
+    """Add bullet points as individual text boxes with click-to-appear animations.
+
+    Each bullet appears on click. bullet_color controls the bullet marker color
+    (defaults to TEAL). Returns list of created text boxes.
+    """
+    if bullet_color is None:
+        bullet_color = RGBColor(0x00, 0xB4, 0xD8)  # TEAL
+    boxes = []
+    for i, bullet_text in enumerate(bullets):
+        y = top + line_height * i
+        txBox = slide.shapes.add_textbox(left, y, width, Inches(0.50))
+        tf = txBox.text_frame
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        # Colored bullet marker
+        run_bullet = p.add_run()
+        run_bullet.text = "▸ "
+        run_bullet.font.size = size
+        run_bullet.font.color.rgb = bullet_color
+        run_bullet.font.name = font_name
+        run_bullet.font.bold = True
+        # Text content
+        run_text = p.add_run()
+        run_text.text = bullet_text
+        run_text.font.size = size
+        run_text.font.color.rgb = text_color
+        run_text.font.name = font_name
+        add_click_animation(slide, txBox)
+        boxes.append(txBox)
+    return boxes
+
+
 def set_shape_text(shape, text, preserve_format=True):
     """Set shape text, optionally preserving first run's formatting."""
     if not shape.has_text_frame:
@@ -863,8 +898,8 @@ def expand_arabic_analysis(prs):
     slide_b.shapes[-1].fill.fore_color.rgb = TEAL
     slide_b.shapes[-1].line.fill.background()
 
-    # Content
-    add_bullet_textbox(slide_b, [
+    # Content — individual animated bullets
+    add_animated_bullets(slide_b, [
         "AV-HuBERT is a self-supervised visual feature extractor",
         "Pretrained on LRS3 (English TED talks) \u2014 but not language-encoded",
         "Training loop: MFCC \u2192 K-means \u2192 pseudo-labels \u2192 masked prediction \u2192 iterate",
@@ -872,8 +907,8 @@ def expand_arabic_analysis(prs):
         "Low-level features are mostly universal: lip shape, mouth opening, jaw movement",
         "Visual features are ~80% language-agnostic (mouth geometry is universal)",
         "Language specificity lives in downstream components, not the visual encoder",
-    ], MX, Inches(1.50), CW, Inches(4.5),
-    size=Pt(15), color=LGRAY)
+    ], MX, Inches(1.50), CW, line_height=Inches(0.60),
+    size=Pt(15), text_color=WHITE, bullet_color=TEAL)
 
     # Page number placeholder
     add_textbox(slide_b, "", MX, Inches(7.12), Inches(0.5), Inches(0.25),
@@ -899,7 +934,7 @@ def expand_arabic_analysis(prs):
     slide_c.shapes[-1].fill.fore_color.rgb = TEAL
     slide_c.shapes[-1].line.fill.background()
 
-    add_bullet_textbox(slide_c, [
+    add_animated_bullets(slide_c, [
         "K-means clustering \u2014 retrain on Arabic audio features (already retrains per-dataset)",
         "LLM backbone \u2014 replace with Arabic-capable LLM (Jais, AceGPT, or multilingual Llama 3)",
         "Q-Former bridge + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
@@ -908,8 +943,8 @@ def expand_arabic_analysis(prs):
         "Phase 2: Fine-tune AV-HuBERT on Arabic video for language-specific distinctions",
         "Phase 3: Scale with more Arabic training data",
         "Biggest bottleneck: training data (no Arabic LRS3 equivalent at scale)",
-    ], MX, Inches(1.50), CW, Inches(4.8),
-    size=Pt(14), color=LGRAY)
+    ], MX, Inches(1.50), CW, line_height=Inches(0.55),
+    size=Pt(14), text_color=WHITE, bullet_color=TEAL)
 
     # Page number placeholder
     add_textbox(slide_c, "", MX, Inches(7.12), Inches(0.5), Inches(0.25),
