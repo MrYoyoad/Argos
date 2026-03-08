@@ -333,3 +333,4 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 215 | 66 | Key takeaways — updated 4 points, de-emphasized data bottleneck, added IS vs WER comparison | done |
 | 216 | 58 | Price tag — "Free upgrade: swap LLM" → "LLM upgrade + adapter retraining" | done |
 | 217 | 24, 40, 54 | Fix 3 page-number overlaps — moved bottom-row content up ~0.3" to clear page numbers on radar legend (S24), gallery captions (S40), and roadmap insight (S54) | done |
+| 218 | IS in Action (two segments) | Bad segment arithmetic wrong: Phonetic 0.029→0.030, Inv WWER 0.004→0.005, sum 0.80→0.81 | done |

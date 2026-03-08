@@ -552,9 +552,9 @@ def slide_is_calc_examples(prs):
     # --- Right: Bad segment ---
     bad_lines = [
         ("Semantic Sim", "0.04", "\u00d7 0.25", "= 0.010", CORAL),
-        ("Phonetic Sim", "0.20", "\u00d7 0.15", "= 0.029", CORAL),
+        ("Phonetic Sim", "0.20", "\u00d7 0.15", "= 0.030", CORAL),
         ("Inverse WER", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
-        ("Inverse WWER", "0.03", "\u00d7 0.15", "= 0.004", CORAL),
+        ("Inverse WWER", "0.03", "\u00d7 0.15", "= 0.005", CORAL),
         ("NEA F1", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
         ("Length Ratio", "0.78", "\u00d7 0.15", "= 0.117", CORAL),
     ]
@@ -562,7 +562,7 @@ def slide_is_calc_examples(prs):
         "Bad Segment", "0.8", CORAL,
         "carry strap",
         "holocaust denier explanation of the final act",
-        bad_lines, "Sum \u00d7 5 = 0.80 \u2192 IS 0.8 (Failed)")
+        bad_lines, "Sum \u00d7 5 = 0.81 \u2192 IS 0.8 (Failed)")
 
     _finish(slide, 0,
         "Two IS calculation examples. Left: good segment (IS 4.2) with high "
