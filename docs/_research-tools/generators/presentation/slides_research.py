@@ -665,7 +665,7 @@ def slide_is_wer_scatter(prs):
 
 def slide_07(prs):
     slide = new_slide(prs)
-    add_title(slide, "Intelligibility Score: 39.9% Properly Captured")
+    add_title(slide, "Intelligibility Score: 40.1% Properly Captured")
     add_accent_line(slide)
 
     # 6 signal blocks
@@ -697,7 +697,7 @@ def slide_07(prs):
 
     # Key callout
     callout = add_text(slide,
-        "IS ≥ 3.0 = Properly Captured: 39.9% — 3.5× more than WER's 11.4%\n"
+        "IS ≥ 3.0 = Properly Captured: 40.1% — 3.5× more than WER's 11.4%\n"
         "Phonetic similarity: 41.5% mean, r=0.943 with IS (strongest single signal)",
         MX, by + bh + Inches(0.2), CW, Inches(0.55),
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
@@ -729,7 +729,7 @@ def slide_07(prs):
 
     _finish(slide, 7,
         "The Intelligibility Score combines 6 signals into a 0-5 composite. "
-        "Key insight: 39.9% of segments are properly captured (IS >= 3.0) — "
+        "Key insight: 40.1% of segments are properly captured (IS >= 3.0) — "
         "3.5x more than WER's 11.4% 'usable.' WER dramatically overstates "
         "failure. Methodology: LLM-distilled evaluation — the "
         "rubric, selected signals and weights, defined tier boundaries. "
@@ -1171,7 +1171,7 @@ def slide_09(prs):
 
 
 def slide_metric_transition(prs):
-    """The three numbers: 64.1% -> 39.9% -> 50.9%."""
+    """The three numbers: 64.1% -> 40.1% -> 51.1%."""
     slide = new_slide(prs)
     add_title(slide, "Three Numbers That Tell the Real Story")
     add_accent_line(slide)
@@ -1208,11 +1208,11 @@ def slide_metric_transition(prs):
     g2.append(add_rect(slide, card_x, c2_y, card_w, card_h,
                         fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                         corner_radius=True))
-    g2.append(add_text(slide, "39.9%", card_x + Inches(0.3), c2_y + Inches(0.1),
+    g2.append(add_text(slide, "40.1%", card_x + Inches(0.3), c2_y + Inches(0.1),
                         Inches(2.5), card_h - Inches(0.2),
                         size=Pt(48), color=TEAL, bold=True))
     g2.append(add_text(slide,
-        "What IS reveals: 597 of 1,497 segments\ndeliver genuinely useful output",
+        "What IS reveals: 601 of 1,497 segments\ndeliver genuinely useful output",
         card_x + Inches(3.0), c2_y + Inches(0.15),
         card_w - Inches(3.3), card_h - Inches(0.3),
         size=Pt(15), color=WHITE))
@@ -1238,7 +1238,7 @@ def slide_metric_transition(prs):
         size=Pt(15), color=WHITE))
 
     _finish(slide, 0,
-        "The three numbers: WER 64.1% (misleading), IS captured 39.9% (real), "
+        "The three numbers: WER 64.1% (misleading), IS captured 40.1% (real), "
         "Opus-as-a-Judge Y+P 64.9% (the full picture).",
         [g1, g1_arrow + g2, g2_arrow + g3], click_reveal=True)
 
@@ -1388,11 +1388,11 @@ def slide_tuning_summary(prs):
 
     headers = ["Metric", "Baseline", "Config J", "\u0394"]
     rows = [
-        ["Mean IS", "2.52", "2.60", "+0.08"],
-        ["Captured (IS\u22653)", "39.9%", "41.2%", "+1.3pp"],
+        ["Mean IS", "2.53", "2.60", "+0.07"],
+        ["Captured (IS\u22653)", "40.1%", "41.2%", "+1.1pp"],
         ["Empty outputs", "4.7%", "0%", "\u221270"],
         ["Hallucinations", "20.5%", "23.2%", "+41"],
-        ["Mean WWER", "61.9%", "59.8%", "\u22122.1pp"],
+        ["Mean WWER", "60.5%", "59.8%", "\u22120.7pp"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.75), col_w,
                     row_height=Inches(0.38),

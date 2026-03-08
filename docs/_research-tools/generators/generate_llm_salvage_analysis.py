@@ -220,7 +220,7 @@ def generate_markdown(categories, all_divergent, all_rows):
                  "context would understand the lip-reading output despite high word error rates.")
     lines.append("")
     lines.append("This represents an **18.3% recovery rate** among segments that metrics mark as failed. "
-                 "If we include these, the effective intelligibility rate rises from 39.9% to **50.9%** "
+                 "If we include these, the effective intelligibility rate rises from 40.1% to **51.1%** "
                  "of all segments.")
     lines.append("")
 

@@ -49,6 +49,8 @@ from presentation.slides_evaluation import (
     slide_llm_context_engine,
     slide_25, slide_25b, slide_25d, slide_25e, slide_25c,
     slide_what_good_looks_like, slide_14b, slide_15,
+    slide_llm_judge_30, slide_judge_ex1, slide_judge_ex2,
+    slide_judge_ex3, slide_judge_ex4, slide_judge_ex5, slide_judge_ex6,
 )
 from presentation.slides_engineering import (
     slide_eng_transition, slide_three_repos,
@@ -101,8 +103,8 @@ def main():
         slide_is_calc_examples, # IS in Action: Two Real Segments
         slide_is_radar,     # [MOD] IS Radar: dual overlay if available
         slide_is_wer_scatter, # [NEW] The Gap: WER vs IS scatter
-        slide_07,           # IS Results: 39.9% Captured
-        slide_metric_transition, # [NEW] 64.1% -> 39.9% -> 50.9%
+        slide_07,           # IS Results: 40.1% Captured
+        slide_metric_transition, # [NEW] 64.1% -> 40.1% -> 51.1%
         # --- Section 4: Understanding Why ---
         # slide_10,           # Three Root Causes (hidden per batch 8)
         # slide_domain_mismatch, # Domain mismatch detail (hidden per batch 8)
@@ -120,9 +122,17 @@ def main():
         slide_metric_disagreement_2, # When Metrics Disagree pt 2
         slide_two_eval_systems, # Two evaluation systems
         slide_llm_judge,    # LLM-as-a-Judge
-        # slide_context_eval, # Context-aware re-evaluation (decluttered: 1 table + bullets)
+        slide_context_eval, # Context-aware re-evaluation (decluttered: 1 table + bullets)
+        # --- LLM Judge 30-sample deep dive ---
+        slide_llm_judge_30, # 30-sample overview stats
+        slide_judge_ex1,    # Named entity swap (IS 4.55)
+        slide_judge_ex2,    # Truncated but core preserved (IS 3.69)
+        slide_judge_ex3,    # Tech vocabulary drift (IS 3.02)
+        slide_judge_ex4,    # Scientific vocabulary lost (IS 2.67)
+        slide_judge_ex5,    # Cooking domain confusion (IS 2.07)
+        slide_judge_ex6,    # Topic hijack (IS 1.79)
         # --- Salvage ---
-        slide_25,           # LLM Salvage overview: 39.9% -> 50.9% (reframed: lower bound, LLM-judge only per batch 8)
+        slide_25,           # LLM Salvage overview: 40.1% -> 51.1% (reframed: lower bound, LLM-judge only per batch 8)
         slide_llm_context_engine, # LLM as context engine
         # slide_25b,          # Salvage: 6 Recovery Categories (hidden per batch 8)
         slide_25d,          # Salvage: 3 Real Examples

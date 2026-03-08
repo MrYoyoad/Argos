@@ -981,8 +981,8 @@ def section_17_llm_judge_gold_standard(doc):
         ["Method", "Capture Rate", "What It Measures"],
         [
             ["WER \u2264 20%", "11.4%", "Traditional word accuracy only"],
-            ["IS \u2265 3.0", "39.9%", "Multi-signal intelligibility"],
-            ["IS + salvage (llm_prob \u2265 0.5)", "50.9%", "IS + recoverable meaning"],
+            ["IS \u2265 3.0", "40.1%", "Multi-signal intelligibility"],
+            ["IS + salvage (llm_prob \u2265 0.5)", "51.1%", "IS + recoverable meaning"],
             ["LLM Judge: Y", "23.0%", "Strict holistic meaning preservation"],
             ["LLM Judge: Y+P", "64.9%", "Any useful output (holistic)"],
         ],
@@ -990,9 +990,9 @@ def section_17_llm_judge_gold_standard(doc):
     )
 
     add_para(doc, (
-        "Key implication: WER alone reports 11.4% success; IS raises this to 39.9%; the LLM judge\u2019s "
+        "Key implication: WER alone reports 11.4% success; IS raises this to 40.1%; the LLM judge\u2019s "
         "lenient threshold shows 64.9% of outputs contain at least some useful information. The true "
-        "capture rate lies between IS (39.9%) and LLM Y+P (64.9%), depending on the downstream "
+        "capture rate lies between IS (40.1%) and LLM Y+P (64.9%), depending on the downstream "
         "application\u2019s tolerance for partial information."
     ), bold=True)
 

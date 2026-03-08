@@ -60,7 +60,7 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
-        ("39.9% properly captured (IS \u2265 3.0)", {"bold": True}),
+        ("40.1% properly captured (IS \u2265 3.0)", {"bold": True}),
         ("64.9% useful per Opus-as-a-Judge (Y+P = 971/1,497)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
@@ -81,7 +81,7 @@ def slide_24(prs):
 
     _finish(slide, 24,
         "This is the turning point. WER says 11.4% usable. Our "
-        "Intelligibility Score says 39.9% properly captured — 3.5x more. "
+        "Intelligibility Score says 40.1% properly captured — 3.5x more. "
         "Opus-as-a-Judge confirms 64.9% useful output (Y+P = 971/1,497). "
         "Validated across 16 decode configs with 85% correlation.",
         [[r1], [r2, img]], click_reveal=True)
@@ -197,7 +197,7 @@ def slide_26b(prs):
     rx = MX + Inches(8.3)
     rw = Inches(3.8)
     milestones = [
-        ("Current", "IS 2.52", "39.9% captured", "", CORAL),
+        ("Current", "IS 2.53", "40.1% captured", "", CORAL),
         ("Phase 1\u20132", "IS ~2.85",  "~48% captured",
          "Fixes: Signal Loss (9%), Accum. Errors (24.4%), Content Words (10.7%)", TEAL),
         ("+ Phase 3", "IS ~3.40", "~58% captured",
@@ -219,7 +219,7 @@ def slide_26b(prs):
                  rw - Inches(0.3), Inches(0.3),
                  size=Pt(16), color=WHITE, bold=True))
         if i > 0:
-            delta = float(is_val.replace("IS ~", "")) - 2.52
+            delta = float(is_val.replace("IS ~", "")) - 2.53
             ms_shapes.append(add_text(slide, f"+{delta:.2f}  |  {failure_note}",
                      rx + Inches(0.15), y + Inches(0.65),
                      rw - Inches(0.3), Inches(0.35),
@@ -232,7 +232,7 @@ def slide_26b(prs):
 
     _finish(slide, "26b",
         "IS improvement trajectory with failure mode annotations. "
-        "Current IS 2.52 (39.9% captured). "
+        "Current IS 2.53 (40.1% captured). "
         "Phase 1-2 target IS ~2.85 (48% captured) by fixing Signal Loss (9%), "
         "Accumulated Errors (24.4%), and Content Word Errors (10.7%). "
         "Phase 3 target IS ~3.40 (58% captured) by fixing Hallucination (12.3%) "
@@ -705,7 +705,7 @@ def slide_30c(prs):
         "prior with 61% higher MMLU and 4x vocabulary directly fixes "
         "entity names and content words.\n\n"
         "Total estimated recovery: ~155-235 of 900 failed segments, "
-        "pushing capture rate from 39.9% to ~50-56%.",
+        "pushing capture rate from 40.1% to ~50-56%.",
         [[ft, tbl],
          [insight_box, insight_title, insight_text],
          [note_text]])
@@ -834,7 +834,7 @@ def slide_31(prs):
         ("3", "Data is the bottleneck: fine-tuning experiments (Exp A/B) "
               "proved 1,273 segments too small. Multiplicative scaling law: "
               "stronger LLM + more data compounds."),
-        ("4", "Actionable roadmap to IS 3.5\u20134.0 (from 2.52): "
+        ("4", "Actionable roadmap to IS 3.5\u20134.0 (from 2.53): "
               "confidence scoring + N-best aggregation + LLM upgrade + "
               "data scaling + GER. Each phase targets a different failure "
               "category."),
@@ -873,7 +873,7 @@ def slide_31(prs):
     _finish(slide, 31,
         "Four takeaways. One: rigorous assessment with novel IS metric. "
         "Two: production system delivered. Three: data is the bottleneck "
-        "(fine-tuning proved it). Four: clear roadmap from IS 2.52 to "
+        "(fine-tuning proved it). Four: clear roadmap from IS 2.53 to "
         "3.5-4.0, each phase targeting a different failure category.",
         card_groups, click_reveal=True)
 
@@ -1033,8 +1033,8 @@ def slide_a11(prs):
         ["Metric", "Value"],
         [["Metric-failed segments", "900"],
          ["LLM-recoverable", "165 (18.3%)"],
-         ["Metric capture (IS ≥ 3.0)", "39.9%"],
-         ["Effective capture", "50.9%"],
+         ["Metric capture (IS ≥ 3.0)", "40.1%"],
+         ["Effective capture", "51.1%"],
          ["Uplift", "+11.0pp (+27.6% rel.)"]],
         MX, CT + Inches(0.4), SLW, text_size=Pt(11),
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
@@ -1065,7 +1065,7 @@ def slide_a11(prs):
 
     _finish(slide, "A4",
         "165 of 900 metric-failed segments are recoverable by the LLM "
-        "heuristic. Effective capture rises from 39.9% to 50.9%. "
+        "heuristic. Effective capture rises from 40.1% to 51.1%. "
         "6 recovery categories (overlap, not disjoint). "
         "58% have moderate WER (50-70%).")
 
@@ -1372,7 +1372,7 @@ def slide_data_scaling(prs):
 
     tbl = add_table(slide,
         ["Phase", "Data", "WER", "IS Target", "Timeline"],
-        [["Current", "1.3K segs", "64.1%", "2.52", "\u2014"],
+        [["Current", "1.3K segs", "64.1%", "2.53", "\u2014"],
          ["Phase 1", "5K hrs", "55\u201358%", "~2.9", "2\u20134 wks"],
          ["Phase 2", "10K hrs", "48\u201352%", "~3.3", "4\u20136 wks"],
          ["Phase 3", "20K hrs", "42\u201346%", "~3.7", "6\u20138 wks"],

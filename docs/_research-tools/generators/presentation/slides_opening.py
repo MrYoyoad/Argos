@@ -46,7 +46,7 @@ def slide_exec_summary(prs):
         ("Our new Intelligibility Score (IS) reveals 40% is actually useful — "
          "3.5\u00d7 more than WER admits", {"color": TEAL, "bold": True}),
         "Built a complete production system: 8-stage pipeline, standalone container",
-        ("Clear roadmap to IS 3.5\u20134.0 (from 2.52) through data scaling + LLM upgrade",
+        ("Clear roadmap to IS 3.5\u20134.0 (from 2.53) through data scaling + LLM upgrade",
          {"color": TEAL}),
         ("Arabic pipeline: replication roadmap established for Arabic lip-reading", {}),
         "Produced 8 comprehensive research reports",

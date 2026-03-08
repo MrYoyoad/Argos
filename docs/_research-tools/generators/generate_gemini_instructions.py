@@ -432,12 +432,12 @@ SPEAKER NOTES: "Same WER, opposite meaning. Left: minor grammatical change, mean
 
 SLIDE 7 - The Intelligibility Score
 LAYOUT: Top section with 6 blocks in a row, bottom section with tier bars
-Title: "Intelligibility Score: 39.9% Properly Captured"
+Title: "Intelligibility Score: 40.1% Properly Captured"
 Six signal blocks in a row (colored blocks with labels):
   Semantic Sim (25%) | Phonetic Sim (15%) | Inv. WER (15%) | Inv. WWER (15%) | NEA F1 (15%) | Length Ratio (15%)
-Key callout in teal: "IS >= 3.0 = Properly Captured: 39.9% \u2014 3.5x more than WER\u2019s 11.4%"
+Key callout in teal: "IS >= 3.0 = Properly Captured: 40.1% \u2014 3.5x more than WER\u2019s 11.4%"
 Five tier bars: 18.4% Excellent | 21.4% Good | 21.7% Fair | 22.4% Poor | 16.0% Failed
-SPEAKER NOTES: "The Intelligibility Score combines 6 signals into a 0-5 composite. Key insight: 39.9% of segments are properly captured (IS >= 3.0) \u2014 3.5x more than WER\u2019s 11.4% \u2018usable.\u2019 WER dramatically overstates failure. Methodology: LLM-distilled evaluation \u2014 Claude designed the rubric, selected signals and weights, defined tier boundaries. This is \u2018what an expert would score\u2019 made deterministic and free. Validated across 16 decode configs: Claude-designed heuristic (deterministic, no runtime LLM calls) r=0.925 with IS, 88.6% agreement. Phonetic Similarity is the #1 correlate (r=0.943). PCA retains 2 dimensions: signal quality (68.4%, all 5 content signals) and output length (19.5%, Length Ratio). [ANIMATION: Six signal blocks build one at a time. Tier bars appear below. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "The Intelligibility Score combines 6 signals into a 0-5 composite. Key insight: 40.1% of segments are properly captured (IS >= 3.0) \u2014 3.5x more than WER\u2019s 11.4% \u2018usable.\u2019 WER dramatically overstates failure. Methodology: LLM-distilled evaluation \u2014 Claude designed the rubric, selected signals and weights, defined tier boundaries. This is \u2018what an expert would score\u2019 made deterministic and free. Validated across 16 decode configs: Claude-designed heuristic (deterministic, no runtime LLM calls) r=0.925 with IS, 88.6% agreement. Phonetic Similarity is the #1 correlate (r=0.943). PCA retains 2 dimensions: signal quality (68.4%, all 5 content signals) and output length (19.5%, Length Ratio). [ANIMATION: Six signal blocks build one at a time. Tier bars appear below. Transition: Fade 0.5s.]"
 
 ---
 
@@ -501,8 +501,8 @@ Left column \u2014 "Parameters Tested":
   \u2022 Sampling strategy
   \u2022 Repetition penalty
 Right column header: "Best Config (J) \u2014 Full Dataset (1,497 segments)"
-  \u2022 IS: 2.60 vs 2.52 baseline (+0.08)
-  \u2022 Captured: 622 vs 597 (+25 segments)
+  \u2022 IS: 2.60 vs 2.53 baseline (+0.07)
+  \u2022 Captured: 622 vs 601 (+21 segments)
   \u2022 Empties: 0 vs 70 (eliminated)
   \u2022 Hallucinations: 348 vs 307 (+41 more)
 SPEAKER NOTES: "13 systematic experiments across beam size, length penalty, temperature, and sampling. Config J (beam=20, lenpen=0, temperature=1.0, do_sample=True) achieved the best IS. Key trade-off: eliminated all 70 empty outputs but added 41 hallucinations. Net IS gain: only +0.08. Note: standalone container uses do_sample=True (stochastic), EC2 uses False (deterministic) \u2014 to be unified. The chart shows the empty-vs-hallucination trade-off across configs. [ANIMATION: Left column appears, then right column. Transition: Fade 0.5s.]"
@@ -675,19 +675,19 @@ LEFT column (coral/red tint): "WER Says"
   \u2022 11.4% usable
   \u2022 9 out of 10 segments fail
 RIGHT column (teal/green tint): "IS Says"
-  \u2022 39.9% properly captured
+  \u2022 40.1% properly captured
   \u2022 43-51% context-recoverable
   \u2022 Validated across 16 decode configs
   \u2022 Claude-designed heuristic (no runtime LLM): 88.6% agreement, r=0.925
 Bottom: "The gap is real \u2014 but WER dramatically overstates failure. 40% already works."
-SPEAKER NOTES: "This is the turning point. WER says 11.4% usable. Our Intelligibility Score says 39.9% properly captured \u2014 3.5x more. And 43-51% is context-recoverable. This isn\u2019t wishful thinking: IS is validated across all 16 decode configs (Claude-designed heuristic r=0.925 (no runtime LLM calls), 88.6% agreement, recall 99.2%). Config J has the highest IS (2.571) despite +14.8pp higher WER than baseline \u2014 IS captures meaning that WER misses. We know WHY it works: 41.5% of successes are phonetically preserved (r=0.943 with IS). Per-segment rankings stable across configs (r > 0.92) \u2014 the bottleneck is the encoder, not decode. [ANIMATION: Left (red) column appears, then right (green) column. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "This is the turning point. WER says 11.4% usable. Our Intelligibility Score says 40.1% properly captured \u2014 3.5x more. And 43-51% is context-recoverable. This isn\u2019t wishful thinking: IS is validated across all 16 decode configs (Claude-designed heuristic r=0.925 (no runtime LLM calls), 88.6% agreement, recall 99.2%). Config J has the highest IS (2.571) despite +14.8pp higher WER than baseline \u2014 IS captures meaning that WER misses. We know WHY it works: 41.5% of successes are phonetically preserved (r=0.943 with IS). Per-segment rankings stable across configs (r > 0.92) \u2014 the bottleneck is the encoder, not decode. [ANIMATION: Left (red) column appears, then right (green) column. Transition: Fade 0.5s.]"
 
 ---
 
 SLIDE 25 - Research Roadmap
-LAYOUT: Staircase/waterfall descending from IS 2.52 to IS 3.5-4.0
+LAYOUT: Staircase/waterfall descending from IS 2.53 to IS 3.5-4.0
 Right half: IMAGE PLACEHOLDER labeled "[P3_wer_trajectory.png]"
-Title: "Five Phases \u2014 From IS 2.52 to Target 3.5-4.0"
+Title: "Five Phases \u2014 From IS 2.53 to Target 3.5-4.0"
 Five phases as descending steps (left side):
   Phase 1: Surface the good 40% \u2014 confidence scoring (2-4 hours)
   Phase 2: Improve the fair 22% \u2014 N-best aggregation (-5 to -15%)
@@ -770,7 +770,7 @@ Four points (teal numbers):
   2. Production system delivered: standalone container, 37 bugs fixed, 8-stage pipeline, 37 tests, 8 research reports.
   3. Data is the bottleneck: Exp A/B proved 1,273 segments too small. Multiplicative scaling law: stronger LLM + more data compounds.
   4. Actionable roadmap to IS 3.5-4.0: LLM swap + smart prompts + data scaling + GER. Each phase targets a different failure category.
-SPEAKER NOTES: "Four takeaways. One: we know exactly where we stand \u2014 rigorous assessment with a novel metric that reveals the true picture. Two: production system delivered and deployed. Three: data, not model capacity, is the bottleneck \u2014 and we know the scaling law. Four: clear roadmap from IS 2.52 to 3.5-4.0, with each phase targeting a different failure category and gains that compound multiplicatively. [ANIMATION: Four points build one at a time. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "Four takeaways. One: we know exactly where we stand \u2014 rigorous assessment with a novel metric that reveals the true picture. Two: production system delivered and deployed. Three: data, not model capacity, is the bottleneck \u2014 and we know the scaling law. Four: clear roadmap from IS 2.53 to 3.5-4.0, with each phase targeting a different failure category and gains that compound multiplicatively. [ANIMATION: Four points build one at a time. Transition: Fade 0.5s.]"
 """
 
 
@@ -928,11 +928,11 @@ def build_overview(doc):
             ["Paper WER (LRS3)", "25.4%", "VSP-LLM paper, Table 1"],
             ["Real-world mean WER", "64.1%", "Report 1, 1,497 segments"],
             ["Reality gap", "2.5x worse", "Report 1"],
-            ["Properly captured (IS \u2265 3.0)", "39.9% (597 segments)", "Intelligibility Score"],
-            ["WER overstatement factor", "3.5x", "39.9% vs 11.4%"],
+            ["Properly captured (IS \u2265 3.0)", "40.1% (601 segments)", "Intelligibility Score"],
+            ["WER overstatement factor", "3.5x", "40.1% vs 11.4%"],
             ["Failure modes classified", "5 categories", "900 failed segments"],
             ["#1 failure: Topic Drift", "15.9% (143 segments)", "Failure taxonomy"],
-            ["#1 success: Phonetic Preservation", "41.5%", "248 of 597 successes"],
+            ["#1 success: Phonetic Preservation", "41.5%", "248 of 601 successes"],
             ["Bugs fixed", "37", "Bug tracking docs"],
             ["Pipeline: lines before \u2192 after", "823 \u2192 393", "52% reduction"],
             ["Total experiments", "13 (A-M)", "Tuning dataset"],
@@ -944,7 +944,7 @@ def build_overview(doc):
             ["LLM: recommended swap", "Llama 3.1 8B (drop-in)", "1-2 hours setup"],
             ["Prompts: force multiplier", "Llama-2 +5-10pp / 3.1 +12-20pp", "7 strategies"],
             ["GER post-processing", "+8-15pp, no retraining", "N-best + correction LLM"],
-            ["Combined target", "IS 3.5-4.0 (from 2.52)", "LLM + data + prompts + GER"],
+            ["Combined target", "IS 3.5-4.0 (from 2.53)", "LLM + data + prompts + GER"],
         ],
         col_widths=[2.5, 2.2, 2.0],
     )
@@ -995,7 +995,7 @@ def build_appendix(doc):
             ["A8", "IS Correlation & Cross-Config Analysis", "If asked about IS validation methodology"],
             ["A9", "LLM Upgrade Analysis \u2014 model alternatives, "
                    "data scaling projections (1.3K\u2192100K), "
-                   "7 prompt strategies, improvement waterfall (IS 2.52\u21923.5-4.0)",
+                   "7 prompt strategies, improvement waterfall (IS 2.53\u21923.5-4.0)",
                    "If asked about LLM alternatives or investment strategy"],
         ],
         col_widths=[0.4, 3.0, 3.2],

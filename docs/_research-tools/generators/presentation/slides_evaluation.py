@@ -55,8 +55,8 @@ def slide_12(prs):
                   rx, CT, col_w, Inches(0.35),
                   size=Pt(17), color=CORAL, bold=True)
     rb = add_bullets(slide, [
-        "IS: 2.60 vs 2.52 baseline (+0.08)",
-        ("Captured: 622 vs 597 (+25 segments)", {"color": GREEN}),
+        "IS: 2.60 vs 2.53 baseline (+0.07)",
+        ("Captured: 622 vs 601 (+21 segments)", {"color": GREEN}),
         ("Empties: 0 vs 70 (eliminated)", {"color": GREEN}),
         ("Hallucinations: 348 vs 307 (+41 more)", {"color": CORAL}),
     ], rx, CT + Inches(0.45), col_w, Inches(2.0))
@@ -308,7 +308,7 @@ def slide_25(prs):
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
     # IS metric — the lower bound
-    add_text(slide, "IS says 39.9%", MX + Inches(0.3), CT + Inches(0.2),
+    add_text(slide, "IS says 40.1%", MX + Inches(0.3), CT + Inches(0.2),
              CW - Inches(0.6), Inches(0.7),
              size=Pt(40), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "of segments pass (IS \u2265 3.0)",
@@ -328,10 +328,10 @@ def slide_25(prs):
     # Key bullets below
     bul = add_bullets(slide, [
         ("IS conservatively undercounts \u2014 the real quality is higher "
-         "than 39.9% suggests", {"bold": True, "color": WHITE}),
+         "than 40.1% suggests", {"bold": True, "color": WHITE}),
         "LLM-as-a-Judge (blind, 1,497 pairs) confirms: nearly 2 in 3 "
          "segments carry useful meaning",
-        ("The gap (39.9% \u2192 64.9%) = segments with partial value "
+        ("The gap (40.1% \u2192 64.9%) = segments with partial value "
          "that strict metrics penalize", {}),
         ("IS is a floor, not a ceiling \u2014 designed to be cautious",
          {"color": TEAL}),
@@ -347,7 +347,7 @@ def slide_25(prs):
 
     _finish(slide, 25,
         "IS provides a conservative lower bound for transcription quality. "
-        "IS says 39.9% of segments are captured (IS >= 3.0). But an independent "
+        "IS says 40.1% of segments are captured (IS >= 3.0). But an independent "
         "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
         "Y+P = 64.9% deliver useful output. The 25pp gap shows IS deliberately "
         "undercounts: many segments with partial value are penalized by strict "
@@ -1017,7 +1017,7 @@ def slide_two_eval_systems(prs):
              size=Pt(14), color=TEAL, bold=True)
     r1_b = add_bullets(slide, [
         "Strict metric: composite 0\u20135 score",
-        ("IS \u2265 3.0 = Captured: 39.9% (597/1,497)", {"bold": True}),
+        ("IS \u2265 3.0 = Captured: 40.1% (601/1,497)", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(1.0), col_w - Inches(0.4), Inches(0.8),
        size=Pt(13))
 
@@ -1065,7 +1065,7 @@ def slide_two_eval_systems(prs):
         size=Pt(12), color=WHITE)
 
     _finish(slide, 0,
-        "Two evaluation systems. IS is strict: 39.9% pass at IS >= 3.0. "
+        "Two evaluation systems. IS is strict: 40.1% pass at IS >= 3.0. "
         "Opus-as-a-Judge is more generous: Y+P = 64.9% (971/1,497). "
         "85% Pearson correlation between IS and Opus verdicts. "
         "The LLM judge is more conservative for full success (Y=23% vs IS 40%) "

@@ -47,12 +47,12 @@ LRS3_VALUES = [
     0.971,  # Length ratio (measured)
 ]
 
-# Real-world YouTube profile (our baseline: WER 64.1%, IS 2.52)
+# Real-world YouTube profile (our baseline: WER 64.1%, IS 2.53)
 YOUTUBE_VALUES = [
     0.58,   # Semantic similarity (mean from our data)
     0.52,   # Phonetic similarity (mean)
     0.36,   # 1 - WER (1 - 0.641 = 0.359)
-    0.38,   # 1 - WWER (1 - 0.619 = 0.381)
+    0.40,   # 1 - WWER (1 - 0.605 = 0.395)
     0.39,   # Named entity F1 (38.9%)
     0.72,   # Length ratio (mean, many short/long predictions)
 ]
