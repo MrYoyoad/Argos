@@ -300,3 +300,35 @@ User performed a density audit of slides with too many elements, tables, or bull
 | 191 | NEW (7 slides) | Convert 30-sample LLM Judge report to PPTX: 1 summary slide (slide_llm_judge_30) + 6 consecutive video example slides (slide_judge_ex1-6). Examples span IS 4.55 to 1.79 — mid-range, interesting cases: named entity swap, truncation, tech vocab drift, scientific vocab lost, cooking domain confusion, topic hijack. Each slide has large embedded video (left) + ref/hyp text + metrics + annotation (right). Placed after slide_context_eval, before Salvage section. Total slides: 75→77 | done |
 | 192 | IS calc card + 6 files | "carry strap" hallucination segment had wrong IS values across files: calc card showed Length Ratio 1.00 (actual 0.78), IS ranged from 0.1 to 0.9 across files (actual 0.813→rounds to 0.8). Fixed: slides_research.py (calc card + failure mode card), slides_evaluation.py (table), curated_examples.tex, generate_gemini_instructions.py, PRESENTATION_PLAN.md. Also corrected Phonetic Sim (0.12→0.20), Inv WWER (0.00→0.03) in the calc card | done |
 | 193 | "3 dimensions" slides | User flagged: "3 independent dimensions (PCA)" claim was never actually PCA — it was correlation clustering mislabeled. Ran actual PCA: Kaiser retains 2 PCs (signal quality 68.4%, output length 19.5%). Semantic loads on PC1 alongside word-accuracy signals — NOT independent. Fixed 12+ files: Beamer (02_research_findings, 05_appendix), PPTX generators (slides_evaluation, slides_research, slides_future), STYLE_GUIDE, CLAUDE.md, intelligibility_methodology, is_correlation_analysis, why_is_not_just_llm_judge, generate_gemini_instructions. Created new doc: docs/evaluation/is_pca_analysis.md | done |
+
+---
+
+## Batch 14 — 2026-03-08 (NIV Threshold Update — 23 Items on PRESNETATION_AFTER_NIV.pptx)
+
+Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/update_niv_presentation.py`. Output: `Argos_VSP_Final.pptx` (76 slides, 71 visible).
+
+| # | Slide(s) | Remark | Status |
+|---|----------|--------|--------|
+| 194 | 2-3 | Professional language rewrite — minimal grammar cleanup, white text + teal keywords only | done |
+| 195 | ALL | Page numbering — sequential 1-N for visible slides only | done |
+| 196 | ~20 slides | Global NIV threshold update: IS ≥ 3.0 → IS ≥ 3.80 (Y) / IS ≥ 2.00 (Y+P). Updated all text + notes | done |
+| 197 | 16 | LLM-as-a-Judge expanded — filled "More explanation here! For claude" placeholder with methodology | done |
+| 198 | 17 | 30-sample slide — replaced placeholder with stratified sample table + key findings | done |
+| 199 | 18 | IS motivation — filled empty slide with 5 reasons from why_is_not_just_llm_judge.md | done |
+| 200 | 22 | PCA narrative fix — corrected speaker notes: 2 PCs not 3, covariance clustering ≠ PCA | done |
+| 201 | 23 | Bad IS sample — fixed Length Ratio 1.00 → 0.25 for carry-strap example | done |
+| 202 | 24 | Radar chart — regenerated from generate_dual_radar.py with measured LRS3 values, embedded new PNG | done |
+| 203 | NEW (hidden) | Metrics disagreement Part 1 — re-added 4 pattern cards as hidden slide before Part 2 | done |
+| 204 | 27 | Two Systems — added full NIV threshold table (IS + WER at both Y and Y+P levels) | done |
+| 205 | 11 | LRS3 reproduction — added "could not fully reproduce, best result 32% WER" | done |
+| 206 | 22 | Weight rationale — added sensitivity analysis to speaker notes (<0.15 avg IS change) | done |
+| 207 | 28 | Three Numbers reframed — "how many videos useful": 25.5% (WER) / 61.6% (IS) / 64.9% (Judge) | done |
+| 208 | 36 | Surrogate — retitled "IS: A Calibrated Surrogate for LLM Judgment", updated NIV numbers | done |
+| 209 | 25 | WER-IS gap — updated with all 4 NIV thresholds, IS beats WER at both levels | done |
+| 210 | 58, 60-62 | LLM swap → training required — reframed across 4 slides, removed "1-2 hours setup" | done |
+| 211 | 63 | Arabic risk downgrade — "RISK" → "minor integration", timeline 3-5 → 2-3 months | done |
+| 212 | 43 | Pipeline ASR separation — ASR as side-branch with "evaluation only" annotation | done |
+| 213 | 7 | Human expert animation — click-reveal "system + human > expert lip reader" on demo slide | done |
+| 214 | NEW (64-65) | Arabic deep-dive — 2 new slides: AV-HuBERT language explanation + What Changes table | done |
+| 215 | 66 | Key takeaways — updated 4 points, de-emphasized data bottleneck, added IS vs WER comparison | done |
+| 216 | 58 | Price tag — "Free upgrade: swap LLM" → "LLM upgrade + adapter retraining" | done |
