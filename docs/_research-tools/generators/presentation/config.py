@@ -72,6 +72,13 @@ VID = {
     "doxology":       VIDEOS / "tOWDLscXYGI_0__ec79306b_with_hyp.mp4",
     "street_photo":   VIDEOS / "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4",
     "smartphone":     VIDEOS / "ktMebjnZiSE_3__ebdf1351_with_hyp.mp4",
+    # LLM Judge 30-sample gallery (6 mid-range examples)
+    "judge_entity":   VIDEOS / "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4",
+    "judge_film":     VIDEOS / "VfJ-6nQAmtk_22__4a7cbfd1_with_hyp.mp4",
+    "judge_router":   VIDEOS / "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4",
+    "judge_cortisol": VIDEOS / "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4",
+    "judge_jalapeno": VIDEOS / "a2CS82VZyO4_7__a6316c95_with_hyp.mp4",
+    "judge_lights":   VIDEOS / "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4",
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"

@@ -2,7 +2,7 @@
 
 Tracking completed missions and the prioritized backlog of future work for the Argos VSP pipeline. Backlog items are informed by the 6 research reports (in `docs/evaluation/`, `docs/tuning/`, `docs/prompts/`, `docs/confidence/`, `docs/beam-search/`, `docs/finetuning/`) and operational experience.
 
-**Current baseline** (english_full run, 1,497 segments): WER 64.1%, WWER 61.9%, IS 2.52/5.0, NEA F1 38.9%, Captured 39.9%, Salvage 50.9%
+**Current baseline** (english_full run, 1,497 segments): WER 64.1%, WWER 60.5%, IS 2.53/5.0, NEA F1 38.9%, Captured 40.1%, Salvage 51.1%
 
 ---
 
@@ -28,7 +28,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - 6 new plot types (P1-P6), pipeline diagram redesign, 11 fine-tuning plots (FT_01-FT_11)
   - 12 embedded videos, 34 unique example segments
 - **New research integrated**:
-  - LLM Salvage Analysis: 165 recoverable segments, effective capture 39.9% → 50.9%
+  - LLM Salvage Analysis: 165 recoverable segments, effective capture 40.1% → 51.1%
   - LLM-as-a-Judge: blind (Y+P=65%) + context-aware (Y+P=62%, context STRICTER)
   - Fine-tuning Exp A/B Claude-as-Judge evaluation + checkpoint correlation
   - IS cross-config stability validation (16 configs, r=0.925)
@@ -90,12 +90,12 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Length ratio analysis — compare hypothesis vs reference token counts per segment
   - Silence / empty-prediction rate tracking (currently 20.5% of segments are WER >= 100%)
   - Quality tier distribution (Excellent/Good/Fair/Poor/Failed) as a dashboard metric
-- **Baseline**: WER 64.1%, WWER 61.9%, IS 2.52/5.0, NEA F1 38.9%, Captured 39.9%, Salvage 50.9%
+- **Baseline**: WER 64.1%, WWER 60.5%, IS 2.53/5.0, NEA F1 38.9%, Captured 40.1%, Salvage 51.1%
 - **Completed** (March 2026):
   - IS metric system: 6 signals, 5 tiers, design-time LLM-distilled, deterministic at eval time
   - IS cross-config validation: 16 configs, mean r=0.925, κ=0.62-0.86
   - LLM-as-a-Judge: blind eval (Y+P=65%) + context-aware re-eval (Y+P=62%, context STRICTER — 230 downgrades vs 68 upgrades)
-  - LLM Salvage: 165 recoverable segments (18.3% of failures), effective capture 50.9%
+  - LLM Salvage: 165 recoverable segments (18.3% of failures), effective capture 51.1%
   - Spider/radar chart for IS profile comparison (reusable for future LLM comparisons)
 - **Research**: [Report 1](../evaluation/report_1_executive_assessment.md), [LLM Judge](../evaluation/llm_judge/llm_judge_analysis.md), [LLM Salvage](../evaluation/llm_salvage/llm_salvage_analysis.md), [IS Correlation](../evaluation/is_correlation_analysis.md)
 
