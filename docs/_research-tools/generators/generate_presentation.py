@@ -58,7 +58,7 @@ from presentation.slides_engineering import (
     slide_web_ui, slide_21, slide_dual_env,
 )
 from presentation.slides_future import (
-    slide_future_transition, slide_insights, slide_24,
+    slide_future_transition, slide_24,
     slide_26, slide_26b, slide_confidence_scoring,
     slide_27, slide_28, slide_data_scaling, slide_price_tag,
     slide_29, slide_30, slide_30b, slide_30c, slide_arabic_roadmap, slide_31, slide_thank_you,
@@ -99,7 +99,7 @@ def main():
         slide_is_intro,     # Introducing IS (split into 3 per batch 8)
         # slide_is_signals,   # IS: Six Signals (removed per batch 8 — merged into split)
         slide_is_weight_rationale, # Why These Weights? 3 Dimensions
-        # slide_is_dimensions,# Three quality dimensions (hidden per batch 8)
+        # slide_is_dimensions,# (moved to slide 22, after failure taxonomy 1a)
         slide_is_calc_examples, # IS in Action: Two Real Segments
         slide_is_radar,     # [MOD] IS Radar: dual overlay if available
         slide_is_wer_scatter, # [NEW] The Gap: WER vs IS scatter
@@ -113,7 +113,6 @@ def main():
         slide_failure_deep_1b, # Failure Modes: 5-Category Taxonomy (2/2)
         slide_failure_deep_2, # Failure Modes: Real Examples
         slide_08,           # Failure Mode Taxonomy
-        slide_failure_deep_3, # Failure Modes: Impact & Fixes
         # --- Section 5: Can We Tune It? ---
         # slide_tuning_summary, # 13 Experiments, Minimal Gain (hidden per batch 8)
         # --- Section 6: The Full Picture ---
@@ -154,7 +153,6 @@ def main():
         slide_dual_env,     # Two environments
         # --- Section 8: Future Directions ---
         slide_future_transition, # Section divider
-        slide_insights,     # Key research insights
         slide_24,           # Starting point better than WER
         slide_26,           # Five Phases roadmap
         slide_26b,          # IS trajectory roadmap
@@ -166,6 +164,7 @@ def main():
         slide_29,           # Phase 3-4 Fine-Tuning
         slide_30,           # Phase 5 LLM Upgrade
         slide_30b,          # LLM Upgrade: Quantified Impact
+        slide_failure_deep_3, # Failure Modes: Impact & Fixes (moved here from Section 4)
         # slide_30c,         # LLM Upgrade: Failure Mode Detail (hidden backup)
         slide_arabic_roadmap, # Arabic Pipeline Roadmap
         slide_31,           # Key Takeaways
