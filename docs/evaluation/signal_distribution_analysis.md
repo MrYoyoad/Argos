@@ -467,7 +467,18 @@ LR's η² is 0.035 for judge, 0.064 for IS tier. Its AUC is 0.59–0.62 (barely 
 
 ---
 
-## 15. Data Availability
+## 15. Presentation Slide
+
+The key finding from Section 10 (LRS3 vs YouTube) is captured in presentation slide **"Same WER, Different Meaning"** (`slide_semantic_domain_gap` in `slides_research.py`, remark #244). The slide shows:
+
+- WER-matched delta table (20-40% band): Semantic +0.143 vs Phonetic +0.024
+- Semantic/Phonetic ratio: LRS3 = 1.01, YouTube = 0.87
+- Two real examples (LRS3: numbers wrong meaning intact; YouTube: same sounds different topic)
+- Three root causes: visual encoder familiarity, vocabulary density, LLM prior anchoring
+
+---
+
+## 16. Data Availability
 
 - **YouTube IS scores:** [intelligibility_scores.csv](intelligibility/intelligibility_scores.csv)
 - **Judge results:** [llm_judge_results.csv](llm_judge/llm_judge_results.csv)
