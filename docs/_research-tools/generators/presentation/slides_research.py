@@ -719,6 +719,110 @@ def slide_is_wer_scatter(prs):
         [[num_s, lbl_s, bul], [img]], click_reveal=True)
 
 
+def slide_semantic_domain_gap(prs):
+    """Why LRS3 errors preserve meaning but YouTube errors don't — WER-matched."""
+    slide = new_slide(prs)
+    add_title(slide, "Same WER, Different Meaning")
+    add_accent_line(slide)
+
+    sub = add_text(slide,
+        "At matched WER (20-40%), LRS3 errors preserve meaning — YouTube errors destroy it.",
+        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+
+    # ── Left column: WER-matched delta table ──
+    col_w = Inches(6.0)
+    gap = Inches(0.5)
+
+    tbl_title = add_text(slide,
+        "Signal Gap at Same WER (20-40%)",
+        MX, CT + Inches(0.5), col_w, Inches(0.35),
+        size=Pt(15), color=TEAL, bold=True)
+
+    tbl = add_table(slide,
+        ["Signal", "LRS3", "YouTube", "\u0394"],
+        [["Semantic Sim", "0.838", "0.695", "+0.143"],
+         ["Phonetic Sim", "0.826", "0.803", "+0.024"],
+         ["1 \u2212 WER", "0.715", "0.701", "+0.014"],
+         ["NEA F1", "0.727", "0.669", "+0.058"],
+         ["Length Ratio", "0.953", "0.962", "\u22120.009"]],
+        MX, CT + Inches(0.95), col_w, text_size=Pt(12),
+        row_colors={0: {3: GREEN}, 1: {3: LGRAY}, 2: {3: LGRAY}, 3: {3: GOLD}})
+
+    # Semantic/Phonetic ratio callout
+    ratio_box = add_rect(slide, MX, CT + Inches(3.2), col_w, Inches(1.0),
+                         fill=NAVY2, border_color=TEAL, border_w=Pt(1.5))
+    add_text(slide, "Semantic / Phonetic Ratio",
+             MX + Inches(0.3), CT + Inches(3.25), col_w - Inches(0.6), Inches(0.3),
+             size=Pt(12), color=TEAL, bold=True)
+    add_text(slide,
+        "LRS3:  1.01  (meaning tracks sound)\n"
+        "YouTube:  0.87  (meaning degrades 13% faster than sound)",
+        MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(0.55),
+        size=Pt(12), color=WHITE)
+
+    # ── Right column: real examples ──
+    rx = MX + col_w + gap
+    rw = CW - col_w - gap
+
+    add_text(slide, "LRS3 Error (WER 29%, Sem 0.93)",
+             rx, CT + Inches(0.5), rw, Inches(0.3),
+             size=Pt(13), color=GREEN, bold=True)
+    add_text(slide,
+        'REF: "spending 14-16 hours a day"\n'
+        'HYP: "spending like 40-60 hours a day"\n'
+        '\u2192 Numbers wrong, meaning intact',
+        rx, CT + Inches(0.85), rw, Inches(1.1),
+        size=Pt(11), color=WHITE)
+
+    add_text(slide, "YouTube Error (WER 33%, Sem 0.16)",
+             rx, CT + Inches(2.1), rw, Inches(0.3),
+             size=Pt(13), color=CORAL, bold=True)
+    add_text(slide,
+        'REF: "talking with admiral mcrae"\n'
+        'HYP: "talking with animal migratory"\n'
+        '\u2192 Same sounds, completely different topic',
+        rx, CT + Inches(2.45), rw, Inches(1.1),
+        size=Pt(11), color=WHITE)
+
+    # ── Bottom: 3 reasons why ──
+    why_top = CT + Inches(4.4)
+    add_text(slide, "Why the Domain Gap Is Semantic",
+             MX, why_top, CW, Inches(0.35),
+             size=Pt(15), color=TEAL, bold=True)
+    bul = add_bullets(slide, [
+        ("Visual encoder trained on LRS3 \u2192 better features \u2192 "
+         "wrong words stay in semantic neighbourhood", {"color": WHITE}),
+        ("TED vocabulary is general \u2014 substitutions are semantically close. "
+         "YouTube has jargon, names, slang \u2192 random substitutions",
+         {"color": WHITE}),
+        ("LLM prior anchors on structured TED grammar. "
+         "YouTube's informal speech gives less context to anchor on",
+         {"color": WHITE}),
+    ], MX, why_top + Inches(0.35), CW, Inches(1.5), size=Pt(12))
+
+    _finish(slide, 0,
+        "WER-matched comparison (20-40% band): LRS3 n=58, YouTube n=290. "
+        "At the same word error rate, LRS3 segments have +0.143 higher semantic "
+        "similarity but only +0.024 higher phonetic similarity. The errors "
+        "sound the same but mean different things.\n\n"
+        "The Semantic/Phonetic ratio quantifies this: on LRS3 it stays ~1.0 "
+        "(meaning tracks sound) across all WER bands. On YouTube it drops to "
+        "0.72 at WER 50-60% — meaning collapses faster than sound.\n\n"
+        "Three root causes:\n"
+        "1. Visual encoder familiarity: AV-HuBERT pretrained on 433h LRS3, "
+        "produces better cluster sequences for TED-like content. Even "
+        "misassigned clusters land on semantically related words.\n"
+        "2. Vocabulary density: TED uses common, general vocabulary. "
+        "YouTube has domain-specific terms (brand names, jargon, proper nouns) "
+        "where substitution errors are semantically distant.\n"
+        "3. LLM prior anchoring: TED's formal grammar gives the LLM strong "
+        "structural context. YouTube's informal, fragmented speech provides "
+        "less scaffolding, leading to more random completions.\n\n"
+        "Data source: docs/evaluation/signal_distribution_analysis.md, Section 10. "
+        "LRS3 V4 (LRS3-trained k-means, 184 segments) vs YouTube (1,497 segments).",
+        [[sub, tbl_title, tbl, ratio_box], [bul]], click_reveal=True)
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 1 — TITLE
 # ═══════════════════════════════════════════════════════════════════════

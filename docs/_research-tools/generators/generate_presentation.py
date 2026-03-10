@@ -38,7 +38,7 @@ from presentation.slides_opening import (
 from presentation.slides_research import (
     slide_research_transition, slide_is_motivation, slide_is_intro, slide_is_signals,
     slide_is_weight_rationale, slide_is_dimensions,
-    slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter,
+    slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter, slide_semantic_domain_gap,
     slide_07, slide_metric_transition,
     slide_10, slide_domain_mismatch, slide_11,
     slide_failure_deep_1a, slide_failure_deep_1b, slide_failure_deep_2, slide_08,
@@ -123,6 +123,7 @@ def main():
         slide_is_calc_examples, # IS in Action: Two Real Segments
         slide_is_radar,     # [MOD] IS Radar: dual overlay if available
         slide_is_wer_scatter, # [NEW] The Gap: WER vs IS scatter
+        slide_semantic_domain_gap, # [NEW] Same WER, Different Meaning — LRS3 vs YouTube
         slide_07,           # IS Results: 40.1% Captured
         slide_metric_transition, # [NEW] 64.1% -> 40.1% -> 51.1%
         # --- Section 4: Understanding Why ---
