@@ -32,41 +32,39 @@ from presentation.slides_opening import (
     slide_01, slide_what_was_done_1, slide_what_was_done_2,
     slide_exec_summary, slide_wer_lies, slide_toc,
     slide_02, slide_visemes, slide_03, slide_data_flow,
-    slide_04, slide_eval_dataset, slide_05, slide_wer_explained,
-    slide_06, slide_is_foreshadow,
+    slide_04, slide_05, slide_06,
 )
 from presentation.slides_research import (
-    slide_research_transition, slide_is_motivation, slide_is_intro, slide_is_signals,
-    slide_is_weight_rationale, slide_is_dimensions,
-    slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter, slide_semantic_domain_gap,
+    slide_research_transition, slide_is_motivation, slide_is_intro,
+    slide_is_weight_rationale,
+    slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter,
     slide_07, slide_metric_transition,
-    slide_10, slide_domain_mismatch, slide_11,
     slide_failure_deep_1a, slide_failure_deep_1b, slide_failure_deep_2, slide_08,
-    slide_failure_deep_3, slide_tuning_summary,
+    slide_failure_deep_3,
 )
 from presentation.slides_evaluation import (
     slide_is_deep_dive, slide_metric_disagreement, slide_metric_disagreement_2,
     slide_two_eval_systems, slide_llm_judge, slide_context_eval,
     slide_llm_context_engine,
-    slide_25, slide_25b, slide_25d, slide_25e, slide_25c,
-    slide_what_good_looks_like, slide_14b, slide_15,
+    slide_25, slide_25d, slide_25e,
+    slide_14b, slide_15,
     slide_llm_judge_30, slide_judge_ex1, slide_judge_ex2,
     slide_judge_ex3, slide_judge_ex4, slide_judge_ex5, slide_judge_ex6,
-    slide_judge_report_screenshot,
+    slide_disagreement_blind, slide_disagreement_context,
 )
 from presentation.slides_engineering import (
     slide_eng_transition, slide_three_repos,
-    slide_17, slide_18, slide_19, slide_20,
+    slide_17, slide_17_png, slide_18, slide_20,
     slide_web_ui, slide_21, slide_dual_env,
 )
 from presentation.slides_future import (
     slide_future_transition, slide_24,
     slide_26, slide_26b, slide_confidence_scoring,
     slide_27, slide_28, slide_data_scaling, slide_price_tag,
-    slide_29, slide_30, slide_30b, slide_30c,
+    slide_29, slide_30, slide_30b,
     slide_arabic_roadmap, slide_arabic_avhubert, slide_arabic_changes,
     slide_31, slide_thank_you,
-    slide_a1, slide_a3, slide_a8, slide_a11, slide_a11b,
+    slide_a1, slide_a8, slide_a11, slide_a11b,
     slide_a13, slide_a15, slide_a16, slide_a17,
 )
 
@@ -94,115 +92,97 @@ def main():
     print("Generating presentation...")
 
     builders = [
-        # --- Section 0: Opening ---
-        slide_01,           # Title
-        slide_what_was_done_1, # What was done? (1/2)
-        slide_what_was_done_2, # What was done? (2/2)
-        slide_exec_summary, # Executive summary
-        slide_wer_lies,     # [NEW] Side-by-side: WER lies, IS tells truth
-        slide_toc,          # Table of contents
-        # --- Section 1: Context ---
-        slide_02,           # What is VSP? (video)
-        slide_visemes,      # [MOD] Fundamental challenge + poster frames
-        slide_03,           # Model Architecture
-        slide_data_flow,    # How It Works
-        slide_04,           # The Benchmark
-        # --- Section 2: The Problem ---
-        # slide_eval_dataset, # Our evaluation dataset (hidden per batch 8)
-        slide_05,           # The Reality Gap (64.1% WER)
-        # slide_wer_explained,# WER formula and limitations (hidden per batch 8)
-        slide_06,           # WER Is Blind to Meaning
-        slide_is_foreshadow,# Bridge: We Need a Better Metric
-        # --- Section 3: Research Findings ---
-        slide_research_transition, # Section divider
-        slide_is_motivation, # Why LLM Judge Is Not Enough (5 reasons for IS)
-        slide_is_intro,     # Introducing IS (split into 3 per batch 8)
-        # slide_is_signals,   # IS: Six Signals (removed per batch 8 — merged into split)
-        slide_is_weight_rationale, # Why These Weights? 3 Dimensions
-        # slide_is_dimensions,# (moved to slide 22, after failure taxonomy 1a)
-        slide_is_calc_examples, # IS in Action: Two Real Segments
-        slide_is_radar,     # [MOD] IS Radar: dual overlay if available
-        slide_is_wer_scatter, # [NEW] The Gap: WER vs IS scatter
-        slide_semantic_domain_gap, # [NEW] Same WER, Different Meaning — LRS3 vs YouTube
-        slide_07,           # IS Results: 40.1% Captured
-        slide_metric_transition, # [NEW] 64.1% -> 40.1% -> 51.1%
-        # --- Section 4: Understanding Why ---
-        # slide_10,           # Three Root Causes (hidden per batch 8)
-        # slide_domain_mismatch, # Domain mismatch detail (hidden per batch 8)
-        # slide_11,           # Named Entity Accuracy (hidden per batch 8)
-        slide_failure_deep_1a, # Failure Modes: 5-Category Taxonomy (1/2)
-        slide_failure_deep_1b, # Failure Modes: 5-Category Taxonomy (2/2)
-        slide_failure_deep_2, # Failure Modes: Real Examples
-        slide_08,           # Failure Mode Taxonomy
-        # --- Section 5: Can We Tune It? ---
-        # slide_tuning_summary, # 13 Experiments, Minimal Gain (hidden per batch 8)
-        # --- Section 6: The Full Picture ---
-        slide_is_deep_dive, # Why These 6 Signals? Validation
-        # slide_metric_disagreement, # When Metrics Disagree (hidden per batch 12)
-        slide_metric_disagreement_2, # When Metrics Disagree pt 2
-        slide_two_eval_systems, # Two evaluation systems
-        slide_llm_judge,    # LLM-as-a-Judge
-        slide_context_eval, # Context-aware re-evaluation (decluttered: 1 table + bullets)
-        # --- LLM Judge 30-sample deep dive ---
-        slide_llm_judge_30, # 30-sample overview stats
-        slide_judge_ex1,    # Named entity swap (IS 4.55)
-        slide_judge_ex2,    # Truncated but core preserved (IS 3.69)
-        slide_judge_ex3,    # Tech vocabulary drift (IS 3.02)
-        slide_judge_ex4,    # Scientific vocabulary lost (IS 2.67)
-        slide_judge_ex5,    # Cooking domain confusion (IS 2.07)
-        slide_judge_ex6,    # Topic hijack (IS 1.79)
-        # slide_judge_report_screenshot, # [HIDDEN] HTML report screenshot (show if needed)
-        # --- Salvage ---
-        slide_25,           # LLM Salvage overview: 40.1% -> 51.1% (reframed: lower bound, LLM-judge only per batch 8)
-        slide_llm_context_engine, # LLM as context engine
-        # slide_25b,          # Salvage: 6 Recovery Categories (hidden per batch 8)
-        slide_25d,          # Salvage: 3 Real Examples
-        slide_25e,          # Salvage: 3 More Examples
-        # slide_25c,          # Salvage: How Detection Works (hidden per batch 8)
-        # --- What good looks like ---
-        # slide_what_good_looks_like,  # hidden per user request
-        slide_14b,          # Video Gallery
-        slide_15,           # Demo: OK > Near-miss > Hallucination
-        # --- Section 7: Engineering ---
-        slide_eng_transition, # Section divider
-        slide_three_repos,  # Starting point
-        slide_17,           # [MOD] Pipeline: per-stage wipe reveal
-        slide_18,           # Engineering Journey
-        # slide_19,           # 52% Code Reduction (hidden per batch 12)
-        slide_20,
-        slide_web_ui,       # Web UI
-        slide_21,
-        slide_dual_env,     # Two environments
-        # --- Section 8: Future Directions ---
-        slide_future_transition, # Section divider
-        slide_24,           # Starting point better than WER
-        slide_26,           # Five Phases roadmap
-        slide_26b,          # IS trajectory roadmap
-        slide_confidence_scoring, # Phase 1: Confidence Scoring detail
-        slide_27,           # Phase 1 Confidence
-        slide_28,           # Phase 2 N-Best
-        slide_data_scaling, # [MOD] Data scaling with phases + timelines
-        slide_price_tag,    # [NEW] Cost projections: GPU/data/IS
-        slide_29,           # Phase 3-4 Fine-Tuning
-        # slide_30,           # Phase 5 LLM Upgrade (hidden per NIV item 26)
-        # slide_30b,          # LLM Upgrade: Quantified Impact (hidden per batch 15)
-        slide_failure_deep_3, # Failure Modes: Impact & Fixes (moved here from Section 4)
-        # slide_30c,         # LLM Upgrade: Failure Mode Detail (hidden backup)
-        slide_arabic_roadmap, # Arabic Pipeline Roadmap
-        slide_arabic_avhubert, # AV-HuBERT: Why It's Not Language-Locked
-        slide_arabic_changes,  # Arabic Adaptation: What Changes
-        slide_31,           # Key Takeaways
-        slide_thank_you,    # Thank You & Questions
-        # --- Appendix (A1-A9) ---
-        slide_a1,           # A1: Homophenes
-        # slide_a3,         # A2: Catastrophic lenpen (removed)
-        slide_a8,           # A3: IS Component Correlation
-        slide_a11,          # A4: LLM Salvage Recoverable
-        slide_a11b,         # A5: LLM Salvage Examples
-        slide_a13,          # A6: Failure Mode Examples
-        slide_a15,          # A7: Video Gallery Map
-        slide_a16,          # A8: LLM Judge x IS Tier
-        slide_a17,          # A9: Context transition matrix
+        # --- Section 0: Opening (slides 1-6) ---
+        slide_01,                    # 1: Title
+        slide_what_was_done_1,       # 2: What was done? (1/2)
+        slide_what_was_done_2,       # 3: What was done? (2/2)
+        slide_exec_summary,          # 4: Executive Summary
+        slide_wer_lies,              # 5: WER: The Metric That Lies
+        slide_toc,                   # 6: Presentation Overview
+        # --- Section 1: Context (slides 7-13) ---
+        slide_02,                    # 7: What is VSP?
+        slide_visemes,               # 8: Visemes
+        slide_03,                    # 9: Three Components
+        slide_data_flow,             # 10: Data Flow
+        slide_04,                    # 11: Benchmark
+        slide_05,                    # 12: Reality Gap
+        slide_06,                    # 13: Same WER, Different Effects
+        # --- Section 2: Research Findings (slides 14-34) ---
+        slide_research_transition,   # 14: RESEARCH FINDINGS
+        slide_llm_judge,             # 15: LLM-as-a-Judge (moved here)
+        slide_llm_judge_30,          # 16: LLM Judge Deep Dive
+        slide_judge_ex1,             # 17: Judge Example 1
+        slide_judge_ex2,             # 18: Judge Example 2
+        slide_judge_ex3,             # 19: Judge Example 3
+        slide_judge_ex4,             # 20: Judge Example 4
+        slide_judge_ex5,             # 21: Judge Example 5
+        slide_judge_ex6,             # 22: Judge Example 6
+        slide_is_motivation,         # 23: Why LLM Judge Not Enough
+        slide_is_intro,              # 24-26: IS Signals (3 sub-slides)
+        slide_is_weight_rationale,   # 27: Do 6 Signals Measure 6 Things?
+        slide_is_calc_examples,      # 28: IS in Action
+        slide_is_radar,              # 29: Model Comparison: IS Profiles
+        slide_is_wer_scatter,        # 30: The Gap: Where WER Lies Most
+        slide_07,                    # 31: IS Results: 61.6% Useful
+        slide_two_eval_systems,      # 32: Two Evaluation Systems (moved here)
+        slide_context_eval,          # 33: IS: Calibrated Surrogate Metric
+        slide_disagreement_blind,    # 34: Where IS and Judge Disagree (blind)
+        slide_disagreement_context,  # 35: Context Exposes Hidden Failures
+        slide_metric_transition,     # 36: Three Numbers That Tell the Real Story
+        # --- Section 3: Failure Analysis (slides 35-38) ---
+        slide_08,                    # 35: Failure Mode Taxonomy (bar chart)
+        slide_failure_deep_1a,       # 36: Failure Taxonomy 1/2
+        slide_failure_deep_1b,       # 37: Failure Taxonomy 2/2
+        slide_failure_deep_2,        # 38: Failure Modes: Real Examples
+        # --- Section 4: Validation & Salvage (slides 39-46) ---
+        slide_is_deep_dive,          # 39: IS Validation
+        slide_metric_disagreement,   # 40: When Metrics Disagree pt 1 (unhidden)
+        slide_metric_disagreement_2, # 41: When Metrics Disagree pt 2
+        slide_25,                    # 42: IS Calibrated Surrogate for LLM
+        slide_25d,                   # 43: LLM Salvage: Three Recoveries
+        slide_25e,                   # 44: LLM Salvage: Domain Context
+        slide_14b,                   # 45: Video Gallery
+        slide_15,                    # 46: Demo
+        # --- Section 5: Engineering (slides 47-55) ---
+        slide_eng_transition,        # 47: ENGINEERING
+        slide_three_repos,           # 48: Starting Point
+        slide_17,                    # 49: 8-Stage Pipeline (animated)
+        slide_17_png,                # 50: 8-Stage Pipeline (PNG version)
+        slide_18,                    # 51: Engineering Journey
+        slide_20,                    # 52: Standalone Container
+        slide_web_ui,                # 53: Live Demo
+        slide_21,                    # 54: Pipeline Intelligence
+        slide_dual_env,              # 55: Two Environments
+        # --- Section 6: Future Directions (slides 56-72) ---
+        slide_future_transition,     # 56: FUTURE DIRECTIONS
+        slide_24,                    # 57: Starting from 61.6%
+        slide_26,                    # 58: Five Phases
+        slide_26b,                   # 59: IS Improvement Roadmap
+        slide_confidence_scoring,    # 60: Phase 1: Confidence Scoring
+        slide_27,                    # 61: Confidence Summary
+        slide_28,                    # 62: Phase 2: N-Best
+        slide_data_scaling,          # 63: Data Scaling
+        slide_price_tag,             # 64: Price Tag
+        slide_29,                    # 65: Fine-Tuning
+        slide_30,                    # 66: Stronger LLM + Smart Prompts (unhidden)
+        slide_llm_context_engine,    # 67: LLM Is a Context Engine (moved here)
+        slide_30b,                   # 68: LLM Upgrade: Why It Matters (unhidden)
+        slide_failure_deep_3,        # 69: Failure Modes: Impact & Fixes
+        slide_arabic_roadmap,        # 70: Arabic Roadmap
+        slide_arabic_avhubert,       # 71: AV-HuBERT
+        slide_arabic_changes,        # 72: Arabic Adaptation
+        # --- Section 7: Closing (slides 73-74) ---
+        slide_31,                    # 73: Key Takeaways
+        slide_thank_you,             # 74: Thank You
+        # --- Appendix (slides 75-82) ---
+        slide_a1,                    # 75: A1: Homophenes
+        slide_a8,                    # 76: A3: IS Component Correlation
+        slide_a11,                   # 77: A4: LLM Salvage Recoverable
+        slide_a11b,                  # 78: A5: LLM Salvage Examples
+        slide_a13,                   # 79: A6: Failure Mode Examples
+        slide_a15,                   # 80: A7: Video Gallery Map
+        slide_a16,                   # 81: A8: LLM Judge x IS Tier
+        slide_a17,                   # 82: A9: Context transition matrix
     ]
     total = len(builders)
 

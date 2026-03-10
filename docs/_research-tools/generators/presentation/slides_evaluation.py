@@ -1628,3 +1628,262 @@ def slide_judge_report_screenshot(prs):
         "LLM Judge verdict (Y/P/N). Distribution: Y=23.3%, P=40.0%, N=36.7%, "
         "Y+P=63.3%. Mean WER 61.4%, Mean IS 2.67/5.0.",
         [[img]])
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# IS vs OPUS JUDGE DISAGREEMENT SLIDES
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_disagreement_blind(prs):
+    """Where IS and the Judge Disagree — blind evaluation."""
+    slide = new_slide(prs)
+    add_title(slide, "Where IS and the Judge Disagree")
+    add_accent_line(slide)
+
+    # Subtitle
+    sub = add_text(slide,
+        "22 of 1,497 segments (1.5%) — rare but revealing edge cases",
+        MX, CT, CW, Inches(0.35),
+        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # --- Two cards side by side ---
+    card_w = Inches(5.8)
+    card_h = Inches(4.2)
+    gap = Inches(0.53)
+    card_y = CT + Inches(0.55)
+
+    # LEFT CARD — IS Too Harsh (green border)
+    left_shapes = []
+    r_l = add_rect(slide, MX, card_y, card_w, card_h,
+                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
+                   corner_radius=True)
+    left_shapes.append(r_l)
+
+    left_shapes.append(add_rich_text(slide, [
+        [("IS Too Harsh", {"size": Pt(16), "color": GREEN, "bold": True}),
+         ("  \u2014  19 cases (1.3%)", {"size": Pt(13), "color": LGRAY})],
+    ], MX + Inches(0.25), card_y + Inches(0.15), card_w - Inches(0.5), Inches(0.35)))
+
+    left_shapes.append(add_text(slide,
+        "Judge says Y (meaning conveyed)\nIS says < 3.0 (metric failure)",
+        MX + Inches(0.25), card_y + Inches(0.55),
+        card_w - Inches(0.5), Inches(0.45),
+        size=Pt(12), color=LGRAY))
+
+    # Example
+    left_shapes.append(add_rect(slide,
+        MX + Inches(0.25), card_y + Inches(1.1),
+        card_w - Inches(0.5), Inches(1.5),
+        fill_color=NAVY3, corner_radius=True))
+
+    left_shapes.append(add_rich_text(slide, [
+        [("REF: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("\"one really nice thing about this is\"",
+          {"size": Pt(11), "color": WHITE, "italic": True})],
+        [("HYP: ", {"size": Pt(11), "color": GOLD, "bold": True}),
+         ("\"what a brilliant idea this is\"",
+          {"size": Pt(11), "color": WHITE, "italic": True})],
+        [("IS = 1.84  |  WER = 71%  |  Judge: Y",
+          {"size": Pt(10), "color": LGRAY})],
+    ], MX + Inches(0.4), card_y + Inches(1.2),
+       card_w - Inches(0.8), Inches(1.2)))
+
+    left_shapes.append(add_text(slide,
+        "Paraphrases and phonetic bridges preserve\n"
+        "meaning that word-level metrics punish.",
+        MX + Inches(0.25), card_y + Inches(2.8),
+        card_w - Inches(0.5), Inches(0.6),
+        size=Pt(12), color=GREEN, italic=True))
+
+    # Also add remaining root causes
+    left_shapes.append(add_text(slide,
+        "\u2022 Harmless hallucination (extra words, core intact)\n"
+        "\u2022 Short segments amplify WER disproportionately",
+        MX + Inches(0.25), card_y + Inches(3.3),
+        card_w - Inches(0.5), Inches(0.6),
+        size=Pt(10), color=LGRAY))
+
+    # RIGHT CARD — IS Too Generous (red border)
+    right_shapes = []
+    rx = MX + card_w + gap
+    r_r = add_rect(slide, rx, card_y, card_w, card_h,
+                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
+                   corner_radius=True)
+    right_shapes.append(r_r)
+
+    right_shapes.append(add_rich_text(slide, [
+        [("IS Too Generous", {"size": Pt(16), "color": CORAL, "bold": True}),
+         ("  \u2014  3 cases (0.2%)", {"size": Pt(13), "color": LGRAY})],
+    ], rx + Inches(0.25), card_y + Inches(0.15), card_w - Inches(0.5), Inches(0.35)))
+
+    right_shapes.append(add_text(slide,
+        "Judge says N (meaning lost)\nIS says \u2265 3.0 (metric pass)",
+        rx + Inches(0.25), card_y + Inches(0.55),
+        card_w - Inches(0.5), Inches(0.45),
+        size=Pt(12), color=LGRAY))
+
+    # Example
+    right_shapes.append(add_rect(slide,
+        rx + Inches(0.25), card_y + Inches(1.1),
+        card_w - Inches(0.5), Inches(1.5),
+        fill_color=NAVY3, corner_radius=True))
+
+    right_shapes.append(add_rich_text(slide, [
+        [("REF: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("\"all you have to do is unscrew\"",
+          {"size": Pt(11), "color": WHITE, "italic": True})],
+        [("HYP: ", {"size": Pt(11), "color": GOLD, "bold": True}),
+         ("\"all you have to do is not to\"",
+          {"size": Pt(11), "color": WHITE, "italic": True})],
+        [("IS = 3.42  |  WER = 29%  |  Judge: N",
+          {"size": Pt(10), "color": LGRAY})],
+    ], rx + Inches(0.4), card_y + Inches(1.2),
+       card_w - Inches(0.8), Inches(1.2)))
+
+    right_shapes.append(add_text(slide,
+        "Structural match hides semantic reversal \u2014\n"
+        "IS cannot detect that meaning is inverted.",
+        rx + Inches(0.25), card_y + Inches(2.8),
+        card_w - Inches(0.5), Inches(0.6),
+        size=Pt(12), color=CORAL, italic=True))
+
+    right_shapes.append(add_text(slide,
+        "\u2022 Domain confusion (medical \u2192 wellness)\n"
+        "\u2022 Word salad with scattered correct words",
+        rx + Inches(0.25), card_y + Inches(3.3),
+        card_w - Inches(0.5), Inches(0.6),
+        size=Pt(10), color=LGRAY))
+
+    # Bottom strip
+    bot = add_text(slide,
+        "98.5% agreement \u2014 disagreements are edge cases, not systemic failure",
+        MX, Inches(6.35), CW, Inches(0.35),
+        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "IS vs Opus Judge disagreement analysis (blind evaluation).\n\n"
+        "LEFT — IS False Negatives (19 cases, 1.3%): Judge says Y, IS < 3.0. "
+        "Paraphrases, phonetic bridges, harmless hallucinations that preserve "
+        "core meaning but score poorly on word-level metrics.\n"
+        "Other examples: 'living in space' topic preserved (IS 1.98, WER 111%); "
+        "'human implications' captures 'human application' (IS 2.06, WER 100%); "
+        "'to the next level' intact but trailing words added (IS 2.32, WER 100%).\n\n"
+        "RIGHT — IS False Positives (3 cases, 0.2%): Judge says N, IS >= 3.0. "
+        "Semantic reversal ('unscrew' -> 'not to', IS 3.42); domain swap "
+        "('blood extraction, x-ray' -> 'cut hair, ashram', IS 3.14); "
+        "phonetic garbage ('one twitch is all you do' -> 'one to rich is all the', IS 3.01).\n\n"
+        "NIV thresholds (IS >= 3.80 for Y, >= 2.00 for Y+P) resolve most of these.",
+        [left_shapes, right_shapes, [bot]], click_reveal=True)
+
+
+def slide_disagreement_context(prs):
+    """Context makes the judge stricter — disagreement examples."""
+    slide = new_slide(prs)
+    add_title(slide, "Context Exposes Hidden Failures")
+    add_accent_line(slide)
+
+    # --- Left side: compact transition matrix ---
+    left_w = Inches(5.5)
+
+    lt = add_text(slide, "Blind \u2192 Context Transitions",
+                  MX, CT, left_w, Inches(0.35),
+                  size=Pt(16), color=TEAL, bold=True)
+
+    # Transition matrix
+    tbl = add_table(slide,
+        ["", "\u2192 Y", "\u2192 P", "\u2192 N"],
+        [["Y (345)", "207", "138", "0"],
+         ["P (626)", "17", "517", "92"],
+         ["N (526)", "1", "50", "475"]],
+        MX, CT + Inches(0.5), left_w, text_size=Pt(13),
+        col_widths=[Inches(1.6), Inches(1.3), Inches(1.3), Inches(1.3)],
+        row_colors={0: {2: CORAL}, 1: {3: CORAL}})
+
+    # Key stat below matrix
+    stat = add_rich_text(slide, [
+        [("230 downgrades", {"size": Pt(15), "color": CORAL, "bold": True}),
+         (" vs ", {"size": Pt(15), "color": WHITE}),
+         ("68 upgrades", {"size": Pt(15), "color": GREEN, "bold": True})],
+        [("Y\u2192P dominant (138): domain knowledge reveals vocabulary failures",
+          {"size": Pt(12), "color": LGRAY})],
+    ], MX, CT + Inches(2.6), left_w, Inches(0.8))
+
+    # Additional stats
+    add_bullets(slide, [
+        "80.1% of judgments stable across both modes",
+        "Only 1 N\u2192Y rescue in 1,497 pairs",
+        ("Context is a quality tool, not a rescue tool",
+         {"color": TEAL, "bold": True}),
+    ], MX, CT + Inches(3.4), left_w, Inches(1.8), size=Pt(12))
+
+    # --- Right side: killer example ---
+    rx = MX + left_w + Inches(0.6)
+    rw = CW - left_w - Inches(0.6)
+
+    rt = add_text(slide, "The IS = 4.75 False Positive",
+                  rx, CT, rw, Inches(0.35),
+                  size=Pt(16), color=CORAL, bold=True)
+
+    # Example card
+    ex_card = []
+    ex_r = add_rect(slide, rx, CT + Inches(0.5), rw, Inches(2.8),
+                    fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
+                    corner_radius=True)
+    ex_card.append(ex_r)
+
+    ex_card.append(add_rich_text(slide, [
+        [("IS = 4.75", {"size": Pt(18), "color": CORAL, "bold": True}),
+         ("  (near perfect!)", {"size": Pt(13), "color": LGRAY})],
+    ], rx + Inches(0.2), CT + Inches(0.6), rw - Inches(0.4), Inches(0.4)))
+
+    ex_card.append(add_rich_text(slide, [
+        [("REF: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+         ("\"...because I'm ", {"size": Pt(11), "color": WHITE, "italic": True}),
+         ("a lover of", {"size": Pt(11), "color": GREEN, "bold": True, "italic": True}),
+         ("\"", {"size": Pt(11), "color": WHITE, "italic": True})],
+        [("HYP: ", {"size": Pt(11), "color": GOLD, "bold": True}),
+         ("\"...because I'm ", {"size": Pt(11), "color": WHITE, "italic": True}),
+         ("not a lover of", {"size": Pt(11), "color": CORAL, "bold": True, "italic": True}),
+         ("\"", {"size": Pt(11), "color": WHITE, "italic": True})],
+    ], rx + Inches(0.2), CT + Inches(1.15), rw - Inches(0.4), Inches(0.8)))
+
+    ex_card.append(add_text(slide,
+        "One word reverses the meaning.\n"
+        "IS rated this near-perfect \u2014 only 10% WER.\n"
+        "Context-aware judge caught the negation.",
+        rx + Inches(0.2), CT + Inches(2.0),
+        rw - Inches(0.4), Inches(0.8),
+        size=Pt(12), color=LGRAY))
+
+    # More context examples below
+    more = add_text(slide,
+        "More context false positives:\n"
+        "\u2022 \"lazy natural\" \u2192 \"lazy astronaut\" (hair \u2192 space, IS 3.6)\n"
+        "\u2022 \"stitches on my needle\" \u2192 \"stitches on my neck\" (knitting \u2192 medical, IS 3.3)\n"
+        "\u2022 \"student loan debt\" \u2192 \"south korea\" (US policy \u2192 intl, IS 3.2)",
+        rx, CT + Inches(3.5), rw, Inches(1.6),
+        size=Pt(11), color=LGRAY)
+
+    # Bottom strip
+    bot = add_text(slide,
+        "Domain knowledge raises the bar \u2192 strongest case for domain-aware fine-tuning",
+        MX, Inches(6.35), CW, Inches(0.35),
+        size=Pt(14), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Context-aware disagreement analysis.\n\n"
+        "LEFT: Transition matrix shows 230 downgrades vs 68 upgrades when "
+        "the judge gains domain context. Y->P is dominant (138 cases). "
+        "Context never rescues failures (only 1 N->Y in 1,497 pairs).\n\n"
+        "RIGHT: The most striking false positive — IS = 4.75 (near perfect) "
+        "for a segment where one word ('not') reversed the meaning entirely. "
+        "Blind judge rated it P, context judge caught the negation reversal.\n\n"
+        "Additional context false positives show domain vocabulary swaps: "
+        "hair care -> space (lazy natural -> lazy astronaut); "
+        "knitting -> medical (needle -> neck, decreases -> skin grafting); "
+        "US education -> international (student loan debt -> south korea, "
+        "US marshals -> US marketers).\n\n"
+        "These 11 context false positives (IS >= 3.0 but context N) are the "
+        "strongest argument for domain-aware fine-tuning: the model resolves "
+        "lip movements to the wrong vocabulary domain.",
+        [[lt, tbl, stat], ex_card, [more, bot]], click_reveal=True)
