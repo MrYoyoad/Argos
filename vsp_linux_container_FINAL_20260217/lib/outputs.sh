@@ -78,14 +78,51 @@ run_client_outputs() {
     echo ">>> [8] Found decode params: $params_json"
   fi
 
-  # Generate report
+  # Auto-install IS dependencies if missing (like spaCy above)
+  if ! python3 -c "import metaphone" 2>/dev/null; then
+    echo ">>> [8] Installing metaphone for IS scoring (one-time)..."
+    local is_wheels_dir="${MODULE_DIR}/../is_wheels"
+    if [ -d "$is_wheels_dir" ] && ls "$is_wheels_dir"/metaphone-*.whl &>/dev/null; then
+      pip install --no-index --find-links="$is_wheels_dir" metaphone 2>/dev/null \
+        && echo ">>> [8] metaphone installed from local wheels" \
+        || pip install metaphone 2>/dev/null
+    else
+      pip install metaphone 2>/dev/null \
+        || echo ">>> [8] metaphone install failed — IS scoring may be limited"
+    fi
+  fi
+
+  # Set HF_HOME for offline model loading (bundled MiniLM weights)
+  local is_cache="${MODULE_DIR}/../is_model_cache"
+  if [ -d "$is_cache" ]; then
+    export HF_HOME="$is_cache"
+    export TRANSFORMERS_OFFLINE=1
+    echo ">>> [8] Using bundled IS model cache: $is_cache"
+  fi
+
+  # Compute Intelligibility Scores in reports
+  echo ">>> [8] Intelligibility Scores enabled"
+
+  # Generate report (always with IS scoring)
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
     --out_dir "$report_dir" \
-    $params_arg || {
+    $params_arg --compute-is || {
     log_error "make_report.py failed"
     return 1
   }
+
+  # Generate full Intelligibility analysis (augmented CSV + summary JSON)
+  local is_script="$vsp_dir/scripts/generate_intelligibility_scores.py"
+  if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
+    echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
+    python3 "$is_script" \
+      --csv "$report_dir/report.csv" \
+      --out_dir "$report_dir" \
+      --device cpu || {
+      log_warn "Full Intelligibility analysis failed (non-critical) — basic report still available"
+    }
+  fi
 
   # Generate burned videos
   python3 "$vsp_dir/scripts/make_burn.py" \

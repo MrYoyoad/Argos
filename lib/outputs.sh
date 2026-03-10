@@ -78,34 +78,46 @@ run_client_outputs() {
     echo ">>> [8] Found decode params: $params_json"
   fi
 
-  # EC2-only: compute Intelligibility Scores in reports
-  local is_arg=""
-  if [ "${ENV_TYPE:-}" = "ec2" ]; then
-    is_arg="--compute-is"
-    echo ">>> [8] Intelligibility Scores enabled (EC2)"
+  # Auto-install IS dependencies if missing (like spaCy above)
+  if ! python3 -c "import metaphone" 2>/dev/null; then
+    echo ">>> [8] Installing metaphone for IS scoring (one-time)..."
+    local is_wheels_dir="${MODULE_DIR}/../is_wheels"
+    if [ -d "$is_wheels_dir" ] && ls "$is_wheels_dir"/metaphone-*.whl &>/dev/null; then
+      pip install --no-index --find-links="$is_wheels_dir" metaphone 2>/dev/null \
+        && echo ">>> [8] metaphone installed from local wheels" \
+        || pip install metaphone 2>/dev/null
+    else
+      pip install metaphone 2>/dev/null \
+        || echo ">>> [8] metaphone install failed — IS scoring may be limited"
+    fi
   fi
 
-  # Generate report
+  # Compute Intelligibility Scores in reports
+  echo ">>> [8] Intelligibility Scores enabled"
+
+  # Generate report (always with IS scoring)
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
     --out_dir "$report_dir" \
-    $params_arg $is_arg || {
+    $params_arg --compute-is || {
     log_error "make_report.py failed"
     return 1
   }
 
-  # EC2-only: generate full Intelligibility analysis (augmented CSV + summary JSON)
-  if [ "${ENV_TYPE:-}" = "ec2" ]; then
-    local is_script="${HOME}/docs/_research-tools/generators/generate_intelligibility_scores.py"
-    if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
-      echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
-      python3 "$is_script" \
-        --csv "$report_dir/report.csv" \
-        --out_dir "$report_dir" \
-        --device cpu || {
-        log_warn "Full Intelligibility analysis failed (non-critical) — basic report still available"
-      }
-    fi
+  # Generate full Intelligibility analysis (augmented CSV + summary JSON)
+  local is_script="$vsp_dir/scripts/generate_intelligibility_scores.py"
+  # Fallback: check docs path (EC2 development layout)
+  if [ ! -f "$is_script" ]; then
+    is_script="${HOME}/docs/_research-tools/generators/generate_intelligibility_scores.py"
+  fi
+  if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
+    echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
+    python3 "$is_script" \
+      --csv "$report_dir/report.csv" \
+      --out_dir "$report_dir" \
+      --device cpu || {
+      log_warn "Full Intelligibility analysis failed (non-critical) — basic report still available"
+    }
   fi
 
   # Generate burned videos

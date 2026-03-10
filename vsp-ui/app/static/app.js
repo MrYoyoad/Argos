@@ -1430,73 +1430,16 @@ function uploadFile(file, fileId) {
 
         const xhr = new XMLHttpRequest();
 
-        // Track upload state
-        let lastProgressUpdate = 0;
-        let simulatedProgress = 0;
-        let progressSimulationInterval = null;
-        let hasRealProgress = false;
-        const fileSize = file.size;
-        const isLargeFile = fileSize > 10 * 1024 * 1024; // >10MB
-
-        // Simulate smooth progress for localhost/fast uploads
-        const simulateProgress = () => {
-            if (simulatedProgress < 95) {
-                // Slower progress for large files, faster for small
-                const increment = isLargeFile ? 2 : 8;
-                simulatedProgress = Math.min(simulatedProgress + increment, 95);
-
-                // Only use simulated progress if we haven't received real progress
-                if (!hasRealProgress || lastProgressUpdate < simulatedProgress) {
-                    updateUploadProgress(fileId, simulatedProgress);
-                }
-            }
-        };
-
-        // Loadstart event - fired when upload actually begins
-        xhr.upload.addEventListener('loadstart', () => {
-            simulatedProgress = 0;
-            updateUploadProgress(fileId, 0);
-            setUploadStatus(fileId, 'Uploading...');
-
-            // Start simulated progress animation
-            // This ensures users see gradual progress even for instant localhost uploads
-            progressSimulationInterval = setInterval(simulateProgress, 100);
-        });
-
-        // Progress event - real upload progress from browser
+        // Progress event
         xhr.upload.addEventListener('progress', (e) => {
             if (e.lengthComputable) {
-                hasRealProgress = true;
                 const percent = Math.round((e.loaded / e.total) * 100);
-
-                // Use real progress if available and higher than simulated
-                if (percent > lastProgressUpdate) {
-                    lastProgressUpdate = percent;
-                    simulatedProgress = percent;
-                    updateUploadProgress(fileId, percent);
-                }
+                updateUploadProgress(fileId, percent);
             }
         });
 
-        // Loadend event - upload phase complete, server processing begins
-        xhr.upload.addEventListener('loadend', () => {
-            // Clear simulation
-            if (progressSimulationInterval) {
-                clearInterval(progressSimulationInterval);
-            }
-
-            // Show upload complete, waiting for server
-            updateUploadProgress(fileId, 100);
-            setUploadStatus(fileId, 'Processing...');
-        });
-
-        // Load event (server response received)
+        // Load event (success)
         xhr.addEventListener('load', () => {
-            // Clear simulation interval (safety)
-            if (progressSimulationInterval) {
-                clearInterval(progressSimulationInterval);
-            }
-
             if (xhr.status === 200) {
                 try {
                     const response = JSON.parse(xhr.responseText);
@@ -1519,34 +1462,26 @@ function uploadFile(file, fileId) {
 
         // Error event
         xhr.addEventListener('error', () => {
-            if (progressSimulationInterval) {
-                clearInterval(progressSimulationInterval);
-            }
             markUploadComplete(fileId, false);
             resolve({ success: false, error: 'Network error' });
         });
 
         // Abort event
         xhr.addEventListener('abort', () => {
-            if (progressSimulationInterval) {
-                clearInterval(progressSimulationInterval);
-            }
             markUploadComplete(fileId, false);
             resolve({ success: false, error: 'Upload cancelled' });
         });
 
-        // Timeout event
+        // Timeout event (5 min base + 1 min per 100MB)
         xhr.addEventListener('timeout', () => {
-            if (progressSimulationInterval) {
-                clearInterval(progressSimulationInterval);
-            }
             markUploadComplete(fileId, false);
-            const sizeMB = (fileSize / (1024 * 1024)).toFixed(0);
-            resolve({ success: false, error: `Upload timed out (${sizeMB} MB). Try a smaller file or check your connection.` });
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(0);
+            resolve({ success: false, error: `Upload timed out (${sizeMB} MB). Try a smaller file or check network.` });
         });
 
-        // Send request with timeout: 5 min base + 1 min per 100MB
+        // Send request
         xhr.open('POST', '/api/upload');
+        const fileSize = file.size || 0;
         xhr.timeout = 300000 + Math.ceil(fileSize / (100 * 1024 * 1024)) * 60000;
         xhr.send(formData);
     });

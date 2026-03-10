@@ -1428,3 +1428,43 @@ hyp_words = [w for w, _ in hyp_tokens]
 ```
 
 **Container action**: Replace the same two lines in `/workspace/VSP-LLM/scripts/make_report.py`.
+
+### IS Scoring for Standalone Container (March 10, 2026)
+
+**Summary**: Intelligibility Score (IS) computation now runs on all environments (EC2 + standalone container), not just EC2. The ENV_TYPE gate has been removed.
+
+**Changes applied to both galaxy_export and container overlay**:
+
+1. **`VSP-LLM/scripts/generate_intelligibility_scores.py`** — NEW file
+   - Copied from `docs/_research-tools/generators/generate_intelligibility_scores.py`
+   - Provides `compute_is()`, `SemanticEncoder`, phonetic/length ratio functions
+   - Dependencies: `torch`, `transformers`, `metaphone`, `editdistance`, `numpy` (all already in venv)
+
+2. **`VSP-LLM/scripts/make_report.py`** — REPLACED with EC2 version
+   - Added IS import block (lines 17-31): imports from same-directory first, then docs fallback
+   - Added `--compute-is` CLI argument
+   - Added IS computation loop (semantic similarity, phonetic, length ratio, WER → IS score)
+   - Added IS columns to CSV, HTML, TXT, ANSI outputs
+   - Added IS summary stats (mean IS, captured count)
+
+3. **`lib/outputs.sh`** — UPDATED (all 3 locations: EC2, galaxy_export, overlay)
+   - Removed `if [ "${ENV_TYPE:-}" = "ec2" ]` gate — IS always runs
+   - Always passes `--compute-is` to `make_report.py`
+   - Added auto-install block for `metaphone` (wheels + online fallback)
+   - Added IS analysis script invocation (looks in `VSP-LLM/scripts/` first, then docs path)
+   - Container versions: added `HF_HOME` + `TRANSFORMERS_OFFLINE=1` for offline model loading
+
+4. **`is_model_cache/`** — NEW directory (galaxy_export only)
+   - Contains bundled `sentence-transformers/all-MiniLM-L6-v2` model weights (88MB)
+   - Enables offline semantic similarity computation
+   - `outputs.sh` sets `HF_HOME` to this path when present
+
+**Container action**: All files already updated in both `vsp_docker/galaxy_export/` and `vsp_linux_container_FINAL_20260217/`. Copy `is_model_cache/` directory to container overlay if deploying from overlay.
+
+### Upload Timer Removal (March 10, 2026)
+
+**Summary**: Removed simulated upload progress timer from EC2 `vsp-ui/app/static/app.js`. EC2 now matches the container's simpler implementation using only real XHR progress percentages.
+
+**Change**: Replaced `uploadFile()` function (was ~130 lines with simulation logic) with clean version (~60 lines, real progress only). Removed: `simulatedProgress`, `progressSimulationInterval`, `hasRealProgress`, `loadstart` event, `loadend` event, `clearInterval` calls.
+
+**Container action**: No changes needed — container already had the simplified version.

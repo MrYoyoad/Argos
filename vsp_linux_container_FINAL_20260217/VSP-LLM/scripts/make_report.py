@@ -12,6 +12,25 @@ from html import escape
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import editdistance
+import sys
+
+# -----------------------
+# IS scoring (optional, via --compute-is)
+# -----------------------
+
+HAS_IS = False
+try:
+    # Try same-directory import first (works in container and EC2)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    # Also try docs path (EC2 development layout)
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "docs" / "_research-tools" / "generators"))
+    from generate_intelligibility_scores import (
+        compute_is, compute_phonetic_similarity, compute_length_ratio,
+        SemanticEncoder, TIER_LABELS, HAS_EMBEDDINGS,
+    )
+    HAS_IS = True
+except ImportError:
+    pass
 
 # -----------------------
 # spaCy (optional, graceful fallback)
@@ -602,6 +621,7 @@ def main() -> None:
     ap.add_argument("--jsonl", required=True, help="decode outputs (.jsonl OR hypo-*.json)")
     ap.add_argument("--out_dir", required=True)
     ap.add_argument("--params", default=None, help="decode_params JSON file (optional)")
+    ap.add_argument("--compute-is", action="store_true", help="Compute Intelligibility Scores")
     args = ap.parse_args()
 
     out_dir = Path(args.out_dir)
@@ -627,6 +647,61 @@ def main() -> None:
 
     print(f"[INFO] Metrics mode: {_metrics_mode()}")
 
+    # IS computation (optional, EC2 only)
+    do_is = args.compute_is and HAS_IS
+    is_data = {}  # utt_id -> (score, tier, label)
+    if args.compute_is and not HAS_IS:
+        print("[WARN] --compute-is requested but IS dependencies not available")
+    if do_is:
+        print("[INFO] Computing Intelligibility Scores...")
+        refs_list = [r.ref or "" for r in recs]
+        hyps_list = [r.hypo or "" for r in recs]
+
+        # Semantic similarity
+        sem_sims = [0.0] * len(recs)
+        if HAS_EMBEDDINGS:
+            try:
+                encoder = SemanticEncoder(device="auto")
+                safe_refs = [r if r.strip() else "empty" for r in refs_list]
+                safe_hyps = [h if h.strip() else "empty" for h in hyps_list]
+                import numpy as np
+                sem_arr = encoder.similarities(safe_refs, safe_hyps)
+                for i, (r, h) in enumerate(zip(refs_list, hyps_list)):
+                    if not r.strip() or not h.strip():
+                        sem_arr[i] = 0.0
+                sem_sims = [float(s) for s in sem_arr]
+                print(f"[INFO] Semantic similarity computed (mean={sum(sem_sims)/len(sem_sims):.3f})")
+            except Exception as e:
+                print(f"[WARN] Semantic similarity failed: {e}")
+        else:
+            print("[INFO] Semantic similarity disabled (no transformers/torch)")
+
+        # Phonetic similarity + length ratio + IS per segment
+        for i, r in enumerate(recs):
+            ref = r.ref or ""
+            hyp = r.hypo or ""
+            if not ref.strip():
+                is_data[r.utt_id] = (0.0, 1, "Failed")
+                continue
+            phon = compute_phonetic_similarity(ref, hyp)
+            lr = compute_length_ratio(ref, hyp)
+            r_toks_is = toks(ref)
+            h_toks_is = toks(hyp)
+            wer_pct = (editdistance.eval(h_toks_is, r_toks_is) / len(r_toks_is) * 100) if r_toks_is else 0.0
+            m_is = compute_all_metrics(ref, hyp)
+            score, tier, label = compute_is(
+                semantic_sim=sem_sims[i],
+                phonetic_sim=phon["phonetic_sim"],
+                wer_pct=wer_pct,
+                wwer_pct=m_is.wwer,
+                nea_f1_pct=m_is.nea_f1,
+                length_ratio=lr,
+            )
+            is_data[r.utt_id] = (score, tier, label)
+        mean_is = sum(s for s, _, _ in is_data.values()) / len(is_data) if is_data else 0.0
+        captured = sum(1 for _, t, _ in is_data.values() if t >= 4)
+        print(f"[INFO] IS computed: mean={mean_is:.2f}/5.0, captured={captured}/{len(is_data)} ({captured/len(is_data)*100:.1f}%)")
+
     # Build outputs with metrics
     rows_csv = []
     html_rows = []
@@ -639,6 +714,7 @@ def main() -> None:
     total_wwer_den = 0.0
     total_nea_recall = 0.0
     total_nea_f1 = 0.0
+    total_is = 0.0
     n_with_ref = 0
 
     for r in recs:
@@ -660,25 +736,36 @@ def main() -> None:
             total_wwer_num += m.wwer
             total_nea_recall += m.nea_recall
             total_nea_f1 += m.nea_f1
+            if do_is and r.utt_id in is_data:
+                total_is += is_data[r.utt_id][0]
             n_with_ref += 1
         else:
             m = None
             simple_wer = 0.0
 
+        # IS data for this record
+        seg_is = is_data.get(r.utt_id) if do_is else None  # (score, tier, label)
+
         # CSV row
         if m:
-            rows_csv.append((
+            csv_row = [
                 r.utt_id, dname, ref, hyp,
                 " ".join([f"{w}:{t}" for w, t in tagged]),
                 f"{simple_wer:.1f}", f"{m.wwer:.1f}", f"{m.nea_recall:.1f}", f"{m.nea_precision:.1f}",
-                f"{m.nea_f1:.1f}", ", ".join(m.missed_entities) if m.missed_entities else ""
-            ))
+                f"{m.nea_f1:.1f}", ", ".join(m.missed_entities) if m.missed_entities else "",
+            ]
+            if do_is:
+                csv_row += [f"{seg_is[0]:.2f}", str(seg_is[1]), seg_is[2]] if seg_is else ["", "", ""]
+            rows_csv.append(tuple(csv_row))
         else:
-            rows_csv.append((
+            csv_row = [
                 r.utt_id, dname, ref, hyp,
                 " ".join([f"{w}:{t}" for w, t in tagged]),
-                "", "", "", "", "", ""
-            ))
+                "", "", "", "", "", "",
+            ]
+            if do_is:
+                csv_row += ["", "", ""]
+            rows_csv.append(tuple(csv_row))
 
         # HTML row — consistent coloring on all metric cells
         metrics_cells = ""
@@ -692,8 +779,15 @@ def main() -> None:
                 f'<td class="{wwer_css}">{m.wwer:.1f}%</td>'
                 f'<td class="{nea_css}"{missed_tip}>{m.nea_recall:.0f}%</td>'
             )
+            if do_is and seg_is:
+                is_css = f"m-{_recall_color(seg_is[0] * 20)}"  # 5.0 -> 100%
+                metrics_cells += f'<td class="{is_css}" title="{escape(seg_is[2])}">{seg_is[0]:.2f}</td>'
+            elif do_is:
+                metrics_cells += '<td>-</td>'
         else:
             metrics_cells = '<td>-</td><td>-</td><td>-</td>'
+            if do_is:
+                metrics_cells += '<td>-</td>'
 
         html_rows.append(
             f"<tr><td><b>{escape(dname)}</b><br>"
@@ -707,6 +801,8 @@ def main() -> None:
         metrics_line = ""
         if m:
             metrics_line = f"WER: {simple_wer:.1f}% | WWER: {m.wwer:.1f}% | NEA: R={m.nea_recall:.0f}% P={m.nea_precision:.0f}% F1={m.nea_f1:.0f}%"
+            if do_is and seg_is:
+                metrics_line += f" | IS: {seg_is[0]:.2f}/5.0 ({seg_is[2]})"
             if m.missed_entities:
                 metrics_line += f" | Missed: [{', '.join(m.missed_entities)}]"
             metrics_line = f"\n{metrics_line}"
@@ -726,12 +822,20 @@ def main() -> None:
             wer_c = ac[_error_color(simple_wer)]
             wwer_c = ac[_error_color(m.wwer)]
             nea_c = ac[_recall_color(m.nea_recall)]
+            is_ansi_part = ""
+            if do_is and seg_is:
+                is_c = ac[_recall_color(seg_is[0] * 20)]
+                is_ansi_part = (
+                    f" | {ANSI['dim']}IS:{ANSI['reset']} "
+                    f"{is_c}{seg_is[0]:.2f}/5.0 ({seg_is[2]}){ANSI['reset']}"
+                )
             ansi_metrics = (
                 f"\n{ANSI['dim']}WER:{ANSI['reset']} {wer_c}{simple_wer:.1f}%{ANSI['reset']} | "
                 f"{ANSI['dim']}WWER:{ANSI['reset']} {wwer_c}{m.wwer:.1f}%{ANSI['reset']} | "
                 f"{nea_c}"
                 f"NEA: R={m.nea_recall:.0f}% P={m.nea_precision:.0f}% F1={m.nea_f1:.0f}%"
                 f"{ANSI['reset']}"
+                f"{is_ansi_part}"
             )
             if m.missed_entities:
                 ansi_metrics += f" | {ANSI['ins']}Missed: [{', '.join(m.missed_entities)}]{ANSI['reset']}"
@@ -750,15 +854,23 @@ def main() -> None:
         avg_wwer = total_wwer_num / n_with_ref
         avg_nea_recall = total_nea_recall / n_with_ref
         avg_nea_f1 = total_nea_f1 / n_with_ref
-        summary = f"OVERALL | WER: {avg_wer:.1f}% | WWER: {avg_wwer:.1f}% | NEA Recall: {avg_nea_recall:.0f}% | NEA F1: {avg_nea_f1:.0f}% | Mode: {_metrics_mode()} | Segments: {n_with_ref}"
+        summary = f"OVERALL | WER: {avg_wer:.1f}% | WWER: {avg_wwer:.1f}% | NEA Recall: {avg_nea_recall:.0f}% | NEA F1: {avg_nea_f1:.0f}%"
+        if do_is and n_with_ref > 0:
+            avg_is = total_is / n_with_ref
+            captured = sum(1 for _, t, _ in is_data.values() if t >= 4)
+            summary += f" | IS: {avg_is:.2f}/5.0 | Captured: {captured}/{n_with_ref} ({captured/n_with_ref*100:.1f}%)"
+        summary += f" | Mode: {_metrics_mode()} | Segments: {n_with_ref}"
     else:
         summary = "OVERALL | No reference transcriptions available for metrics"
 
     # Write CSV (params go to a separate JSON to keep CSV clean)
     with open(out_dir / "report.csv", "w", newline="", encoding="utf-8") as cf:
         w = csv.writer(cf)
-        w.writerow(["utt_id", "display_name", "ref", "hyp", "hyp_tagged",
-                     "wer_%", "wwer_%", "nea_recall_%", "nea_precision_%", "nea_f1_%", "missed_entities"])
+        csv_header = ["utt_id", "display_name", "ref", "hyp", "hyp_tagged",
+                       "wer_%", "wwer_%", "nea_recall_%", "nea_precision_%", "nea_f1_%", "missed_entities"]
+        if do_is:
+            csv_header += ["is_score", "is_tier", "is_label"]
+        w.writerow(csv_header)
         w.writerows(rows_csv)
 
     if run_params:
@@ -769,10 +881,11 @@ def main() -> None:
     # Write HTML
     html_params = _format_params_html(run_params) if run_params else ""
     html_summary = f'<div class="summary"><b>{escape(summary)}</b></div>'
+    is_th = '<th>IS</th>' if do_is else ''
     html_table = (
         '<table>\n'
         '<tr><th>ID</th><th>Reference</th><th>Hypothesis (colored)</th>'
-        '<th>WER</th><th>WWER</th><th>NEA Recall</th></tr>\n'
+        f'<th>WER</th><th>WWER</th><th>NEA Recall</th>{is_th}</tr>\n'
         + "\n".join(html_rows)
     )
     (out_dir / "report.html").write_text(
