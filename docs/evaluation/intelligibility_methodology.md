@@ -214,7 +214,25 @@ The Intelligibility Score (IS) combines six automated signals that collectively 
 ### Signal 6: Length Ratio (weight: 0.15)
 **What it does:** Checks whether the hypothesis is roughly the same length as the reference.
 
-**How:** Ratio = len(hypothesis words) / len(reference words). A ratio near 1.0 is ideal. Too long (>1.5) suggests hallucination (the model invented extra words). Too short (<0.5) suggests truncation (the model gave up).
+**How:** Ratio = len(hypothesis tokens) / len(reference tokens). A ratio near 1.0 is ideal. Too long (>1.5) suggests hallucination (the model invented extra words). Too short (<0.5) suggests truncation (the model gave up).
+
+**Scaling formula:** The raw ratio is converted to a 0–5 score using a symmetric linear penalty centered at 1.0:
+
+```
+score = max(0,  5 × (1 − |1 − ratio|))
+```
+
+This penalizes outputs that are too long identically to outputs that are too short — deviation in either direction from the ideal ratio of 1.0 is penalized equally. Examples:
+
+| Scenario | Ratio | Score |
+|----------|-------|-------|
+| Same length | 1.0 | 5.0 |
+| 10% shorter or longer | 0.9 / 1.1 | 4.5 |
+| Half as long or 50% longer | 0.5 / 1.5 | 2.5 |
+| Empty output or double length | 0.0 / 2.0 | 0.0 |
+| Triple length (clamped) | 3.0 | 0.0 |
+
+The score floors at 0 — outputs beyond 2× the reference length receive the same minimum penalty as empty outputs.
 
 **What it catches:** Extreme hallucinations where the model generates paragraphs of fluent but fabricated text, or truncations where it outputs just a few words.
 
@@ -585,7 +603,7 @@ Semantic dominates variance (28.5%) due to its higher weight and substantial spr
 | **NEA F1** | 0.75 | 0.75 | -0.69 | -0.75 | 1.00 | 0.13 |
 | **Length** | 0.19 | 0.36 | 0.22 | -0.10 | 0.13 | 1.00 |
 
-**PCA reveals 2 principal components** (Kaiser criterion, eigenvalue > 1):
+**PCA reveals 2 principal components** (Kaiser criterion, eigenvalue > 1). All 6 signals were standardized (zero mean, unit variance via `StandardScaler`) before PCA — required because the signals have different scales:
 1. **PC1: Signal quality** (68.4% of variance) — all 5 content signals load equally (0.43–0.47). Semantic is NOT independent; it loads alongside word-accuracy signals.
 2. **PC2: Output length** (19.5% of variance) — Length Ratio dominates (loading 0.91), independent of content quality.
 
