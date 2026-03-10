@@ -1188,8 +1188,9 @@ def duplicate_slide(prs, source_idx):
 def clear_slide_content(slide):
     """Remove all shapes from a slide and set navy background."""
     sp_tree = slide.shapes._spTree
+    removable_tags = ('}sp', '}pic', '}grpSp', '}graphicFrame', '}cxnSp')
     for sp in list(sp_tree):
-        if sp.tag.endswith('}sp') or sp.tag.endswith('}pic') or sp.tag.endswith('}grpSp'):
+        if any(sp.tag.endswith(t) for t in removable_tags):
             sp_tree.remove(sp)
     # Ensure navy background (duplicated slides may inherit white from layout)
     bg_fill = slide.background.fill
@@ -1279,12 +1280,31 @@ def update_niv_thresholds_global(prs):
 
         # Starting from 40%
         ("Starting from 40%", "Starting from 61.6%"),
+
+        # Salvage appendix table
+        ("Metric capture (IS \u2265 3.0)", "Useful output (IS \u2265 2.00)"),
+        ("Metric capture (IS ≥ 3.0)", "Useful output (IS \u2265 2.00)"),
+        ("Effective capture", "LLM Judge Y+P"),
+        ("50.9%", "64.9%"),
+        ("+11.0pp (+27.6% rel.)", "+3.3pp vs IS"),
     ]
 
     for slide in prs.slides:
         for old, new in global_replacements:
             replace_text_in_slide(slide, old, new)
             replace_in_notes(slide, old, new)
+            # Also replace in tables
+            for shape in slide.shapes:
+                if shape.has_table:
+                    tbl = shape.table
+                    for r in range(len(tbl.rows)):
+                        for c in range(len(tbl.columns)):
+                            cell = tbl.cell(r, c)
+                            if old in cell.text:
+                                for para in cell.text_frame.paragraphs:
+                                    for run in para.runs:
+                                        if old in run.text:
+                                            run.text = run.text.replace(old, new)
 
     # Also update slide 26 title specifically
     slide26 = prs.slides[25]
@@ -1527,6 +1547,707 @@ def clarify_two_systems(prs):
 
 # ─── Item 12: Weight Rationale Note (Slide 22) ───────────────────────────────
 # Already handled in fix_pca_narrative — combined items 6 and 12
+
+
+# ─── Batch 15: #218 PCA Title Reframe ─────────────────────────────────────────
+
+def fix_pca_title(prs):
+    """#218: Change PCA slide title to question/answer framing."""
+    print("Batch 15 #218: Reframing PCA slide title...")
+
+    # Find PCA slide by content (fix_pca_narrative already updated content via shape indices)
+    # After fix_pca_narrative runs, title is "6 Signals, 3 Principal Components"
+    # Change it to question/answer framing
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Principal Components" in shape.text_frame.text:
+                set_shape_text(shape, "Do 6 Signals Actually Measure 6 Things?")
+                # Also update subtitle on same slide
+                for s2 in slide.shapes:
+                    if s2.has_text_frame and "PCA on the six IS signals" in s2.text_frame.text:
+                        set_shape_text(s2,
+                            "PCA on the six IS signals reveals where the variance actually lives:")
+                # Update bottom line to include weight insight
+                for s2 in slide.shapes:
+                    if s2.has_text_frame and "93% of variance" in s2.text_frame.text:
+                        set_shape_text(s2,
+                            "93% of variance in 3 components; Kaiser retains 2 (87.9%). "
+                            "Weights barely matter — equal weighting gives r=0.999.")
+                return
+    print("  Warning: Could not find PCA slide")
+
+
+# ─── Batch 15: #219 Radar Image Position ──────────────────────────────────────
+
+def fix_radar_image_position(prs):
+    """#219: Move radar chart image down 0.2" so grey subtitle isn't covered."""
+    print("Batch 15 #219: Moving radar image down 0.2\"...")
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Model Comparison" in shape.text_frame.text:
+                # Found the slide — find the image
+                for s in slide.shapes:
+                    if s.shape_type == 13:  # Picture
+                        s.top += Inches(0.2)
+                        print("  Moved image down 0.2\"")
+                        return
+    print("  Warning: Could not find radar image to move")
+
+
+# ─── Batch 15: #220 Remove Taxonomy Impact Text ──────────────────────────────
+
+def remove_taxonomy_impact_text(prs):
+    """#220: Remove 'Impact order:...' bottom text from Failure Taxonomy 2/2."""
+    print("Batch 15 #220: Removing taxonomy impact text...")
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Accumulated" in shape.text_frame.text and "Signal Loss" in shape.text_frame.text:
+                # Found taxonomy 2/2 slide — find and remove "Impact order" text
+                for s in slide.shapes:
+                    if s.has_text_frame and "Impact order" in s.text_frame.text:
+                        sp = s._element
+                        sp.getparent().remove(sp)
+                        print("  Removed 'Impact order' text")
+                        return
+    print("  Warning: Could not find taxonomy impact text to remove")
+
+
+# ─── Batch 15: #218b IS Action Arithmetic Fix ─────────────────────────────────
+
+def fix_is_action_arithmetic(prs):
+    """#218b: Fix bad segment arithmetic on IS in Action slide."""
+    print("Batch 15 #218b: Fixing IS action arithmetic...")
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "IS in Action" in shape.text_frame.text:
+                # Found the slide — fix values
+                replacements = [
+                    ("0.029", "0.030"),
+                    ("0.004", "0.005"),
+                ]
+                for s in slide.shapes:
+                    if s.has_text_frame and s.left > Inches(6):  # Bad segment is on right
+                        for old, new in replacements:
+                            replace_text_in_shape(s, old, new)
+                # Fix sum
+                for s in slide.shapes:
+                    if s.has_text_frame and s.left > Inches(6):
+                        if "0.80" in s.text_frame.text and "0.81" not in s.text_frame.text:
+                            replace_text_in_shape(s, "0.80", "0.81")
+                print("  Fixed arithmetic values")
+                return
+    print("  Warning: Could not find IS in Action slide")
+
+
+# ─── Batch 15: #220b VSP Slide Fix ────────────────────────────────────────────
+
+def fix_vsp_slide(prs):
+    """#220b: Fix 'What is VSP?' slide — remove overlapping text, enlarge video."""
+    print("Batch 15 #220b: Fixing VSP slide...")
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "What is Visual Speech Processing" in shape.text_frame.text:
+                # Found slide — remove grey subtitle and caption shapes
+                shapes_to_remove = []
+                for s in slide.shapes:
+                    if s.has_text_frame:
+                        text = s.text_frame.text.strip()
+                        # Check for grey text (subtitle or caption) — skip title
+                        if text and "What is Visual Speech" not in text:
+                            # Check if it has grey-colored text
+                            for para in s.text_frame.paragraphs:
+                                for run in para.runs:
+                                    try:
+                                        c = run.font.color.rgb
+                                        if c in (LGRAY, MGRAY, DGRAY):
+                                            shapes_to_remove.append(s)
+                                            break
+                                    except (AttributeError, TypeError):
+                                        pass
+
+                for s in shapes_to_remove:
+                    sp = s._element
+                    sp.getparent().remove(sp)
+                    print(f"  Removed grey text shape")
+
+                # Enlarge video/image if present
+                for s in slide.shapes:
+                    if s.shape_type == 13 or s.shape_type == 24:  # Picture or Media
+                        s.width = Inches(4.8)
+                        s.top = Inches(1.8)
+                        print("  Resized video to 4.8\" and moved to y=1.8\"")
+                        break
+                return
+    print("  Warning: Could not find VSP slide")
+
+
+# ─── Batch 16: #221 Embed Updated Scatter Plot ────────────────────────────────
+
+def embed_scatter_plot(prs):
+    """#221: Replace stale scatter plot with updated NIV-threshold version."""
+    print("Batch 16 #221: Embedding updated scatter plot...")
+
+    scatter_path = "presentation_materials_20260224/01_plots_for_slides/P7_is_wer_scatter.png"
+    if not os.path.exists(scatter_path):
+        print(f"  Warning: {scatter_path} not found")
+        return
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Where WER Lies" in shape.text_frame.text:
+                # Found the slide — find and replace the image
+                for s in slide.shapes:
+                    if s.shape_type == 13:  # Picture
+                        # Save position and size
+                        left, top, width, height = s.left, s.top, s.width, s.height
+                        # Remove old image
+                        sp = s._element
+                        sp.getparent().remove(sp)
+                        # Add new image at same position
+                        slide.shapes.add_picture(scatter_path, left, top, width, height)
+                        print("  Replaced scatter plot image")
+                        return
+    print("  Warning: Could not find scatter plot slide")
+
+
+# ─── Batch 16: #222 Rebuild Two Evaluation Systems ────────────────────────────
+
+def rebuild_two_systems(prs):
+    """#222: Rebuild Two Evaluation Systems with NIV confusion matrix and worked examples."""
+    print("Batch 16 #222: Rebuilding Two Evaluation Systems slide...")
+
+    for i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Two Evaluation Systems" in shape.text_frame.text:
+                clear_slide_content(slide)
+
+                # Set navy background
+                bg = slide.background
+                bg.fill.solid()
+                bg.fill.fore_color.rgb = NAVY
+
+                # Title
+                add_textbox(slide, "Two Evaluation Systems, One Framework",
+                            MX, Inches(0.35), CW, Inches(0.65),
+                            size=Pt(32), color=WHITE, bold=True)
+
+                # Accent line
+                ln = slide.shapes.add_shape(1, MX, Inches(1.05), CW, Inches(0.02))
+                ln.fill.solid()
+                ln.fill.fore_color.rgb = TEAL
+                ln.line.fill.background()
+
+                # ── Left column ──
+                lx = MX
+                col_w = Inches(5.5)
+
+                # IS Card
+                is_card = add_rounded_rect(slide, lx, Inches(1.25), col_w, Inches(1.6), NAVY2, TEAL)
+                add_textbox(slide, "Intelligibility Score (IS) — NIV Thresholds",
+                            lx + Inches(0.15), Inches(1.30), col_w - Inches(0.3), Inches(0.30),
+                            size=Pt(14), color=TEAL, bold=True)
+                add_textbox(slide,
+                    "Strict metric: composite 0–5 score, two operating points\n"
+                    "IS ≥ 3.80 = Clearly conveyed: 23.1% (346/1,497)\n"
+                    "IS ≥ 2.00 = Any useful meaning: 61.6% (922/1,497)",
+                    lx + Inches(0.15), Inches(1.62), col_w - Inches(0.3), Inches(1.10),
+                    size=Pt(12), color=LGRAY)
+
+                # Opus Card
+                op_card = add_rounded_rect(slide, lx, Inches(3.00), col_w, Inches(1.2), NAVY2, GREEN)
+                add_textbox(slide, "Opus-as-a-Judge (LLM Gold Standard)",
+                            lx + Inches(0.15), Inches(3.05), col_w - Inches(0.3), Inches(0.30),
+                            size=Pt(14), color=GREEN, bold=True)
+                add_textbox(slide,
+                    "Holistic: Y/P/N per ref+hyp pair (1,497 pairs)\n"
+                    "Y = 23.0% clearly conveyed, Y+P = 64.9% useful",
+                    lx + Inches(0.15), Inches(3.37), col_w - Inches(0.3), Inches(0.70),
+                    size=Pt(12), color=LGRAY)
+
+                # ── Right column ──
+                rx = lx + col_w + Inches(0.30)
+                rw = CW - col_w - Inches(0.30)
+
+                add_textbox(slide, "Agreement (IS ≥ 2.00 vs Opus Y+P)",
+                            rx, Inches(1.25), rw, Inches(0.30),
+                            size=Pt(14), color=CORAL, bold=True)
+
+                add_textbox(slide, "κ = 0.818 (almost perfect agreement)",
+                            rx, Inches(1.55), rw, Inches(0.25),
+                            size=Pt(12), color=LGRAY, italic=True)
+
+                # Confusion matrix table
+                matrix_data = [
+                    ("", "Opus: Y or P", "Opus: N"),
+                    ("IS ≥ 2.00", "883", "39"),
+                    ("IS < 2.00", "88", "487"),
+                ]
+                tbl = slide.shapes.add_table(3, 3, rx, Inches(1.90), rw, Inches(1.10)).table
+                tbl.columns[0].width = Inches(1.8)
+                tbl.columns[1].width = Inches(2.2)
+                tbl.columns[2].width = Inches(2.0)
+                for r, row_data in enumerate(matrix_data):
+                    for c, txt in enumerate(row_data):
+                        cell = tbl.cell(r, c)
+                        cell.text = txt
+                        p = cell.text_frame.paragraphs[0]
+                        p.font.size = Pt(12)
+                        p.font.name = "Calibri"
+                        p.font.color.rgb = TEAL if r == 0 or c == 0 else WHITE
+                        p.font.bold = (r == 0 or c == 0)
+                        p.alignment = PP_ALIGN.CENTER
+                        cell.fill.solid()
+                        cell.fill.fore_color.rgb = NAVY2
+
+                # Worked examples
+                add_textbox(slide, "Worked Examples",
+                            rx, Inches(3.15), rw, Inches(0.25),
+                            size=Pt(13), color=GOLD, bold=True)
+
+                add_textbox(slide,
+                    'Ref: "what does this chord sound like to you"\n'
+                    'Hyp: "what does this court sound like to you"\n'
+                    'WER: 12% • IS: 3.84 • NIV Y ✓ • Opus: Y',
+                    rx, Inches(3.42), rw, Inches(0.85),
+                    size=Pt(10), color=LGRAY)
+
+                add_textbox(slide,
+                    'Ref: "opinions about reason and logic"\n'
+                    'Hyp: "our opinion is about reasoning and logic"\n'
+                    'WER: 74% • IS: 2.94 • NIV Y+P ✓ • Opus: P\n'
+                    'Old IS ≥ 3.0 wrongly rejected this segment.',
+                    rx, Inches(4.30), rw, Inches(1.0),
+                    size=Pt(10), color=LGRAY)
+
+                # Speaker notes
+                set_notes(slide,
+                    "Two evaluation systems with NIV thresholds.\n"
+                    "IS >= 3.80 for clearly conveyed (23.1%, matches judge Y rate 23.0%, kappa=0.690).\n"
+                    "IS >= 2.00 for any useful meaning (61.6%, kappa=0.818, almost perfect).\n"
+                    "Opus-as-a-Judge: Y=23.0%, Y+P=64.9%.\n\n"
+                    "IS is a strict estimator — undercounts at both operating points.\n"
+                    "Old IS >= 3.0 threshold is superseded.\n\n"
+                    "Confusion matrix (IS >= 2.00 vs Opus Y+P): 883 agree useful, 487 agree not useful, "
+                    "39 IS overcount, 88 IS undercount. kappa=0.818.\n"
+                    "85% Pearson correlation between IS and Opus verdicts.")
+                return
+    print("  Warning: Could not find Two Evaluation Systems slide")
+
+
+# ─── Batch 16: #223 Widen Taxonomy Name Column ────────────────────────────────
+
+def widen_taxonomy_name_column(prs):
+    """#223: Widen category title text boxes on Failure Taxonomy 1/2 to prevent wrapping."""
+    print("Batch 16 #223: Widening taxonomy category titles...")
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Highest Impact First" in shape.text_frame.text:
+                # Found taxonomy 1/2 — widen category title shapes
+                # These are text boxes like "1. Right Topic, Wrong Details  (22.7%)"
+                for s in slide.shapes:
+                    if s.has_text_frame:
+                        text = s.text_frame.text.strip()
+                        if text and (text.startswith("1.") or text.startswith("2.") or text.startswith("3.")):
+                            if "%" in text and ("Topic" in text or "Wrong" in text or "Hallucination" in text):
+                                # Widen this shape to prevent wrapping
+                                s.width = Inches(11.5)
+                                print(f"  Widened: {text[:50]}")
+                return
+    print("  Warning: Could not find taxonomy slide")
+
+
+# ─── Batch 16: #224 Fix White Backgrounds ──────────────────────────────────────
+
+def fix_white_backgrounds(prs):
+    """#224: Fix white background on When Metrics Disagree, AV-HuBERT, Arabic slides."""
+    print("Batch 16 #224: Fixing white backgrounds...")
+
+    # Match only slides where these are the TITLE (first text shape with content)
+    target_titles = [
+        "When Metrics Disagree",
+        "AV-HuBERT: Why It",
+        "Arabic Adaptation: What Changes",
+    ]
+    fixed = 0
+    already_fixed = set()
+    for i, slide in enumerate(prs.slides):
+        if i in already_fixed:
+            continue
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                text = shape.text_frame.text.strip()
+                for title in target_titles:
+                    if text.startswith(title):
+                        bg = slide.background
+                        bg.fill.solid()
+                        bg.fill.fore_color.rgb = NAVY
+                        fixed += 1
+                        already_fixed.add(i)
+                        print(f"  Fixed background for slide {i+1}: '{title}'")
+                        break
+                if i in already_fixed:
+                    break
+    if fixed == 0:
+        print("  Warning: No white background slides found to fix")
+
+
+# ─── Batch 16: #226 Rebuild Pipeline Slide (ASR side-branch) ──────────────────
+
+def rebuild_pipeline_slide(prs):
+    """#226: Rebuild 8-Stage Pipeline with ASR as side-branch."""
+    print("Batch 16 #226: Rebuilding pipeline slide with ASR side-branch...")
+
+    for i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            if shape.has_text_frame and "8-Stage" in shape.text_frame.text:
+                clear_slide_content(slide)
+
+                # Set navy background
+                bg = slide.background
+                bg.fill.solid()
+                bg.fill.fore_color.rgb = NAVY
+
+                # Title
+                add_textbox(slide, "8-Stage Automated Pipeline",
+                            MX, Inches(0.35), CW, Inches(0.65),
+                            size=Pt(32), color=WHITE, bold=True)
+
+                # Accent line
+                ln = slide.shapes.add_shape(1, MX, Inches(1.05), CW, Inches(0.02))
+                ln.fill.solid()
+                ln.fill.fore_color.rgb = TEAL
+                ln.line.fill.background()
+
+                # Stage colors
+                BLUE = RGBColor(0x4D, 0xD0, 0xE1)
+                SGREEN = RGBColor(0x66, 0xBB, 0x6A)
+                SGOLD = RGBColor(0xFF, 0xCA, 0x28)
+                SPINK = RGBColor(0xEF, 0x9A, 0x9A)
+                SCORAL = RGBColor(0xE0, 0x6C, 0x75)
+                DARK = RGBColor(0x0D, 0x1B, 0x2A)
+                RED = RGBColor(0xFF, 0x44, 0x44)
+
+                # Layout
+                box_w = Inches(2.6)
+                box_h = Inches(1.4)
+                h_gap = Inches(0.18)
+                arrow_w = Inches(0.22)
+                step = box_w + h_gap + arrow_w + h_gap
+                row1_y = Inches(1.35)
+                row2_y = Inches(4.20)
+                line_w = Inches(0.035)
+
+                # ── Row 1: Normalize, Mouth Crop, [gap for ASR side-branch], LRS3 Convert ──
+                stages_row1 = [
+                    ("1. Normalize", "HDR/10-bit conversion", BLUE),
+                    ("2. Mouth Crop", "Face detect & ROI", BLUE),
+                    (None, None, None),  # Empty slot for ASR drop
+                    ("4. LRS3 Convert", "Flat → LRS3 format", BLUE),
+                ]
+
+                for j, (name, subtitle, color) in enumerate(stages_row1):
+                    x = MX + j * step
+                    if name is None:
+                        continue
+                    # Box
+                    box = slide.shapes.add_shape(1, x, row1_y, box_w, box_h)
+                    box.fill.solid()
+                    box.fill.fore_color.rgb = color
+                    box.line.fill.background()
+                    # Stage name
+                    add_textbox(slide, name,
+                                x + Inches(0.1), row1_y + Inches(0.25), box_w - Inches(0.2), Inches(0.4),
+                                size=Pt(14), color=DARK, bold=True, align=PP_ALIGN.CENTER)
+                    # Subtitle
+                    add_textbox(slide, subtitle,
+                                x + Inches(0.1), row1_y + Inches(0.7), box_w - Inches(0.2), Inches(0.4),
+                                size=Pt(11), color=DARK, align=PP_ALIGN.CENTER)
+
+                # Arrows between row 1 boxes (1→2, and long arrow 2→4 spanning gap)
+                for j in [0]:
+                    ax = MX + (j + 1) * step - arrow_w - h_gap
+                    add_textbox(slide, "→", ax, row1_y + Inches(0.45), Inches(0.4), Inches(0.4),
+                                size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+                # Long arrow from Mouth Crop to LRS3 (spanning the empty slot)
+                long_ax = MX + step + box_w + h_gap
+                long_aw = step + arrow_w  # spans one full step
+                add_textbox(slide, "→→", long_ax, row1_y + Inches(0.45), long_aw, Inches(0.4),
+                            size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+                # ── ASR Side-Branch (drops below from between slots 1-2) ──
+                asr_x = MX + 2 * step  # Position at empty slot 2
+                asr_y = row1_y + box_h + Inches(0.60)
+
+                # ASR box
+                asr_box = slide.shapes.add_shape(1, asr_x, asr_y, box_w, box_h)
+                asr_box.fill.solid()
+                asr_box.fill.fore_color.rgb = BLUE
+                asr_box.line.fill.background()
+                add_textbox(slide, "3. ASR",
+                            asr_x + Inches(0.1), asr_y + Inches(0.25), box_w - Inches(0.2), Inches(0.4),
+                            size=Pt(14), color=DARK, bold=True, align=PP_ALIGN.CENTER)
+                add_textbox(slide, "Whisper transcription",
+                            asr_x + Inches(0.1), asr_y + Inches(0.7), box_w - Inches(0.2), Inches(0.4),
+                            size=Pt(11), color=DARK, align=PP_ALIGN.CENTER)
+
+                # "evaluation only" label below ASR
+                add_textbox(slide, "evaluation only",
+                            asr_x, asr_y + box_h + Inches(0.05), box_w, Inches(0.25),
+                            size=Pt(9), color=SCORAL, italic=True, align=PP_ALIGN.CENTER)
+
+                # Vertical drop connector (CORAL ▼)
+                drop_x = asr_x + box_w / 2 - Inches(0.1)
+                add_textbox(slide, "▼", drop_x, row1_y + box_h + Inches(0.15), Inches(0.3), Inches(0.3),
+                            size=Pt(14), color=SCORAL, bold=True, align=PP_ALIGN.CENTER)
+
+                # ── Row 2: Manifests, K-means, LLM Decode, Outputs ──
+                stages_row2 = [
+                    ("5. Manifests", "TSV + splits", SGREEN),
+                    ("6. K-means", "Feature clustering", SGREEN),
+                    ("7. LLM Decode", "AV-HuBERT + LLaMA-2", SGOLD),
+                    ("8. Outputs", "Reports & burned video", SPINK),
+                ]
+
+                for j, (name, subtitle, color) in enumerate(stages_row2):
+                    x = MX + j * step
+                    box = slide.shapes.add_shape(1, x, row2_y, box_w, box_h)
+                    box.fill.solid()
+                    box.fill.fore_color.rgb = color
+                    box.line.fill.background()
+                    add_textbox(slide, name,
+                                x + Inches(0.1), row2_y + Inches(0.25), box_w - Inches(0.2), Inches(0.4),
+                                size=Pt(14), color=DARK, bold=True, align=PP_ALIGN.CENTER)
+                    add_textbox(slide, subtitle,
+                                x + Inches(0.1), row2_y + Inches(0.7), box_w - Inches(0.2), Inches(0.4),
+                                size=Pt(11), color=DARK, align=PP_ALIGN.CENTER)
+
+                # Row 2 arrows
+                for j in range(3):
+                    ax = MX + (j + 1) * step - arrow_w - h_gap
+                    add_textbox(slide, "→", ax, row2_y + Inches(0.45), Inches(0.4), Inches(0.4),
+                                size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+                # L-connector: LRS3 → Manifests (row1 to row2)
+                lrs3_x = MX + 3 * step + box_w / 2
+                man_x = MX + box_w / 2
+                conn_y1 = row1_y + box_h
+                conn_y2 = row2_y
+                # Vertical line down from LRS3
+                vline = slide.shapes.add_shape(1, lrs3_x - line_w/2, conn_y1,
+                                                line_w, Inches(0.4))
+                vline.fill.solid()
+                vline.fill.fore_color.rgb = TEAL
+                vline.line.fill.background()
+                # ▼ arrowhead
+                add_textbox(slide, "▼", lrs3_x - Inches(0.1), conn_y1 + Inches(0.25),
+                            Inches(0.3), Inches(0.3),
+                            size=Pt(12), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+                # Coral L-connector: ASR → Outputs
+                outputs_x = MX + 3 * step + box_w / 2
+                asr_bottom = asr_y + box_h
+                # Vertical down from ASR
+                cv1 = slide.shapes.add_shape(1, asr_x + box_w/2 - line_w/2, asr_bottom,
+                                              line_w, Inches(0.3))
+                cv1.fill.solid()
+                cv1.fill.fore_color.rgb = SCORAL
+                cv1.line.fill.background()
+                # Horizontal right to Outputs
+                cv2_y = asr_bottom + Inches(0.3)
+                cv2_w = outputs_x - (asr_x + box_w/2)
+                cv2 = slide.shapes.add_shape(1, asr_x + box_w/2, cv2_y - line_w/2,
+                                              cv2_w, line_w)
+                cv2.fill.solid()
+                cv2.fill.fore_color.rgb = SCORAL
+                cv2.line.fill.background()
+                # Vertical up to Outputs
+                cv3 = slide.shapes.add_shape(1, outputs_x - line_w/2, row2_y - Inches(0.25),
+                                              line_w, cv2_y - row2_y + Inches(0.25))
+                cv3.fill.solid()
+                cv3.fill.fore_color.rgb = SCORAL
+                cv3.line.fill.background()
+
+                # Red highlight box around stages 6-7 (K-means + LLM Decode)
+                hi_x = MX + 1 * step - Inches(0.08)
+                hi_w = 2 * step + box_w + Inches(0.16) - step + box_w + Inches(0.16)
+                # Actually: stages 6 and 7 are at indices 1 and 2 in row 2
+                hi_x = MX + 1 * step - Inches(0.08)
+                hi_w = 2 * box_w + step - box_w + Inches(0.16)
+                hi_rect = slide.shapes.add_shape(1, hi_x, row2_y - Inches(0.08),
+                                                  hi_w, box_h + Inches(0.16))
+                hi_rect.fill.background()
+                hi_rect.line.color.rgb = RED
+                hi_rect.line.width = Pt(2)
+
+                add_textbox(slide, "Existed in academic repo",
+                            hi_x, row2_y - Inches(0.35), hi_w, Inches(0.25),
+                            size=Pt(10), color=RED, bold=True, align=PP_ALIGN.CENTER)
+
+                # Legend
+                legend_y = row2_y + box_h + Inches(0.50)
+                leg_items = [
+                    (BLUE, "Preprocessing"),
+                    (SGREEN, "Feature Extraction"),
+                    (SGOLD, "LLM Inference"),
+                    (SPINK, "Output"),
+                ]
+                leg_gap = Inches(2.9)
+                for k, (lcolor, llabel) in enumerate(leg_items):
+                    lx = MX + k * leg_gap
+                    # Color dot
+                    dot = slide.shapes.add_shape(9, lx, legend_y, Inches(0.2), Inches(0.2))  # Oval
+                    dot.fill.solid()
+                    dot.fill.fore_color.rgb = lcolor
+                    dot.line.fill.background()
+                    add_textbox(slide, llabel,
+                                lx + Inches(0.25), legend_y - Inches(0.02), Inches(1.5), Inches(0.25),
+                                size=Pt(10), color=LGRAY)
+
+                # Repo attribution
+                add_textbox(slide, "auto_avsr  ·  av_hubert  ·  VSP-LLM",
+                            MX, legend_y + Inches(0.35), CW, Inches(0.25),
+                            size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+                # Speaker notes
+                set_notes(slide,
+                    "8-stage automated pipeline built from 3 research repos (auto_avsr, av_hubert, VSP-LLM).\n"
+                    "Row 1 main flow: normalize, mouth crop, LRS3 convert.\n"
+                    "ASR (Whisper) is a side-branch — it provides reference text for evaluation "
+                    "(WER/IS scoring) only, not part of the core lip-reading inference path.\n"
+                    "Coral connector links ASR output to the Outputs stage for scoring.\n"
+                    "Row 2: feature processing and inference (manifests, K-means clustering, "
+                    "LLM decode, outputs).\n"
+                    "Stages 6-7 (K-means and LLM Decode) existed in the academic repo; "
+                    "all other stages were engineered from scratch.")
+                return
+    print("  Warning: Could not find 8-Stage Pipeline slide")
+
+
+# ─── Batch 17: #228 Fix Arabic Empty Bullets ──────────────────────────────────
+
+def fix_arabic_empty_bullets(prs):
+    """#228: Remove empty bullet strings from Arabic Adaptation slide."""
+    print("Batch 17 #228: Fixing Arabic empty bullets...")
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame and "Arabic" in shape.text_frame.text and "What Changes" in shape.text_frame.text:
+                # Found Arabic Adaptation slide — find shapes with empty bullets
+                for s in slide.shapes:
+                    if s.has_text_frame:
+                        tf = s.text_frame
+                        # Remove empty paragraphs (blank bullets)
+                        paras_to_remove = []
+                        for p in tf.paragraphs:
+                            if p.text.strip() == "" or p.text.strip() == "•":
+                                paras_to_remove.append(p)
+                        for p in paras_to_remove:
+                            p._p.getparent().remove(p._p)
+                if paras_to_remove:
+                    print(f"  Removed {len(paras_to_remove)} empty bullets")
+                return
+    print("  Warning: Could not find Arabic Adaptation slide")
+
+
+# ─── Batch 17: #239 Fix Arabic/AV-HuBERT Bullet Colors ────────────────────────
+
+def fix_arabic_bullet_colors(prs):
+    """#239: Upgrade AV-HuBERT + Arabic slides to WHITE text + TEAL markers + animations."""
+    print("Batch 17 #239: Fixing Arabic/AV-HuBERT bullet colors...")
+
+    # Only target the specific Arabic deep-dive slides added by expand_arabic_analysis
+    target_titles = ["AV-HuBERT: Why It", "Arabic Adaptation: What Changes"]
+    fixed = 0
+    for slide in prs.slides:
+        is_target = False
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for title in target_titles:
+                    if title in shape.text_frame.text:
+                        is_target = True
+                        break
+            if is_target:
+                break
+
+        if is_target:
+            # Update bullet text colors to WHITE and bullet markers to TEAL
+            for shape in slide.shapes:
+                if shape.has_text_frame:
+                    for para in shape.text_frame.paragraphs:
+                        for run in para.runs:
+                            text = run.text
+                            if text.strip() in ("▸", "•", "▹", "►"):
+                                run.font.color.rgb = TEAL
+                                run.font.bold = True
+                            else:
+                                try:
+                                    c = run.font.color.rgb
+                                    if c in (LGRAY, MGRAY):
+                                        run.font.color.rgb = WHITE
+                                except (AttributeError, TypeError):
+                                    pass
+            fixed += 1
+    print(f"  Updated {fixed} slides")
+
+
+# ─── Batch 17: #241 Add LLM Judge Screenshot Slide ────────────────────────────
+
+def add_llm_judge_screenshot_slide(prs):
+    """#241: Add hidden slide with LLM Judge 30-sample HTML report screenshot."""
+    print("Batch 17 #241: Adding LLM Judge screenshot slide...")
+
+    screenshot_path = "presentation_materials_20260224/01_plots_for_slides/llm_judge_report_30_screenshot.png"
+    if not os.path.exists(screenshot_path):
+        print(f"  Warning: {screenshot_path} not found")
+        return
+
+    # Find a slide to duplicate (use the last visible slide before appendix)
+    target_idx = len(prs.slides) - 1
+    for i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            if shape.has_text_frame and "A1:" in shape.text_frame.text:
+                target_idx = i - 1
+                break
+
+    new_slide = duplicate_slide(prs, target_idx)
+    clear_slide_content(new_slide)
+
+    # Set navy background
+    bg = new_slide.background
+    bg.fill.solid()
+    bg.fill.fore_color.rgb = NAVY
+
+    # Title
+    add_textbox(new_slide, "LLM Judge: 30-Sample Report (Screenshot)",
+                MX, Inches(0.35), CW, Inches(0.65),
+                size=Pt(28), color=WHITE, bold=True)
+
+    # Accent line
+    ln = new_slide.shapes.add_shape(1, MX, Inches(1.05), CW, Inches(0.02))
+    ln.fill.solid()
+    ln.fill.fore_color.rgb = TEAL
+    ln.line.fill.background()
+
+    # Add screenshot image centered
+    img_w = Inches(11.0)
+    img_h = Inches(5.5)
+    img_x = (SLIDE_W - img_w) // 2
+    img_y = Inches(1.30)
+    new_slide.shapes.add_picture(screenshot_path, img_x, img_y, img_w, img_h)
+
+    # Hide the slide
+    hide_slide(new_slide)
+
+    set_notes(new_slide,
+        "Screenshot of the full 30-sample LLM Judge HTML report showing ~16 rows "
+        "with color-coded word diffs, Y/P/N badges, and metrics. "
+        "This is a backup slide for Q&A — uncomment in builders list to show.")
 
 
 # ─── Item 18: Pipeline ASR Separation (Slide 43) ─────────────────────────────
@@ -1941,40 +2662,50 @@ def main():
     prs = Presentation(INPUT_PATH)
     print(f"  {len(prs.slides)} slides loaded")
 
-    # Group 1: Text content changes
-    rewrite_what_was_done(prs)          # Item 1
-    expand_llm_judge_slide(prs)         # Item 4
-    fill_is_motivation_slide(prs)       # Item 5
-    add_lrs3_comment(prs)              # Item 11
-    reframe_three_numbers(prs)          # Item 13
-    clarify_llm_swap_training(prs)     # Item 16
-    rebuild_price_tag(prs)             # Remark #236
-    downgrade_arabic_risk(prs)          # Item 17
-    add_human_expert_animation(prs)     # Item 20
-    expand_arabic_analysis(prs)         # Item 21
-    update_key_takeaways(prs)           # Item 22
+    # ── Phase A: Content modifications to existing slides (indices stable) ──
+    rewrite_what_was_done(prs)          # Batch 14, Item 1
+    expand_llm_judge_slide(prs)         # Batch 14, Item 4
+    fill_is_motivation_slide(prs)       # Batch 14, Item 5 / #231
+    add_lrs3_comment(prs)              # Batch 14, Item 11
+    reframe_three_numbers(prs)          # Batch 14, Item 13
+    clarify_llm_swap_training(prs)     # Batch 14, Item 16
+    rebuild_price_tag(prs)             # Batch 14, #236
+    downgrade_arabic_risk(prs)          # Batch 14, Item 17
+    add_human_expert_animation(prs)     # Batch 14, Item 20
+    expand_arabic_analysis(prs)         # Batch 14, Item 21 (inserts 2 slides)
+    update_key_takeaways(prs)           # Batch 14, Item 22
+    fix_is_action_arithmetic(prs)       # Batch 15, #218b
+    fix_vsp_slide(prs)                  # Batch 15, #220b
+    fix_arabic_empty_bullets(prs)       # Batch 17, #228
+    fix_radar_image_position(prs)       # Batch 15, #219
+    remove_taxonomy_impact_text(prs)    # Batch 15, #220
+    widen_taxonomy_name_column(prs)     # Batch 16, #223
+    fix_white_backgrounds(prs)          # Batch 16, #224
 
-    # Group 2: Number/threshold updates
-    update_niv_thresholds_global(prs)   # Items 3, 19
-    update_surrogate_metric(prs)        # Item 14
-    update_wer_is_gap(prs)             # Item 15
+    # ── Phase B: Global text replacements ──
+    update_niv_thresholds_global(prs)   # Batch 14, Items 3/19
+    update_surrogate_metric(prs)        # Batch 14, Item 14
+    update_wer_is_gap(prs)             # Batch 14, Item 15
 
-    # Group 3: Narrative/visual fixes
-    fix_pca_narrative(prs)             # Items 6, 12
-    fix_bad_is_sample(prs)             # Item 7
-    fix_radar_chart(prs)               # Item 8
-    clarify_two_systems(prs)           # Item 10
-    separate_asr_pipeline(prs)         # Item 18
+    # ── Phase C: Visual/narrative rebuilds (clear_slide_content + rebuild) ──
+    fix_pca_narrative(prs)             # Batch 14, Items 6/12
+    fix_pca_title(prs)                  # Batch 15, #218 + #234 (title reframe)
+    fix_bad_is_sample(prs)             # Batch 14, Item 7
+    fix_radar_chart(prs)               # Batch 14, Item 8
+    rebuild_two_systems(prs)            # Batch 16, #222 (replaces clarify_two_systems)
+    rebuild_pipeline_slide(prs)         # Batch 16, #226 (replaces separate_asr_pipeline)
+    embed_scatter_plot(prs)             # Batch 16, #221
+    fix_arabic_bullet_colors(prs)       # Batch 17, #239
 
-    # Group 4: New slides
-    add_disagreement_slide(prs)        # Item 9
-    add_30_sample_slide(prs)           # Item 23
+    # ── Phase D: New slides ──
+    add_disagreement_slide(prs)        # Batch 14, Item 9
+    add_30_sample_slide(prs)           # Batch 14, Item 23
+    add_llm_judge_screenshot_slide(prs) # Batch 17, #241
 
-    # Group 5: Slide deletion
+    # ── Phase E: Slide deletion/reordering ──
     print("Item 25: Removing 'Five Insights That Inform the Roadmap' slide...")
     delete_slide(prs, "Five Insights That Inform the Roadmap")
 
-    # Group 6: Slide reordering and hiding
     print("Item 24: Moving 'Failure Modes: Impact' after 'LLM Upgrade: Why It Matters'...")
     move_slide(prs, "Failure Modes: Impact", "LLM Upgrade: Why It Matters")
 
@@ -1986,12 +2717,80 @@ def main():
                 print("  Hidden.")
                 break
 
-    # Group 7: Page numbering — MUST BE LAST
-    fix_page_numbers(prs)              # Item 2
+    # ── Phase F: Page numbering — MUST BE LAST ──
+    fix_page_numbers(prs)              # Batch 14, Item 2
 
     print(f"\nSaving to {OUTPUT_PATH}...")
     prs.save(OUTPUT_PATH)
     print(f"Done! {len(prs.slides)} slides saved.")
+
+    # Verify if requested
+    if "--verify" in sys.argv:
+        verify_output()
+
+
+def verify_output():
+    """Verify the output PPTX for stale text and correct content."""
+    print("\n── Verification ──")
+    prs = Presentation(OUTPUT_PATH)
+    print(f"  Total slides: {len(prs.slides)}")
+
+    hidden = sum(1 for s in prs.slides if is_hidden(s))
+    print(f"  Hidden slides: {hidden}")
+
+    # Check for stale text that should have been replaced
+    stale_patterns = ["39.9%", "597/1,497", "IS >= 3.0", "IS ≥ 3.0",
+                      "3 dimensions", "Conservative Lower Bound",
+                      "projected profiles"]
+    # "Old IS ≥ 3.0 wrongly rejected" is intentional — explaining why old threshold was bad
+    false_positives = ["Old IS"]
+    found_stale = False
+    for pattern in stale_patterns:
+        for i, slide in enumerate(prs.slides):
+            for shape in slide.shapes:
+                if shape.has_text_frame and pattern in shape.text_frame.text:
+                    text = shape.text_frame.text
+                    if any(fp in text for fp in false_positives):
+                        continue
+                    print(f"  ⚠ Stale text '{pattern}' found on slide {i+1}")
+                    found_stale = True
+                if shape.has_table:
+                    for r in range(len(shape.table.rows)):
+                        for c in range(len(shape.table.columns)):
+                            if pattern in shape.table.cell(r, c).text:
+                                print(f"  ⚠ Stale text '{pattern}' found in table on slide {i+1}")
+                                found_stale = True
+
+    # Check for key new content (text frames + tables)
+    key_checks = [
+        ("Do 6 Signals Actually Measure 6 Things", "PCA title"),
+        ("883", "NIV confusion matrix"),
+        ("evaluation only", "ASR side-branch"),
+        ("κ = 0.818", "Agreement kappa"),
+    ]
+    for text, desc in key_checks:
+        found = False
+        for slide in prs.slides:
+            for shape in slide.shapes:
+                if shape.has_text_frame and text in shape.text_frame.text:
+                    found = True
+                    break
+                if shape.has_table:
+                    for r in range(len(shape.table.rows)):
+                        for c in range(len(shape.table.columns)):
+                            if text in shape.table.cell(r, c).text:
+                                found = True
+                                break
+                        if found:
+                            break
+            if found:
+                break
+        status = "✓" if found else "✗"
+        print(f"  {status} {desc}: '{text}'")
+
+    if not found_stale:
+        print("  ✓ No stale text found")
+    print("── Done ──")
 
 
 if __name__ == "__main__":

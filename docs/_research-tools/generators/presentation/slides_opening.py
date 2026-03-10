@@ -38,27 +38,27 @@ def slide_what_was_done_1(prs):
 
     add_text(slide,
         "Four months of research and engineering on visual speech processing:",
-        MX, CT, CW, Inches(0.35), size=Pt(15), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
     bullets = [
         "Started from a research paper with no working environment, "
         "no documentation, and no pipeline",
-        "Standard metric (WER) proved insufficient for measuring "
-        "actual output quality",
+        "Standard metric (WER) was the basic metric \u2013 which is unsatisfactory "
+        "to actually measure what is needed",
         "Built a complete end-to-end pipeline, including preprocessing "
         "(STT, face crop) and post-processing",
-        "Created a working environment and deployed to a standalone "
-        "container with a professional UI",
+        "Created a working environment and migrated into a container on a "
+        "standalone container including complete and professional UI handling",
         "Evaluated the model extensively, including designing a new metric "
         "that measures whether meaning is preserved",
         "Started fine-tuning the model, including environment setup "
         "and data preparation",
-        "Created a clear plan to improve performance and generalize "
-        "from English to Arabic",
+        "Created a clear future plan on how to improve performance "
+        "+ generalize from English to Arabic",
     ]
 
     add_bullets(slide, bullets, MX, CT + Inches(0.45), CW, Inches(4.0),
-                size=Pt(14), bullet_color=TEAL)
+                size=Pt(17), bullet_color=TEAL)
 
     _finish(slide, 0,
         "Overview slide 1/2. Four months of work: went from a research paper "
@@ -74,7 +74,7 @@ def slide_what_was_done_2(prs):
 
     add_text(slide,
         "Four months of research and engineering on visual speech processing:",
-        MX, CT, CW, Inches(0.35), size=Pt(15), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
     bullets = [
         "Proved the model performs well \u2014 about 65% of videos are "
@@ -93,7 +93,7 @@ def slide_what_was_done_2(prs):
     ]
 
     add_bullets(slide, bullets, MX, CT + Inches(0.45), CW, Inches(4.0),
-                size=Pt(14), bullet_color=TEAL)
+                size=Pt(17), bullet_color=TEAL)
 
     _finish(slide, 0,
         "Overview slide 2/2. Key findings: 65% useful output by LLM judge, "
@@ -117,11 +117,11 @@ def slide_exec_summary(prs):
     items = [
         ("Evaluated a lip-reading AI on 1,497 real-world YouTube segments",
          {"bold": True}),
-        "Standard metric (WER) reports 64.1% error — 2.5\u00d7 worse than benchmark",
-        ("Our new Intelligibility Score (IS) reveals 40% is actually useful — "
-         "3.5\u00d7 more than WER admits", {"color": TEAL, "bold": True}),
+        "Standard metric (WER) reports 64.1% error \u2014 2.5\u00d7 worse than benchmark",
+        ("Our new Intelligibility Score (IS) reveals 40% is actually useful \u2014 "
+         "2.4\u00d7 what WER suggests admits", {"color": TEAL, "bold": True}),
         "Built a complete production system: 8-stage pipeline, standalone container",
-        ("Clear roadmap to IS 3.5\u20134.0 (from 2.53) through data scaling + LLM upgrade",
+        ("Clear roadmap to IS 3.5\u20134.0 (from 2.52) through data scaling + LLM upgrade",
          {"color": TEAL}),
         ("Arabic pipeline: replication roadmap established for Arabic lip-reading", {}),
         "Produced 8 comprehensive research reports",
@@ -353,6 +353,13 @@ def slide_02(prs):
     vid_h = Inches(4.8)
     vid_x = (SL_W - vid_w) // 2
     add_video(slide, "perfect", vid_x, Inches(1.8), vid_w, vid_h)
+
+    # Bottom text — expert lip reader comparison
+    add_text(slide,
+        "System + human reader outperforms expert lip readers: "
+        "55\u201370% vs 45\u201352% word accuracy, with near-zero hallucination risk",
+        MX + Inches(0.08), Inches(6.78), CW, Inches(0.6),
+        size=Pt(14), color=WHITE)
 
     _finish(slide, 2,
         "PLAY VIDEO: IEa7qEkMvfQ_3__c5447488_with_hyp.mp4 — 33 words about "

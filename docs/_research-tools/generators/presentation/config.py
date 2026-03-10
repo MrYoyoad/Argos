@@ -43,6 +43,7 @@ IMG = {
     "P6b_radar_dual": PLOTS / "P6b_radar_dual.png",
     "P7_is_wer_scatter": PLOTS / "P7_is_wer_scatter.png",
     "pipeline_visual": PLOTS / "pipeline_visual_strip.png",
+    "pipeline_detailed": PLOTS / "pipeline_detailed.png",
     "llm_judge_report": PLOTS / "llm_judge_report_30_screenshot.png",
 }
 

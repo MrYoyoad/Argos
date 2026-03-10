@@ -123,17 +123,22 @@ def main():
     ax.text(2, NIV_YP_IS + 0.08, f"NIV Y+P: IS = {NIV_YP_IS} (κ=0.818)",
             color=AMBER, fontsize=9, alpha=0.8, va="bottom")
 
-    # NIV WER lines
-    ax.axvline(x=NIV_Y_WER, color=GREEN, linewidth=0.8, linestyle=":", alpha=0.4, zorder=1)
-    ax.axvline(x=40, color=LGRAY, linewidth=0.8, linestyle=":", alpha=0.3, zorder=1)
-    ax.text(41, 0.15, "WER 40%\n(conventional)", color=LGRAY,
-            fontsize=7, alpha=0.5, va="bottom")
+    # NIV WER threshold lines (labels rotated vertically, top of plot)
+    ax.axvline(x=NIV_Y_WER, color=GREEN, linewidth=1.0, linestyle="--", alpha=0.6, zorder=1)
+    ax.text(NIV_Y_WER - 1.5, 5.05, f"WER {NIV_Y_WER}% (κ=0.629)",
+            color=GREEN, fontsize=8, alpha=0.8, va="bottom", ha="right",
+            rotation=90)
+
+    ax.axvline(x=NIV_YP_WER, color=AMBER, linewidth=1.0, linestyle="--", alpha=0.6, zorder=1)
+    ax.text(NIV_YP_WER - 1.5, 5.05, f"WER {NIV_YP_WER}% (κ=0.777)",
+            color=AMBER, fontsize=8, alpha=0.8, va="bottom", ha="right",
+            rotation=90)
 
     # Formatting
     ax.set_xlabel("Word Error Rate (%)", color=WHITE, fontsize=13, labelpad=10)
     ax.set_ylabel("Intelligibility Score", color=WHITE, fontsize=13, labelpad=10)
     ax.set_xlim(-2, 210)
-    ax.set_ylim(-0.1, 5.2)
+    ax.set_ylim(-0.1, 5.35)
 
     ax.tick_params(colors=LGRAY, labelsize=10)
     for spine in ax.spines.values():

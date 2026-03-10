@@ -300,18 +300,18 @@ def slide_16(prs):
 
 def slide_25(prs):
     slide = new_slide(prs)
-    add_title(slide, "IS: A Calibrated Surrogate Metric")
+    add_title(slide, "IS: A Calibrated Surrogate for LLM Judgment")
     add_accent_line(slide)
 
     # Big number card — centered, full width
     r1 = add_rect(slide, MX, CT, CW, Inches(4.6), fill_color=NAVY2,
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
-    # IS metric — the lower bound
+    # IS metric — in CORAL for this variant
     add_text(slide, "IS says 61.6%", MX + Inches(0.3), CT + Inches(0.2),
              CW - Inches(0.6), Inches(0.7),
-             size=Pt(40), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
-    add_text(slide, "of segments deliver useful output (IS \u2265 2.00)",
+             size=Pt(40), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "of segments pass (IS \u2265 2.00)",
              MX + Inches(0.3), CT + Inches(0.85),
              CW - Inches(0.6), Inches(0.35),
              size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
@@ -327,12 +327,12 @@ def slide_25(prs):
 
     # Key bullets below
     bul = add_bullets(slide, [
-        ("IS closely tracks LLM judge \u2014 61.6% vs 64.9% "
-         "(\u03ba = 0.818)", {"bold": True, "color": WHITE}),
+        ("IS conservatively undercounts \u2014 the real quality is higher "
+         "than 61.6% suggests", {"bold": True, "color": WHITE}),
         "LLM-as-a-Judge (blind, 1,497 pairs) confirms: nearly 2 in 3 "
          "segments carry useful meaning",
-        ("The 3pp gap (61.6% \u2192 64.9%) = IS is a calibrated "
-         "surrogate, not an overcount", {}),
+        ("The gap (61.6% \u2192 64.9%) = segments with partial value "
+         "that strict metrics penalize", {}),
         ("IS is a floor, not a ceiling \u2014 designed to be cautious",
          {"color": TEAL}),
     ], MX + Inches(0.3), CT + Inches(2.8), CW - Inches(0.6),
@@ -341,13 +341,13 @@ def slide_25(prs):
     # Bottom text
     add_text(slide,
              "Our metric is deliberately conservative. "
-             "An independent LLM judge confirms the true useful rate is 25pp higher.",
+             "An independent LLM judge confirms the true useful rate is 3pp higher.",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 25,
-        "IS is a calibrated surrogate metric for transcription quality. "
-        "IS says 61.6% of segments deliver useful output (IS >= 2.00). An independent "
+        "IS provides a conservative lower bound for transcription quality. "
+        "IS says 61.6% of segments are captured (IS >= 2.00). But an independent "
         "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
         "Y+P = 64.9% deliver useful output. The 25pp gap shows IS deliberately "
         "undercounts: many segments with partial value are penalized by strict "
@@ -1162,61 +1162,61 @@ def slide_llm_judge(prs):
 
 
 def slide_context_eval(prs):
-    """Context-aware re-evaluation results."""
+    """IS: A Calibrated Surrogate Metric — IS vs LLM Judge comparison."""
     slide = new_slide(prs)
-    add_title(slide, "Context Makes the Judge Stricter, Not Lenient")
+    add_title(slide, "IS: A Calibrated Surrogate Metric")
     add_accent_line(slide)
 
-    # Headline stat — centered, full width
-    hl = add_text(slide,
-        "Y+P (useful output): 64.9% \u2192 62.1%  (\u22122.7pp when judge knows the topic)",
-        MX, CT, CW, Inches(0.4),
-        size=Pt(18), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+    # Big number card — centered, full width
+    r1 = add_rect(slide, MX, CT, CW, Inches(4.6), fill_color=NAVY2,
+                  border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
-    # Transition matrix — centered, the star of the slide
-    tbl_w = Inches(7.0)
-    tbl_x = int((SL_W - tbl_w) / 2)
-    rt = add_text(slide, "Transition Matrix (1,497 pairs)",
-                  tbl_x, CT + Inches(0.7), tbl_w, Inches(0.35),
-                  size=Pt(16), color=TEAL, bold=True)
+    # IS metric
+    add_text(slide, "IS says 61.6%", MX + Inches(0.3), CT + Inches(0.2),
+             CW - Inches(0.6), Inches(0.7),
+             size=Pt(40), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "of segments deliver useful output (IS \u2265 2.00)",
+             MX + Inches(0.3), CT + Inches(0.85),
+             CW - Inches(0.6), Inches(0.35),
+             size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
 
-    tbl2 = add_table(slide,
-        ["", "Ctx Y", "Ctx P", "Ctx N"],
-        [["Blind Y (345)", "207", "138", "0"],
-         ["Blind P (626)", "17", "519", "90"],
-         ["Blind N (526)", "1", "48", "477"]],
-        tbl_x, CT + Inches(1.15), tbl_w, text_size=Pt(14),
-        col_widths=[Inches(2.0), Inches(1.67), Inches(1.67), Inches(1.67)],
-        row_colors={0: {2: CORAL}, 1: {3: CORAL}})
+    # LLM Judge
+    add_text(slide, "LLM Judge says 64.9%", MX + Inches(0.3), CT + Inches(1.5),
+             CW - Inches(0.6), Inches(0.7),
+             size=Pt(40), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "deliver useful output (Y + P)",
+             MX + Inches(0.3), CT + Inches(2.15),
+             CW - Inches(0.6), Inches(0.35),
+             size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
 
-    # Key findings — below matrix, full width
-    kf_b = add_bullets(slide, [
-        ("230 downgrades vs 68 upgrades \u2014 context is 3.4\u00d7 more likely to penalize",
-         {"color": CORAL, "bold": True}),
-        "Y\u2192P is the dominant transition (138 cases): judge realizes domain vocabulary was wrong",
-        ("Only 1 N\u2192Y rescue across all 1,497 pairs \u2014 context almost never saves a failure",
-         {"bold": True}),
-    ], MX, CT + Inches(3.2), CW, Inches(1.8), size=Pt(14), spacing=Pt(10))
+    # Key bullets
+    bul = add_bullets(slide, [
+        ("IS closely tracks LLM judge \u2014 61.6% vs 64.9% "
+         "(\u03ba = 0.818)", {"bold": True, "color": WHITE}),
+        "LLM-as-a-Judge (blind, 1,497 pairs) confirms: nearly 2 in 3 "
+         "segments carry useful meaning",
+        ("The 3pp gap (61.6% \u2192 64.9%) = IS is a calibrated "
+         "surrogate, not an overcount", {}),
+        ("IS is a floor, not a ceiling \u2014 designed to be cautious",
+         {"color": TEAL}),
+    ], MX + Inches(0.3), CT + Inches(2.8), CW - Inches(0.6),
+       Inches(1.8), size=Pt(14))
 
-    # Bottom
+    # Bottom text
     add_text(slide,
-        "Domain knowledge reveals vocabulary failures that surface-level evaluation misses.",
-        MX, Inches(6.3), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "Our metric is deliberately conservative. "
+             "An independent LLM judge confirms the true useful rate is 3pp higher.",
+             MX, Inches(6.35), CW, Inches(0.4),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Context-aware re-evaluation. When the judge knows the topic, Y drops "
-        "from 23% to 15% (-8pp). Y+P drops from 64.9% to 62.1%. Context is "
-        "STRICTER, not lenient. 230 downgrades vs 68 upgrades. Dominant "
-        "transition: Y to P (138 cases) — the judge realizes domain vocabulary "
-        "was wrong. Only 1 N-to-Y rescue across all 1,497 pairs.\n\n"
-        "FULL COMPARISON (for reference):\n"
-        "Y: 23.0% (345) -> 15.0% (225), delta -8.0pp\n"
-        "P: 41.8% (626) -> 47.1% (705), delta +5.3pp\n"
-        "N: 35.1% (526) -> 37.9% (567), delta +2.8pp\n"
-        "Y+P: 64.9% (971) -> 62.1% (930), delta -2.7pp\n"
-        "Cross-condition agreement: 80.0%",
-        [[hl], [rt, tbl2], [kf_b]], click_reveal=True)
+        "IS is a calibrated surrogate metric for transcription quality. "
+        "IS says 61.6% of segments deliver useful output (IS >= 2.00). An independent "
+        "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
+        "Y+P = 64.9% deliver useful output. The 3pp gap shows IS deliberately "
+        "undercounts: many segments with partial value are penalized by strict "
+        "metrics. IS is a floor, not a ceiling.",
+        [[r1], [bul]], click_reveal=True)
 
 
 def slide_what_good_looks_like(prs):
@@ -1348,7 +1348,7 @@ def slide_llm_context_engine(prs):
 def slide_llm_judge_30(prs):
     """30-sample LLM-as-a-Judge overview — summary stats + what the sample shows."""
     slide = new_slide(prs)
-    add_title(slide, "LLM Judge: 30-Sample Deep Dive")
+    add_title(slide, "LLM Judge: Deep Dive")
     add_accent_line(slide)
 
     col_w = Inches(5.5)

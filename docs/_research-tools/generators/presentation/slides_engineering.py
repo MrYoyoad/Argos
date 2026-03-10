@@ -270,6 +270,25 @@ def slide_17(prs):
         anim_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
+# SLIDE 17b — PIPELINE ARCHITECTURE (PNG version)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_17_png(prs):
+    """8-Stage Pipeline — full-slide PNG version (from PPTX slide 50)."""
+    slide = new_slide(prs)
+    add_title(slide, "8-Stage Automated Pipeline")
+    add_accent_line(slide)
+
+    add_image(slide, "pipeline_detailed", MX, CT, width=CW)
+
+    _finish(slide, 0,
+        "Full pipeline diagram showing 8 stages with ASR as evaluation-only "
+        "side-branch. Data flow: .mp4 → normalize → mouth crop → LRS3 convert "
+        "→ manifests → K-means → LLM decode → reports. ASR (Whisper) provides "
+        "reference text for WER/IS scoring only.")
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # SLIDE 18 — ENGINEERING JOURNEY
 # ═══════════════════════════════════════════════════════════════════════
 

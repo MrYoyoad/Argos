@@ -129,16 +129,16 @@ def main():
         slide_disagreement_blind,    # 34: Where IS and Judge Disagree (blind)
         slide_disagreement_context,  # 35: Context Exposes Hidden Failures
         slide_metric_transition,     # 36: Three Numbers That Tell the Real Story
-        # --- Section 3: Failure Analysis (slides 35-38) ---
-        slide_08,                    # 35: Failure Mode Taxonomy (bar chart)
-        slide_failure_deep_1a,       # 36: Failure Taxonomy 1/2
-        slide_failure_deep_1b,       # 37: Failure Taxonomy 2/2
-        slide_failure_deep_2,        # 38: Failure Modes: Real Examples
-        # --- Section 4: Validation & Salvage (slides 39-46) ---
-        slide_is_deep_dive,          # 39: IS Validation
-        slide_metric_disagreement,   # 40: When Metrics Disagree pt 1 (unhidden)
-        slide_metric_disagreement_2, # 41: When Metrics Disagree pt 2
-        slide_25,                    # 42: IS Calibrated Surrogate for LLM
+        # --- Section 3: Failure Analysis (slides 37-40) ---
+        slide_08,                    # 37: Failure Mode Taxonomy (bar chart)
+        slide_failure_deep_1a,       # 38: Failure Taxonomy 1/2
+        slide_failure_deep_1b,       # 39: Failure Taxonomy 2/2
+        slide_failure_deep_2,        # 40: Failure Modes: Real Examples
+        # --- Section 4: Validation & Salvage (slides 41-48) ---
+        slide_is_deep_dive,          # 41: IS Validation
+        slide_metric_disagreement,   # 42: When Metrics Disagree pt 1 (unhidden)
+        slide_metric_disagreement_2, # 43: When Metrics Disagree pt 2
+        slide_25,                    # 44: IS Calibrated Surrogate for LLM
         slide_25d,                   # 43: LLM Salvage: Three Recoveries
         slide_25e,                   # 44: LLM Salvage: Domain Context
         slide_14b,                   # 45: Video Gallery

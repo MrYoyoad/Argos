@@ -644,7 +644,7 @@ def slide_is_calc_examples(prs):
 def slide_is_radar(prs):
     """Radar chart — model comparison: expected IS profiles for different LLMs."""
     slide = new_slide(prs)
-    add_title(slide, "Model Comparison: Expected IS Profiles")
+    add_title(slide, "Model Comparison: IS Profiles")
     add_accent_line(slide)
     sub = add_text(slide,
         "How different LLM backbones would reshape the IS radar \u2014 "
@@ -1851,7 +1851,7 @@ def slide_research_transition(prs):
     add_text(slide, "RESEARCH FINDINGS",
              MX, Inches(2.2), CW, Inches(1.2),
              size=Pt(48), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
-    add_text(slide, "Understanding What Works, What Fails, and Why",
+    add_text(slide, 'Understanding What does \u201cWorking\u201d mean, What Works, and Why',
              MX, Inches(3.5), CW, Inches(0.6),
              size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER)
 

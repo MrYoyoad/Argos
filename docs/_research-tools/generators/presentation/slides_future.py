@@ -32,7 +32,7 @@ from .helpers import (
 
 def slide_24(prs):
     slide = new_slide(prs)
-    add_title(slide, "Starting from 40%, Not 11%")
+    add_title(slide, "Starting from 61.6%, Not 25%")
     add_accent_line(slide)
 
     col_w = Inches(3.4)
@@ -1687,7 +1687,7 @@ def slide_a17(prs):
 def slide_confidence_scoring(prs):
     """Future direction: per-segment confidence — merged with Phase 1 detail."""
     slide = new_slide(prs)
-    add_title(slide, "Phase 1: Confidence Scoring \u2014 Surface the Good 40%")
+    add_title(slide, "Phase 1: Confidence Scoring \u2014 Surface the Good 65%")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
