@@ -118,8 +118,8 @@ def slide_exec_summary(prs):
         ("Evaluated a lip-reading AI on 1,497 real-world YouTube segments",
          {"bold": True}),
         "Standard metric (WER) reports 64.1% error \u2014 2.5\u00d7 worse than benchmark",
-        ("Our new Intelligibility Score (IS) reveals 40% is actually useful \u2014 "
-         "2.4\u00d7 what WER suggests admits", {"color": TEAL, "bold": True}),
+        ("Our new Intelligibility Score (IS) reveals 61.6% is actually useful \u2014 "
+         "2.4\u00d7 what WER suggests", {"color": TEAL, "bold": True}),
         "Built a complete production system: 8-stage pipeline, standalone container",
         ("Clear roadmap to IS 3.5\u20134.0 (from 2.52) through data scaling + LLM upgrade",
          {"color": TEAL}),

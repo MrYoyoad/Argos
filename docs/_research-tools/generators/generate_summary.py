@@ -572,9 +572,9 @@ def part_1_research(doc):
         "Correlation: Pearson r = 0.850 between LLM judge and IS, with only 22 boundary "
         "disagreements out of 1,497 segments (1.5%). The llm_context_prob heuristic is stable "
         "across 16 decode configurations (mean r = 0.925, \u03ba range 0.62\u20130.86). The LLM judge is "
-        "more conservative for \u2018full success\u2019 (23% vs IS 40%) but more generous for \u2018any useful "
-        "output\u2019 (65% vs IS 40%), revealing a large partial zone where structure survives "
-        "but semantic meaning is lost."
+        "closely aligned for \u2018full success\u2019 (Judge 23.0% vs IS NIV Y 23.1%, \u03ba=0.690) and for "
+        "\u2018any useful output\u2019 (Judge 64.9% vs IS NIV Y+P 61.6%, \u03ba=0.818), with only a 3.3pp gap "
+        "in the useful zone."
     ), bold=True)
 
     # 1.5 Root Cause

@@ -501,8 +501,8 @@ Left column \u2014 "Parameters Tested":
   \u2022 Sampling strategy
   \u2022 Repetition penalty
 Right column header: "Best Config (J) \u2014 Full Dataset (1,497 segments)"
-  \u2022 IS: 2.60 vs 2.53 baseline (+0.07)
-  \u2022 Captured: 622 vs 601 (+21 segments)
+  \u2022 IS: 2.60 vs 2.52 baseline (+0.08)
+  \u2022 Useful (IS \u2265 2.00): marginal gain over baseline 922 segments
   \u2022 Empties: 0 vs 70 (eliminated)
   \u2022 Hallucinations: 348 vs 307 (+41 more)
 SPEAKER NOTES: "13 systematic experiments across beam size, length penalty, temperature, and sampling. Config J (beam=20, lenpen=0, temperature=1.0, do_sample=True) achieved the best IS. Key trade-off: eliminated all 70 empty outputs but added 41 hallucinations. Net IS gain: only +0.08. Note: standalone container uses do_sample=True (stochastic), EC2 uses False (deterministic) \u2014 to be unified. The chart shows the empty-vs-hallucination trade-off across configs. [ANIMATION: Left column appears, then right column. Transition: Fade 0.5s.]"
@@ -704,10 +704,10 @@ Title: "Phase 1: Automatic Quality Flagging"
   \u2022 IS proves 40% is good \u2014 beam scores can flag it at decode time
   \u2022 No additional inference needed \u2014 scores already computed
   \u2022 Effort: 2-4 hours implementation
-  \u2022 Priority: Business/Finance segments (57% captured) most reliable
-  \u2022 Short segments (<10 words, 32%) need lower confidence thresholds
+  \u2022 Priority: Business/Finance segments (78% useful) most reliable
+  \u2022 Short segments (<10 words, 53% useful) need lower confidence thresholds
   \u2022 This is the immediate next step
-SPEAKER NOTES: "Phase 1 is the quick win. We know 40% is already good; beam scores computed during decode can flag quality automatically. Business/Finance content (57% captured) should get highest confidence. Short segments need lower thresholds. 2-4 hours of implementation. [ANIMATION: Bullet items build one at a time. Transition: Fade 0.5s.]"
+SPEAKER NOTES: "Phase 1 is the quick win. We know 61.6% is already useful; beam scores computed during decode can flag quality automatically. Business/Finance content (78% useful) should get highest confidence. Short segments need lower thresholds. 2-4 hours of implementation. [ANIMATION: Bullet items build one at a time. Transition: Fade 0.5s.]"
 
 ---
 
@@ -765,7 +765,7 @@ SLIDE 30 - Summary
 LAYOUT: Four numbered points
 Title: "Key Takeaways"
 Four points (teal numbers):
-  1. Rigorous assessment: 2.5x WER gap on 1,497 segments. Novel IS metric reveals 40% properly captured. 5 classified failure categories.
+  1. Rigorous assessment: 2.5x WER gap on 1,497 segments. Novel IS metric reveals 61.6% useful output (NIV Y+P). 5 classified failure categories.
   2. Production system delivered: standalone container, 37 bugs fixed, 8-stage pipeline, 37 tests, 8 research reports.
   3. Data is the bottleneck: Exp A/B proved 1,273 segments too small. Multiplicative scaling law: stronger LLM + more data compounds.
   4. Actionable roadmap to IS 3.5-4.0: LLM swap + smart prompts + data scaling + GER. Each phase targets a different failure category.
