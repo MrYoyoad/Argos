@@ -68,23 +68,21 @@ Llama 3.1 8B is widely cited as roughly equivalent to Llama 2 70B on most benchm
 
 We have detailed data on exactly what goes wrong and which failures a stronger LLM would fix.
 
-### Failure Mode Recovery Estimates
+### Failure Mode Recovery Estimates (575 NIV N segments, IS < 2.00)
 
-The failure mode analysis below covers all 900 segments below the legacy IS 3.0 threshold. Under the current **NIV thresholds** (IS ≥ 2.00 for Y+P "any useful", IS ≥ 3.80 for Y "clearly conveyed"), 325 of these 900 segments are already counted as useful (the "Fair" tier, IS 2.00–2.99). The remaining **575 segments (IS < 2.00)** are truly non-useful under NIV.
-
-| Failure Category | Count (of 900) | % | LLM Impact | Expected Recovery |
+| Failure Category | Count | % | LLM Impact | Expected Recovery |
 |-----------------|-------|---|------------|-------------------|
-| **Wrong Topic** | 284 | 31.6% | Moderate — better language prior reduces drift | ~15-25% (~40-70 segments) |
-| **Accumulated Errors** | 220 | 24.4% | High — stronger context catches small errors | ~20-30% (~45-65 segments) |
-| **Right Topic Wrong Details** | 204 | 22.7% | **Highest** — entity/vocabulary disambiguation | ~25-35% (~50-70 segments) |
-| **Hallucination** | 111 | 12.3% | Moderate-High — better calibration | ~15-25% (~15-25 segments) |
-| **Signal Loss** | 81 | 9.0% | Low — encoder failures, not LLM failures | ~5% (~4 segments) |
+| **Wrong Topic** | 255 | 44.4% | Moderate — better language prior reduces drift | ~10-20% (~25-50 segments) |
+| **Hallucination** | 108 | 18.8% | Moderate-High — better calibration | ~15-25% (~16-27 segments) |
+| **Signal Loss** | 80 | 13.9% | Low — encoder failures, not LLM failures | ~5% (~4 segments) |
+| **Right Topic Wrong Details** | 79 | 13.8% | **Highest** — entity/vocabulary disambiguation | ~25-35% (~20-28 segments) |
+| **Accumulated Errors** | 52 | 9.1% | High — stronger context catches small errors | ~20-30% (~10-16 segments) |
 
-**Estimated total recovery: ~155-235 segments** from the 575 truly non-useful pool (IS < 2.00), pushing the NIV Y+P useful rate from **61.6% to ~72-77%**.
+**Estimated total recovery: ~75-125 segments** from the 575 NIV N pool (IS < 2.00), pushing the NIV Y+P useful rate from **61.6% to ~67-70%**. (With prompt engineering unlocked by Llama 3.1 8B, the combined gain reaches ~72-77%.)
 
 ### Why "Right Topic Wrong Details" Is the Sweet Spot
 
-These 204 segments are where the visual encoder **correctly captured** the topic/domain but the LLM picked wrong words. Examples:
+These 79 segments are where the visual encoder **correctly captured** the topic/domain but the LLM picked wrong words. Examples:
 
 - "admiral McRae" → "animal migratory" (entity destruction — LLM lacks pragmatic knowledge)
 - "pro controller" → "broken dollar" (content word substitution — weak vocabulary prior)
@@ -107,12 +105,12 @@ Our success patterns reveal the #1 driver of correct output:
 
 | Success Pattern | Count | % of Successes | LLM Upgrade Impact |
 |----------------|-------|---------------|-------------------|
-| **Phonetically Preserved** | 248 | 41.5% | **Highest** — LLM converts phonetic near-misses to correct words |
-| Minor Errors, High Semantic | 146 | 24.5% | Moderate — already working, marginal improvement |
-| Entities Preserved | 74 | 12.4% | High — better entity knowledge preserves more |
-| Near-Perfect Output | 69 | 11.6% | Low — already excellent |
+| **Phonetically Preserved** | 249 | 41.4% | **Highest** — LLM converts phonetic near-misses to correct words |
+| Minor Errors, High Semantic | 146 | 24.3% | Moderate — already working, marginal improvement |
+| Entities Preserved | 75 | 12.5% | High — better entity knowledge preserves more |
+| Near-Perfect Output | 69 | 11.5% | Low — already excellent |
 
-**Key insight**: Phonetic preservation is the #1 success driver (41.5%). The visual signal preserves the phonetic structure of speech even when specific words are wrong. A stronger LLM that corrects phonetic near-misses could recover many "fair" tier segments — this is where the 128K vocabulary and better language prior have the most impact.
+**Key insight**: Phonetic preservation is the #1 success driver (41.4%). The visual signal preserves the phonetic structure of speech even when specific words are wrong. A stronger LLM that corrects phonetic near-misses could recover many "fair" tier segments — this is where the 128K vocabulary and better language prior have the most impact.
 
 ---
 
@@ -194,25 +192,23 @@ The ICLR 2024 scaling law paper (Zhang et al.) shows fine-tuning follows a **mul
 
 ## Part 6: Which Failure Categories Improve Most vs Least
 
-*Counts below are from the 900 segments below legacy IS 3.0; under NIV thresholds (IS ≥ 2.00), 575 of these are truly non-useful. Recovery estimates target this non-useful pool.*
+*Counts below are from the 575 NIV N segments (IS < 2.00).*
 
 ### High Impact (LLM-dependent failures)
 
-1. **Right Topic Wrong Details (204 segments, 22.7%)**: The sweet spot. Encoder captured the right topic, LLM picked wrong words. Stronger language prior directly fixes entity names, technical vocabulary, content words. **Expected: 25-35% recovery.**
+1. **Right Topic Wrong Details (79 segments, 13.8%)**: The sweet spot. Encoder captured the right topic, LLM picked wrong words. Stronger language prior directly fixes entity names, technical vocabulary, content words. **Expected: 25-35% recovery.**
 
-2. **Accumulated Small Errors (220 segments, 24.4%)**: Many individually minor substitutions that compound. Better context modeling catches cascading errors. **Expected: 20-30% recovery.**
+2. **Accumulated Errors (52 segments, 9.1%)**: Many individually minor substitutions that compound. Better context modeling catches cascading errors. **Expected: 20-30% recovery.**
 
-3. **Hallucination (111 segments, 12.3%)**: The LLM "runs ahead" of the visual signal. Better-calibrated model truncates sooner, follows anti-hallucination instructions. **Expected: 15-25% recovery.**
+3. **Hallucination (108 segments, 18.8%)**: The LLM "runs ahead" of the visual signal. Better-calibrated model truncates sooner, follows anti-hallucination instructions. **Expected: 15-25% recovery.**
 
 ### Moderate Impact
 
-4. **Wrong Topic, phonetically similar (141 segments)**: Mouth shapes captured but decoded into wrong semantic domain. 4x vocabulary and better contextual disambiguation help. **Expected: 10-20% recovery.**
+4. **Wrong Topic (255 segments, 44.4%)**: The dominant category — topic drift (143) plus phonetically similar but wrong domain (112). 4x vocabulary and better contextual disambiguation help, but many are encoder-limited. **Expected: 10-20% recovery.**
 
 ### Low Impact (encoder-limited)
 
-5. **Wrong Topic, total drift (143 segments)**: No visual signal. No LLM can fix this. **Expected: <5% recovery.**
-
-6. **Signal Loss / Empty (81 segments)**: Encoder-level failures. **Expected: <5% recovery.**
+5. **Signal Loss (80 segments, 13.9%)**: Empty or near-empty output. Encoder-level failures. **Expected: <5% recovery.**
 
 ---
 
