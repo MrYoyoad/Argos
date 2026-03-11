@@ -38,15 +38,15 @@ Both are independently maintained — changes in one do NOT propagate to the oth
 | Metric | Value | Source |
 |--------|-------|--------|
 | Baseline WER | 64.1% (1,497 segments) | english_full_results |
-| IS mean | 2.53/5.0 | intelligibility_summary.json |
-| Properly captured (IS >= 3.0) | 40.1% (601/1,497) | intelligibility_scores.csv |
-| Effective capture (IS + salvage) | 51.1% (766/1,497) | llm_salvage_segments.json |
+| IS mean | 2.52/5.0 | intelligibility_summary.json |
+| Useful (NIV Y+P, IS >= 2.00) | 61.6% (922/1,497) | intelligibility_scores.csv |
+| Clearly conveyed (NIV Y, IS >= 3.80) | 23.1% (346/1,497) | intelligibility_scores.csv |
 | LLM Judge blind (Y+P) | 64.9% | llm_judge_results.csv |
 | LLM Judge context (Y+P) | 62.1% (stricter) | context_eval_results.csv |
 | Finetune: Baseline IS | 2.487 | checkpoint_correlation.csv |
 | Finetune: Exp A IS | 2.312 | checkpoint_correlation.csv |
 | Cross-config r | 0.925 (16 configs) | is_correlation_analysis.md |
-| Roadmap target | IS 3.5-4.0 (from 2.53) | llm_upgrade_analysis.md |
+| Roadmap target | IS 3.5-4.0 (from 2.52) | llm_upgrade_analysis.md |
 
 ---
 
@@ -54,9 +54,9 @@ Both are independently maintained — changes in one do NOT propagate to the oth
 
 1. **IS = design-time LLM-distilled**: Claude designed the rubric; no LLM runs at eval time
 2. **Fine-tuning = data-limited**: 1.3K segments below LoRA minimum; data scaling solves it
-3. **Salvage = current insight**: 51% effective capture (not future work)
+3. **NIV thresholds adopted**: IS >= 2.00 for useful (61.6%), IS >= 3.80 for clearly conveyed (23.1%)
 4. **Spider chart = reusable**: Template for future LLM comparison (Llama-2 vs Llama-3.1)
-5. **Narrative arc**: Nuanced ("40% captured, 51% with salvage") not deficit ("64% WER = bad")
+5. **Narrative arc**: Nuanced ("61.6% useful by NIV Y+P") not deficit ("64% WER = bad")
 
 ---
 
