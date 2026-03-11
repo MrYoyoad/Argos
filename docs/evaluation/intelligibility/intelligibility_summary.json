@@ -11,6 +11,13 @@
   "niv_useful_pct": 61.6,
   "niv_clearly_conveyed_count": 346,
   "niv_clearly_conveyed_pct": 23.1,
+  "tier_distribution": {
+    "5_excellent": { "count": 288, "pct": 19.2 },
+    "4_good": { "count": 313, "pct": 20.9 },
+    "3_fair": { "count": 322, "pct": 21.5 },
+    "2_poor": { "count": 336, "pct": 22.4 },
+    "1_failed": { "count": 238, "pct": 15.9 }
+  },
   "niv_category_distribution": {
     "Y_clearly_conveyed": {
       "range": "IS >= 3.80",
