@@ -738,22 +738,20 @@ def slide_arabic_roadmap(prs):
 
     topics = [
         (TEAL,  "Arabic AV-HuBERT encoder (BOTTLENECK)",
-         "AV-HuBERT learned English mouth shapes (visemes). Arabic has different "
-         "phonemes (pharyngeals, emphatics) producing distinct lip movements \u2014 "
-         "without fine-tuning, Arabic lips map to wrong English clusters"),
+         "Arabic has different phonemes (pharyngeals, emphatics) \u2014 "
+         "without fine-tuning, Arabic lips map to wrong clusters"),
         (TEAL,  "Arabic LLM backend",
-         "Swap Llama-2 for Arabic-capable LLM (e.g. Jais, AceGPT, "
-         "or Arabic-tuned Llama 3) \u2014 Arabic tokenizer quality varies"),
+         "Swap Llama-2 for Arabic-capable LLM "
+         "(e.g. Jais, AceGPT, or Arabic-tuned Llama 3)"),
         (CORAL, "Arabic evaluation dataset (UNKNOWN)",
-         "No Arabic lip-reading benchmark exists. Manual transcriptions "
-         "needed for MSA + dialect coverage \u2014 requires native speakers, "
-         "timeline uncertain"),
+         "No Arabic lip-reading benchmark exists \u2014 "
+         "needs native speakers for MSA + dialect coverage"),
         (GREEN, "Training infrastructure",
          "AWS GPU instance (existing) for AV-HuBERT fine-tuning "
-         "and K-means reclustering on Arabic mouth shapes"),
-        (CORAL,  "RTL text & normalization (minor integration)",
-         "RTL text handling may need research; spaCy Arabic, "
-         "diacritic handling, Arabic NER \u2014 maturity unknown"),
+         "and K-means reclustering"),
+        (CORAL,  "RTL text & normalization",
+         "RTL handling, spaCy Arabic, diacritic handling, "
+         "Arabic NER \u2014 maturity unknown"),
     ]
 
     topic_groups = []
@@ -763,9 +761,9 @@ def slide_arabic_roadmap(prs):
         grp.append(add_bullets(slide, [
             (heading, {"bold": True, "color": clr}),
             detail,
-        ], MX, by, col_w, Inches(0.75), size=Pt(13)))
+        ], MX, by, col_w, Inches(0.85), size=Pt(13)))
         topic_groups.append(grp)
-        by += Inches(0.75)
+        by += Inches(0.85)
 
     # Right — timeline with practical details
     rx = MX + col_w + gap
@@ -1055,17 +1053,17 @@ def slide_a8(prs):
     add_title(slide, "A3: IS Component Correlation")
     add_accent_line(slide)
 
-    # Dimension table
-    add_text(slide, "The 6 IS signals collapse into 3 independent dimensions:",
+    # PCA dimension table — 2 PCs (Kaiser criterion)
+    add_text(slide, "PCA: 6 IS signals collapse into 2 principal components:",
              MX, CT, CW * 0.55, Inches(0.4), size=Pt(14), color=WHITE)
 
     tbl1 = add_table(slide,
-        ["Dimension", "Signals", "Variance", "Inter-signal r"],
-        [["Word Accuracy", "WER, WWER, Phonetic", "60.0%", "> 0.79"],
-         ["Meaning Preservation", "Semantic", "28.5%", "independent"],
-         ["Output Sanity", "Length Ratio", "9.1%", "independent"]],
+        ["Component", "Signals", "Variance", "Loadings"],
+        [["PC1: Signal Quality", "All 5 content signals", "68.4%", "0.43\u20130.47 each"],
+         ["PC2: Output Length", "Length Ratio", "19.5%", "0.91"]],
         MX, CT + Inches(0.5), CW * 0.55, text_size=Pt(11),
-        row_height=Inches(0.32))
+        row_height=Inches(0.35),
+        col_widths=[Inches(1.6), Inches(1.8), Inches(1.1), Inches(1.5)])
 
     # Cross-config stability
     add_text(slide, "Cross-Config Stability (16 configs)",
@@ -1211,47 +1209,34 @@ def slide_a13(prs):
     add_text(slide, "One real example per failure category (5 categories):",
              MX, CT, CW, Inches(0.3), size=Pt(13), color=LGRAY)
 
+    # Canonical 5 categories from 574-segment failure taxonomy
     tbl = add_table(slide,
-        ["Mode", "Reference", "Hypothesis", "WER", "IS"],
-        [["Empty Output",
-          '"do you say i wonder what..."',
-          "(empty)", "100%", "0.00"],
-         ["Hallucination",
+        ["Category", "% of Failures", "Reference", "Hypothesis", "WER", "IS"],
+        [["Wrong Topic\n(255 segs)",  "44.4%",
+          '"weight loss and diet..."',
+          '"wanted to be a princess..."', "97%", "0.38"],
+         ["Hallucination\n(108 segs)", "18.8%",
           '"and body parts"',
           '"20 years ago when i was"', "200%", "0.00"],
-         ["Truncation",
-          '"i don\'t want to say mistakes but i will say..."',
-          '"i don\'t want to seem disrespectful"', "69%", "1.26"],
-         ["Topic Drift",
-          '"i\'ve made lots of videos..."',
-          '"when i was a little girl..."', "97%", "0.38"],
-         ["Entity Destruction",
-          '"china to take off to cross the pacific ocean..."',
-          '"i don\'t think that\'s a good idea"', "100%", "0.72"],
-         ["Phonetic Wrong Topic",
-          '"they have something like..."',
-          '"some english for you all..."', "100%", "0.94"],
-         ["High Error Rate",
-          '"today here the three in one..."',
-          '"i\'m so happy to be here..."', "100%", "1.13"],
-         ["Accum. Small Errors",
+         ["Signal Loss\n(80 segs)",    "13.9%",
+          '"do you say i wonder what..."',
+          "(empty)", "100%", "0.00"],
+         ["Right Topic,\nWrong Details\n(79 segs)", "13.8%",
+          '"13th amendment is going..."',
+          '"13th may mean something..."', "60%", "1.86"],
+         ["Accumulated\nErrors (52 segs)", "9.1%",
           '"you\'re rich no no no..."',
-          '"your ring that\'s not what..."', "67%", "1.64"],
-         ["Content Word Errors",
-          '"even after the insurance..."',
-          '"after the initial contamination"', "60%", "1.86"],
-         ["Over-generation",
-          '"to the next level"',
-          '"to the next level and they..."', "100%", "2.32"]],
-        MX, CT + Inches(0.4), CW, text_size=Pt(9),
-        row_height=Inches(0.42),
-        row_colors={0: {4: CORAL}, 1: {4: CORAL}, 3: {4: CORAL},
-                    4: {4: CORAL}, 5: {4: CORAL}})
+          '"your ring that\'s not what..."', "67%", "1.64"]],
+        MX, CT + Inches(0.4), CW, text_size=Pt(10),
+        row_height=Inches(0.70),
+        col_widths=[Inches(1.8), Inches(1.0), Inches(2.8), Inches(2.8),
+                    Inches(0.8), Inches(0.6)],
+        row_colors={0: {5: CORAL}, 1: {5: CORAL}, 2: {5: CORAL}})
 
     _finish(slide, "A6",
-        "5 failure categories with real examples from the 1,497-segment "
-        "baseline. Wrong Topic is the largest (44.4%). Hallucination is the "
-        "most dangerous — fluent but completely fabricated text.")
+        "Canonical 5 failure categories from the 574-segment taxonomy "
+        "(IS < 2.00). Wrong Topic is the largest (44.4%, 255 segments). "
+        "Hallucination is the most dangerous — fluent but fabricated text.")
 
 
 # ═══════════════════════════════════════════════════════════════════════

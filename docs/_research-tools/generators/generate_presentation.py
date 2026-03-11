@@ -197,6 +197,7 @@ def main():
         slide_disagreement_context,  # Context Exposes Hidden Failures (new)
         slide_17,                    # 8-Stage Pipeline (animated)
         slide_30b,                   # LLM Upgrade: Why It Matters
+        slide_a11b,                  # A5: LLM Salvage Examples (not relevant)
     }
 
     for i, builder in enumerate(builders, 1):
