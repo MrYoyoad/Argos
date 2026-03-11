@@ -7,6 +7,10 @@
   "std_is": 1.38,
   "properly_captured_count": 601,
   "properly_captured_pct": 40.1,
+  "niv_useful_count": 922,
+  "niv_useful_pct": 61.6,
+  "niv_clearly_conveyed_count": 346,
+  "niv_clearly_conveyed_pct": 23.1,
   "tier_distribution": {
     "5_excellent": {
       "count": 288,

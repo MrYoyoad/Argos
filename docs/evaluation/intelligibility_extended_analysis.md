@@ -11,6 +11,8 @@ Topics are assigned by keyword matching on reference text across 10 categories (
 
 ### Baseline Results by Topic (sorted by Mean IS)
 
+*Note: "Captured%" uses legacy IS ≥ 3.0 threshold. Under NIV Y+P (IS ≥ 2.00), the overall useful rate is 61.6%. Per-topic NIV rates are in the PPTX generator ([slides_research.py](../../_research-tools/generators/presentation/slides_research.py)).*
+
 | Topic | N | Mean IS | WER | Captured% | Ctx Rule% | Ctx LLM% |
 |-------|---|---------|-----|-----------|-----------|----------|
 | Business/Finance | 46 | 3.08 | 46.8% | 56.5% | 63.0% | 67.4% |
@@ -38,6 +40,8 @@ Topics are assigned by keyword matching on reference text across 10 categories (
 Longer segments give the lip-reading model more visual context. Metrics vary significantly with segment length.
 
 ### Baseline Results by Length Band
+
+*Note: "Captured%" uses legacy IS ≥ 3.0 threshold. Under NIV Y+P (IS ≥ 2.00), the overall useful rate is 61.6%.*
 
 | Length Band | N | Mean IS | WER | Captured% | Ctx Rule% | Ctx LLM% |
 |------------|---|---------|-----|-----------|-----------|----------|
@@ -73,7 +77,7 @@ All other parameters identical (beam=20, top_p=0.9, rep_penalty=1.2, no_repeat_n
 
 | Metric | Baseline | Config J | Config C |
 |--------|----------|----------|----------|
-| Mean IS | 2.53 | **2.60** | 2.57 |
+| Mean IS | 2.52 | **2.60** | 2.57 |
 | Useful (IS >= 2.00, NIV Y+P) | 922 (61.6%) | **938 (62.7%)** | 928 (62.0%) |
 | *Legacy: Captured (IS >= 3.0)* | *601 (40.1%)* | *622 (41.5%)* | *594 (39.7%)* |
 | Empty Predictions | 70 (4.7%) | **0** | **0** |
@@ -230,7 +234,7 @@ Already at correct length, word choice problems. ~0% improvement from word count
 | Useful (IS >= 2.00, NIV Y+P) | 922 (61.6%) | ~960-980 (64-65%) | **+38 to +58 (+2.5-3.9pp)** |
 | *Legacy: Captured (IS >= 3.0)* | *597 (39.9%)* | *~640-660 (42.7-44.1%)* | *+43 to +63 (+3-4pp)* |
 | Non-useful hallucinations | 108 (18.8% of 575) | ~80-90 | **-18 to -28** |
-| Mean IS | 2.53 | ~2.60-2.65 | **+0.07-0.12** |
+| Mean IS | 2.52 | ~2.60-2.65 | **+0.08-0.13** |
 | Short segment (5-10w) useful% | ~55% | ~61-65% | **+6-10pp** |
 | Long segment (20+w) useful% | ~67% | ~69-71% | **+2-4pp** |
 

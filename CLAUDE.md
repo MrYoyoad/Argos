@@ -244,7 +244,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Folder | Contents | Backlog Mission |
 |--------|----------|-----------------|
-| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.53/5.0), IS correlation analysis + [cross-config validation](docs/evaluation/is_cross_config_validation.md), [extended analysis](docs/evaluation/intelligibility_extended_analysis.md), [LLM salvage](docs/evaluation/llm_salvage/) (165 recoverable segments + [example gallery](docs/evaluation/llm_salvage/salvage_example_gallery.md)), [LLM-as-a-Judge](docs/evaluation/llm_judge/) gold standard (1,497 pairs, Y/P/N + [context eval](docs/evaluation/llm_judge/context_eval/)), [human expert comparison](docs/evaluation/human_expert_comparison.md) (model+human vs expert lip reader) | M5: Expanded Metrics |
+| [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0), IS correlation analysis + [cross-config validation](docs/evaluation/is_cross_config_validation.md), [extended analysis](docs/evaluation/intelligibility_extended_analysis.md), [LLM salvage](docs/evaluation/llm_salvage/) (165 recoverable segments + [example gallery](docs/evaluation/llm_salvage/salvage_example_gallery.md)), [LLM-as-a-Judge](docs/evaluation/llm_judge/) gold standard (1,497 pairs, Y/P/N + [context eval](docs/evaluation/llm_judge/context_eval/)), [human expert comparison](docs/evaluation/human_expert_comparison.md) (model+human vs expert lip reader) | M5: Expanded Metrics |
 | [docs/tuning/](docs/tuning/) | Report 2 (hyperparameter tuning), metrics explainer, 13 experiments, HTML reports | M7: Hyperparams, M14: Auto-tuning |
 | [docs/confidence/](docs/confidence/) | Report 4 (confidence scoring & quality filtering) | M4: Confidence Scoring |
 | [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR) | M6: Beam Aggregation |
@@ -274,7 +274,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 
 | Directory | Contents |
 |-----------|----------|
-| `english_full_results/` | 1497 segments, WER 64.1%, WWER 60.5%, IS 2.53/5.0, full report suite |
+| `english_full_results/` | 1497 segments, WER 64.1%, WWER 60.5%, IS 2.52/5.0, full report suite |
 | `tuning_results/` | 13 decode parameter experiments (beam, lenpen, sampling, greedy) |
 
 ### Baseline Evaluation Results (February 2026)
@@ -286,7 +286,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | **Mean WER** | 64.1% | Segment-level; 2.5x worse than paper's 25.4% on LRS3 |
 | **Mean WWER** | 60.5% | Weighted WER — high-value tokens penalized 2x |
 | **Named Entity F1** | 38.9% | Entities missed in 85% of segments |
-| **Intelligibility Score** | 2.53/5.0 | Composite metric (semantic, phonetic, WER, WWER, NEA, length) |
+| **Intelligibility Score** | 2.52/5.0 | Composite metric (semantic, phonetic, WER, WWER, NEA, length) |
 | **NIV Y: Clearly Conveyed (IS ≥ 3.80)** | 346/1,497 (23.1%) | Matches Opus judge Y rate (23.0%), κ=0.690 |
 | **NIV Y+P: Any Useful (IS ≥ 2.00)** | 922/1,497 (61.6%) | Strict vs Opus judge Y+P (64.9%), κ=0.818 |
 | *Legacy: Captured (IS ≥ 3)* | *597/1,497 (39.9%)* | *Superseded by NIV thresholds* |

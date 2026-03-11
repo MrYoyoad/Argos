@@ -2,7 +2,7 @@
 
 ## Context
 
-The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 64.1%, IS 2.53/5.0**. The original paper reports 25.4% WER on clean LRS3 TED talks. This analysis quantifies the expected improvement from upgrading to Llama 3.1 8B.
+The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 64.1%, IS 2.52/5.0**. The original paper reports 25.4% WER on clean LRS3 TED talks. This analysis quantifies the expected improvement from upgrading to Llama 3.1 8B.
 
 ---
 
@@ -68,7 +68,7 @@ Llama 3.1 8B is widely cited as roughly equivalent to Llama 2 70B on most benchm
 
 We have detailed data on exactly what goes wrong and which failures a stronger LLM would fix.
 
-### Failure Mode Recovery Estimates (900 failed segments, IS < 3.0)
+### Failure Mode Recovery Estimates (575 non-useful segments, IS < 2.00)
 
 | Failure Category | Count | % | LLM Impact | Expected Recovery |
 |-----------------|-------|---|------------|-------------------|
@@ -78,7 +78,7 @@ We have detailed data on exactly what goes wrong and which failures a stronger L
 | **Hallucination** | 111 | 12.3% | Moderate-High — better calibration | ~15-25% (~15-25 segments) |
 | **Signal Loss** | 81 | 9.0% | Low — encoder failures, not LLM failures | ~5% (~4 segments) |
 
-**Estimated total recovery: ~155-235 segments**, pushing IS ≥ 3.0 capture rate from **39.9% to ~50-56%**.
+**Estimated total recovery: ~155-235 segments**, pushing the useful rate (NIV Y+P, IS ≥ 2.00) from **61.6% to ~72-77%**. (Note: the legacy IS ≥ 3.0 threshold has been superseded by NIV thresholds — IS ≥ 2.00 for Y+P "any useful", IS ≥ 3.80 for Y "clearly conveyed".)
 
 ### Why "Right Topic Wrong Details" Is the Sweet Spot
 
@@ -143,8 +143,8 @@ Extrapolating: Llama 3.1 8B (2.7x larger than 3B, same architecture family) shou
 | Metric | Current (Llama-2-7B) | Projected (Llama 3.1 8B) | Change |
 |--------|---------------------|--------------------------|--------|
 | **WER** | 64.1% | ~56-61% | **-3 to -8 pp** |
-| **IS** | 2.53/5.0 | ~2.7-2.9 | **+0.2-0.4** |
-| **Capture rate** (IS ≥ 3.0) | 40.1% | ~44-48% | **+4-8 pp** |
+| **IS** | 2.52/5.0 | ~2.7-2.9 | **+0.2-0.4** |
+| **Useful rate** (NIV Y+P, IS ≥ 2.00) | 61.6% | ~66-70% | **+4-8 pp** |
 | **Hallucination rate** | 20.5% | ~15-18% | **-2-5 pp** |
 | **Empty outputs** | 4.7% (70 segments) | ~3-4% | **-1 pp** |
 
@@ -161,19 +161,19 @@ Llama 3.1 8B **unlocks** prompt strategies that Llama-2-7B cannot reliably use:
 | Phonetic context hints | Doesn't understand phonetic notation | **-3 to -8 pp** |
 | Topic context injection | Works partially now | **-5 to -10 pp** (better with stronger model) |
 
-Combined Scenario B estimate: **WER ~45-52%, IS ~3.0-3.3, Capture rate ~52-60%**
+Combined Scenario B estimate: **WER ~45-52%, IS ~3.0-3.3, Useful rate (NIV Y+P) ~72-80%**
 
 ### Scenario C: LLM Swap + Data Scaling + Prompt Engineering
 
 The ICLR 2024 scaling law paper (Zhang et al.) shows fine-tuning follows a **multiplicative joint scaling law**: `L = A × model^(-α) × data^(-β)`. A better model extracts MORE from additional data — the gap widens with scale.
 
-| Configuration | Projected WER | Capture Rate |
+| Configuration | Projected WER | Useful Rate (NIV Y+P) |
 |--------------|--------------|--------------|
-| Current: Llama-2-7B + 1.3K segments | 64.1% | 39.9% |
-| Llama 3.1 8B + 1.3K segments | ~56-61% | ~44-48% |
-| Llama 3.1 8B + 20K segments | ~40-45% | ~55-65% |
-| Llama 3.1 8B + 50K segments + prompts | ~35-40% | ~65-75% |
-| Llama 3.1 8B + 50K + encoder unfreeze | ~30-35% | ~70-80% |
+| Current: Llama-2-7B + 1.3K segments | 64.1% | 61.6% |
+| Llama 3.1 8B + 1.3K segments | ~56-61% | ~66-70% |
+| Llama 3.1 8B + 20K segments | ~40-45% | ~75-82% |
+| Llama 3.1 8B + 50K segments + prompts | ~35-40% | ~82-88% |
+| Llama 3.1 8B + 50K + encoder unfreeze | ~30-35% | ~88-93% |
 
 ### Summary: Where the Improvement Comes From
 

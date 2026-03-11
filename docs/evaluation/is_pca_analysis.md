@@ -144,11 +144,13 @@ PCA operates on the **raw signals**, not on the IS formula. Changing the IS weig
 
 ### 6.2 Impact on IS Scores
 
-| Comparison | Pearson r | Tier changes | Captured (IS >= 3.0) |
+| Comparison | Pearson r | Tier changes | Useful (IS >= 2.00)* |
 |---|---|---|---|
 | Current vs Equal | **0.999** | 81 / 1497 (5.4%) | 451 vs 454 |
 | Current vs No LR | **0.996** | 203 / 1497 (13.6%) | 451 vs 475 |
 | Equal vs No LR | 0.994 | — | — |
+
+*Counts shown use the legacy IS >= 3.0 threshold (pre-NIV). Under the adopted NIV operating points (Y: IS >= 3.80, Y+P: IS >= 2.00), rankings are preserved because the weight variants are nearly perfectly correlated (r >= 0.994). The key finding — that weights barely matter — holds regardless of threshold choice.
 
 **The weights barely matter.** Current and equal-weight IS correlate at r = 0.999. Only 5.4% of segments change tier. Even removing Length Ratio entirely only changes 13.6% of tiers.
 
