@@ -1,5 +1,7 @@
 # Context-Aware LLM-as-a-Judge: Final Analysis
 
+> **Note (March 2026):** This document uses the legacy IS ≥ 3.0 threshold (40.1% captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.6% useful (κ=0.818), IS ≥ 3.80 = 23.1% clearly conveyed (κ=0.690). See [threshold_calibration_vs_opus.md](../../threshold_calibration_vs_opus.md).
+
 **Date:** March 2026
 **Evaluation:** Claude Opus 4.6, context-aware mode
 **Coverage:** 1,497 pairs (same pool as blind gold standard)

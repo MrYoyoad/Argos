@@ -2,6 +2,8 @@
 
 > **SUPERSEDED (March 2026):** This report was based on the preliminary `english_1k` run (860 segments from an incomplete pipeline run). It has been superseded by the full `english_full` baseline (1,497 segments, Feb 18 2026) which is the authoritative evaluation. This report is retained for historical reference only — all metrics, recommendations, and analysis should be sourced from the `english_full_results/` dataset and the IS correlation / LLM salvage analyses instead.
 
+> **Note (March 2026):** This document uses the legacy IS ≥ 3.0 threshold (40.1% captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.6% useful (κ=0.818), IS ≥ 3.80 = 23.1% clearly conveyed (κ=0.690). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
+
 **Document Classification:** Technical Evaluation Report (HISTORICAL)
 **Date:** February 17, 2026
 **Dataset:** english_1k (860 segments — preliminary run, superseded by english_full)

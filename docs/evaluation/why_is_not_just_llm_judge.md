@@ -1,5 +1,7 @@
 # Why IS — Not Just LLM-as-a-Judge
 
+> **Note (March 2026):** This document uses the legacy IS ≥ 3.0 threshold (40.1% captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.6% useful (κ=0.818), IS ≥ 3.80 = 23.1% clearly conveyed (κ=0.690). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
+
 ## The Problem
 
 LLM-as-a-Judge (e.g., Claude Opus evaluating ref/hyp pairs) provides rich holistic assessment but cannot serve as the **sole** evaluation metric for a production VSP system. The Intelligibility Score (IS) fills five critical gaps.

@@ -1,5 +1,7 @@
 # LLM Salvage: Curated Example Gallery
 
+> **Note (March 2026):** This document uses the legacy IS ≥ 3.0 threshold (40.1% captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.6% useful (κ=0.818), IS ≥ 3.80 = 23.1% clearly conveyed (κ=0.690). See [threshold_calibration_vs_opus.md](../threshold_calibration_vs_opus.md).
+
 **Parent document:** [llm_salvage_analysis.md](llm_salvage_analysis.md) (executive summary, methodology, implications)
 **Dataset:** 165 divergent segments (LLM prob >= 0.5, IS < 3.0) from 1,497 baseline
 
