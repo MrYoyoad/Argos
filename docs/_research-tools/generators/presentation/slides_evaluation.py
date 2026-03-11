@@ -1728,17 +1728,17 @@ def slide_disagreement_blind(prs):
 
     _finish(slide, 0,
         "IS vs Opus Judge disagreement analysis (blind evaluation).\n\n"
-        "LEFT — IS False Negatives (19 cases, 1.3%): Judge says Y, IS < 3.0. "
+        "LEFT — IS False Negatives (19 cases, 1.3%): Judge says Y, IS < 2.00. "
         "Paraphrases, phonetic bridges, harmless hallucinations that preserve "
         "core meaning but score poorly on word-level metrics.\n"
         "Other examples: 'living in space' topic preserved (IS 1.98, WER 111%); "
         "'human implications' captures 'human application' (IS 2.06, WER 100%); "
         "'to the next level' intact but trailing words added (IS 2.32, WER 100%).\n\n"
-        "RIGHT — IS False Positives (3 cases, 0.2%): Judge says N, IS >= 3.0. "
+        "RIGHT — IS False Positives (3 cases, 0.2%): Judge says N, IS >= 2.00. "
         "Semantic reversal ('unscrew' -> 'not to', IS 3.42); domain swap "
         "('blood extraction, x-ray' -> 'cut hair, ashram', IS 3.14); "
         "phonetic garbage ('one twitch is all you do' -> 'one to rich is all the', IS 3.01).\n\n"
-        "NIV thresholds (IS >= 3.80 for Y, >= 2.00 for Y+P) resolve most of these.",
+        "NIV thresholds (IS >= 3.80 for Y, >= 2.00 for Y+P) define the operating points.",
         [left_shapes, right_shapes, [bot]], click_reveal=True)
 
 

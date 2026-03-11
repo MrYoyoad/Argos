@@ -199,7 +199,7 @@ def slide_26b(prs):
     rx = MX + Inches(8.3)
     rw = Inches(3.8)
     milestones = [
-        ("Current", "IS 2.53", "61.6% useful", "", CORAL),
+        ("Current", "IS 2.52", "61.6% captured", "", CORAL),
         ("Phase 1\u20132", "IS ~2.85",  "~48% captured",
          "Fixes: Signal Loss (13.9%), Accum. Errors (9.1%), Details (13.8%)", TEAL),
         ("+ Phase 3", "IS ~3.40", "~58% captured",
@@ -221,7 +221,7 @@ def slide_26b(prs):
                  rw - Inches(0.3), Inches(0.3),
                  size=Pt(16), color=WHITE, bold=True))
         if i > 0:
-            delta = float(is_val.replace("IS ~", "")) - 2.53
+            delta = float(is_val.replace("IS ~", "")) - 2.52
             ms_shapes.append(add_text(slide, f"+{delta:.2f}  |  {failure_note}",
                      rx + Inches(0.15), y + Inches(0.65),
                      rw - Inches(0.3), Inches(0.35),
@@ -343,7 +343,7 @@ def slide_28(prs):
     iy = cy + ch + Inches(0.3)
     impact = add_bullets(slide, [
         ("Expected: 5\u201315% relative IS improvement", {"color": TEAL, "bold": True}),
-        "Targets: Accumulated Errors (24.4%) \u2014 the \"death by a thousand cuts\" category",
+        "Targets: Accumulated Errors (9.1%) \u2014 the \"death by a thousand cuts\" category",
         "Moves IS 2.0\u20132.9 segments above the 3.0 threshold",
     ], MX, iy, CW, Inches(1.5), size=Pt(14))
 
@@ -358,7 +358,7 @@ def slide_28(prs):
         "hypothesis and throw away 19 alternatives. ROVER aligns all 20 and "
         "votes word-by-word. MBR picks the hypothesis closest to the consensus. "
         "Both are established ASR techniques with consistent 5-15% gains. "
-        "Targets the Accumulated Errors category (24.4% of failures).",
+        "Targets the Accumulated Errors category (9.1% of failures).",
         [[r1], [r2], [impact]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1155,7 +1155,7 @@ def slide_a11b(prs):
     add_title(slide, "A5: LLM Salvage — Curated Examples")
     add_accent_line(slide)
 
-    add_text(slide, "One real example per recovery category — all IS < 3.0 "
+    add_text(slide, "One real example per recovery category — all IS < 2.0 "
              '(metrics say "failed") but heuristic says recoverable:',
              MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY)
 
@@ -1243,7 +1243,7 @@ def slide_a13(prs):
 
     _finish(slide, "A6",
         "5 failure categories with real examples from the 1,497-segment "
-        "baseline. Wrong Topic is the largest (31.6%). Hallucination is the "
+        "baseline. Wrong Topic is the largest (44.4%). Hallucination is the "
         "most dangerous — fluent but completely fabricated text.")
 
 
