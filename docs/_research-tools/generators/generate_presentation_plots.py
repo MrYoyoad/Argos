@@ -176,11 +176,11 @@ def plot_P3_wer_trajectory():
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    # Improvement annotation
-    ax.annotate("", xy=(3, 34), xytext=(0, 64),
-                arrowprops=dict(arrowstyle="<->", color="#2ca02c", lw=2))
-    ax.text(1.5, 49, "~47% relative\nimprovement", ha="center", fontsize=11,
-            fontweight="bold", color="#2ca02c")
+    # Improvement annotation — label in open bottom-left area
+    ax.annotate("47% relative improvement", xy=(2.5, 41), xytext=(0.3, 30),
+                fontsize=11, fontweight="bold", color="#2ca02c", ha="left",
+                arrowprops=dict(arrowstyle="->", color="#2ca02c", lw=1.5,
+                                connectionstyle="arc3,rad=-0.2"))
 
     plt.tight_layout()
     out = OUTPUT_DIR / "P3_wer_trajectory.png"
