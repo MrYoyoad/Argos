@@ -56,6 +56,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
 | **3 - Training** | 9 | AVSpeech fine-tuning (biggest single gain) | ~42-52% |
 | **4 - Deployment** | 10, 11 | Horizon container, Arabic support | — |
 | **5 - Advanced** | 12, 13, 14 | Multi-speaker, streaming, auto-tuning | — |
+| **1.5 - Quality** | 15 | Pre-decode video quality heuristics | Saves compute, informs M4/M9 |
 
 ---
 
@@ -245,6 +246,63 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Auto-select best config per-language or per-domain
   - Integrate winning config back into pipeline defaults
 - **Dependencies**: Mission 7 (manual optimization provides search space bounds)
+
+---
+
+### Mission 15: Pre-Decode Video Quality Heuristics
+- **Priority**: HIGH
+- **Goal**: Predict whether a video segment will produce reliable lip-reading output BEFORE running the expensive decode pipeline, using video-level quality metrics extracted during preprocessing
+- **Motivation**: Currently 20.5% of segments hallucinate (WER ≥ 100%) and 16% score IS < 1.0 (Failed tier). The pipeline spends full GPU decode time on these segments with no early warning. Face detection confidence, landmark scores, and head pose are already partially computed during preprocessing but silently discarded — storing and thresholding them could skip doomed segments and save hours of compute.
+- **Items**:
+  - **Phase 1: Extract & Store Quality Metadata** (during preprocessing, before decode)
+    - Face detection confidence per frame (RetinaFace already returns scores at threshold 0.8 — store them instead of discarding)
+    - Landmark confidence scores per frame (FAN already returns per-point scores — currently unused)
+    - Face visibility ratio: fraction of frames where face was successfully detected
+    - Face bounding box size (proxy for face resolution — already computed for largest-face selection)
+    - Lip region resolution: pixel distance between upper and lower lip landmarks (minimum 4px per literature)
+    - Segment duration (already in `segment_metadata.json`)
+    - Previous context flag: whether segment is part of a longer video (available from segmentation metadata)
+  - **Phase 2: Compute Derived Quality Signals** (new computation)
+    - Head pose estimation (yaw/pitch/roll) from 68-point landmarks — OpenFace-style or PnP solve from FAN landmarks
+    - Motion blur score: Laplacian variance on face ROI per frame
+    - Lighting quality: histogram spread / mean brightness of face ROI
+    - Mouth occlusion detection: sudden drops in mouth-region landmark confidence (landmarks 48-68)
+    - Inter-frame face stability: bounding box jitter / landmark movement variance
+  - **Phase 3: Composite Quality Score & Gating**
+    - Combine heuristics into a composite "Video Readability Score" (VRS) per segment
+    - Correlate VRS against IS scores from existing 1,497-segment baseline to find optimal thresholds
+    - Two operating modes:
+      - *Score-only*: emit `quality_metadata.json` alongside `segment_metadata.json` for analysis
+      - *Gate mode*: skip segments below VRS threshold before decode (configurable, off by default)
+    - Add VRS to client reports (HTML/CSV) as a pre-decode quality indicator
+  - **Phase 4: Validation**
+    - Retrospective analysis: compute VRS for all 1,497 baseline segments, measure correlation with IS and WER
+    - Target: VRS should predict IS < 1.0 (Failed) segments with ≥ 70% precision at ≥ 50% recall
+    - Compare VRS gating vs post-decode IS filtering for cost-benefit analysis
+- **Existing Codebase Hooks** (code already computes these, just doesn't store):
+  - `auto_avsr/preparation/detectors/retinaface/detector.py`: detection confidence scores (threshold 0.8)
+  - `auto_avsr/preparation/detectors/mediapipe/detector.py`: detection confidence (threshold 0.5)
+  - `face_alignment/face_alignment_test.py`: FAN landmark confidence scores per point
+  - `auto_avsr/preparation/detectors/retinaface/video_process.py`: `cut_patch()` geometric centering bias (currently raises OverflowError on failure — should log instead)
+  - `auto_avsr/preparation/preprocess_lrs2lrs3.py`: silent `try/except` drops failed segments — should log failure reasons
+- **Integration Points**:
+  - New module: `lib/quality.sh` — orchestrates quality extraction between preprocessing and decode
+  - New Python script: `scripts/pipeline/compute_video_quality.py` — extracts metrics from preprocessed data
+  - Output: `quality_metadata.json` per run (alongside `segment_metadata.json`)
+  - Pipeline flag: `--quality-gate` with configurable threshold in `run_flat_english_pipeline.sh`
+- **Research References**:
+  - *Resolution limits on visual speech recognition* (2017, arXiv:1710.01073) — minimum 4px lip height for reliable reading
+  - *Multi-pose lipreading and audio-visual speech recognition* (JASP 2012) — 5% WER loss at 60° yaw, 9% at 90°; pose normalization via linear regression
+  - *Deep Learning for Visual Speech Analysis: A Survey* (2022, arXiv:2205.10839) — documents lighting, identity, motion, head pose as key degradation factors
+  - *Watch or Listen: Robust Audio-Visual Speech Recognition with Visual Corruption* (Hong et al., CVPR 2023) — cross-modal attention compensates for visual corruption; quantifies occlusion impact
+  - *OpenFace: An open source facial behavior analysis toolkit* (Baltrusaitis et al., 2016) — head pose estimation (yaw/pitch/roll), 18 Action Units including lip-relevant AU12/AU20/AU25-26
+  - *LRS3-TED dataset* (Afouras et al., 2018, arXiv:1809.00496) — filtering criteria for "clearly visible mouth region"
+  - *Bootstrapping Audiovisual Speech Recognition with Synthetic Visual Data* (2025, arXiv:2603.08249) — pose-augmented training with 15-60° synthetic transformations improves robustness
+  - *SyncNet / Interpretable Convolutional SyncNet* (2024, arXiv:2409.00971) — audio-visual sync confidence (LSE-C) as quality proxy; sensitive to face alignment
+  - *PEAVS: Perceptual Evaluation of Audio-Visual Synchrony* (ECCV 2024) — 5-point sync quality scale, r=0.79 vs human labels
+- **Expected Impact**: At minimum, logging quality metadata enables post-hoc analysis of why segments fail (currently impossible — failures are silent). With gating, could skip 15-25% of segments predicted to fail, saving proportional decode time. Quality scores also inform Mission 9 (fine-tuning data curation: filter face confidence > 0.9, remove head pose > 30°)
+- **Effort**: Phase 1 (store existing scores): 4-6 hours. Phase 2 (new signals): 1-2 days. Phase 3-4 (composite score + validation): 1-2 days
+- **Dependencies**: None (can start immediately; improves Missions 4, 9, and 14)
 
 ---
 
