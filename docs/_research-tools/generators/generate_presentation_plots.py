@@ -126,9 +126,16 @@ def plot_P3_wer_trajectory():
     """WER Trajectory roadmap — projected improvement per phase."""
     phases = ["Current\nBaseline", "Phase 1\nConf+Metrics", "Phase 2\nN-Best+Prompts",
               "Phase 3\nFine-Tuning"]
-    wer_mid = [64, 55, 45, 42]
-    wer_lo = [64, 52, 42, 38]
-    wer_hi = [64, 60, 52, 48]
+    # Derived from 574 non-useful segments (IS < 2.00) failure taxonomy:
+    #   Phase 1 (Conf+N-Best): targets Accum Errors (52) + Details (79) = 131 segs
+    #     ROVER 5-8% relative WER reduction (Fiscus 1997) → ~4pp
+    #   Phase 2 (LLM+Prompts): targets Halluc (108) + Wrong Topic (255) = 363 segs
+    #     VALLR ICCV 2025: 26% relative improvement Llama 3 family; +prompts → ~12pp
+    #   Phase 3 (Data+GER): targets ALL 574 via better visual features
+    #     ICLR 2024 scaling law + Chen et al. 2024 GER → ~14pp
+    wer_mid = [64, 60, 48, 34]
+    wer_lo = [64, 58, 44, 30]
+    wer_hi = [64, 62, 53, 40]
 
     missions = ["", "M4, M5, M7", "M6, M8", "M9"]
     effort = ["", "Days", "Weeks", "Weeks + 8x GPU"]
@@ -170,9 +177,9 @@ def plot_P3_wer_trajectory():
     ax.spines["right"].set_visible(False)
 
     # Improvement annotation
-    ax.annotate("", xy=(3, 42), xytext=(0, 64),
+    ax.annotate("", xy=(3, 34), xytext=(0, 64),
                 arrowprops=dict(arrowstyle="<->", color="#2ca02c", lw=2))
-    ax.text(1.5, 53, "~34% relative\nimprovement", ha="center", fontsize=11,
+    ax.text(1.5, 49, "~47% relative\nimprovement", ha="center", fontsize=11,
             fontweight="bold", color="#2ca02c")
 
     plt.tight_layout()
@@ -186,11 +193,21 @@ def plot_P3b_is_trajectory():
     """IS Trajectory roadmap — projected IS improvement per phase (parallel to P3)."""
     phases = ["Current\nBaseline", "Phase 1\nConf+Metrics", "Phase 2\nN-Best+Prompts",
               "Phase 3\nFine-Tuning"]
-    is_mid = [2.52, 2.85, 3.40, 3.80]
-    is_lo  = [2.52, 2.65, 3.10, 3.50]
-    is_hi  = [2.52, 3.05, 3.70, 4.10]
+    # Derived from taxonomy: 0.033 IS per pp WER (empirical: 2.52 at 64% → ~3.81 at 25.4%)
+    #   Phase 1: +4pp WER → +0.13 IS, ~35 segs cross threshold → 65% useful
+    #   Phase 2: +12pp WER → +0.40 IS, ~98 segs cross threshold → 73% useful
+    #   Phase 3: +14pp WER → +0.45 IS, ~125 segs cross threshold → 82% useful
+    # Per-category signal profiles (signal_distribution_analysis.md §8):
+    #   Accum Errors (IS≈2.33): Phonetic 0.53, InvWER 0.34 — small distributed fix
+    #   Details (IS≈2.13): NEA 0.18 → needs +0.35 NEA for threshold crossing
+    #   Wrong Topic (IS≈1.29): Semantic 0.10 → needs +0.45 Semantic (biggest gap)
+    #   Hallucination (IS≈0.87): InvWER −0.47, LR 1.56 → needs WER+length normalization
+    #   Signal Loss (IS≈0.01): all zeros → needs complete recovery
+    is_mid = [2.52, 2.65, 3.05, 3.50]
+    is_lo  = [2.52, 2.58, 2.90, 3.30]
+    is_hi  = [2.52, 2.72, 3.20, 3.70]
 
-    captured_mid = [61.6, 72, 83, 90]  # % segments IS >= 2.00 (NIV Y+P)
+    captured_mid = [61.6, 65, 73, 82]  # % segments IS >= 2.00 (NIV Y+P)
 
     missions = ["", "M4, M5, M7", "M6, M8", "M9"]
     effort = ["", "Days", "Weeks", "Weeks + 8x GPU"]
@@ -244,9 +261,9 @@ def plot_P3b_is_trajectory():
     ax.spines["right"].set_visible(False)
 
     # Improvement annotation — positioned left of center to avoid data labels
-    ax.annotate("", xy=(3, 3.80), xytext=(0, 2.52),
+    ax.annotate("", xy=(3, 3.50), xytext=(0, 2.52),
                 arrowprops=dict(arrowstyle="<->", color="#2ca02c", lw=2, alpha=0.5))
-    ax.text(0.5, 3.55, "+1.28 IS\n(+51% relative)",
+    ax.text(0.5, 3.20, "+0.98 IS\n(+39% relative)",
             ha="center", fontsize=10, fontweight="bold", color="#2ca02c")
 
     plt.tight_layout()

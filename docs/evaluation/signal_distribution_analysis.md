@@ -273,16 +273,16 @@ Segments split by median Semantic (0.412) and median InvWER (0.389):
 
 ## 8. Signal Behavior by Failure Mode
 
-| Failure Mode | n | Semantic | Phonetic | InvWER | NEA F1 | LR |
-|-------------|:-:|:-:|:-:|:-:|:-:|:-:|
-| Content Word Errors | 96 | **0.463** | **0.559** | 0.396 | 0.372 | 0.899 |
-| Accumulated Small | 111 | 0.360 | 0.628 | **0.498** | 0.274 | 0.923 |
-| High Error Rate | 109 | 0.404 | 0.439 | 0.186 | **0.338** | 0.937 |
-| Entity Destruction | 108 | 0.351 | 0.429 | 0.197 | **0.000** | 0.904 |
-| Phonetic Wrong Topic | 141 | 0.116 | **0.456** | 0.215 | 0.185 | 0.949 |
-| Total Topic Drift | 143 | 0.081 | 0.187 | 0.054 | 0.041 | 0.720 |
-| Hallucination | 111 | 0.160 | 0.299 | **−0.465** | 0.045 | **1.563** |
-| Empty Output | 70 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Failure Mode | n | Semantic | Phonetic | InvWER | InvWWER | NEA F1 | LR |
+|-------------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Content Word Errors | 96 | **0.463** | **0.559** | 0.396 | 0.389 | 0.372 | 0.899 |
+| Accumulated Small | 111 | 0.360 | 0.628 | **0.498** | **0.474** | 0.274 | 0.923 |
+| High Error Rate | 109 | 0.404 | 0.439 | 0.186 | 0.214 | **0.338** | 0.937 |
+| Entity Destruction | 108 | 0.351 | 0.429 | 0.197 | 0.187 | **0.000** | 0.904 |
+| Phonetic Wrong Topic | 141 | 0.116 | **0.456** | 0.215 | 0.226 | 0.185 | 0.949 |
+| Total Topic Drift | 143 | 0.081 | 0.187 | 0.054 | −0.013 | 0.041 | 0.720 |
+| Hallucination | 111 | 0.160 | 0.299 | **−0.465** | −0.012 | 0.045 | **1.563** |
+| Empty Output | 70 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
 
 **Most revealing failure mode contrasts:**
 - **Phonetic Wrong Topic**: Phonetic = 0.456 but Semantic = 0.116 — the sounds match but the meaning is completely different. This is the failure mode Phonetic should NOT catch.

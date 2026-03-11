@@ -68,17 +68,25 @@ Llama 3.1 8B is widely cited as roughly equivalent to Llama 2 70B on most benchm
 
 We have detailed data on exactly what goes wrong and which failures a stronger LLM would fix.
 
-### Failure Mode Recovery Estimates (575 NIV N segments, IS < 2.00)
+### Failure Mode Recovery Estimates (574 non-useful segments, IS < 2.00)
 
-| Failure Category | Count | % | LLM Impact | Expected Recovery |
-|-----------------|-------|---|------------|-------------------|
-| **Wrong Topic** | 255 | 44.4% | Moderate — better language prior reduces drift | ~10-20% (~25-50 segments) |
-| **Hallucination** | 108 | 18.8% | Moderate-High — better calibration | ~15-25% (~16-27 segments) |
-| **Signal Loss** | 80 | 13.9% | Low — encoder failures, not LLM failures | ~5% (~4 segments) |
-| **Right Topic Wrong Details** | 79 | 13.8% | **Highest** — entity/vocabulary disambiguation | ~25-35% (~20-28 segments) |
-| **Accumulated Errors** | 52 | 9.1% | High — stronger context catches small errors | ~20-30% (~10-16 segments) |
+Signal profiles per category from [signal_distribution_analysis.md](signal_distribution_analysis.md) §8 (0–1 scale):
 
-**Estimated total recovery: ~75-125 segments** from the 575 NIV N pool (IS < 2.00), pushing the NIV Y+P useful rate from **61.6% to ~67-70%**. (With prompt engineering unlocked by Llama 3.1 8B, the combined gain reaches ~72-77%.)
+| Failure Category | Count | % | Current IS | Signal Profile (Sem / Phon / InvWER / InvWWER / NEA / LR) | LLM Impact | Expected Recovery |
+|-----------------|-------|---|-----------|----------------------------------------------------------|------------|-------------------|
+| **Wrong Topic** | 255 | 44.4% | ~1.29 | 0.10 / 0.32 / 0.13 / 0.11 / 0.11 / 0.83 | Moderate — better language prior reduces drift | ~10-20% (~26-51 segs) |
+| **Hallucination** | 108 | 18.8% | ~0.87 | 0.16 / 0.30 / −0.47 / −0.01 / 0.05 / 1.56 | Moderate-High — better calibration | ~15-25% (~16-27 segs) |
+| **Signal Loss** | 80 | 13.9% | ~0.01 | 0.00 / 0.00 / 0.00 / 0.00 / 0.00 / 0.00 | Low — encoder failures, not LLM failures | ~3-5% (~2-4 segs) |
+| **Right Topic Wrong Details** | 79 | 13.8% | ~2.13 | 0.40 / 0.49 / 0.29 / 0.29 / 0.18 / 0.90 | **Highest** — entity/vocabulary disambiguation | ~20-30% (~16-24 segs) |
+| **Accumulated Errors** | 52 | 9.1% | ~2.33 | 0.38 / 0.53 / 0.34 / 0.34 / 0.31 / 0.93 | High — stronger context catches small errors | ~15-25% (~8-13 segs) |
+
+**Estimated total recovery: ~68-119 segments** (LLM swap only), pushing the NIV Y+P useful rate from **61.6% to ~66-70%**. With prompt engineering unlocked by Llama 3.1 8B, the combined gain reaches ~72-77% (Scenario B below).
+
+**What each fix requires** (from signal profiles):
+- **Wrong Topic**: primarily a SEMANTIC fix — Semantic needs to jump from 0.10 to ~0.55 (+0.45). Biggest IS gap of any recoverable category.
+- **Hallucination**: primarily a WER+LENGTH fix — InvWER from −0.47 to ~0.30, LR from 1.56 to ~1.0. Better calibration prevents over-generation.
+- **Right Topic Wrong Details**: primarily an ENTITY fix — NEA needs +0.35 (from 0.18 to ~0.53). Phonetic already decent at 0.49.
+- **Accumulated Errors**: DISTRIBUTED fix — all signals improve a little. Already close to threshold (IS ~2.33).
 
 ### Why "Right Topic Wrong Details" Is the Sweet Spot
 
@@ -192,23 +200,23 @@ The ICLR 2024 scaling law paper (Zhang et al.) shows fine-tuning follows a **mul
 
 ## Part 6: Which Failure Categories Improve Most vs Least
 
-*Counts below are from the 575 NIV N segments (IS < 2.00).*
+*574 non-useful segments (IS < 2.00). Signal profiles from [signal_distribution_analysis.md](signal_distribution_analysis.md) §8.*
 
 ### High Impact (LLM-dependent failures)
 
-1. **Right Topic Wrong Details (79 segments, 13.8%)**: The sweet spot. Encoder captured the right topic, LLM picked wrong words. Stronger language prior directly fixes entity names, technical vocabulary, content words. **Expected: 25-35% recovery.**
+1. **Right Topic Wrong Details (79 segments, 13.8%, IS ~2.13)**: The sweet spot. Encoder captured the right topic, LLM picked wrong words. Signal profile: Semantic 0.40, Phonetic 0.49 (both decent), but NEA only 0.18 — entities are destroyed. Stronger language prior directly fixes entity names, technical vocabulary, content words. Needs NEA to jump +0.35. **Expected: 20-30% recovery (~16-24 segments).**
 
-2. **Accumulated Errors (52 segments, 9.1%)**: Many individually minor substitutions that compound. Better context modeling catches cascading errors. **Expected: 20-30% recovery.**
+2. **Accumulated Errors (52 segments, 9.1%, IS ~2.33)**: Many individually minor substitutions that compound. Signal profile: highest Phonetic (0.53) and InvWER (0.34) among failure modes — individual errors are small. Better context modeling catches cascading errors. Already closest to threshold. **Expected: 15-25% recovery (~8-13 segments).**
 
-3. **Hallucination (108 segments, 18.8%)**: The LLM "runs ahead" of the visual signal. Better-calibrated model truncates sooner, follows anti-hallucination instructions. **Expected: 15-25% recovery.**
+3. **Hallucination (108 segments, 18.8%, IS ~0.87)**: The LLM "runs ahead" of the visual signal. Signal profile: InvWER −0.47 (WER > 146%), LR 1.56 (output much longer than reference) — length ratio is the best detection signal. Better-calibrated model truncates sooner, follows anti-hallucination instructions. Needs InvWER to jump +0.77. **Expected: 15-25% recovery (~16-27 segments).**
 
 ### Moderate Impact
 
-4. **Wrong Topic (255 segments, 44.4%)**: The dominant category — topic drift (143) plus phonetically similar but wrong domain (112). 4x vocabulary and better contextual disambiguation help, but many are encoder-limited. **Expected: 10-20% recovery.**
+4. **Wrong Topic (255 segments, 44.4%, IS ~1.29)**: The dominant category — topic drift plus phonetically similar but wrong domain. Signal profile: Semantic only 0.10 (lowest), Phonetic 0.32 (moderate for phonetic subset). Needs Semantic to jump +0.45 — this is the biggest signal gap of any category. 4x vocabulary and better contextual disambiguation help the phonetic subset, but total drift is encoder-limited. **Expected: 10-20% recovery (~26-51 segments).**
 
 ### Low Impact (encoder-limited)
 
-5. **Signal Loss (80 segments, 13.9%)**: Empty or near-empty output. Encoder-level failures. **Expected: <5% recovery.**
+5. **Signal Loss (80 segments, 13.9%, IS ~0.01)**: Empty or near-empty output. All signal values at 0.00 — encoder produced nothing. No LLM can decode information the encoder didn't capture. **Expected: 3-5% recovery (~2-4 segments).**
 
 ---
 
