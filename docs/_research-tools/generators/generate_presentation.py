@@ -186,11 +186,28 @@ def main():
     ]
     total = len(builders)
 
+    # Slides to hide (matching FINAL_PRESENTATION.pptx user edits)
+    hidden_builders = {
+        slide_exec_summary,          # Executive Summary
+        slide_wer_lies,              # WER: The Metric That Lies
+        slide_is_deep_dive,          # IS Validation
+        slide_metric_disagreement,   # When Metrics Disagree pt 1
+        slide_metric_disagreement_2, # When Metrics Disagree pt 2
+        slide_disagreement_blind,    # Where IS and Judge Disagree (new)
+        slide_disagreement_context,  # Context Exposes Hidden Failures (new)
+        slide_17,                    # 8-Stage Pipeline (animated)
+        slide_30b,                   # LLM Upgrade: Why It Matters
+    }
+
     for i, builder in enumerate(builders, 1):
         print(f"  Slide {i:2d}/{total} ...", end=" ")
         try:
             builder(prs)
-            print("OK")
+            if builder in hidden_builders:
+                prs.slides[-1]._element.set('show', '0')
+                print("OK (hidden)")
+            else:
+                print("OK")
         except Exception as e:
             print(f"ERROR: {e}")
 

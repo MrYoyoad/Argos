@@ -984,8 +984,7 @@ def slide_metric_disagreement_2(prs):
         "entity destruction. All-moderate = accumulated errors.",
         [c for c in cards], click_reveal=True)
 
-    # Hide slide
-    slide._element.set('show', '0')
+    # Note: slide visibility controlled by hidden_builders in generate_presentation.py
 
 
 def slide_two_eval_systems(prs):

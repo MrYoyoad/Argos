@@ -60,7 +60,7 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
-        ("61.6% properly captured (IS \u2265 2.00)", {"bold": True}),
+        ("61.6% useful output (IS \u2265 2.00)", {"bold": True}),
         ("64.9% useful per Opus-as-a-Judge (Y+P = 971/1,497)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
@@ -102,7 +102,7 @@ def slide_26(prs):
     add_accent_line(slide)
 
     phases = [
-        ("Phase 1", "Surface the good 40%",
+        ("Phase 1", "Surface the good 65%",
          "Confidence scoring \u2014 flags known-good segments (2\u20134 hrs)",
          "Targets: Signal Loss (13.9%) | IS: filters to high-confidence subset (+0.3 perceived)", TEAL),
         ("Phase 2", "Fix small & content errors",
