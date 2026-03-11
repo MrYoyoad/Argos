@@ -16,7 +16,7 @@ This document analyzes how the 6 signals that make up the Intelligibility Score 
 
 3. **~60% of IS depends on the visual encoder.** The word accuracy cluster (Phonetic, WER, WWER) is the largest contributor, and these signals measure how well the visual encoder extracts speech information from lip movements. To meaningfully improve IS, the visual features must improve — via better training data, a stronger encoder, or both.
 
-4. **The LLM heuristic agrees with IS 89% of the time.** Two independently designed systems — the IS formula and the `llm_context_prob` decision tree — converge on the same quality judgments. This confirms IS is not arbitrary.
+4. **The LLM heuristic agrees with IS 89% of the time** (at the legacy IS ≥ 3.0 threshold; see Section 7.3). Two independently designed systems — the IS formula and the `llm_context_prob` decision tree — converge on the same quality judgments. This confirms IS is not arbitrary. NIV thresholds (IS ≥ 2.00 for Y+P, IS ≥ 3.80 for Y) now supersede IS ≥ 3.0.
 
 5. **Across 16 decode configurations: Semantic and Phonetic are rock-solid; WER and Length Ratio are volatile.** Changing decode parameters (beam size, length penalty, sampling) barely affects Semantic or Phonetic correlations with IS (std < 0.06). But WER correlation swings from -0.95 to -0.45, and Length Ratio even flips sign. This means WER is unreliable as a standalone quality metric.
 
@@ -115,7 +115,7 @@ Correlation analysis reveals that the 6 signals collapse into **3 independent di
 2. **Meaning preservation** (Semantic — partially redundant with word accuracy at r=0.82) → ~28% of IS variance
 3. **Output sanity** (Length Ratio — largely independent of other signals) → ~9% of IS variance
 
-The heuristic LLM-knowledge-based judge (`llm_context_prob`) correlates at **r=0.93** with IS and achieves **88.6% agreement** with the legacy IS ≥ 3.0 threshold. **NIV thresholds** (March 2026) supersede IS ≥ 3.0: IS ≥ 3.80 for Y (κ=0.690 vs Opus judge), IS ≥ 2.00 for Y+P (κ=0.818). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
+The heuristic LLM-knowledge-based judge (`llm_context_prob`) correlates at **r=0.93** with IS and achieves **88.6% agreement** at the legacy IS ≥ 3.0 threshold (Cohen's κ=0.773). **NIV thresholds** (March 2026) supersede IS ≥ 3.0: IS ≥ 3.80 for Y (κ=0.690 vs Opus judge), IS ≥ 2.00 for Y+P (κ=0.818, 922/1,497 useful). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
 
 ---
 
@@ -293,9 +293,11 @@ The LLM heuristic correlates most strongly with IS itself (r=0.93) and with Sema
 
 *(Selected configs shown; full table in computation logs. Mean κ across all 16 configs: ~0.72, range 0.62-0.86.)*
 
-**Recall is near-perfect across all configs** (97.6-100.0%) — the LLM heuristic almost never misses a segment that IS scores as captured. Precision varies more (65-82%), reflecting the heuristic's intentionally optimistic design. Config J achieves the best agreement at scale (κ=0.791).
+**Recall is near-perfect across all configs** (97.6-100.0%) — the LLM heuristic almost never misses a segment that IS scores as captured (at the legacy IS ≥ 3.0 threshold). Precision varies more (65-82%), reflecting the heuristic's intentionally optimistic design. Config J achieves the best agreement at scale (κ=0.791).
 
-### 7.3 Agreement with IS ≥ 3.0 Threshold
+### 7.3 Agreement with IS ≥ 3.0 Threshold (Legacy)
+
+> **Note (March 2026):** IS ≥ 3.0 has been superseded by NIV thresholds: IS ≥ 3.80 for Y ("clearly conveyed", κ=0.690) and IS ≥ 2.00 for Y+P ("any useful output", κ=0.818). The statistics below remain valid for the legacy threshold and are retained for reference. See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
 
 Confusion matrix comparing `llm_context_prob ≥ 0.5` vs `IS ≥ 3.0`:
 
@@ -364,7 +366,7 @@ The IS metric was not designed independently from LLM judgment — **Claude (Ant
 
 2. **Claude selected the 6 signals and their weights** — the choice of which automated signals to include (semantic similarity, phonetic similarity, WER, WWER, NEA F1, length ratio), how to scale them, and the 0.25/0.15 weight distribution were all Claude's expert judgment, calibrated against the 10 proof examples in Section 2 of the methodology.
 
-3. **Claude defined the tier boundaries** — the IS ≥ 3.0 "properly captured" threshold and the 5-tier system map directly to Claude's scoring rubric (0-5 scale).
+3. **Claude defined the tier boundaries** — the original IS ≥ 3.0 threshold and the 5-tier system map directly to Claude's scoring rubric (0-5 scale). NIV thresholds (IS ≥ 3.80 for Y, IS ≥ 2.00 for Y+P) now supersede IS ≥ 3.0 as the operational thresholds.
 
 4. **Claude designed the context recovery heuristic** — the `estimate_llm_context_recovery()` decision tree with its 15 rules and 6 linguistic factors codifies Claude's judgment about when a viewer with domain context could recover meaning.
 
@@ -393,7 +395,7 @@ This is a form of **LLM-distilled evaluation**: rather than calling an LLM per s
 Key findings from the literature for context:
 - GPT-4 as judge achieves ~80-85% agreement with human annotators on MT quality assessment (Kocmi & Federmann, 2023)
 - Rubric-based prompting significantly improves reliability — our approach takes this to the extreme by baking the rubric into the metric itself
-- Agreement between LLM judges and humans is comparable to inter-annotator agreement (~0.6-0.8 Cohen's κ) — our `llm_context_prob` achieves κ=0.773 against IS
+- Agreement between LLM judges and humans is comparable to inter-annotator agreement (~0.6-0.8 Cohen's κ) — our `llm_context_prob` achieves κ=0.773 against IS at the legacy IS ≥ 3.0 threshold
 
 ### 8.3 What Per-Sample LLM Judging Would Add
 
@@ -414,7 +416,7 @@ If we additionally called Claude per-segment at evaluation time, the primary val
 
 ### 8.5 Opus Per-Sample Judge Agreement with IS
 
-We also ran **Claude Opus 4.6 as a per-sample judge** on all 1,497 pairs in two conditions: blind (no topic context) and context-aware (topic inferred from reference). Agreement with IS ≥ 3.0 ("properly captured"):
+We also ran **Claude Opus 4.6 as a per-sample judge** on all 1,497 pairs in two conditions: blind (no topic context) and context-aware (topic inferred from reference). Agreement with IS ≥ 3.0 (legacy threshold):
 
 | Judge Condition | Y+P vs IS≥3 κ | Agreement | Pearson r (ordinal vs IS) |
 |----------------|---------------|-----------|--------------------------|
@@ -444,7 +446,7 @@ We also ran **Claude Opus 4.6 as a per-sample judge** on all 1,497 pairs in two 
 
 Opus Y aligns best with IS ≥ 3.75–4.00 (Tier 5, "Excellent"). The judge reserves full endorsement for only the highest-quality outputs.
 
-**Interpretation**: The three evaluation systems (IS, heuristic, Opus judge) agree on **ranking** (Pearson r = 0.85–0.93) but disagree on **where to draw the line**. IS ≥ 3.0 is our conservative "properly captured" threshold; the Opus judge's natural Y+P boundary is closer to IS ≥ 2.0 — it sees more segments as partially useful. This is consistent with the judge's holistic reasoning capturing contextual value that the purely metric-based IS formula penalizes.
+**Interpretation**: The three evaluation systems (IS, heuristic, Opus judge) agree on **ranking** (Pearson r = 0.85–0.93) but disagree on **where to draw the line**. The legacy IS ≥ 3.0 threshold was conservative; the Opus judge's natural Y+P boundary is IS ≥ 2.0, which became the **NIV Y+P threshold** (κ=0.818, 922/1,497 segments useful). The Y threshold was set at IS ≥ 3.80 (κ=0.690, 346/1,497 clearly conveyed). These NIV thresholds supersede IS ≥ 3.0. See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
 
 - **Bug note (2026-03-05):** An earlier computation returned NaN for the context-aware judge due to using column name `context_judge` instead of the correct column name `context` in `context_eval_results.csv`. This has been resolved.
 
