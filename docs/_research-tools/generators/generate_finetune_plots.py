@@ -810,7 +810,7 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
             bbox=dict(boxstyle="round,pad=0.5", facecolor=BG,
                       edgecolor=C_LGRAY, alpha=0.95))
 
-    ax.set_xlabel("Epoch", fontsize=14, color=C_WHITE)
+    ax.set_xlabel("Epoch", fontsize=14, color=C_WHITE, labelpad=8)
     ax.set_ylabel("Loss (log\u2082)", fontsize=14, color=C_WHITE)
     ax.set_title("LoRA r=16: Severe Overfitting After Epoch 2",
                  fontsize=16, fontweight="bold", color=C_WHITE, pad=10)
@@ -821,7 +821,7 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
     for t in leg.get_texts():
         t.set_color(C_WHITE)
 
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0.03, 1, 1])
     out_a = OUTPUT_DIR / "FT_11a_loss.png"
     fig_a.savefig(out_a, dpi=PLOT_DPI, bbox_inches="tight", facecolor=BG)
     plt.close(fig_a)
@@ -884,7 +884,7 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
     for t in leg.get_texts():
         t.set_color(C_WHITE)
 
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0.03, 1, 1])
     out_b = OUTPUT_DIR / "FT_11b_impact.png"
     fig_b.savefig(out_b, dpi=PLOT_DPI, bbox_inches="tight", facecolor=BG)
     plt.close(fig_b)

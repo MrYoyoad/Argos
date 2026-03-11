@@ -407,7 +407,7 @@ def slide_25b(prs):
         MX, Inches(6.45), CW, Inches(0.35),
         size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    _finish(slide, "25b",
+    _finish(slide, 0,
         "6 salvage categories explained in plain English. Phonetic Bridge is "
         "the largest (93 segments). Categories overlap. Each represents a "
         "different mechanism by which meaning survives despite high WER.",
@@ -481,7 +481,7 @@ def slide_25c(prs):
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    _finish(slide, "25c",
+    _finish(slide, 0,
         "How the salvage detection works: a 15-rule deterministic decision tree "
         "that checks 6 linguistic signals and outputs a recovery probability. "
         "Validated at r=0.934 with IS, κ=0.818 (Y+P), stable across 16 configs.",
@@ -585,7 +585,7 @@ def slide_25d(prs):
                  x + Inches(0.15), cy + Inches(2.55), cw_card - Inches(0.3), Inches(1.8),
                  size=Pt(9.5), color=WHITE)
 
-    _finish(slide, "25d",
+    _finish(slide, 0,
         "Three real salvage examples from different recovery categories. "
         "Phonetic Bridge (IS 1.29): lip-reading confusions that are linguistically "
         "plausible, not hallucinations. Semantic Preservation (IS 2.18): WER 75% "
@@ -703,7 +703,7 @@ def slide_25e(prs):
                  x + Inches(0.15), cy + Inches(2.55), cw_card - Inches(0.3), Inches(1.8),
                  size=Pt(9.5), color=WHITE)
 
-    _finish(slide, "25e",
+    _finish(slide, 0,
         "Three more salvage examples emphasising domain-context recovery. "
         "Religious Context (IS 2.75): 'fear of allah' becomes 'fear of the loss' "
         "-- a sermon viewer recognizes the spiritual theme despite name garbling. "
@@ -769,7 +769,7 @@ def slide_14b(prs):
                      size=Pt(9), color=color, bold=False,
                      align=PP_ALIGN.CENTER)
 
-    _finish(slide, "14b",
+    _finish(slide, 0,
         "Balanced video gallery: 3 positive + 3 failure modes. "
         "Row 1 (positive): (1) Convention — person describes selling books at a "
         "convention, meaning fully captured with minor word drops. (2) Marilyn "

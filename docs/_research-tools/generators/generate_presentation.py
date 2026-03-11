@@ -211,6 +211,39 @@ def main():
         except Exception as e:
             print(f"ERROR: {e}")
 
+    # ── Fix slide numbering (overwrite all bottom-left labels) ──
+    from pptx.util import Inches, Pt
+    appendix_num = 0
+    in_appendix = False
+    slide_counter = 0
+    for slide in prs.slides:
+        # Find the slide-number text box: bottom-left, narrow, at y > 6.5"
+        num_shape = None
+        for shape in slide.shapes:
+            if (shape.has_text_frame
+                    and shape.width <= Inches(0.6)
+                    and shape.left <= Inches(1.2)
+                    and shape.top >= Inches(6.8)):
+                num_shape = shape
+                break
+        if num_shape is None:
+            continue
+
+        old_text = num_shape.text_frame.text.strip()
+        # Detect appendix slides by "A" prefix
+        if old_text.startswith("A"):
+            in_appendix = True
+            appendix_num += 1
+            new_text = f"A{appendix_num}"
+        else:
+            slide_counter += 1
+            new_text = str(slide_counter)
+
+        if old_text != new_text:
+            num_shape.text_frame.paragraphs[0].text = new_text
+
+    print(f"  Renumbered: {slide_counter} main + {appendix_num} appendix slides")
+
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT))
     _fix_pptx_video_compat(str(OUTPUT))

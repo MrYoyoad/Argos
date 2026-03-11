@@ -195,7 +195,7 @@ def plot_P3b_is_trajectory():
     missions = ["", "M4, M5, M7", "M6, M8", "M9"]
     effort = ["", "Days", "Weeks", "Weeks + 8x GPU"]
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 6.8))
 
     x = np.arange(len(phases))
     ax.fill_between(x, is_lo, is_hi, alpha=0.2, color="#ff9800", label="Expected range")

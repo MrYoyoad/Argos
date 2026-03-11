@@ -192,8 +192,8 @@ def slide_26b(prs):
 
     # IS trajectory plot (left side, large)
     img = add_image(slide, "P3b_is_trajectory",
-                    MX, CT + Inches(0.45),
-                    width=Inches(8.0))
+                    MX, CT + Inches(0.40),
+                    width=Inches(7.6))
 
     # Key milestones callout (right side) — with failure mode annotations
     rx = MX + Inches(8.3)
@@ -232,7 +232,7 @@ def slide_26b(prs):
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    _finish(slide, "26b",
+    _finish(slide, 0,
         "IS improvement trajectory with failure mode annotations. "
         "Current IS 2.52 (61.6% useful, NIV Y+P). "
         "Phase 1-2 target IS ~2.85 (~72% useful) by fixing Signal Loss (13.9%), "
@@ -377,7 +377,7 @@ def slide_29(prs):
     # Two plots side by side — reduced height to leave room for text
     col_w = Inches(5.9)
     gap = Inches(0.33)
-    plot_h = Inches(3.5)
+    plot_h = Inches(3.8)
     rx = MX + col_w + gap
 
     img_l = add_image(slide, "ft_loss", MX, CT, width=col_w, height=plot_h)
