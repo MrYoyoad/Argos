@@ -132,48 +132,34 @@
     "4.5-5.0": 99
   },
   "failure_mode_distribution": {
-    "Total Topic Drift": {
-      "count": 143,
-      "pct": 16.0
+    "_note": "5 consolidated categories from 896 non-captured segments (legacy IS < 3.0)",
+    "Wrong Topic": {
+      "count": 282,
+      "pct": 31.5,
+      "includes": ["Total Topic Drift (143)", "Phonetically Similar but Wrong Topic (139)"]
     },
-    "Phonetically Similar but Wrong Topic": {
-      "count": 139,
-      "pct": 15.5
+    "Accumulated Errors": {
+      "count": 219,
+      "pct": 24.4,
+      "includes": ["Accumulated Small Errors (110)", "High Error Rate (109)"]
+    },
+    "Right Topic Wrong Details": {
+      "count": 203,
+      "pct": 22.7,
+      "includes": ["Entity Destruction (108)", "Content Word Errors (95)"]
     },
     "Hallucination": {
       "count": 111,
       "pct": 12.4
     },
-    "Accumulated Small Errors": {
-      "count": 110,
-      "pct": 12.3
-    },
-    "High Error Rate": {
-      "count": 109,
-      "pct": 12.2
-    },
-    "Entity Destruction": {
-      "count": 108,
-      "pct": 12.1
-    },
-    "Content Word Errors": {
-      "count": 95,
-      "pct": 10.6
-    },
-    "Empty Output": {
-      "count": 70,
-      "pct": 7.8
-    },
-    "Truncation": {
-      "count": 10,
-      "pct": 1.1
-    },
-    "Over-generation": {
-      "count": 1,
-      "pct": 0.1
+    "Signal Loss": {
+      "count": 81,
+      "pct": 9.0,
+      "includes": ["Empty Output (70)", "Truncation (10)", "Over-generation (1)"]
     }
   },
   "success_pattern_distribution": {
+    "_note": "5 consolidated categories from 601 captured segments (legacy IS >= 3.0)",
     "Phonetically Preserved": {
       "count": 249,
       "pct": 41.4
@@ -190,13 +176,10 @@
       "count": 69,
       "pct": 11.5
     },
-    "Good Semantic + Correct Length": {
-      "count": 46,
-      "pct": 7.7
-    },
-    "Low-Moderate WER": {
-      "count": 13,
-      "pct": 2.2
+    "Other Success": {
+      "count": 62,
+      "pct": 10.3,
+      "includes": ["Good Semantic + Correct Length (46)", "Low-Moderate WER (13)", "Combined Semantic + Phonetic Bridge (3)"]
     },
     "Combined Semantic + Phonetic Bridge": {
       "count": 3,
