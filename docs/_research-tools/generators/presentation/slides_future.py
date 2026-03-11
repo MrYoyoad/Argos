@@ -98,25 +98,28 @@ def slide_24(prs):
 
 def slide_26(prs):
     slide = new_slide(prs)
-    add_title(slide, "Five Phases — From IS 2.5 to Target IS 3.5–4.0")
+    add_title(slide, "Five Phases \u2014 From IS 2.5 to Target IS 3.3\u20133.7")
     add_accent_line(slide)
 
+    # IS deltas derived from 574 non-useful segments (IS < 2.00) failure taxonomy.
+    # Conversion: ~0.033 IS per pp WER (empirical: 2.52@64% to ~3.81@25.4%).
+    # Per-category signal profiles from signal_distribution_analysis.md §8.
     phases = [
-        ("Phase 1", "Surface the good 65%",
+        ("Phase 1", "Surface the good 62%",
          "Confidence scoring \u2014 flags known-good segments (2\u20134 hrs)",
-         "Targets: Signal Loss (13.9%) | IS: filters to high-confidence subset (+0.3 perceived)", TEAL),
+         "Targets: Signal Loss (80, 13.9%) | IS: perceived only (filtering, no recovery)", TEAL),
         ("Phase 2", "Fix small & content errors",
          "N-best aggregation (ROVER/MBR) \u2014 vote across 20 beams",
-         "Targets: Accum. Errors (9.1%) + Details (13.8%) | IS: +0.3\u20130.5", TEAL),
+         "Targets: Accum. Errors (52, 9.1%) + Details (79, 13.8%) | IS: +0.13 (\u223c35 segs)", TEAL),
         ("Phase 3", "Better world knowledge",
          "Llama 3.1 8B + context prompts",
-         "Targets: Hallucination (18.8%) + Wrong Topic (44.4%) | IS: +0.5\u20130.8", GREEN),
+         "Targets: Halluc (108, 18.8%) + Wrong Topic (255, 44.4%) | IS: +0.40 (\u223c98 segs)", GREEN),
         ("Phase 4", "Scale data 20K\u201350K",
          "Fine-tune visual encoder + projection on more data",
-         "Targets: ALL categories via better visual features | IS: +0.5\u20131.0", GREEN),
+         "Targets: ALL 574 non-useful via better visual features | IS: +0.35", GREEN),
         ("Phase 5", "Error Correction (GER)",
          "Second LLM corrects remaining decode errors",
-         "Targets: residual errors post-Phase 1\u20134 | IS: +0.3\u20130.5", LGRAY),
+         "Targets: residual errors post-Phase 1\u20134 | IS: +0.10", LGRAY),
     ]
 
     # Staircase on left side
@@ -146,7 +149,8 @@ def slide_26(prs):
                     SRL - Inches(0.2), CT, width=SRW + Inches(0.2))
 
     bottom = add_text(slide,
-             "Combined target: IS 3.5–4.0 (85–90% useful Y+P). "
+             "Combined target: IS 3.3\u20133.7 (~80\u201385% useful Y+P). "
+             "Phase deltas sum to +0.98 from 2.52 baseline. "
              "Gains are multiplicative (ICLR 2024 scaling law).",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -159,32 +163,30 @@ def slide_26(prs):
         size=Pt(8), color=MGRAY, italic=True)
 
     _finish(slide, 26,
-        "Five phases, each explicitly targeting failure mode categories from "
-        "our error analysis.\n\n"
-        "FAILURE MODE -> PHASE MAPPING:\n"
-        "Phase 1 (Confidence): Signal Loss accounts for 13.9% of failures. "
-        "Confidence scoring flags the 40% already good, giving immediate "
-        "perceived improvement (+0.3 IS perceived, 2-4 hours).\n"
-        "Phase 2 (N-Best): Accumulated Errors (9.1%) and Right Topic Wrong Details "
-        "(13.8%) are exactly what voting/consensus fixes. Each word-level "
-        "error corrected individually yields IS +0.3-0.5.\n"
-        "Phase 3 (LLM Swap): Hallucination (18.8%) and Wrong Topic (44.4%) "
-        "stem from Llama-2's weak world knowledge. Llama 3.1 8B has 3x the "
-        "training data and 128K vocab, directly reducing these. IS +0.5-0.8.\n"
-        "Phase 4 (Data Scaling): All failure categories improve because the "
-        "visual encoder learns better lip representations. Biggest single gain "
-        "IS +0.5-1.0.\n"
-        "Phase 5 (GER): Post-hoc correction of whatever errors remain after "
-        "Phases 1-4. IS +0.3-0.5.\n\n"
-        "Combined target: IS 3.5-4.0 (85-90% useful Y+P). "
-        "ICLR 2024 shows gains are multiplicative.",
+        "Five phases targeting 574 non-useful segments (IS < 2.00) from "
+        "our failure taxonomy.\n\n"
+        "DERIVATION (signal profiles from signal_distribution_analysis.md):\n"
+        "Phase 1 (Confidence): Perceived improvement only — filters to "
+        "high-confidence subset. No IS change. 2-4 hours.\n"
+        "Phase 2 (N-Best): Targets Accum. Errors (52 segs, IS~2.33, Phonetic "
+        "0.53/InvWER 0.34 — small distributed fix) + Right Topic Wrong Details "
+        "(79 segs, IS~2.13, NEA 0.18 — needs +0.35 NEA). ROVER 5-8% relative "
+        "WER reduction (Fiscus 1997). ~35 segs recovered. IS +0.13.\n"
+        "Phase 3 (LLM Swap): Targets Hallucination (108 segs, IS~0.87, "
+        "InvWER -0.47/LR 1.56 — needs WER+length normalization) + Wrong Topic "
+        "(255 segs, IS~1.29, Semantic 0.10 — needs +0.45 Semantic). VALLR "
+        "(ICCV 2025) showed 26% relative WER improvement. ~98 segs. IS +0.40.\n"
+        "Phase 4 (Data Scaling): All 574 benefit from better visual features. "
+        "ICLR 2024 multiplicative scaling law. IS +0.35.\n"
+        "Phase 5 (GER): Residual correction. Chen et al. 2024. IS +0.10.\n\n"
+        "Combined: +0.98 IS → target IS 3.3-3.7 (~80-85% useful Y+P).",
         [step_shapes, [img, bottom]], click_reveal=True)
 
 
 def slide_26b(prs):
     """26b: IS trajectory roadmap — parallel to WER trajectory on slide_26."""
     slide = new_slide(prs)
-    add_title(slide, "IS Improvement Roadmap — From 2.5 to 3.8")
+    add_title(slide, "IS Improvement Roadmap \u2014 From 2.5 to 3.5")
     add_accent_line(slide)
 
     add_text(slide, "Projected Intelligibility Score improvement per phase",
@@ -196,16 +198,20 @@ def slide_26b(prs):
                     width=Inches(7.6))
 
     # Key milestones callout (right side) — with failure mode annotations
+    # IS deltas derived from 574-segment taxonomy × per-category recovery rates.
+    # Per-category current IS (from signal profiles):
+    #   Accum Errors IS~2.33, Details IS~2.13, Wrong Topic IS~1.29,
+    #   Hallucination IS~0.87, Signal Loss IS~0.01
     rx = MX + Inches(8.3)
     rw = Inches(3.8)
     milestones = [
         ("Current", "IS 2.52", "61.6% useful (Y+P)", "", CORAL),
-        ("Phase 1\u20132", "IS ~2.85",  "~72% useful (Y+P)",
-         "Fixes: Signal Loss (13.9%), Accum. Errors (9.1%), Details (13.8%)", TEAL),
-        ("+ Phase 3", "IS ~3.40", "~83% useful (Y+P)",
-         "Fixes: Hallucination (18.8%), Wrong Topic (44.4%)", GREEN),
-        ("+ Phase 4\u20135", "IS ~3.80", "~90% useful (Y+P)",
-         "Fixes: all remaining via data + post-correction", GREEN),
+        ("Phase 1\u20132", "IS ~2.65",  "~65% useful (Y+P)",
+         "Fixes: Accum (52) + Details (79) \u2014 131/574 targeted", TEAL),
+        ("+ Phase 3", "IS ~3.05", "~73% useful (Y+P)",
+         "Fixes: Halluc (108) + Wrong Topic (255) \u2014 363/574 targeted", GREEN),
+        ("+ Phase 4\u20135", "IS ~3.50", "~82% useful (Y+P)",
+         "Fixes: all remaining via data + GER post-correction", GREEN),
     ]
     ms_shapes = []
     for i, (phase, is_val, cap_val, failure_note, color) in enumerate(milestones):
@@ -228,21 +234,22 @@ def slide_26b(prs):
                      size=Pt(11), color=WHITE, italic=True))
 
     bottom = add_text(slide,
-             "Each ~10pp WER reduction \u2192 ~0.3\u20130.5 IS improvement + ~8\u201312pp useful rate.",
+             "Conversion: ~0.033 IS per pp WER (empirical: 2.52@64% \u2192 ~3.81@25.4%).",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "IS improvement trajectory with failure mode annotations. "
-        "Current IS 2.52 (61.6% useful, NIV Y+P). "
-        "Phase 1-2 target IS ~2.85 (~72% useful) by fixing Signal Loss (13.9%), "
-        "Accumulated Errors (9.1%), and Right Topic Wrong Details (13.8%). "
-        "Phase 3 target IS ~3.40 (~83% useful) by fixing Hallucination (18.8%) "
-        "and Wrong Topic (44.4%) via stronger LLM world knowledge. "
-        "Phase 4-5 target IS ~3.80 (~90% useful) by improving visual encoder "
-        "with more data and post-hoc error correction. "
-        "Each phase targets specific failure categories, and the magnitude "
-        "reflects the proportion of errors in that category.",
+        "IS trajectory derived from 574 non-useful segments (IS < 2.00).\n"
+        "Current IS 2.52 (61.6% useful, NIV Y+P).\n"
+        "Phase 1-2: IS ~2.65 (~65% useful). N-Best ROVER targets Accum Errors "
+        "(52 segs, IS~2.33, Phonetic 0.53/InvWER 0.34) + Right Topic Wrong "
+        "Details (79 segs, IS~2.13, NEA 0.18). ~35 segs recovered.\n"
+        "Phase 3: IS ~3.05 (~73% useful). LLM swap targets Hallucination "
+        "(108 segs, IS~0.87, InvWER -0.47/LR 1.56) + Wrong Topic "
+        "(255 segs, IS~1.29, Semantic 0.10). ~98 segs recovered.\n"
+        "Phase 4-5: IS ~3.50 (~82% useful). Data scaling improves visual "
+        "encoder for ALL categories. GER post-correction for residual.\n"
+        "Conversion: ~0.033 IS per pp WER (2.52@64% to ~3.81@25.4% paper).",
         [[img], ms_shapes + [bottom]], click_reveal=True)
 
 
@@ -574,7 +581,7 @@ def slide_30b(prs):
                        border_width=Pt(2), corner_radius=True)
     key_text = add_text(slide,
         "Strongest LLM impact: entity disambiguation\n"
-        "(204 segments) and accumulated errors (220 segments)",
+        "(79 segments) and accumulated errors (52 segments)",
         rx + Inches(0.2), ky + Inches(0.10),
         right_w - Inches(0.4), Inches(0.55),
         size=Pt(13), color=WHITE)

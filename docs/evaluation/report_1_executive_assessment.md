@@ -223,15 +223,20 @@ A critical practical question: if we deploy this model, can we automatically ide
 
 ### 6.3 LLM Salvage Analysis (March 2026 Update)
 
-Subsequent analysis using the Claude-designed Intelligibility Score (IS) framework and LLM heuristic (`llm_context_prob`) revealed that traditional metrics systematically undercount the system's useful output. Of 900 segments classified as failures (IS < 3.0), **165 segments (18.3%)** have recoverable meaning that a domain-aware viewer would understand — identified by `llm_context_prob >= 0.5`.
+Subsequent analysis using the Claude-designed Intelligibility Score (IS) framework and LLM heuristic (`llm_context_prob`) revealed that traditional metrics systematically undercount the system's useful output.
+
+Under the current **NIV thresholds** (adopted March 2026), the primary operating points are:
 
 | Assessment Method | Segments Useful | Rate |
 |-------------------|-----------------|------|
 | WER-only (WER ≤ 20%) | ~98 | 11.4% |
-| IS (IS ≥ 3.0) | 601 | 40.1% |
-| **IS + LLM salvage** | **766** | **51.1%** |
+| Legacy IS (IS ≥ 3.0) | 597 | 39.9% |
+| **NIV Y+P (IS ≥ 2.00)** | **922** | **61.6%** |
+| **NIV Y (IS ≥ 3.80)** | **346** | **23.1%** |
 
-The 165 salvageable segments include cases where high phonetic similarity (natural lip-reading confusions), preserved semantic meaning, or intact named entities make the output usable despite high WER. This raises the effective capture rate from 40.1% to 51.1% — roughly 1 in 2 segments rather than 2 in 5.
+NIV Y+P ("any useful") at IS ≥ 2.00 achieves κ=0.818 agreement with the Opus LLM judge (Y+P rate 64.9%). NIV Y ("clearly conveyed") at IS ≥ 3.80 achieves κ=0.690. Both outperform equivalent WER thresholds.
+
+*Legacy note*: Under the superseded IS ≥ 3.0 threshold, an LLM salvage analysis identified 165 of 900 metric-failed segments (18.3%) with recoverable meaning (`llm_context_prob >= 0.5`), raising the effective capture rate from 40.1% to 51.1%. This analysis is now largely subsumed by the NIV Y+P threshold, which captures most of these salvageable segments directly.
 
 Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md)
 

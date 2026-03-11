@@ -12,7 +12,7 @@
 The LLM-as-a-Judge evaluation (March 2026) classified failure modes for all 1,497 segments:
 - **143 segments** tagged "Total Topic Drift" -- model produces fluent text about a completely wrong topic
 - **141 segments** tagged "Phonetically Similar but Wrong Topic" -- model gets sounds right but resolves to wrong-domain vocabulary
-- **143 + 141 = 284** segments with domain vocabulary confusion
+- **143 + 141 = 284** segments with domain vocabulary confusion (across all IS tiers; of these, 255 are NIV N with IS < 2.00)
 
 ## Technical Implementation
 

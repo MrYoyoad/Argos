@@ -330,40 +330,42 @@ Every segment scoring IS < 3.0 is classified into its dominant failure category.
 | **Right Topic Wrong Details** | Entity Destruction, Content Word Errors | Semantic >= 0.2 but NEA F1 < 10% and WER > 60% (entities lost) or Semantic >= 0.3 but WER > 50% (content words wrong) | General topic preserved but names, numbers, and key content words are wrong |
 | **Accumulated Errors** | High Error Rate, Accumulated Small Errors | WER > 70% (high error) or default (many small errors) | Many individually small errors that compound to destroy meaning |
 
-### Baseline Results (1497 segments, 900 failures)
+### Baseline Results (1,497 segments, 575 NIV N failures)
+
+Failure modes are classified for segments scoring IS < 2.00 (NIV N, "not useful"). Under the current NIV thresholds, 575 of 1,497 segments are non-useful.
 
 | Category | Count | % of Failures |
 |----------|-------|--------------|
-| Wrong Topic | 284 | 31.6% |
-| Accumulated Errors | 220 | 24.4% |
-| Right Topic Wrong Details | 204 | 22.7% |
-| Hallucination | 111 | 12.3% |
-| Signal Loss | 81 | 9.0% |
+| Wrong Topic | 255 | 44.4% |
+| Hallucination | 108 | 18.8% |
+| Signal Loss | 80 | 13.9% |
+| Right Topic Wrong Details | 79 | 13.8% |
+| Accumulated Errors | 52 | 9.1% |
 
 ### 8.1 What Each Failure Category Means (Plain English)
 
-**Signal Loss** (81 segments, 9.0%)
-- *What it looks like*: The model produced nothing (empty output, 70 segments), stopped too early (truncation, 10 segments), or ran past the content (over-generation, 1 segment).
-- *Why it happens*: Visual encoder could not extract enough signal — face occluded, very short segment, poor video quality, or confidence drops below generation threshold.
-- *What could fix it*: Config J (lenpen=1 + sampling) eliminates all 70 empties. N-best provides fallback candidates. Length penalty tuning handles over-generation.
+**Wrong Topic** (255 segments, 44.4%)
+- *What it looks like*: The output is about a completely different subject. Either no connection at all (total topic drift, 143 segments — e.g., reference about weight loss, hypothesis about being a princess), or words that sound similar but belong to the wrong domain (phonetically similar, 112 segments — similar mouth shapes but different meaning).
+- *Why it happens*: Visual encoder extracted no meaningful signal (pure drift) or captured mouth shapes but the LLM decoded them into the wrong semantic domain (phonetic confusion).
+- *What could fix it*: Better visual encoder (more training data, domain adaptation), topic-context prompts, stronger LLM with better disambiguation, N-best aggregation.
 
-**Hallucination** (111 segments, 12.3%)
+**Hallucination** (108 segments, 18.8%)
 - *What it looks like*: The model generated fluent, confident text that has nothing to do with what was actually said. Often longer than the reference.
 - *Why it happens*: The LLM "runs ahead" of the visual signal, generating plausible text from its language model prior rather than from lip movements. This is the most dangerous failure category because the output sounds convincing.
 - *What could fix it*: Stronger visual encoder (more training data), anti-hallucination prompts, GER post-processing to compare multiple hypotheses.
 
-**Wrong Topic** (284 segments, 31.6%)
-- *What it looks like*: The output is about a completely different subject. Either no connection at all (total topic drift, 143 segments — e.g., reference about weight loss, hypothesis about being a princess), or words that sound similar but belong to the wrong domain (phonetically similar wrong topic, 141 segments — similar mouth shapes but different meaning).
-- *Why it happens*: Visual encoder extracted no meaningful signal (pure drift) or captured mouth shapes but the LLM decoded them into the wrong semantic domain (phonetic confusion).
-- *What could fix it*: Better visual encoder (more training data, domain adaptation), topic-context prompts, stronger LLM with better disambiguation, N-best aggregation.
+**Signal Loss** (80 segments, 13.9%)
+- *What it looks like*: The model produced nothing (empty output, 70 segments), stopped too early (truncation, 10 segments), or ran past the content (over-generation, 1 segment — note: 1 unclassified segment accounts for 575 - 574 = 1).
+- *Why it happens*: Visual encoder could not extract enough signal — face occluded, very short segment, poor video quality, or confidence drops below generation threshold.
+- *What could fix it*: Config J (lenpen=1 + sampling) eliminates all 70 empties. N-best provides fallback candidates. Length penalty tuning handles over-generation.
 
-**Right Topic Wrong Details** (204 segments, 22.7%)
-- *What it looks like*: The general topic is vaguely right, but all names, numbers, and proper nouns are wrong (entity destruction, 108 segments — e.g., "the 13th amendment" → "13th may mean something to him"), or sentence structure is intact but key nouns and verbs are substituted (content word errors, 96 segments — e.g., "before I get into that" → "the day before I get here").
+**Right Topic Wrong Details** (79 segments, 13.8%)
+- *What it looks like*: The general topic is vaguely right, but names, numbers, and proper nouns are wrong (entity destruction — e.g., "the 13th amendment" → "13th may mean something to him"), or sentence structure is intact but key nouns and verbs are substituted (content word errors — e.g., "before I get into that" → "the day before I get here").
 - *Why it happens*: Named entities are unpredictable from lip shapes. Content words get substituted with similar-looking alternatives while structure is preserved.
 - *What could fix it*: Context injection (entity lists), N-best with entity voting, stronger LLM, phonetic post-correction, domain-specific fine-tuning.
 
-**Accumulated Errors** (220 segments, 24.4%)
-- *What it looks like*: Either too many words wrong for any signal to survive (high error rate, 109 segments), or many individually small errors that compound to destroy meaning (accumulated small errors, 111 segments — e.g., "convert your body into an avatar" → "interjection to an existing body into an adjoining sentence").
+**Accumulated Errors** (52 segments, 9.1%)
+- *What it looks like*: Many individually small errors that compound to destroy meaning (e.g., "convert your body into an avatar" → "interjection to an existing body into an adjoining sentence").
 - *Why it happens*: Combination of visual ambiguity, unfamiliar vocabulary, rapid speech, and many simultaneous phonetic confusions.
 - *What could fix it*: N-best aggregation (ROVER voting), GER post-processing, more training data, stronger LLM, visual encoder improvements.
 
