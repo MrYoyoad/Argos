@@ -621,17 +621,17 @@ def slide_is_calc_examples(prs):
     # --- Right: Bad segment ---
     bad_lines = [
         ("Semantic Sim", "0.04", "\u00d7 0.25", "= 0.010", CORAL),
-        ("Phonetic Sim", "0.20", "\u00d7 0.15", "= 0.030", CORAL),
+        ("Phonetic Sim", "0.12", "\u00d7 0.15", "= 0.018", CORAL),
         ("Inverse WER", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
-        ("Inverse WWER", "0.03", "\u00d7 0.15", "= 0.005", CORAL),
+        ("Inverse WWER", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
         ("NEA F1", "0.00", "\u00d7 0.15", "= 0.000", CORAL),
-        ("Length Ratio", "0.78", "\u00d7 0.15", "= 0.117", CORAL),
+        ("Length Ratio", "0.25", "\u00d7 0.15", "= 0.150", CORAL),
     ]
     r2 = _draw_calc_card(slide, MX + col_w + gap,
-        "Bad Segment", "0.8", CORAL,
+        "Bad Segment", "0.9", CORAL,
         "carry strap",
         "holocaust denier explanation of the final act",
-        bad_lines, "Sum \u00d7 5 = 0.81 \u2192 IS 0.8 (Failed)")
+        bad_lines, "Sum \u00d7 5 = 0.89 \u2192 IS 0.9 (Failed)")
 
     _finish(slide, 0,
         "Two IS calculation examples. Left: good segment (IS 4.2) with high "
@@ -661,12 +661,7 @@ def slide_is_radar(prs):
     img = add_image(slide, radar_key, img_l, img_top,
                     width=img_w, height=img_h)
 
-    # Clean legend — just color key, no description cards
-    legend_y = SL_H - Inches(0.65)
-    add_text(slide,
-        "\u25cf LRS3 benchmark (YouTube baseline, coral)     \u25cf YouTube real-world (target profile, teal)",
-        MX, legend_y, CW, Inches(0.35),
-        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+    # No legend text — chart is self-explanatory
 
     _finish(slide, 0,
         "Dual radar chart: LRS3 benchmark (measured, n=170) vs YouTube real-world "
@@ -697,7 +692,7 @@ def slide_is_wer_scatter(prs):
                      size=Pt(15), color=LGRAY)
     bul = add_bullets(slide, [
         ("42 clearly conveyed (IS \u2265 3.80) but WER > 34%", {"bold": True, "color": GREEN}),
-        ("437 useful meaning (IS \u2265 2.00) but WER > 77%", {"bold": True, "color": GOLD}),
+        ("437 useful meaning (IS \u2265 2.00) but WER > 40%", {"bold": True, "color": GOLD}),
         "NIV: calibrated against Opus-as-a-Judge (blind eval)",
         "IS \u2265 3.80 matches judge Y rate exactly (\u03ba=0.690)",
         ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),
@@ -708,6 +703,13 @@ def slide_is_wer_scatter(prs):
                     MX + left_w + Inches(0.2), CT - Inches(0.2),
                     width=CW - left_w - Inches(0.2))
 
+    # Bottom note about IS-WER correlation
+    add_text(slide,
+        "IS WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
+        "it misses phonetic and semantic preservation, making it insufficient alone.",
+        MX, Inches(6.3), CW, Inches(0.4),
+        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
     _finish(slide, 0,
         "Scatter plot of WER vs IS for all 1,497 segments with NIV thresholds. "
         "Green region: 42 segments clearly conveyed (IS >= 3.80) but WER > 34%. "
@@ -715,7 +717,10 @@ def slide_is_wer_scatter(prs):
         "NIV thresholds calibrated against Opus-as-a-Judge: IS >= 3.80 for Y "
         "(\u03ba=0.690, captures 23.1% vs judge 23.0%), IS >= 2.00 for Y+P "
         "(\u03ba=0.818, captures 61.6% vs judge 64.9%). IS beats WER at both "
-        "operating points (+0.061 for Y, +0.041 for Y+P).",
+        "operating points (+0.061 for Y, +0.041 for Y+P).\n\n"
+        "IS WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
+        "it misses phonetic and semantic preservation, making it insufficient "
+        "as a standalone quality measure.",
         [[num_s, lbl_s, bul], [img]], click_reveal=True)
 
 
@@ -865,7 +870,7 @@ def slide_07(prs):
 
     # Key callout
     callout = add_text(slide,
-        "IS ≥ 2.00 = Useful (Y+P): 61.6% — 2.4× what WER suggests (25.5%)\n"
+        "IS ≥ 2.00 = Useful Output (Y+P): 61.6% — 2.4× what WER suggests (25.5%)\n"
         "Phonetic similarity: 41.5% mean, r=0.943 with IS (strongest single signal)",
         MX, by + bh + Inches(0.2), CW, Inches(0.55),
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
@@ -1150,7 +1155,7 @@ def slide_failure_deep_2(prs):
             "color": CORAL,
             "ref": "carry strap",
             "hyp": "holocaust denier explanation\nof the final act",
-            "wer": "100%", "is_score": "0.8",
+            "wer": "100%", "is_score": "0.1",
             "why_label": "Why this category?",
             "why": "The model generated 8 words from\n"
                    "a 2-word input. The LLM\u2019s language\n"
@@ -1857,11 +1862,6 @@ def slide_research_transition(prs):
 
     add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
              fill_color=CORAL)
-
-    add_text(slide, "1,497 segments  \u2022  6 quality signals  \u2022  5 failure categories  "
-             "\u2022  13 tuning experiments",
-             MX, Inches(4.8), CW, Inches(0.5),
-             size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Section transition: we now present the research findings — our novel "

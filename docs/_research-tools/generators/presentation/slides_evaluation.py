@@ -824,17 +824,14 @@ def slide_is_deep_dive(prs):
     rb = add_bullets(slide, [
         ("IS captures quality that WER misses",
          {"bold": True, "color": GREEN}),
-        ("PCA reveals 2 dimensions: signal quality "
-         "(68.4%, all 5 content signals) and output "
-         "length (19.5%, Length Ratio)", {}),
         ("Cross-config validation confirms stability: "
          "mean r = 0.925 across 16 configurations",
          {"bold": True, "color": TEAL}),
-        ("All 5 content signals load equally on PC1 "
-         "(0.43\u20130.47) \u2014 one general quality factor "
-         "driven by visual encoder", {}),
-        ("Semantic gets higher weight (25%) because it "
-         "captures paraphrasing that word metrics miss", {}),
+        ("WER/WWER/Phonetic are redundant with each other "
+         "(r > 0.79) but IS needs all three for robustness", {}),
+        ("Semantic Sim is the tiebreaker \u2014 it separates "
+         "segments with similar WER but different meaning "
+         "preservation", {}),
     ], rx, CT + offset + Inches(0.5), rw, Inches(4.5), size=Pt(14))
 
     _finish(slide, 0,
@@ -867,25 +864,21 @@ def slide_metric_disagreement(prs):
 
     patterns = [
         ("WWER \u226a WER", TEAL,
-         "Function words wrong, content words right",
-         "\"the team discussed a quarterly\" \u2192 \"team discuss quarterly\"\n"
-         "WER 43% but WWER 15% — viewer gets the message.\n"
-         "IS captures this: meaning preserved despite surface errors."),
+         "Function words wrong, content right",
+         "\"the team discussed quarterly\" \u2192 \"team discuss quarterly\"\n"
+         "WER 43% but WWER 15% \u2014 viewer gets the message."),
         ("NEA high, WER high", GREEN,
-         "Names preserved despite overall poor accuracy",
-         "\"Dr. Chen presented the Q3 results\" \u2192 \"Dr. Chen present Q3 result\"\n"
-         "WER 57% but NEA F1 = 100% — critical info intact.\n"
-         "IS rewards: the most important facts came through."),
+         "Names preserved despite poor accuracy",
+         "\"Dr. Chen presented Q3 results\" \u2192 \"Dr. Chen present Q3 result\"\n"
+         "WER 57% but NEA F1 = 100% \u2014 critical info intact."),
         ("Semantic high, WER high", GOLD,
          "Meaning preserved through paraphrasing",
-         "\"we need to reduce spending\" \u2192 \"must cut the budget\"\n"
-         "WER 100% but Semantic 0.87 — same meaning, different words.\n"
-         "IS captures: WER says total failure, IS says useful output."),
+         "\"reduce spending\" \u2192 \"cut the budget\"\n"
+         "WER 100% but Semantic 0.87 \u2014 same meaning, different words."),
         ("Phonetic high, Semantic low", CORAL,
-         "Sounds right, wrong meaning (deceptive)",
+         "Sounds right, wrong meaning",
          "\"the alliance was formed\" \u2192 \"the lions were found\"\n"
-         "Phonetic 0.71 but Semantic 0.12 — sounds similar, wrong topic.\n"
-         "IS catches: phonetic alone would miss this dangerous error."),
+         "Phonetic 0.71 but Semantic 0.12 \u2014 dangerous deceptive error."),
     ]
 
     cards = []
@@ -908,7 +901,7 @@ def slide_metric_disagreement(prs):
         cards.append(card_shapes)
 
     add_text(slide,
-        "This is why IS uses 6 signals, not just WER — each disagreement pattern "
+        "This is why IS uses 6 signals \u2014 each disagreement pattern "
         "reveals a different type of quality that a single metric would miss.",
         MX, Inches(6.3), CW, Inches(0.4),
         size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -1012,7 +1005,7 @@ def slide_two_eval_systems(prs):
     r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.6),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                   corner_radius=True)
-    r1_t = add_text(slide, "Intelligibility Score (IS) \u2014 NIV Thresholds", MX + Inches(0.2),
+    r1_t = add_text(slide, "Intelligibility Score (IS)", MX + Inches(0.2),
              CT + Inches(0.6), col_w - Inches(0.4), Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
     r1_b = add_bullets(slide, [
@@ -1041,7 +1034,7 @@ def slide_two_eval_systems(prs):
                   size=Pt(17), color=CORAL, bold=True)
 
     agree_txt = add_text(slide,
-        "\u03ba = 0.818 (almost perfect agreement)\n"
+        "\u03ba = 0.818 (good agreement)\n"
         "IS undercounts: 61.6% vs judge 64.9%.",
         rx, CT + Inches(0.5), col_w, Inches(0.6),
         size=Pt(15), color=WHITE, bold=True)
@@ -1060,10 +1053,10 @@ def slide_two_eval_systems(prs):
     we_b = add_text(slide,
         'Ref: "what does this chord sound like to you"\n'
         'Hyp: "what does this court sound like to you"\n'
-        'WER: 12% \u2022 IS: 3.84 \u2022 NIV Y \u2714 \u2022 Opus: Y\n\n'
+        'WER: 12% \u2022 IS: 3.84 \u2022 IS Y \u2714 \u2022 Opus: Y\n\n'
         'Ref: "opinions about reason and logic"\n'
         'Hyp: "our opinion is about reasoning and logic"\n'
-        'WER: 74% \u2022 IS: 2.94 \u2022 NIV Y+P \u2714 \u2022 Opus: P\n'
+        'WER: 74% \u2022 IS: 2.94 \u2022 IS Y+P \u2714 \u2022 Opus: P\n'
         'Old IS \u2265 3.0 wrongly rejected this segment.',
         rx, CT + Inches(2.95), col_w, Inches(1.7),
         size=Pt(11), color=WHITE)
@@ -1110,42 +1103,20 @@ def slide_llm_judge(prs):
         MX, CT + Inches(2.8), col_w, text_size=Pt(12),
         row_colors={0: {2: GREEN}, 2: {2: CORAL}, 3: {2: TEAL}})
 
-    # Right — IS correlation + takeaway
+    # Right — Methodology
     rx = MX + col_w + gap
-    rt = add_text(slide, "Correlation with Our Metric", rx, CT, col_w, Inches(0.4),
+    rt = add_text(slide, "Methodology:", rx, CT, col_w, Inches(0.4),
                   size=Pt(17), color=CORAL, bold=True)
 
-    r_big = add_text(slide, "85% correlation", rx, CT + Inches(0.6), col_w, Inches(0.7),
-             size=Pt(36), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
-    r_label = add_text(slide, "with our Intelligibility Score",
-             rx, CT + Inches(1.2), col_w, Inches(0.3),
-             size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER)
+    rb = add_bullets(slide, [
+        "Claude Opus received each ref+hyp pair blind (no metrics visible)",
+        "3-level holistic judgment: Y (fully conveyed), P (partial), N (lost)",
+        ("\u03ba = 0.690 (Y threshold) and \u03ba = 0.818 (Y+P threshold)",
+         {"color": TEAL}),
+        ("Used as gold standard to calibrate IS thresholds",
+         {"bold": True}),
+    ], rx, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(14))
 
-    # Plain-language takeaway box
-    tk_box = add_rect(slide, rx, CT + Inches(2.0), col_w, Inches(1.8),
-                  fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
-                  corner_radius=True)
-    tk_txt = add_text(slide,
-        "Systems agree on extremes \u2014 perfect segments\n"
-        "always Y, failed always N.\n\n"
-        "Borderline cases (Fair tier) are where\n"
-        "judgment differs.",
-        rx + Inches(0.2), CT + Inches(2.1), col_w - Inches(0.4), Inches(1.6),
-        size=Pt(14), color=WHITE)
-
-    # Key takeaway
-    takeaway = add_text(slide,
-        "LLM judge is more conservative for full success (23% vs IS 40%) "
-        "but more generous for any useful output (Y+P=65%). "
-        "IS is a calibrated surrogate for real quality.",
-        MX, Inches(6.3), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
-
-    # Animation groups — logical narrative order:
-    # 1. Setup: what is LLM-as-a-Judge?
-    # 2. Results: Y/P/N percentages
-    # 3. Correlation + takeaway insight
-    # 4. Bottom-line takeaway
     _finish(slide, 0,
         "LLM-as-a-Judge gold standard. Claude Opus evaluated all 1,497 pairs "
         "blind. Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9%. "
@@ -1156,8 +1127,7 @@ def slide_llm_judge(prs):
         "Full cross-tab in appendix slide A16.",
         [[lt, lb],
          [res_t, tbl],
-         [rt, r_big, r_label, tk_box, tk_txt],
-         [takeaway]],
+         [rt, rb]],
         click_reveal=True)
 
 
@@ -1327,8 +1297,8 @@ def slide_llm_context_engine(prs):
     add_bullets(slide, [
         "128K vocab, 128K context",
         "Quality \u2248 LLaMA-2 70B",
-        ("Same hidden_size (4096) = architecture-compatible", {"color": GREEN}),
-        ("Requires adapter retraining (~2\u20134 weeks)", {"bold": True}),
+        ("Same hidden_size (4096) = architecture-compatible upgrade", {"color": GREEN}),
+        ("Setup: 2\u20134 weeks + retraining", {"bold": True}),
     ], rx + Inches(0.2), CT + Inches(3.0), col_w - Inches(0.4), Inches(1.2),
        size=Pt(12), bullet_color=GREEN)
 
@@ -1378,10 +1348,6 @@ def slide_llm_judge_30(prs):
     rb = add_bullets(slide, [
         ("Distribution mirrors the full 1,497-segment dataset",
          {"bold": True}),
-        "IS spans 0.00 (empty output) to 5.00 (perfect match)",
-        ("Middle zone (IS 2\u20134) is where the interesting "
-         "cases live \u2014 partial captures, phonetic bridges, "
-         "domain confusion", {}),
         ("6 videos on the next slides walk through these "
          "cases one by one", {"color": TEAL}),
     ], rx, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(14))

@@ -354,6 +354,12 @@ def slide_02(prs):
     vid_x = (SL_W - vid_w) // 2
     add_video(slide, "perfect", vid_x, Inches(1.8), vid_w, vid_h)
 
+    # Subtitle
+    add_text(slide,
+        "A system that reads lips from video \u2014 no audio needed.",
+        MX + Inches(0.08), Inches(1.3), CW, Inches(0.4),
+        size=Pt(16), color=LGRAY, italic=True)
+
     # Bottom text — expert lip reader comparison
     add_text(slide,
         "System + human reader outperforms expert lip readers: "
@@ -423,8 +429,8 @@ def slide_03(prs):
 
     # Bottom note
     add_text(slide,
-             "Only 12.6M trainable params (0.19%). LLM is upgradeable — "
-             "Llama 3.1 8B is architecture-compatible (same 4096 hidden size, requires adapter retraining).",
+             "Only 12.6M trainable params (0.19%). LLM is architecture-compatible — "
+             "Llama 3.1 8B is a drop-in replacement (same 4096 hidden size).",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True)
 
@@ -446,7 +452,7 @@ def slide_03(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_04(prs):
-    build_split(prs, 4, "The Benchmark: Paper vs Reality", "P2_paper",
+    slide = build_split(prs, 4, "The Benchmark: Paper vs Reality", "P2_paper",
         big_num="25.4%", num_color=TEAL,
         num_label="WER on LRS3 (TED Talks)",
         bullets=[
@@ -455,15 +461,22 @@ def slide_04(prs):
              {"color": CORAL, "bold": True}),
             ("Result: 64.1% WER \u2014 2.5\u00d7 worse",
              {"color": CORAL, "bold": True}),
+            ("WER is the wrong metric \u2013 our new IS is the right one "
+             "(or LLM as a judge)", {}),
         ],
         bottom_text="Different dataset, fundamentally harder problem.",
-        notes="The paper reports 25.4% WER on LRS3 — a curated TED talks dataset "
+        notes="The paper reports 25.4% WER on LRS3 \u2014 a curated TED talks dataset "
               "with ideal conditions. Our 1,497 YouTube segments are fundamentally "
               "harder: diverse speakers, topics, lighting, angles. Result: 64.1% "
               "WER, 2.5x worse. The dataset is different, and that explains the gap.\n\n"
-              "Note: Our best LRS3 reproduction achieved 32% WER — gap from paper's "
-              "25.4% likely due to pretrain vs test split differences. "
-              "Details in docs/evaluation/lrs3_decode_experiment.md.")
+              "Note: Our best LRS3 reproduction achieved 32% WER \u2014 gap likely "
+              "due to pretrain/test split differences.")
+    # Visible note at bottom (user added this to FINAL)
+    add_text(slide,
+        "Note: Our best LRS3 reproduction achieved 32% WER \u2014 gap likely "
+        "due to pretrain/test split differences.",
+        MX, Inches(6.85), CW, Inches(0.3),
+        size=Pt(10), color=MGRAY, italic=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 5 — THE REALITY GAP
@@ -478,10 +491,10 @@ def slide_05(prs):
         big_num="64.1%", num_color=CORAL,
         num_label="Mean WER across 1,497 real-world segments",
         bullets=[
-            ("25.5% Useful by WER (\u226434%)", {"bullet": "\u25cf", "bullet_color": GREEN}),
-            ("17.4% Marginal (34-50%)", {"bullet": "\u25cf", "bullet_color": YELLOW}),
+            ("25.5% Useful by WER (<30%)", {"bullet": "\u25cf", "bullet_color": GREEN}),
+            ("17.4% Marginal (30-50%)", {"bullet": "\u25cf", "bullet_color": YELLOW}),
             ("17.8% Poor (50-75%)", {"bullet": "\u25cf", "bullet_color": ORANGE}),
-            ("18.7% Unusable (75-100%)", {"bullet": "\u25cf", "bullet_color": RED}),
+            ("32.8% Unusable (75-100%)", {"bullet": "\u25cf", "bullet_color": RED}),
             ("20.6% Hallucinated (>100%)", {"bullet": "\u25cf", "bullet_color": DRED}),
         ],
         bottom_text="But WER overstates failure — see next slide.",
@@ -624,11 +637,11 @@ def slide_visemes(prs):
         size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     tbl2 = add_table(slide,
-        ["Word A", "Word B", "Viseme"],
-        [["pat", "bat", "Bilabial"],
-         ["mom", "bomb", "Bilabial"],
-         ["admiral", "animal", "Alveolar"],
-         ["collar", "color", "Velar"]],
+        ["Word A", "Word B"],
+        [["pat", "bat"],
+         ["mom", "bomb"],
+         ["admiral", "animal"],
+         ["collar", "color"]],
         rx, CT + Inches(2.5), col_w, text_size=Pt(12))
 
     # Bottom

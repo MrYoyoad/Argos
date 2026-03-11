@@ -37,7 +37,7 @@ from presentation.slides_opening import (
 from presentation.slides_research import (
     slide_research_transition, slide_is_motivation, slide_is_intro,
     slide_is_weight_rationale,
-    slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter, slide_semantic_domain_gap,
+    slide_is_calc_examples, slide_is_radar, slide_is_wer_scatter,
     slide_07, slide_metric_transition,
     slide_failure_deep_1a, slide_failure_deep_1b, slide_failure_deep_2, slide_08,
     slide_failure_deep_3,
@@ -123,8 +123,7 @@ def main():
         slide_is_calc_examples,      # 28: IS in Action
         slide_is_radar,              # 29: Model Comparison: IS Profiles
         slide_is_wer_scatter,        # 30: The Gap: Where WER Lies Most
-        slide_semantic_domain_gap,   # 31: Same WER, Different Meaning (LRS3 vs YouTube)
-        slide_07,                    # 32: IS Results: 61.6% Useful
+        slide_07,                    # 31: IS Results: 61.6% Useful
         slide_two_eval_systems,      # 32: Two Evaluation Systems (moved here)
         slide_context_eval,          # 33: IS: Calibrated Surrogate Metric
         slide_disagreement_blind,    # 34: Where IS and Judge Disagree (blind)

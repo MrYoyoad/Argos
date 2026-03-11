@@ -46,8 +46,8 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=CORAL, bold=True)
     add_bullets(slide, [
-        "25.5% useful (\u226434% WER)",
-        "3 out of 4 segments fail",
+        "25.5% useful by WER",
+        "9 out of 10 segments fail",
         "Ignores phonetic preservation (41.5%)",
     ], MX + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(1.2), size=Pt(13), bullet_color=CORAL)
@@ -60,8 +60,8 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
-        ("61.6% useful output (IS \u2265 2.00, NIV Y+P)", {"bold": True}),
-        ("64.9% confirmed by Opus-as-a-Judge (Y+P = 971/1,497)",
+        ("61.6% properly captured (IS \u2265 2.00)", {"bold": True}),
+        ("64.9% useful per Opus-as-a-Judge (Y+P = 971/1,497)",
          {"color": GREEN}),
         "Validated across 16 decode configs",
         "85% correlation between IS and Opus verdicts",
@@ -75,8 +75,6 @@ def slide_24(prs):
     # Bottom
     add_text(slide,
              "The gap is real \u2014 but WER dramatically overstates failure. "
-             "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 it misses "
-             "phonetic and semantic preservation, making it insufficient alone. "
              "40% captured by IS, 65% useful per Opus-as-a-Judge.",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -417,9 +415,9 @@ def slide_30(prs):
 
     cols = [
         ("LLM Upgrade (requires training)", [
-            "Llama 3.1 8B: architecture-compatible (same hidden_size 4096)",
+            "Llama 3.1 8B: drop-in (same hidden_size 4096)",
             "Quality ≈ Llama-2 70B, 128K vocab, 128K context",
-            ("Requires adapter retraining (~2\u20134 weeks)", {"bold": True}),
+            ("Training: ~2\u20134 weeks with 5K+ segments", {"bold": True}),
             "Alone: -3 to -8pp WER",
         ], TEAL),
         ("Smart Prompts (force multiplier)", [
@@ -461,7 +459,7 @@ def slide_30(prs):
 
     _finish(slide, 30,
         "Three columns of future capability. Left: LLM swap to Llama 3.1 "
-        "8B is architecture-compatible — same hidden dimension, requires adapter retraining. Center: 7 prompt "
+        "8B is drop-in — same hidden dimension. Center: 7 prompt "
         "strategies are a force multiplier — more effective on stronger "
         "models. GER uses N-best hypotheses + correction LLM for +8-15pp "
         "with no retraining. Right: Arabic support planned, multi-speaker "
@@ -533,7 +531,7 @@ def slide_30b(prs):
     # Drop-in callout
     drop_y = CT + Inches(3.85)
     drop_text = add_text(slide,
-        "Same hidden dimension (4096) = architecture-compatible, requires adapter retraining",
+        "Same hidden dimension (4096) = architecture-compatible upgrade, requires adapter retraining",
         MX, drop_y, left_w, Inches(0.35),
         size=Pt(14), color=LGRAY, italic=True)
 
@@ -1051,13 +1049,14 @@ def slide_a8(prs):
     add_accent_line(slide)
 
     # Dimension table
-    add_text(slide, "PCA retains 2 principal components (Kaiser criterion):",
+    add_text(slide, "The 6 IS signals collapse into 3 independent dimensions:",
              MX, CT, CW * 0.55, Inches(0.4), size=Pt(14), color=WHITE)
 
     tbl1 = add_table(slide,
-        ["PC", "Top Loadings", "Variance", "Interpretation"],
-        [["PC1: Signal Quality", "All 5 content (0.43\u20130.47)", "68.4%", "Visual encoder quality"],
-         ["PC2: Output Length", "Length Ratio (0.91)", "19.5%", "Hallucination / truncation"]],
+        ["Dimension", "Signals", "Variance", "Inter-signal r"],
+        [["Word Accuracy", "WER, WWER, Phonetic", "60.0%", "> 0.79"],
+         ["Meaning Preservation", "Semantic", "28.5%", "independent"],
+         ["Output Sanity", "Length Ratio", "9.1%", "independent"]],
         MX, CT + Inches(0.5), CW * 0.55, text_size=Pt(11),
         row_height=Inches(0.32))
 
@@ -1113,9 +1112,9 @@ def slide_a11(prs):
         ["Metric", "Value"],
         [["Metric-failed segments", "900"],
          ["LLM-recoverable", "165 (18.3%)"],
-         ["Useful output (IS ≥ 2.00)", "61.6%"],
-         ["LLM Judge (Y+P)", "64.9%"],
-         ["Agreement (κ)", "0.818"]],
+         ["Metric capture (IS ≥ 3.0)", "39.9%"],
+         ["Effective capture", "50.9%"],
+         ["Uplift", "+11.0pp (+27.6% rel.)"]],
         MX, CT + Inches(0.4), SLW, text_size=Pt(11),
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
 
@@ -1156,7 +1155,7 @@ def slide_a11b(prs):
     add_title(slide, "A5: LLM Salvage — Curated Examples")
     add_accent_line(slide)
 
-    add_text(slide, "One real example per recovery category — all IS < 2.0 "
+    add_text(slide, "One real example per recovery category — all IS < 3.0 "
              '(metrics say "failed") but heuristic says recoverable:',
              MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY)
 
@@ -1452,7 +1451,7 @@ def slide_data_scaling(prs):
 
     tbl = add_table(slide,
         ["Phase", "Data", "WER", "IS Target", "Timeline"],
-        [["Current", "1.3K segs", "64.1%", "2.53", "\u2014"],
+        [["Current", "1.3K segs", "64.1%", "2.52", "\u2014"],
          ["Phase 1", "5K hrs", "55\u201358%", "~2.9", "2\u20134 wks"],
          ["Phase 2", "10K hrs", "48\u201352%", "~3.3", "4\u20136 wks"],
          ["Phase 3", "20K hrs", "42\u201346%", "~3.7", "6\u20138 wks"],
@@ -1592,7 +1591,7 @@ def slide_a16(prs):
         "IS Tier 1: 81% N \u2014 strong agreement on complete failure",
         ("Pearson r = 0.85 between IS and judge verdict (coded Y=3, P=2, N=1)",
          {"color": TEAL}),
-        ("Y+P peaks at IS \u2265 2.0 (\u03ba=0.82) not IS \u2265 3.0 (\u03ba=0.52) "
+        ("Y+P peaks at IS \u2265 2.0 (\u03ba=0.82) not IS \u2265 2.00 (\u03ba=0.52) "
          "\u2014 systems agree on ranking, differ on threshold",
          {"color": GOLD}),
     ], MX, CT + Inches(3.35), CW, Inches(2.0), size=Pt(13))
