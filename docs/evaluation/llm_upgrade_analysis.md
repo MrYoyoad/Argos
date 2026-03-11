@@ -68,9 +68,11 @@ Llama 3.1 8B is widely cited as roughly equivalent to Llama 2 70B on most benchm
 
 We have detailed data on exactly what goes wrong and which failures a stronger LLM would fix.
 
-### Failure Mode Recovery Estimates (575 non-useful segments, IS < 2.00)
+### Failure Mode Recovery Estimates
 
-| Failure Category | Count | % | LLM Impact | Expected Recovery |
+The failure mode analysis below covers all 900 segments below the legacy IS 3.0 threshold. Under the current **NIV thresholds** (IS ≥ 2.00 for Y+P "any useful", IS ≥ 3.80 for Y "clearly conveyed"), 325 of these 900 segments are already counted as useful (the "Fair" tier, IS 2.00–2.99). The remaining **575 segments (IS < 2.00)** are truly non-useful under NIV.
+
+| Failure Category | Count (of 900) | % | LLM Impact | Expected Recovery |
 |-----------------|-------|---|------------|-------------------|
 | **Wrong Topic** | 284 | 31.6% | Moderate — better language prior reduces drift | ~15-25% (~40-70 segments) |
 | **Accumulated Errors** | 220 | 24.4% | High — stronger context catches small errors | ~20-30% (~45-65 segments) |
@@ -78,7 +80,7 @@ We have detailed data on exactly what goes wrong and which failures a stronger L
 | **Hallucination** | 111 | 12.3% | Moderate-High — better calibration | ~15-25% (~15-25 segments) |
 | **Signal Loss** | 81 | 9.0% | Low — encoder failures, not LLM failures | ~5% (~4 segments) |
 
-**Estimated total recovery: ~155-235 segments**, pushing the useful rate (NIV Y+P, IS ≥ 2.00) from **61.6% to ~72-77%**. (Note: the legacy IS ≥ 3.0 threshold has been superseded by NIV thresholds — IS ≥ 2.00 for Y+P "any useful", IS ≥ 3.80 for Y "clearly conveyed".)
+**Estimated total recovery: ~155-235 segments** from the 575 truly non-useful pool (IS < 2.00), pushing the NIV Y+P useful rate from **61.6% to ~72-77%**.
 
 ### Why "Right Topic Wrong Details" Is the Sweet Spot
 
@@ -191,6 +193,8 @@ The ICLR 2024 scaling law paper (Zhang et al.) shows fine-tuning follows a **mul
 ---
 
 ## Part 6: Which Failure Categories Improve Most vs Least
+
+*Counts below are from the 900 segments below legacy IS 3.0; under NIV thresholds (IS ≥ 2.00), 575 of these are truly non-useful. Recovery estimates target this non-useful pool.*
 
 ### High Impact (LLM-dependent failures)
 
