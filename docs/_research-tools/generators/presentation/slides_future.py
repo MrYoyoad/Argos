@@ -1512,37 +1512,37 @@ def slide_price_tag(prs):
         [["5\u201310K hrs  (10\u201320\u00d7 paper)", "~$10\u201320K", "~3.0\u20133.5"],
          ["20K hrs  (46\u00d7 paper)", "~$30\u201340K", "~3.5\u20133.8"],
          ["50K hrs  (115\u00d7 paper)", "~$70\u2013100K", "~3.8\u20134.2"]],
-        tbl_x, CT + Inches(0.55), tbl_w, text_size=Pt(15),
+        tbl_x, CT + Inches(0.55), tbl_w, text_size=Pt(14),
         col_widths=[Inches(3.8), Inches(2.4), Inches(2.8)],
-        row_height=Inches(0.6),
+        row_height=Inches(0.5),
         row_colors={1: {1: GREEN, 2: GREEN}})
 
     # Key insight callout
-    ins_y = CT + Inches(2.8)
-    r1 = add_rect(slide, MX, ins_y, CW, Inches(1.3),
+    ins_y = CT + Inches(2.55)
+    r1 = add_rect(slide, MX, ins_y, CW, Inches(1.2),
                    fill_color=NAVY2, border_color=GOLD, border_width=Pt(2),
                    corner_radius=True)
     add_text(slide, "Key insight",
-             MX + Inches(0.25), ins_y + Inches(0.12),
-             Inches(3.0), Inches(0.3), size=Pt(16), color=GOLD, bold=True)
+             MX + Inches(0.25), ins_y + Inches(0.08),
+             Inches(3.0), Inches(0.28), size=Pt(15), color=GOLD, bold=True)
     add_bullets(slide, [
         "Paper used only 433 hrs of LRS3 \u2014 we need 20\u201350K hrs of diverse data",
         ("Same training recipe, same model architecture \u2014 just more data",
          {"color": TEAL}),
         "Current IS 2.52 \u2192 target IS 3.5\u20134.0 requires ~46\u2013115\u00d7 data scale-up",
-    ], MX + Inches(0.2), ins_y + Inches(0.45), CW - Inches(0.4), Inches(0.8),
-        size=Pt(14))
+    ], MX + Inches(0.2), ins_y + Inches(0.38), CW - Inches(0.4), Inches(0.75),
+        size=Pt(13))
 
     # LLM upgrade — requires adapter retraining but stacks with data investment
-    llm_y = ins_y + Inches(1.55)
-    r2 = add_rect(slide, MX, llm_y, CW, Inches(0.8),
+    llm_y = ins_y + Inches(1.4)
+    r2 = add_rect(slide, MX, llm_y, CW, Inches(0.7),
                    fill_color=NAVY2, border_color=TEAL, border_width=Pt(1),
                    corner_radius=True)
     add_text(slide, "LLM upgrade: Llama-2 \u2192 Llama 3.1 8B  "
              "(+0.3\u20130.5 IS, requires adapter retraining, stacks with data investment)",
-             MX + Inches(0.25), llm_y + Inches(0.2),
+             MX + Inches(0.25), llm_y + Inches(0.15),
              CW - Inches(0.5), Inches(0.4),
-             size=Pt(14), color=TEAL)
+             size=Pt(13), color=TEAL)
 
     _finish(slide, 0,
         "Cost projection focused on data scale as the single variable.\n\n"

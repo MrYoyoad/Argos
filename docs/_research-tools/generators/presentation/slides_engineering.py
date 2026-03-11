@@ -59,14 +59,14 @@ def slide_17(prs):
 
     # Layout — 4 slots per row with arrows between
     box_w = Inches(2.6)
-    box_h = Inches(1.4)
+    box_h = Inches(1.2)
     h_gap = Inches(0.18)
     arrow_w = Inches(0.22)
     step = box_w + h_gap + arrow_w + h_gap
     total_w = 4 * box_w + 3 * (h_gap + arrow_w + h_gap)
     start_x = int((SL_W - total_w) / 2)
-    row1_y = CT + Inches(0.15)
-    row2_y = row1_y + box_h + Inches(0.9)
+    row1_y = CT + Inches(0.05)
+    row2_y = row1_y + box_h + Inches(2.05)
 
     def _box(name, sub, color, x, y, w=None):
         bw = w or box_w
@@ -131,7 +131,7 @@ def slide_17(prs):
     # ── ASR side-branch: drops down from branch point between slots 1 and 3 ──
     # Position ASR box centered below the empty slot 2
     asr_x = start_x + 2 * step
-    asr_y = row1_y + box_h + Inches(0.55)
+    asr_y = row1_y + box_h + Inches(0.45)
     asr_grp = []
 
     # Branch connector: vertical drop from main flow down to ASR box
