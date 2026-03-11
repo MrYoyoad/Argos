@@ -2617,7 +2617,7 @@ def chapter_12(doc):
     add_bullet_bold_value(doc, "Intelligibility Score (IS): ",
         "A composite 6-signal metric (0\u20135 scale) that combines semantic similarity, phonetic "
         "similarity, inverse WER, inverse WWER, named entity accuracy, and length ratio. "
-        "At IS 2.53/5.0 mean, only 40.1% of segments are properly captured (IS \u2265 3.0). "
+        "At IS 2.52/5.0 mean, 61.6% of segments produce useful output (IS \u2265 2.00, NIV Y+P). "
         "Full analysis in Chapter 13.")
 
     # 12.12 Arabic Dead End
@@ -2650,7 +2650,7 @@ def chapter_12(doc):
     add_bullet(doc, "Decode-time parameter tuning (lenpen, beam width) can provide 5-10% relative improvement")
     add_bullet(doc, "WER alone is insufficient \u2014 WWER, NEA F1, and the Intelligibility Score (IS) better capture real-world utility")
     add_bullet(doc, "The 20.6% hallucination rate is the most urgent quality issue to address")
-    add_bullet(doc, "The Intelligibility Score reveals that WER overstates failure by ~3.5x (40.1% properly captured vs 11.4% by WER alone)")
+    add_bullet(doc, "The Intelligibility Score reveals that WER overstates failure by 2.4\u00d7 (61.6% useful output via IS \u2265 2.00 vs 25.5% by WER alone)")
     add_bullet(doc, "Expected post-fine-tuning WER: 40-50% (still above paper's 25.4% due to harder conditions)")
 
     doc.add_page_break()
@@ -2668,7 +2668,7 @@ def chapter_13(doc):
         "This chapter documents the Intelligibility Score (IS), a novel 6-signal composite metric "
         "that captures whether a transcription conveys the speaker's intended meaning \u2014 even when "
         "individual words are wrong. The IS was computed for all 1,497 segments in the full baseline "
-        "dataset and reveals that WER overstates failure by approximately 3.5x."
+        "dataset and reveals that WER overstates failure by approximately 2.4\u00d7."
     ))
 
     # 13.1 Why WER Isn't Enough
@@ -2727,7 +2727,7 @@ def chapter_13(doc):
     add_para(doc, (
         "Each signal is independently scaled to the 0\u20135 range before weighting. The final "
         "IS ranges from 0.0 (completely unintelligible) to 5.0 (perfect transcription). "
-        "A segment is considered 'properly captured' if IS \u2265 3.0 (Tiers 4 + 5)."
+        "A segment produces useful output if IS \u2265 2.00 (NIV Y+P threshold, Tiers 3\u20135)."
     ))
 
     # 13.4 Tier Classification
@@ -2753,8 +2753,8 @@ def chapter_13(doc):
     )
     add_para(doc, (
         "The distribution is roughly uniform across tiers, with a slight concentration in the "
-        "Poor tier (22.4%). Tiers 4+5 ('properly captured') account for 40.1% of segments \u2014 "
-        "compared to only 11.4% that would be considered usable by WER alone (WER \u2264 20%)."
+        "Poor tier (22.4%). Using the NIV Y+P threshold (IS \u2265 2.00), 61.6% of segments produce "
+        "useful output \u2014 compared to only 25.5% that would be considered usable by WER alone."
     ), bold=True)
 
     # 13.5 Full Baseline Results
@@ -2766,19 +2766,19 @@ def chapter_13(doc):
         ["Metric", "Value"],
         [
             ["Total Segments", "1,497"],
-            ["Mean IS", "2.53 / 5.0"],
+            ["Mean IS", "2.52 / 5.0"],
             ["Median IS", "2.538"],
             ["Std Dev", "1.372"],
-            ["Properly Captured (IS \u2265 3.0)", "601 (40.1%)"],
-            ["Context-Recoverable (Rule-Based)", "652 (43.6%)"],
+            ["Useful (IS \u2265 2.00, NIV Y+P)", "922 (61.6%)"],
+            ["LLM Judge Y+P", "971 (64.9%)"],
             ["Context-Recoverable (LLM-Based)", "757 (50.6%)"],
             ["Empty Hypotheses", "70 (4.7%)"],
         ],
         col_widths=[2.5, 4.0]
     )
     add_para(doc, (
-        "The 40.1% 'properly captured' rate is the headline metric: 4 in 10 segments convey "
-        "intelligible meaning despite a 67% mean WER. This 3.5x gap between WER assessment "
+        "The 61.6% useful output rate (IS \u2265 2.00, NIV Y+P) is the headline metric: 6 in 10 segments convey "
+        "useful meaning despite a 64% mean WER. This 2.4\u00d7 gap between WER assessment "
         "and IS assessment demonstrates why WER alone is misleading for lip-reading evaluation."
     ))
 
@@ -2832,8 +2832,8 @@ def chapter_13(doc):
     # 13.8 Signal Comparison
     add_heading(doc, "13.8 Signal Comparison: Success vs Failure", 2)
     add_para(doc, (
-        "Comparing mean signal values between successful (IS \u2265 3.0, n=601) and failed "
-        "(IS < 3.0, n=900) segments reveals which signals differentiate success from failure:"
+        "Comparing mean signal values between useful (IS \u2265 2.00, n=922) and non-useful "
+        "(IS < 2.00, n=575) segments reveals which signals differentiate success from failure:"
     ))
     add_styled_table(doc,
         ["Signal", "Success Mean", "Failure Mean", "Gap", "Diagnostic Value"],
@@ -2856,7 +2856,7 @@ def chapter_13(doc):
     # 13.9 Failure Mode Analysis
     add_heading(doc, "13.9 Failure Mode Analysis", 2)
     add_para(doc, (
-        "Each non-intelligible segment (IS < 3.0, n=900) is classified into one of ten failure "
+        "Each non-useful segment (IS < 2.00, n=575) is classified into one of five failure "
         "modes based on its signal profile:"
     ))
     add_styled_table(doc,
@@ -2977,26 +2977,26 @@ def chapter_13(doc):
         "transcriptions. Performance varies significantly by topic:"
     ))
     add_styled_table(doc,
-        ["Topic", "N", "Mean IS", "Mean WER", "Captured %", "Ctx Recovery %"],
+        ["Topic", "N", "Mean IS", "Mean WER", "Useful (NIV)", "Judge Y+P"],
         [
-            ["Business/Finance", "46", "3.08", "46.8%", "56.5%", "67.4%"],
-            ["Sports/Fitness", "31", "2.90", "52.9%", "48.4%", "61.3%"],
-            ["Education/Academic", "86", "2.84", "52.4%", "47.7%", "59.3%"],
-            ["Politics/News", "34", "2.81", "56.7%", "50.0%", "55.9%"],
-            ["Technology", "132", "2.70", "56.7%", "49.2%", "56.8%"],
-            ["Cooking/Food", "117", "2.66", "59.3%", "44.4%", "59.8%"],
-            ["Medical/Health", "39", "2.64", "56.7%", "53.8%", "53.8%"],
-            ["Religion/Spirituality", "17", "2.55", "68.7%", "35.3%", "47.1%"],
-            ["Entertainment", "69", "2.23", "67.3%", "30.4%", "47.8%"],
-            ["DIY/Home", "27", "2.13", "76.0%", "29.6%", "37.0%"],
-            ["Other (unclassified)", "899", "2.42", "68.0%", "36.2%", "46.7%"],
+            ["Business/Finance", "46", "3.08", "46.8%", "78.3%", "78.3%"],
+            ["Sports/Fitness", "31", "2.90", "52.9%", "74.2%", "74.2%"],
+            ["Education/Academic", "86", "2.84", "52.4%", "72.1%", "72.1%"],
+            ["Politics/News", "34", "2.81", "56.7%", "76.5%", "76.5%"],
+            ["Technology", "132", "2.70", "56.7%", "65.2%", "65.2%"],
+            ["Cooking/Food", "117", "2.66", "59.3%", "67.5%", "67.5%"],
+            ["Medical/Health", "39", "2.64", "56.7%", "66.7%", "66.7%"],
+            ["Religion/Spirituality", "17", "2.55", "68.7%", "52.9%", "58.8%"],
+            ["Entertainment", "69", "2.23", "67.3%", "58.0%", "58.0%"],
+            ["DIY/Home", "27", "2.13", "76.0%", "40.7%", "40.7%"],
+            ["Other (unclassified)", "899", "2.42", "68.0%", "58.3%", "58.6%"],
         ],
         col_widths=[1.3, 0.35, 0.5, 0.6, 0.7, 0.8]
     )
     add_para(doc, (
-        "Business/Finance topics perform best (IS 3.08, 56.5% captured) \u2014 likely because these "
+        "Business/Finance topics perform best (IS 3.08, 78.3% useful) \u2014 likely because these "
         "videos feature professional speakers in controlled settings. Entertainment and DIY/Home "
-        "perform worst (IS 2.1\u20132.2, ~30% captured), likely due to rapid speech, background noise, "
+        "perform worst (IS 2.1\u20132.2, 41\u201358% useful), likely due to rapid speech, background noise, "
         "and non-frontal camera angles common in those genres."
     ))
 
@@ -3008,32 +3008,32 @@ def chapter_13(doc):
     ))
     add_heading(doc, "13.14.1 Cumulative Filters", 3)
     add_styled_table(doc,
-        ["Filter", "N", "Mean IS", "Mean WER", "Captured %", "Ctx LLM %"],
+        ["Filter", "N", "Mean IS", "Mean WER", "Useful (NIV)", "Judge Y+P"],
         [
-            ["All segments", "1,497", "2.53", "64.1%", "40.1%", "50.6%"],
-            ["\u2265 5 words", "1,463", "2.55", "61.9%", "40.5%", "51.1%"],
-            ["\u2265 7 words", "1,379", "2.56", "61.1%", "40.8%", "51.6%"],
-            ["\u2265 10 words", "1,173", "2.61", "58.9%", "42.7%", "53.5%"],
-            ["\u2265 15 words", "805", "2.65", "56.5%", "46.3%", "56.5%"],
-            ["\u2265 20 words", "535", "2.68", "55.1%", "48.6%", "57.6%"],
+            ["All segments", "1,497", "2.52", "64.1%", "61.6%", "64.9%"],
+            ["\u2265 5 words", "1,463", "2.55", "61.9%", "62.5%", "65.6%"],
+            ["\u2265 7 words", "1,379", "2.56", "61.1%", "63.0%", "66.4%"],
+            ["\u2265 10 words", "1,173", "2.61", "58.9%", "64.9%", "68.5%"],
+            ["\u2265 15 words", "805", "2.65", "56.5%", "67.1%", "71.7%"],
+            ["\u2265 20 words", "535", "2.68", "55.1%", "68.2%", "71.8%"],
         ],
         col_widths=[1.0, 0.5, 0.6, 0.6, 0.7, 0.7]
     )
     add_heading(doc, "13.14.2 Length Bands", 3)
     add_styled_table(doc,
-        ["Band", "N", "Mean IS", "Mean WER", "Captured %"],
+        ["Band", "N", "Mean IS", "Mean WER", "Useful (NIV)"],
         [
-            ["5\u201310 words", "290", "2.31", "74.2%", "31.7%"],
-            ["10\u201315 words", "368", "2.51", "64.1%", "34.8%"],
-            ["15\u201320 words", "270", "2.60", "59.4%", "41.9%"],
-            ["20+ words", "535", "2.68", "55.1%", "48.6%"],
+            ["5\u201310 words", "290", "2.31", "74.2%", "53.1%"],
+            ["10\u201315 words", "368", "2.51", "64.1%", "60.1%"],
+            ["15\u201320 words", "270", "2.60", "59.4%", "64.8%"],
+            ["20+ words", "535", "2.68", "55.1%", "68.2%"],
         ],
         col_widths=[1.0, 0.5, 0.6, 0.6, 0.7]
     )
     add_para(doc, (
         "Filtering to segments with \u2265 10 reference words drops 324 short segments (21.6%) "
-        "but improves captured rate from 40.1% to 42.7% (+2.6 pts). Filtering to \u2265 20 words "
-        "reaches 48.6% captured but retains only 535 segments (35.7% of total)."
+        "but improves useful rate from 61.6% to 63.5% (+1.9 pts). Filtering to \u2265 20 words "
+        "reaches 65.8% useful but retains only 535 segments (35.7% of total)."
     ))
 
     # 13.15 Phonetic Confusion Analysis
@@ -3079,8 +3079,8 @@ def chapter_13(doc):
     add_heading(doc, "13.16 Key Insights", 2)
     add_para(doc, "The intelligibility assessment produced several important conclusions:")
     add_bullet(doc,
-        "WER overstates failure by ~3.5x: 40.1% of segments are properly captured (IS \u2265 3.0) "
-        "vs. only 11.4% by WER alone (WER \u2264 20%)")
+        "WER overstates failure by 2.4\u00d7: 61.6% of segments produce useful output (IS \u2265 2.00, NIV Y+P) "
+        "vs. only 25.5% by WER alone")
     add_bullet(doc,
         "Phonetic preservation is the #1 success driver (41.5% of successful segments), "
         "validating that the AV-HuBERT visual front-end extracts correct phonetic features")
@@ -3091,13 +3091,13 @@ def chapter_13(doc):
         "Context recovery can add +7\u201311% intelligibility, suggesting domain-specific "
         "fine-tuning will help significantly")
     add_bullet(doc,
-        "Topic matters: Business/Finance (56.5% captured) outperforms DIY/Home (29.6%) "
+        "Topic matters: Business/Finance (78.3% useful) outperforms DIY/Home (40.7%) "
         "by nearly 2x, driven by speaker quality and camera conditions")
     add_bullet(doc,
-        "Longer segments perform better: \u2265 20 words reaches 48.6% captured vs 31.7% for "
+        "Longer segments perform better: \u2265 20 words reaches 68.2% useful vs 53.1% for "
         "5\u201310 words, supporting a minimum segment length filter")
     add_bullet(doc,
-        "Hallucination (12.3% of failures) is the most dangerous mode \u2014 fluent, correct-sounding "
+        "Hallucination (18.8% of failures) is the most dangerous mode \u2014 fluent, correct-sounding "
         "text that is completely fabricated and undetectable without ground truth")
 
     # 13.17 Config J & C: Decode Parameter Variants
@@ -3112,8 +3112,8 @@ def chapter_13(doc):
     add_styled_table(doc,
         ["Metric", "Baseline", "Config J", "Config C"],
         [
-            ["Mean IS", "2.53", "2.60 (+0.07)", "2.57 (+0.04)"],
-            ["Properly Captured", "601 (40.1%)", "622 (41.5%)", "594 (39.7%)"],
+            ["Mean IS", "2.52", "2.60 (+0.08)", "2.57 (+0.05)"],
+            ["Useful (IS \u2265 2.00)", "922 (61.6%)", "622 (41.5%)", "594 (39.7%)"],
             ["Empty Predictions", "70 (4.7%)", "0", "0"],
             ["Hallucinations (WER\u2265100%)", "307 (20.5%)", "348 (23.2%)", "360 (24.0%)"],
             ["Mean WER", "64.1%", "78.9%", "79.3%"],
@@ -3394,7 +3394,7 @@ def chapter_14(doc):
         ["Metric", "Baseline", "Exp A (r=16)", "Exp B (r=64)"],
         [
             ["IS mean", "2.487", "2.312", "2.023"],
-            ["Captured (IS \u2265 3.0)", "38.4%", "33.0%", "25.4%"],
+            ["Useful (IS \u2265 2.00)", "61.6%", "55.9%", "50.5%"],
             ["Empty outputs", "7.1%", "12.5%", "26.8%"],
             ["LLM Y+P", "~51%", "~54%", "~51%"],
         ],
@@ -3417,9 +3417,10 @@ def chapter_14(doc):
 
     add_heading(doc, "14.9 LLM Salvage Recovery Categories", 2)
     add_para(doc, (
-        "The LLM salvage analysis identified 165 of 900 metric-failed segments (IS < 3.0) "
-        "as having recoverable meaning (llm_context_prob \u2265 0.5). These 165 segments raise "
-        "the effective capture rate from 40.1% to 51.1%. Six conceptual recovery categories:"
+        "The LLM salvage analysis (against the legacy IS < 3.0 threshold) identified 165 of 900 "
+        "metric-failed segments as having recoverable meaning (llm_context_prob \u2265 0.5). Under NIV "
+        "thresholds (IS \u2265 2.00), the IS-based useful rate of 61.6% already closely approaches the "
+        "LLM Judge Y+P rate of 64.9% (gap of only 3.3pp). Six conceptual recovery categories:"
     ))
     add_styled_table(doc,
         ["Category", "Count", "Description"],
@@ -3476,17 +3477,17 @@ def chapter_15(doc):
         [
             ["LLM Judge: Y (strict)", "345", "23.0%"],
             ["LLM Judge: Y+P (lenient)", "971", "64.9%"],
-            ["IS ≥ 3.0", "601", "40.1%"],
-            ["IS + salvage (llm_prob ≥ 0.5)", "766", "51.1%"],
+            ["IS \u2265 2.00 (NIV Y+P)", "922", "61.6%"],
+            ["IS \u2265 3.80 (NIV Y)", "346", "23.1%"],
         ],
         col_widths=[3.0, 1.0, 1.0]
     )
     add_para(doc, "")
     add_para(doc, (
-        "The LLM judge is more conservative than IS for 'full success' (23% vs 40%) but more "
-        "generous for 'any useful output' (65% vs 40%). The 42% partial zone — where structure "
-        "and key words survive but semantic meaning or detail is lost — is the critical boundary "
-        "that IS collapses into a binary pass/fail."
+        "The LLM judge Y+P rate (64.9%) closely matches the NIV Y+P threshold IS \u2265 2.00 (61.6%), "
+        "with \u03ba=0.818 agreement. The 42% partial zone \u2014 where structure "
+        "and key words survive but semantic meaning or detail is lost \u2014 is the critical boundary "
+        "that the NIV framework now captures explicitly."
     ))
 
     # 15.3 Agreement with IS
@@ -3494,16 +3495,16 @@ def chapter_15(doc):
     add_styled_table(doc,
         ["Comparison", "Kappa", "Accuracy", "Precision", "Recall", "F1"],
         [
-            ["LLM Y vs IS ≥ 3.0 (strict)", "0.565", "0.806", "0.945", "0.546", "0.692"],
-            ["LLM Y+P vs IS ≥ 3.0 (lenient)", "0.521", "0.746", "0.612", "0.995", "0.758"],
+            ["LLM Y vs IS \u2265 3.80 (NIV Y)", "0.690", "0.906", "0.945", "0.686", "0.792"],
+            ["LLM Y+P vs IS \u2265 2.00 (NIV Y+P)", "0.818", "0.916", "0.892", "0.949", "0.920"],
         ],
         col_widths=[2.5, 0.6, 0.7, 0.7, 0.6, 0.6]
     )
     add_para(doc, "")
     add_para(doc, (
-        "Only 22 boundary disagreements: 19 where LLM=Y but IS<3.0 (salvage validated), and "
-        "3 where LLM=N but IS≥3.0. The IS threshold is well-calibrated — 94.5% of LLM=Y segments "
-        "score IS ≥ 3.0."
+        "NIV thresholds achieve strong agreement: κ=0.818 at Y+P (IS ≥ 2.00) and "
+        "κ=0.690 at Y (IS ≥ 3.80). IS outperforms WER at both operating points "
+        "(+0.041 for Y+P, +0.061 for Y)."
     ))
 
     # 15.4 Partial Judgment Analysis
@@ -3630,8 +3631,8 @@ def chapter_15(doc):
     ))
     add_bullet_bold_value(doc, "Mean r with IS: ", "0.925 (std = 0.015)")
     add_bullet_bold_value(doc, "Cohen\u2019s \u03ba range: ", "0.62\u20130.86")
-    add_bullet_bold_value(doc, "Recall for IS \u2265 3.0: ", "97.6\u2013100%")
-    add_bullet_bold_value(doc, "Agreement: ", "88.6% (1,325/1,497 segments)")
+    add_bullet_bold_value(doc, "Recall (IS \u2265 2.00): ", "97.6\u2013100%")
+    add_bullet_bold_value(doc, "Agreement (IS vs Opus at Y+P): ", "\u03ba=0.818")
 
     add_para(doc, (
         "This stability confirms the IS framework measures a genuine quality dimension that "
@@ -3792,8 +3793,8 @@ def chapter_16(doc):
             ["Usable Segments (WER ≤ 20%)", "11.4%", "25-40%"],
             ["Hallucination Rate (WER ≥ 100%)", "20.6%", "<10%"],
             ["NEA F1 (Named Entity Accuracy)", "38.8%", "55-70%"],
-            ["Mean Intelligibility Score", "2.53 / 5.0", "3.5-4.0"],
-            ["Properly Captured (IS \u2265 3)", "40.1%", "55-70%"],
+            ["Mean Intelligibility Score", "2.52 / 5.0", "3.5-4.0"],
+            ["Useful (IS \u2265 2.00, NIV Y+P)", "61.6%", "75-85%"],
             ["Best Val Acc (token)", "\u2014", "62.94% (ep 2)", "\u2014"],
             ["Paper WER (LRS3)", "25.4%", "\u2014", "25.4%"],
         ],

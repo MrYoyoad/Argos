@@ -190,7 +190,7 @@ def plot_P3b_is_trajectory():
     is_lo  = [2.52, 2.65, 3.10, 3.50]
     is_hi  = [2.52, 3.05, 3.70, 4.10]
 
-    captured_mid = [39.9, 48, 58, 65]  # % segments IS >= 3.0
+    captured_mid = [61.6, 72, 83, 90]  # % segments IS >= 2.00 (NIV Y+P)
 
     missions = ["", "M4, M5, M7", "M6, M8", "M9"]
     effort = ["", "Days", "Weeks", "Weeks + 8x GPU"]
@@ -202,9 +202,12 @@ def plot_P3b_is_trajectory():
     ax.plot(x, is_mid, "o-", color="#ff9800", linewidth=3, markersize=12, zorder=5,
             label="Best estimate")
 
-    # IS >= 3.0 threshold line
-    ax.axhline(y=3.0, color="#4CAF50", linestyle="--", linewidth=1.5, alpha=0.7)
-    ax.text(3.15, 3.05, "IS ≥ 3.0 = Captured", fontsize=9, color="#4CAF50",
+    # NIV threshold lines
+    ax.axhline(y=2.0, color="#00B4D8", linestyle="--", linewidth=1.5, alpha=0.7)
+    ax.text(3.15, 2.05, "IS ≥ 2.00 = Useful (Y+P)", fontsize=9, color="#00B4D8",
+            fontweight="bold", va="bottom")
+    ax.axhline(y=3.8, color="#4CAF50", linestyle="--", linewidth=1.5, alpha=0.7)
+    ax.text(3.15, 3.85, "IS ≥ 3.80 = Clearly Conveyed (Y)", fontsize=9, color="#4CAF50",
             fontweight="bold", va="bottom")
 
     # Labels on points — stagger to avoid overlap
@@ -212,14 +215,14 @@ def plot_P3b_is_trajectory():
         if i == 0:
             ax.text(i, mid + 0.15, f"{mid}", ha="center", fontsize=14, fontweight="bold",
                     color="#cc0000")
-            ax.text(i - 0.15, mid - 0.25, f"{cap}% captured", ha="center", fontsize=9,
+            ax.text(i - 0.15, mid - 0.25, f"{cap}% useful", ha="center", fontsize=9,
                     color="#cc0000", style="italic")
         else:
             ax.text(i, hi + 0.25, f"~{mid:.1f}", ha="center", fontsize=13, fontweight="bold",
                     color="#ff9800")
             ax.text(i, hi + 0.12, f"({lo:.1f}–{hi:.1f})", ha="center", fontsize=8,
                     color="#666666")
-            ax.text(i, mid - 0.22, f"~{cap}% captured", ha="center", fontsize=9,
+            ax.text(i, mid - 0.22, f"~{cap}% useful", ha="center", fontsize=9,
                     color="#ff9800", style="italic")
 
     # Mission labels below — more space from data points
@@ -375,7 +378,7 @@ def plot_P5_tuning_before_after():
 
 
 def plot_P6_is_radar():
-    """IS Component Radar — captured vs failed segments across 6 IS dimensions.
+    """IS Component Radar — useful vs non-useful segments across 6 IS dimensions.
 
     Clean design: single-line labels, value annotations placed outside the chart
     area using a table-style legend for exact numbers.
@@ -384,8 +387,8 @@ def plot_P6_is_radar():
         "Semantic (25%)", "Phonetic (15%)", "Inv WER (15%)",
         "Inv WWER (15%)", "NEA F1 (15%)", "Length (15%)",
     ]
-    captured_vals = [0.74, 0.81, 0.55, 0.58, 0.74, 0.85]
-    failed_vals = [0.24, 0.38, 0.25, 0.30, 0.16, 0.55]
+    captured_vals = [0.62, 0.73, 0.59, 0.58, 0.59, 0.97]  # IS >= 2.00 (NIV Y+P)
+    failed_vals = [0.14, 0.27, 0.00, 0.06, 0.06, 0.85]   # IS < 2.00
 
     N = len(categories)
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
@@ -418,7 +421,7 @@ def plot_P6_is_radar():
             markeredgewidth=1.0, zorder=3)
     ax.fill(angles, failed_vals_closed, color="#E06C75", alpha=0.12)
 
-    # Captured polygon (on top) — solid green
+    # Useful polygon (on top) — solid green
     ax.plot(angles, captured_vals_closed, color="#56B870", linewidth=2.5,
             linestyle="-", marker="o", markersize=8, markeredgecolor="white",
             markeredgewidth=1.0, zorder=4)
@@ -447,10 +450,10 @@ def plot_P6_is_radar():
     legend_elements = [
         Line2D([0], [0], color="#56B870", linewidth=2.5, linestyle="-",
                marker="o", markersize=8, markeredgecolor="white",
-               markeredgewidth=1.0, label="Captured  (IS \u2265 3.0)  —  mean 0.71"),
+               markeredgewidth=1.0, label="Useful  (IS \u2265 2.00)  \u2014  mean 0.68"),
         Line2D([0], [0], color="#E06C75", linewidth=2.0, linestyle="--",
                marker="D", markersize=7, markeredgecolor="white",
-               markeredgewidth=1.0, label="Failed  (IS < 3.0)  —  mean 0.31"),
+               markeredgewidth=1.0, label="Non-useful  (IS < 2.00)  \u2014  mean 0.23"),
     ]
     ax_leg = fig.add_axes([0.1, 0.02, 0.8, 0.12])
     ax_leg.set_facecolor("#0D1B2A")

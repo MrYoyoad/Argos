@@ -494,7 +494,7 @@ def part_1_research(doc):
             ["WWER", "\u2014", "59.5%"],
             ["NEA F1", "Not reported", "38.8%"],
             ["Intelligibility Score (IS)", "\u2014", "2.53 / 5.0"],
-            ["Properly Captured (IS \u2265 3)", "\u2014", "40.1%"],
+            ["Useful Output (IS \u2265 2.00)", "\u2014", "61.6%"],
             ["Hallucinated (WER \u2265100%)", "\u2014", "20.6%"],
         ],
         col_widths=[2.2, 1.5, 2.0]
@@ -506,7 +506,7 @@ def part_1_research(doc):
         "hallucinated (the model generates fluent but completely fabricated text). However, WER alone "
         "overstates errors by ~3.5\u00d7: the Intelligibility Score (IS) \u2014 a 6-signal composite metric "
         "combining semantic similarity, phonetic similarity, WER, WWER, NEA, and length ratio \u2014 "
-        "shows 40.1% of segments are properly captured (IS \u2265 3.0), versus only 11.4% by WER."
+        "shows 61.6% of segments deliver useful output (IS \u2265 2.00, NIV Y+P), versus only 25.5% by WER."
     ))
 
     # 1.3 Quality Distribution
@@ -541,10 +541,10 @@ def part_1_research(doc):
     )
 
     add_para(doc, (
-        "By IS measure, 40.1% of segments convey intelligible meaning (IS \u2265 3.0) \u2014 "
+        "By IS measure, 61.6% of segments deliver useful output (IS \u2265 2.00) \u2014 "
         "3.5\u00d7 more than the 11.4% identified by WER alone. The dominant success pattern is "
         "phonetic preservation (41.5% of successes), while the most dangerous failure mode is "
-        "hallucination (12.3% of failures) \u2014 fluent text with no connection to what was spoken."
+        "hallucination (18.8% of failures) \u2014 fluent text with no connection to what was spoken."
     ))
 
     # 1.4 LLM-as-a-Judge Cross-Validation
@@ -560,8 +560,8 @@ def part_1_research(doc):
         ["Method", "Capture Rate", "Notes"],
         [
             ["WER \u2264 20%", "11.4%", "Word accuracy only"],
-            ["IS \u2265 3.0", "40.1%", "Multi-signal intelligibility"],
-            ["IS + salvage", "51.1%", "IS + recoverable meaning"],
+            ["IS \u2265 2.00", "61.6%", "Multi-signal intelligibility"],
+            ["LLM Judge (Y+P)", "64.9%", "Opus-as-a-Judge confirms"],
             ["LLM Judge: Y", "23.0%", "Strict holistic meaning"],
             ["LLM Judge: Y+P", "64.9%", "Any useful output"],
         ],
@@ -903,8 +903,8 @@ def part_4_lessons_and_todo(doc):
     add_heading(doc, "4.1 Key Insights", 2)
 
     add_bullet_bold_value(doc, "WER Overstates Failure: ",
-        "WER reports only 11.4% usable output, but Intelligibility Score analysis shows 40.1% of "
-        "segments convey intelligible meaning (IS \u2265 3.0). WER treats all errors equally and misses "
+        "WER reports only 25.5% usable output, but Intelligibility Score analysis shows 61.6% of "
+        "segments deliver useful output (IS \u2265 2.00, NIV Y+P). WER treats all errors equally and misses "
         "phonetic preservation, semantic similarity, and context recoverability.")
 
     add_bullet_bold_value(doc, "Benchmark \u2260 Reality: ",

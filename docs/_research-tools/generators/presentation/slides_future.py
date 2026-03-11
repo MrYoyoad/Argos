@@ -75,7 +75,7 @@ def slide_24(prs):
     # Bottom
     add_text(slide,
              "The gap is real \u2014 but WER dramatically overstates failure. "
-             "40% captured by IS, 65% useful per Opus-as-a-Judge.",
+             "61.6% useful by IS (Y+P), 64.9% confirmed by Opus-as-a-Judge.",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -104,7 +104,7 @@ def slide_26(prs):
     phases = [
         ("Phase 1", "Surface the good 40%",
          "Confidence scoring \u2014 flags known-good segments (2\u20134 hrs)",
-         "Targets: Signal Loss (13.9%) | IS: filters to \u2265 3.0 subset (+0.3 perceived)", TEAL),
+         "Targets: Signal Loss (13.9%) | IS: filters to high-confidence subset (+0.3 perceived)", TEAL),
         ("Phase 2", "Fix small & content errors",
          "N-best aggregation (ROVER/MBR) \u2014 vote across 20 beams",
          "Targets: Accum. Errors (9.1%) + Details (13.8%) | IS: +0.3\u20130.5", TEAL),
@@ -146,7 +146,7 @@ def slide_26(prs):
                     SRL - Inches(0.2), CT, width=SRW + Inches(0.2))
 
     bottom = add_text(slide,
-             "Combined target: IS 3.5–4.0 (55–65% captured). "
+             "Combined target: IS 3.5–4.0 (85–90% useful Y+P). "
              "Gains are multiplicative (ICLR 2024 scaling law).",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -176,7 +176,7 @@ def slide_26(prs):
         "IS +0.5-1.0.\n"
         "Phase 5 (GER): Post-hoc correction of whatever errors remain after "
         "Phases 1-4. IS +0.3-0.5.\n\n"
-        "Combined target: IS 3.5-4.0 (55-65% captured). "
+        "Combined target: IS 3.5-4.0 (85-90% useful Y+P). "
         "ICLR 2024 shows gains are multiplicative.",
         [step_shapes, [img, bottom]], click_reveal=True)
 
@@ -199,12 +199,12 @@ def slide_26b(prs):
     rx = MX + Inches(8.3)
     rw = Inches(3.8)
     milestones = [
-        ("Current", "IS 2.52", "61.6% captured", "", CORAL),
-        ("Phase 1\u20132", "IS ~2.85",  "~48% captured",
+        ("Current", "IS 2.52", "61.6% useful (Y+P)", "", CORAL),
+        ("Phase 1\u20132", "IS ~2.85",  "~72% useful (Y+P)",
          "Fixes: Signal Loss (13.9%), Accum. Errors (9.1%), Details (13.8%)", TEAL),
-        ("+ Phase 3", "IS ~3.40", "~58% captured",
+        ("+ Phase 3", "IS ~3.40", "~83% useful (Y+P)",
          "Fixes: Hallucination (18.8%), Wrong Topic (44.4%)", GREEN),
-        ("+ Phase 4\u20135", "IS ~3.80", "~65% captured",
+        ("+ Phase 4\u20135", "IS ~3.80", "~90% useful (Y+P)",
          "Fixes: all remaining via data + post-correction", GREEN),
     ]
     ms_shapes = []
@@ -228,18 +228,18 @@ def slide_26b(prs):
                      size=Pt(11), color=WHITE, italic=True))
 
     bottom = add_text(slide,
-             "Each ~10pp WER reduction \u2192 ~0.3\u20130.5 IS improvement + ~8\u201312pp captured rate.",
+             "Each ~10pp WER reduction \u2192 ~0.3\u20130.5 IS improvement + ~8\u201312pp useful rate.",
              MX, Inches(6.35), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, "26b",
         "IS improvement trajectory with failure mode annotations. "
-        "Current IS 2.53 (61.6% useful). "
-        "Phase 1-2 target IS ~2.85 (48% captured) by fixing Signal Loss (13.9%), "
+        "Current IS 2.52 (61.6% useful, NIV Y+P). "
+        "Phase 1-2 target IS ~2.85 (~72% useful) by fixing Signal Loss (13.9%), "
         "Accumulated Errors (9.1%), and Right Topic Wrong Details (13.8%). "
-        "Phase 3 target IS ~3.40 (58% captured) by fixing Hallucination (18.8%) "
+        "Phase 3 target IS ~3.40 (~83% useful) by fixing Hallucination (18.8%) "
         "and Wrong Topic (44.4%) via stronger LLM world knowledge. "
-        "Phase 4-5 target IS ~3.80 (65% captured) by improving visual encoder "
+        "Phase 4-5 target IS ~3.80 (~90% useful) by improving visual encoder "
         "with more data and post-hoc error correction. "
         "Each phase targets specific failure categories, and the magnitude "
         "reflects the proportion of errors in that category.",
@@ -344,7 +344,7 @@ def slide_28(prs):
     impact = add_bullets(slide, [
         ("Expected: 5\u201315% relative IS improvement", {"color": TEAL, "bold": True}),
         "Targets: Accumulated Errors (9.1%) \u2014 the \"death by a thousand cuts\" category",
-        "Moves IS 2.0\u20132.9 segments above the 3.0 threshold",
+        "Moves borderline segments into clearly useful range (IS \u2265 3.80)",
     ], MX, iy, CW, Inches(1.5), size=Pt(14))
 
     # Academic references
@@ -1084,9 +1084,9 @@ def slide_a8(prs):
     tbl3 = add_table(slide,
         ["Metric", "Value"],
         [["Mean r", "0.925 (std 0.015)"],
-         ["Agreement", "88.6%"],
-         ["Cohen's κ", "0.773"],
-         ["Recall (IS≥3)", "97.6–100%"],
+         ["Agreement (IS ≥ 2.00)", "κ = 0.818"],
+         ["Agreement (IS ≥ 3.80)", "κ = 0.690"],
+         ["Recall (IS ≥ 2.00)", "97.6–100%"],
          ["Config range", "κ 0.62–0.86"]],
         SRL, CT + Inches(2.75), SRW * 0.7, text_size=Pt(10),
         row_height=Inches(0.3))
@@ -1095,7 +1095,7 @@ def slide_a8(prs):
         "PCA retains 2 PCs: signal quality (68.4%, all 5 content signals load "
         "equally) and output length (19.5%, Length Ratio). Cross-config: "
         "Semantic, Phonetic, NEA are stable; WER and Length Ratio are volatile. "
-        "Heuristic: r=0.925, agreement 88.6%, kappa 0.773.")
+        "IS vs Opus judge: κ=0.818 at Y+P (IS≥2.00), κ=0.690 at Y (IS≥3.80).")
 
 
 def slide_a11(prs):
@@ -1112,9 +1112,9 @@ def slide_a11(prs):
         ["Metric", "Value"],
         [["Metric-failed segments", "900"],
          ["LLM-recoverable", "165 (18.3%)"],
-         ["Metric capture (IS ≥ 3.0)", "39.9%"],
-         ["Effective capture", "50.9%"],
-         ["Uplift", "+11.0pp (+27.6% rel.)"]],
+         ["Useful output (IS ≥ 2.00)", "61.6%"],
+         ["LLM Judge confirms (Y+P)", "64.9%"],
+         ["IS vs Judge agreement", "κ = 0.818"]],
         MX, CT + Inches(0.4), SLW, text_size=Pt(11),
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
 
@@ -1375,8 +1375,8 @@ def slide_insights(prs):
          "Tuning the LLM's decode parameters changes almost nothing.",
          TEAL),
         ("2", "WER dramatically overstates failure",
-         "40% properly captured vs WER's 11% \u2014 3.5\u00d7 more. Even 51% "
-         "with LLM salvage. Most useful output has moderate WER (50\u201370%).",
+         "61.6% useful (NIV Y+P) vs WER's 25.5% \u2014 2.4\u00d7 more. LLM Judge "
+         "confirms 64.9%. Most useful output has moderate WER (50\u201370%).",
          GREEN),
         ("3", "Domain mismatch is the primary quality driver",
          "IS ranges from 3.08 (Business) to 2.13 (DIY). Training data is TED "
@@ -1487,7 +1487,7 @@ def slide_data_scaling(prs):
     _finish(slide, 0,
         "Data scaling projections based on ICLR 2024 multiplicative scaling "
         "law. Current 1,273 segments is far below minimum. 20K segments with "
-        "Llama 3.1 8B projects to IS 3.5-4.0 (55-65% captured). AVSpeech has "
+        "Llama 3.1 8B projects to IS 3.5-4.0 (85-90% useful Y+P). AVSpeech has "
         "290K videos available for training data curation.",
         [[lt, lb], [rt], [tbl], [r1, realistic_note]], click_reveal=True)
 
@@ -1529,7 +1529,7 @@ def slide_price_tag(prs):
         "Paper used only 433 hrs of LRS3 \u2014 we need 20\u201350K hrs of diverse data",
         ("Same training recipe, same model architecture \u2014 just more data",
          {"color": TEAL}),
-        "Current IS 2.53 \u2192 target IS 3.5\u20134.0 requires ~46\u2013115\u00d7 data scale-up",
+        "Current IS 2.52 \u2192 target IS 3.5\u20134.0 requires ~46\u2013115\u00d7 data scale-up",
     ], MX + Inches(0.2), ins_y + Inches(0.45), CW - Inches(0.4), Inches(0.8),
         size=Pt(14))
 
@@ -1601,10 +1601,9 @@ def slide_a16(prs):
         "extremes: 57% Y for Tier 5, 81% N for Tier 1. The interesting "
         "middle: Tiers 2-3 get majority P verdicts — the LLM sees partial "
         "meaning preservation that strict metrics miss. Pearson r=0.85. "
-        "Threshold sweep: Y+P aligns best with IS>=2.0 (kappa=0.818, "
-        "91.5% agreement). The judge's natural boundary is one IS tier "
-        "lower than our conservative IS>=3.0 cutoff, validating that "
-        "the salvage zone (IS 2.0-3.0) contains genuinely useful output.")
+        "Threshold sweep: Y+P aligns best with IS>=2.00 (kappa=0.818, "
+        "91.5% agreement). NIV thresholds: IS>=3.80 for Y (kappa=0.690), "
+        "IS>=2.00 for Y+P (kappa=0.818). IS beats WER at both operating points.")
 
 
 def slide_a17(prs):

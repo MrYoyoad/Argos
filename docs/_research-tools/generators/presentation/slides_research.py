@@ -906,8 +906,8 @@ def slide_07(prs):
         "2.4x what WER suggests (25.5%). WER dramatically overstates "
         "failure. Methodology: LLM-distilled evaluation — the "
         "rubric, selected signals and weights, defined tier boundaries. "
-        "Validated across 16 decode configs: LLM heuristic judge r=0.925 "
-        "with IS, 88.6% agreement.",
+        "Validated: IS vs Opus judge κ=0.818 at Y+P (IS≥2.00), "
+        "cross-config r=0.925.",
         [signal_shapes, [callout], tier_shapes], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1119,10 +1119,10 @@ def slide_failure_deep_1b(prs):
     anim_groups.append([sr])
 
     _finish(slide, 0,
-        "Failure taxonomy Part 2. Accumulated Errors (24.4%): death by a "
-        "thousand cuts, 220 segments — responds to N-best aggregation. "
-        "Signal Loss (9.0%): empty or near-empty output, 81 segments — "
-        "detectable and filterable, lowest impact.",
+        "Failure taxonomy Part 2. Signal Loss (13.9%): empty or near-empty "
+        "output, 80 segments — detectable and filterable. Accumulated Errors "
+        "(9.1%): death by a thousand cuts, 52 segments — responds to N-best "
+        "aggregation. Together 23.0% of failures.",
         anim_groups, click_reveal=True)
 
 
@@ -1151,7 +1151,7 @@ def slide_failure_deep_2(prs):
     examples = [
         {
             "title": "Hallucination",
-            "pct": "12.3%",
+            "pct": "18.8%",
             "color": CORAL,
             "ref": "carry strap",
             "hyp": "holocaust denier explanation\nof the final act",
@@ -1166,7 +1166,7 @@ def slide_failure_deep_2(prs):
         },
         {
             "title": "Wrong Topic",
-            "pct": "31.6%",
+            "pct": "44.4%",
             "color": GOLD,
             "ref": "i\u2019ve made lots of videos\nabout weight loss and diet",
             "hyp": "when i was a little girl i\nalways wanted to be a princess",
@@ -1181,7 +1181,7 @@ def slide_failure_deep_2(prs):
         },
         {
             "title": "Right Topic, Wrong Details",
-            "pct": "22.7%",
+            "pct": "13.8%",
             "color": TEAL,
             "ref": "about the 13th amendment\nthe 13th amendment is going",
             "hyp": "13th may mean something to\nhim because it can help him",
@@ -1426,15 +1426,15 @@ def slide_10(prs):
             ("1. Domain Mismatch", {"bold": True, "color": TEAL}),
             "Model trained on TED talks (LRS3); real-world: DIY, cooking, sports",
             ("2. Short Segments Fail", {"bold": True, "color": TEAL}),
-            "Under 10 words: only 32% captured vs 49% for 20+ words",
+            "Under 10 words: only 53% useful vs 68% for 20+ words",
             ("3. Hallucination (20.5%)", {"bold": True, "color": TEAL}),
             "LLM prior overwhelms weak visual signal \u2014 fluent but fabricated",
         ],
         "By the Numbers", [
-            ("Business/Finance: IS 3.08, 57% captured", {"color": GREEN}),
-            ("DIY/Home: IS 2.13, 30% captured \u2014 27pp gap", {"color": CORAL}),
-            "Short (5\u201310 words): 74% WER, 32% captured",
-            "Long (20+ words): 55% WER, 49% captured \u2014 17pp gap",
+            ("Business/Finance: IS 3.08, 78% useful", {"color": GREEN}),
+            ("DIY/Home: IS 2.13, 41% useful \u2014 37pp gap", {"color": CORAL}),
+            "Short (5\u201310 words): 74% WER, 53% useful",
+            "Long (20+ words): 55% WER, 68% useful \u2014 15pp gap",
             ("28.2% of failures = drift + hallucination", {"color": CORAL, "bold": True}),
         ],
         "Three root causes explain most failures: domain mismatch (model trained "
@@ -1463,9 +1463,9 @@ def slide_11(prs):
         "Names (Admiral McRae), numbers (13th), places, "
         "organizations",
         "Either correct or destroyed \u2014 no partial credit",
-        ("Captured: 74% NEA F1 vs Failed: 16%",
+        ("Useful: 59% NEA F1 vs Non-useful: 6%",
          {"bold": True, "color": CORAL}),
-        "58pp gap \u2014 largest differentiator of any signal",
+        "53pp gap \u2014 largest differentiator of any signal",
         "17.3% of IS variance (highest for 15%-weight signal)",
         'A viewer can guess a missing "the" but not a missing name',
     ], MX, CT + Inches(0.5), col_w, Inches(3.8), size=Pt(13))
@@ -1484,7 +1484,7 @@ def slide_11(prs):
         "KEY PATTERNS TO NOTE:\n"
         "1. Top-left cluster (low WWER, high NEA): These are the success cases \u2014 "
         "segments where both word accuracy and entity preservation are high. "
-        "Most captured segments live here.\n\n"
+        "Most useful segments live here.\n\n"
         "2. Bottom row at NEA=0: A large cluster of segments with ZERO entity "
         "recall across ALL WWER values. This means many segments lose ALL named "
         "entities regardless of how many other words they get right. This is why "
@@ -1500,7 +1500,7 @@ def slide_11(prs):
         "The dense cluster at NEA=0 across all WWER levels shows that entity "
         "loss is catastrophic and independent of general word accuracy. This is "
         "why NEA accounts for 17.3% of IS variance despite only 15% weight \u2014 "
-        "it's the single most discriminating signal between captured and failed.",
+        "it's the single most discriminating signal between useful and non-useful.",
         None)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1640,8 +1640,8 @@ def slide_design_philosophy(prs):
 
     # Bottom
     add_text(slide,
-        "Validated: 88.6% agreement with IS \u2265 3.0 threshold, r = 0.85 "
-        "Pearson correlation with LLM judge gold standard.",
+        "Validated: IS vs Opus judge \u03ba = 0.818 (Y+P), \u03ba = 0.690 (Y), "
+        "r = 0.85 Pearson correlation with LLM judge gold standard.",
         MX, Inches(6.3), CW, Inches(0.4),
         size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1650,7 +1650,7 @@ def slide_design_philosophy(prs):
         "non-deterministic, slow. Option B (ours): the entire "
         "evaluation framework was designed at development time, then distilled into "
         "deterministic formulas. Zero cost per run, 100% reproducible. "
-        "Validated at 88.6% agreement, r=0.85.",
+        "Validated at κ=0.818 (Y+P), r=0.85.",
         [[r1], [r2]], click_reveal=True)
 
 
@@ -1735,14 +1735,14 @@ def slide_domain_mismatch(prs):
                   size=Pt(17), color=TEAL, bold=True)
 
     tbl = add_table(slide,
-        ["Topic", "IS", "Captured", "Judge N%"],
-        [["Business/Finance", "3.08", "57%", "25%"],
-         ["Education/Lecture", "2.63", "42%", "33%"],
-         ["Entertainment", "2.51", "39%", "36%"],
-         ["News/Politics", "2.48", "38%", "37%"],
-         ["Tech/Science", "2.43", "36%", "39%"],
-         ["Sports/Health", "2.38", "34%", "41%"],
-         ["DIY/Home", "2.13", "30%", "52%"]],
+        ["Topic", "IS", "Useful", "Judge N%"],
+        [["Business/Finance", "3.08", "78%", "24%"],
+         ["Education/Lecture", "2.84", "72%", "23%"],
+         ["News/Politics", "2.81", "76%", "26%"],
+         ["Sports/Health", "2.76", "70%", "30%"],
+         ["Tech/Science", "2.70", "65%", "28%"],
+         ["Entertainment", "2.23", "58%", "39%"],
+         ["DIY/Home", "2.13", "41%", "52%"]],
         MX, CT + Inches(0.5), col_w, text_size=Pt(12),
         row_colors={0: {1: GREEN, 2: GREEN}, 6: {1: CORAL, 2: CORAL, 3: CORAL}})
 
@@ -1766,8 +1766,8 @@ def slide_domain_mismatch(prs):
 
     _finish(slide, 0,
         "Domain mismatch is a major factor. Business and Finance has IS 3.08 "
-        "(57% captured) because it's closest to the TED talk training data. "
-        "DIY/Home is worst at IS 2.13 (30% captured) — inherently visual content "
+        "(78% useful) because it's closest to the TED talk training data. "
+        "DIY/Home is worst at IS 2.13 (41% useful) — inherently visual content "
         "that doesn't translate to speech patterns. 19% of segments (~284) show "
         "domain vocabulary confusion.\n\n"
         "TOPIC LABEL EXPERIMENT (March 2026): We tested naive topic label "

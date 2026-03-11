@@ -220,8 +220,7 @@ def generate_markdown(categories, all_divergent, all_rows):
                  "context would understand the lip-reading output despite high word error rates.")
     lines.append("")
     lines.append("This represents an **18.3% recovery rate** among segments that metrics mark as failed. "
-                 "If we include these, the effective intelligibility rate rises from 40.1% to **51.1%** "
-                 "of all segments.")
+                 "The effective useful rate is 61.6% by IS (\u2265 2.00), confirmed at 64.9% by Opus judge.")
     lines.append("")
 
     # Summary statistics
@@ -394,7 +393,7 @@ def generate_markdown(categories, all_divergent, all_rows):
     lines.append("")
     lines.append("Cross-configuration analysis (16 decode parameter sets) confirms:")
     lines.append("- Mean correlation with IS: r=0.925 (std=0.015)")
-    lines.append("- Agreement on IS >= 3.0 threshold: 88.6%, Cohen's kappa = 0.773")
+    lines.append("- Agreement at IS >= 2.00 (Y+P): \u03ba = 0.818; at IS >= 3.80 (Y): \u03ba = 0.690")
     lines.append("- Recall: 99.2% (almost never misses a properly captured segment)")
     lines.append("- Precision: 78.2% (intentionally optimistic — assumes domain context)")
     lines.append("")

@@ -838,18 +838,18 @@ def plot_FT_11_clean_summary(train_df=None, val_epoch_df=None):
 
     configs = ["Baseline", "Exp A (r=16)", "Exp B (r=64)"]
     is_scores = [2.49, 2.31, 2.02]
-    captured = [38.4, 33.5, 25.9]
+    captured = [61.6, 55.9, 50.5]  # Useful % (IS >= 2.00, NIV Y+P)
     empty_pct = [7.1, 12.5, 26.8]
 
     y = np.arange(len(configs))
     bar_h = 0.25
 
-    # Three metric groups: IS, Captured %, Empty %
+    # Three metric groups: IS, Useful %, Empty %
     bars_is = ax.barh(y + bar_h, is_scores, bar_h, color=C_TEAL,
                       edgecolor="none", label="IS Score (/5.0)", zorder=3)
     cap_scaled = [c / 20 for c in captured]
     bars_cap = ax.barh(y, cap_scaled, bar_h, color=C_GREEN,
-                       edgecolor="none", label="Captured % (\u00f720)", zorder=3)
+                       edgecolor="none", label="Useful % (\u00f720)", zorder=3)
     empty_scaled = [e / 20 for e in empty_pct]
     bars_emp = ax.barh(y - bar_h, empty_scaled, bar_h, color=C_CORAL,
                        edgecolor="none", label="Empty % (\u00f720)", zorder=3)

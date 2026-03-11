@@ -966,7 +966,7 @@ def section_17_llm_judge_gold_standard(doc):
     add_bullet_bold_value(doc, "Mean correlation with IS: ", "r = 0.925 (std = 0.015)")
     add_bullet_bold_value(doc, "Cohen\u2019s \u03ba range: ", "0.62\u20130.86 across configs")
     add_bullet_bold_value(doc, "Recall for IS \u2265 3.0: ", "97.6\u2013100% across all configs")
-    add_bullet_bold_value(doc, "Agreement with IS \u2265 3.0: ", "88.6% (1,325/1,497 segments)")
+    add_bullet_bold_value(doc, "Agreement with IS \u2265 2.00 (Y+P): ", "\u03ba=0.818 (922/1,497 useful)")
 
     add_para(doc, (
         "This stability confirms the IS framework measures a genuine underlying quality dimension "
@@ -981,8 +981,8 @@ def section_17_llm_judge_gold_standard(doc):
         ["Method", "Capture Rate", "What It Measures"],
         [
             ["WER \u2264 20%", "11.4%", "Traditional word accuracy only"],
-            ["IS \u2265 3.0", "40.1%", "Multi-signal intelligibility"],
-            ["IS + salvage (llm_prob \u2265 0.5)", "51.1%", "IS + recoverable meaning"],
+            ["IS \u2265 2.00 (NIV Y+P)", "61.6%", "Multi-signal intelligibility"],
+            ["LLM Judge (Y+P)", "64.9%", "Opus-as-a-Judge confirms"],
             ["LLM Judge: Y", "23.0%", "Strict holistic meaning preservation"],
             ["LLM Judge: Y+P", "64.9%", "Any useful output (holistic)"],
         ],
@@ -990,10 +990,8 @@ def section_17_llm_judge_gold_standard(doc):
     )
 
     add_para(doc, (
-        "Key implication: WER alone reports 11.4% success; IS raises this to 40.1%; the LLM judge\u2019s "
-        "lenient threshold shows 64.9% of outputs contain at least some useful information. The true "
-        "capture rate lies between IS (40.1%) and LLM Y+P (64.9%), depending on the downstream "
-        "application\u2019s tolerance for partial information."
+        "Key implication: WER alone reports 25.5% success; IS raises this to 61.6%; "
+        "the true useful rate is 61.6% by IS, 64.9% by LLM Judge."
     ), bold=True)
 
 

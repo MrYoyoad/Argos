@@ -729,7 +729,7 @@ def main():
     md.append(f"| **LLM Judge: Y (strict)** | {n_y} | **{strict_rate:.1%}** |")
     md.append(f"| **LLM Judge: Y+P (lenient)** | {n_y + n_p} | **{lenient_rate:.1%}** |")
     md.append(f"| IS >= 3.0 | {is_gte3} | {is_gte3/total:.1%} |")
-    md.append(f"| IS + salvage (llm_prob >= 0.5) | 766 | 51.1% |")
+    md.append(f"| Useful output (IS >= 2.00) | 922 | 61.6% |")
     md.append("")
     md.append("### Judgment Distribution")
     md.append("")
@@ -872,7 +872,7 @@ def main():
     md.append("")
     md.append(f"The gold standard LLM lenient capture rate of {lenient_rate:.1%} compares with:")
     md.append(f"- IS >= 3.0: {is_gte3/total:.1%}")
-    md.append(f"- IS + salvage: 51.1%")
+    md.append(f"- Useful output (IS >= 2.00): 61.6%")
     md.append("")
 
     with open(OUTPUT_MD, "w") as f:

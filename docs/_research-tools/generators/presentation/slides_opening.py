@@ -132,7 +132,7 @@ def slide_exec_summary(prs):
     _finish(slide, 2,
         "Executive summary. Three months of work on visual speech processing. "
         "Key finding: WER dramatically overstates failure. Our Intelligibility "
-        "Score shows 40% of output is properly captured, not the 11% WER suggests. "
+        "Score shows 61.6% of output is useful (NIV Y+P), not the 25.5% WER suggests. "
         "Complete production system delivered. Clear roadmap to improve further.",
         [[bul]], click_reveal=True)
 

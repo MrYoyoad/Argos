@@ -287,8 +287,8 @@ def slide_16(prs):
         "15% weight — most direct measure of visual encoder quality.\n"
         "2. WER is UNRELIABLE across configs — correlation with IS swings from "
         "-0.95 to -0.45 depending on length penalty. This is why IS was created.\n\n"
-        "Cross-config validation: r=0.925, 88.6% agreement, κ=0.773, "
-        "recall 97.6-100% across 16 decode configs.")
+        "Cross-config validation: r=0.925, recall 97.6-100% across 16 configs. "
+        "IS vs Opus judge: κ=0.818 at Y+P (IS≥2.00), κ=0.690 at Y (IS≥3.80).")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 17 — PIPELINE ARCHITECTURE
@@ -347,7 +347,7 @@ def slide_25(prs):
 
     _finish(slide, 25,
         "IS provides a conservative lower bound for transcription quality. "
-        "IS says 61.6% of segments are captured (IS >= 2.00). But an independent "
+        "IS says 61.6% of segments are useful (IS >= 2.00). But an independent "
         "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
         "Y+P = 64.9% deliver useful output. The 25pp gap shows IS deliberately "
         "undercounts: many segments with partial value are penalized by strict "
@@ -458,9 +458,9 @@ def slide_25c(prs):
     headers = ["Metric", "Value"]
     rows = [
         ["Correlation with IS", "r = 0.934"],
-        ["Agreement (IS \u2265 3.0)", "88.6%"],
-        ["Cohen\u2019s \u03ba", "0.773 (substantial)"],
-        ["Recall", "99.2%"],
+        ["Agreement (IS \u2265 2.00)", "\u03ba = 0.818"],
+        ["Agreement (IS \u2265 3.80)", "\u03ba = 0.690"],
+        ["Recall (IS \u2265 2.00)", "97.6\u2013100%"],
         ["Cross-config stability", "r = 0.925 \u00b1 0.015"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.5), col_w,
@@ -470,7 +470,7 @@ def slide_25c(prs):
 
     rb = add_bullets(slide, [
         "Stable across all 16 decode configurations",
-        "Catches 99.2% of IS \u2265 3.0 segments",
+        "Recall 97.6\u2013100% across 16 decode configurations",
         ("Zero cost: pure Python, no LLM calls at runtime", {"bold": True}),
     ], rx, CT + Inches(3.1), col_w, Inches(1.5), size=Pt(13))
 
@@ -484,7 +484,7 @@ def slide_25c(prs):
     _finish(slide, "25c",
         "How the salvage detection works: a 15-rule deterministic decision tree "
         "that checks 6 linguistic signals and outputs a recovery probability. "
-        "Validated at r=0.934 with IS, 88.6% agreement, stable across 16 configs.",
+        "Validated at r=0.934 with IS, κ=0.818 (Y+P), stable across 16 configs.",
         [[lt] + step_shapes, [rt, tbl, rb]])
 
 def slide_25d(prs):
@@ -1849,7 +1849,7 @@ def slide_disagreement_context(prs):
         "knitting -> medical (needle -> neck, decreases -> skin grafting); "
         "US education -> international (student loan debt -> south korea, "
         "US marshals -> US marketers).\n\n"
-        "These 11 context false positives (IS >= 3.0 but context N) are the "
+        "These 11 context false positives (IS \u2265 3.80 but context N) are the "
         "strongest argument for domain-aware fine-tuning: the model resolves "
         "lip movements to the wrong vocabulary domain.",
         [[lt, tbl, stat], ex_card, [more, bot]], click_reveal=True)

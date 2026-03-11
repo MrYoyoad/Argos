@@ -623,7 +623,7 @@ def section_mitigations(doc):
         "already captures most of these cases. At IS \u2265 2.00, \u03ba=0.818 with judge Y+P (922 segments, 61.6%).")
     add_bullet_bold_value(doc, "Deploy llm_context_prob heuristic: ",
         "the 15-rule decision tree identifies 165 salvageable segments (18.3% of metric failures) "
-        "with llm_context_prob \u2265 0.5, lifting effective capture from 40.1% to 51.1%.")
+        "with llm_context_prob \u2265 0.5, lifting useful rate to 61.6% (IS \u2265 2.00), confirmed at 64.9% by Opus judge.")
     add_bullet_bold_value(doc, "Accept the residual gap: ",
         "19 of 1,497 (1.3%) is a small false negative rate. Perfect alignment would require "
         "runtime LLM evaluation, which is expensive and non-deterministic.")
