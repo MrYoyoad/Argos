@@ -34,6 +34,8 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
 OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "evaluation" / "plots"
+# Also copy to PPTX source directory so generate_presentation.py picks them up
+PPTX_PLOTS_DIR = Path("/home/ubuntu/presentation_materials_20260224/01_plots_for_slides")
 PLOT_DPI = 200
 FIG_SIZE = (10, 6)
 
@@ -500,5 +502,11 @@ if __name__ == "__main__":
     plot_P4_lenpen_sensitivity()
     plot_P5_tuning_before_after()
     plot_P6_is_radar()
+    # Copy all plots to PPTX source directory
+    if PPTX_PLOTS_DIR.exists():
+        import shutil
+        for png in OUTPUT_DIR.glob("P*.png"):
+            shutil.copy2(png, PPTX_PLOTS_DIR / png.name)
+        print(f"\n  Copied to {PPTX_PLOTS_DIR}")
     print()
     print("Done! All 7 plots saved to", OUTPUT_DIR)
