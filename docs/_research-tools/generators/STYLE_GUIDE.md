@@ -12,7 +12,8 @@ Standard formatting rules for all document and presentation generators.
 4. [Pipeline Diagram](#pipeline-diagram)
 5. [Beamer (LaTeX) Theme](#beamer-latex-theme)
 6. [Spider/Radar Chart Conventions](#spiderradar-chart-conventions)
-7. [Cross-Format Rules](#cross-format-rules)
+7. [Visual Quality Guardrails](#visual-quality-guardrails)
+8. [Cross-Format Rules](#cross-format-rules)
 
 ---
 
@@ -201,6 +202,8 @@ The `add_animations()` function in `helpers.py` creates click-to-advance OOXML e
 
 5. **Plot text annotations need staggering** — Place IS values above the hi-range line, captured % below the mid-line, and mission labels below the lo-range line with extra spacing.
 
+> See [Visual Quality Guardrails §7.6](#76-animation-structure-a1a5) for the complete animation checklist.
+
 ## PPTX Modular Architecture
 
 **Generator**: `generate_presentation.py` is a slim orchestrator (~90 lines). All logic lives in the `presentation/` package:
@@ -263,6 +266,8 @@ C_BEST  = "#FFD700"   # Best checkpoint (gold star)
 - Best checkpoint: gold star marker (`marker="*"`)
 - Overfitting zones: red shading with `alpha=0.08`
 - Font sizes: title 14-15pt, axes 12-13pt, labels 10-11pt
+
+> See [Visual Quality Guardrails T5/T6](#73-text-readability-t1t7) for presentation-readability requirements.
 
 ---
 
@@ -374,6 +379,197 @@ The radar template is **reusable for comparing LLM performance profiles**:
 
 ---
 
+# Visual Quality Guardrails
+
+Hard-won rules from 251 presentation remarks and 35+ visual-fix commits. Every developer touching generator code or creating new slides must follow these.
+
+**Docx applicability**: Rules T1 (body 11pt min, table 10pt min), D3 (avoid consecutive tables without text between them), and F1–F4 (data freshness) also apply to docx generators.
+
+## 7.1 Occlusion Prevention (O1–O8)
+
+Elements hiding each other is the most common visual defect.
+
+**O1 — Column widths must not exceed CW.**
+Multi-column layouts must satisfy: `n * col_w + (n-1) * gap <= CW` (12.13"). A 3-column layout once totaled 12.4" and clipped the right column off-slide.
+
+**O2 — Tables must not overlap downstream elements.**
+After placing a table, verify: `table_y + (num_rows + 1) * row_height < next_element_y`. Fix: reduce `row_height` (0.7" → 0.48") and font size (12pt → 11pt).
+
+**O3 — Images must not cover subtitle text.**
+When an image follows a subtitle, the image top must be ≥ `subtitle_y + subtitle_h + Inches(0.15)`. Grey subtitle text on navy is invisible if even partially covered.
+
+**O4 — Footer safe zone.**
+- Main content must end by **y=6.1"**
+- Footnotes/references by **y=6.45"**
+- Nothing below **y=7.12"** (page numbers live there)
+
+Common offenders: radar legends, gallery captions, roadmap insight boxes.
+
+**O5 — `clear_slide_content()` must re-apply navy background.**
+When clearing all shapes from a slide (for rebuild), explicitly reset `slide.background.fill` to BG. Otherwise text renders white-on-white.
+
+**O6 — Callout boxes must be wide enough for their text.**
+Minimum callout width: `Inches(2.2)`. A "Weight: 25%" callout was clipping until widened from 3.5" to 4.8".
+
+**O7 — Connectors and arrows must be mathematically centered.**
+Never eyeball placement. Use: `arrow_x = target_x + target_w / 2 - arrow_w / 2`. A pipeline down-arrow was visually disconnected until this was applied.
+
+**O8 — Rebuilt slides must clear shapes first or use absolute positioning.**
+When rebuilding slide content programmatically, clear existing shapes first. Never rely on "below previous" relative positioning — shapes will stack on top of each other.
+
+## 7.2 Density Limits (D1–D6)
+
+Overcrowded slides were the second most common remark category.
+
+**D1 — Max 5 bullet points per slide (prefer 3–4).**
+Each bullet should be one line at the target font size. If you need more, split into two slides.
+
+**D2 — Max 12 words per bullet point.**
+Bullets are signposts, not sentences. Move explanatory detail to speaker notes.
+
+**D3 — Max 1 primary table per slide.**
+If a slide needs two tables, the second goes to speaker notes or a separate slide. Exception: small key-value stat tables (≤3 rows) alongside a main table.
+
+**D4 — Max 2 statistical measures visible per slide.**
+Pick the most important metric (e.g., κ OR agreement %, not both). Move the rest to speaker notes.
+
+**D5 — One concept per slide.**
+If a slide needs "Part 1" and "Part 2" labels, it should be two slides. The IS intro was split into 3 sub-slides; the failure taxonomy into 2.
+
+**D6 — Redundant tables go to speaker notes.**
+If information is already conveyed by a chart or card layout, do not also show it in a table on the same slide.
+
+## 7.3 Text Readability (T1–T7)
+
+Projector distance reduces effective readability by ~50%.
+
+**T1 — Minimum font sizes by element type:**
+
+| Element | Minimum | Recommended |
+|---------|---------|-------------|
+| Slide title | 28pt | 32pt |
+| Body text / bullets | 14pt | 15–17pt |
+| Table cell text | 12pt | 13pt |
+| Card description text | 12pt | 13pt |
+| Callout box text | 11pt | 12pt |
+| Footnotes / references | 8pt | 9pt |
+| Annotations on slides | 11pt | 12pt |
+| Plot axis labels (matplotlib) | 12pt | 13pt |
+| Plot value labels (matplotlib) | 10pt | 11pt |
+
+**T2 — Never use LGRAY text smaller than 11pt.**
+Grey on dark navy has inherently low contrast. Below 11pt it becomes unreadable on projectors. Prefer WHITE for any text below 13pt.
+
+**T3 — Every text frame must set `word_wrap=True` and `auto_size=None`.**
+This is already enforced in `add_text()`, `add_rich_text()`, `add_bullets()`, and `add_rect()`. When creating raw textboxes, always set these explicitly:
+```python
+tf = tb.text_frame
+tf.word_wrap = True
+tf.auto_size = None  # Prevents pptx from auto-shrinking text
+```
+
+**T4 — Font sizes must be consistent across similar elements within a slide.**
+All card titles on one slide must use the same size. All table cells must use the same size. Inconsistency signals accidental construction.
+
+**T5 — Plot text must be readable at presentation scale.**
+Matplotlib defaults (10pt) are too small. Set `rcParams` for titles ≥ 14pt, axes ≥ 12pt, tick labels ≥ 10pt. Test embedded plots at 50% zoom (simulates projector distance).
+
+**T6 — Split combined dual-axis plots into separate panels.**
+A single matplotlib figure with dual axes, small text, and multiple series is always unreadable in presentations. Split into two separate images at larger size (e.g., 5.9" × 3.4" each).
+
+**T7 — Border and header weight must not overpower content.**
+Header bars max 0.32" height (not 0.4"). Borders max Pt(1.5) (not Pt(3)). Use fills rather than heavy outlines for color-coded elements.
+
+## 7.4 Spacing & Layout (S1–S7)
+
+Breathing room is what separates a professional slide from a wall of text.
+
+**S1 — Minimum 0.15" vertical gap between stacked elements.**
+Between cards, between table and text, between image and caption. Zero-gap layouts look cramped and risk pixel-level occlusion.
+
+**S2 — Minimum 0.3" two-column gutter.**
+The standard `build_two_col` uses 1.13". Custom two-column layouts must not go below 0.3" (`SRG` in config.py).
+
+**S3 — Images and text must share width proportionally.**
+Standard split: `SLW=5.6"` text + `SRG=0.3"` gap + `SRW=5.93"` image. Custom ratios are allowed, but text area ≥ 3.4" and image ≥ 4.0".
+
+**S4 — Content top starts at CT=1.45".**
+This reserves space for title (32pt at y=0.4") and accent line (y≈1.2"). Never place content above CT unless intentionally replacing the title area.
+
+**S5 — Content bottom zones.**
+- Main content (tables, cards, images): end by **y=6.1"**
+- Footnotes and references: **y=6.45"** max
+- The `helpers.py` height cap enforces this: `max_h = Inches(6.1) - top`
+
+**S6 — Use named gap variables, never magic numbers.**
+Every layout function should define named variables at the top:
+```python
+row_gap = Inches(0.12)
+col_gap = Inches(0.43)
+card_h  = Inches(1.05)
+```
+This makes spacing auditable and adjustable.
+
+**S7 — Layout formulas must be self-documenting.**
+Use named arithmetic when computing positions:
+```python
+step = box_w + h_gap + arrow_w + h_gap
+total_w = n * box_w + (n - 1) * (h_gap + arrow_w + h_gap)
+start_x = MX + (CW - total_w) / 2  # center the grid
+```
+Never hardcode pixel positions.
+
+## 7.5 Data Freshness (F1–F4)
+
+Stale numbers undermine credibility and caused the most multi-file fix commits.
+
+**F1 — Regenerate embedded images after any metric/threshold change.**
+Plots with threshold lines, percentages, or tier boundaries go stale when source data changes. After modifying canonical numbers, always re-run the relevant `generate_*_plots.py` AND regenerate the PPTX. A scatter plot once showed the old IS ≥ 3.0 threshold for weeks after NIV adoption.
+
+**F2 — All slide text numbers must trace to a single source of truth.**
+Canonical numbers live in CLAUDE.md and MEMORY.md. If a number appears on a slide, it must match. When numbers change, grep all generator files for the old value.
+
+**F3 — Speaker notes must be updated alongside visible slide content.**
+When slide text changes, speaker notes for that slide must also be reviewed. Old statistics in notes cause presenter confusion.
+
+**F4 — After updating a metric threshold, run a full-file grep audit.**
+Search for the old threshold value across ALL generator files (`*.py`), markdown docs, and Beamer source. A single surviving stale reference undermines the entire update. Example: `grep -rn "IS.*3\.0" docs/_research-tools/generators/`
+
+## 7.6 Animation Structure (A1–A5)
+
+OOXML animation bugs are silent — PowerPoint doesn't warn, it just renders wrong.
+
+**A1 — `para_build` must default to `False`.**
+Only set `True` when bullet-by-bullet reveal is explicitly desired. When `True`, multi-paragraph text in entry groups gets hidden instead of appearing on entry.
+
+**A2 — Animation groups must include ALL child shapes.**
+When a visual unit consists of multiple shapes (rect + title + body), all must be in the same `anim_groups` entry:
+```python
+card_shapes = []
+card_shapes.append(add_rect(...))   # background
+card_shapes.append(add_text(...))   # title
+card_shapes.append(add_text(...))   # body
+anim_groups.append(card_shapes)
+```
+Never put only the rectangle in `anim_groups` — orphaned text will float independently, appearing before its background card. This bug affected 16 slides simultaneously.
+
+**A3 — Animation group order = visual narrative order.**
+Group 0 is visible on slide entry. Group 1 appears on first click. Left-side content should generally be group 0 (read first), right-side group 1. Top-to-bottom reveals: top = group 0.
+
+**A4 — One animation group per logical unit.**
+For pipeline or timeline slides, each stage/step should be its own animation group. Lumping all stages into one group or splitting stages across groups both create confusion.
+
+**A5 — OOXML 3-level par nesting is non-negotiable.**
+The `add_animations()` function uses this specific structure:
+```xml
+Level 1 par: delay="indefinite"  (waits for click)
+  Level 2 par: delay="0"
+    Level 3 par: presetID="1", presetClass="entr", nodeType="clickEffect"
+```
+Do not attempt to simplify or shortcut this XML. Even small deviations silently break in PowerPoint.
+
+---
+
 # Cross-Format Rules
 
 | Rule | Detail |
@@ -386,3 +582,4 @@ The radar template is **reusable for comparing LLM performance profiles**:
 | **Numbers** | All formats must use same canonical numbers (see MEMORY.md) |
 | **Design-time LLM** | Always clarify: "Claude designed the rubric; no LLM runs at eval time" |
 | **IS explanation** | 6 signals with weight rationale; PCA shows 2 dimensions: signal quality (68.4%, all 5 content signals) and output length (19.5%, Length Ratio) |
+| **Visual guardrails** | PPTX: all rules (O/D/T/S/F/A). Docx: T1 (min fonts), T3 (word wrap), D3 (one table per section), F1–F4 (data freshness) |
