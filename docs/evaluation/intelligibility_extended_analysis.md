@@ -74,7 +74,8 @@ All other parameters identical (beam=20, top_p=0.9, rep_penalty=1.2, no_repeat_n
 | Metric | Baseline | Config J | Config C |
 |--------|----------|----------|----------|
 | Mean IS | 2.53 | **2.60** | 2.57 |
-| Properly Captured (IS >= 3) | 601 (40.1%) | **622 (41.5%)** | 594 (39.7%) |
+| Useful (IS >= 2.00, NIV Y+P) | 922 (61.6%) | **938 (62.7%)** | 928 (62.0%) |
+| *Legacy: Captured (IS >= 3.0)* | *601 (40.1%)* | *622 (41.5%)* | *594 (39.7%)* |
 | Empty Predictions | 70 (4.7%) | **0** | **0** |
 | Hallucinations (WER >= 100%) | 307 (20.5%) | 348 (23.2%) | 360 (24.0%) |
 | Mean WER | **64.1%** | 78.9% | 79.3% |
@@ -84,14 +85,14 @@ All other parameters identical (beam=20, top_p=0.9, rep_penalty=1.2, no_repeat_n
 ### What Changed
 
 - **Empties eliminated:** lenpen=1.0 forces output for all segments. The 70 former empties (IS=0) now produce actual text.
-- **Hallucinations doubled:** 111 -> 262 (J) / 270 (C). Most former empties become hallucinations -- the model generates fluent but fabricated text when visual signal is weak.
+- **Hallucinations increased by +13%:** 307 → 348 (J) / 360 (C). Most former empties become hallucinations — the model generates fluent but fabricated text when visual signal is weak.
 - **Net IS slightly positive:** Even hallucinated output scores IS ~0.5-1.0 (vs 0.0 for empty), and ~15% of filled empties produce fair/good quality.
 - **J beats C:** Stochastic sampling (temp=0.5) finds 28 more intelligible segments and recovers 3.7pp more named entities than deterministic decoding.
-- **Long segments benefit most:** 20+ word segments gain +0.25 IS and +3.4pp capture rate under J. Short segments (5-10 words) are marginally worse due to over-generation.
+- **Long segments benefit most:** 20+ word segments gain +0.25 IS and +3.4pp useful rate under J. Short segments (5-10 words) are marginally worse due to over-generation.
 
 ### Conclusion
 
-The improvement is real but marginal (+0.08 IS, +25 captured segments). The fundamental tradeoff is silent failures (empties) vs noisy failures (hallucinations). Decode parameter tuning has reached diminishing returns; domain adaptation via fine-tuning remains the only viable path to production-grade accuracy.
+The improvement is real but marginal (+0.08 IS, +16 useful segments under NIV Y+P). The fundamental tradeoff is silent failures (empties) vs noisy failures (hallucinations). Decode parameter tuning has reached diminishing returns; domain adaptation via fine-tuning remains the only viable path to production-grade accuracy.
 
 Full comparison: [baseline_vs_J_vs_C_intelligibility.md](baseline_vs_J_vs_C_intelligibility.md)
 
@@ -115,23 +116,27 @@ Two approaches exist: (A) inject word count at inference only (no retraining), o
 
 #### The Critical Finding: Most Failures Are Content Problems, Not Length Problems
 
-| Failure Category | N | Already Correct Length (0.8-1.2 ratio) | Mean length_ratio |
-|---|---|---|---|
-| Accumulated Errors | 220 | **72.3%** | 0.930 |
-| Wrong Topic | 284 | **58.1%** | 0.837 |
-| Right Topic Wrong Details | 204 | **68.6%** | 0.902 |
-| Hallucination | 111 | 23.4% | 1.563 |
-| Signal Loss | 81 | 0.0% | 0.064 |
+Under NIV thresholds (IS < 2.00 = non-useful, n=575):
 
-**3 out of 5 failure categories** (708/900 = 78.7% of failures) already produce approximately the correct number of words. Word count has zero effect on them — the problem is **which words** are generated, not **how many**.
+| Failure Category | N | % of Non-Useful | Already Correct Length (0.8-1.2 ratio) | Mean length_ratio |
+|---|---|---|---|---|
+| Wrong Topic | 255 | 44.4% | ~58% | ~0.84 |
+| Hallucination | 108 | 18.8% | ~23% | ~1.56 |
+| Signal Loss | 80 | 13.9% | ~0% | ~0.06 |
+| Right Topic Wrong Details | 79 | 13.8% | ~69% | ~0.90 |
+| Accumulated Errors | 52 | 9.1% | ~72% | ~0.93 |
+
+*Note: Legacy IS < 3.0 analysis (n=900) is superseded by NIV IS < 2.00 (n=575). The tighter threshold excludes ~325 "partial" segments that carry some useful meaning.*
+
+**3 out of 5 failure categories** (Wrong Topic + Right Topic Wrong Details + Accumulated Errors = 386/575 = 67.1% of non-useful segments) already produce approximately the correct number of words. Word count has zero effect on them — the problem is **which words** are generated, not **how many**.
 
 #### Per-Failure-Mode Impact (Inference-Only)
 
 **Empty Output (70 segments, mean ref_words=33.7):**
 Model produces nothing. These are the LONGEST segments (mean 33.7 words, 0% have ref_words < 10). Setting `min_length=N` forces generation, but the model produced nothing because visual features for long sequences are degraded. Forced output = **pure hallucination at exactly the right length**. Impact: NEGATIVE.
 
-**Hallucination (111 segments, mean ref_words=9.6, 57.7% on short segments):**
-Fluent text unrelated to what was said. Mean length_ratio=1.56 (56% more words than reference). 23.4% already have correct length. For the 76.6% that are too long, word count truncates the fabrication but doesn't fix content. **Most importantly: removes the client's only detection signal** (see Hallucination Detectability below). Impact: MIXED/NEGATIVE.
+**Hallucination (108 non-useful segments, mean ref_words=9.6, 57.7% on short segments):**
+Fluent text unrelated to what was said. Mean length_ratio=1.56 (56% more words than reference). ~23% already have correct length. For the ~77% that are too long, word count truncates the fabrication but doesn't fix content. **Most importantly: removes the client's only detection signal** (see Hallucination Detectability below). Impact: MIXED/NEGATIVE.
 
 Real examples of what the LLM hallucinates:
 - REF: `"here"` (1 word) → HYP: `"i am an engineer"` (4 words, ratio=4.0)
@@ -149,12 +154,12 @@ Real examples of what the LLM hallucinates:
 | Failure Mode | N | Would It Help? | Direction |
 |---|---|---|---|
 | Over-generation | 1 | YES — direct fix | Positive |
-| Hallucination | 111 | PARTIALLY — reduces volume, makes detection HARDER | Mixed/Negative |
+| Hallucination | 108 | PARTIALLY — reduces volume, makes detection HARDER | Mixed/Negative |
 | Truncation | 10 | NO — converts to partial hallucination | Negative |
 | Empty Output | 70 | NO — converts to full hallucination | Negative |
-| All others | 608 | NO — already correct length | None |
+| All others | ~327 | NO — already correct length | None |
 
-**Net impact:** ~+5 segments crossing IS=3.0 (+0.3pp). Hallucination count increases from 111 to ~191 (7.4% → 12.8%) as Empty Output and Truncation are forced to generate fabricated text. All hallucinations become harder to detect.
+**Net impact:** Negligible improvement. Hallucination count increases as Empty Output and Truncation are forced to generate fabricated text. All hallucinations become harder to detect.
 
 #### Hallucination Detectability (Critical Finding)
 
@@ -203,8 +208,8 @@ This conditional length modeling literally cannot be learned without the word co
 
 #### Per-Failure-Mode Impact (Fine-Tuned)
 
-**Hallucination (111 segments) — largest improvement:**
-The 64 short-segment hallucinations (ref_words < 10) benefit most. With "3 words" conditioning, the model's hypothesis space shrinks dramatically — instead of exploring all possible English sentences, it focuses on 3-word hypotheses consistent with the visual features. Estimated 15-25% of short-segment hallucinations could improve. Longer-segment hallucinations: 5-10% improvement.
+**Hallucination (108 non-useful segments) — largest improvement:**
+The short-segment hallucinations (ref_words < 10) benefit most. With "3 words" conditioning, the model's hypothesis space shrinks dramatically — instead of exploring all possible English sentences, it focuses on 3-word hypotheses consistent with the visual features. Estimated 15-25% of short-segment hallucinations could improve. Longer-segment hallucinations: 5-10% improvement.
 
 **Empty Output (70 segments):**
 The model learns "when told 20 words, generate 20 words." Visual features are still degraded for these long segments, but training teaches the model to attempt generation rather than producing nothing. Estimated 10-15 of 70 might produce partially correct text where visual signal is merely weak rather than absent.
@@ -212,23 +217,24 @@ The model learns "when told 20 words, generate 20 words." Visual features are st
 **Truncation (10 segments):**
 The model learns to continue generating up to N words. Unlike inference-only forcing, the continuation is grounded in trained behavior, not raw forced generation. Estimated 2-3 of 10 improve.
 
-**Total Topic Drift (143 segments):**
-Modest improvement for the 60.8% that undergenerate. Word count forces the model to produce more output, giving more opportunities for correct content. Estimated 5-10% improvement.
+**Wrong Topic (255 non-useful segments):**
+Modest improvement for those that undergenerate. Word count forces the model to produce more output, giving more opportunities for correct content. Estimated 5-10% improvement.
 
-**All other modes (424 segments):**
+**All other modes (~227 segments):**
 Already at correct length, word choice problems. ~0% improvement from word count alone.
 
 #### Net Impact Estimate (Fine-Tuned)
 
 | Metric | Current | Fine-Tuned w/ Word Count | Change |
 |---|---|---|---|
-| Properly captured (IS >= 3.0) | 597 (39.9%) | ~640-660 (42.7-44.1%) | **+43 to +63 (+3-4pp)** |
-| Hallucinated segments | 111 (7.4%) | ~80-90 (5.3-6.0%) | **-21 to -31 (-1.4-2.1pp)** |
-| Mean IS | 2.52 | ~2.60-2.65 | **+0.08-0.13** |
-| Short segment (5-10w) captured% | 31.7% | ~38-42% | **+6-10pp** |
-| Long segment (20+w) captured% | 48.6% | ~50-52% | **+1.4-3.4pp** |
+| Useful (IS >= 2.00, NIV Y+P) | 922 (61.6%) | ~960-980 (64-65%) | **+38 to +58 (+2.5-3.9pp)** |
+| *Legacy: Captured (IS >= 3.0)* | *597 (39.9%)* | *~640-660 (42.7-44.1%)* | *+43 to +63 (+3-4pp)* |
+| Non-useful hallucinations | 108 (18.8% of 575) | ~80-90 | **-18 to -28** |
+| Mean IS | 2.53 | ~2.60-2.65 | **+0.07-0.12** |
+| Short segment (5-10w) useful% | ~55% | ~61-65% | **+6-10pp** |
+| Long segment (20+w) useful% | ~67% | ~69-71% | **+2-4pp** |
 
-Improvement concentrates on **short segments** where the model currently hallucinates due to insufficient visual context. Not transformative, but meaningful — and the implementation cost is ~3 lines of code in the dataset class.
+Improvement concentrates on **short segments** where the model currently hallucinates due to insufficient visual context. Not transformative, but meaningful (~+2.5-4pp useful under NIV Y+P) — and the implementation cost is ~3 lines of code in the dataset class.
 
 #### Risks
 
@@ -252,7 +258,7 @@ These are complementary — Config J's lenpen=1.0 could be combined with word co
 
 1. **Do NOT inject word count at inference without retraining.** Net negative — camouflages hallucinations while providing negligible content improvement.
 
-2. **Fine-tuning with word count is viable as part of domain adaptation (Mission 9).** When fine-tuning on AVSpeech data, adding word count to the instruction is a zero-cost modification (~3 lines). The estimated +3-4pp capture rate improvement is worth the negligible effort.
+2. **Fine-tuning with word count is viable as part of domain adaptation (Mission 9).** When fine-tuning on AVSpeech data, adding word count to the instruction is a zero-cost modification (~3 lines). The estimated +2.5-4pp useful rate improvement (NIV Y+P) is worth the negligible effort.
 
 3. **Use noisy/approximate word counts during training** to prevent brittleness. At inference, use Whisper's word count estimate from the ASR step that already runs in the pipeline.
 
@@ -264,7 +270,7 @@ These are complementary — Config J's lenpen=1.0 could be combined with word co
 
 *(Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md))*
 
-Traditional metrics classify 900 of 1,497 segments as failures (IS < 3.0). The LLM heuristic identifies **165 of these 900 segments (18.3%)** as having recoverable meaning, raising effective capture from 40.1% to **51.1%**.
+Under NIV thresholds, 922 of 1,497 segments (61.6%) are useful (IS >= 2.00). The remaining 575 are non-useful. *Legacy note: under the superseded IS >= 3.0 threshold, the LLM heuristic identified 165 of 900 metric-failed segments (18.3%) as having recoverable meaning, raising effective capture from 40.1% to 51.1%. This salvage analysis predated NIV adoption and is less relevant under the broader NIV Y+P operating point.*
 
 6 recovery categories: Phonetic Bridge (93), Structure Match (74), Semantic Preservation (57), Hidden Gems (54), Entity-Preserved (44), WER Over-Punishment (27).
 
