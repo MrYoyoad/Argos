@@ -1,4 +1,2 @@
-# Mark generated HTML reports as non-language content
-docs/evaluation/intelligibility/*.html linguist-generated
-docs/evaluation/llm_judge/*.html linguist-generated
-english_full_results/client_outputs/report/report.html linguist-generated
+# Exclude all HTML from GitHub language stats (generated reports, not source code)
+*.html linguist-generated
