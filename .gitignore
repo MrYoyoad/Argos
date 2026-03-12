@@ -257,6 +257,11 @@ outputs/
 vsp_input_tuning/
 tuning_results/
 
+# ---------- Generated HTML Reports ----------
+# Tuning experiment reports (regenerable, findings captured in CSVs and markdown)
+docs/tuning/html-reports/*.html
+docs/tuning/experiments/*/report/report.html
+
 # ---------- Misc Large / Generated Files ----------
 FINAL_PRESENTATION.pptx
 html_report_full.png
