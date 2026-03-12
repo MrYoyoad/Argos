@@ -1,2 +1,4 @@
-# Exclude all HTML from GitHub language stats (generated reports, not source code)
-*.html linguist-generated
+# Generated HTML reports — exclude from GitHub language stats
+docs/evaluation/**/*.html linguist-generated
+english_full_results/**/*.html linguist-generated
+presentation_materials_20260224/**/*.html linguist-generated
