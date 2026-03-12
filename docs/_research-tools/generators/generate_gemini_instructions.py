@@ -779,7 +779,7 @@ SPEAKER NOTES: "Four takeaways. One: we know exactly where we stand \u2014 rigor
 # ═══════════════════════════════════════════════════
 
 ATTACHMENTS_1 = [
-    ["08_branding/BlackLogo300x300-W-BG.png", "1", "Replace [Logo] placeholder, top-right ~1 inch"],
+    ["08_branding/WhiteLogo.jpeg", "1", "Replace [Logo] placeholder, top-right ~1 inch"],
     ["09_pipeline_diagram/pipeline_architecture.png", "3", "Replace [pipeline_architecture.png] placeholder, full width"],
     ["01_plots_for_slides/P2_paper_vs_reality.png", "4", "Replace [P2_paper_vs_reality.png] placeholder, right half"],
 ]

@@ -23,7 +23,7 @@
 
 | # | File | Slide | Placement |
 |---|------|-------|-----------|
-| 1 | `08_branding/BlackLogo300x300-W-BG.png` | 1 | Top-right logo |
+| 1 | `08_branding/WhiteLogo.jpeg` | 1 | Top-right logo |
 | 2 | `09_pipeline_diagram/pipeline_architecture.png` | 3 | Full-width architecture diagram |
 | 3 | `01_plots_for_slides/P2_paper_vs_reality.png` | 4 | Right half bar chart |
 
