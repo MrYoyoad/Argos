@@ -62,6 +62,10 @@ For detailed environment setup and package installation, see **[INSTALL.md](INST
 └── docs/                          # Documentation
 ```
 
+## Presentation
+
+[Research Findings and Production Roadmap (Google Slides)](https://docs.google.com/presentation/d/1UNZVtpcODsTOFolRgVyo4h6jKTx_6Y5u/edit?usp=sharing&ouid=113034242173553309203&rtpof=true&sd=true) — covers evaluation methodology, baseline results, engineering decisions, and future directions.
+
 ## Documentation
 
 | Document | Description |
