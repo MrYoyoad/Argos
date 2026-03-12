@@ -1,0 +1,28 @@
+=== FULL PIPELINE RE-RUN SUMMARY ===
+Finished: Wed Feb 18 09:17:33 UTC 2026
+Status: SUCCESS
+K-means: 802K
+Cached transcriptions reused: 895
+Segments in report: 1497
+
+=== Last 20 lines of log ===
+[OK] Using pre-segmented full-frame video for sFpho0G8nCI_0__35ee12d5_01_000299_000363: sFpho0G8nCI_0__35ee12d5_01_000299_000363.mp4
+[OK] /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs/burned_videos/sFpho0G8nCI_0__35ee12d5_Part2_with_hyp.mp4
+[OK] Using pre-segmented full-frame video for XHCAXkDOMtI_4__6a3ac270_01_000299_000362: XHCAXkDOMtI_4__6a3ac270_01_000299_000362.mp4
+[OK] /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs/burned_videos/XHCAXkDOMtI_4__6a3ac270_Part2_with_hyp.mp4
+[OK] Using pre-segmented full-frame video for JvpPZm2q5Pc_13__31837a80_01_000239_000289: JvpPZm2q5Pc_13__31837a80_01_000239_000289.mp4
+[OK] /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs/burned_videos/JvpPZm2q5Pc_13__31837a80_Part2_with_hyp.mp4
+[OK] Using pre-segmented full-frame video for -U9zjwIiUsc_0__7bcd098c_01_000299_000360: -U9zjwIiUsc_0__7bcd098c_01_000299_000360.mp4
+[OK] /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs/burned_videos/-U9zjwIiUsc_0__7bcd098c_Part2_with_hyp.mp4
+[OK] Using pre-segmented full-frame video for fqCW9gpDUlA_3__f3ef1170_01_000250_000300: fqCW9gpDUlA_3__f3ef1170_01_000250_000300.mp4
+[OK] /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs/burned_videos/fqCW9gpDUlA_3__f3ef1170_Part2_with_hyp.mp4
+>>> [8] Copying lip crop videos to client outputs
+[INFO] Copied 1497 lip crop(s) to /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs/lip_crops
+[09:16:44] INFO: Client outputs complete
+[09:16:44] INFO: Outputs saved to: /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs
+
+>>> Pipeline complete!
+    - Mouth crops: /home/ubuntu/auto_avsr/preprocessed_flat_seg12
+    - TSVs: /home/ubuntu/auto_avsr/preprocessed_flat_seg12/433h_data
+    - Labels: /home/ubuntu/VSP-LLM/flat_labels
+    - Outputs: /home/ubuntu/flat_runs_archive/20260217_182620/client_outputs
