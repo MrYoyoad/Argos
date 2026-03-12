@@ -1,0 +1,6 @@
+# Mark generated HTML reports as non-language content
+docs/tuning/html-reports/*.html linguist-generated
+docs/tuning/experiments/*/report/report.html linguist-generated
+docs/evaluation/intelligibility/*.html linguist-generated
+docs/evaluation/llm_judge/*.html linguist-generated
+english_full_results/client_outputs/report/report.html linguist-generated
