@@ -1,0 +1,449 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>LLM-as-a-Judge Report (30 samples)</title>
+<style>
+body { font-family: system-ui, -apple-system, Arial, sans-serif; margin: 20px; background: #fafafa; }
+h2 { color: #1a1a2e; margin-bottom: 4px; }
+table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+td, th { border: 1px solid #ddd; padding: 8px 10px; vertical-align: top; font-size: 0.88em; }
+th { background: #f0f0f5; text-align: left; position: sticky; top: 0; z-index: 1; }
+pre { white-space: pre-wrap; word-break: break-word; margin: 0; font-family: inherit; }
+small { color: #555; }
+
+/* Word-level coloring */
+.ok { color: #0a7a0a; font-weight: 700; }
+.rep { color: #b58900; font-weight: 800; }
+.ins { color: #b00020; font-weight: 800; }
+
+/* Metric cells */
+.m-green { background: #d4edda; color: #155724; font-weight: 700; text-align: center; }
+.m-yellow { background: #fff3cd; color: #856404; font-weight: 700; text-align: center; }
+.m-red { background: #f8d7da; color: #721c24; font-weight: 700; text-align: center; }
+
+/* Judge badges */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-weight: 800; font-size: 0.95em; letter-spacing: 0.5px; }
+.badge-y { background: #28a745; color: #fff; }
+.badge-p { background: #ffc107; color: #333; }
+.badge-n { background: #dc3545; color: #fff; }
+
+/* Context badge (smaller) */
+.ctx { font-size: 0.8em; margin-left: 4px; opacity: 0.85; }
+
+/* Summary bar */
+.summary { background: #e9ecef; padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 0.92em; }
+.legend { margin-bottom: 12px; font-size: 0.9em; }
+
+/* IS tier label */
+.tier { font-size: 0.78em; display: block; color: #555; margin-top: 2px; }
+
+/* Justification */
+.just { font-size: 0.82em; color: #444; max-width: 280px; }
+
+/* Row hover */
+tr:hover td { background: #f8f9fa; }
+
+/* Alternating rows */
+tbody tr:nth-child(even) { background: #fcfcfc; }
+</style></head><body>
+<h2>LLM-as-a-Judge Report (30 samples)</h2>
+<div class="legend">
+<b>Hypothesis coloring:</b>
+<span class="ok">green</span> = match,
+<span class="rep">yellow</span> = substitution/shift,
+<span class="ins">red</span> = inserted/hallucinated
+&nbsp;&nbsp;|&nbsp;&nbsp;
+<b>LLM Judge:</b>
+<span class="badge badge-y">Y</span> = Yes (intelligible),
+<span class="badge badge-p">P</span> = Partial,
+<span class="badge badge-n">N</span> = No (failed)
+</div>
+<div class="summary">
+<b>Segments: 30</b> &nbsp;|&nbsp;
+<b>Mean WER: 61.4%</b> &nbsp;|&nbsp;
+<b>Mean IS: 2.67/5.0</b> &nbsp;|&nbsp;
+<b>LLM Judge:</b> Y=7 (23.3%),
+P=12 (40.0%),
+N=11 (36.7%) &nbsp;|&nbsp;
+<b>Y+P: 63.3%</b>
+</div>
+<table>
+<thead>
+<tr>
+<th style="width:3%">#</th>
+<th style="width:10%">ID</th>
+<th style="width:22%">Reference</th>
+<th style="width:22%">Hypothesis</th>
+<th style="width:5%">WER</th>
+<th style="width:5%">WWER</th>
+<th style="width:5%">NEA&nbsp;F1</th>
+<th style="width:6%">IS</th>
+<th style="width:5%">LLM</th>
+<th style="width:17%">Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td><b>FLRU5qzb6hc_9__b6ede2d3</b><br><small>FLRU5qzb6hc_9__b6ede2d3_00_000000_000124</small></td>
+<td><pre>next week i will be making my debut</pre></td>
+<td><pre><span class="ok">next</span> <span class="ok">week</span> <span class="ok">i</span> <span class="ok">will</span> <span class="ok">be</span> <span class="ok">making</span> <span class="ok">my</span> <span class="ok">debut</span></pre></td>
+<td class="m-green">0.0%</td>
+<td class="m-green">0.0%</td>
+<td class="m-green">100.0%</td>
+<td class="m-green">5.00<span class="tier">Excellent</span></td>
+<td style="text-align:center"><span class="badge badge-y">Y</span><br><span class="ctx" title="Y→Y">(ctx: Y)</span></td>
+<td class="just">Almost perfect transcription  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td><b>omu6u-TTRTY_9__cf34bed7</b><br><small>omu6u-TTRTY_9__cf34bed7_00_000000_000084</small></td>
+<td><pre>i just learned something recently because i&#x27;m a lover of</pre></td>
+<td><pre><span class="ok">i</span> <span class="ok">just</span> <span class="ok">learned</span> <span class="ok">something</span> <span class="ok">recently</span> <span class="ok">because</span> <span class="ok">i&#x27;m</span> <span class="ins">not</span> <span class="rep">a</span> <span class="rep">lover</span> <span class="rep">of</span></pre></td>
+<td class="m-green">10.0%</td>
+<td class="m-green">13.3%</td>
+<td class="m-green">100.0%</td>
+<td class="m-green">4.75<span class="tier">Excellent</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→N">(ctx: N)</span></td>
+<td class="just">Almost perfect transcription  <span style="opacity:0.6">[Education/Academic]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td><b>BVynmQr3cf8_0__0166130c</b><br><small>BVynmQr3cf8_0__0166130c_00_000000_000169</small></td>
+<td><pre>so i have two and a half of these size cups which is probably like the equivalent of</pre></td>
+<td><pre><span class="rep">i</span> <span class="rep">have</span> <span class="rep">two</span> <span class="rep">and</span> <span class="rep">a</span> <span class="rep">half</span> <span class="rep">of</span> <span class="rep">these</span> <span class="ins">nice</span> <span class="rep">cups</span> <span class="rep">which</span> <span class="rep">is</span> <span class="rep">probably</span> <span class="rep">like</span> <span class="rep">the</span> <span class="rep">equivalent</span> <span class="rep">of</span></pre></td>
+<td class="m-green">11.1%</td>
+<td class="m-green">11.1%</td>
+<td class="m-green">100.0%</td>
+<td class="m-green">4.73<span class="tier">Excellent</span></td>
+<td style="text-align:center"><span class="badge badge-y">Y</span><br><span class="ctx" title="Y→P">(ctx: P)</span></td>
+<td class="just">Small word errors but the meaning is correct  <span style="opacity:0.6">[Cooking/Food]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td><b>4D634qUi2BI_0__93a9f2b4</b><br><small>4D634qUi2BI_0__93a9f2b4_00_000000_000122</small></td>
+<td><pre>market research firm bernreuter research is forecasting pv installations could reach</pre></td>
+<td><pre><span class="ok">market</span> <span class="ok">research</span> <span class="ok">firm</span> <span class="ins">rogers</span> <span class="ok">research</span> <span class="ok">is</span> <span class="ok">forecasting</span> <span class="ok">pv</span> <span class="ok">installations</span> <span class="ins">will</span> <span class="ok">reach</span></pre></td>
+<td class="m-green">18.2%</td>
+<td class="m-green">15.0%</td>
+<td class="m-green">87.5%</td>
+<td class="m-green">4.55<span class="tier">Excellent</span></td>
+<td style="text-align:center"><span class="badge badge-y">Y</span><br><span class="ctx" title="Y→P">(ctx: P)</span></td>
+<td class="just">Small word errors but the meaning is correct  <span style="opacity:0.6">[Education/Academic]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td><b>-29kYQQ3Kos_11__652a02f9</b><br><small>-29kYQQ3Kos_11__652a02f9_00_000000_000073</small></td>
+<td><pre>that are going to allow you to work with the team in a more</pre></td>
+<td><pre><span class="rep">are</span> <span class="rep">going</span> <span class="rep">to</span> <span class="rep">allow</span> <span class="rep">you</span> <span class="rep">to</span> <span class="rep">work</span> <span class="rep">with</span> <span class="rep">a</span> <span class="rep">team</span> <span class="ins">and</span> <span class="rep">more</span></pre></td>
+<td class="m-green">28.6%</td>
+<td class="m-green">21.1%</td>
+<td class="m-green">100.0%</td>
+<td class="m-green">4.34<span class="tier">Excellent</span></td>
+<td style="text-align:center"><span class="badge badge-y">Y</span><br><span class="ctx" title="Y→Y">(ctx: Y)</span></td>
+<td class="just">Words sound similar to the original (phonetic bridge)  <span style="opacity:0.6">[Sports/Fitness]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td><b>4LapdlOuZ2o_3__824681a8</b><br><small>4LapdlOuZ2o_3__824681a8_00_000000_000212</small></td>
+<td><pre>and we have a bit of fun as well along the way but driving energy and determination to succeed is how i describe jason</pre></td>
+<td><pre><span class="rep">have</span> <span class="rep">a</span> <span class="rep">bit</span> <span class="rep">of</span> <span class="rep">fun</span> <span class="rep">as</span> <span class="rep">well</span> <span class="rep">along</span> <span class="rep">the</span> <span class="rep">way</span> <span class="rep">but</span> <span class="ins">drive</span> <span class="ins">an</span> <span class="ins">engine</span> <span class="rep">and</span> <span class="rep">determination</span> <span class="ins">are</span> <span class="ins">key</span> <span class="ins">with</span> <span class="rep">how</span> <span class="rep">i</span> <span class="rep">describe</span> <span class="rep">jason</span></pre></td>
+<td class="m-yellow">33.3%</td>
+<td class="m-green">27.8%</td>
+<td class="m-green">75.0%</td>
+<td class="m-green">4.12<span class="tier">Excellent</span></td>
+<td style="text-align:center"><span class="badge badge-y">Y</span><br><span class="ctx" title="Y→P">(ctx: P)</span></td>
+<td class="just">Words sound similar to the original (phonetic bridge)  <span style="opacity:0.6">[Politics/News]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td><b>6rfcJxp1G6s_1__c452617e</b><br><small>6rfcJxp1G6s_1__c452617e_00_000000_000153</small></td>
+<td><pre>because i have tried to use it that is more on that in another video soon</pre></td>
+<td><pre><span class="ok">because</span> <span class="ok">i</span> <span class="ok">have</span> <span class="ok">tried</span> <span class="ok">to</span> <span class="ok">use</span> <span class="ins">and</span> <span class="ok">that</span> <span class="ok">is</span> <span class="ok">more</span> <span class="ins">than</span> <span class="ins">any</span> <span class="ins">other</span> <span class="rep">video</span> <span class="ins">so</span></pre></td>
+<td class="m-yellow">37.5%</td>
+<td class="m-yellow">33.3%</td>
+<td class="m-green">72.7%</td>
+<td class="m-green">3.98<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Words sound similar to the original (phonetic bridge)  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td><b>lVQ3KUTHDe0_0__3201d1c4</b><br><small>lVQ3KUTHDe0_0__3201d1c4_00_000000_000177</small></td>
+<td><pre>put up a wall and hide behind it there&#x27;s a hidden epidemic</pre></td>
+<td><pre><span class="rep">up</span> <span class="rep">a</span> <span class="rep">wall</span> <span class="rep">and</span> <span class="rep">hide</span> <span class="rep">behind</span> <span class="rep">it</span> <span class="ins">there</span> <span class="ins">is</span> <span class="ins">an</span> <span class="rep">epidemic</span> <span class="ins">that</span></pre></td>
+<td class="m-yellow">41.7%</td>
+<td class="m-yellow">47.4%</td>
+<td class="m-yellow">60.0%</td>
+<td class="m-green">3.88<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-y">Y</span><br><span class="ctx" title="Y→Y">(ctx: Y)</span></td>
+<td class="just">Words sound similar to the original (phonetic bridge)  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">9</td>
+<td><b>VfJ-6nQAmtk_22__4a7cbfd1</b><br><small>VfJ-6nQAmtk_22__4a7cbfd1_00_000000_000173</small></td>
+<td><pre>as this new home video market matured in the 1980s a number of film companies decided they could bypass the theatrical distribution system altogether and market their</pre></td>
+<td><pre><span class="rep">in</span> <span class="rep">the</span> <span class="rep">1980s</span> <span class="ins">when</span> <span class="rep">film</span> <span class="rep">companies</span> <span class="rep">decided</span> <span class="rep">they</span> <span class="rep">could</span> <span class="rep">bypass</span> <span class="rep">the</span> <span class="rep">theatrical</span> <span class="rep">distribution</span> <span class="rep">system</span> <span class="rep">altogether</span> <span class="ins">among</span> <span class="ins">other</span></pre></td>
+<td class="m-yellow">48.1%</td>
+<td class="m-yellow">41.7%</td>
+<td class="m-green">100.0%</td>
+<td class="m-green">3.69<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→Y">(ctx: Y)</span></td>
+<td class="just">Important names and numbers are correct  <span style="opacity:0.6">[Cooking/Food]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">10</td>
+<td><b>Iy6MDgm-Ze0_2__0bef8646 - Part 2</b><br><small>Iy6MDgm-Ze0_2__0bef8646_01_000250_000338</small></td>
+<td><pre>does this in any way relate to that and maybe it doesn&#x27;t</pre></td>
+<td><pre><span class="rep">doesn&#x27;t</span> <span class="ins">anyway</span> <span class="rep">relate</span> <span class="rep">to</span> <span class="rep">that</span> <span class="ins">or</span> <span class="rep">maybe</span> <span class="rep">it</span> <span class="rep">does</span></pre></td>
+<td class="m-yellow">58.3%</td>
+<td class="m-yellow">47.1%</td>
+<td class="m-green">75.0%</td>
+<td class="m-green">3.45<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Important names and numbers are correct  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">11</td>
+<td><b>5EK19q96h8U_14__a298ae36</b><br><small>5EK19q96h8U_14__a298ae36_00_000000_000091</small></td>
+<td><pre>all you have to do is unscrew</pre></td>
+<td><pre><span class="ok">all</span> <span class="ok">you</span> <span class="ok">have</span> <span class="ok">to</span> <span class="ok">do</span> <span class="ok">is</span> <span class="ins">not</span> <span class="rep">to</span></pre></td>
+<td class="m-green">28.6%</td>
+<td class="m-green">20.0%</td>
+<td class="m-green">80.0%</td>
+<td class="m-green">3.42<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→P">(ctx: P)</span></td>
+<td class="just">Words sound similar to the original (phonetic bridge)  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">12</td>
+<td><b>S8aXVz799Dc_7__0af934d2</b><br><small>S8aXVz799Dc_7__0af934d2_00_000000_000204</small></td>
+<td><pre>another useful expression i&#x27;m afraid there&#x27;s been a mistake or i&#x27;m afraid there&#x27;s been a mistake</pre></td>
+<td><pre><span class="ok">another</span> <span class="ok">useful</span> <span class="ok">expression</span> <span class="ok">i&#x27;m</span> <span class="ok">afraid</span> <span class="ok">there&#x27;s</span> <span class="ok">been</span> <span class="ok">a</span> <span class="ins">mishap</span> <span class="ok">or</span> <span class="ins">i</span> <span class="ins">m</span> <span class="rep">afraid</span> <span class="ins">there</span> <span class="ins">s</span></pre></td>
+<td class="m-yellow">43.8%</td>
+<td class="m-red">117.9%</td>
+<td class="m-green">66.7%</td>
+<td class="m-green">3.41<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-y">Y</span><br><span class="ctx" title="Y→Y">(ctx: Y)</span></td>
+<td class="just">Words sound similar to the original (phonetic bridge)  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">13</td>
+<td><b>wM9372IF0kw_6__50e1276f - Part 2</b><br><small>wM9372IF0kw_6__50e1276f_01_000299_000441</small></td>
+<td><pre>like where the extra income was gonna come from but i told myself i was gonna quit my job</pre></td>
+<td><pre><span class="rep">where</span> <span class="rep">the</span> <span class="ins">internet</span> <span class="rep">was</span> <span class="ins">going</span> <span class="ins">to</span> <span class="rep">come</span> <span class="rep">from</span> <span class="rep">i</span> <span class="rep">told</span> <span class="rep">myself</span> <span class="ins">i&#x27;m</span> <span class="ins">going</span> <span class="ins">to</span> <span class="rep">quit</span> <span class="rep">my</span> <span class="rep">job</span> <span class="ins">and</span></pre></td>
+<td class="m-yellow">52.6%</td>
+<td class="m-yellow">55.2%</td>
+<td class="m-yellow">61.5%</td>
+<td class="m-green">3.23<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Important names and numbers are correct  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">14</td>
+<td><b>c6eBrYor21I_10__70697c08 - Part 1</b><br><small>c6eBrYor21I_10__70697c08_00_000000_000359</small></td>
+<td><pre>what that meant is that we need a radically different approach we basically need to find a way how we can take existing routers existing switches existing links and enable them for research</pre></td>
+<td><pre><span class="ins">their</span> <span class="ins">masses</span> <span class="rep">and</span> <span class="rep">we</span> <span class="rep">need</span> <span class="rep">a</span> <span class="rep">radically</span> <span class="rep">different</span> <span class="rep">approach</span> <span class="rep">we</span> <span class="ins">must</span> <span class="ins">indeed</span> <span class="rep">find</span> <span class="rep">a</span> <span class="rep">way</span> <span class="rep">we</span> <span class="rep">can</span> <span class="ins">design</span> <span class="rep">existing</span> <span class="ins">roads</span> <span class="rep">to</span> <span class="ins">exist</span> <span class="ins">with</span> <span class="rep">existing</span> <span class="ins">structures</span> <span class="rep">and</span> <span class="rep">enable</span> <span class="rep">them</span> <span class="rep">for</span> <span class="ins">reuse</span> <span class="ins">so</span></pre></td>
+<td class="m-yellow">51.5%</td>
+<td class="m-yellow">47.1%</td>
+<td class="m-yellow">51.6%</td>
+<td class="m-green">3.02<span class="tier">Good</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Meaning preserved through similar-sounding words  <span style="opacity:0.6">[Technology]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">15</td>
+<td><b>4f6fSdKA0vw_4__5e8ccf15</b><br><small>4f6fSdKA0vw_4__5e8ccf15_00_000000_000123</small></td>
+<td><pre>i have a gift from one of my viewers a vostok koran komand</pre></td>
+<td><pre><span class="rep">a</span> <span class="rep">gift</span> <span class="rep">from</span> <span class="rep">one</span> <span class="rep">of</span> <span class="rep">my</span> <span class="rep">viewers</span> <span class="ins">the</span> <span class="ins">first</span> <span class="ins">shot</span> <span class="ins">ok</span> <span class="ins">you&#x27;re</span> <span class="ins">mine</span></pre></td>
+<td class="m-yellow">61.5%</td>
+<td class="m-yellow">53.8%</td>
+<td class="m-yellow">50.0%</td>
+<td class="m-yellow">2.85<span class="tier">Fair</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Important content words are wrong  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">16</td>
+<td><b>9HanJOCw2Sc_11__19c7ec4e</b><br><small>9HanJOCw2Sc_11__19c7ec4e_00_000000_000261</small></td>
+<td><pre>us and couples us to light cycles in our environment tells us when to sleep tells us when to make cortisol tells us when to make testosterone basically switches on</pre></td>
+<td><pre><span class="ins">the</span> <span class="ins">job</span> <span class="ins">prescription</span> <span class="ins">takes</span> <span class="ins">into</span> <span class="ins">account</span> <span class="rep">our</span> <span class="rep">environment</span> <span class="rep">tells</span> <span class="rep">us</span> <span class="ins">what</span> <span class="rep">to</span> <span class="ins">eat</span> <span class="rep">tells</span> <span class="rep">us</span> <span class="ins">where</span> <span class="rep">to</span> <span class="rep">make</span> <span class="ins">turns</span> <span class="rep">tells</span> <span class="rep">us</span> <span class="rep">when</span> <span class="rep">to</span> <span class="rep">make</span> <span class="ins">stops</span> <span class="rep">basically</span> <span class="rep">switches</span> <span class="rep">on</span></pre></td>
+<td class="m-yellow">43.3%</td>
+<td class="m-yellow">56.8%</td>
+<td class="m-yellow">43.5%</td>
+<td class="m-yellow">2.67<span class="tier">Fair</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Many small errors that add up to lost meaning  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">17</td>
+<td><b>S0ID6pdAvvY_7__e2281119</b><br><small>S0ID6pdAvvY_7__e2281119_00_000000_000214</small></td>
+<td><pre>with how to reverse it okay what are the handful of things i&#x27;m gonna show you some things that might help you here in just a minute</pre></td>
+<td><pre><span class="rep">just</span> <span class="rep">reverse</span> <span class="rep">it</span> <span class="ins">like</span> <span class="rep">what</span> <span class="ins">is</span> <span class="rep">the</span> <span class="rep">handful</span> <span class="rep">of</span> <span class="rep">things</span> <span class="rep">i&#x27;m</span> <span class="ins">going</span> <span class="rep">to</span> <span class="rep">show</span> <span class="rep">you</span> <span class="rep">some</span> <span class="rep">things</span> <span class="ins">like</span> <span class="ins">my</span> <span class="ins">belt</span> <span class="ins">loop</span> <span class="ins">or</span> <span class="ins">something</span> <span class="ins">like</span> <span class="rep">that</span> <span class="ins">but</span></pre></td>
+<td class="m-yellow">59.3%</td>
+<td class="m-red">93.5%</td>
+<td class="m-red">0.0%</td>
+<td class="m-yellow">2.48<span class="tier">Fair</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Important content words are wrong  <span style="opacity:0.6">[Entertainment]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">18</td>
+<td><b>I2WFF3Gy4a0_0__67b6a1a8 - Part 1</b><br><small>I2WFF3Gy4a0_0__67b6a1a8_00_000000_000359</small></td>
+<td><pre>the basic idea is to make a cage or a basket that protects a fragile or toxic or precious payload and only releases a few drops of oxygen</pre></td>
+<td><pre><span class="rep">basic</span> <span class="rep">idea</span> <span class="rep">is</span> <span class="rep">to</span> <span class="rep">make</span> <span class="rep">a</span> <span class="ins">case</span> <span class="rep">that</span> <span class="rep">the</span> <span class="ins">persecution</span> <span class="rep">of</span> <span class="rep">fragile</span> <span class="rep">toxic</span> <span class="ins">was</span> <span class="ins">preceded</span> <span class="ins">by</span> <span class="rep">and</span> <span class="rep">only</span> <span class="ins">related</span> <span class="rep">to</span></pre></td>
+<td class="m-yellow">64.3%</td>
+<td class="m-yellow">60.5%</td>
+<td class="m-yellow">48.0%</td>
+<td class="m-yellow">2.28<span class="tier">Fair</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→P">(ctx: P)</span></td>
+<td class="just">Important content words are wrong  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">19</td>
+<td><b>a2CS82VZyO4_7__a6316c95</b><br><small>a2CS82VZyO4_7__a6316c95_00_000000_000097</small></td>
+<td><pre>and i have a tablespoon of jalapeno fresh jalapeno</pre></td>
+<td><pre><span class="ok">and</span> <span class="ok">i</span> <span class="ok">have</span> <span class="ok">a</span> <span class="ins">dietary</span> <span class="ins">smoothie</span> <span class="ins">i&#x27;ve</span> <span class="ins">got</span> <span class="ins">the</span> <span class="ins">banana</span> <span class="ins">called</span> <span class="rep">fresh</span> <span class="ins">banana</span></pre></td>
+<td class="m-red">88.9%</td>
+<td class="m-yellow">43.8%</td>
+<td class="m-red">0.0%</td>
+<td class="m-yellow">2.07<span class="tier">Fair</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→N">(ctx: N)</span></td>
+<td class="just">Names, numbers, and key terms are lost  <span style="opacity:0.6">[Cooking/Food]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">20</td>
+<td><b>Hl08kKKS1lw_13__1c5ee283</b><br><small>Hl08kKKS1lw_13__1c5ee283_00_000000_000098</small></td>
+<td><pre>i did not have to major in acting there were some</pre></td>
+<td><pre><span class="rep">did</span> <span class="rep">not</span> <span class="rep">have</span> <span class="rep">to</span> <span class="ins">measure</span> <span class="ins">a</span> <span class="ins">hacking</span> <span class="ins">that</span> <span class="ins">was</span></pre></td>
+<td class="m-yellow">63.6%</td>
+<td class="m-red">66.7%</td>
+<td class="m-red">28.6%</td>
+<td class="m-red">1.94<span class="tier">Poor</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Words sound right but the topic is completely wrong  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">21</td>
+<td><b>tUcgHemnJiQ_0__2fc132c1</b><br><small>tUcgHemnJiQ_0__2fc132c1_00_000000_000177</small></td>
+<td><pre>is neither i actually use the overhead lights which are mostly fluorescent which i know is a big no no but this camera</pre></td>
+<td><pre><span class="ins">together</span> <span class="rep">i</span> <span class="rep">actually</span> <span class="ins">used</span> <span class="rep">the</span> <span class="ins">overheard</span> <span class="ins">ghost</span> <span class="ins">whisperer</span> <span class="ins">music</span> <span class="ins">for</span> <span class="ins">that</span> <span class="ins">scene</span> <span class="ok">which</span> <span class="ok">i</span> <span class="ok">know</span> <span class="ok">is</span> <span class="ins">about</span> <span class="ins">to</span> <span class="ins">go</span> <span class="ins">on</span> <span class="ok">but</span> <span class="rep">the</span> <span class="ins">scene</span> <span class="ins">runs</span></pre></td>
+<td class="m-red">73.9%</td>
+<td class="m-red">68.8%</td>
+<td class="m-red">19.0%</td>
+<td class="m-red">1.79<span class="tier">Poor</span></td>
+<td style="text-align:center"><span class="badge badge-p">P</span><br><span class="ctx" title="P→N">(ctx: N)</span></td>
+<td class="just">Words sound right but the topic is completely wrong  <span style="opacity:0.6">[Technology]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">22</td>
+<td><b>XvKlXsIC3aw_10__c91ddb42</b><br><small>XvKlXsIC3aw_10__c91ddb42_00_000000_000090</small></td>
+<td><pre>but there&#x27;s not so we&#x27;ll have to enjoy this one together</pre></td>
+<td><pre><span class="ok">but</span> <span class="ins">let&#x27;s</span> <span class="ins">try</span> <span class="rep">to</span> <span class="ins">do</span> <span class="rep">this</span> <span class="ins">as</span> <span class="ins">quickly</span> <span class="ins">as</span> <span class="ins">we</span> <span class="ins">can</span></pre></td>
+<td class="m-red">90.9%</td>
+<td class="m-red">89.5%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">1.64<span class="tier">Poor</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Names, numbers, and key terms are lost  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">23</td>
+<td><b>vTlV5MoRZ7s_0__d05a1352</b><br><small>vTlV5MoRZ7s_0__d05a1352_00_000000_000193</small></td>
+<td><pre>what we&#x27;re now going to do this is a three dimensional object and we&#x27;re going to break that object into</pre></td>
+<td><pre><span class="ins">how</span> <span class="ins">would</span> <span class="ins">i</span> <span class="ins">get</span> <span class="ok">to</span> <span class="ins">the</span> <span class="ins">top</span> <span class="ins">of</span> <span class="rep">that</span> <span class="ins">i</span> <span class="ins">don&#x27;t</span> <span class="ins">know</span> <span class="ins">how</span> <span class="rep">to</span> <span class="ins">climb</span> <span class="rep">that</span></pre></td>
+<td class="m-red">85.0%</td>
+<td class="m-red">90.9%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">1.45<span class="tier">Poor</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Names, numbers, and key terms are lost  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">24</td>
+<td><b>3rMBdSM6TPk_12__295e6cec</b><br><small>3rMBdSM6TPk_12__295e6cec_00_000000_000091</small></td>
+<td><pre>code that way i know there was a lot of hype of that back in the 90s</pre></td>
+<td><pre><span class="rep">that</span> <span class="ins">when</span> <span class="ins">lucille</span> <span class="ins">clifton</span> <span class="ins">came</span> <span class="rep">back</span> <span class="ins">at</span> <span class="rep">the</span> <span class="ins">time</span></pre></td>
+<td class="m-red">82.4%</td>
+<td class="m-red">85.2%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">1.28<span class="tier">Poor</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Names, numbers, and key terms are lost  <span style="opacity:0.6">[Technology]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">25</td>
+<td><b>dyUoixloi3w_2__f85b05e4</b><br><small>dyUoixloi3w_2__f85b05e4_00_000000_000091</small></td>
+<td><pre>something to make it easier to bring native code to the web</pre></td>
+<td><pre><span class="ins">can</span> <span class="rep">make</span> <span class="ins">a</span> <span class="ins">difference</span> <span class="ins">and</span> <span class="ins">so</span> <span class="ins">can</span> <span class="ins">you</span></pre></td>
+<td class="m-red">91.7%</td>
+<td class="m-red">88.9%</td>
+<td class="m-red">22.2%</td>
+<td class="m-red">1.15<span class="tier">Poor</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Output is about a completely different topic  <span style="opacity:0.6">[Technology]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">26</td>
+<td><b>xOAv1Q5oZkA_0__b58807a3</b><br><small>xOAv1Q5oZkA_0__b58807a3_00_000000_000075</small></td>
+<td><pre>community so there&#x27;s a lot of people that need</pre></td>
+<td><pre><span class="ins">when</span> <span class="ins">i</span> <span class="ins">was</span> <span class="ins">in</span> <span class="ins">high</span> <span class="ins">school</span> <span class="ins">i</span> <span class="ins">was</span></pre></td>
+<td class="m-red">100.0%</td>
+<td class="m-red">100.0%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">1.02<span class="tier">Poor</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Output is about a completely different topic  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">27</td>
+<td><b>iIs47g4frOk_20__319023b9</b><br><small>iIs47g4frOk_20__319023b9_00_000000_000088</small></td>
+<td><pre>lovely simone and francesca my lovely assistant</pre></td>
+<td><pre><span class="ins">of</span> <span class="ins">legal</span> <span class="ins">support</span> <span class="rep">and</span> <span class="ins">financial</span> <span class="ins">support</span></pre></td>
+<td class="m-red">100.0%</td>
+<td class="m-red">91.7%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">0.87<span class="tier">Failed</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Output is about a completely different topic  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">28</td>
+<td><b>plJcn0IaPZg_8__a23a897e</b><br><small>plJcn0IaPZg_8__a23a897e_00_000000_000260</small></td>
+<td><pre>see how they work they both came with level 4 software licensing and i don&#x27;t know if i&#x27;ve talked about it but i&#x27;m not a huge fan of software licensing</pre></td>
+<td><pre><span class="rep">i</span> <span class="rep">don&#x27;t</span> <span class="rep">know</span> <span class="rep">if</span> <span class="ins">it&#x27;s</span> <span class="rep">a</span> <span class="ins">coincidence</span> <span class="ins">or</span> <span class="rep">not</span> <span class="rep">but</span></pre></td>
+<td class="m-red">83.3%</td>
+<td class="m-red">89.6%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">0.71<span class="tier">Failed</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Output is about a completely different topic  <span style="opacity:0.6">[Technology]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">29</td>
+<td><b>LQ0ZgzZ6efE_2__4b0214bd</b><br><small>LQ0ZgzZ6efE_2__4b0214bd_00_000000_000131</small></td>
+<td><pre>for recreational use do you think that&#x27;s a good idea</pre></td>
+<td><pre><span class="ins">standing</span> <span class="ins">by</span> <span class="ins">and</span> <span class="ins">turning</span> <span class="rep">a</span> <span class="ins">blind</span> <span class="ins">eye</span> <span class="ins">to</span> <span class="ins">what</span> <span class="ins">we</span> <span class="ins">can</span> <span class="ins">and</span> <span class="ins">should</span> <span class="rep">do</span> <span class="ins">to</span> <span class="ins">stop</span> <span class="ins">this</span> <span class="ins">from</span> <span class="ins">happening</span></pre></td>
+<td class="m-red">190.0%</td>
+<td class="m-red">93.8%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">0.42<span class="tier">Failed</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Model invented fluent but completely wrong text  <span style="opacity:0.6">[Cooking/Food]</span></td>
+</tr>
+<tr>
+<td style="text-align:center">30</td>
+<td><b>LmsHS4eXxGM_17__c4494b52 - Part 1</b><br><small>LmsHS4eXxGM_17__c4494b52_00_000000_000359</small></td>
+<td><pre>everyday conversation it is usually said as just which is room if it&#x27;s my room it would be if it&#x27;s</pre></td>
+<td><pre><em>(empty)</em></pre></td>
+<td class="m-red">100.0%</td>
+<td class="m-red">100.0%</td>
+<td class="m-red">0.0%</td>
+<td class="m-red">0.00<span class="tier">Failed</span></td>
+<td style="text-align:center"><span class="badge badge-n">N</span><br><span class="ctx" title="N→N">(ctx: N)</span></td>
+<td class="just">Model produced no output  <span style="opacity:0.6">[Other]</span></td>
+</tr>
+</tbody></table>
+<p style="font-size:0.8em; color:#999; margin-top:20px">
+Generated by generate_llm_judge_html.py | Data: LLM-as-a-Judge blind evaluation (Claude Opus 4.6)
+</p>
+</body></html>
