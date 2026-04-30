@@ -674,6 +674,12 @@ def slide_client_hallucination_flag(prs):
         "You don't have to find them. The system finds them for you.",
     ], MX + Inches(5.3), Inches(2.0), Inches(7.0), Inches(4.0), size=Pt(15))
 
+    add_text(slide,
+             "Detection combines length-anomaly rules with per-token confidence — "
+             "the model can fabricate fluent text but it usually 'knows' it.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
@@ -720,6 +726,12 @@ def slide_client_validation_intro(prs):
         "We compared the system's confidence signals to that judgment",
         "Result: the trust score and the expert agree on most segments",
     ], MX, Inches(1.9), CW, Inches(4.0), size=Pt(20))
+
+    add_text(slide,
+             "Real-world YouTube footage — varied lighting, head angles, "
+             "multi-speaker scenes, accents. Not curated lab footage.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -800,6 +812,11 @@ def slide_client_cross_config_stability(prs):
              MX, Inches(5.0), CW, Inches(1.4),
              size=Pt(15), color=TEAL, italic=True, align=PP_ALIGN.LEFT)
 
+    add_text(slide,
+             "Tested across 16 different decode configurations on the same 1,497 segments.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, "Cross-config Pearson r=0.925, std=0.015 across 16 decode configs. Don't say r on the slide.")
@@ -831,96 +848,206 @@ def slide_client_validation_summary(prs):
 
 def slide_client_entity_split(prs):
     """Multi-speaker videos broken into per-speaker centered crops.
-    Local pre-processing using a face detector + tracker."""
-    from pathlib import Path
+
+    Native python-pptx shapes (not an embedded matplotlib PNG) so the
+    fonts match the rest of the deck and labels stay positioned where
+    we put them.
+    """
+    from pptx.enum.shapes import MSO_SHAPE
     slide = new_slide(prs)
     _auto_num[0] += 1
     add_title(slide, "Pre-processing 1 — Per-speaker entity split")
     add_accent_line(slide)
 
-    plot_path = Path(__file__).resolve().parents[4] / (
-        "presentation_materials_20260224/01_plots_for_slides/entity_split_mock.png"
-    )
-    if plot_path.exists():
-        # Height-constrained so the diagram fits between title and footer.
-        from PIL import Image
-        with Image.open(plot_path) as im:
-            aspect = im.width / im.height
-        img_h = Inches(4.7)
-        img_w = Inches(4.7 * aspect)
-        if img_w > Inches(12.5):
-            img_w = Inches(12.5)
-            img_h = Inches(12.5 / aspect)
-        img_x = (SL_W - img_w) / 2
-        img_y = Inches(1.55)
-        slide.shapes.add_picture(str(plot_path), img_x, img_y, width=img_w, height=img_h)
-    else:
-        add_text(slide, "[ entity_split_mock.png — run the diagram generator ]",
-                 MX, Inches(2.0), CW, Inches(0.6),
-                 size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    # ── INPUT card (left): wide frame containing 2 stylized speakers ──
+    in_x = MX + Inches(0.3)
+    in_y = Inches(2.2)
+    in_w = Inches(5.4)
+    in_h = Inches(3.4)
+    add_rect(slide, in_x, in_y, in_w, in_h, fill_color=NAVY2, border_color=LGRAY)
+    add_text(slide, "INPUT — multi-speaker frame",
+             in_x, in_y - Inches(0.4), in_w, Inches(0.35),
+             size=Pt(12), bold=True, color=LGRAY, align=PP_ALIGN.CENTER)
 
+    # Two stylized "speakers" — head circle on top of shoulders rect.
+    def _speaker(left, top, color, label):
+        # Head
+        head = slide.shapes.add_shape(MSO_SHAPE.OVAL,
+                                       left + Inches(0.5), top + Inches(0.2),
+                                       Inches(0.7), Inches(0.7))
+        head.fill.solid(); head.fill.fore_color.rgb = color
+        head.line.fill.background()
+        # Shoulders
+        body = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                       left + Inches(0.2), top + Inches(0.95),
+                                       Inches(1.3), Inches(1.0))
+        body.fill.solid(); body.fill.fore_color.rgb = color
+        body.line.fill.background()
+        # Label
+        add_text(slide, label,
+                 left, top + Inches(2.05), Inches(1.7), Inches(0.3),
+                 size=Pt(11), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+
+    speaker_a_x = in_x + Inches(0.6)
+    speaker_b_x = in_x + Inches(2.9)
+    speaker_y = in_y + Inches(0.55)
+    _speaker(speaker_a_x, speaker_y, TEAL, "Speaker A")
+    _speaker(speaker_b_x, speaker_y, GOLD, "Speaker B")
+
+    # ── Arrow + caption between INPUT and OUTPUT ──
+    arrow_x = in_x + in_w + Inches(0.15)
+    arrow_y = in_y + in_h / 2 - Inches(0.25)
+    arrow_w = Inches(1.0)
+    arrow = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW,
+                                    arrow_x, arrow_y, arrow_w, Inches(0.5))
+    arrow.fill.solid(); arrow.fill.fore_color.rgb = TEAL
+    arrow.line.fill.background()
+    add_text(slide, "FACE DETECTION + TRACKER",
+             arrow_x - Inches(0.5), arrow_y - Inches(0.5), Inches(2.0), Inches(0.3),
+             size=Pt(10), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+    add_text(slide, "(runs locally)",
+             arrow_x - Inches(0.5), arrow_y + Inches(0.55), Inches(2.0), Inches(0.3),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # ── OUTPUT card (right): two stacked centered crops ──
+    out_x = arrow_x + arrow_w + Inches(0.4)
+    out_y = in_y
+    out_w = Inches(4.2)
+    out_h = in_h
+    add_rect(slide, out_x, out_y, out_w, out_h, fill_color=NAVY2, border_color=LGRAY)
+    add_text(slide, "OUTPUT — per-speaker crops",
+             out_x, out_y - Inches(0.4), out_w, Inches(0.35),
+             size=Pt(12), bold=True, color=LGRAY, align=PP_ALIGN.CENTER)
+
+    # Two square crops, each with a small centered head
+    crop_size = Inches(1.4)
+    crop_a_y = out_y + Inches(0.15)
+    crop_b_y = out_y + Inches(1.7)
+    crop_x = out_x + Inches(0.25)
+
+    for cy, color, label in [(crop_a_y, TEAL, "Speaker A → centered crop"),
+                              (crop_b_y, GOLD, "Speaker B → centered crop")]:
+        # Crop frame
+        crop = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE,
+                                       crop_x, cy, crop_size, crop_size)
+        crop.fill.solid(); crop.fill.fore_color.rgb = NAVY3
+        crop.line.color.rgb = color; crop.line.width = Pt(1.2)
+        # Centered mini-speaker
+        head = slide.shapes.add_shape(MSO_SHAPE.OVAL,
+                                       crop_x + Inches(0.5), cy + Inches(0.25),
+                                       Inches(0.4), Inches(0.4))
+        head.fill.solid(); head.fill.fore_color.rgb = color
+        head.line.fill.background()
+        body = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                       crop_x + Inches(0.35), cy + Inches(0.7),
+                                       Inches(0.7), Inches(0.55))
+        body.fill.solid(); body.fill.fore_color.rgb = color
+        body.line.fill.background()
+        # Label to the right of the crop
+        add_text(slide, label,
+                 crop_x + crop_size + Inches(0.2), cy + Inches(0.5),
+                 out_w - crop_size - Inches(0.5), Inches(0.4),
+                 size=Pt(12), color=WHITE)
+
+    # ── Footer caption ──
     add_text(slide,
-             "Two speakers in one frame become two centered crops. Each speaker "
-             "gets its own clean lip-reading pass.",
-             MX, Inches(6.55), CW, Inches(0.45),
+             "Two speakers in one frame become two centered crops. Each "
+             "speaker gets its own clean lip-reading pass.",
+             MX, Inches(6.0), CW, Inches(0.4),
              size=Pt(13), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Status: planned ablation. Runs locally. No cloud dependency.",
+             MX, Inches(6.45), CW, Inches(0.35),
+             size=Pt(10), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "Diagram from generate_*_diagrams agent run. The 'face detection + "
-        "tracker (local)' framing leaves the implementation open — could be "
-        "YOLO, RetinaFace, MediaPipe, etc. — we pick whatever wins the "
-        "ablation. Emphasize 'runs locally' for client comfort: no extra "
-        "cloud dependency, no extra cost. Status is explicitly 'planned "
-        "ablation' — we are NOT claiming this is shipping today."
+        "Native python-pptx shapes (not embedded matplotlib). The 'face "
+        "detection + tracker' framing leaves implementation open — YOLO, "
+        "RetinaFace, MediaPipe, etc. Emphasize 'runs locally' for client "
+        "comfort: no extra cloud dependency, no extra cost. Status is "
+        "explicitly 'planned ablation' — we are NOT claiming this is "
+        "shipping today."
     ))
     return slide
 
 
 def slide_client_quality_filter(prs):
-    """Drop bad-angle / occluded / low-light clips before pipeline. Local CV."""
-    from pathlib import Path
+    """Drop bad-angle / occluded / low-light clips before pipeline.
+
+    Native python-pptx shapes — five stacked horizontal bars, each
+    progressively narrower, with tier label / percentage / rejection
+    sub-label. Replaces the matplotlib funnel PNG (which had a
+    system-fallback font that didn't match the deck's Calibri).
+    """
     slide = new_slide(prs)
     _auto_num[0] += 1
     add_title(slide, "Pre-processing 2 — Quality pre-filter")
     add_accent_line(slide)
 
-    plot_path = Path(__file__).resolve().parents[4] / (
-        "presentation_materials_20260224/01_plots_for_slides/quality_filter_funnel.png"
-    )
-    if plot_path.exists():
-        # Height-constrained so the funnel fits between title and footer.
-        from PIL import Image
-        with Image.open(plot_path) as im:
-            aspect = im.width / im.height
-        img_h = Inches(4.7)
-        img_w = Inches(4.7 * aspect)
-        if img_w > Inches(12.5):
-            img_w = Inches(12.5)
-            img_h = Inches(12.5 / aspect)
-        img_x = (SL_W - img_w) / 2
-        img_y = Inches(1.55)
-        slide.shapes.add_picture(str(plot_path), img_x, img_y, width=img_w, height=img_h)
-    else:
-        add_text(slide, "[ quality_filter_funnel.png — run the diagram generator ]",
-                 MX, Inches(2.0), CW, Inches(0.6),
-                 size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
-
     add_text(slide,
-             "Drop bad-angle, occluded, or poorly-lit clips before the model "
-             "ever sees them. Saves compute. Lifts apparent accuracy.",
-             MX, Inches(6.55), CW, Inches(0.45),
-             size=Pt(13), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+             "Reject bad clips before they reach the model.",
+             MX, Inches(1.5), CW, Inches(0.4),
+             size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Funnel: 5 horizontal bars, narrowing top-to-bottom
+    chart_top = Inches(2.1)
+    bar_h = Inches(0.65)
+    bar_gap = Inches(0.18)
+    label_w = Inches(2.9)   # was 2.4 — "All uploaded clips" was clipping at 2.4"/Pt(13)
+    rejected_w = Inches(3.6)
+    # Center the chart horizontally
+    max_bar_w = Inches(5.0)
+    chart_left = label_w + Inches(0.3)
+    # x of bars is chart_left, but each bar is centered around chart_center
+    chart_center = chart_left + max_bar_w / 2
+
+    tiers = [
+        ("All uploaded clips",          1.00, MGRAY,                None),
+        ("Head angle ≤ N°",             0.90, TEAL,  "rejected: face too profile (-10%)"),
+        ("Mouth visibility",            0.82, TEAL,  "rejected: mouth occluded (-8%)"),
+        ("Lighting / contrast",         0.75, TEAL,  "rejected: too dark or washed out (-7%)"),
+        ("Reaches the model",           0.75, GREEN, None),
+    ]
+    for i, (label, frac, color, rejected) in enumerate(tiers):
+        y = chart_top + i * (bar_h + bar_gap)
+        bar_w = max_bar_w * frac
+        bar_x = chart_center - bar_w / 2
+        # Tier label (left)
+        add_text(slide, label, MX, y + Inches(0.12), label_w, Inches(0.4),
+                 size=Pt(13), bold=True, color=WHITE, align=PP_ALIGN.RIGHT)
+        # Bar
+        bar = add_rect(slide, bar_x, y, bar_w, bar_h,
+                       fill_color=color, border_color=None)
+        # Percentage in bar
+        pct = f"{int(frac * 100)}%"
+        add_text(slide, pct, bar_x, y + Inches(0.12), bar_w, Inches(0.4),
+                 size=Pt(15), bold=True, color=BG, align=PP_ALIGN.CENTER)
+        # Rejected sub-label (right)
+        if rejected:
+            add_text(slide, rejected,
+                     chart_left + max_bar_w + Inches(0.3), y + Inches(0.18),
+                     rejected_w, Inches(0.4),
+                     size=Pt(10), color=LGRAY, italic=True)
+
+    # Footer caption
+    add_text(slide,
+             "Three frame-level CV checks, all running locally. Status: "
+             "planned ablation. Percentages illustrative — actual rejection "
+             "rates depend on your video conditions.",
+             MX, Inches(6.5), CW, Inches(0.6),
+             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "Frame as 'highest leverage per dollar.' The model is never tested in "
-        "isolation; what reaches it is what matters. The funnel percentages "
-        "shown are illustrative — actual rejection rates depend on the "
-        "client's own video conditions, which is exactly what the ablation "
-        "would measure. Status is 'planned ablation' — not yet shipping."
+        "Native python-pptx funnel (no matplotlib). Frame as 'highest leverage "
+        "per dollar.' The model is never tested in isolation; what reaches "
+        "it is what matters. The funnel percentages shown are illustrative — "
+        "actual rejection rates depend on the client's own video conditions, "
+        "which is exactly what the ablation would measure. Status is 'planned "
+        "ablation' — not yet shipping."
     ))
     return slide
 
@@ -1006,6 +1133,12 @@ def slide_client_stronger_model(prs):
         "No change to your integration — same inputs, same outputs, better text",
         "Requires retraining — not a switch, an investment",
     ], MX, Inches(3.0), CW, Inches(3.4), size=Pt(17))
+
+    add_text(slide,
+             "Biggest expected lift: yellow / red segments — where richer language "
+             "priors help disambiguate visemically-identical words.",
+             MX, Inches(6.55), CW, Inches(0.45),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -1167,6 +1300,11 @@ def slide_client_integration_commitment(prs):
         add_text(slide, body, x + Inches(0.15), top + Inches(0.85),
                  step_w - Inches(0.3), h - Inches(0.95),
                  size=Pt(12), color=WHITE)
+
+    add_text(slide,
+             "Typical handoff: 4-8 weeks from contract to first end-to-end run on your data.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])

@@ -211,6 +211,17 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "22%",                # segment 31 — partial
         "45%",                # segment 5  — flagged hallucination
     })
+    # Illustrative rejection rates on the Section 7 quality-pre-filter
+    # funnel (slide 34). These are explicitly labeled illustrative on the
+    # slide footer ("Percentages illustrative — actual rejection rates
+    # depend on your video conditions") and the slide is the only place
+    # they appear. Listed so the audit catches *new* stray numbers but
+    # lets these through.
+    approved.update({
+        "90%",                # head-angle pass rate
+        "82%",                # mouth-visibility pass rate
+        "75%",                # lighting / contrast + final pass rate
+    })
     # Strip whitespace inside percent tokens
     def norm(s):
         return s.replace(" ", "")
