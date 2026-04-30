@@ -8,7 +8,7 @@ existing builders from presentation/slides_*.py. The only net-new builders
 live in presentation/slides_client.py.
 
 Output:
-    presentation_materials_20260224/Argos_VSP_Client_47slides_Apr2026.pptx
+    presentation_materials_20260224/Argos_VSP_Client_46slides_Apr2026.pptx
 
 Run:
     python3 docs/_research-tools/generators/generate_client_presentation.py
@@ -22,20 +22,17 @@ from presentation.config import SL_W, SL_H, _auto_num, MATERIALS
 
 # Borrow from existing slide modules. The borrow-vs-build policy is binding.
 from presentation.slides_opening import (
-    slide_visemes,        # accessible "what is lip reading" framing
-    slide_data_flow,      # pipeline overview
+    slide_data_flow,      # pipeline overview (reused — clean enough as-is)
 )
-from presentation.slides_evaluation import (
-    slide_judge_ex1, slide_judge_ex2, slide_judge_ex3,  # 3 of 6 examples (subset)
-    slide_14b,                     # video gallery
-    slide_what_good_looks_like,    # gallery example slide (lives in evaluation, not research)
-)
-# slide_llm_judge intentionally NOT imported — see note in builders[] above for why.
+# slide_visemes replaced with slide_client_visemes (no jargon, client-friendly).
+# slide_llm_judge / slide_judge_ex* / slide_14b / slide_what_good_looks_like
+# intentionally NOT imported — those academic-styled slides were replaced
+# with client-friendly equivalents in slides_client.py. See builders[] notes.
 from presentation.slides_engineering import (
-    slide_three_repos,             # engineering credibility
-    slide_dual_env,                # two environments
     slide_web_ui,                  # UI overview
 )
+# slide_three_repos and slide_dual_env replaced with client-friendly
+# slide_client_pipeline_components and slide_client_deployment_options.
 from presentation.slides_future import (
     slide_arabic_roadmap,          # high-level Arabic roadmap (per v3 user feedback)
     slide_thank_you,               # close
@@ -54,6 +51,11 @@ from presentation.slides_client import (
     slide_client_demo_recap,
     # Section transitions (factory)
     make_section_transition,
+    # Section 3 — replacements for academic-styled borrowed slides
+    slide_client_examples_intro,
+    slide_client_example_perfect,
+    slide_client_example_partial,
+    slide_client_example_flagged,
     # Section 4
     slide_client_confidence_question,
     slide_client_two_layer_confidence,
@@ -67,6 +69,10 @@ from presentation.slides_client import (
     slide_client_agreement_chart,
     slide_client_cross_config_stability,
     slide_client_validation_summary,
+    # Section 6 — reframed pipeline slides
+    slide_client_visemes,
+    slide_client_pipeline_components,
+    slide_client_deployment_options,
     # Section 7
     slide_client_entity_split,
     slide_client_quality_filter,
@@ -114,7 +120,7 @@ _section_9 = make_section_transition(
 )
 
 
-OUTPUT = MATERIALS / "Argos_VSP_Client_47slides_Apr2026.pptx"
+OUTPUT = MATERIALS / "Argos_VSP_Client_46slides_Apr2026.pptx"
 
 
 def main():
@@ -136,13 +142,15 @@ def main():
         slide_client_demo_intro,
         slide_client_demo_video_embed,
         slide_client_demo_recap,
-        # ── Section 3 — Output Examples (transition + gallery) ──
+        # ── Section 3 — Output Examples (transition + 4 client-specific slides) ──
+        # Borrowed academic slides (slide_what_good_looks_like, slide_14b,
+        # slide_judge_ex1-3) replaced with client-friendly versions that use
+        # real per-token confidence on Obama bin Laden segments.
         _section_3,
-        slide_what_good_looks_like,
-        slide_14b,
-        slide_judge_ex1,
-        slide_judge_ex2,
-        slide_judge_ex3,
+        slide_client_examples_intro,
+        slide_client_example_perfect,
+        slide_client_example_partial,
+        slide_client_example_flagged,
         # ── Section 4 — Confidence & Trust (transition + 7 slides) ──
         _section_4,
         slide_client_confidence_question,
@@ -165,12 +173,16 @@ def main():
         slide_client_cross_config_stability,
         slide_client_validation_summary,
         # ── Section 6 — Pipeline & Architecture (transition + 5 slides) ──
+        # slide_visemes, slide_three_repos, slide_dual_env replaced with
+        # client-friendly equivalents (visemes -> "Why lip reading is hard";
+        # three_repos -> "Three components"; dual_env -> "Deploys where you
+        # need it"). slide_data_flow + slide_web_ui kept as borrowed.
         _section_6,
-        slide_data_flow,                    # borrowed
-        slide_visemes,                      # borrowed
-        slide_three_repos,                  # borrowed
-        slide_dual_env,                     # borrowed
-        slide_web_ui,                       # borrowed
+        slide_data_flow,                    # borrowed: pipeline diagram
+        slide_client_visemes,               # reframed: "Why lip reading is hard"
+        slide_client_pipeline_components,   # reframed: "Three components"
+        slide_client_deployment_options,    # reframed: "Cloud / on-premise"
+        slide_web_ui,                       # borrowed: UI overview
         # ── Section 7 — Pre-Processing Roadmap (transition + 3 slides) ──
         _section_7,
         slide_client_entity_split,

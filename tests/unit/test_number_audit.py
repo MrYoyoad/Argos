@@ -36,34 +36,17 @@ import pytest
 from pptx import Presentation
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_47slides_Apr2026.pptx"
+DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_46slides_Apr2026.pptx"
 
 # Slide indices (1-based) that come from BORROWED builders in the existing
-# academic deck. These are exempt from the jargon and canonical-percentage
-# checks because the borrow-vs-build policy in the plan forbids us from
-# modifying upstream builders. Stale-pattern checks (67%, 860, 1,273, etc.)
-# DO still apply to borrowed slides — those numbers are genuinely wrong.
-#
-# This list MUST be kept in sync with generate_client_presentation.py — if
-# the slide order changes, regenerate the list by running:
-#   python3 -c "from pptx import Presentation; p = Presentation('...pptx'); ..."
+# academic deck. After the client-side replacements (Apr 30 batch), only 4
+# borrowed slides remain: data_flow, web_ui, arabic_roadmap, thank_you.
+# All four are visually compatible with the client deck theme.
 BORROWED_SLIDES = {
-    9,   # slide_what_good_looks_like
-    10,  # slide_14b (video gallery)
-    11,  # slide_judge_ex1
-    12,  # slide_judge_ex2
-    13,  # slide_judge_ex3
-    # slide_llm_judge dropped from the client deck — its 64.9% figure
-    # contradicted our canonical 62% useful-output number. Indices below
-    # reflect the post-drop slide order (everything after the old slide 24
-    # shifts by -1).
-    28,  # slide_data_flow
-    29,  # slide_visemes
-    30,  # slide_three_repos
-    31,  # slide_dual_env
-    32,  # slide_web_ui
-    41,  # slide_arabic_roadmap
-    47,  # slide_thank_you
+    27,  # slide_data_flow         — pipeline diagram (first slide of section 6)
+    31,  # slide_web_ui            — UI overview (last slide of section 6)
+    40,  # slide_arabic_roadmap    — Arabic adaptation (one slide in section 8)
+    46,  # slide_thank_you         — close
 }
 
 
@@ -217,6 +200,16 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "38.5%", "39%",      # 61.6 - 23.1 = 38.5 → "useful with context"
         "20%",                # rounded form sometimes used
         "100%",               # control reference
+    })
+    # Per-segment WER values that appear on the Section 3 example slides
+    # (perfect / partial / flagged Obama segments). These are factual
+    # per-instance numbers, not project-level metrics — they cannot contradict
+    # the canonical set. Listed explicitly so the audit catches *new* stray
+    # numbers but lets these through.
+    approved.update({
+        "0%",                 # segment 14 — perfect
+        "22%",                # segment 31 — partial
+        "45%",                # segment 5  — flagged hallucination
     })
     # Strip whitespace inside percent tokens
     def norm(s):

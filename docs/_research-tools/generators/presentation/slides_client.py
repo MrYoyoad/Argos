@@ -1164,6 +1164,348 @@ def slide_client_integration_commitment(prs):
     return slide
 
 
+# ──────────────────────────────────────────────────────────────────────────
+# Section 3 — Output examples (replacements for borrowed academic slides)
+# ──────────────────────────────────────────────────────────────────────────
+
+
+# 33-Obama-segment B3 sidecar — used to color-code the example slides with
+# real per-token probabilities. Loaded lazily so the deck still builds if
+# the sidecar is absent (falls back to plain text).
+_OBAMA_SIDECAR_PATH = "/tmp/vsp_b3_full_out/confidence-172610.json"
+_OBAMA_HYPO_PATH = "/tmp/vsp_b3_full_out/hypo-172610.json"
+
+
+def _load_obama_segment(utt_id):
+    """Return (ref, hyp_words_with_probs) for an Obama segment, or (None, None)
+    if the sidecar isn't available. hyp_words_with_probs is the output of
+    compute_word_confidence.aggregate_subtokens_to_words.
+    """
+    import json
+    from pathlib import Path
+    import sys
+    sd_path = Path(_OBAMA_SIDECAR_PATH)
+    hp_path = Path(_OBAMA_HYPO_PATH)
+    if not sd_path.exists() or not hp_path.exists():
+        return None, None
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from compute_word_confidence import aggregate_subtokens_to_words
+    sidecar = json.loads(sd_path.read_text())
+    hypo = json.loads(hp_path.read_text())
+    full_id = next((u for u in hypo["utt_id"] if utt_id in u), None)
+    if not full_id:
+        return None, None
+    idx = hypo["utt_id"].index(full_id)
+    ref = hypo["ref"][idx]
+    seg = sidecar.get(full_id)
+    if not seg:
+        return ref, None
+    words = aggregate_subtokens_to_words(seg.get("tokens", []))
+    return ref, words
+
+
+def _color_for_class(klass):
+    return {
+        "conf-high": GREEN,
+        "conf-med": YELLOW,
+        "conf-low": CORAL,
+    }.get(klass, WHITE)
+
+
+def _example_slide(prs, *, title, subtitle, utt_id, takeaway, takeaway_color=TEAL):
+    """Shared layout for the three Obama example slides."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, title)
+    add_accent_line(slide)
+    add_text(slide, subtitle, MX, Inches(1.45), CW, Inches(0.4),
+             size=Pt(13), color=LGRAY, italic=True)
+
+    ref, words = _load_obama_segment(utt_id)
+
+    # REF row
+    add_text(slide, "REFERENCE", MX, Inches(2.0), Inches(1.4), Inches(0.4),
+             size=Pt(11), bold=True, color=LGRAY)
+    add_text(slide,
+             ref or "(reference text not available — re-run the B3 decode)",
+             MX + Inches(1.5), Inches(2.0), CW - Inches(1.5), Inches(1.4),
+             size=Pt(16), color=LGRAY, italic=True)
+
+    # HYP row — color-coded
+    add_text(slide, "HYPOTHESIS", MX, Inches(3.6), Inches(1.4), Inches(0.4),
+             size=Pt(11), bold=True, color=WHITE)
+    if words:
+        runs = []
+        for w in words:
+            color = _color_for_class(w.get("conf_class", "conf-unknown"))
+            runs.append((w["word"] + " ", {"size": Pt(17), "color": color, "bold": False}))
+        add_rich_text(slide, [runs], MX + Inches(1.5), Inches(3.6),
+                      CW - Inches(1.5), Inches(2.0))
+    else:
+        add_text(slide, "(real-confidence sidecar not loaded — placeholder)",
+                 MX + Inches(1.5), Inches(3.6), CW - Inches(1.5), Inches(0.4),
+                 size=Pt(13), color=MGRAY, italic=True)
+
+    # Takeaway pill
+    add_rect(slide, MX, Inches(5.7), CW, Inches(0.7),
+             fill_color=NAVY2, border_color=takeaway_color)
+    add_text(slide, takeaway, MX + Inches(0.3), Inches(5.85),
+             CW - Inches(0.6), Inches(0.4),
+             size=Pt(14), color=WHITE, italic=True)
+
+    # Tiny legend
+    add_text(slide, "GREEN: confident   YELLOW: review   RED: likely error",
+             MX, Inches(6.55), CW, Inches(0.3),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    return slide
+
+
+def slide_client_example_perfect(prs):
+    """Obama segment 14 — WER 0%, 27 words at conf-high."""
+    return _example_slide(
+        prs,
+        title="Example 1 — Clean speech, perfect transcription",
+        subtitle="Obama bin Laden announcement  ·  segment #14  ·  41.95–45.55 s",
+        utt_id="14_004195_004555",
+        takeaway="WER 0%. 27 of 29 words at high confidence. No reviewer "
+                 "intervention needed.",
+        takeaway_color=GREEN,
+    )
+
+
+def slide_client_example_partial(prs):
+    """Obama segment 31 — WER 22%, mostly green with 2 substitutions."""
+    return _example_slide(
+        prs,
+        title="Example 2 — Partial recovery, model knows where it slipped",
+        subtitle="Obama bin Laden announcement  ·  segment #31  ·  92.90–96.50 s",
+        utt_id="31_009290_009650",
+        takeaway="WER 22%. \"president bush did\" became \"president bush said\". "
+                 "Substitutions appear in yellow — reviewer goes straight to them.",
+        takeaway_color=GOLD,
+    )
+
+
+def slide_client_example_flagged(prs):
+    """Obama segment 5 — WER 45%, hallucination caught (min_p 0.02).
+
+    REF: 'heroic citizens saved even more heartbreak and destruction'
+    HYP: 'rwanda's genocide even more heartbreaking is russia'
+    """
+    return _example_slide(
+        prs,
+        title="Example 3 — Flagged before it ever reached you",
+        subtitle="Obama bin Laden announcement  ·  segment #5  ·  14.98–18.58 s",
+        utt_id="05_001498_001858",
+        takeaway="WER 45%. The model fabricated \"rwanda's genocide\" — and "
+                 "knew it. Lowest-confidence word at p=0.02. The system flags "
+                 "the line before the reviewer ever sees the transcript.",
+        takeaway_color=CORAL,
+    )
+
+
+def slide_client_examples_intro(prs):
+    """Tee up the three example slides."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "What good, partial, and flagged look like")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Three real segments from the Obama bin Laden announcement, "
+             "decoded by the live model, color-coded by real per-word "
+             "confidence.",
+             MX, Inches(1.8), CW, Inches(1.2),
+             size=Pt(20), color=LGRAY, italic=True)
+
+    # Three preview cards
+    card_w = Inches(3.85)
+    gap = Inches(0.25)
+    top = Inches(3.2)
+    h = Inches(2.7)
+    items = [
+        ("CLEAN", "Segment 14",  "WER 0%. All confident.",       GREEN),
+        ("PARTIAL","Segment 31", "WER 22%. Substitutions in yellow.", GOLD),
+        ("FLAGGED","Segment 5",  "WER 45%. Hallucination caught.",   CORAL),
+    ]
+    for i, (label, sub, body, color) in enumerate(items):
+        x = MX + i * (card_w + gap)
+        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
+        add_text(slide, label, x + Inches(0.3), top + Inches(0.3),
+                 card_w - Inches(0.6), Inches(0.4),
+                 size=Pt(14), bold=True, color=color)
+        add_text(slide, sub, x + Inches(0.3), top + Inches(0.85),
+                 card_w - Inches(0.6), Inches(0.4),
+                 size=Pt(15), color=WHITE, bold=True)
+        add_text(slide, body, x + Inches(0.3), top + Inches(1.45),
+                 card_w - Inches(0.6), h - Inches(1.45),
+                 size=Pt(13), color=LGRAY)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, "Three concrete examples on the next three slides.")
+    return slide
+
+
+# ──────────────────────────────────────────────────────────────────────────
+# Section 6 — Pipeline reframes (replace academic-styled borrowed slides)
+# ──────────────────────────────────────────────────────────────────────────
+
+
+def slide_client_visemes(prs):
+    """Why lip reading is hard — without saying 'viseme'."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Why lip reading is hard")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Many words look identical on the lips. The model has to choose.",
+             MX, Inches(1.7), CW, Inches(0.6),
+             size=Pt(22), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three example sets — words that share lip shape
+    card_w = Inches(3.85)
+    gap = Inches(0.25)
+    top = Inches(2.8)
+    h = Inches(2.4)
+    examples = [
+        ("LOOK IDENTICAL", "pat  ·  bat  ·  mat",   "Plosive sounds — same lip closure", TEAL),
+        ("LOOK IDENTICAL", "thin  ·  fin  ·  shin",  "Fricatives — invisible airflow",   GOLD),
+        ("LOOK IDENTICAL", "see  ·  zee  ·  thee",   "Voicing — invisible vibration",    CORAL),
+    ]
+    for i, (label, words, why, color) in enumerate(examples):
+        x = MX + i * (card_w + gap)
+        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
+        add_text(slide, label, x + Inches(0.3), top + Inches(0.25),
+                 card_w - Inches(0.6), Inches(0.4),
+                 size=Pt(11), bold=True, color=color)
+        add_text(slide, words, x + Inches(0.3), top + Inches(0.85),
+                 card_w - Inches(0.6), Inches(0.7),
+                 size=Pt(22), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+        add_text(slide, why, x + Inches(0.3), top + Inches(1.7),
+                 card_w - Inches(0.6), h - Inches(1.8),
+                 size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
+
+    add_text(slide,
+             "The system uses language context and confidence scoring to pick the right one — and tells you when it can't.",
+             MX, Inches(5.5), CW, Inches(0.5),
+             size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "These are visemes (groups of phonemes that look the same on the lips). "
+        "Don't say 'visemes' on the slide. The teaching beat is: this is why "
+        "the problem is hard, and why our confidence signal matters."
+    ))
+    return slide
+
+
+def slide_client_pipeline_components(prs):
+    """Three components, client-friendly labels."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Three components, end-to-end")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "From a raw video frame to a confidence-scored transcript.",
+             MX, Inches(1.7), CW, Inches(0.5),
+             size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three flow boxes connected by arrows
+    box_w = Inches(3.6)
+    gap = Inches(0.4)
+    top = Inches(2.7)
+    h = Inches(3.0)
+    total_w = 3 * box_w + 2 * gap
+    start_x = MX + (CW - total_w) / 2
+
+    components = [
+        ("1.", "FACE DETECTION & MOUTH CROPPING",
+         "Find the speaker. Crop a stable, centered window around the mouth across every frame.",
+         TEAL),
+        ("2.", "VISUAL FEATURE EXTRACTION",
+         "Convert the mouth movement into a compact representation the language model can read.",
+         GOLD),
+        ("3.", "LANGUAGE DECODING",
+         "Generate the transcript word-by-word. Capture per-word confidence as we go.",
+         GREEN),
+    ]
+    for i, (num, title, body, color) in enumerate(components):
+        x = start_x + i * (box_w + gap)
+        add_rect(slide, x, top, box_w, h, fill_color=NAVY2, border_color=None)
+        add_text(slide, num, x + Inches(0.3), top + Inches(0.25),
+                 box_w - Inches(0.6), Inches(0.5),
+                 size=Pt(28), bold=True, color=color)
+        add_text(slide, title, x + Inches(0.3), top + Inches(0.85),
+                 box_w - Inches(0.6), Inches(0.8),
+                 size=Pt(13), bold=True, color=WHITE)
+        add_text(slide, body, x + Inches(0.3), top + Inches(1.7),
+                 box_w - Inches(0.6), h - Inches(1.8),
+                 size=Pt(12), color=LGRAY)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Behind the scenes these are auto_avsr, av_hubert, and VSP-LLM. Don't "
+        "name those repos for clients. The narrative beat: we own the whole "
+        "stack, not a vendor stitch-up."
+    ))
+    return slide
+
+
+def slide_client_deployment_options(prs):
+    """Cloud vs on-prem — clean two-card layout."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Deploys where you need it")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Same pipeline, two deployment paths. You pick.",
+             MX, Inches(1.7), CW, Inches(0.5),
+             size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Two big cards
+    card_w = Inches(5.85)
+    gap = Inches(0.4)
+    top = Inches(2.6)
+    h = Inches(3.6)
+    options = [
+        ("CLOUD",
+         "Hosted on your AWS / GCP / Azure account. We run the GPU infra; you pay per minute of video.",
+         ["Faster setup, no hardware procurement", "Scales elastically with your queue", "We patch and update the stack"],
+         TEAL),
+        ("ON-PREMISE",
+         "Containerized install on your hardware. Your data never leaves your network.",
+         ["Air-gapped operation supported", "GPU on your own machines (T4 minimum)", "We support and maintain remotely"],
+         GOLD),
+    ]
+    for i, (label, blurb, bullets, color) in enumerate(options):
+        x = MX + i * (card_w + gap)
+        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=color)
+        add_text(slide, label, x + Inches(0.3), top + Inches(0.3),
+                 card_w - Inches(0.6), Inches(0.6),
+                 size=Pt(28), bold=True, color=color)
+        add_text(slide, blurb, x + Inches(0.3), top + Inches(1.1),
+                 card_w - Inches(0.6), Inches(1.0),
+                 size=Pt(14), color=WHITE)
+        add_bullets(slide, bullets,
+                    x + Inches(0.3), top + Inches(2.1),
+                    card_w - Inches(0.6), Inches(1.4),
+                    size=Pt(13))
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, "Headline: same code, two deployment models.")
+    return slide
+
+
 def slide_client_next_steps(prs):
     """Shipping-safe placeholder. The four prompts are intentional cues for
     the presenter to fill in with client-specific language before the
