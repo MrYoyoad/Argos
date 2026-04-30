@@ -1468,3 +1468,28 @@ hyp_words = [w for w, _ in hyp_tokens]
 **Change**: Replaced `uploadFile()` function (was ~130 lines with simulation logic) with clean version (~60 lines, real progress only). Removed: `simulatedProgress`, `progressSimulationInterval`, `hasRealProgress`, `loadstart` event, `loadend` event, `clearInterval` calls.
 
 **Container action**: No changes needed — container already had the simplified version.
+
+### NIV Y/P/N labels in IS output (April 30, 2026)
+
+**Summary**: `generate_intelligibility_scores.py` now emits NIV (Net Intelligibility Verdict) labels — Y / P / N — directly in the per-segment CSV and a structured `niv_distribution` block in the summary JSON. Previously only legacy IS-tier labels were written; container had partial NIV (count-only, no per-segment column).
+
+**Thresholds** (calibrated against Opus 4.6 judge, March 2026 — see [docs/evaluation/threshold_calibration_vs_opus.md](evaluation/threshold_calibration_vs_opus.md)):
+- `NIV_Y_THRESHOLD = 3.80` — Y, clearly conveyed (κ=0.690 vs judge Y)
+- `NIV_P_THRESHOLD = 2.00` — Y+P, any useful (κ=0.818 vs judge Y+P)
+
+**Files changed (all three IS-script copies, kept byte-identical)**:
+1. `docs/_research-tools/generators/generate_intelligibility_scores.py` (EC2 source-of-truth)
+2. `vsp_docker/galaxy_export/VSP-LLM/scripts/generate_intelligibility_scores.py`
+3. `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/generate_intelligibility_scores.py`
+
+**Code additions**:
+- New module-level constants `NIV_Y_THRESHOLD`, `NIV_P_THRESHOLD`
+- New helper `niv_label(is_score) -> "Y"/"P"/"N"`
+- New `niv` column in `intelligibility_scores.csv`
+- New `niv_distribution` dict in `intelligibility_summary.json` (Y/P/N counts + thresholds + Y_pct + YP_pct)
+- Backward-compat: `niv_useful_count` / `niv_useful_pct` (Y+P) and `niv_clearly_conveyed_count` / `niv_clearly_conveyed_pct` (Y) preserved
+- Console summary now prints NIV Y/P/N/Y+P breakdown alongside legacy "captured" count
+
+**Container action**: No further action needed — all three copies updated in this commit and verified identical (`md5sum` match).
+
+**Verification**: End-to-end test on `english_full_results/client_outputs/report/report.csv` (1,497 segments): partition is exhaustive (Y=359 + P=564 + N=574 = 1,497); Y+P=923 (61.7%) matches published 922 (61.6%) within 1 segment; boundary cases verified (1.937→N, 3.763→P, 4.342→Y).

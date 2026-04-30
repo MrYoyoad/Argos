@@ -572,6 +572,24 @@ def compute_is(
     return score, tier, TIER_LABELS[tier]
 
 
+# ── NIV (Net Intelligibility Verdict) thresholds ─────────────────────
+# Calibrated against Opus 4.6 LLM judge on 1,497 segments (March 2026).
+# See docs/evaluation/threshold_calibration_vs_opus.md.
+#   Y  : IS >= 3.80  -> kappa=0.690 vs judge Y      (clearly conveyed)
+#   Y+P: IS >= 2.00  -> kappa=0.818 vs judge Y+P    (any useful)
+NIV_Y_THRESHOLD = 3.80
+NIV_P_THRESHOLD = 2.00
+
+
+def niv_label(is_score: float) -> str:
+    """Map IS to Net Intelligibility Verdict (Y / P / N)."""
+    if is_score >= NIV_Y_THRESHOLD:
+        return "Y"
+    if is_score >= NIV_P_THRESHOLD:
+        return "P"
+    return "N"
+
+
 # ── CSV Loading ──────────────────────────────────────────────────────
 
 def load_csv(path: str) -> List[Dict]:
@@ -768,6 +786,7 @@ def main():
         "semantic_sim", "phonetic_sim", "phonetic_matches",
         "phonetic_near_misses", "length_ratio",
         "intelligibility_score", "intelligibility_tier", "intelligibility_label",
+        "niv",
         "context_recoverable", "context_reason",
         "llm_context_prob", "llm_context_reason",
         "failure_mode", "success_pattern",
@@ -785,6 +804,7 @@ def main():
             row["intelligibility_score"] = f"{is_scores[i]:.3f}"
             row["intelligibility_tier"] = is_tiers[i]
             row["intelligibility_label"] = is_labels[i]
+            row["niv"] = niv_label(float(is_scores[i]))
             row["context_recoverable"] = ctx_recoverable[i]
             row["context_reason"] = ctx_reasons[i]
             row["llm_context_prob"] = f"{llm_ctx_probs[i]:.3f}"
@@ -799,9 +819,16 @@ def main():
     n = len(rows)
     n_empty = sum(1 for h in hyps if not h.strip())
     properly_captured = int(np.sum(is_tiers >= 4))  # Legacy: IS >= 3.0
-    # NIV thresholds (supersede IS >= 3.0)
-    niv_useful = int(np.sum(is_scores >= 2.00))      # NIV Y+P: IS >= 2.00
-    niv_clearly_conveyed = int(np.sum(is_scores >= 3.80))  # NIV Y: IS >= 3.80
+
+    # NIV (Net Intelligibility Verdict) counts -- supersede legacy IS >= 3.0
+    niv_per_segment = np.array([niv_label(float(s)) for s in is_scores])
+    n_niv_y = int(np.sum(niv_per_segment == "Y"))
+    n_niv_p = int(np.sum(niv_per_segment == "P"))
+    n_niv_n = int(np.sum(niv_per_segment == "N"))
+    n_niv_yp = n_niv_y + n_niv_p
+    # Backward-compat aliases (used by older container reports)
+    niv_useful = n_niv_yp
+    niv_clearly_conveyed = n_niv_y
 
     tier_dist = {}
     for t in [5, 4, 3, 2, 1]:
@@ -826,6 +853,25 @@ def main():
         "std_is": round(float(is_scores.std()), 3),
         "properly_captured_count": properly_captured,
         "properly_captured_pct": round(properly_captured / n * 100, 1),
+        "niv_distribution": {
+            "Y_clearly_conveyed": {
+                "count": n_niv_y,
+                "pct": round(n_niv_y / n * 100, 1),
+                "threshold": f"IS >= {NIV_Y_THRESHOLD}",
+            },
+            "P_partial_useful": {
+                "count": n_niv_p,
+                "pct": round(n_niv_p / n * 100, 1),
+                "threshold": f"{NIV_P_THRESHOLD} <= IS < {NIV_Y_THRESHOLD}",
+            },
+            "N_failed": {
+                "count": n_niv_n,
+                "pct": round(n_niv_n / n * 100, 1),
+                "threshold": f"IS < {NIV_P_THRESHOLD}",
+            },
+            "Y_pct": round(n_niv_y / n * 100, 1),
+            "YP_pct": round(n_niv_yp / n * 100, 1),
+        },
         "niv_useful_count": niv_useful,
         "niv_useful_pct": round(niv_useful / n * 100, 1),
         "niv_clearly_conveyed_count": niv_clearly_conveyed,
@@ -962,12 +1008,16 @@ def main():
     print(f"  Mean IS:   {summary['mean_is']:.2f} / 5.0")
     print(f"  Median IS: {summary['median_is']:.2f} / 5.0")
     print()
-    print(f"  USEFUL (NIV Y+P, IS >= 2.00):  {niv_useful} / {n}"
-          f"  ({summary['niv_useful_pct']:.1f}%)")
-    print(f"  CLEARLY CONVEYED (NIV Y, IS >= 3.80): {niv_clearly_conveyed} / {n}"
-          f"  ({summary['niv_clearly_conveyed_pct']:.1f}%)")
-    print(f"  Legacy captured (IS >= 3.0):   {properly_captured} / {n}"
-          f"  ({summary['properly_captured_pct']:.1f}%)")
+    print(f"  NIV Y   (clearly conveyed, IS >= {NIV_Y_THRESHOLD}): {n_niv_y:5d} / {n}"
+          f"  ({n_niv_y / n * 100:5.1f}%)")
+    print(f"  NIV P   (partial useful):                    {n_niv_p:5d} / {n}"
+          f"  ({n_niv_p / n * 100:5.1f}%)")
+    print(f"  NIV N   (failed, IS < {NIV_P_THRESHOLD}):                {n_niv_n:5d} / {n}"
+          f"  ({n_niv_n / n * 100:5.1f}%)")
+    print(f"  NIV Y+P (any useful, IS >= {NIV_P_THRESHOLD}):           {n_niv_yp:5d} / {n}"
+          f"  ({n_niv_yp / n * 100:5.1f}%)")
+    print(f"  Legacy captured (IS >= 3.0):                 {properly_captured:5d} / {n}"
+          f"  ({summary['properly_captured_pct']:5.1f}%)")
     print()
     print("  Tier Distribution:")
     for t in [5, 4, 3, 2, 1]:

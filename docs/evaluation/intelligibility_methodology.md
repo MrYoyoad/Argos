@@ -316,6 +316,16 @@ IS beats WER at both operating points: +0.061 for Y (vs WER <= 34%), +0.041 for 
 
 *Legacy: IS >= 3.0 was the original design-time threshold ("properly captured"). NIV thresholds supersede it for presentation and reporting.*
 
+### Live pipeline output (April 2026)
+
+NIV labels are emitted directly by [generate_intelligibility_scores.py](../_research-tools/generators/generate_intelligibility_scores.py) (Stage 8 of the pipeline). Every run produces:
+
+- **Per-segment**: `niv` column in `intelligibility_scores.csv` with values `Y` / `P` / `N`.
+- **Aggregate**: `niv_distribution` block in `intelligibility_summary.json` containing Y / P / N / Y+P counts and percentages, plus the threshold definitions inline.
+- **Backward-compat**: `niv_useful_count` / `niv_useful_pct` (Y+P) and `niv_clearly_conveyed_count` / `niv_clearly_conveyed_pct` (Y) preserved for older consumers.
+
+Thresholds are defined as module constants `NIV_Y_THRESHOLD = 3.80` and `NIV_P_THRESHOLD = 2.00`. The mapping is `Y if IS >= 3.80, P if 2.00 <= IS < 3.80, else N`.
+
 ---
 
 ## 8. Failure Mode Classification

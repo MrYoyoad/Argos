@@ -45,6 +45,12 @@ which is a poor operating point for Y+P prediction.
 (too lenient, 271 false positives), κ=0.521 for Y+P (too strict, misses 377 useful segments).
 NIV thresholds provide two clean, purpose-specific decision boundaries instead.
 
+**Implementation (April 2026):** NIV labels are now first-class output of the live pipeline.
+[generate_intelligibility_scores.py](../_research-tools/generators/generate_intelligibility_scores.py)
+emits a `niv` column (`Y` / `P` / `N`) on every segment in `intelligibility_scores.csv` and a
+`niv_distribution` block in `intelligibility_summary.json`. Thresholds are exposed as
+constants `NIV_Y_THRESHOLD = 3.80` and `NIV_P_THRESHOLD = 2.00`.
+
 ---
 
 ## 1. Opus Judge Ground Truth
