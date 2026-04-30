@@ -69,11 +69,18 @@ run_vsp_decode() {
     return 1
   }
 
+  # VSP_OUTPUT_SCORES (optional, default 0): when set to 1, vsp_llm_decode writes
+  # a confidence-{fid}.json sidecar with per-token softmax probabilities.
+  if [ "${VSP_OUTPUT_SCORES:-0}" = "1" ]; then
+    log_info "VSP_OUTPUT_SCORES=1 — confidence sidecar will be written alongside hypo-{fid}.json"
+  fi
+
   LANG="en" \
   SPLIT="train" \
   LRS3_ROOT="$prep_root" \
   LAB_DIR="$lab_dir" \
   WRD_ROOT="$wrd_root" \
+  VSP_OUTPUT_SCORES="${VSP_OUTPUT_SCORES:-0}" \
   bash "$vsp_dir/scripts/run_flat_decode.sh" || {
     log_error "VSP-LLM decode failed"
     return 1
