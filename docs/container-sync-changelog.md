@@ -1485,6 +1485,44 @@ hyp_words = [w for w, _ in hyp_tokens]
 
 ---
 
+### Word-Level Confidence in Pipeline Output (April 30, 2026)
+
+**Summary**: Stage 8 of the modular pipeline now emits per-word confidence artifacts on every run. `VSP_OUTPUT_SCORES=1` is the default (set in `lib/decode.sh`); decode runs that previously skipped scoring will start writing a `confidence-{fid}.json` sidecar with no caller change. `make_report.py` consumes it via a new `--word-confidence` flag and surfaces the data in both `report.csv` (3 trailing columns) and `report.html` (a labeled `Confidence:` line per segment, plus a `Sent Conf` metric cell next to `IS`).
+
+**Why this change is here**: per-token confidence existed in the model code (`vsp_llm.py`/`vsp_llm_decode.py`) for one-off use (the Obama bin Laden demo at `presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html`), but never ran automatically in the pipeline. Production deliveries had no confidence column or visualization. Now every client run produces the data.
+
+**Color encoding** (deliberately distinct so the two cues never get confused):
+- Accuracy (existing): green / yellow / red — match / mismatch / inserted
+- Confidence (new): blue / orange / purple — high (≥0.85) / med (0.40–0.85) / low (<0.40)
+
+**Files added (byte-identical across all three deploy locations)**:
+1. `VSP-LLM/scripts/compute_word_confidence.py`  — canonical: `docs/_research-tools/generators/compute_word_confidence.py`
+2. `VSP-LLM/scripts/generate_client_demo_report.py`  — canonical: same dir
+3. `VSP-LLM/scripts/generate_intelligibility_scores.py`  — already mirrored, refreshed for `confidence_summary` block
+
+**Files updated**:
+4. `lib/decode.sh` — flipped `VSP_OUTPUT_SCORES` fallback from `:-0` to `:-1` (two occurrences)
+5. `lib/outputs.sh` — new pre-`make_report.py` block aggregates the sidecar via `compute_word_confidence.py`; passes `--word-confidence <path>` when sidecar exists
+6. `VSP-LLM/scripts/make_report.py` — new `--word-confidence` CLI flag; appends `sentence_confidence`, `min_word_conf`, `n_low_conf_words` to CSV; renders `Confidence:` line + `Sent Conf` metric cell in HTML; adds CSS `.conf-high/.conf-med/.conf-low` and a header legend
+7. `docs/_research-tools/generators/generate_intelligibility_scores.py` — adds optional `confidence_summary` block to `intelligibility_summary.json` when `word_confidence.json` is present
+
+**Output artifacts added to `<run>/client_outputs/report/`**:
+- `confidence-{fid}.json` — raw per-token softmax sidecar (copied from `decode_output/`)
+- `word_confidence.json` — aggregated per-word + per-segment summary
+- New columns in `report.csv`: `sentence_confidence`, `min_word_conf`, `n_low_conf_words`
+- New `Confidence:` line + `Sent Conf` cell in `report.html`
+- New `confidence_summary` block in `intelligibility_summary.json`
+
+**Backward compatibility**: if the sidecar is absent (old decode runs, `VSP_OUTPUT_SCORES=0`, container without the script), Stage 8 logs `[8] No confidence-{fid}.json sidecar — confidence will be skipped` and produces byte-identical pre-change output. CSV header does not gain confidence columns when no confidence data is loaded; HTML does not render a `Confidence:` row.
+
+**Standalone container compatibility (verified)**: zero new Python dependencies. `compute_word_confidence.py` and `generate_client_demo_report.py` are pure stdlib. `make_report.py` already runs in the container's `vsp-llm-yoad-venv`. No change to `INSTALL.sh` needed.
+
+**`run_flat_english_pipeline.sh` is NOT modified** in either EC2 or container — the master orchestrator stays untouched. Changes ride through the modular `lib/` it already sources.
+
+**Container action**: copy the seven files above; verify md5 across all three deploy locations.
+
+**Verification**: `pytest tests/unit/test_compute_word_confidence.py tests/unit/test_make_report_word_confidence.py tests/unit/test_vsp_llm_output_scores.py` (21 tests pass). End-to-end smoke run on `english_full_results/decode_output/hypo-979657.json` with synthetic confidence verified populated CSV columns + HTML rendering + `confidence_summary` block.
+
 ### NIV Y/P/N labels in IS output (April 30, 2026)
 
 **Summary**: `generate_intelligibility_scores.py` now emits NIV (Net Intelligibility Verdict) labels — Y / P / N — directly in the per-segment CSV and a structured `niv_distribution` block in the summary JSON. Previously only legacy IS-tier labels were written; container had partial NIV (count-only, no per-segment column).

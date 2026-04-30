@@ -62,10 +62,13 @@ def test_vsp_llm_decode_sidecar_write_present():
 
 def test_decode_sh_passes_envvar():
     """B1.t4 — lib/decode.sh must explicitly pass VSP_OUTPUT_SCORES through
-    to the Python decode subprocess so the env-var gate is reachable."""
+    to the Python decode subprocess so the env-var gate is reachable.
+    Default flipped to 1 (always-on) on 2026-04-30; users can opt out
+    by exporting VSP_OUTPUT_SCORES=0."""
     src = _read(DECODE_SH)
-    assert 'VSP_OUTPUT_SCORES="${VSP_OUTPUT_SCORES:-0}"' in src, (
-        "decode.sh must explicitly forward VSP_OUTPUT_SCORES to run_flat_decode.sh"
+    assert 'VSP_OUTPUT_SCORES="${VSP_OUTPUT_SCORES:-1}"' in src, (
+        "decode.sh must explicitly forward VSP_OUTPUT_SCORES to run_flat_decode.sh "
+        "(default :-1 since 2026-04-30 to make confidence sidecars on by default)"
     )
 
 

@@ -107,6 +107,23 @@ def hyp_html(tagged: List[Tuple[str, str]]) -> str:
         parts.append(f'<span class="{cls.get(t,"rep")}">{escape(w)}</span>')
     return " ".join(parts)
 
+
+def conf_html(words: List[Dict[str, Any]]) -> str:
+    """Render per-word confidence-colored HTML from a word_confidence.json segment."""
+    parts = []
+    for w in words or []:
+        word = str(w.get("word", ""))
+        if not word:
+            continue
+        cc = w.get("conf_class") or ""
+        prob = w.get("prob")
+        if cc not in ("conf-high", "conf-med", "conf-low"):
+            parts.append(escape(word))
+            continue
+        title = f' title="prob={prob:.2f}"' if isinstance(prob, (int, float)) else ""
+        parts.append(f'<span class="{cc}"{title}>{escape(word)}</span>')
+    return " ".join(parts)
+
 HTML_HEAD = """<!doctype html>
 <html><head><meta charset="utf-8">
 <style>
@@ -120,12 +137,18 @@ th{background:#f5f5f5; text-align:left}
 .m-green{background:#d4edda; color:#155724; font-weight:700; text-align:center}
 .m-yellow{background:#fff3cd; color:#856404; font-weight:700; text-align:center}
 .m-red{background:#f8d7da; color:#721c24; font-weight:700; text-align:center}
+.conf-high{background:#cfe2ff; color:#084298; font-weight:700; padding:0 2px; border-radius:2px}
+.conf-med {background:#ffe5b4; color:#8a4b00; font-weight:700; padding:0 2px; border-radius:2px}
+.conf-low {background:#e2c4f0; color:#4b0082; font-weight:800; padding:0 2px; border-radius:2px}
+.label-acc{display:inline-block; min-width:6.5em; color:#555; font-size:0.85em; font-weight:600}
+.label-conf{display:inline-block; min-width:6.5em; color:#555; font-size:0.85em; font-weight:600}
 small{color:#555}
 pre{white-space:pre-wrap; word-break:break-word; margin:0}
 .summary{background:#e9ecef; padding:12px; border-radius:6px; margin-bottom:16px}
 </style></head><body>
 <h2>ASR Report (REF vs HYP)</h2>
-<p><span class="ok">green</span>=match, <span class="rep">yellow</span>=mismatch/shift, <span class="ins">red</span>=inserted/made-up</p>
+<p><b>Accuracy:</b> <span class="ok">green</span>=match, <span class="rep">yellow</span>=mismatch/shift, <span class="ins">red</span>=inserted/made-up</p>
+<p><b>Confidence (model softmax):</b> <span class="conf-high">blue</span>=high (&ge;0.85), <span class="conf-med">orange</span>=medium (0.40&ndash;0.85), <span class="conf-low">purple</span>=low (&lt;0.40) &mdash; <i>only shown when per-token scores were captured during decode</i></p>
 """
 
 HTML_TAIL = "</table></body></html>"
@@ -622,7 +645,20 @@ def main() -> None:
     ap.add_argument("--out_dir", required=True)
     ap.add_argument("--params", default=None, help="decode_params JSON file (optional)")
     ap.add_argument("--compute-is", action="store_true", help="Compute Intelligibility Scores")
+    ap.add_argument("--word-confidence", default=None,
+                    help="word_confidence.json (from compute_word_confidence.py); enables per-word confidence rendering and per-segment confidence columns")
     args = ap.parse_args()
+
+    # Word-level confidence (optional). Format: {utt_id: {words: [...], summary: {...}}}
+    word_conf: Dict[str, Dict[str, Any]] = {}
+    if args.word_confidence:
+        try:
+            word_conf = json.loads(Path(args.word_confidence).read_text(encoding="utf-8"))
+            print(f"[INFO] Loaded word-confidence for {len(word_conf)} segments from {args.word_confidence}")
+        except Exception as e:
+            print(f"[WARN] Could not load --word-confidence {args.word_confidence}: {e}")
+            word_conf = {}
+    do_conf = bool(word_conf)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -746,6 +782,27 @@ def main() -> None:
         # IS data for this record
         seg_is = is_data.get(r.utt_id) if do_is else None  # (score, tier, label)
 
+        # Per-segment word-confidence summary (if available) — needed for both CSV and HTML below
+        seg_conf = word_conf.get(r.utt_id) if do_conf else None
+        seg_words = (seg_conf or {}).get("words") or []
+        seg_summary = (seg_conf or {}).get("summary") or {}
+        sent_conf_val = seg_summary.get("mean_word_prob") if seg_summary else None
+
+        def _conf_csv_cells():
+            """Return [sentence_confidence, min_word_conf, n_low_conf_words] cells."""
+            if not do_conf:
+                return []
+            if seg_summary:
+                sc = seg_summary.get("mean_word_prob")
+                mn = seg_summary.get("min_word_prob")
+                nl = seg_summary.get("n_low")
+                return [
+                    f"{sc:.3f}" if isinstance(sc, (int, float)) else "",
+                    f"{mn:.3f}" if isinstance(mn, (int, float)) else "",
+                    str(nl) if isinstance(nl, int) else "",
+                ]
+            return ["", "", ""]
+
         # CSV row
         if m:
             csv_row = [
@@ -756,6 +813,7 @@ def main() -> None:
             ]
             if do_is:
                 csv_row += [f"{seg_is[0]:.2f}", str(seg_is[1]), seg_is[2]] if seg_is else ["", "", ""]
+            csv_row += _conf_csv_cells()
             rows_csv.append(tuple(csv_row))
         else:
             csv_row = [
@@ -765,6 +823,7 @@ def main() -> None:
             ]
             if do_is:
                 csv_row += ["", "", ""]
+            csv_row += _conf_csv_cells()
             rows_csv.append(tuple(csv_row))
 
         # HTML row — consistent coloring on all metric cells
@@ -784,16 +843,33 @@ def main() -> None:
                 metrics_cells += f'<td class="{is_css}" title="{escape(seg_is[2])}">{seg_is[0]:.2f}</td>'
             elif do_is:
                 metrics_cells += '<td>-</td>'
+            if do_conf:
+                if isinstance(sent_conf_val, (int, float)):
+                    sc_css = f"m-{_recall_color(sent_conf_val * 100)}"
+                    metrics_cells += f'<td class="{sc_css}" title="mean word prob">{sent_conf_val:.2f}</td>'
+                else:
+                    metrics_cells += '<td>-</td>'
         else:
             metrics_cells = '<td>-</td><td>-</td><td>-</td>'
             if do_is:
                 metrics_cells += '<td>-</td>'
+            if do_conf:
+                metrics_cells += '<td>-</td>'
+
+        # Hypothesis cell: accuracy line, plus a confidence line when available
+        hyp_cell_inner = (
+            f'<pre><span class="label-acc">Accuracy:</span>{hyp_html(tagged)}</pre>'
+        )
+        if do_conf and seg_words:
+            hyp_cell_inner += (
+                f'<pre><span class="label-conf">Confidence:</span>{conf_html(seg_words)}</pre>'
+            )
 
         html_rows.append(
             f"<tr><td><b>{escape(dname)}</b><br>"
             f"<small>{escape(r.utt_id)}</small></td>"
             f"<td><pre>{escape(ref)}</pre></td>"
-            f"<td><pre>{hyp_html(tagged)}</pre></td>"
+            f"<td>{hyp_cell_inner}</td>"
             f"{metrics_cells}</tr>"
         )
 
@@ -870,6 +946,8 @@ def main() -> None:
                        "wer_%", "wwer_%", "nea_recall_%", "nea_precision_%", "nea_f1_%", "missed_entities"]
         if do_is:
             csv_header += ["is_score", "is_tier", "is_label"]
+        if do_conf:
+            csv_header += ["sentence_confidence", "min_word_conf", "n_low_conf_words"]
         w.writerow(csv_header)
         w.writerows(rows_csv)
 
@@ -882,10 +960,12 @@ def main() -> None:
     html_params = _format_params_html(run_params) if run_params else ""
     html_summary = f'<div class="summary"><b>{escape(summary)}</b></div>'
     is_th = '<th>IS</th>' if do_is else ''
+    conf_th = '<th title="mean per-word softmax probability">Sent Conf</th>' if do_conf else ''
+    hyp_th_label = 'Hypothesis (Accuracy / Confidence)' if do_conf else 'Hypothesis (colored)'
     html_table = (
         '<table>\n'
-        '<tr><th>ID</th><th>Reference</th><th>Hypothesis (colored)</th>'
-        f'<th>WER</th><th>WWER</th><th>NEA Recall</th>{is_th}</tr>\n'
+        f'<tr><th>ID</th><th>Reference</th><th>{hyp_th_label}</th>'
+        f'<th>WER</th><th>WWER</th><th>NEA Recall</th>{is_th}{conf_th}</tr>\n'
         + "\n".join(html_rows)
     )
     (out_dir / "report.html").write_text(

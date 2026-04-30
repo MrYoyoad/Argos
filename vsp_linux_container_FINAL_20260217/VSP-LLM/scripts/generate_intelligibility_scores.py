@@ -993,6 +993,40 @@ def main():
         if len(indices) >= 10:
             summary["length_analysis"][label] = _group_stats(indices)
 
+    # ── Optional: confidence_summary block (only if word_confidence.json present) ──
+    word_conf_path = out_dir / "word_confidence.json"
+    if word_conf_path.exists():
+        try:
+            wc = json.loads(word_conf_path.read_text(encoding="utf-8"))
+            sent_means = []
+            n_high_total = n_med_total = n_low_total = 0
+            n_words_total = 0
+            for seg in wc.values():
+                summ = (seg or {}).get("summary") or {}
+                mw = summ.get("mean_word_prob")
+                if isinstance(mw, (int, float)):
+                    sent_means.append(float(mw))
+                n_high_total += int(summ.get("n_high", 0) or 0)
+                n_med_total  += int(summ.get("n_med", 0) or 0)
+                n_low_total  += int(summ.get("n_low", 0) or 0)
+                n_words_total += int(summ.get("n_words", 0) or 0)
+            if sent_means:
+                arr = np.array(sent_means)
+                summary["confidence_summary"] = {
+                    "n_segments_with_confidence": len(sent_means),
+                    "mean_sentence_conf": round(float(arr.mean()), 3),
+                    "median_sentence_conf": round(float(np.median(arr)), 3),
+                    "n_high_words_total": n_high_total,
+                    "n_med_words_total":  n_med_total,
+                    "n_low_words_total":  n_low_total,
+                    "n_words_total":      n_words_total,
+                    "pct_low_conf_words": (round(n_low_total / n_words_total * 100, 1)
+                                            if n_words_total else 0.0),
+                    "thresholds": {"high": 0.85, "med": 0.40},
+                }
+        except Exception as e:
+            print(f"[WARN] Could not load {word_conf_path} for confidence_summary: {e}")
+
     json_path = out_dir / "intelligibility_summary.json"
     print(f"Writing {json_path}...")
     with open(json_path, "w", encoding="utf-8") as f:

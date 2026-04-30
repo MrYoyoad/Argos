@@ -326,6 +326,21 @@ NIV labels are emitted directly by [generate_intelligibility_scores.py](../_rese
 
 Thresholds are defined as module constants `NIV_Y_THRESHOLD = 3.80` and `NIV_P_THRESHOLD = 2.00`. The mapping is `Y if IS >= 3.80, P if 2.00 <= IS < 3.80, else N`.
 
+### Word-level confidence in live pipeline output (April 30, 2026)
+
+`VSP_OUTPUT_SCORES=1` is now the default in [`lib/decode.sh`](../../lib/decode.sh), so every decode emits a `confidence-{fid}.json` sidecar with per-token softmax probabilities. Stage 8 aggregates this into per-word confidence and surfaces it alongside the existing intelligibility metrics:
+
+- **Per-segment** in `report.csv`: three trailing columns — `sentence_confidence` (mean per-word probability, 0–1), `min_word_conf`, `n_low_conf_words` — appended right after the existing IS columns.
+- **Per-segment** in `report.html`: each row's hypothesis cell now renders two clearly-labeled lines — `Accuracy:` (existing green/yellow/red WER alignment) and `Confidence:` (new blue/orange/purple word-level softmax). A `Sent Conf` metric cell sits beside `IS` so the two segment-level scores read together.
+- **Aggregate** in `intelligibility_summary.json`: a new `confidence_summary` block reports `mean_sentence_conf`, `median_sentence_conf`, totals for `n_high_words` / `n_med_words` / `n_low_words`, and `pct_low_conf_words`. The block is only emitted when `word_confidence.json` is present.
+
+Thresholds for the word-level color classes (calibrated against LLaMA-2 literature, see [docs/confidence/threshold_design.md](../confidence/threshold_design.md)):
+- `conf-high`: prob ≥ 0.85
+- `conf-med`:  0.40 ≤ prob < 0.85
+- `conf-low`:  prob < 0.40
+
+The same `compute_word_confidence.py` and `generate_client_demo_report.py` that produced the one-off Obama bin Laden demo now run automatically in every pipeline run, on both EC2 and the standalone client container. Users who don't want the sidecar (e.g. on memory-constrained GPUs) can set `export VSP_OUTPUT_SCORES=0` before invoking the pipeline; reports then come out byte-identical to the pre-change output.
+
 ---
 
 ## 8. Failure Mode Classification

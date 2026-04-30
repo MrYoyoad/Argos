@@ -529,14 +529,17 @@ The Intelligibility Score (IS) acts as the segment-level confidence gate. On the
 - **100% precision at IS ≥ 3.80 vs WER ≤ 50%** — every segment the IS gate marks "clearly conveyed" (NIV Y) is also a strong WER segment. Zero false positives at this operating point on the full dataset.
 - The canonical visual is [presentation_materials_20260224/01_plots_for_slides/is_confidence_gate.png](../../presentation_materials_20260224/01_plots_for_slides/is_confidence_gate.png), which shows the IS-vs-WER scatter with the NIV Y / Y+P thresholds and precision/recall annotations.
 
-### Tier 2 — Per-token softmax from LLaMA decoder (PLUMBING IN PLACE, DATA PENDING)
+### Tier 2 — Per-token softmax from LLaMA decoder (LIVE IN PIPELINE — April 30, 2026)
 
-The decoder-side wiring is done; the GPU run that produces real sidecars is in flight as of writing.
+End-to-end automation is now in place. Every pipeline run on EC2 and the standalone client container produces per-word confidence in the existing report files.
 
-- `VSP-LLM/src/vsp_llm.py` and `VSP-LLM/src/vsp_llm_decode.py` accept the `VSP_OUTPUT_SCORES=1` environment variable. When set, generation is invoked with `output_scores=True, return_dict_in_generate=True` and a per-token confidence sidecar is written next to `hypo-{fid}.json` as `confidence-{fid}.json`. Default behavior (env var unset or `0`) is unchanged — purely additive.
-- `lib/decode.sh` forwards the `VSP_OUTPUT_SCORES` env var into `run_flat_decode.sh` so the flag propagates from pipeline level to model invocation.
-- The sub-token → word aggregator (mean / min / product across the BPE pieces that make up each word) is at [docs/_research-tools/generators/compute_word_confidence.py](../_research-tools/generators/compute_word_confidence.py).
-- A B3 GPU decode is currently running in the background to produce the first end-to-end set of real per-token sidecars on the 1,497-segment baseline. Calibration analysis (ECE, reliability diagrams, agreement with IS) will be added once that data lands.
+- `VSP-LLM/src/vsp_llm.py` and `VSP-LLM/src/vsp_llm_decode.py` accept `VSP_OUTPUT_SCORES=1`. When set, generation is invoked with `output_scores=True, return_dict_in_generate=True` and a per-token confidence sidecar is written next to `hypo-{fid}.json` as `confidence-{fid}.json`.
+- `lib/decode.sh` now defaults this env var to `1` (was `0`); decoders write the sidecar by default. Users can opt out with `export VSP_OUTPUT_SCORES=0` before invoking the pipeline.
+- `lib/outputs.sh` Stage 8 detects the sidecar, runs the sub-token → word aggregator [`compute_word_confidence.py`](../_research-tools/generators/compute_word_confidence.py), and passes the resulting `word_confidence.json` to `make_report.py` via a new `--word-confidence` flag.
+- `make_report.py` appends three columns to `report.csv` (`sentence_confidence`, `min_word_conf`, `n_low_conf_words`) right after the IS columns, and renders a labeled `Confidence:` line per segment in `report.html` using a deliberately distinct **blue/orange/purple** palette so it cannot be confused with the existing **green/yellow/red** accuracy palette. A `Sent Conf` metric cell sits next to `IS` in the per-segment metrics row.
+- `generate_intelligibility_scores.py` adds a `confidence_summary` block (overall mean sentence confidence, totals, % low-confidence) to `intelligibility_summary.json` whenever `word_confidence.json` is present.
+- The standalone client container (`vsp_linux_container_FINAL_20260217/`) ships all required scripts; zero new Python dependencies were introduced. `run_flat_english_pipeline.sh` is unchanged on both sides.
+- Calibration analysis (ECE, reliability diagrams, agreement with IS) on real B3 sidecars will be added in a follow-up; the live pipeline now produces the data needed to compute it on every run.
 
 ### Tier 2 — Client-facing visualization (SHIPPED, with synthetic-confidence fallback)
 

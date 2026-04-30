@@ -92,28 +92,47 @@ run_client_outputs() {
     fi
   fi
 
-  # Set HF_HOME for offline model loading (bundled MiniLM weights)
-  local is_cache="${MODULE_DIR}/../is_model_cache"
-  if [ -d "$is_cache" ]; then
-    export HF_HOME="$is_cache"
-    export TRANSFORMERS_OFFLINE=1
-    echo ">>> [8] Using bundled IS model cache: $is_cache"
+  # ---- Aggregate per-token confidence -> per-word (only if sidecar present) ----
+  local confidence_json="${decode_json/hypo-/confidence-}"
+  local word_conf_json=""
+  if [ -f "$confidence_json" ]; then
+    echo ">>> [8] Aggregating per-token confidence to per-word"
+    local conf_script="$vsp_dir/scripts/compute_word_confidence.py"
+    if [ ! -f "$conf_script" ]; then
+      conf_script="${HOME}/docs/_research-tools/generators/compute_word_confidence.py"
+    fi
+    if [ -f "$conf_script" ]; then
+      word_conf_json="$report_dir/word_confidence.json"
+      python3 "$conf_script" "$confidence_json" --out "$word_conf_json" \
+        || { log_warn "compute_word_confidence.py failed (non-critical)"; word_conf_json=""; }
+      cp "$confidence_json" "$report_dir/" 2>/dev/null || true
+    else
+      log_warn "compute_word_confidence.py not found — confidence aggregation skipped"
+    fi
+  else
+    log_info "[8] No confidence-{fid}.json sidecar — confidence will be skipped"
   fi
 
   # Compute Intelligibility Scores in reports
   echo ">>> [8] Intelligibility Scores enabled"
 
-  # Generate report (always with IS scoring)
+  # Generate report (always with IS scoring; optionally with word confidence)
+  local conf_arg=""
+  [ -n "$word_conf_json" ] && conf_arg="--word-confidence $word_conf_json"
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
     --out_dir "$report_dir" \
-    $params_arg --compute-is || {
+    $params_arg --compute-is $conf_arg || {
     log_error "make_report.py failed"
     return 1
   }
 
   # Generate full Intelligibility analysis (augmented CSV + summary JSON)
   local is_script="$vsp_dir/scripts/generate_intelligibility_scores.py"
+  # Fallback: check docs path (EC2 development layout)
+  if [ ! -f "$is_script" ]; then
+    is_script="${HOME}/docs/_research-tools/generators/generate_intelligibility_scores.py"
+  fi
   if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
     echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
     python3 "$is_script" \
