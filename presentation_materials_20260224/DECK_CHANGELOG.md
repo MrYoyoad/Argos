@@ -26,12 +26,14 @@ Reverse-chronological: newest entry on top.
 
 ---
 
-## 2026-04-30 — Round 5 — Framing-v2 alignment (in flight)
+## 2026-04-30 — Round 5 — Framing-v2 alignment (LANDED)
 
-- WHAT: not yet committed. Round 5 operationalises [`docs/CLIENT_MEETING_FRAMING_v2.md`](../docs/CLIENT_MEETING_FRAMING_v2.md): re-aim the deck at surveillance lip-reading (two friends in a coffee shop, observer 30 ft away, no audio) instead of media transcription; add a "compared to today" slide (expert human 45-52% / don't-do-it 0% / Argos + reviewer 55-70%); rewrite section openers per the framing doc.
-- WHY: user wrote a comprehensive framing brief that supersedes Round 4's messaging. Round 4's structural reorder still applies; Round 5 layers substance and language on top.
-- FILES: planned — `docs/_research-tools/generators/presentation/slides_client.py`, `docs/_research-tools/generators/generate_client_presentation.py`, this changelog.
-- COMMIT: (pending) — see [`/.claude/plans/i-need-to-create-proud-cupcake.md`](../.claude/plans/i-need-to-create-proud-cupcake.md) § "Round 5".
+- WHAT: full reframe per [`docs/CLIENT_MEETING_FRAMING_v2.md`](../docs/CLIENT_MEETING_FRAMING_v2.md). Use case re-aimed at surveillance lip-reading (two friends in a coffee shop, 30 ft away, no audio) instead of media transcription. Three-act 2-hour meeting structure (0:00-0:30 / 0:38-1:18 / 1:25-2:00). 9 new client builders, 5 existing rewrites (incl. peacock on title + about_argos), 12 academic-deck borrows wired in (6 judge examples, 4 failure-mode slides, 2 salvage slides). New "compared to today" anchor (expert humans 45-52% / no-attempt 0% / Argos+reviewer 55-70%). Hallucination story expanded to a 3-slide trio. Investment ask reframed as partnership ("The next milestone is a partnership", no line items). Multi-speaker slide reframed as the client's canonical use case. Validation slide protocol-named.
+- WHY: user wrote a comprehensive framing brief that superseded Round 4's messaging. Round 4's structural reorder still applies; Round 5 layered substance and language on top.
+- FILES: `docs/_research-tools/generators/generate_client_presentation.py` (rewrite), `docs/_research-tools/generators/presentation/slides_client.py` (+737 lines), `presentation/config.py` (+1 line peacock IMG key), `tests/unit/test_number_audit.py` (Round-5 numbers whitelisted, BORROWED_SLIDES recomputed for 16 borrowed slides), `tests/unit/test_style_compliance.py` (slide-count range bumped 60→75), `presentation_materials_20260224/Argos_VSP_Client_Round5_Apr2026.pptx`+`.pdf`, this file, `PRE_MEETING_CHECKLIST.md` (4 prep items added).
+- DECK SIZE: 49 → 63 slides.
+- AUDITS: 25/25 green.
+- COMMIT: **3af087e**
 
 ## 2026-04-30 — Round 4 — Narrative restructure (planned, partial)
 
