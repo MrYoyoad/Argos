@@ -1469,6 +1469,22 @@ hyp_words = [w for w, _ in hyp_tokens]
 
 **Container action**: No changes needed — container already had the simplified version.
 
+### Per-Token Confidence Scores (April 30, 2026) — PENDING SYNC TO CONTAINER
+
+**Summary**: Decoder now emits per-token softmax confidence sidecars when the `VSP_OUTPUT_SCORES` environment variable is set to `1`. Used by the April 2026 client deck for word-level confidence visualization (green/yellow/red). Default behavior (env var unset or `0`) is unchanged — these are **purely additive, off-by-default extensions**, so the container continues to work identically until/unless the env var is set.
+
+**EC2 files changed** (need to be replicated in the container's matching paths under `/workspace/`):
+
+1. `VSP-LLM/src/vsp_llm.py` — added env-var-gated `output_scores=True, return_dict_in_generate=True` block (~lines 384-405). Search for `VSP_OUTPUT_SCORES` to locate. The block branches on `os.environ.get("VSP_OUTPUT_SCORES", "0") == "1"`; falls through to the legacy `model.generate()` call when unset.
+2. `VSP-LLM/src/vsp_llm_decode.py` — added dict-unwrap path after `model.generate()` (the call returns a `GenerateOutput` dataclass when `return_dict_in_generate=True`, plain tensor otherwise) and a `confidence-{fid}.json` sidecar write next to the existing `hypo-{fid}.json` write. Search for `output_scores_enabled` to locate. Sidecar contains per-token max-softmax probability and the corresponding decoded token text.
+3. `lib/decode.sh` — passes `VSP_OUTPUT_SCORES` env var through to `run_flat_decode.sh` (single line addition next to the other env-var pass-throughs).
+
+**Container action when synced**: After porting these three files, the container will support per-token confidence sidecars when callers opt in via `VSP_OUTPUT_SCORES=1`. No callers in the container set this by default; UI and pipeline behavior are unchanged unless explicitly enabled.
+
+**Verification on EC2**: Decode runs without `VSP_OUTPUT_SCORES` produce byte-identical hypo-*.json to pre-change runs. Decode runs with `VSP_OUTPUT_SCORES=1` additionally produce `confidence-{fid}.json` sidecars (one per segment) parseable by `docs/_research-tools/generators/compute_word_confidence.py`.
+
+---
+
 ### NIV Y/P/N labels in IS output (April 30, 2026)
 
 **Summary**: `generate_intelligibility_scores.py` now emits NIV (Net Intelligibility Verdict) labels — Y / P / N — directly in the per-segment CSV and a structured `niv_distribution` block in the summary JSON. Previously only legacy IS-tier labels were written; container had partial NIV (count-only, no per-segment column).

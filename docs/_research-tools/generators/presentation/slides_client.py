@@ -239,7 +239,7 @@ def slide_client_demo_intro(prs):
              size=Pt(20), color=LGRAY, italic=True)
 
     add_text(slide,
-             "Click ▶ to play the walkthrough →",
+             "Press play on the next slide to start the walkthrough.",
              MX, Inches(4.5), CW, Inches(0.6),
              size=Pt(16), color=TEAL, align=PP_ALIGN.CENTER)
 
@@ -428,17 +428,21 @@ def slide_client_word_color_coding(prs):
     add_title(slide, "Per-word color coding on a real example")
     add_accent_line(slide)
 
-    screenshot = Path(__file__).resolve().parents[3] / (
+    screenshot = Path(__file__).resolve().parents[4] / (
         "presentation_materials_20260224/01_plots_for_slides/"
         "ui_word_confidence_screenshot.png"
     )
     if screenshot.exists():
-        # Center the image in the available content area, leaving room for the
-        # legend strip at the bottom.
-        img_w = Inches(8.5)
+        # Height-constrained: the source PNG is tall (1600x1900). Width-
+        # constraining at 8.5" would push the image past the slide edge.
+        from PIL import Image
+        with Image.open(screenshot) as im:
+            aspect = im.height / im.width
+        img_h = Inches(4.7)
+        img_w = Inches(4.7 / aspect)
         img_x = (SL_W - img_w) / 2
         img_y = Inches(1.55)
-        slide.shapes.add_picture(str(screenshot), img_x, img_y, width=img_w)
+        slide.shapes.add_picture(str(screenshot), img_x, img_y, height=img_h)
     else:
         # Fallback placeholder if screenshot has not been generated yet.
         box_w = Inches(11.0)
@@ -504,15 +508,25 @@ def slide_client_seq_confidence_correlation(prs):
     add_title(slide, "Higher confidence → lower error, every time")
     add_accent_line(slide)
 
-    plot_path = Path(__file__).resolve().parents[3] / (
+    plot_path = Path(__file__).resolve().parents[4] / (
         "presentation_materials_20260224/01_plots_for_slides/"
         "is_confidence_gate.png"
     )
     if plot_path.exists():
-        img_w = Inches(11.5)
-        img_x = (SL_W - img_w) / 2
+        # Height-constrained so the bar chart fits between title and footer.
+        img_h = Inches(4.7)
         img_y = Inches(1.55)
-        slide.shapes.add_picture(str(plot_path), img_x, img_y, width=img_w)
+        # Keep the canonical aspect ratio (the plot is ~13:5).
+        from PIL import Image
+        with Image.open(plot_path) as im:
+            aspect = im.width / im.height
+        img_w = Inches(4.7 * aspect)
+        # Cap width so it doesn't escape the slide.
+        if img_w > Inches(12.5):
+            img_w = Inches(12.5)
+            img_h = Inches(12.5 / aspect)
+        img_x = (SL_W - img_w) / 2
+        slide.shapes.add_picture(str(plot_path), img_x, img_y, width=img_w, height=img_h)
     else:
         # Fallback: text-only summary if plot hasn't been regenerated
         add_text(slide,
@@ -771,7 +785,7 @@ def slide_client_cross_config_stability(prs):
 def slide_client_validation_summary(prs):
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "An independent expert agreed in 8 of 10 cases")
+    add_title(slide, "An independent expert agreed 82% of the time")
     add_accent_line(slide)
 
     add_text(slide,
@@ -793,100 +807,96 @@ def slide_client_validation_summary(prs):
 
 def slide_client_entity_split(prs):
     """Multi-speaker videos broken into per-speaker centered crops.
-    Local pre-processing using YOLO + face tracker."""
+    Local pre-processing using a face detector + tracker."""
+    from pathlib import Path
     slide = new_slide(prs)
     _auto_num[0] += 1
     add_title(slide, "Pre-processing 1 — Per-speaker entity split")
     add_accent_line(slide)
 
-    # Left column: the problem
-    col_w = Inches(5.85)
-    add_rect(slide, MX, Inches(1.7), col_w, Inches(4.7),
-             fill_color=NAVY2, border_color=None)
-    add_text(slide, "THE PROBLEM",
-             MX + Inches(0.3), Inches(1.85),
-             col_w - Inches(0.6), Inches(0.4),
-             size=Pt(13), bold=True, color=CORAL)
-    add_bullets(slide, [
-        "Real client video often has 2+ speakers in frame",
-        "Our model expects one centered face per frame",
-        "Multi-speaker content confuses lip reading",
-    ], MX + Inches(0.3), Inches(2.4), col_w - Inches(0.6), Inches(2.5), size=Pt(15))
-
-    # Right column: the fix
-    add_rect(slide, MX + col_w + Inches(0.4), Inches(1.7), col_w, Inches(4.7),
-             fill_color=NAVY2, border_color=None)
-    add_text(slide, "THE FIX",
-             MX + col_w + Inches(0.7), Inches(1.85),
-             col_w - Inches(0.6), Inches(0.4),
-             size=Pt(13), bold=True, color=GREEN)
-    add_bullets(slide, [
-        "Detect each speaker (YOLO or equivalent)",
-        "Track identity across frames so each crop stays centered",
-        "Feed each speaker as its own video into the pipeline",
-        "Runs locally — no cloud dependency, no extra cost",
-    ], MX + col_w + Inches(0.7), Inches(2.4), col_w - Inches(0.6), Inches(3.0), size=Pt(15))
+    plot_path = Path(__file__).resolve().parents[4] / (
+        "presentation_materials_20260224/01_plots_for_slides/entity_split_mock.png"
+    )
+    if plot_path.exists():
+        # Height-constrained so the diagram fits between title and footer.
+        from PIL import Image
+        with Image.open(plot_path) as im:
+            aspect = im.width / im.height
+        img_h = Inches(4.7)
+        img_w = Inches(4.7 * aspect)
+        if img_w > Inches(12.5):
+            img_w = Inches(12.5)
+            img_h = Inches(12.5 / aspect)
+        img_x = (SL_W - img_w) / 2
+        img_y = Inches(1.55)
+        slide.shapes.add_picture(str(plot_path), img_x, img_y, width=img_w, height=img_h)
+    else:
+        add_text(slide, "[ entity_split_mock.png — run the diagram generator ]",
+                 MX, Inches(2.0), CW, Inches(0.6),
+                 size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_text(slide,
-             "Status: planned ablation — we will measure how much this lifts "
-             "intelligibility on multi-speaker content.",
-             MX, Inches(6.6), CW, Inches(0.4),
-             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "Two speakers in one frame become two centered crops. Each speaker "
+             "gets its own clean lip-reading pass.",
+             MX, Inches(6.55), CW, Inches(0.45),
+             size=Pt(13), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "User flagged this in v3. The 'YOLO or equivalent' framing leaves room "
-        "for whatever detector ends up winning the ablation. Emphasize 'runs "
-        "locally' for client comfort."
+        "Diagram from generate_*_diagrams agent run. The 'face detection + "
+        "tracker (local)' framing leaves the implementation open — could be "
+        "YOLO, RetinaFace, MediaPipe, etc. — we pick whatever wins the "
+        "ablation. Emphasize 'runs locally' for client comfort: no extra "
+        "cloud dependency, no extra cost. Status is explicitly 'planned "
+        "ablation' — we are NOT claiming this is shipping today."
     ))
     return slide
 
 
 def slide_client_quality_filter(prs):
     """Drop bad-angle / occluded / low-light clips before pipeline. Local CV."""
+    from pathlib import Path
     slide = new_slide(prs)
     _auto_num[0] += 1
     add_title(slide, "Pre-processing 2 — Quality pre-filter")
     add_accent_line(slide)
 
-    add_text(slide,
-             "Not every clip is worth running through a million-parameter model.",
-             MX, Inches(1.7), CW, Inches(0.5),
-             size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.LEFT)
-
-    # Three checks shown as cards
-    card_w = Inches(3.85)
-    gap = Inches(0.25)
-    top = Inches(2.5)
-    h = Inches(2.8)
-
-    checks = [
-        ("HEAD ANGLE", "Reject when the face is past a profile threshold — lip reading needs frontal view.", TEAL),
-        ("MOUTH VISIBILITY", "Reject when the mouth is occluded by hair, hands, or props.", GOLD),
-        ("LIGHTING / CONTRAST", "Reject when the lip region is too dark or too washed out for the model.", CORAL),
-    ]
-    for i, (label, body, color) in enumerate(checks):
-        x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
-        add_text(slide, label, x + Inches(0.2), top + Inches(0.2),
-                 card_w - Inches(0.4), Inches(0.4),
-                 size=Pt(13), bold=True, color=color)
-        add_text(slide, body, x + Inches(0.2), top + Inches(0.8),
-                 card_w - Inches(0.4), h - Inches(0.9),
-                 size=Pt(13), color=WHITE)
+    plot_path = Path(__file__).resolve().parents[4] / (
+        "presentation_materials_20260224/01_plots_for_slides/quality_filter_funnel.png"
+    )
+    if plot_path.exists():
+        # Height-constrained so the funnel fits between title and footer.
+        from PIL import Image
+        with Image.open(plot_path) as im:
+            aspect = im.width / im.height
+        img_h = Inches(4.7)
+        img_w = Inches(4.7 * aspect)
+        if img_w > Inches(12.5):
+            img_w = Inches(12.5)
+            img_h = Inches(12.5 / aspect)
+        img_x = (SL_W - img_w) / 2
+        img_y = Inches(1.55)
+        slide.shapes.add_picture(str(plot_path), img_x, img_y, width=img_w, height=img_h)
+    else:
+        add_text(slide, "[ quality_filter_funnel.png — run the diagram generator ]",
+                 MX, Inches(2.0), CW, Inches(0.6),
+                 size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_text(slide,
-             "All three checks run locally as fast frame-level CV. "
-             "Status: planned ablation — we will publish the trade-off curve.",
-             MX, Inches(5.7), CW, Inches(0.4),
-             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "Drop bad-angle, occluded, or poorly-lit clips before the model "
+             "ever sees them. Saves compute. Lifts apparent accuracy.",
+             MX, Inches(6.55), CW, Inches(0.45),
+             size=Pt(13), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
         "Frame as 'highest leverage per dollar.' The model is never tested in "
-        "isolation; what reaches it is what matters."
+        "isolation; what reaches it is what matters. The funnel percentages "
+        "shown are illustrative — actual rejection rates depend on the "
+        "client's own video conditions, which is exactly what the ablation "
+        "would measure. Status is 'planned ablation' — not yet shipping."
     ))
     return slide
 

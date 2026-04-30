@@ -513,3 +513,34 @@ The user gets actionable intelligence: "most of this sentence is probably right,
 6. Platt (1999). "Probabilistic Outputs for Support Vector Machines and Comparisons to Regularized Likelihood Methods." — Platt scaling.
 7. HuggingFace Transformers Documentation. "Generation with LLMs — output_scores parameter." — API reference for GenerateOutput.
 8. Malinin & Gales (2021). "Uncertainty Estimation in Autoregressive Structured Prediction." ICLR 2021. — Sequence-level uncertainty.
+
+---
+
+## Implementation Status (April 2026)
+
+The two-tier confidence design from this report is now partially shipped. Status by tier:
+
+### Tier 1 — IS-based segment confidence (SHIPPED)
+
+The Intelligibility Score (IS) acts as the segment-level confidence gate. On the 1,497-segment baseline:
+
+- **Pearson r(IS, WER) = -0.850** (very strong negative correlation: high IS ↔ low WER).
+- **Spearman ρ(IS, WER) = -0.943** (near-perfect monotonic relationship).
+- **100% precision at IS ≥ 3.80 vs WER ≤ 50%** — every segment the IS gate marks "clearly conveyed" (NIV Y) is also a strong WER segment. Zero false positives at this operating point on the full dataset.
+- The canonical visual is [presentation_materials_20260224/01_plots_for_slides/is_confidence_gate.png](../../presentation_materials_20260224/01_plots_for_slides/is_confidence_gate.png), which shows the IS-vs-WER scatter with the NIV Y / Y+P thresholds and precision/recall annotations.
+
+### Tier 2 — Per-token softmax from LLaMA decoder (PLUMBING IN PLACE, DATA PENDING)
+
+The decoder-side wiring is done; the GPU run that produces real sidecars is in flight as of writing.
+
+- `VSP-LLM/src/vsp_llm.py` and `VSP-LLM/src/vsp_llm_decode.py` accept the `VSP_OUTPUT_SCORES=1` environment variable. When set, generation is invoked with `output_scores=True, return_dict_in_generate=True` and a per-token confidence sidecar is written next to `hypo-{fid}.json` as `confidence-{fid}.json`. Default behavior (env var unset or `0`) is unchanged — purely additive.
+- `lib/decode.sh` forwards the `VSP_OUTPUT_SCORES` env var into `run_flat_decode.sh` so the flag propagates from pipeline level to model invocation.
+- The sub-token → word aggregator (mean / min / product across the BPE pieces that make up each word) is at [docs/_research-tools/generators/compute_word_confidence.py](../_research-tools/generators/compute_word_confidence.py).
+- A B3 GPU decode is currently running in the background to produce the first end-to-end set of real per-token sidecars on the 1,497-segment baseline. Calibration analysis (ECE, reliability diagrams, agreement with IS) will be added once that data lands.
+
+### Tier 2 — Client-facing visualization (SHIPPED, with synthetic-confidence fallback)
+
+To unblock the April 2026 client deck while the B3 decode finishes, word-level confidence is rendered in a standalone client demo HTML report at [presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html](../../presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html).
+
+- Words are color-coded green (high confidence) / yellow (review) / red (likely error).
+- The renderer prefers real `confidence-{fid}.json` sidecars when present. When no sidecar is available, it falls back to **synthetic confidence aligned to the per-segment WER** so the visualization mechanism can be demonstrated end-to-end. The same renderer accepts real sidecars with no code change once B3 completes.

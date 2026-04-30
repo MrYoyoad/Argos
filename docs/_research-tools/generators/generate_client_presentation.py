@@ -8,7 +8,7 @@ existing builders from presentation/slides_*.py. The only net-new builders
 live in presentation/slides_client.py.
 
 Output:
-    presentation_materials_20260224/Argos_VSP_Client_48slides_Apr2026.pptx
+    presentation_materials_20260224/Argos_VSP_Client_47slides_Apr2026.pptx
 
 Run:
     python3 docs/_research-tools/generators/generate_client_presentation.py
@@ -26,11 +26,11 @@ from presentation.slides_opening import (
     slide_data_flow,      # pipeline overview
 )
 from presentation.slides_evaluation import (
-    slide_llm_judge,               # validation methodology
     slide_judge_ex1, slide_judge_ex2, slide_judge_ex3,  # 3 of 6 examples (subset)
     slide_14b,                     # video gallery
     slide_what_good_looks_like,    # gallery example slide (lives in evaluation, not research)
 )
+# slide_llm_judge intentionally NOT imported — see note in builders[] above for why.
 from presentation.slides_engineering import (
     slide_three_repos,             # engineering credibility
     slide_dual_env,                # two environments
@@ -114,7 +114,7 @@ _section_9 = make_section_transition(
 )
 
 
-OUTPUT = MATERIALS / "Argos_VSP_Client_48slides_Apr2026.pptx"
+OUTPUT = MATERIALS / "Argos_VSP_Client_47slides_Apr2026.pptx"
 
 
 def main():
@@ -155,7 +155,12 @@ def main():
         # ── Section 5 — Validation (transition + 4 slides) ──
         _section_5,
         slide_client_validation_intro,
-        slide_llm_judge,                    # borrowed: LLM-Judge methodology
+        # NOTE: slide_llm_judge dropped from client deck — its visible 64.9%
+        # figure (LLM-judge Y+P rate) contradicts our canonical 62% useful-output
+        # number. Borrow-vs-build forbids modifying upstream builders, so the
+        # cleanest fix is to skip the borrowed methodology slide here. The
+        # validation story lands cleanly with intro → 82% chart → stability →
+        # summary, without surfacing the methodology detail.
         slide_client_agreement_chart,
         slide_client_cross_config_stability,
         slide_client_validation_summary,

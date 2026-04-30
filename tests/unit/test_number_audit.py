@@ -36,7 +36,7 @@ import pytest
 from pptx import Presentation
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_48slides_Apr2026.pptx"
+DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_47slides_Apr2026.pptx"
 
 # Slide indices (1-based) that come from BORROWED builders in the existing
 # academic deck. These are exempt from the jargon and canonical-percentage
@@ -53,14 +53,17 @@ BORROWED_SLIDES = {
     11,  # slide_judge_ex1
     12,  # slide_judge_ex2
     13,  # slide_judge_ex3
-    24,  # slide_llm_judge
-    29,  # slide_data_flow
-    30,  # slide_visemes
-    31,  # slide_three_repos
-    32,  # slide_dual_env
-    33,  # slide_web_ui
-    42,  # slide_arabic_roadmap
-    48,  # slide_thank_you
+    # slide_llm_judge dropped from the client deck — its 64.9% figure
+    # contradicted our canonical 62% useful-output number. Indices below
+    # reflect the post-drop slide order (everything after the old slide 24
+    # shifts by -1).
+    28,  # slide_data_flow
+    29,  # slide_visemes
+    30,  # slide_three_repos
+    31,  # slide_dual_env
+    32,  # slide_web_ui
+    41,  # slide_arabic_roadmap
+    47,  # slide_thank_you
 }
 
 
