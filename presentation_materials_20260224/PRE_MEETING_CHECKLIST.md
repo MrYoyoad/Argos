@@ -53,6 +53,43 @@ These need access to your dev machine and the deck source, so do them before wal
 
 ---
 
+## 🟡 PRE-MEETING PREP (4 ITEMS — DO 1 WEEK OUT)
+
+These are not last-minute checks. They need lead time — a system run, a 5-min call, a speaker-notes edit. Block 1-2 hours about a week before the meeting and knock them out together. Sourced from [`docs/CLIENT_MEETING_FRAMING_v2.md`](../docs/CLIENT_MEETING_FRAMING_v2.md) § "Things to do before the meeting".
+
+### Run client-shaped segments through the system
+- [ ] Pick 3-5 video clips that match the client's actual use case: two-person conversational footage, observer-distance framing (not selfie / not studio), iPhone-quality, 20s-60s each
+- [ ] Run them through the full pipeline (`run_flat_english_pipeline.sh`)
+- [ ] Generate the report HTML — even mixed results are fine, the *act of having done it* is what signals seriousness
+- [ ] Screenshot the best result and the worst result
+- [ ] Either attach to the deck (replace one of the gallery videos) OR have the screenshots open in a tab to pull up if asked
+- [ ] Note: "we ran your scenario through the day before our meeting" is a strong opener if it lands naturally
+
+### Coordinate with the co-partners (5-min call)
+- [ ] Schedule a quick call with the 2 technical co-partners attending
+- [ ] Pick ONE of these modes — don't leave it ambiguous:
+  - [ ] **Solo-drive with chime-ins** — you present, they answer questions in their domain
+  - [ ] **Solo-drive with co-partners on 1-2 slides** — they own a specific section (e.g. infra, integration)
+  - [ ] **Joint walkthrough** — you trade off section by section
+- [ ] Confirm the choice in writing (Slack / email) so nobody freelances mid-meeting
+
+### Cheat sheet for hidden appendix slides
+- [ ] Open the .pptx and edit the speaker notes of the **last visible slide** (slide 45 or 46 depending on build)
+- [ ] Add a one-line index — example:
+  - "If asked about IS internals → slide 47"
+  - "If asked about cross-config stability → slide 49"
+  - "If asked about LLM-as-judge methodology → slide 48"
+- [ ] You will fumble in the meeting without this. The cheat sheet is for you, not the audience.
+
+### Three questions to ASK in the meeting (don't promise on a slide)
+- [ ] Memorize these — write them on a sticky note inside the laptop lid if needed:
+  - [ ] "Which Arabic? MSA, Levantine, Egyptian, or Gulf?"
+  - [ ] "What does your canonical video actually look like — duration, environment, speakers?"
+  - [ ] "What does 'good enough' look like for your workflow?"
+- [ ] Their answers reframe the entire follow-up conversation. Don't preempt them on a slide; let them tell you.
+
+---
+
 ## ✅ CHECK AT THE VENUE (allow 10 min before audience arrives)
 
 Everything that depends on the actual presentation environment.

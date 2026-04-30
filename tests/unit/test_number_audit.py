@@ -36,17 +36,39 @@ import pytest
 from pptx import Presentation
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_46slides_Apr2026.pptx"
+DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_Apr2026.pptx"
 
-# Slide indices (1-based) that come from BORROWED builders in the existing
-# academic deck. After the client-side replacements (Apr 30 batch), only 4
-# borrowed slides remain: data_flow, web_ui, arabic_roadmap, thank_you.
-# All four are visually compatible with the client deck theme.
+# Slide indices (1-based) for BORROWED builders. Recomputed for Round 5
+# after the framing-v2 reorder + 12 academic borrows landed (six judge
+# examples in §Real Outputs, four failure-mode slides + two salvage
+# slides in §Trust). Per the Round-5 partner-audience relaxation
+# documented in /home/ubuntu/.claude/plans/i-need-to-create-proud-cupcake.md
+# § "Pull-from-academic checklist," these slides carry visible WER/WWER
+# values which Round-5 framing accepts (architecture-overview slides
+# are OK for the partner audience).
 BORROWED_SLIDES = {
-    27,  # slide_data_flow         — pipeline diagram (first slide of section 6)
-    31,  # slide_web_ui            — UI overview (last slide of section 6)
-    40,  # slide_arabic_roadmap    — Arabic adaptation (one slide in section 8)
-    46,  # slide_thank_you         — close
+    # Real Outputs — 6 judge examples (academic deck)
+    18,  # slide_judge_ex1 — Bernreuter -> Rogers (named-entity swap)
+    19,  # slide_judge_ex2 — 1980s film (truncated, core preserved)
+    20,  # slide_judge_ex3 — routers -> roads (technical vocab drift)
+    21,  # slide_judge_ex4 — cortisol -> stops (scientific vocab lost)
+    22,  # slide_judge_ex5 — jalapeno -> banana (cooking domain)
+    23,  # slide_judge_ex6 — overhead lights -> ghost whisperer (topic hijack)
+    # Trust story — failure-mode taxonomy block (academic borrows)
+    35,  # slide_08              — taxonomy bar chart
+    36,  # slide_failure_deep_1a — 1/2 (top 3 modes)
+    37,  # slide_failure_deep_1b — 2/2 (bottom 2 modes)
+    39,  # slide_failure_deep_2  — 3 worked examples
+    # Trust story — salvage examples
+    40,  # slide_25d — 3 real recoveries
+    41,  # slide_25e — domain context
+    # Engineering — pipeline diagram + UI
+    50,  # slide_data_flow — pipeline diagram
+    52,  # slide_web_ui    — UI overview
+    # What's next — Arabic
+    57,  # slide_arabic_roadmap
+    # Close
+    63,  # slide_thank_you
 }
 
 
@@ -210,17 +232,34 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "0%",                 # segment 14 — perfect
         "22%",                # segment 31 — partial
         "45%",                # segment 5  — flagged hallucination
+        "59%",                # segment 27 — failure_worked_example (Round 5)
     })
     # Illustrative rejection rates on the Section 7 quality-pre-filter
-    # funnel (slide 34). These are explicitly labeled illustrative on the
-    # slide footer ("Percentages illustrative — actual rejection rates
-    # depend on your video conditions") and the slide is the only place
-    # they appear. Listed so the audit catches *new* stray numbers but
-    # lets these through.
+    # funnel. These are explicitly labeled illustrative on the slide
+    # footer ("Percentages illustrative — actual rejection rates depend on
+    # your video conditions").
     approved.update({
         "90%",                # head-angle pass rate
         "82%",                # mouth-visibility pass rate
         "75%",                # lighting / contrast + final pass rate
+    })
+    # Round-5 "compared to today" comparison anchor — published lip-reading
+    # literature figures from CLIENT_MEETING_FRAMING_v2.md § "Compared to today".
+    # Bear & Harvey 2017 + Assael et al. 2016 expert-human and
+    # system+reviewer accuracy ranges.
+    approved.update({
+        "45%", "52%",         # expert human lip-reader range (45-52%)
+        "55%", "70%",         # Argos + reviewer range (55-70%)
+    })
+    # Round-5 failure-mode taxonomy frequencies on the 574 below-threshold
+    # segments per docs/CLIENT_MEETING_FRAMING_v2.md § "Trust framework".
+    # These are explicit known frequencies, not project-level metrics.
+    approved.update({
+        "44.4%",              # Wrong Topic (255 segments)
+        "18.8%",              # Hallucination (108)
+        "13.9%",              # Signal Loss (80)
+        "13.8%",              # Right Topic Wrong Details (79)
+        "9.1%",               # Accumulated Errors (52)
     })
     # Strip whitespace inside percent tokens
     def norm(s):

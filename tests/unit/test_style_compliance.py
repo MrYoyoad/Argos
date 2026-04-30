@@ -35,7 +35,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_46slides_Apr2026.pptx"
+DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_Apr2026.pptx"
 
 SLIDE_W = Emu(int(13.333 * 914400))
 SLIDE_H = Emu(int(7.5 * 914400))
@@ -73,9 +73,10 @@ def _is_footer_shape(shape):
 
 
 def test_deck_exists_and_has_expected_slide_count(deck):
-    """Sanity: ~50 slide target. Tolerate a small range."""
+    """Sanity: Round 5 lands at ~60 slides; the deeper 2-hour deck can
+    grow to ~70 with all academic borrows. Range bumped from 40-60."""
     n = len(deck.slides)
-    assert 40 <= n <= 60, f"Slide count {n} outside expected range 40-60"
+    assert 40 <= n <= 75, f"Slide count {n} outside expected range 40-75"
 
 
 def test_no_shape_off_slide(deck):

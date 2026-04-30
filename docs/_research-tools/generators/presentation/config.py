@@ -21,6 +21,7 @@ OUTPUT = MATERIALS / "Argos_VSP_Final.pptx"
 # Image map
 IMG = {
     "logo": BRANDING / "WhiteLogo.jpeg",
+    "peacock": Path("/home/ubuntu/docs/_research-tools/assets/peacock.png"),
     "pipeline": PLOTS / "pipeline_architecture.png",
     "model_arch": PLOTS / "model_architecture.png",
     "P1_quality": PLOTS / "P1_quality_tiers.png",

@@ -47,7 +47,7 @@ from .config import (
 from .helpers import (
     new_slide, add_title, add_accent_line, add_text, add_rich_text,
     add_bullets, add_rect, add_image, add_logo, add_slide_num,
-    set_notes,
+    set_notes, add_video_poster,
 )
 
 
@@ -57,11 +57,21 @@ from .helpers import (
 
 
 def slide_client_title(prs):
-    """Title slide. Client name + date + presenter + tagline."""
+    """Title slide. Client name + date + presenter + tagline.
+
+    Round-5 addition: large centered peacock above the title to match the
+    academic deck's cover-page brand mark.
+    """
     slide = new_slide(prs)
     _auto_num[0] += 1
 
-    # Hero title (centered vertically)
+    # Centered peacock — large brand mark above the title text.
+    peacock_h = Inches(1.5)
+    peacock_w = Inches(1.5)
+    peacock_x = (SL_W - peacock_w) / 2
+    add_image(slide, "peacock", peacock_x, Inches(0.6), peacock_w, peacock_h)
+
+    # Hero title (shifted down to clear the peacock)
     add_text(
         slide, "Argos — Visual Speech Recognition",
         MX, Inches(2.4), CW, Inches(1.0),
@@ -84,6 +94,283 @@ def slide_client_title(prs):
         "Open with the product positioning: working pipeline + trust signals + "
         "we deploy it on your infrastructure. Set expectation that this is a "
         "deep dive, not a pitch — they'll see the system run end-to-end."
+    ))
+    return slide
+
+
+def slide_client_about_argos(prs):
+    """Who we are. Goes right after the title slide.
+    Anchors the brand before any product talk.
+
+    Round-5 reframe: surveillance lip-reading framing per
+    docs/CLIENT_MEETING_FRAMING_v2.md (use case reframe).
+    Adds small peacock brand mark beside the headline.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Argos")
+    add_accent_line(slide)
+
+    # Small peacock brand mark beside the headline
+    peacock_h = Inches(0.5)
+    peacock_w = Inches(0.5)
+    add_image(slide,
+              "peacock",
+              MX + Inches(0.4),
+              Inches(1.75),
+              peacock_w, peacock_h)
+
+    # Big tagline
+    add_text(slide,
+             "We build production-grade visual speech recognition.",
+             MX, Inches(1.7), CW, Inches(0.8),
+             size=Pt(28), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Lip-reading at scale, with built-in confidence.",
+             MX, Inches(2.55), CW, Inches(0.5),
+             size=Pt(18), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three columns of "what we are"
+    col_w = Inches(3.85)
+    gap = Inches(0.25)
+    top = Inches(3.6)
+    h = Inches(2.5)
+
+    items = [
+        ("WHAT WE DO", TEAL,
+         "End-to-end pipeline: face detection, mouth cropping, visual feature "
+         "extraction, language decoding — and confidence scoring on every word."),
+        ("WHO USES IT", GOLD,
+         "Teams recovering speech from footage where audio is missing, can't "
+         "be obtained, or can't be trusted: surveillance, intelligence-"
+         "adjacent, security, accessibility-of-historical-record."),
+        ("WHY IT MATTERS", GREEN,
+         "Most speech-to-text systems hand you a transcript and a hope. We "
+         "hand you a transcript with a per-word trust signal so you know "
+         "what to review."),
+    ]
+    for i, (label, color, body) in enumerate(items):
+        x = MX + i * (col_w + gap)
+        add_rect(slide, x, top, col_w, h, fill_color=NAVY2, border_color=None)
+        add_text(slide, label, x + Inches(0.2), top + Inches(0.25),
+                 col_w - Inches(0.4), Inches(0.4),
+                 size=Pt(13), bold=True, color=color)
+        add_text(slide, body, x + Inches(0.2), top + Inches(0.85),
+                 col_w - Inches(0.4), h - Inches(1.0),
+                 size=Pt(13), color=WHITE)
+
+    add_text(slide,
+             "Argos / The Orchard.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Open with the brand. 30-second elevator pitch — what we are, who we "
+        "serve, what makes us different. Don't go deep on any one column; "
+        "the next slide explains what we built."
+    ))
+    return slide
+
+
+def slide_client_what_we_built(prs):
+    """The concrete deliverables. Goes after about_argos.
+    Sets expectations: this is a real product, not a research demo."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "What we built — concretely")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Six things actually exist today, end-to-end, on real data.",
+             MX, Inches(1.65), CW, Inches(0.5),
+             size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # 3x2 grid of deliverables (was 2x3 — overflowed past y=7.20).
+    cols = 3
+    rows = 2
+    col_w = Inches(3.85)
+    row_h = Inches(1.95)
+    gap_x = Inches(0.25)
+    gap_y = Inches(0.25)
+    grid_top = Inches(2.3)
+
+    items = [
+        ("1. PIPELINE",       TEAL,
+         "Nine automatic stages from raw video to confidence-scored transcript. Containerized; runs anywhere with a GPU."),
+        ("2. WEB UI",         TEAL,
+         "Drag-and-drop, live progress, downloadable HTML report. No command line required."),
+        ("3. MODEL",          GOLD,
+         "Visual-only encoder + LLaMA-2 decoder, fine-tuned on lip-reading. Same architecture VSP-LLM published, our own training run."),
+        ("4. CONFIDENCE",     GREEN,
+         "Per-word green/yellow/red. Per-segment Intelligibility Score. Hallucination auto-flagging."),
+        ("5. EVALUATION",     GOLD,
+         "1,497-segment baseline with WER, IS, and expert-judge agreement metrics. Reproducible from raw inputs."),
+        ("6. INTEGRATION",    GREEN,
+         "On-premise install, cloud deployment, or both. We deploy and hand off."),
+    ]
+    for i, (label, color, body) in enumerate(items):
+        col = i % cols
+        row = i // cols
+        x = MX + col * (col_w + gap_x)
+        y = grid_top + row * (row_h + gap_y)
+        add_rect(slide, x, y, col_w, row_h, fill_color=NAVY2, border_color=None)
+        add_text(slide, label, x + Inches(0.2), y + Inches(0.15),
+                 col_w - Inches(0.4), Inches(0.35),
+                 size=Pt(13), bold=True, color=color)
+        add_text(slide, body, x + Inches(0.2), y + Inches(0.6),
+                 col_w - Inches(0.4), row_h - Inches(0.7),
+                 size=Pt(12), color=WHITE)
+
+    add_text(slide,
+             "Everything you'll see today is in production today — not a 'with more research it could…' projection.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Six concrete deliverables. Each is a real artifact you can show. "
+        "Frame this as 'this is what your team gets', not 'this is what "
+        "we research.' The footnote is the closer: don't oversell future "
+        "improvements."
+    ))
+    return slide
+
+
+def slide_client_what_is_vsr(prs):
+    """Background context. Most clients won't know what visual speech
+    recognition is. Two minutes of teaching saves twenty of confusion later."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "What is visual speech recognition?")
+    add_accent_line(slide)
+
+    # Headline definition
+    add_text(slide,
+             "Reading speech from video alone — no audio.",
+             MX, Inches(1.65), CW, Inches(0.6),
+             size=Pt(24), bold=True, color=TEAL, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Same problem a deaf lip reader solves, automated and at scale.",
+             MX, Inches(2.3), CW, Inches(0.5),
+             size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # When you'd use it
+    add_text(slide, "WHEN AUDIO ISN'T USABLE",
+             MX, Inches(3.2), CW, Inches(0.4),
+             size=Pt(13), bold=True, color=GOLD, align=PP_ALIGN.CENTER)
+
+    cases_top = Inches(3.7)
+    case_w = Inches(2.95)
+    case_h = Inches(1.9)
+    case_gap = Inches(0.15)
+    # Round-5 reframe: cases anchored to the surveillance use case
+    # (per docs/CLIENT_MEETING_FRAMING_v2.md § "Use case reframe").
+    cases = [
+        ("MUTED",       "Surveillance footage, archive video,\nindoor or outdoor."),
+        ("NOISY",       "Crowd noise, machinery, traffic,\ndistance from speaker."),
+        ("UNRELIABLE",  "Suspected dub, voice-over,\nmismatched lip sync, edited audio."),
+        ("AUDIO-LESS",  "Distant CCTV, drones,\nsilent stream captures."),
+    ]
+    total_w = 4 * case_w + 3 * case_gap
+    start_x = MX + (CW - total_w) / 2
+    for i, (label, body) in enumerate(cases):
+        x = start_x + i * (case_w + case_gap)
+        add_rect(slide, x, cases_top, case_w, case_h, fill_color=NAVY2, border_color=None)
+        add_text(slide, label, x + Inches(0.2), cases_top + Inches(0.2),
+                 case_w - Inches(0.4), Inches(0.4),
+                 size=Pt(13), bold=True, color=TEAL, align=PP_ALIGN.CENTER)
+        add_text(slide, body, x + Inches(0.15), cases_top + Inches(0.75),
+                 case_w - Inches(0.3), case_h - Inches(0.85),
+                 size=Pt(12), color=WHITE, align=PP_ALIGN.CENTER)
+
+    add_text(slide,
+             "We've shipped this end-to-end. The next slides show the numbers.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Background slide. Most clients haven't heard of visual speech "
+        "recognition. Spend 60 seconds: define the problem, name 4 use "
+        "cases, then move on. The four cards are deliberately broad so "
+        "the client maps their own use case onto one."
+    ))
+    return slide
+
+
+def slide_client_video_gallery(prs):
+    """Real demo videos with poster frames + click-to-play. Shows the
+    system isn't just text — it actually produced these transcripts on
+    these specific clips, and you can play any of them in PowerPoint."""
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Real outputs — pick any tile to play")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Six real segments decoded by the model. Click a tile in PowerPoint to play.",
+             MX, Inches(1.55), CW, Inches(0.4),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # 2x3 grid of video posters
+    cols = 3
+    rows = 2
+    gap = Inches(0.2)
+    grid_top = Inches(2.1)
+    grid_h = Inches(4.0)
+    available_w = CW
+    tile_w = (available_w - (cols - 1) * gap) / cols
+    tile_h = (grid_h - (rows - 1) * gap) / rows
+    caption_h = Inches(0.45)
+
+    # Pick six representative clips — cleanest narrative spread.
+    # All are real videos with hyp burned in, present in 06_demo_videos/.
+    tiles = [
+        ("perfect",        "PERFECT",          GREEN, "Clean visual, clean output"),
+        ("vitamin_d",      "ALMOST PERFECT",   GREEN, "Near-verbatim transcription"),
+        ("admiral",        "PARTIAL",          GOLD,  "Right gist, wrong specifics"),
+        ("nearmiss",       "NEAR MISS",        GOLD,  "Off by a phrase, recoverable with context"),
+        ("halluc",         "HALLUCINATION",    CORAL, "Fluent but wrong — auto-flagged"),
+        ("topic_drift",    "TOPIC DRIFT",      CORAL, "Model lost the thread, system flags it"),
+    ]
+
+    for i, (vid_key, label, color, caption) in enumerate(tiles):
+        col = i % cols
+        row = i // cols
+        x = MX + col * (tile_w + gap)
+        y = grid_top + row * (tile_h + gap)
+        # Poster frame + play button (helper handles missing video gracefully)
+        add_video_poster(slide, vid_key, x, y, tile_w, tile_h - caption_h)
+        # Caption strip below the poster
+        add_rect(slide, x, y + tile_h - caption_h, tile_w, caption_h,
+                 fill_color=NAVY2, border_color=None)
+        add_text(slide, label,
+                 x + Inches(0.1), y + tile_h - caption_h + Inches(0.05),
+                 tile_w - Inches(0.2), Inches(0.25),
+                 size=Pt(11), bold=True, color=color)
+        add_text(slide, caption,
+                 x + Inches(0.1), y + tile_h - caption_h + Inches(0.27),
+                 tile_w - Inches(0.2), Inches(0.2),
+                 size=Pt(9), color=LGRAY, italic=True)
+
+    add_text(slide,
+             "These six are a deliberate spread — best-case to worst-case. "
+             "All visually decoded, no audio, on real-world video.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Pick 1-2 tiles to actually play during the meeting. Recommend "
+        "starting with 'perfect' (sets the bar) then 'halluc' (shows the "
+        "system catches the bad ones). Don't play all 6 — pick what fits "
+        "your audience. All videos are static poster frames at deck-build "
+        "time; in PowerPoint they have hyperlinks/embeds set by helpers."
     ))
     return slide
 
@@ -722,10 +1009,12 @@ def slide_client_validation_intro(prs):
 
     add_bullets(slide, [
         "1,497 real-world segments — not benchmark data",
-        "Independent expert reviewer scored every one",
+        "An independent automated reviewer with no access to our scores or "
+        "reasoning judged whether the message was conveyed at three levels — "
+        "preserved, partial, not preserved — across all 1,497 pairs.",
         "We compared the system's confidence signals to that judgment",
         "Result: the trust score and the expert agree on most segments",
-    ], MX, Inches(1.9), CW, Inches(4.0), size=Pt(20))
+    ], MX, Inches(1.9), CW, Inches(4.0), size=Pt(18))
 
     add_text(slide,
              "Real-world YouTube footage — varied lighting, head angles, "
@@ -1180,49 +1469,64 @@ def slide_client_more_data(prs):
 
 
 def slide_client_investment_ask(prs):
-    """The funding ask. Direct, simple, client-facing."""
+    """The funding ask, reframed as PARTNERSHIP per Round-5 framing.
+
+    Source: docs/CLIENT_MEETING_FRAMING_v2.md § "Investment ask framing".
+    Three beats, no line items, no dollar amounts. Title carries the
+    partnership frame, not the budget frame.
+    """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "What it takes to ship the next model")
+    add_title(slide, "The next milestone is a partnership")
     add_accent_line(slide)
 
-    add_text(slide,
-             "To train the next model on the data scale needed, we need a "
-             "training-budget commitment.",
-             MX, Inches(1.9), CW, Inches(1.2),
-             size=Pt(22), color=WHITE, align=PP_ALIGN.CENTER, bold=True)
+    # Three beats stacked vertically — direct quote from framing doc.
+    beat_x = MX
+    beat_w = CW
+    beat_h = Inches(1.35)
+    beat_gap = Inches(0.25)
+    beat_top = Inches(1.85)
 
-    # Three drivers of the ask
-    card_w = Inches(3.85)
-    gap = Inches(0.25)
-    top = Inches(3.4)
-    h = Inches(2.4)
-
-    drivers = [
-        ("Compute", "GPU hours for full training, not a quick partial pass.", TEAL),
-        ("Data", "Curated and labeled domain segments — your domain.", GOLD),
-        ("Engineering", "Pipeline integration, testing, and on-prem handoff.", GREEN),
+    beats = [
+        ("1.",
+         "Today's model is trained on a small slice of public data, not your "
+         "domain. It works, but it's a prototype, not a production model on "
+         "your content.",
+         TEAL),
+        ("2.",
+         "We're proposing to go from prototype to production *together* — "
+         "your data, our pipeline, a shared training run on your domain.",
+         GREEN),
+        ("3.",
+         "Specifics in follow-up.",
+         GOLD),
     ]
-    for i, (label, body, color) in enumerate(drivers):
-        x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
-        add_text(slide, label, x + Inches(0.2), top + Inches(0.2),
-                 card_w - Inches(0.4), Inches(0.4),
-                 size=Pt(15), bold=True, color=color)
-        add_text(slide, body, x + Inches(0.2), top + Inches(0.85),
-                 card_w - Inches(0.4), h - Inches(0.95),
-                 size=Pt(14), color=WHITE)
+    for i, (num, body, color) in enumerate(beats):
+        y = beat_top + i * (beat_h + beat_gap)
+        add_rect(slide, beat_x, y, beat_w, beat_h,
+                 fill_color=NAVY2, border_color=None)
+        add_text(slide, num, beat_x + Inches(0.3), y + Inches(0.3),
+                 Inches(0.8), Inches(0.8),
+                 size=Pt(28), bold=True, color=color)
+        add_text(slide, body, beat_x + Inches(1.2), y + Inches(0.25),
+                 beat_w - Inches(1.5), beat_h - Inches(0.4),
+                 size=Pt(16), color=WHITE)
 
     add_text(slide,
-             "Specific numbers in the follow-up — today is direction, not invoice.",
-             MX, Inches(6.1), CW, Inches(0.4),
-             size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "No dollar amounts on slide. Specifics in the follow-up.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "Be direct. The ask is real. Numbers go in the follow-up email, not "
-        "this slide — leaves room for negotiation and avoids anchoring."
+        "Title and framing per docs/CLIENT_MEETING_FRAMING_v2.md § "
+        "'Investment ask framing'. The three beats are quoted verbatim from "
+        "that doc. They are NOT price-sensitive — the slide doesn't justify "
+        "cost, it sizes the unlock. No compute / data / engineering "
+        "breakdown on slide. Bridge from data_ask: 'Data without a training "
+        "budget is a folder. Budget without data is a wishlist. Both "
+        "together is a model trained on your content.'"
     ))
     return slide
 
@@ -1701,4 +2005,698 @@ def slide_client_next_steps(prs):
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, "Customize before the meeting. Use the client's own language for each bullet.")
+    return slide
+
+
+# ──────────────────────────────────────────────────────────────────────────
+# Round-5 additions — Framing v2 alignment
+# (per docs/CLIENT_MEETING_FRAMING_v2.md and
+#  .claude/plans/i-need-to-create-proud-cupcake.md § "Round 5")
+# ──────────────────────────────────────────────────────────────────────────
+
+
+def slide_client_compared_to_today(prs):
+    """The comparative anchor — Section 1, after `what_we_built`,
+    before the demo.
+
+    Three-row card stack contrasting expert lip-readers, do-nothing,
+    and Argos+reviewer. Numbers from docs/CLIENT_MEETING_FRAMING_v2.md
+    § "Compared to today" (sourced from academic deck slide 7 +
+    published lip-reading literature).
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Compared to today")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "The client doesn't have a current vendor — they have two "
+             "unsatisfactory options. We're the third.",
+             MX, Inches(1.55), CW, Inches(0.45),
+             size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Column header strip
+    header_y = Inches(2.1)
+    header_h = Inches(0.4)
+    col_label_w = Inches(3.5)
+    col_acc_w = Inches(2.6)
+    col_time_w = Inches(3.0)
+    col_halluc_w = Inches(3.03)
+
+    col_xs = [MX,
+              MX + col_label_w,
+              MX + col_label_w + col_acc_w,
+              MX + col_label_w + col_acc_w + col_time_w]
+
+    headers = ["APPROACH", "WORD ACCURACY", "TIME PER HOUR", "HALLUCINATION RISK"]
+    widths = [col_label_w, col_acc_w, col_time_w, col_halluc_w]
+    for i, (h, w, x) in enumerate(zip(headers, widths, col_xs)):
+        add_text(slide, h, x, header_y, w, header_h,
+                 size=Pt(11), bold=True, color=LGRAY, align=PP_ALIGN.CENTER)
+
+    # Three rows
+    row_h = Inches(1.2)
+    row_gap = Inches(0.18)
+    rows_top = Inches(2.65)
+
+    rows = [
+        # (label, accuracy, time, halluc, fill, border)
+        ("Expert human lip-reader",
+         "45 – 52%",
+         "hours of expert time",
+         "varies, hard to audit",
+         NAVY2, None,
+         WHITE),
+        ("Don't do it at all",
+         "—",
+         "0 (information is lost)",
+         "—",
+         NAVY2, None,
+         LGRAY),
+        ("Argos + reviewer",
+         "55 – 70%",
+         "minutes of reviewer time",
+         "near-zero, flagged",
+         NAVY3, GREEN,
+         WHITE),
+    ]
+    accent_colors = [LGRAY, MGRAY, TEAL]
+    for i, (label, acc, time, halluc, fill, border, txtcol) in enumerate(rows):
+        y = rows_top + i * (row_h + row_gap)
+        add_rect(slide, MX, y, CW, row_h, fill_color=fill, border_color=border)
+        # Approach label (left)
+        add_text(slide, label, col_xs[0] + Inches(0.2), y + Inches(0.4),
+                 col_label_w - Inches(0.3), Inches(0.5),
+                 size=Pt(15) if i != 2 else Pt(17),
+                 bold=(i == 2), color=txtcol)
+        # Accuracy
+        acc_color = accent_colors[i] if i != 2 else GREEN
+        add_text(slide, acc, col_xs[1], y + Inches(0.35),
+                 col_acc_w, Inches(0.55),
+                 size=Pt(20) if i == 2 else Pt(18),
+                 bold=True, color=acc_color, align=PP_ALIGN.CENTER)
+        # Time
+        add_text(slide, time, col_xs[2], y + Inches(0.4),
+                 col_time_w, Inches(0.5),
+                 size=Pt(13) if i != 2 else Pt(14),
+                 bold=(i == 2), color=txtcol, align=PP_ALIGN.CENTER)
+        # Hallucination risk
+        halluc_color = txtcol if i != 2 else GREEN
+        add_text(slide, halluc, col_xs[3], y + Inches(0.4),
+                 col_halluc_w - Inches(0.2), Inches(0.5),
+                 size=Pt(13) if i != 2 else Pt(14),
+                 bold=(i == 2), color=halluc_color, align=PP_ALIGN.CENTER)
+
+    add_text(slide,
+             "Word accuracy figures from published lip-reading literature "
+             "(Bear & Harvey 2017, Assael et al. 2016).",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "The comparative anchor for Section 1. The bottom row (Argos + "
+        "reviewer) is the punch — system + reviewer using the colored "
+        "confidence report outperforms expert humans alone, in minutes "
+        "instead of hours, with near-zero hallucination risk because the "
+        "system flags its own uncertainty. Numbers from "
+        "docs/CLIENT_MEETING_FRAMING_v2.md (academic deck slide 7). "
+        "Critical for cold audience members — first 10 minutes of the "
+        "meeting do most of the work for them, this is where they map our "
+        "product onto a problem they recognize."
+    ))
+    return slide
+
+
+def slide_client_halluc_problem(prs):
+    """Section 9 trio — first slide.
+
+    'The model can produce confident text that's wrong.'
+    Defines the failure mode in the abstract, sets up the real example
+    on the next slide.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "The model can produce confident text that's wrong.")
+    add_accent_line(slide)
+
+    # Big definition statement — the thing to feel
+    add_text(slide,
+             "Sometimes the model fabricates fluent text from nothing.",
+             MX, Inches(1.9), CW, Inches(0.8),
+             size=Pt(26), bold=True, color=CORAL, align=PP_ALIGN.CENTER)
+
+    # Explanatory paragraph
+    add_text(slide,
+             "Visual lip-reading is hard. When the visual signal is weak — "
+             "off-axis face, occluded mouth, ambiguous viseme — a language-"
+             "model decoder will sometimes confabulate text that reads well "
+             "and follows English grammar, with no real visual evidence "
+             "behind it.",
+             MX, Inches(3.2), CW, Inches(1.7),
+             size=Pt(17), color=WHITE, align=PP_ALIGN.LEFT)
+
+    # Footnote pill — the framing line
+    add_rect(slide, MX, Inches(5.4), CW, Inches(0.95),
+             fill_color=NAVY2, border_color=CORAL)
+    add_text(slide,
+             "This is the dangerous-failure mode for surveillance — fluent "
+             "transcripts that look right but aren't.",
+             MX + Inches(0.3), Inches(5.55), CW - Inches(0.6), Inches(0.7),
+             size=Pt(15), color=WHITE, italic=True, bold=True,
+             align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Slide 1 of the hallucination case-study trio per "
+        "docs/CLIENT_MEETING_FRAMING_v2.md § 'Trust story'. The trust "
+        "story IS the product for this audience — an unflagged "
+        "hallucination isn't an inconvenience, it's a wrong belief about "
+        "a real conversation that the client may act on. Make them feel "
+        "the failure first, then the catch on slides 2-3 of the trio."
+    ))
+    return slide
+
+
+def slide_client_halluc_real_example(prs):
+    """Section 9 trio — second slide.
+
+    Reuses the existing _example_slide layout + Obama segment 5 sidecar
+    (same data slide_client_example_flagged uses). REF says
+    'heroic citizens saved'; the model said 'rwanda's genocide'.
+    """
+    return _example_slide(
+        prs,
+        title="Here's what that looks like in practice.",
+        subtitle="Obama bin Laden announcement  ·  segment #5  ·  14.98–18.58 s",
+        utt_id="05_001498_001858",
+        takeaway="REF said \"heroic citizens saved.\" The model said "
+                 "\"rwanda's genocide.\" That's the failure mode in 1.5 "
+                 "seconds of footage.",
+        takeaway_color=CORAL,
+    )
+
+
+def slide_client_halluc_caught(prs):
+    """Section 9 trio — third slide.
+
+    Two-column: left = same Obama segment 5 hyp re-rendered with
+    emphasis on the red/yellow words; right = trust signals card
+    showing how the system caught it. Anchors on min_p = 0.02.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "...and the system caught it.")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Same segment as the previous slide — now with the trust "
+             "signals layered on.",
+             MX, Inches(1.45), CW, Inches(0.4),
+             size=Pt(13), color=LGRAY, italic=True)
+
+    # Left column — colored hypothesis (re-rendered from sidecar)
+    left_w = Inches(7.0)
+    left_x = MX
+    left_y = Inches(2.1)
+    left_h = Inches(4.0)
+    add_rect(slide, left_x, left_y, left_w, left_h,
+             fill_color=NAVY2, border_color=None)
+    add_text(slide, "DECODED HYPOTHESIS",
+             left_x + Inches(0.25), left_y + Inches(0.2),
+             left_w - Inches(0.5), Inches(0.35),
+             size=Pt(11), bold=True, color=LGRAY)
+
+    ref, words = _load_obama_segment("05_001498_001858")
+    if words:
+        runs = []
+        for w in words:
+            klass = w.get("conf_class", "conf-unknown")
+            color = _color_for_class(klass)
+            # Bold the low- and med-confidence words to draw the eye
+            bold = klass in ("conf-low", "conf-med")
+            runs.append((w["word"] + " ",
+                         {"size": Pt(18), "color": color, "bold": bold}))
+        add_rich_text(slide, [runs],
+                      left_x + Inches(0.25), left_y + Inches(0.65),
+                      left_w - Inches(0.5), left_h - Inches(0.85))
+    else:
+        add_text(slide,
+                 "(real-confidence sidecar not loaded — placeholder)",
+                 left_x + Inches(0.25), left_y + Inches(0.85),
+                 left_w - Inches(0.5), Inches(0.4),
+                 size=Pt(13), color=MGRAY, italic=True)
+
+    # Right column — trust signals card
+    right_x = left_x + left_w + Inches(0.3)
+    right_w = CW - left_w - Inches(0.3)
+    right_y = left_y
+    right_h = left_h
+    add_rect(slide, right_x, right_y, right_w, right_h,
+             fill_color=NAVY3, border_color=GREEN)
+    add_text(slide, "WHAT THE SYSTEM DID",
+             right_x + Inches(0.25), right_y + Inches(0.2),
+             right_w - Inches(0.5), Inches(0.35),
+             size=Pt(11), bold=True, color=GREEN)
+
+    # Three signal lines
+    sig_top = right_y + Inches(0.65)
+    sig_h = Inches(0.95)
+    sig_gap = Inches(0.15)
+
+    signals = [
+        ("LOW CONFIDENCE",
+         "Lowest-confidence word at p = 0.02.",
+         CORAL),
+        ("AUTO-EXCLUDED",
+         "Segment auto-excluded from \"useful output.\"",
+         GOLD),
+        ("REVIEWER PATH",
+         "Reviewer goes straight to the flagged spans.",
+         TEAL),
+    ]
+    for i, (label, body, color) in enumerate(signals):
+        y = sig_top + i * (sig_h + sig_gap)
+        add_text(slide, label,
+                 right_x + Inches(0.25), y,
+                 right_w - Inches(0.5), Inches(0.32),
+                 size=Pt(11), bold=True, color=color)
+        add_text(slide, body,
+                 right_x + Inches(0.25), y + Inches(0.32),
+                 right_w - Inches(0.5), sig_h - Inches(0.32),
+                 size=Pt(13), color=WHITE)
+
+    # Legend strip
+    add_text(slide,
+             "GREEN: confident   YELLOW: review   RED: likely error",
+             MX, Inches(6.55), CW, Inches(0.3),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Slide 3 of the hallucination case-study trio. The narrative beat: "
+        "model fabricated 'rwanda's genocide' from a clip about heroic "
+        "citizens — and KNEW it. Lowest per-token probability hit 0.02 on "
+        "'rwanda's', the segment was below the IS threshold for 'useful "
+        "output,' and the colored hypothesis sends the reviewer straight to "
+        "the red and yellow spans instead of having to read the whole "
+        "transcript. The min_p = 0.02 anchor is real (matches the existing "
+        "slide_client_example_flagged speaker note). Don't say IS or κ on "
+        "the slide."
+    ))
+    return slide
+
+
+def slide_client_failure_taxonomy(prs):
+    """Section 9 — after the hallucination trio.
+
+    'When it fails, here's how' — five failure-mode bars with real
+    frequencies on the 574 below-threshold segments. Pulled from
+    docs/CLIENT_MEETING_FRAMING_v2.md § "Trust framework (the
+    differentiator)" and academic deck failure-mode slides.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "When it fails, here's how")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Five failure modes. Real frequencies on the 574 segments "
+             "the system rated below the useful-output threshold.",
+             MX, Inches(1.55), CW, Inches(0.45),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Five horizontal bars
+    chart_top = Inches(2.2)
+    bar_h = Inches(0.7)
+    bar_gap = Inches(0.18)
+    label_w = Inches(3.0)
+    max_bar_w = Inches(4.5)
+    desc_w = Inches(4.4)
+
+    bar_origin_x = MX + label_w + Inches(0.2)
+
+    modes = [
+        ("Wrong Topic",                44.4, 255, "mouth shapes decoded to wrong domain",        CORAL),
+        ("Hallucination",              18.8, 108, "model invented fake text",                    RED),
+        ("Signal Loss",                13.9, 80,  "empty or near-empty output",                  GOLD),
+        ("Right Topic, Wrong Details", 13.8, 79,  "gist right, names/content lost",              TEAL),
+        ("Accumulated Errors",         9.1,  52,  "many small errors compound",                  GREEN),
+    ]
+    # Find max for proportional widths (largest = full bar width)
+    max_pct = max(m[1] for m in modes)
+    for i, (name, pct, count, desc, color) in enumerate(modes):
+        y = chart_top + i * (bar_h + bar_gap)
+        # Mode label (left)
+        add_text(slide, name, MX, y + Inches(0.18), label_w, Inches(0.4),
+                 size=Pt(13), bold=True, color=WHITE, align=PP_ALIGN.RIGHT)
+        # Bar
+        bar_w = max_bar_w * (pct / max_pct)
+        add_rect(slide, bar_origin_x, y, bar_w, bar_h,
+                 fill_color=color, border_color=None)
+        # Percentage in bar
+        add_text(slide, f"{pct:.1f}%  ({count})",
+                 bar_origin_x, y + Inches(0.18),
+                 bar_w, Inches(0.4),
+                 size=Pt(13), bold=True, color=BG, align=PP_ALIGN.CENTER)
+        # Description (right of bar)
+        add_text(slide, desc,
+                 bar_origin_x + max_bar_w + Inches(0.2),
+                 y + Inches(0.2),
+                 desc_w, Inches(0.4),
+                 size=Pt(11), color=LGRAY, italic=True)
+
+    # Footer pill
+    add_rect(slide, MX, Inches(6.4), CW, Inches(0.6),
+             fill_color=NAVY2, border_color=TEAL)
+    add_text(slide,
+             "Honest disclosure. The trust signals tag every one of these "
+             "for the reviewer.",
+             MX + Inches(0.3), Inches(6.5), CW - Inches(0.6), Inches(0.4),
+             size=Pt(13), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Failure-mode taxonomy from docs/CLIENT_MEETING_FRAMING_v2.md § "
+        "'Trust framework' (sourced from academic deck failure_deep_1a/_1b "
+        "and slide_08). 574 = total below-threshold segments out of 1,497. "
+        "Frequencies sum to ~100%: 255+108+80+79+52 = 574. Hiding failure "
+        "modes reads as marketing; honest disclosure builds trust. Worked "
+        "example for the largest bucket (Wrong Topic) is on the next slide."
+    ))
+    return slide
+
+
+def slide_client_failure_worked_example(prs):
+    """Section 9 — after `failure_taxonomy`.
+
+    Worked example for the 'Wrong Topic' bucket (largest, most teachable).
+    Reuses the _example_slide pattern with Obama segment 27, where
+    'bin laden' was decoded as 'middle east' — a topic-drift case.
+    """
+    return _example_slide(
+        prs,
+        title="Failure mode in practice — Wrong Topic",
+        subtitle="Obama bin Laden announcement  ·  segment #27  ·  80.91–84.51 s",
+        utt_id="27_008091_008451",
+        takeaway="Topic drifted — \"bin laden\" became \"middle east.\" "
+                 "WER calls this 59% wrong; the trust signal calls it: "
+                 "high-confidence-but-flagged.",
+        takeaway_color=CORAL,
+    )
+
+
+def slide_client_engineering_journey(prs):
+    """Section 5 (What we built) — after `what_we_built`.
+
+    Four milestones across the four-month engineering pass.
+    Source: docs/CLIENT_MEETING_FRAMING_v2.md § "Engineering credibility
+    (for the partner audience)".
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "How we built it — four months, four milestones")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "We integrated, tested, and shipped — not researched in theory.",
+             MX, Inches(1.55), CW, Inches(0.45),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Four milestone rows — vertical timeline
+    row_top = Inches(2.1)
+    row_h = Inches(0.95)
+    row_gap = Inches(0.15)
+    num_w = Inches(0.9)
+    title_x = MX + num_w + Inches(0.15)
+    title_w = CW - num_w - Inches(0.15)
+
+    milestones = [
+        ("M1",
+         "Adopted three open-source codebases — auto_avsr, av_hubert, VSP-LLM.",
+         "Integrated, not reinvented.",
+         TEAL),
+        ("M2",
+         "37 bugs fixed and documented.",
+         "Open changelog of every problem solved.",
+         GOLD),
+        ("M3",
+         "Confidence layer shipped — Tier-1 IS + Tier-2 per-token.",
+         "Both calibrated against an independent expert reviewer.",
+         GREEN),
+        ("M4",
+         "Dual-environment validation — refactor-v1.0 → ec2-v1.1 → container-v1.1.",
+         "Same code on AWS and on-premise.",
+         CORAL),
+    ]
+    for i, (m_id, head, body, color) in enumerate(milestones):
+        y = row_top + i * (row_h + row_gap)
+        # Number badge
+        add_rect(slide, MX, y, num_w, row_h,
+                 fill_color=NAVY3, border_color=color)
+        add_text(slide, m_id, MX, y + Inches(0.25),
+                 num_w, Inches(0.5),
+                 size=Pt(20), bold=True, color=color, align=PP_ALIGN.CENTER)
+        # Body card
+        add_rect(slide, title_x, y, title_w, row_h,
+                 fill_color=NAVY2, border_color=None)
+        add_text(slide, head, title_x + Inches(0.3), y + Inches(0.13),
+                 title_w - Inches(0.4), Inches(0.4),
+                 size=Pt(15), bold=True, color=WHITE)
+        add_text(slide, body, title_x + Inches(0.3), y + Inches(0.55),
+                 title_w - Inches(0.4), Inches(0.4),
+                 size=Pt(12), color=LGRAY, italic=True)
+
+    # Footer
+    add_text(slide,
+             "We keep an open changelog of every problem solved.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(11), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Engineering credibility for the partner audience. All four "
+        "milestones from docs/CLIENT_MEETING_FRAMING_v2.md § 'Engineering "
+        "credibility'. Architecture specificity is OK here per Round-5 "
+        "framing — partners want to see real choices for integration. "
+        "Model names (auto_avsr, av_hubert, VSP-LLM, LLaMA, AV-HuBERT) are "
+        "fine; LoRA r-values still scrubbed per N9. The git tags are real "
+        "(refactor-v1.0 → ec2-v1.1 → container-v1.1)."
+    ))
+    return slide
+
+
+def slide_client_data_ask(prs):
+    """Section 12 (What's next) — replaces `stronger_model` +
+    `more_data` + `roadmap_phases`.
+
+    Frames the data ask as the bridge to investment_ask. Three short
+    framing lines, footer brings the partnership beat.
+    Source: plan § "Round 5 → Investment-ask reframe".
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "The next milestone needs more training data — from you.")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Today's model is trained on a small slice of public data, "
+             "not your domain.",
+             MX, Inches(1.7), CW, Inches(0.7),
+             size=Pt(20), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three framing lines
+    line_top = Inches(2.7)
+    line_h = Inches(1.05)
+    line_gap = Inches(0.18)
+
+    lines = [
+        ("Direction is known.",
+         "More data on your domain → fewer flagged segments, better "
+         "domain-vocabulary recovery.",
+         TEAL),
+        ("Path is concrete.",
+         "Same pipeline, same architecture — a shared training run "
+         "on your data.",
+         GREEN),
+        ("Outcome is yours.",
+         "The model that ships at the end is trained on your content, "
+         "not a benchmark.",
+         GOLD),
+    ]
+    for i, (head, body, color) in enumerate(lines):
+        y = line_top + i * (line_h + line_gap)
+        add_rect(slide, MX, y, CW, line_h, fill_color=NAVY2, border_color=None)
+        add_text(slide, head, MX + Inches(0.3), y + Inches(0.18),
+                 Inches(4.5), Inches(0.4),
+                 size=Pt(16), bold=True, color=color)
+        add_text(slide, body, MX + Inches(0.3), y + Inches(0.6),
+                 CW - Inches(0.6), Inches(0.4),
+                 size=Pt(13), color=WHITE, italic=True)
+
+    # Bridge to investment_ask
+    add_rect(slide, MX, Inches(6.35), CW, Inches(0.65),
+             fill_color=NAVY3, border_color=TEAL)
+    add_text(slide,
+             "Data without a training budget is a folder. Budget without "
+             "data is a wishlist. Both together is a model trained on "
+             "your content.",
+             MX + Inches(0.3), Inches(6.4), CW - Inches(0.6), Inches(0.55),
+             size=Pt(12), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "This slide is the bridge into the investment-ask slide. The "
+        "footer line is quoted from docs/CLIENT_MEETING_FRAMING_v2.md § "
+        "'Investment ask framing' — it's the connection sentence that "
+        "ties the data ask and the budget ask together. Three beats "
+        "(direction / path / outcome) per the plan § 'Round 5 → "
+        "Investment-ask reframe (rewrite existing)'. No specific dataset "
+        "sizes on slide — direction-only framing per N9."
+    ))
+    return slide
+
+
+def slide_client_multi_speaker_today_vs_path(prs):
+    """Section 12 (What's next) — FIRST slide.
+    REPLACES `slide_client_entity_split`.
+
+    Multi-speaker is the client's canonical use case (two-person
+    conversational footage). Frame as "today single-speaker; here's
+    the entity-split path."
+    Source: docs/CLIENT_MEETING_FRAMING_v2.md § "Multi-speaker emphasis"
+    + plan § "Round 5".
+    """
+    from pptx.enum.shapes import MSO_SHAPE
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Multi-speaker: today vs. the path forward")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Two-person conversational footage is your canonical use case. "
+             "Here's where we are honestly today, and where we go next.",
+             MX, Inches(1.55), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Two columns
+    col_w = Inches(5.95)
+    gap = Inches(0.2)
+    top = Inches(2.25)
+    h = Inches(4.0)
+
+    # ── LEFT — TODAY ──
+    left_x = MX
+    add_rect(slide, left_x, top, col_w, h,
+             fill_color=NAVY2, border_color=CORAL)
+    add_text(slide, "TODAY",
+             left_x + Inches(0.3), top + Inches(0.25),
+             col_w - Inches(0.6), Inches(0.5),
+             size=Pt(13), bold=True, color=CORAL)
+    add_text(slide, "Single-speaker mode",
+             left_x + Inches(0.3), top + Inches(0.7),
+             col_w - Inches(0.6), Inches(0.6),
+             size=Pt(22), bold=True, color=WHITE)
+    add_text(slide,
+             "The current model assumes one centered face per frame. "
+             "Two-person conversational footage degrades the visual signal — "
+             "the model can lose track of which speaker is currently "
+             "talking.",
+             left_x + Inches(0.3), top + Inches(1.55),
+             col_w - Inches(0.6), Inches(1.6),
+             size=Pt(14), color=LGRAY)
+
+    # Mini illustration: one face icon, single crop
+    illu_y = top + h - Inches(1.2)
+    head1 = slide.shapes.add_shape(
+        MSO_SHAPE.OVAL,
+        left_x + col_w / 2 - Inches(0.3),
+        illu_y,
+        Inches(0.6), Inches(0.6))
+    head1.fill.solid()
+    head1.fill.fore_color.rgb = CORAL
+    head1.line.fill.background()
+    add_text(slide, "one centered crop",
+             left_x, illu_y + Inches(0.7),
+             col_w, Inches(0.3),
+             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # ── RIGHT — PATH ──
+    right_x = left_x + col_w + gap
+    add_rect(slide, right_x, top, col_w, h,
+             fill_color=NAVY2, border_color=GREEN)
+    add_text(slide, "PATH",
+             right_x + Inches(0.3), top + Inches(0.25),
+             col_w - Inches(0.6), Inches(0.5),
+             size=Pt(13), bold=True, color=GREEN)
+    add_text(slide, "Entity-split preprocessing",
+             right_x + Inches(0.3), top + Inches(0.7),
+             col_w - Inches(0.6), Inches(0.6),
+             size=Pt(22), bold=True, color=WHITE)
+    add_text(slide,
+             "Local face detection + tracker emits per-speaker centered "
+             "crops. Each speaker gets its own clean lip-reading pass. "
+             "Three weeks of engineering, not research.",
+             right_x + Inches(0.3), top + Inches(1.55),
+             col_w - Inches(0.6), Inches(1.6),
+             size=Pt(14), color=LGRAY)
+
+    # Mini illustration: two face icons, two arrows, two crops
+    a_x = right_x + Inches(0.5)
+    b_x = right_x + Inches(1.4)
+    head_a = slide.shapes.add_shape(
+        MSO_SHAPE.OVAL, a_x, illu_y, Inches(0.5), Inches(0.5))
+    head_a.fill.solid(); head_a.fill.fore_color.rgb = TEAL
+    head_a.line.fill.background()
+    head_b = slide.shapes.add_shape(
+        MSO_SHAPE.OVAL, b_x, illu_y, Inches(0.5), Inches(0.5))
+    head_b.fill.solid(); head_b.fill.fore_color.rgb = GOLD
+    head_b.line.fill.background()
+    arrow = slide.shapes.add_shape(
+        MSO_SHAPE.RIGHT_ARROW,
+        right_x + Inches(2.1), illu_y + Inches(0.1),
+        Inches(0.7), Inches(0.3))
+    arrow.fill.solid(); arrow.fill.fore_color.rgb = GREEN
+    arrow.line.fill.background()
+    crop_a = slide.shapes.add_shape(
+        MSO_SHAPE.RECTANGLE,
+        right_x + Inches(2.95), illu_y - Inches(0.05),
+        Inches(0.5), Inches(0.5))
+    crop_a.fill.solid(); crop_a.fill.fore_color.rgb = TEAL
+    crop_a.line.fill.background()
+    crop_b = slide.shapes.add_shape(
+        MSO_SHAPE.RECTANGLE,
+        right_x + Inches(3.55), illu_y - Inches(0.05),
+        Inches(0.5), Inches(0.5))
+    crop_b.fill.solid(); crop_b.fill.fore_color.rgb = GOLD
+    crop_b.line.fill.background()
+    add_text(slide, "two speakers → two crops",
+             right_x, illu_y + Inches(0.7),
+             col_w, Inches(0.3),
+             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Footer
+    add_text(slide,
+             "This is the gap we're flagging honestly because it's your "
+             "canonical use case.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(11), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Replaces slide_client_entity_split. The narrative shift is from "
+        "'planned ablation' (research-toned) to 'honest gap with a "
+        "concrete path' (partnership-toned). Three weeks of engineering "
+        "is the realistic estimate from the plan. Lead the 'What's next' "
+        "section with this slide — multi-speaker is the client's "
+        "canonical case per docs/CLIENT_MEETING_FRAMING_v2.md § "
+        "'Client's concerns, ranked'."
+    ))
     return slide
