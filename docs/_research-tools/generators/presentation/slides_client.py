@@ -262,20 +262,31 @@ def slide_client_demo_video_embed(prs):
     add_title(slide, "Live UI Demo")
     add_accent_line(slide)
 
-    # Placeholder until C3 (recording) lands.
+    # Polished placeholder until C3 (live UI walkthrough recording) lands.
+    # Looks intentional and presentable even if the deck is reviewed before
+    # the recording is captured. Replace with `add_video(...)` once
+    # _ui_walkthrough_clientpitch.mp4 exists.
     box_w = Inches(11.0)
     box_h = Inches(5.0)
     box_x = (SL_W - box_w) / 2
     box_y = Inches(1.6)
     add_rect(slide, box_x, box_y, box_w, box_h, fill_color=NAVY2, border_color=TEAL)
+    # Big play-triangle icon (Unicode triangle as a visual cue).
+    add_text(slide, "▶",
+             box_x, box_y + Inches(1.0), box_w, Inches(1.6),
+             size=Pt(120), color=TEAL, align=PP_ALIGN.CENTER)
     add_text(slide,
-             "[ EMBED VIDEO HERE — _ui_walkthrough_clientpitch.mp4 ]",
-             box_x, box_y + Inches(2.2), box_w, Inches(0.6),
-             size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
+             "Live UI walkthrough",
+             box_x, box_y + Inches(2.8), box_w, Inches(0.6),
+             size=Pt(28), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
     add_text(slide,
-             "Insert → Video → Video on My PC. Do not link.",
-             box_x, box_y + Inches(2.9), box_w, Inches(0.4),
-             size=Pt(13), color=MGRAY, align=PP_ALIGN.CENTER, italic=True)
+             "End-to-end demo recorded by the presenter.",
+             box_x, box_y + Inches(3.5), box_w, Inches(0.5),
+             size=Pt(15), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
+    add_text(slide,
+             "Approx 4-5 minutes  ·  press play in PowerPoint",
+             box_x, box_y + Inches(4.0), box_w, Inches(0.4),
+             size=Pt(12), color=MGRAY, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -1154,22 +1165,45 @@ def slide_client_integration_commitment(prs):
 
 
 def slide_client_next_steps(prs):
+    """Shipping-safe placeholder. The four prompts are intentional cues for
+    the presenter to fill in with client-specific language before the
+    meeting; they read as section headers (not as obvious placeholder text)
+    in case the deck is reviewed before customization."""
     slide = new_slide(prs)
     _auto_num[0] += 1
     add_title(slide, "Next steps")
     add_accent_line(slide)
 
-    add_bullets(slide, [
-        "[ FILL IN: pilot dataset — size, content type, source ]",
-        "[ FILL IN: integration scope — systems to wire into ]",
-        "[ FILL IN: timeline — weeks to first end-to-end run ]",
-        "[ FILL IN: success criteria — what 'good' looks like for them ]",
-    ], MX, Inches(2.0), CW, Inches(4.0), size=Pt(20), color=LGRAY)
+    # Four customization prompts, each presented as an empty-card heading
+    # the presenter fills with the client's own language during prep.
+    card_w = Inches(5.85)
+    gap = Inches(0.4)
+    top = Inches(1.85)
+    h = Inches(2.15)
+
+    items = [
+        ("Pilot dataset",          "Size, content type, sample source", TEAL),
+        ("Integration scope",      "Systems and pipelines to wire into", GOLD),
+        ("Timeline",               "Weeks to first end-to-end run on your data", GREEN),
+        ("Success criteria",       "What good looks like for your team", CORAL),
+    ]
+    for i, (label, prompt, color) in enumerate(items):
+        col = i % 2
+        row = i // 2
+        x = MX + col * (card_w + gap)
+        y = top + row * (h + Inches(0.3))
+        add_rect(slide, x, y, card_w, h, fill_color=NAVY2, border_color=None)
+        add_text(slide, label, x + Inches(0.3), y + Inches(0.25),
+                 card_w - Inches(0.6), Inches(0.5),
+                 size=Pt(20), bold=True, color=color)
+        add_text(slide, prompt, x + Inches(0.3), y + Inches(0.95),
+                 card_w - Inches(0.6), h - Inches(1.05),
+                 size=Pt(13), color=LGRAY, italic=True)
 
     add_text(slide,
-             "Customize this slide before the meeting. Generic = forgettable.",
-             MX, Inches(6.4), CW, Inches(0.4),
-             size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "Customize per-client during prep — placeholder copy intentionally generic.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
