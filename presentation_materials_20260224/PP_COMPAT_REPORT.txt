@@ -1,0 +1,23 @@
+=== PPTX -> PowerPoint compatibility scan ===
+File: /home/ubuntu/presentation_materials_20260224/Argos_VSP_Client_46slides_Apr2026.pptx
+Slides: 46
+
+[1] EMBEDDED VIDEOS
+  (none — slide 6 placeholder will need video embedded later)
+
+[2] NON-LATIN / NON-CALIBRI-SAFE GLYPHS
+  - '▶' (U+25B6 BLACK RIGHT-POINTING TRIANGLE): 2x  on slides 6, 31
+  - '☁' (U+2601 CLOUD): 1x  on slides 31
+  - '⚙' (U+2699 GEAR): 1x  on slides 31
+  - '✔' (U+2714 HEAVY CHECK MARK): 1x  on slides 31
+
+  These may render as boxes (□) on machines without the right font.
+  Verify each in real PowerPoint; replace with text or safer glyph if absent.
+
+[3] FONT FACES
+  Used:
+    Calibri: 523 runs
+
+  All fonts are PowerPoint default-bundle / cross-platform safe. ✓
+
+Total flagged items: 4
