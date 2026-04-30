@@ -410,51 +410,76 @@ def slide_client_two_layer_confidence(prs):
 
 
 def slide_client_word_color_coding(prs):
-    """Screenshot of the new UI report with green/yellow/red word coloring.
+    """Screenshot of the Obama bin Laden demo report with per-word
+    green/yellow/red confidence color coding.
 
-    Until B5 produces ui_word_confidence_screenshot.png, this slide shows a
-    placeholder. After the screenshot exists, replace with add_image().
+    Source HTML: presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html
+    Source generator: docs/_research-tools/generators/generate_client_demo_report.py
+
+    Confidence on this screenshot is currently *synthetic*, derived from WER
+    alignment between the decoded HYP and the known REF text — it shows what
+    the rendering looks like end-to-end. When B3 lands a real per-token
+    confidence sidecar, regenerate the HTML (same script, same script just
+    swaps source automatically) and re-screenshot to refresh this slide.
     """
+    from pathlib import Path
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Per-word color coding — in your report")
+    add_title(slide, "Per-word color coding on a real example")
     add_accent_line(slide)
 
-    # Placeholder until B5 lands
-    box_w = Inches(11.0)
-    box_h = Inches(4.6)
-    box_x = (SL_W - box_w) / 2
-    box_y = Inches(1.6)
-    add_rect(slide, box_x, box_y, box_w, box_h, fill_color=NAVY2, border_color=GREEN)
-    add_text(slide,
-             "[ SCREENSHOT — vsp-ui report with mixed-confidence segment ]",
-             box_x, box_y + Inches(1.9), box_w, Inches(0.6),
-             size=Pt(20), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
-    add_text(slide,
-             "Replace with: add_image(slide, 'ui_word_confidence', ...) once B5 lands.",
-             box_x, box_y + Inches(2.6), box_w, Inches(0.4),
-             size=Pt(13), color=MGRAY, align=PP_ALIGN.CENTER, italic=True)
+    screenshot = Path(__file__).resolve().parents[3] / (
+        "presentation_materials_20260224/01_plots_for_slides/"
+        "ui_word_confidence_screenshot.png"
+    )
+    if screenshot.exists():
+        # Center the image in the available content area, leaving room for the
+        # legend strip at the bottom.
+        img_w = Inches(8.5)
+        img_x = (SL_W - img_w) / 2
+        img_y = Inches(1.55)
+        slide.shapes.add_picture(str(screenshot), img_x, img_y, width=img_w)
+    else:
+        # Fallback placeholder if screenshot has not been generated yet.
+        box_w = Inches(11.0)
+        box_h = Inches(4.6)
+        box_x = (SL_W - box_w) / 2
+        box_y = Inches(1.6)
+        add_rect(slide, box_x, box_y, box_w, box_h, fill_color=NAVY2, border_color=GREEN)
+        add_text(slide,
+                 "[ Run docs/_research-tools/generators/generate_client_demo_report.py "
+                 "then re-screenshot ]",
+                 box_x, box_y + Inches(1.9), box_w, Inches(0.6),
+                 size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
 
-    # Tiny legend
-    legend_top = Inches(6.35)
-    add_text(slide, "Legend  —  ", MX, legend_top, Inches(1.5), Inches(0.3),
+    # Legend strip
+    legend_top = Inches(6.7)
+    add_text(slide, "Per-word confidence  —  ",
+             MX, legend_top, Inches(2.6), Inches(0.3),
              size=Pt(11), color=LGRAY)
     add_text(slide, "GREEN: confident",
-             MX + Inches(1.4), legend_top, Inches(2.0), Inches(0.3),
+             MX + Inches(2.5), legend_top, Inches(2.0), Inches(0.3),
              size=Pt(11), color=GREEN, bold=True)
     add_text(slide, "YELLOW: review",
-             MX + Inches(3.5), legend_top, Inches(2.0), Inches(0.3),
+             MX + Inches(4.6), legend_top, Inches(2.0), Inches(0.3),
              size=Pt(11), color=YELLOW, bold=True)
     add_text(slide, "RED: likely error",
-             MX + Inches(5.6), legend_top, Inches(2.0), Inches(0.3),
+             MX + Inches(6.7), legend_top, Inches(2.0), Inches(0.3),
              size=Pt(11), color=CORAL, bold=True)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "Walk the audience through one row of the report. Hover green words, "
-        "then yellow, then red. End on a flagged segment that the model knew "
-        "was uncertain."
+        "Walk the audience through one segment of the Obama bin Laden speech "
+        "report. Hover or point at a green run, then a yellow word, then the "
+        "red mismatch. The recognizable content lets clients track what's "
+        "right and what's not even though the audio isn't being played. "
+        "Note that the per-word confidence on THIS screenshot is currently "
+        "synthetic (derived from WER alignment) until B3's real sequence-"
+        "confidence sidecar lands — visual treatment is identical, the "
+        "underlying signal will swap when the GPU run completes. The Obama "
+        "speech is the demo input recommended for your live UI walkthrough "
+        "recording (vsp_input/050111_OsamaBinLadenStatement_HD.mp4)."
     ))
     return slide
 
