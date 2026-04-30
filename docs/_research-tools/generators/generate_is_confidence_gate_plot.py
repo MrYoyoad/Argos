@@ -141,12 +141,17 @@ def _plot():
     leg = ax2.legend(loc="lower left", facecolor=NAVY2, edgecolor=MGRAY,
                      labelcolor=WHITE, fontsize=11, framealpha=0.95)
 
-    # Anchor annotation: the killer fact
+    # Anchor annotation: the killer fact. Position chosen so the text sits
+    # in the empty top-left quadrant (x<2.5, y in 50-70 range) where neither
+    # the precision nor the recall curve passes — visual QA flagged earlier
+    # placement as overlapping the curves.
     ax2.annotate(
         "At IS ≥ 3.80:\n100% precision",
-        xy=(3.80, 100), xytext=(2.4, 88),
+        xy=(3.80, 100), xytext=(0.7, 50),
         color=GREEN, fontsize=11, fontweight="bold",
-        arrowprops=dict(arrowstyle="->", color=GREEN, lw=1.5),
+        arrowprops=dict(arrowstyle="->", color=GREEN, lw=1.5,
+                        connectionstyle="arc3,rad=0.15"),
+        bbox=dict(boxstyle="round,pad=0.4", fc=NAVY2, ec=GREEN, lw=1.0),
     )
 
     fig.suptitle(

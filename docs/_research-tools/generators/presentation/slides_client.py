@@ -271,22 +271,29 @@ def slide_client_demo_video_embed(prs):
     box_x = (SL_W - box_w) / 2
     box_y = Inches(1.6)
     add_rect(slide, box_x, box_y, box_w, box_h, fill_color=NAVY2, border_color=TEAL)
-    # Big play-triangle icon (Unicode triangle as a visual cue).
-    add_text(slide, "▶",
-             box_x, box_y + Inches(1.0), box_w, Inches(1.6),
-             size=Pt(120), color=TEAL, align=PP_ALIGN.CENTER)
+    # Centered headline + subtitle + metadata stack. No icon — the cyan
+    # border + "press play in PowerPoint" copy is enough to read as an
+    # intentional video placeholder. Earlier attempts at a Unicode ▶ glyph
+    # were dropped by the LibreOffice PDF render, and an MSO_SHAPE
+    # triangle attempt blew out the rest of the textbox content. Plain
+    # type is the boring-but-reliable choice.
     add_text(slide,
              "Live UI walkthrough",
-             box_x, box_y + Inches(2.8), box_w, Inches(0.6),
-             size=Pt(28), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+             box_x, box_y + Inches(1.6), box_w, Inches(1.0),
+             size=Pt(40), bold=True, color=TEAL, align=PP_ALIGN.CENTER)
     add_text(slide,
              "End-to-end demo recorded by the presenter.",
-             box_x, box_y + Inches(3.5), box_w, Inches(0.5),
-             size=Pt(15), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
+             box_x, box_y + Inches(2.7), box_w, Inches(0.6),
+             size=Pt(18), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
     add_text(slide,
-             "Approx 4-5 minutes  ·  press play in PowerPoint",
-             box_x, box_y + Inches(4.0), box_w, Inches(0.4),
-             size=Pt(12), color=MGRAY, align=PP_ALIGN.CENTER)
+             "Approximately 4-5 minutes  ·  press play in PowerPoint to start",
+             box_x, box_y + Inches(3.5), box_w, Inches(0.5),
+             size=Pt(13), color=LGRAY, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "If video does not embed before the meeting, narrate the demo: "
+             "drag-drop upload → 9-stage pipeline → color-coded report.",
+             box_x, box_y + Inches(4.3), box_w, Inches(0.6),
+             size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -444,15 +451,21 @@ def slide_client_word_color_coding(prs):
         "ui_word_confidence_screenshot.png"
     )
     if screenshot.exists():
-        # Height-constrained: the source PNG is tall (1600x1900). Width-
-        # constraining at 8.5" would push the image past the slide edge.
+        # Height-constrained: the source PNG is tall. Visual QA flagged
+        # earlier 4.7"-tall sizing as too small at projection scale, so
+        # bumped to 5.0" — fills the available content band more fully
+        # and lets the per-word colors read across a room.
         from PIL import Image
         with Image.open(screenshot) as im:
             aspect = im.height / im.width
-        img_h = Inches(4.7)
-        img_w = Inches(4.7 / aspect)
+        img_h = Inches(5.0)
+        img_w = Inches(5.0 / aspect)
+        # If it's now wider than the slide can fit, cap on width.
+        if img_w > Inches(11.5):
+            img_w = Inches(11.5)
+            img_h = Inches(11.5 * aspect)
         img_x = (SL_W - img_w) / 2
-        img_y = Inches(1.55)
+        img_y = Inches(1.45)
         slide.shapes.add_picture(str(screenshot), img_x, img_y, height=img_h)
     else:
         # Fallback placeholder if screenshot has not been generated yet.
