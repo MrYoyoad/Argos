@@ -28,9 +28,17 @@ from typing import Iterable, List, Mapping, Optional, Sequence
 # SentencePiece word-start marker used by LLaMA-2 / Llama 3.x tokenizers.
 WORD_START_MARKER = "▁"
 
-# Confidence-class thresholds (initial heuristic; tune after looking at ~10 real outputs).
-CONF_HIGH = 0.7
-CONF_MED = 0.3
+# Confidence-class thresholds. Tightened from initial 0.7/0.3 to 0.85/0.4
+# on 2026-04-30 after running on real per-token data and reading the
+# Llama-2 confidence literature review (docs/confidence/llama2_confidence_literature_review.md).
+# Rationale:
+#   - LLaMA-2 is mildly over-confident in the 0.7-0.95 band (5-15pp ECE).
+#   - On the 33-Obama-segment B3 sample, 89.7% of words landed at p>=0.7
+#     under the old threshold — green coverage was meaningless.
+#   - Literature norm for "trust without review" is p>=0.85 in calibrated
+#     speech / NER / MT pipelines (Whisper, NeMo, OpenAI).
+CONF_HIGH = 0.85
+CONF_MED = 0.40
 
 
 def classify(prob: Optional[float]) -> str:
@@ -157,17 +165,26 @@ def aggregate_segment_records(
 def overall_confidence_badge(per_segment: Mapping[str, Mapping]) -> Optional[float]:
     """Compute the overall-confidence badge value for the UI Complete screen.
 
-    Defined as the mean of per-segment max-word probabilities. Returns None
-    if no segment has any non-None word probabilities.
+    Defined as the **fraction of all words classified conf-high** across
+    all segments. Returns a value in [0, 1] or None if no words exist.
+
+    Rationale: directly interpretable as "of all words across the run, this
+    fraction passed the conf-high threshold (>=CONF_HIGH)". The earlier
+    "mean of per-segment max-word-prob" was always near 1.0 on real data
+    (every segment has at least one near-perfect word) — uninformative.
     """
-    maxes = [
-        s["summary"]["max_word_prob"]
-        for s in per_segment.values()
-        if s["summary"].get("max_word_prob") is not None
-    ]
-    if not maxes:
+    n_high = 0
+    n_classified = 0
+    for s in per_segment.values():
+        summary = s.get("summary", {})
+        n_high += summary.get("n_high", 0)
+        # Only count words that have a real probability (not conf-unknown).
+        n_classified += (summary.get("n_high", 0)
+                         + summary.get("n_med", 0)
+                         + summary.get("n_low", 0))
+    if n_classified == 0:
         return None
-    return sum(maxes) / len(maxes)
+    return n_high / n_classified
 
 
 def main() -> None:

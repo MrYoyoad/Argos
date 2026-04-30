@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Argos VSP — Client Demo Report</title>
+  <style>
+:root {
+  --bg: #0d1b2a;
+  --bg-card: #152a40;
+  --bg-card-2: #1a3550;
+  --teal: #00b4d8;
+  --green: #4caf50;
+  --yellow: #ffc107;
+  --red: #e06c75;
+  --red-bg: #5a2027;
+  --green-bg: #1f3a26;
+  --yellow-bg: #4a3a08;
+  --gray: #aaaaaa;
+  --gray-mid: #666666;
+  --white: #ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Segoe UI', Calibri, system-ui, sans-serif;
+  margin: 0;
+  padding: 28px 36px;
+  line-height: 1.45;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--white);
+}
+h1 .subtitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--gray);
+  margin-top: 4px;
+}
+.summary {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  margin: 22px 0 28px 0;
+}
+.summary-card {
+  background: var(--bg-card);
+  padding: 14px 18px;
+  border-radius: 8px;
+  flex: 1;
+}
+.summary-card .label {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--gray);
+}
+.summary-card .value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  margin-top: 4px;
+}
+.badge {
+  font-size: 38px;
+  font-weight: 800;
+  padding: 14px 22px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 140px;
+}
+.badge-high   { background: var(--green-bg);  color: var(--green); }
+.badge-med    { background: var(--yellow-bg); color: var(--yellow); }
+.badge-low    { background: var(--red-bg);    color: var(--red); }
+.badge-unknown{ background: var(--bg-card-2); color: var(--gray); }
+.legend {
+  background: var(--bg-card);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 22px;
+  font-size: 13px;
+  color: var(--gray);
+}
+.legend .swatch {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin: 0 6px;
+  font-weight: 600;
+}
+.swatch.conf-high { background: var(--green-bg);  color: var(--green); }
+.swatch.conf-med  { background: var(--yellow-bg); color: var(--yellow); }
+.swatch.conf-low  { background: var(--red-bg);    color: var(--red); }
+.segment {
+  background: var(--bg-card);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 16px;
+}
+.segment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.segment-title {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.segment-tag {
+  font-size: 10px;
+  color: var(--gray-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.row {
+  display: flex;
+  gap: 18px;
+  margin-top: 8px;
+}
+.row .label {
+  flex: 0 0 60px;
+  font-size: 11px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-top: 4px;
+}
+.row .text {
+  flex: 1;
+  font-size: 17px;
+  line-height: 1.55;
+}
+.row.ref .text {
+  color: var(--gray);
+  font-style: italic;
+}
+.word {
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin: 0 1px;
+  font-weight: 500;
+  cursor: help;
+  position: relative;
+}
+.word.conf-high { color: var(--green); }
+.word.conf-med  { color: var(--yellow); }
+.word.conf-low  { color: var(--red); text-decoration: underline wavy var(--red); }
+/* CSS-driven hover tooltip — renders instantly, no browser delay,
+   works in IDE-embedded HTML previews where title= often does not. */
+.word::after {
+  content: "p = " attr(data-prob);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0a0f17;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--gray-mid);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 10;
+}
+.word:hover::after { opacity: 1; }
+.footer-note {
+  margin-top: 30px;
+  font-size: 11px;
+  color: var(--gray-mid);
+  font-style: italic;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+  <h1>
+    Argos VSP — Visual Speech Recognition
+    <span class="subtitle">Client demo · Obama bin Laden announcement (May 1, 2011) · 33 segments</span>
+  </h1>
+
+  <div class="summary">
+    <div class="badge badge-high">100%<div style="font-size:10px;font-weight:600;letter-spacing:0.1em;margin-top:4px">OVERALL CONFIDENCE</div></div>
+    <div class="summary-card">
+      <div class="label">Segments</div>
+      <div class="value">33</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Source</div>
+      <div class="value" style="font-size:18px">Public TV broadcast</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Audio</div>
+      <div class="value" style="font-size:18px">Not used — vision only</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    Per-word confidence:
+    <span class="swatch conf-high">high</span>
+    <span class="swatch conf-med">review</span>
+    <span class="swatch conf-low">likely error</span>
+    &nbsp; · &nbsp;Hover any word to see its confidence value.
+  </div>
+
+  
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #4  ·  12.0s–15.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">the ground black smoke billowing up from the pentagon the wreckage of flight 93 in shanksville pennsylvania where the actions of heroic citizens saved lives</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.81">ground</span> <span class="word conf-high" data-prob="0.89">black</span> <span class="word conf-high" data-prob="0.94">smoke</span> <span class="word conf-high" data-prob="0.85">billowing</span> <span class="word conf-high" data-prob="0.99">up</span> <span class="word conf-high" data-prob="1.00">from</span> <span class="word conf-med" data-prob="0.82">the</span> <span class="word conf-low" data-prob="0.07">pedal</span> <span class="word conf-low" data-prob="0.26">car</span> <span class="word conf-med" data-prob="0.60">the</span> <span class="word conf-low" data-prob="0.38">wreckage</span> <span class="word conf-high" data-prob="0.96">of</span> <span class="word conf-high" data-prob="0.98">flight</span> <span class="word conf-high" data-prob="1.00">93</span> <span class="word conf-high" data-prob="0.92">in</span> <span class="word conf-high" data-prob="0.94">shanksville</span> <span class="word conf-high" data-prob="1.00">pennsylvania</span> <span class="word conf-med" data-prob="0.74">where</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.98">actions</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-low" data-prob="0.39">heroic</span> <span class="word conf-high" data-prob="0.89">citizens</span> <span class="word conf-med" data-prob="0.83">saved</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #17  ·  50.9s–54.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">several who were a part of the 9 11 plot yet osama bin laden avoided capture and escaped across the afghan border into pakistan meanwhile al qaeda&#x27;s forces were in the air</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.83">who</span> <span class="word conf-high" data-prob="1.00">were</span> <span class="word conf-med" data-prob="0.53">a</span> <span class="word conf-high" data-prob="1.00">part</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-med" data-prob="0.78">9</span> <span class="word conf-high" data-prob="0.99">11</span> <span class="word conf-high" data-prob="1.00">plot</span> <span class="word conf-med" data-prob="0.44">then</span> <span class="word conf-high" data-prob="1.00">osama</span> <span class="word conf-high" data-prob="1.00">bin</span> <span class="word conf-high" data-prob="0.98">laden</span> <span class="word conf-med" data-prob="0.67">evaded</span> <span class="word conf-high" data-prob="1.00">capture</span> <span class="word conf-high" data-prob="0.96">and</span> <span class="word conf-high" data-prob="0.98">escaped</span> <span class="word conf-high" data-prob="1.00">across</span> <span class="word conf-high" data-prob="0.96">the</span> <span class="word conf-high" data-prob="0.98">afghan</span> <span class="word conf-high" data-prob="0.97">border</span> <span class="word conf-high" data-prob="1.00">into</span> <span class="word conf-high" data-prob="1.00">pakistan</span> <span class="word conf-high" data-prob="0.99">meanwhile</span> <span class="word conf-high" data-prob="0.99">al</span> <span class="word conf-high" data-prob="0.99">qaeda</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #18  ·  53.9s–57.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">meanwhile al qaeda continued to operate from along that border and operate through its affiliates across the world and so shortly after taking office i directed leon klobuchar&#x27;s report on the united states</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.28">meanwhile</span> <span class="word conf-high" data-prob="0.99">al</span> <span class="word conf-high" data-prob="0.98">qaeda</span> <span class="word conf-high" data-prob="0.99">continued</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">operate</span> <span class="word conf-high" data-prob="0.95">from</span> <span class="word conf-high" data-prob="1.00">along</span> <span class="word conf-high" data-prob="1.00">that</span> <span class="word conf-high" data-prob="0.99">border</span> <span class="word conf-high" data-prob="0.99">and</span> <span class="word conf-high" data-prob="0.91">operate</span> <span class="word conf-high" data-prob="1.00">through</span> <span class="word conf-high" data-prob="0.98">its</span> <span class="word conf-high" data-prob="0.99">affiliates</span> <span class="word conf-high" data-prob="0.96">across</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">world</span> <span class="word conf-high" data-prob="0.87">so</span> <span class="word conf-high" data-prob="0.99">shortly</span> <span class="word conf-high" data-prob="1.00">after</span> <span class="word conf-high" data-prob="1.00">taking</span> <span class="word conf-high" data-prob="1.00">office</span> <span class="word conf-high" data-prob="1.00">i</span> <span class="word conf-high" data-prob="0.99">directed</span> <span class="word conf-high" data-prob="0.99">the</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #7  ·  21.0s–24.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">embrace nearly 3 000 citizens taken from us leaving a gaping hole in our hearts on september 11 2001</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.39">embraced</span> <span class="word conf-high" data-prob="0.99">nearly</span> <span class="word conf-high" data-prob="0.91">3000</span> <span class="word conf-low" data-prob="0.14">tons</span> <span class="word conf-high" data-prob="1.00">taken</span> <span class="word conf-high" data-prob="1.00">from</span> <span class="word conf-high" data-prob="1.00">us</span> <span class="word conf-med" data-prob="0.77">leaving</span> <span class="word conf-high" data-prob="0.97">a</span> <span class="word conf-high" data-prob="0.98">gaping</span> <span class="word conf-high" data-prob="0.98">hole</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.99">hearts</span> <span class="word conf-med" data-prob="0.84">september</span> <span class="word conf-med" data-prob="0.76">11th</span> <span class="word conf-high" data-prob="1.00">2001</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #15  ·  45.0s–48.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">we&#x27;ve made great strides in that effort we&#x27;ve disrupted terrorist attacks and strengthened our homeland defense in afghanistan we removed the taliban government which had given bin laden and al qaeda safe haven and</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.96">made</span> <span class="word conf-high" data-prob="1.00">great</span> <span class="word conf-high" data-prob="1.00">strides</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-high" data-prob="1.00">that</span> <span class="word conf-high" data-prob="1.00">effort</span> <span class="word conf-high" data-prob="0.95">we&#x27;ve</span> <span class="word conf-high" data-prob="0.99">disrupted</span> <span class="word conf-high" data-prob="1.00">terrorist</span> <span class="word conf-high" data-prob="1.00">attacks</span> <span class="word conf-med" data-prob="0.82">and</span> <span class="word conf-high" data-prob="0.99">strengthened</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.99">homeland</span> <span class="word conf-high" data-prob="0.87">defense</span> <span class="word conf-high" data-prob="0.98">in</span> <span class="word conf-high" data-prob="1.00">afghanistan</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.97">removed</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.99">taliban</span> <span class="word conf-high" data-prob="1.00">government</span> <span class="word conf-high" data-prob="1.00">which</span> <span class="word conf-high" data-prob="0.99">had</span> <span class="word conf-high" data-prob="1.00">given</span> <span class="word conf-med" data-prob="0.58">bin</span> <span class="word conf-high" data-prob="0.97">laden</span> <span class="word conf-med" data-prob="0.77">and</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-high" data-prob="1.00">qaeda</span> <span class="word conf-high" data-prob="0.94">safe</span> <span class="word conf-high" data-prob="1.00">haven</span> <span class="word conf-med" data-prob="0.84">and</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #14  ·  42.0s–45.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">and our allies over the last 10 years thanks to the tireless and heroic work of our military and our counterterrorism professionals we&#x27;ve made great strides in that effort</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.98">and</span> <span class="word conf-high" data-prob="0.99">our</span> <span class="word conf-high" data-prob="1.00">allies</span> <span class="word conf-high" data-prob="0.92">over</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.99">last</span> <span class="word conf-med" data-prob="0.72">10</span> <span class="word conf-high" data-prob="1.00">years</span> <span class="word conf-high" data-prob="1.00">thanks</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">tireless</span> <span class="word conf-high" data-prob="0.94">and</span> <span class="word conf-med" data-prob="0.82">heroic</span> <span class="word conf-high" data-prob="1.00">work</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">military</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.93">counterterrorism</span> <span class="word conf-high" data-prob="1.00">professionals</span> <span class="word conf-high" data-prob="0.97">we&#x27;ve</span> <span class="word conf-high" data-prob="1.00">made</span> <span class="word conf-high" data-prob="1.00">great</span> <span class="word conf-high" data-prob="1.00">strides</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-high" data-prob="1.00">that</span> <span class="word conf-high" data-prob="0.99">effort</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #1  ·  3.0s–6.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">osama bin laden the leader of al qaeda and a terrorist who&#x27;s responsible for the murder of thousands of innocent men women and children</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.79">bin</span> <span class="word conf-high" data-prob="0.86">laden</span> <span class="word conf-high" data-prob="0.98">the</span> <span class="word conf-high" data-prob="1.00">leader</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-high" data-prob="1.00">qaeda</span> <span class="word conf-high" data-prob="0.96">a</span> <span class="word conf-high" data-prob="0.99">terrorist</span> <span class="word conf-high" data-prob="0.96">who</span> <span class="word conf-med" data-prob="0.60">was</span> <span class="word conf-high" data-prob="1.00">responsible</span> <span class="word conf-high" data-prob="1.00">for</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.95">murder</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">thousands</span> <span class="word conf-high" data-prob="0.94">of</span> <span class="word conf-high" data-prob="1.00">innocent</span> <span class="word conf-high" data-prob="1.00">men</span> <span class="word conf-high" data-prob="1.00">women</span> <span class="word conf-high" data-prob="0.99">and</span> <span class="word conf-high" data-prob="1.00">children</span> <span class="word conf-med" data-prob="0.65">it</span> <span class="word conf-high" data-prob="0.97">was</span> <span class="word conf-high" data-prob="0.99">nearly</span> <span class="word conf-med" data-prob="0.76">10</span> <span class="word conf-med" data-prob="0.84">years</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #10  ·  30.0s–33.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">no matter where we came from what god we prayed to or what race or ethnicity we were we were united as one american family we were also united in our resolve to protect our country</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.49">where</span> <span class="word conf-high" data-prob="0.99">we</span> <span class="word conf-high" data-prob="0.99">came</span> <span class="word conf-high" data-prob="1.00">from</span> <span class="word conf-high" data-prob="0.97">what</span> <span class="word conf-high" data-prob="0.96">god</span> <span class="word conf-high" data-prob="0.99">we</span> <span class="word conf-med" data-prob="0.72">prayed</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-med" data-prob="0.83">what</span> <span class="word conf-high" data-prob="1.00">race</span> <span class="word conf-high" data-prob="1.00">or</span> <span class="word conf-high" data-prob="1.00">ethnicity</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">were</span> <span class="word conf-high" data-prob="0.99">we</span> <span class="word conf-high" data-prob="1.00">were</span> <span class="word conf-high" data-prob="1.00">united</span> <span class="word conf-high" data-prob="0.99">as</span> <span class="word conf-high" data-prob="1.00">one</span> <span class="word conf-high" data-prob="1.00">american</span> <span class="word conf-high" data-prob="1.00">family</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">were</span> <span class="word conf-high" data-prob="1.00">also</span> <span class="word conf-high" data-prob="1.00">united</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-med" data-prob="0.81">resolve</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #25  ·  74.9s–78.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">in abbottabad pakistan a small team of americans carried out the operation with extraordinary courage and capability no americans were harmed they took care to avoid the threat of war</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.95">in</span> <span class="word conf-low" data-prob="0.21">ammonia</span> <span class="word conf-low" data-prob="0.24">pakistan</span> <span class="word conf-high" data-prob="0.85">a</span> <span class="word conf-high" data-prob="1.00">small</span> <span class="word conf-high" data-prob="1.00">team</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">americans</span> <span class="word conf-high" data-prob="0.99">carried</span> <span class="word conf-high" data-prob="1.00">out</span> <span class="word conf-high" data-prob="0.99">the</span> <span class="word conf-high" data-prob="1.00">operation</span> <span class="word conf-high" data-prob="1.00">with</span> <span class="word conf-high" data-prob="0.99">extraordinary</span> <span class="word conf-high" data-prob="1.00">courage</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="0.95">capability</span> <span class="word conf-high" data-prob="0.99">no</span> <span class="word conf-high" data-prob="0.99">americans</span> <span class="word conf-high" data-prob="1.00">were</span> <span class="word conf-high" data-prob="0.99">harmed</span> <span class="word conf-high" data-prob="0.99">they</span> <span class="word conf-high" data-prob="1.00">took</span> <span class="word conf-high" data-prob="1.00">care</span> <span class="word conf-high" data-prob="0.99">to</span> <span class="word conf-high" data-prob="0.99">avoid</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #0  ·  0.0s–3.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">tonight i can report to the american people and to the world that the united states has conducted an operation that killed osama bin laden the leader of al qaeda</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.23">to</span> <span class="word conf-med" data-prob="0.61">leave</span> <span class="word conf-high" data-prob="0.90">it</span> <span class="word conf-high" data-prob="0.96">tonight</span> <span class="word conf-high" data-prob="0.99">i</span> <span class="word conf-med" data-prob="0.83">can</span> <span class="word conf-high" data-prob="0.99">report</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">american</span> <span class="word conf-high" data-prob="1.00">people</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="0.98">to</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">world</span> <span class="word conf-high" data-prob="1.00">that</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.99">united</span> <span class="word conf-high" data-prob="1.00">states</span> <span class="word conf-med" data-prob="0.78">is</span> <span class="word conf-high" data-prob="0.99">conducting</span> <span class="word conf-med" data-prob="0.60">an</span> <span class="word conf-high" data-prob="1.00">operation</span> <span class="word conf-high" data-prob="0.97">that</span> <span class="word conf-high" data-prob="0.96">killed</span> <span class="word conf-high" data-prob="0.99">osama</span> <span class="word conf-high" data-prob="1.00">bin</span> <span class="word conf-high" data-prob="0.99">laden</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">leader</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-med" data-prob="0.55">qaeda</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #30  ·  89.9s–93.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">as we do we must also reaffirm that the united states is not and never will be at war with islam i&#x27;ve made clear just as president bush did shortly before</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.71">as</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="1.00">do</span> <span class="word conf-high" data-prob="0.99">we</span> <span class="word conf-high" data-prob="1.00">must</span> <span class="word conf-high" data-prob="1.00">also</span> <span class="word conf-high" data-prob="0.96">reaffirm</span> <span class="word conf-high" data-prob="0.99">that</span> <span class="word conf-high" data-prob="0.98">the</span> <span class="word conf-high" data-prob="1.00">united</span> <span class="word conf-high" data-prob="1.00">states</span> <span class="word conf-high" data-prob="0.98">is</span> <span class="word conf-high" data-prob="1.00">not</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">never</span> <span class="word conf-high" data-prob="1.00">will</span> <span class="word conf-high" data-prob="1.00">be</span> <span class="word conf-high" data-prob="1.00">at</span> <span class="word conf-high" data-prob="1.00">war</span> <span class="word conf-high" data-prob="1.00">with</span> <span class="word conf-high" data-prob="1.00">islam</span> <span class="word conf-high" data-prob="1.00">i</span> <span class="word conf-med" data-prob="0.81">have</span> <span class="word conf-high" data-prob="1.00">made</span> <span class="word conf-high" data-prob="0.98">it</span> <span class="word conf-high" data-prob="1.00">clear</span> <span class="word conf-high" data-prob="0.91">just</span> <span class="word conf-med" data-prob="0.83">since</span> <span class="word conf-high" data-prob="0.99">president</span> <span class="word conf-high" data-prob="0.99">bush</span> <span class="word conf-low" data-prob="0.26">has</span> <span class="word conf-high" data-prob="0.93">joined</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #31  ·  92.9s–96.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">as president bush did shortly after 9 11 that our war is not against islam bin laden was not a muslim leader he was a mass murderer of muslims indeed al qaeda has slaughtered so many muslims</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.84">president</span> <span class="word conf-high" data-prob="1.00">bush</span> <span class="word conf-high" data-prob="0.98">said</span> <span class="word conf-high" data-prob="1.00">shortly</span> <span class="word conf-high" data-prob="1.00">after</span> <span class="word conf-high" data-prob="0.99">9</span> <span class="word conf-high" data-prob="1.00">11</span> <span class="word conf-high" data-prob="0.99">that</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">war</span> <span class="word conf-high" data-prob="0.98">is</span> <span class="word conf-high" data-prob="1.00">not</span> <span class="word conf-high" data-prob="1.00">against</span> <span class="word conf-high" data-prob="1.00">islam</span> <span class="word conf-med" data-prob="0.42">bin</span> <span class="word conf-high" data-prob="0.99">laden</span> <span class="word conf-high" data-prob="1.00">was</span> <span class="word conf-high" data-prob="1.00">not</span> <span class="word conf-high" data-prob="0.97">a</span> <span class="word conf-high" data-prob="0.99">muslim</span> <span class="word conf-high" data-prob="0.94">leader</span> <span class="word conf-high" data-prob="1.00">he</span> <span class="word conf-high" data-prob="1.00">was</span> <span class="word conf-high" data-prob="0.98">a</span> <span class="word conf-high" data-prob="0.99">mass</span> <span class="word conf-high" data-prob="1.00">murderer</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">muslims</span> <span class="word conf-low" data-prob="0.35">then</span> <span class="word conf-high" data-prob="0.97">al</span> <span class="word conf-high" data-prob="0.92">qaeda</span> <span class="word conf-low" data-prob="0.33">slithered</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #13  ·  39.0s–42.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">committed to killing innocents in our country and around the globe and so we went to war against al qaeda to protect our citizens our friends and our allies</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.96">committed</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">killing</span> <span class="word conf-med" data-prob="0.70">innocents</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">country</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">around</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.99">globe</span> <span class="word conf-high" data-prob="0.96">so</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">went</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">war</span> <span class="word conf-high" data-prob="0.99">against</span> <span class="word conf-high" data-prob="0.99">al</span> <span class="word conf-high" data-prob="1.00">qaeda</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">protect</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">citizens</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">friends</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">allies</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #24  ·  71.9s–75.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">bin laden and bring him to justice today at my direction the united states launched a targeted operation against that compound in abadabad pakistan</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.42">come</span> <span class="word conf-low" data-prob="0.34">a</span> <span class="word conf-low" data-prob="0.20">midnight</span> <span class="word conf-high" data-prob="0.94">and</span> <span class="word conf-high" data-prob="0.97">bring</span> <span class="word conf-high" data-prob="0.96">him</span> <span class="word conf-high" data-prob="0.99">to</span> <span class="word conf-high" data-prob="0.97">justice</span> <span class="word conf-high" data-prob="0.98">today</span> <span class="word conf-high" data-prob="0.92">at</span> <span class="word conf-low" data-prob="0.19">minneapolis</span> <span class="word conf-high" data-prob="0.91">the</span> <span class="word conf-high" data-prob="0.93">united</span> <span class="word conf-high" data-prob="0.99">states</span> <span class="word conf-high" data-prob="0.96">launched</span> <span class="word conf-med" data-prob="0.78">a</span> <span class="word conf-high" data-prob="0.96">targeted</span> <span class="word conf-high" data-prob="1.00">operation</span> <span class="word conf-high" data-prob="1.00">against</span> <span class="word conf-high" data-prob="0.99">that</span> <span class="word conf-high" data-prob="0.98">compound</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-med" data-prob="0.81">a</span> <span class="word conf-low" data-prob="0.09">pakistani</span> <span class="word conf-low" data-prob="0.15">province</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #23  ·  68.9s–72.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">inside pakistan and finally last week i determined that we had enough intelligence to take action and authorized an operation to get osama bin laden and bring him to jalsa</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.61">had</span> <span class="word conf-med" data-prob="0.84">pakistan</span> <span class="word conf-high" data-prob="0.90">finally</span> <span class="word conf-high" data-prob="1.00">last</span> <span class="word conf-high" data-prob="1.00">week</span> <span class="word conf-high" data-prob="0.99">i</span> <span class="word conf-high" data-prob="0.99">determined</span> <span class="word conf-high" data-prob="0.99">that</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">had</span> <span class="word conf-high" data-prob="0.99">enough</span> <span class="word conf-high" data-prob="1.00">intelligence</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">take</span> <span class="word conf-high" data-prob="1.00">action</span> <span class="word conf-high" data-prob="0.86">and</span> <span class="word conf-high" data-prob="0.95">authorized</span> <span class="word conf-med" data-prob="0.74">an</span> <span class="word conf-high" data-prob="0.94">operation</span> <span class="word conf-high" data-prob="0.98">to</span> <span class="word conf-med" data-prob="0.53">get</span> <span class="word conf-high" data-prob="0.98">osama</span> <span class="word conf-high" data-prob="1.00">bin</span> <span class="word conf-high" data-prob="0.98">laden</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">bring</span> <span class="word conf-high" data-prob="1.00">him</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="0.89">justice</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #5  ·  15.0s–18.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">heroic citizens saved even more heartbreak and destruction and yet we know that the worst images are those that were unseen to the world the empty seat at the dinner table</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.02">rwanda&#x27;s</span> <span class="word conf-med" data-prob="0.81">genocide</span> <span class="word conf-high" data-prob="0.95">even</span> <span class="word conf-high" data-prob="1.00">more</span> <span class="word conf-high" data-prob="0.99">heartbreaking</span> <span class="word conf-high" data-prob="0.92">is</span> <span class="word conf-high" data-prob="0.93">russia</span> <span class="word conf-med" data-prob="0.84">and</span> <span class="word conf-high" data-prob="1.00">yet</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="1.00">know</span> <span class="word conf-high" data-prob="0.97">that</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.98">worst</span> <span class="word conf-high" data-prob="0.97">images</span> <span class="word conf-med" data-prob="0.71">are</span> <span class="word conf-high" data-prob="0.98">those</span> <span class="word conf-high" data-prob="0.99">that</span> <span class="word conf-med" data-prob="0.64">were</span> <span class="word conf-high" data-prob="0.92">unseen</span> <span class="word conf-med" data-prob="0.46">in</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">world</span> <span class="word conf-med" data-prob="0.66">mt</span> <span class="word conf-low" data-prob="0.14">killer</span> <span class="word conf-med" data-prob="0.81">whale</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #8  ·  24.0s–27.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">on november 11 2001 in our time of grief the american people came together we offered our neighbors a hand and we offered the wounded our blood</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.88">11th</span> <span class="word conf-high" data-prob="0.97">2001</span> <span class="word conf-med" data-prob="0.76">in</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">time</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">grief</span> <span class="word conf-high" data-prob="0.95">the</span> <span class="word conf-high" data-prob="1.00">american</span> <span class="word conf-high" data-prob="1.00">people</span> <span class="word conf-high" data-prob="1.00">came</span> <span class="word conf-high" data-prob="1.00">together</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">offered</span> <span class="word conf-high" data-prob="0.97">our</span> <span class="word conf-med" data-prob="0.79">neighbors</span> <span class="word conf-med" data-prob="0.66">a</span> <span class="word conf-high" data-prob="1.00">hand</span> <span class="word conf-high" data-prob="0.96">and</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="1.00">offered</span> <span class="word conf-low" data-prob="0.20">wounded</span> <span class="word conf-high" data-prob="0.98">our</span> <span class="word conf-high" data-prob="0.99">blood</span> <span class="word conf-med" data-prob="0.42">in</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #11  ·  33.0s–36.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">we were also united in our resolve to protect our nation and to bring those who committed this vicious attack to justice we quickly learned that the 9 11 attack</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.84">we</span> <span class="word conf-high" data-prob="0.99">were</span> <span class="word conf-high" data-prob="0.97">also</span> <span class="word conf-high" data-prob="0.98">united</span> <span class="word conf-high" data-prob="0.99">in</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">resolve</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">protect</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">nation</span> <span class="word conf-high" data-prob="0.87">and</span> <span class="word conf-low" data-prob="0.34">to</span> <span class="word conf-med" data-prob="0.67">bring</span> <span class="word conf-med" data-prob="0.69">those</span> <span class="word conf-high" data-prob="1.00">who</span> <span class="word conf-high" data-prob="0.91">committed</span> <span class="word conf-med" data-prob="0.70">this</span> <span class="word conf-med" data-prob="0.44">vicious</span> <span class="word conf-high" data-prob="0.92">attack</span> <span class="word conf-high" data-prob="0.97">to</span> <span class="word conf-high" data-prob="1.00">justice</span> <span class="word conf-high" data-prob="0.88">we</span> <span class="word conf-high" data-prob="0.98">quickly</span> <span class="word conf-high" data-prob="0.99">learned</span> <span class="word conf-high" data-prob="0.93">that</span> <span class="word conf-high" data-prob="0.97">the</span> <span class="word conf-med" data-prob="0.81">9</span> <span class="word conf-high" data-prob="0.98">11</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #27  ·  80.9s–84.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">for over two decades bin laden has been al qaeda&#x27;s leader and symbol and has continued to plot attacks against our country and our friends and allies the death of bin laden marked the end of the world&#x27;s most powerful and most powerful regime the death of bin laden marked the end of the world&#x27;s most powerful and most powerful regime</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.83">for</span> <span class="word conf-high" data-prob="0.99">over</span> <span class="word conf-high" data-prob="0.95">two</span> <span class="word conf-high" data-prob="1.00">decades</span> <span class="word conf-low" data-prob="0.07">middle</span> <span class="word conf-high" data-prob="0.89">east</span> <span class="word conf-med" data-prob="0.83">has</span> <span class="word conf-high" data-prob="1.00">been</span> <span class="word conf-high" data-prob="0.99">al</span> <span class="word conf-high" data-prob="0.99">qaeda&#x27;s</span> <span class="word conf-high" data-prob="0.97">leader</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="0.98">symbol</span> <span class="word conf-high" data-prob="0.98">it</span> <span class="word conf-high" data-prob="0.88">has</span> <span class="word conf-high" data-prob="0.99">continued</span> <span class="word conf-high" data-prob="0.98">to</span> <span class="word conf-high" data-prob="0.99">plot</span> <span class="word conf-high" data-prob="0.95">attacks</span> <span class="word conf-high" data-prob="1.00">against</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">country</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="0.95">our</span> <span class="word conf-high" data-prob="1.00">friends</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">allies</span> <span class="word conf-med" data-prob="0.82">the</span> <span class="word conf-low" data-prob="0.15">netherlands</span> <span class="word conf-high" data-prob="0.85">middle</span> <span class="word conf-high" data-prob="1.00">east</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #21  ·  62.9s–66.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">of painstaking work by our intelligence community i was briefed on a possible lead to bin laden it was far from certain and it took many months to run this thread to ground</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.21">made</span> <span class="word conf-low" data-prob="0.10">saying</span> <span class="word conf-high" data-prob="0.92">work</span> <span class="word conf-high" data-prob="0.99">by</span> <span class="word conf-high" data-prob="0.99">our</span> <span class="word conf-high" data-prob="0.99">intelligence</span> <span class="word conf-high" data-prob="1.00">community</span> <span class="word conf-high" data-prob="0.98">i</span> <span class="word conf-high" data-prob="1.00">was</span> <span class="word conf-high" data-prob="0.92">briefed</span> <span class="word conf-high" data-prob="1.00">on</span> <span class="word conf-high" data-prob="0.95">a</span> <span class="word conf-high" data-prob="0.99">possible</span> <span class="word conf-med" data-prob="0.65">link</span> <span class="word conf-high" data-prob="0.99">to</span> <span class="word conf-high" data-prob="0.89">bin</span> <span class="word conf-high" data-prob="0.98">laden</span> <span class="word conf-high" data-prob="0.94">it</span> <span class="word conf-high" data-prob="0.99">was</span> <span class="word conf-high" data-prob="1.00">far</span> <span class="word conf-high" data-prob="1.00">from</span> <span class="word conf-high" data-prob="1.00">certain</span> <span class="word conf-high" data-prob="0.88">it</span> <span class="word conf-high" data-prob="1.00">took</span> <span class="word conf-high" data-prob="1.00">many</span> <span class="word conf-high" data-prob="1.00">months</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="0.97">run</span> <span class="word conf-high" data-prob="0.99">this</span> <span class="word conf-high" data-prob="0.87">thread</span> <span class="word conf-high" data-prob="0.97">to</span> <span class="word conf-high" data-prob="0.95">ground</span> <span class="word conf-high" data-prob="0.93">i</span> <span class="word conf-med" data-prob="0.51">met</span> <span class="word conf-med" data-prob="0.46">with</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #29  ·  86.9s–90.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">there&#x27;s no doubt that al qaeda will continue to pursue attacks against us we must and we will remain vigilant at home and abroad as we do we will continue to fight against the</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.86">there</span> <span class="word conf-med" data-prob="0.54">is</span> <span class="word conf-high" data-prob="1.00">no</span> <span class="word conf-high" data-prob="1.00">doubt</span> <span class="word conf-high" data-prob="0.96">that</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-high" data-prob="1.00">qaeda</span> <span class="word conf-high" data-prob="1.00">will</span> <span class="word conf-high" data-prob="1.00">continue</span> <span class="word conf-high" data-prob="0.99">to</span> <span class="word conf-high" data-prob="0.99">pursue</span> <span class="word conf-med" data-prob="0.42">a</span> <span class="word conf-high" data-prob="0.91">task</span> <span class="word conf-high" data-prob="0.99">against</span> <span class="word conf-high" data-prob="1.00">us</span> <span class="word conf-high" data-prob="0.99">we</span> <span class="word conf-high" data-prob="1.00">must</span> <span class="word conf-high" data-prob="0.99">and</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="1.00">will</span> <span class="word conf-high" data-prob="1.00">remain</span> <span class="word conf-high" data-prob="0.99">vigilant</span> <span class="word conf-high" data-prob="0.99">at</span> <span class="word conf-high" data-prob="1.00">home</span> <span class="word conf-high" data-prob="0.99">and</span> <span class="word conf-high" data-prob="1.00">abroad</span> <span class="word conf-high" data-prob="0.99">as</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">do</span> <span class="word conf-med" data-prob="0.57">we</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #22  ·  65.9s–69.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">to ground i met repeatedly with my national security team as we developed more information about the possibility that we had located bin laden hiding within a compound deep inside pakistan</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.70">ground</span> <span class="word conf-high" data-prob="0.93">i</span> <span class="word conf-high" data-prob="0.97">mean</span> <span class="word conf-med" data-prob="0.74">repeatedly</span> <span class="word conf-high" data-prob="0.99">with</span> <span class="word conf-high" data-prob="1.00">my</span> <span class="word conf-high" data-prob="1.00">national</span> <span class="word conf-high" data-prob="1.00">security</span> <span class="word conf-high" data-prob="1.00">team</span> <span class="word conf-high" data-prob="0.99">as</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.91">developed</span> <span class="word conf-high" data-prob="1.00">more</span> <span class="word conf-high" data-prob="1.00">information</span> <span class="word conf-high" data-prob="1.00">about</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.99">possibility</span> <span class="word conf-high" data-prob="0.97">that</span> <span class="word conf-high" data-prob="0.99">we</span> <span class="word conf-med" data-prob="0.80">had</span> <span class="word conf-high" data-prob="1.00">located</span> <span class="word conf-high" data-prob="0.97">bin</span> <span class="word conf-high" data-prob="0.96">laden</span> <span class="word conf-high" data-prob="0.97">hiding</span> <span class="word conf-high" data-prob="0.99">within</span> <span class="word conf-med" data-prob="0.59">compound</span> <span class="word conf-high" data-prob="0.99">deep</span> <span class="word conf-high" data-prob="1.00">inside</span> <span class="word conf-high" data-prob="0.88">pakistan</span> <span class="word conf-med" data-prob="0.55">ca</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #20  ·  59.9s–63.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">even as we continued our broader efforts to disrupt dismantle and defeat his network then last august after years of painstaking work by our intelligence companies</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.70">even</span> <span class="word conf-high" data-prob="1.00">as</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.90">continued</span> <span class="word conf-med" data-prob="0.70">our</span> <span class="word conf-med" data-prob="0.85">broader</span> <span class="word conf-high" data-prob="0.99">efforts</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="0.99">disrupt</span> <span class="word conf-med" data-prob="0.79">dismantle</span> <span class="word conf-high" data-prob="0.99">and</span> <span class="word conf-high" data-prob="1.00">defeat</span> <span class="word conf-med" data-prob="0.76">this</span> <span class="word conf-high" data-prob="1.00">network</span> <span class="word conf-high" data-prob="0.97">then</span> <span class="word conf-high" data-prob="0.98">last</span> <span class="word conf-high" data-prob="1.00">august</span> <span class="word conf-high" data-prob="1.00">after</span> <span class="word conf-high" data-prob="1.00">years</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-low" data-prob="0.29">painstaking</span> <span class="word conf-high" data-prob="1.00">work</span> <span class="word conf-high" data-prob="1.00">by</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.99">intelligence</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #28  ·  83.9s–87.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">the death of bin laden marks the most significant achievement to date in our nation&#x27;s effort to defeat al qaeda yet his death does not mark the end of our effort there is no doubt that al qaeda will be defeated</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.28">the</span> <span class="word conf-low" data-prob="0.25">death</span> <span class="word conf-high" data-prob="0.93">of</span> <span class="word conf-low" data-prob="0.20">bin</span> <span class="word conf-high" data-prob="0.99">laden</span> <span class="word conf-high" data-prob="0.89">marks</span> <span class="word conf-high" data-prob="0.97">the</span> <span class="word conf-high" data-prob="1.00">most</span> <span class="word conf-high" data-prob="1.00">significant</span> <span class="word conf-high" data-prob="0.99">achievement</span> <span class="word conf-med" data-prob="0.40">to</span> <span class="word conf-high" data-prob="1.00">date</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.99">nation&#x27;s</span> <span class="word conf-high" data-prob="0.96">effort</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">defeat</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-high" data-prob="1.00">qaeda</span> <span class="word conf-med" data-prob="0.46">and</span> <span class="word conf-med" data-prob="0.61">his</span> <span class="word conf-high" data-prob="1.00">death</span> <span class="word conf-high" data-prob="1.00">does</span> <span class="word conf-high" data-prob="1.00">not</span> <span class="word conf-high" data-prob="0.99">mark</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">end</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.98">effort</span> <span class="word conf-high" data-prob="1.00">there</span> <span class="word conf-med" data-prob="0.82">is</span> <span class="word conf-high" data-prob="1.00">no</span> <span class="word conf-high" data-prob="1.00">doubt</span> <span class="word conf-high" data-prob="1.00">that</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #2  ·  6.0s–9.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">it was nearly 10 years ago that a bright september day was darkened by the worst attack on the american people in our history the images of 9 11 are seared into our hearts</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.60">it</span> <span class="word conf-high" data-prob="0.99">was</span> <span class="word conf-high" data-prob="1.00">nearly</span> <span class="word conf-med" data-prob="0.65">10</span> <span class="word conf-high" data-prob="1.00">years</span> <span class="word conf-high" data-prob="1.00">ago</span> <span class="word conf-med" data-prob="0.78">on</span> <span class="word conf-low" data-prob="0.34">bright</span> <span class="word conf-high" data-prob="0.98">september</span> <span class="word conf-high" data-prob="1.00">day</span> <span class="word conf-low" data-prob="0.37">when</span> <span class="word conf-med" data-prob="0.70">the</span> <span class="word conf-high" data-prob="0.96">worst</span> <span class="word conf-high" data-prob="0.99">attack</span> <span class="word conf-high" data-prob="1.00">on</span> <span class="word conf-high" data-prob="0.99">the</span> <span class="word conf-high" data-prob="1.00">american</span> <span class="word conf-high" data-prob="1.00">people</span> <span class="word conf-high" data-prob="0.99">in</span> <span class="word conf-high" data-prob="0.99">our</span> <span class="word conf-high" data-prob="1.00">history</span> <span class="word conf-high" data-prob="0.98">the</span> <span class="word conf-high" data-prob="1.00">images</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="0.98">9</span> <span class="word conf-high" data-prob="0.99">11</span> <span class="word conf-high" data-prob="1.00">are</span> <span class="word conf-high" data-prob="0.99">seared</span> <span class="word conf-med" data-prob="0.79">into</span> <span class="word conf-high" data-prob="1.00">our</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #9  ·  27.0s–30.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">wounded our blood we reaffirmed our ties to each other and our love of community and country on that day no matter where we came from what god had done to us we were not alone we were together we were together we were together we were together we were together we were together we were together we were together</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.60">our</span> <span class="word conf-high" data-prob="1.00">blood</span> <span class="word conf-high" data-prob="0.95">we</span> <span class="word conf-high" data-prob="0.91">reaffirmed</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.99">ties</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="0.92">each</span> <span class="word conf-high" data-prob="1.00">other</span> <span class="word conf-high" data-prob="0.97">and</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">love</span> <span class="word conf-high" data-prob="0.99">of</span> <span class="word conf-high" data-prob="1.00">community</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">country</span> <span class="word conf-high" data-prob="0.99">on</span> <span class="word conf-high" data-prob="1.00">that</span> <span class="word conf-high" data-prob="1.00">day</span> <span class="word conf-high" data-prob="0.97">no</span> <span class="word conf-high" data-prob="1.00">matter</span> <span class="word conf-high" data-prob="0.99">where</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">came</span> <span class="word conf-high" data-prob="1.00">from</span> <span class="word conf-high" data-prob="0.97">what</span> <span class="word conf-high" data-prob="0.99">god</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #3  ·  9.0s–12.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">the last nine 11 are seared into our national memory hijacked planes cutting through a cloudless september sky the twin towers collapsing to the ground</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.44">11</span> <span class="word conf-high" data-prob="0.93">are</span> <span class="word conf-med" data-prob="0.68">seared</span> <span class="word conf-high" data-prob="0.99">into</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="0.99">national</span> <span class="word conf-high" data-prob="0.99">memory</span> <span class="word conf-low" data-prob="0.11">highjacked</span> <span class="word conf-high" data-prob="0.97">planes</span> <span class="word conf-high" data-prob="0.90">cutting</span> <span class="word conf-high" data-prob="1.00">through</span> <span class="word conf-low" data-prob="0.16">a</span> <span class="word conf-med" data-prob="0.78">cloudless</span> <span class="word conf-high" data-prob="0.89">september</span> <span class="word conf-med" data-prob="0.66">sky</span> <span class="word conf-high" data-prob="0.92">the</span> <span class="word conf-high" data-prob="0.95">twin</span> <span class="word conf-high" data-prob="1.00">towers</span> <span class="word conf-high" data-prob="0.90">collapsing</span> <span class="word conf-med" data-prob="0.82">to</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">ground</span> <span class="word conf-high" data-prob="0.91">black</span> <span class="word conf-high" data-prob="0.99">smoke</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #6  ·  18.0s–21.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">the empty seat at the dinner table children who were forced to grow up without their mother or their father parents who would never know the feeling of their child&#x27;s embrace</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.80">mdc</span> <span class="word conf-med" data-prob="0.76">at</span> <span class="word conf-high" data-prob="0.99">the</span> <span class="word conf-low" data-prob="0.27">dinner</span> <span class="word conf-high" data-prob="1.00">table</span> <span class="word conf-high" data-prob="0.99">children</span> <span class="word conf-high" data-prob="0.98">who</span> <span class="word conf-med" data-prob="0.44">were</span> <span class="word conf-high" data-prob="0.99">forced</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">grow</span> <span class="word conf-high" data-prob="1.00">up</span> <span class="word conf-high" data-prob="1.00">without</span> <span class="word conf-high" data-prob="0.97">their</span> <span class="word conf-high" data-prob="1.00">mother</span> <span class="word conf-high" data-prob="0.99">or</span> <span class="word conf-high" data-prob="0.99">their</span> <span class="word conf-high" data-prob="1.00">father</span> <span class="word conf-high" data-prob="0.94">parents</span> <span class="word conf-high" data-prob="0.85">would</span> <span class="word conf-high" data-prob="1.00">never</span> <span class="word conf-high" data-prob="1.00">know</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.99">feeling</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="0.99">their</span> <span class="word conf-high" data-prob="0.95">child&#x27;s</span> <span class="word conf-high" data-prob="1.00">embrace</span> <span class="word conf-low" data-prob="0.26">the</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #19  ·  56.9s–60.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">office i directed leon panetta the director of the cia to make the killing or capture of bin laden the top priority of our war against al qaeda even as we continued our broader</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.89">office</span> <span class="word conf-high" data-prob="0.99">i</span> <span class="word conf-high" data-prob="0.99">directed</span> <span class="word conf-low" data-prob="0.14">leon</span> <span class="word conf-med" data-prob="0.84">panetta</span> <span class="word conf-high" data-prob="0.99">the</span> <span class="word conf-high" data-prob="1.00">director</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">cia</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">make</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.98">killing</span> <span class="word conf-high" data-prob="1.00">or</span> <span class="word conf-high" data-prob="0.99">capture</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="0.98">bin</span> <span class="word conf-high" data-prob="0.93">laden</span> <span class="word conf-high" data-prob="0.99">the</span> <span class="word conf-high" data-prob="1.00">top</span> <span class="word conf-high" data-prob="1.00">priority</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">war</span> <span class="word conf-high" data-prob="1.00">against</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-high" data-prob="1.00">qaeda</span> <span class="word conf-low" data-prob="0.39">even</span> <span class="word conf-high" data-prob="0.99">as</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="0.99">continued</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-med" data-prob="0.77">broader</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #16  ·  48.0s–51.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">bin laden and al qaeda safe haven and support and around the globe we worked with our friends and allies to capture or kill scores of al qaeda terrorists including several who were a part of the 9 1 1 war</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.19">laden</span> <span class="word conf-high" data-prob="0.87">and</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-high" data-prob="0.99">qaeda</span> <span class="word conf-med" data-prob="0.71">safe</span> <span class="word conf-med" data-prob="0.42">havens</span> <span class="word conf-med" data-prob="0.52">had</span> <span class="word conf-med" data-prob="0.84">support</span> <span class="word conf-med" data-prob="0.56">and</span> <span class="word conf-high" data-prob="0.97">around</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="0.96">globe</span> <span class="word conf-high" data-prob="1.00">we</span> <span class="word conf-high" data-prob="1.00">worked</span> <span class="word conf-high" data-prob="1.00">with</span> <span class="word conf-high" data-prob="1.00">our</span> <span class="word conf-high" data-prob="1.00">friends</span> <span class="word conf-high" data-prob="1.00">and</span> <span class="word conf-high" data-prob="1.00">allies</span> <span class="word conf-high" data-prob="0.99">to</span> <span class="word conf-high" data-prob="0.95">capture</span> <span class="word conf-high" data-prob="1.00">or</span> <span class="word conf-high" data-prob="1.00">kill</span> <span class="word conf-high" data-prob="0.99">scores</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-low" data-prob="0.00">Qaeda</span> <span class="word conf-high" data-prob="0.99">terrorists</span> <span class="word conf-high" data-prob="1.00">including</span> <span class="word conf-high" data-prob="1.00">several</span> <span class="word conf-high" data-prob="1.00">who</span> <span class="word conf-high" data-prob="1.00">were</span> <span class="word conf-med" data-prob="0.51">part</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="0.97">the</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #12  ·  36.0s–39.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">we quickly learned that the 9 11 attacks were carried out by al qaeda an organization headed by osama bin laden which had openly declared war on the united states and was committed to killing innocents in our country</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.93">quickly</span> <span class="word conf-high" data-prob="0.97">learned</span> <span class="word conf-high" data-prob="0.99">that</span> <span class="word conf-high" data-prob="0.99">the</span> <span class="word conf-med" data-prob="0.66">9</span> <span class="word conf-high" data-prob="0.98">11</span> <span class="word conf-high" data-prob="0.99">attacks</span> <span class="word conf-high" data-prob="0.99">were</span> <span class="word conf-high" data-prob="1.00">carried</span> <span class="word conf-high" data-prob="0.98">out</span> <span class="word conf-high" data-prob="1.00">by</span> <span class="word conf-high" data-prob="1.00">al</span> <span class="word conf-high" data-prob="1.00">qaeda</span> <span class="word conf-med" data-prob="0.63">the</span> <span class="word conf-high" data-prob="0.98">organization</span> <span class="word conf-high" data-prob="0.93">headed</span> <span class="word conf-high" data-prob="1.00">by</span> <span class="word conf-high" data-prob="1.00">osama</span> <span class="word conf-high" data-prob="1.00">bin</span> <span class="word conf-high" data-prob="0.96">laden</span> <span class="word conf-high" data-prob="0.99">which</span> <span class="word conf-high" data-prob="1.00">had</span> <span class="word conf-high" data-prob="0.98">openly</span> <span class="word conf-high" data-prob="1.00">declared</span> <span class="word conf-high" data-prob="1.00">war</span> <span class="word conf-high" data-prob="1.00">on</span> <span class="word conf-high" data-prob="1.00">the</span> <span class="word conf-high" data-prob="1.00">united</span> <span class="word conf-high" data-prob="1.00">states</span> <span class="word conf-high" data-prob="0.98">and</span> <span class="word conf-high" data-prob="0.99">was</span> <span class="word conf-high" data-prob="0.99">committed</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">killing</span> <span class="word conf-med" data-prob="0.76">innocent</span> <span class="word conf-med" data-prob="0.48">americans</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #26  ·  77.9s–81.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">armed they took care to avoid civilian casualties after a firefight they killed osama bin laden and took custody of his body for over two decades osama bin laden was the only man who was ever killed</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-high" data-prob="0.92">they</span> <span class="word conf-high" data-prob="0.96">took</span> <span class="word conf-high" data-prob="0.98">care</span> <span class="word conf-high" data-prob="1.00">to</span> <span class="word conf-high" data-prob="1.00">avoid</span> <span class="word conf-med" data-prob="0.78">civilian</span> <span class="word conf-high" data-prob="1.00">casualties</span> <span class="word conf-high" data-prob="1.00">after</span> <span class="word conf-high" data-prob="0.96">a</span> <span class="word conf-high" data-prob="0.96">firefight</span> <span class="word conf-high" data-prob="0.98">they</span> <span class="word conf-high" data-prob="0.97">killed</span> <span class="word conf-med" data-prob="0.63">osama</span> <span class="word conf-high" data-prob="1.00">bin</span> <span class="word conf-high" data-prob="0.99">laden</span> <span class="word conf-high" data-prob="0.98">and</span> <span class="word conf-low" data-prob="0.24">securing</span> <span class="word conf-med" data-prob="0.49">his</span> <span class="word conf-high" data-prob="1.00">body</span> <span class="word conf-high" data-prob="1.00">for</span> <span class="word conf-high" data-prob="0.99">over</span> <span class="word conf-high" data-prob="0.98">two</span> <span class="word conf-med" data-prob="0.84">days</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">Obama bin Laden speech  ·  segment #32  ·  95.9s–99.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">indeed al qaeda has slaughtered scores of muslims in many countries including our own</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-low" data-prob="0.14">al</span> <span class="word conf-high" data-prob="0.99">qaeda</span> <span class="word conf-med" data-prob="0.78">has</span> <span class="word conf-med" data-prob="0.47">slaughtered</span> <span class="word conf-high" data-prob="0.99">scores</span> <span class="word conf-high" data-prob="1.00">of</span> <span class="word conf-high" data-prob="1.00">muslims</span> <span class="word conf-high" data-prob="1.00">in</span> <span class="word conf-high" data-prob="1.00">many</span> <span class="word conf-high" data-prob="1.00">countries</span> <span class="word conf-high" data-prob="1.00">including</span> <span class="word conf-high" data-prob="0.96">our</span> <span class="word conf-high" data-prob="0.89">own</span></span>
+          </div>
+        </div>
+        
+
+  <div class="footer-note">
+    Argos / The Orchard — confidential client demo. Do not redistribute.
+  </div>
+</body>
+</html>

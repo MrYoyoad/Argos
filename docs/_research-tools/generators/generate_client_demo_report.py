@@ -111,14 +111,20 @@ def words_with_synthetic_confidence(ref: str, hyp: str) -> List[dict]:
 
 
 def render_words_html(words: Sequence[Mapping]) -> str:
-    """Render a list of {word, prob, conf_class} as an HTML span string."""
+    """Render a list of {word, prob, conf_class} as an HTML span string.
+
+    Each word carries a `data-prob` attribute that drives a CSS tooltip
+    (see CSS `.word::after` rule). Native title= tooltips are unreliable
+    in IDE-embedded previews and slow in browsers; the CSS approach
+    renders instantly on hover.
+    """
     parts = []
     for w in words:
         klass = escape(w.get("conf_class", "conf-unknown"))
         prob = w.get("prob")
-        title = f"confidence ≈ {prob:.2f}" if prob is not None else "confidence n/a"
+        prob_str = f"{prob:.2f}" if prob is not None else "n/a"
         parts.append(
-            f'<span class="word {klass}" title="{escape(title)}">'
+            f'<span class="word {klass}" data-prob="{prob_str}">'
             f'{escape(w["word"])}</span>'
         )
     return " ".join(parts)
@@ -303,10 +309,33 @@ h1 .subtitle {
   margin: 0 1px;
   font-weight: 500;
   cursor: help;
+  position: relative;
 }
 .word.conf-high { color: var(--green); }
 .word.conf-med  { color: var(--yellow); }
 .word.conf-low  { color: var(--red); text-decoration: underline wavy var(--red); }
+/* CSS-driven hover tooltip — renders instantly, no browser delay,
+   works in IDE-embedded HTML previews where title= often does not. */
+.word::after {
+  content: "p = " attr(data-prob);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0a0f17;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--gray-mid);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 10;
+}
+.word:hover::after { opacity: 1; }
 .footer-note {
   margin-top: 30px;
   font-size: 11px;

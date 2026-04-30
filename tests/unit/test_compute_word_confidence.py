@@ -46,21 +46,23 @@ def test_synthetic_three_words_min_aggregation():
     }
     assert words[1]["word"] == "world"
     assert words[1]["prob"] == 0.20
-    assert words[1]["conf_class"] == "conf-low"
+    assert words[1]["conf_class"] == "conf-low"  # 0.20 < 0.40
     assert words[1]["n_subtokens"] == 2
     assert words[2]["word"] == "friends"
     # min(0.85, 0.55) == 0.55
     assert words[2]["prob"] == pytest.approx(0.55)
-    assert words[2]["conf_class"] == "conf-med"
+    assert words[2]["conf_class"] == "conf-med"  # 0.40 <= 0.55 < 0.85
     assert words[2]["n_subtokens"] == 2
 
 
 def test_classify_thresholds():
+    # Thresholds tightened on 2026-04-30 to high>=0.85, med>=0.40, see
+    # compute_word_confidence.py for rationale.
     assert classify(0.99) == "conf-high"
-    assert classify(0.70) == "conf-high"  # boundary inclusive
-    assert classify(0.69) == "conf-med"
-    assert classify(0.30) == "conf-med"  # boundary inclusive
-    assert classify(0.29) == "conf-low"
+    assert classify(0.85) == "conf-high"  # boundary inclusive
+    assert classify(0.84) == "conf-med"
+    assert classify(0.40) == "conf-med"   # boundary inclusive
+    assert classify(0.39) == "conf-low"
     assert classify(0.0) == "conf-low"
     assert classify(None) == "conf-unknown"
 
@@ -177,6 +179,8 @@ def test_idempotent_on_same_input(tmp_path):
 
 
 def test_aggregate_segment_records_summary():
+    # Probs chosen to land one in each band under 0.85/0.40 thresholds:
+    #   0.90 → high, 0.50 → med, 0.10 → low.
     sidecar = {
         "utt_a": {
             "sequence_score": -1.0,
@@ -197,15 +201,22 @@ def test_aggregate_segment_records_summary():
     assert out["utt_a"]["summary"]["mean_word_prob"] == pytest.approx(0.5)
 
 
-def test_overall_badge_mean_of_maxes():
+def test_overall_badge_fraction_high():
+    # Badge = fraction of all words at conf-high across all segments.
     sidecar = {
-        "a": {"sequence_score": None, "tokens": [{"token": f"{W}x", "prob": 0.8}]},
-        "b": {"sequence_score": None, "tokens": [{"token": f"{W}y", "prob": 0.4}]},
+        "a": {"sequence_score": None, "tokens": [
+            {"token": f"{W}x", "prob": 0.95},  # high
+            {"token": f"{W}y", "prob": 0.50},  # med
+        ]},
+        "b": {"sequence_score": None, "tokens": [
+            {"token": f"{W}z", "prob": 0.20},  # low
+            {"token": f"{W}w", "prob": 0.90},  # high
+        ]},
     }
     per_segment = aggregate_segment_records(sidecar)
     badge = overall_confidence_badge(per_segment)
-    # max for a is 0.8, max for b is 0.4 → mean 0.6
-    assert badge == pytest.approx(0.6)
+    # 2 high out of 4 total = 0.50
+    assert badge == pytest.approx(0.5)
 
 
 def test_overall_badge_returns_none_when_all_unknown():
