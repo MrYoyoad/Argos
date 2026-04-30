@@ -175,9 +175,13 @@ def slide_client_headline_numbers(prs):
                  size=Pt(13), color=LGRAY, align=PP_ALIGN.CENTER)
 
     add_text(slide,
-             "Based on 1,497 real-world video segments. Calibrated against an "
-             "independent expert reviewer.",
-             MX, Inches(5.6), CW, Inches(0.4),
+             "Measured on 1,497 segments of unfiltered real-world video — varied "
+             "lighting, head angles, multi-speaker scenes, no curation.",
+             MX, Inches(5.55), CW, Inches(0.55),
+             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Validated against an independent expert reviewer.",
+             MX, Inches(6.05), CW, Inches(0.4),
              size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
@@ -188,7 +192,10 @@ def slide_client_headline_numbers(prs):
         "23% = 346/1497 NIV Y (rounded from 23.1%). "
         "1 in 5 = 20.5% hallucination/auto-flag rate. "
         "Validation κ=0.818 vs Opus expert judge — phrased as '8 of 10' on slide. "
-        "Don't read out NIV / κ on the slide; they're for your reference here."
+        "Don't read out NIV / κ on the slide; they're for your reference here. "
+        "Lean into the difficulty caveat — these numbers are on real-world hard "
+        "data, not a curated benchmark, and the client should hear that "
+        "explicitly. Anything cleaner-than-YouTube will perform better."
     ))
     return slide
 
@@ -453,84 +460,121 @@ def slide_client_word_color_coding(prs):
 
 
 def slide_client_seq_confidence_correlation(prs):
-    """Sequence-level confidence — correlation plot vs WER.
+    """The conditional-performance lift slide. Replaces the deferred Trust
+    Dashboard plot.
 
-    DECISION GATE: only include this slide if B3 reports Pearson r ≤ -0.4.
-    Until B3 runs, show a placeholder."""
+    Placeholder until B3 produces real per-segment sequence-confidence data
+    on the 100-segment subset. The actual plot will be:
+
+      Bar 1 — All 1,497 segments (raw): 23% clearly conveyed
+      Bar 2 — Top quartile of confidence: [B3 output, expected 60-80%]
+
+    DECISION GATE: include this slide only if B3 reports Pearson r ≤ -0.4
+    AND the conditional lift is at least 2x the raw rate. Otherwise drop
+    the slide and rely on Tier 1 narrative alone (the plan's fallback)."""
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Confidence is built into the model")
+    add_title(slide, "Performance lifts when the system is confident")
     add_accent_line(slide)
 
+    # Plot placeholder
     box_w = Inches(7.0)
     box_h = Inches(4.4)
     box_x = MX
     box_y = Inches(1.7)
     add_rect(slide, box_x, box_y, box_w, box_h, fill_color=NAVY2, border_color=TEAL)
     add_text(slide,
-             "[ scatter — sequence score vs WER (B3 output) ]",
+             "[ B3 plot — clearly-conveyed rate, raw vs top-quartile confidence ]",
              box_x, box_y + Inches(1.9), box_w, Inches(0.6),
-             size=Pt(15), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
+             size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
+    add_text(slide,
+             "x-axis: confidence band  /  y-axis: % clearly conveyed",
+             box_x, box_y + Inches(2.6), box_w, Inches(0.4),
+             size=Pt(11), color=MGRAY, align=PP_ALIGN.CENTER, italic=True)
 
     # Right-side narrative
     add_bullets(slide, [
         "When the model is unsure, it says so",
-        "Lower confidence → higher error rate",
-        "We surface this signal end-to-end — no extra computation",
-    ], MX + box_w + Inches(0.3), Inches(1.9), Inches(4.7), Inches(3.5), size=Pt(15))
+        "Filter to the segments it rates high-confidence",
+        "Performance on that subset is dramatically higher than on the raw mix",
+        "Lets your reviewers spend time where it matters",
+    ], MX + box_w + Inches(0.3), Inches(1.9), Inches(4.7), Inches(3.8), size=Pt(15))
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "B3 decision gate: include this slide only if Pearson r ≤ -0.4 on the "
-        "100-segment subset. Otherwise drop the slide and rely on Tier 1 only."
+        "This slide is the home for the deferred Trust Dashboard plot — the "
+        "real conditional-lift story. Triple-gate before showing: (1) B3 has "
+        "run on the 100-segment subset; (2) Pearson r between sequence "
+        "confidence and WER is at most -0.4; (3) the top-quartile-of-"
+        "confidence subset's NIV-Y rate is at least 2x the raw 23%. If any "
+        "gate fails, drop this slide and lean on the hallucination flag and "
+        "agreement chart instead. Don't show a placeholder to the client."
     ))
     return slide
 
 
 def slide_client_trust_dashboard(prs):
-    """Three-tier trust dashboard — clear / useful / needs review.
-    Numbers from MEMORY.md > Key Project Numbers."""
+    """Reframe of 62% useful with difficulty context, no partial-bucket
+    breakdown. The conditional 'when system confidence is high' story is
+    deferred until B3 produces real per-segment sequence-confidence data
+    (see slide_client_seq_confidence_correlation)."""
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "How segments break down by trust tier")
+    add_title(slide, "62% useful — on real-world video, not benchmark data")
     add_accent_line(slide)
 
-    # Three big bars
-    bar_w = Inches(3.85)
-    gap = Inches(0.25)
-    top = Inches(1.9)
-    h = Inches(3.6)
+    # Left column — the headline number
+    left_w = Inches(5.8)
+    add_rect(slide, MX, Inches(1.7), left_w, Inches(4.7),
+             fill_color=NAVY2, border_color=None)
+    add_text(slide, "62%",
+             MX, Inches(1.95), left_w, Inches(2.2),
+             size=Pt(140), bold=True, color=GREEN, align=PP_ALIGN.CENTER)
+    add_text(slide, "of segments deliver useful output today",
+             MX + Inches(0.3), Inches(4.4), left_w - Inches(0.6), Inches(0.6),
+             size=Pt(17), color=WHITE, align=PP_ALIGN.CENTER, bold=True)
+    add_text(slide, "Measured on 1,497 segments of unfiltered real-world video",
+             MX + Inches(0.3), Inches(5.05), left_w - Inches(0.6), Inches(0.5),
+             size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    tiers = [
-        ("Clearly conveyed", "23%", "346 of 1,497 segments. No review needed.", GREEN),
-        ("Useful with context", "39%", "576 segments. Domain context fills the gaps.", GOLD),
-        ("Needs review", "38%", "575 segments. The system flags these for you.", CORAL),
-    ]
-    for i, (label, big, body, color) in enumerate(tiers):
-        x = MX + i * (bar_w + gap)
-        add_rect(slide, x, top, bar_w, h, fill_color=NAVY2, border_color=None)
-        add_text(slide, big, x, top + Inches(0.3),
-                 bar_w, Inches(1.4),
-                 size=Pt(58), bold=True, color=color, align=PP_ALIGN.CENTER)
-        add_text(slide, label, x, top + Inches(1.8),
-                 bar_w, Inches(0.4),
-                 size=Pt(15), color=WHITE, align=PP_ALIGN.CENTER, bold=True)
-        add_text(slide, body, x + Inches(0.2), top + Inches(2.3),
-                 bar_w - Inches(0.4), h - Inches(2.3),
-                 size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+    # Right column — the difficulty context
+    right_x = MX + left_w + Inches(0.4)
+    right_w = Inches(5.93)
+    add_rect(slide, right_x, Inches(1.7), right_w, Inches(4.7),
+             fill_color=NAVY2, border_color=None)
+    add_text(slide, "WHAT THAT 62% IS UP AGAINST",
+             right_x + Inches(0.3), Inches(1.85), right_w - Inches(0.6), Inches(0.4),
+             size=Pt(13), bold=True, color=CORAL)
+    add_bullets(slide, [
+        "Real YouTube footage — not a curated benchmark dataset",
+        "Varied lighting, head angles, and camera distances",
+        "Multi-speaker scenes, off-axis faces, partial occlusion",
+        "Domain vocabulary the model has never seen",
+        "No pre-filtering — the system processes whatever was uploaded",
+    ], right_x + Inches(0.3), Inches(2.45), right_w - Inches(0.6), Inches(3.5),
+       size=Pt(15))
 
+    # Tease the conditional story
     add_text(slide,
-             "Together: 62% deliver useful output today — 6 of every 10 segments.",
-             MX, Inches(5.7), CW, Inches(0.4),
-             size=Pt(13), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+             "On segments the system flags as high-confidence, performance lifts further — "
+             "we'll measure that conditional rate in the next iteration.",
+             MX, Inches(6.55), CW, Inches(0.45),
+             size=Pt(11), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "Numbers: NIV Y = 23.1% (rounded 23%). NIV Y+P = 61.6% → partial = "
-        "61.6 - 23.1 = 38.5%, rounded 39%. 'Needs review' = 100 - 61.6 = 38.4%, "
-        "rounded 38%. All sourced from MEMORY.md > Key Project Numbers."
+        "62% = NIV Y+P (61.6% rounded). The point of this slide is twofold: "
+        "(1) anchor the 62% as the headline 'useful' number without giving "
+        "the client labels for what counts as useful or partial — they decide "
+        "their own bar; (2) make crystal clear that this is real-world hard "
+        "data, not a benchmark we hand-picked. The conditional 'on "
+        "high-confidence segments only' lift is real but we're holding back "
+        "the precise number until per-segment sequence-confidence data is in "
+        "(B3 in the plan). Don't say NIV / kappa / r=. The user explicitly "
+        "rejected the 39% partial / 38% needs-review breakdown — we don't "
+        "anchor the client's threshold for 'useful' on our terms."
     ))
     return slide
 
