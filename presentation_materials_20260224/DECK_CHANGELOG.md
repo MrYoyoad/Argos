@@ -88,7 +88,7 @@ about what's coming.
   slide change).
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- e686a01 — Round 5.7.
 
 ---
 
