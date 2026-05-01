@@ -372,38 +372,13 @@ def analysis_1_distributions(segs: List[Segment]) -> Dict[str, Any]:
 # Analysis 2 — calibration: P(correct | predicted prob bin)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _word_correctness_alignment(ref: str, hyp_words: Sequence[str]) -> List[int]:
-    """Levenshtein-aligned per-hyp-word correctness (1=matches an aligned ref word).
-
-    Returns list of 0/1 the same length as hyp_words.
-    """
-    rs = ref.strip().lower().split()
-    hs = [w.strip().lower() for w in hyp_words]
-    n, m = len(rs), len(hs)
-    # DP table for ref vs hyp
-    d = np.zeros((n + 1, m + 1), dtype=np.int32)
-    for i in range(n + 1):
-        d[i][0] = i
-    for j in range(m + 1):
-        d[0][j] = j
-    for i in range(1, n + 1):
-        for j in range(1, m + 1):
-            cost = 0 if rs[i-1] == hs[j-1] else 1
-            d[i][j] = min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+cost)
-    # Traceback to mark hyp-word correctness.
-    correct = [0] * m
-    i, j = n, m
-    while i > 0 and j > 0:
-        if rs[i-1] == hs[j-1] and d[i][j] == d[i-1][j-1]:
-            correct[j-1] = 1
-            i -= 1; j -= 1
-        elif d[i][j] == d[i-1][j-1] + 1:
-            i -= 1; j -= 1  # substitution: hyp word kept but wrong
-        elif d[i][j] == d[i-1][j] + 1:
-            i -= 1  # deletion (extra ref word)
-        else:
-            j -= 1  # insertion (extra hyp word; correct=0 already)
-    return correct
+try:
+    from _alignment import hyp_word_correctness as _word_correctness_alignment  # noqa: F401
+except ImportError:
+    # When invoked from a different cwd, ensure the generators dir is on the path.
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+    from _alignment import hyp_word_correctness as _word_correctness_alignment  # noqa: F401
 
 
 def _ece(probs: np.ndarray, correct: np.ndarray, n_bins: int = 10) -> float:
@@ -1181,6 +1156,166 @@ def analysis_9_false_goods(df: pd.DataFrame, segs: List[Segment],
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Analysis 11 — Failure-mode profiling
+# ─────────────────────────────────────────────────────────────────────────────
+
+_DIGIT_RE = re.compile(r"^\d+$")
+
+
+def _is_counting_loop(hyp: str) -> bool:
+    if not hyp:
+        return False
+    toks = hyp.split()
+    if len(toks) < 4:
+        return False
+    n_dig = sum(1 for t in toks if _DIGIT_RE.match(t))
+    return n_dig / len(toks) >= 0.5
+
+
+def _categorize_failure(hyp: str, nea_f1: float, len_ratio: float, duration: float) -> str:
+    """Mutually exclusive failure-mode rules, evaluated in order."""
+    if _is_counting_loop(hyp):
+        return "counting/digit"
+    if len_ratio > 1.5:
+        return "over-generation"
+    if len_ratio < 0.5:
+        return "under-generation"
+    if duration < 1.0 and (nea_f1 or 0) == 0:
+        return "short-seg sub"
+    if (nea_f1 or 0) == 0 and 0.5 <= len_ratio <= 1.5 and duration >= 1.0:
+        return "phonetic sub"
+    if (nea_f1 or 0) > 0 and 0.5 <= len_ratio <= 1.5:
+        return "plausible swap"
+    return "other"
+
+
+def analysis_11_failure_modes(df: pd.DataFrame, baseline_csv: Path) -> Dict[str, Any]:
+    """Categorize hallucinated segments and profile their confidence
+    parameters against a healthy reference (NIV-Y)."""
+    print("\n══ Analysis 11: Failure-mode profiling ══")
+    df = df.dropna(subset=["is_score"]).copy()
+    df["niv_y"] = (df["is_score"] >= 3.80).astype(int)
+    df["duration_s"] = df["utt_id"].map(_utt_duration_seconds)
+
+    baseline_rows = list(csv.DictReader(baseline_csv.open(encoding="utf-8")))
+    baseline_by_id = {r["utt_id"]: r for r in baseline_rows}
+
+    def _get_field(uid: str, key: str) -> str:
+        return (baseline_by_id.get(uid, {}).get(key, "") or "").strip()
+
+    def _to_float(v: str) -> float:
+        try:
+            return float(v.replace("%", ""))
+        except (ValueError, AttributeError):
+            return 0.0
+
+    df["hyp_text"] = df["utt_id"].map(lambda u: _get_field(u, "hyp"))
+    df["nea_f1_pct"] = df["utt_id"].map(lambda u: _to_float(_get_field(u, "nea_f1_%")))
+    df["wer_pct"] = df["utt_id"].map(lambda u: _to_float(_get_field(u, "wer_%")))
+    df["hallucinated"] = ((df["wer_pct"] >= 100) & (df["len_ratio"] >= 0.5)).astype(int)
+
+    hall = df[df["hallucinated"] == 1].copy()
+    hall["category"] = hall.apply(
+        lambda r: _categorize_failure(r["hyp_text"], r["nea_f1_pct"],
+                                       r["len_ratio"], r["duration_s"]),
+        axis=1,
+    )
+    healthy = df[df["niv_y"] == 1].copy()
+    healthy["category"] = "Healthy (NIV-Y)"
+    combined = pd.concat([hall, healthy[hall.columns]], ignore_index=True)
+
+    counts = hall["category"].value_counts()
+    print(f"\n  Hallucinated by category (n={len(hall)} total):")
+    for cat, n in counts.items():
+        print(f"    {cat:20s}  {int(n):4d}")
+    cat_order = list(counts.index) + ["Healthy (NIV-Y)"]
+
+    summary = combined.groupby("category").agg(
+        n=("utt_id", "count"),
+        mean_prob=("mean_prob", "mean"),
+        min_word_prob=("min_word_prob", "mean"),
+        mean_entropy=("mean_entropy", "mean"),
+        mean_margin=("mean_margin", "mean"),
+        len_ratio=("len_ratio", "mean"),
+        duration_s=("duration_s", "mean"),
+        len_hyp_words=("len_hyp_words", "mean"),
+        frac_p_lt_04=("frac_p_lt_04", "mean"),
+        nea_f1=("nea_f1_pct", "mean"),
+        wer=("wer_pct", "mean"),
+        is_score=("is_score", "mean"),
+    ).round(3)
+    summary = summary.reindex([c for c in cat_order if c in summary.index])
+    print(f"\n  Per-category means:")
+    print(summary[["n", "mean_prob", "min_word_prob", "mean_entropy",
+                   "mean_margin", "duration_s", "len_ratio",
+                   "frac_p_lt_04", "is_score"]].to_string())
+
+    cat_colors = {
+        "counting/digit":   GOLD,
+        "over-generation":  ORANGE,
+        "under-generation": PURPLE,
+        "short-seg sub":    CORAL,
+        "phonetic sub":     "#ff5722",
+        "plausible swap":   "#9c27b0",
+        "other":            MGRAY,
+        "Healthy (NIV-Y)":  GREEN,
+    }
+    panels = [
+        ("mean_prob",     "mean_prob",       [0, 1.0]),
+        ("min_word_prob", "min_word_prob",   [0, 1.0]),
+        ("mean_entropy",  "mean_entropy",    [0, 4]),
+        ("mean_margin",   "mean_margin",     [0, 1.0]),
+        ("len_ratio",     "len_ratio",       [0, 4]),
+        ("duration_s",    "duration (s)",    [0, 5]),
+        ("len_hyp_words", "hyp word count",  [0, 50]),
+        ("frac_p_lt_04",  "fraction p<0.40", [0, 1.0]),
+    ]
+    fig, axs = plt.subplots(2, 4, figsize=(20, 10), dpi=200)
+    fig.patch.set_facecolor(BG)
+    for idx, (key, label, yrng) in enumerate(panels):
+        ax = axs.flat[idx]
+        _style_ax(ax)
+        box_data, box_colors, valid_cats = [], [], []
+        for cat in cat_order:
+            sub = combined[combined["category"] == cat][key].dropna().values
+            if len(sub) == 0:
+                continue
+            box_data.append(sub)
+            box_colors.append(cat_colors.get(cat, MGRAY))
+            valid_cats.append(cat)
+        bp = ax.boxplot(box_data, patch_artist=True, widths=0.6,
+                        showfliers=False,
+                        medianprops=dict(color=WHITE, linewidth=2))
+        for patch, color in zip(bp["boxes"], box_colors):
+            patch.set_facecolor(color)
+            patch.set_alpha(0.75)
+            patch.set_edgecolor(WHITE)
+        for whisker in bp["whiskers"]:
+            whisker.set_color("#cccccc")
+        for cap in bp["caps"]:
+            cap.set_color("#cccccc")
+        ax.set_xticks(range(1, len(valid_cats) + 1))
+        ax.set_xticklabels(
+            [f"{c}\n(n={int((combined['category']==c).sum())})" for c in valid_cats],
+            rotation=30, ha="right", color=WHITE, fontsize=8,
+        )
+        ax.set_ylabel(label, color=WHITE, fontsize=11)
+        ax.set_title(label, color=WHITE, fontsize=12, fontweight="bold", pad=8)
+        ax.set_ylim(yrng)
+    fig.suptitle(
+        f"Confidence parameters by failure mode  "
+        f"(n_hallucinated={len(hall)}, n_healthy_ref={len(healthy)})",
+        color=WHITE, fontsize=14, fontweight="bold", y=1.0,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.97))
+    _save(fig, PLOTS_DIR / "conf_failure_mode_profile.png")
+
+    return {"summary": summary, "counts": counts.to_dict(),
+            "n_hall": len(hall), "n_healthy": len(healthy),
+            "cat_order": cat_order}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Markdown report
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -1189,7 +1324,7 @@ def write_report(
     a0: Dict[str, Any], a1: Dict[str, Any], a2: Dict[str, Any],
     a3: Dict[str, Any], a4: Dict[str, Any], a5: Dict[str, Any],
     a6: Dict[str, Any], a7: Dict[str, Any],
-    a8: Dict[str, Any], a9: Dict[str, Any],
+    a8: Dict[str, Any], a9: Dict[str, Any], a11: Dict[str, Any],
     confidence_path: Path, hypo_path: Path, baseline_csv: Path,
 ) -> None:
     pearson: pd.DataFrame = a3["pearson"]
@@ -1517,19 +1652,70 @@ Based on these findings:
 {reproduce_block}"""
     DOC_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-    # Preserve any extra sections (## 10, ## 11, ...) that another generator
-    # appended between section 9 and "What changes in the codebase".
+    # Build Section 11 markdown (failure-mode profile) before splicing.
+    a11_summary = a11["summary"]
+    s11_table = "| Category | n | mean_prob | min_word_prob | mean_entropy | mean_margin | duration (s) | len_ratio | hyp_words | frac p<0.4 | NEA F1 | WER % | IS |\n"
+    s11_table += "|---|---|---|---|---|---|---|---|---|---|---|---|---|\n"
+    for cat, row in a11_summary.iterrows():
+        s11_table += (f"| **{cat}** | {int(row['n'])} | "
+                      f"{row['mean_prob']:.2f} | {row['min_word_prob']:.2f} | "
+                      f"{row['mean_entropy']:.2f} | {row['mean_margin']:.2f} | "
+                      f"{row['duration_s']:.2f} | {row['len_ratio']:.2f} | "
+                      f"{row['len_hyp_words']:.1f} | {row['frac_p_lt_04']:.2f} | "
+                      f"{row['nea_f1']:.1f} | {row['wer']:.0f} | "
+                      f"{row['is_score']:.2f} |\n")
+
+    counts = a11["counts"]
+    counts_str = ", ".join(f"{cat} ({int(n)})" for cat, n in counts.items())
+
+    section_11_md = f"""## 12. Failure-mode profile — confidence parameters by category
+
+![failure-mode profile](../presentation_materials_20260224/01_plots_for_slides/conf_failure_mode_profile.png)
+
+The 223 hallucinated segments fall into a small set of mutually-exclusive categories defined by simple decode-time rules (no reference required at runtime). The plot and table below show how each category looks on every confidence parameter, with NIV-Y "healthy" segments included as a reference distribution.
+
+**Hallucinated breakdown:** {counts_str}.
+
+**Per-category mean values** (the bottom row is the healthy reference, NIV-Y at the balanced gate):
+
+{s11_table}
+
+**Where each category lives in confidence space:**
+
+- **Phonetic substitution** (n={int(counts.get('phonetic sub', 0))}): mean_prob ≈ 0.55, min_word_prob ≈ 0.09, mean_entropy ≈ 2.7. The model produces a fluent English replacement for the reference text — visemic confusion (e.g. "major in acting" → "measure a hacking"). Entropy IS high, but no single signal is decisive — these distribute across the medium-confidence band. **Best catch: min_word_prob.**
+- **Short-segment substitution** (n={int(counts.get('short-seg sub', 0))}): mean_prob ≈ 0.47, mean_entropy ≈ 3.2 (highest of any category), duration ≈ 0.85s, NEA F1 = 0. Segment is too short for the encoder to lock onto. **Best catch: duration filter (< 1s).**
+- **Over-generation** (n={int(counts.get('over-generation', 0))}): mean_prob ≈ 0.58, len_ratio ≈ 2.0 (defining feature), WER ≈ 185%. Model emits a long fluent string for a short clip. **Best catch: len_ratio > 1.5.**
+- **Plausible swap** (n={int(counts.get('plausible swap', 0))}): mean_prob ≈ 0.62 (highest of the hallucinated categories), mean_entropy ≈ 2.1 (lowest of hallucinated), NEA F1 ≈ 26% (some entities preserved), IS ≈ 1.64 (highest IS among failures — these aren't catastrophic). The chosen text is fluent, length-matched, and partially-relevant. **Reference-required to detect — beam aggregation or topic LM.**
+- **Counting/digit loop** (n={int(counts.get('counting/digit', 0))}): mean_prob ≈ 0.90 (high!), mean_entropy ≈ 0.71. The decisive failure mode — confidence alone won't catch it. **Best catch: digit-pattern regex on hyp text.**
+
+**The pattern across all parameters:** every category except `counting/digit` and `plausible swap` separates cleanly from the healthy distribution on at least one parameter. Combining `mean_prob`, `min_word_prob`, `mean_entropy`, `len_ratio`, and `duration` covers 4 of 5 categories without reference. The remaining holes are the rare counting loop (1 case in 1,497, easily caught with a regex) and the genuinely deep "plausible swap" failure (27 cases, requires beam aggregation or external context).
+
+"""
+
+    # Preserve any extra sections (## 10, ## 11, ...) added by other
+    # generators between section 9 and "What changes in the codebase".
+    # We re-generate Section 12 (failure-mode profile) ourselves, so strip
+    # any prior copy before re-injecting. Sections 10 and 11 (added by
+    # external generators — extra-scatters and band-reliability) are
+    # preserved verbatim.
     extra = ""
     if DOC_PATH.exists():
         prev = DOC_PATH.read_text(encoding="utf-8")
         m = re.search(r"\n(## 1[0-9]\..*?)(?=\n## What changes in the codebase)",
                       prev, re.DOTALL)
         if m:
-            extra = m.group(1).rstrip() + "\n\n"
-    if extra:
-        md = md.replace("## What changes in the codebase",
-                         extra + "## What changes in the codebase", 1)
-        print(f"  Preserved {len(extra)} bytes of extra sections (## 10+)")
+            block = m.group(1)
+            # Drop any prior section 12 — we rewrite it.
+            block = re.sub(r"## 12\..*?(?=\n## |\Z)", "", block, flags=re.DOTALL).rstrip()
+            if block:
+                extra = block + "\n\n"
+    # Inject preserved extras + our section 12 before "What changes".
+    md = md.replace(
+        "## What changes in the codebase",
+        extra + section_11_md + "## What changes in the codebase",
+        1,
+    )
+    print(f"  Preserved {len(extra)} bytes of extra sections, added section 12")
 
     DOC_PATH.write_text(md, encoding="utf-8")
     print(f"\nWrote {DOC_PATH}")
@@ -1558,8 +1744,9 @@ def main() -> None:
     a7 = analysis_7_beam_preview(df)
     a8 = analysis_8_operating_points(df)
     a9 = analysis_9_false_goods(df, segs, balanced_threshold=0.80)
+    a11 = analysis_11_failure_modes(df, args.baseline_csv)
 
-    write_report(diag, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+    write_report(diag, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a11,
                  args.confidence_sidecar, args.hypo, args.baseline_csv)
 
 

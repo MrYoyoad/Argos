@@ -421,6 +421,36 @@ The "very low" bucket (mean_prob < 0.40) has only 11 green words in the dataset 
 
 ---
 
+## 12. Failure-mode profile — confidence parameters by category
+
+![failure-mode profile](../presentation_materials_20260224/01_plots_for_slides/conf_failure_mode_profile.png)
+
+The 223 hallucinated segments fall into a small set of mutually-exclusive categories defined by simple decode-time rules (no reference required at runtime). The plot and table below show how each category looks on every confidence parameter, with NIV-Y "healthy" segments included as a reference distribution.
+
+**Hallucinated breakdown:** phonetic sub (80), short-seg sub (72), over-generation (43), plausible swap (27), counting/digit (1).
+
+**Per-category mean values** (the bottom row is the healthy reference, NIV-Y at the balanced gate):
+
+| Category | n | mean_prob | min_word_prob | mean_entropy | mean_margin | duration (s) | len_ratio | hyp_words | frac p<0.4 | NEA F1 | WER % | IS |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **phonetic sub** | 80 | 0.55 | 0.09 | 2.73 | 0.32 | 1.44 | 1.02 | 12.9 | 0.37 | 0.0 | 108 | 0.97 |
+| **short-seg sub** | 72 | 0.47 | 0.07 | 3.21 | 0.24 | 0.85 | 0.97 | 7.5 | 0.46 | 0.0 | 108 | 0.98 |
+| **over-generation** | 43 | 0.58 | 0.12 | 2.50 | 0.37 | 1.25 | 2.02 | 12.4 | 0.31 | 7.0 | 185 | 0.80 |
+| **plausible swap** | 27 | 0.62 | 0.13 | 2.11 | 0.41 | 1.39 | 1.24 | 14.9 | 0.27 | 26.5 | 108 | 1.64 |
+| **counting/digit** | 1 | 0.90 | 0.15 | 0.71 | 0.84 | 1.14 | 2.00 | 12.0 | 0.04 | 0.0 | 200 | 0.03 |
+| **Healthy (NIV-Y)** | 361 | 0.86 | 0.32 | 0.62 | 0.78 | 1.93 | 0.97 | 20.0 | 0.06 | 84.6 | 22 | 4.33 |
+
+
+**Where each category lives in confidence space:**
+
+- **Phonetic substitution** (n=80): mean_prob ≈ 0.55, min_word_prob ≈ 0.09, mean_entropy ≈ 2.7. The model produces a fluent English replacement for the reference text — visemic confusion (e.g. "major in acting" → "measure a hacking"). Entropy IS high, but no single signal is decisive — these distribute across the medium-confidence band. **Best catch: min_word_prob.**
+- **Short-segment substitution** (n=72): mean_prob ≈ 0.47, mean_entropy ≈ 3.2 (highest of any category), duration ≈ 0.85s, NEA F1 = 0. Segment is too short for the encoder to lock onto. **Best catch: duration filter (< 1s).**
+- **Over-generation** (n=43): mean_prob ≈ 0.58, len_ratio ≈ 2.0 (defining feature), WER ≈ 185%. Model emits a long fluent string for a short clip. **Best catch: len_ratio > 1.5.**
+- **Plausible swap** (n=27): mean_prob ≈ 0.62 (highest of the hallucinated categories), mean_entropy ≈ 2.1 (lowest of hallucinated), NEA F1 ≈ 26% (some entities preserved), IS ≈ 1.64 (highest IS among failures — these aren't catastrophic). The chosen text is fluent, length-matched, and partially-relevant. **Reference-required to detect — beam aggregation or topic LM.**
+- **Counting/digit loop** (n=1): mean_prob ≈ 0.90 (high!), mean_entropy ≈ 0.71. The decisive failure mode — confidence alone won't catch it. **Best catch: digit-pattern regex on hyp text.**
+
+**The pattern across all parameters:** every category except `counting/digit` and `plausible swap` separates cleanly from the healthy distribution on at least one parameter. Combining `mean_prob`, `min_word_prob`, `mean_entropy`, `len_ratio`, and `duration` covers 4 of 5 categories without reference. The remaining holes are the rare counting loop (1 case in 1,497, easily caught with a regex) and the genuinely deep "plausible swap" failure (27 cases, requires beam aggregation or external context).
+
 ## What changes in the codebase
 
 Based on these findings:
