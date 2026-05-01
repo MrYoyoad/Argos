@@ -7,7 +7,7 @@ confidence-scoring report). It joins per-word probabilities aggregated by
 with the per-segment IS scoring already in
 `english_full_results/client_outputs/report/report.csv`.
 
-**Sample size.** **935 words across 0 segments**.
+**Sample size.** **23,261 words across 1427 segments**.
 
 ## Word-level distribution (the headline)
 
@@ -15,22 +15,22 @@ with the per-segment IS scoring already in
 
 | Statistic | Value |
 |-----------|-------|
-| Mean | 0.911 |
-| Median | 0.993 |
-| 10th percentile | 0.697 |
-| 25th percentile | 0.945 |
-| 75th percentile | 0.998 |
-| 90th percentile | 1.000 |
-| 95th percentile | 1.000 |
+| Mean | 0.716 |
+| Median | 0.835 |
+| 10th percentile | 0.240 |
+| 25th percentile | 0.488 |
+| 75th percentile | 0.980 |
+| 90th percentile | 0.996 |
+| 95th percentile | 0.998 |
 | 99th percentile | 1.000 |
 
 **Threshold band fractions:**
 
 | Band | Cutoff | % of words |
 |------|--------|-----------|
-| `conf-high` | p ≥ 0.7 | **89.7%** |
-| `conf-med`  | 0.3 ≤ p < 0.7 | 6.8% |
-| `conf-low`  | p < 0.3 | **3.4%** |
+| `conf-high` | p ≥ 0.85 | **48.6%** |
+| `conf-med`  | 0.4 ≤ p < 0.85 | 32.1% |
+| `conf-low`  | p < 0.4 | **19.3%** |
 
 ## Per-segment confidence vs IS family
 
@@ -38,21 +38,21 @@ with the per-segment IS scoring already in
 
 Pearson correlations:
 
-  - mean_word_prob vs IS score (0-5): r = +0.000 (n=0)
-  - min_word_prob  vs IS score (0-5): r = +0.000
-  - mean_word_prob vs WER (%): r = +0.000 (n=0)
-  - min_word_prob  vs WER (%): r = +0.000
-  - mean_word_prob vs WWER (%): r = +0.000 (n=0)
-  - min_word_prob  vs WWER (%): r = +0.000
-  - mean_word_prob vs NEA F1 (%): r = +0.000 (n=0)
-  - min_word_prob  vs NEA F1 (%): r = +0.000
+  - mean_word_prob vs IS score (0-5): r = +0.837 (n=1427)
+  - min_word_prob  vs IS score (0-5): r = +0.526
+  - mean_word_prob vs WER (%): r = -0.714 (n=1427)
+  - min_word_prob  vs WER (%): r = -0.443
+  - mean_word_prob vs WWER (%): r = -0.749 (n=1427)
+  - min_word_prob  vs WWER (%): r = -0.464
+  - mean_word_prob vs NEA F1 (%): r = +0.682 (n=1427)
+  - min_word_prob  vs NEA F1 (%): r = +0.432
 
 ## Threshold recommendation
 
 (see the companion literature review for the calibration argument)
 
 The current band cutoffs (0.3 / 0.7) split the actual word probability
-distribution into roughly **3% red / 7% yellow / 90% green** in
+distribution into roughly **19% red / 32% yellow / 49% green** in
 the data we just generated. Whether that's the right operating point for the
 client deck depends on whether they want few-but-trustworthy green words or
 many-and-loose green words — the right answer comes from the
@@ -66,7 +66,7 @@ with the new cutoffs to see the band shift.
 
 ```
 python3 docs/_research-tools/generators/analyze_confidence_distribution.py \
-    --confidence-sidecar /tmp/vsp_b3_full_out/confidence-172610.json \
-    --hypo               /tmp/vsp_b3_full_out/hypo-172610.json \
+    --confidence-sidecar /tmp/vsp_b3_1497_out/confidence-172610.json \
+    --hypo               /tmp/vsp_b3_1497_out/hypo-172610.json \
     --report-csv         /home/ubuntu/english_full_results/client_outputs/report/report.csv
 ```
