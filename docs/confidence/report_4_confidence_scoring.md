@@ -372,6 +372,51 @@ def classify_segment(seq_confidence, mean_word_conf, low_conf_ratio):
         return "LOW_CONFIDENCE"  # Do not trust
 ```
 
+### 5.4 Band Reliability Depends on Segment Quality (May 2026 finding)
+
+**The empirical observation that changes the policy:** the green band's
+"trust this word" promise only holds when the *segment* it lives in is
+also high-confidence. P(correct | green) is **not a single number** —
+it stratifies by the segment's own mean_prob:
+
+| Segment mean_prob | P(correct \| green) | Interpretation |
+|---|---|---|
+| ≥ 0.85 | **92.8%** | Original promise holds |
+| 0.75–0.85 | 83.8% | Trustworthy |
+| 0.65–0.75 | 69.6% | Borderline |
+| 0.55–0.65 | **41.3%** | Worse than coin flip |
+| 0.40–0.55 | **21.8%** | Actively misleading |
+| < 0.40 | 18.2% | Noise |
+
+(Source: 23,261 aligned words across 1,427 segments, see
+[`confidence_full_analysis.md` §11](confidence_full_analysis.md#11-two-tier-policy--when-can-the-user-salvage-a-bad-segment-from-the-per-word-coloring).)
+
+**This produces a three-tier UI policy keyed on segment mean_prob, not a
+flat per-word threshold:**
+
+| Tier | Segment mean_prob | UI behavior | Why |
+|---|---|---|---|
+| **Trust** | ≥ 0.82 | Full per-word coloring as today | Green ≥ 85% reliable |
+| **Salvage** | 0.65 – 0.82 | Coloring + visible "uncertain" banner | Green 70–84% reliable; user can extract meaning if warned |
+| **Strip** | < 0.65 | Plain grey text — NO color applied | Green < 50% reliable; coloring would mislead |
+
+The "billion → million" failure (model latches on a wrong number with
+high softmax inside an otherwise-broken segment) is the canonical case
+in the Strip tier. Across the corpus we found 2,192 wrong-and-green
+words, 605 of them in segments below mean_prob 0.65.
+
+**Why these numbers will move.** This policy is tuned to
+LLaMA-2-7B + a 1,273-segment LoRA adapter + chosen-beam-only confidence.
+Expect the strip-coloring boundary to drop (more segments earn coloring)
+as the system improves:
+
+- Backbone → Llama-3.1-8B / 3.3-70B: better-calibrated softmax, P(correct | green) +3–6pp uniformly
+- LoRA training data → 20K+ AVSpeech segments: numeric/entity green-leakage shrinks substantially
+- Beam aggregation (Mission 6): catches fluent latches; T_strip can drop toward 0.55
+
+The full rollout plan is in
+[`band_reliability_rollout_plan.md`](band_reliability_rollout_plan.md).
+
 ---
 
 ## 6. Advanced: Calibrating Confidence Scores
