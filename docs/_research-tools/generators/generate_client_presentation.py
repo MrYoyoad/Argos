@@ -28,24 +28,22 @@ from presentation.slides_engineering import (
     slide_web_ui,                       # UI overview
 )
 from presentation.slides_future import (
-    slide_arabic_roadmap,               # Arabic high-level (v3 user feedback)
     slide_thank_you,                    # close
 )
 
-# ── Round-5 academic borrows ────────────────────────────────────────────
-# Per the borrow research at /tmp/round5_borrow_report.md, all 12 slides
-# pass the partner-audience N9 relaxation. Exempted in BORROWED_SLIDES.
+# ── Round-5.1 academic borrows ──────────────────────────────────────────
+# slide_judge_ex1-6 → replaced by slide_client_judge_ex1-6 (verdict tags
+# instead of WER/WWER score strips per N9). The academic builders stay
+# defined; we just don't import them here.
+# slide_25e → DROPPED (jalapeno duplicates slide_client_judge_ex5).
+# slide_failure_deep_1a + 1b → MERGED into slide_client_failure_taxonomy_full.
+# slide_08 → DROPPED (duplicates the new failure_taxonomy slide).
+# slide_arabic_roadmap → REPLACED by slide_client_arabic_high_level.
 from presentation.slides_evaluation import (
-    slide_judge_ex1, slide_judge_ex2, slide_judge_ex3,
-    slide_judge_ex4, slide_judge_ex5, slide_judge_ex6,
-    slide_25d,                          # Salvage: 3 real recoveries
-    slide_25e,                          # Salvage: domain context
+    slide_25d,                          # Salvage: 3 real recoveries (Round 5.1: WER stripped from card headers)
 )
 from presentation.slides_research import (
-    slide_08,                           # Failure-mode taxonomy bar chart
-    slide_failure_deep_1a,              # Taxonomy 1/2 — top 3 modes
-    slide_failure_deep_1b,              # Taxonomy 2/2 — bottom 2 modes
-    slide_failure_deep_2,               # Taxonomy worked examples
+    slide_failure_deep_2,               # Taxonomy worked examples (3 ref/hyp cards)
 )
 
 # ── Net-new and reframed client builders ────────────────────────────────
@@ -54,11 +52,14 @@ from presentation.slides_client import (
     slide_client_title,
     slide_client_about_argos,
 
-    # Section 2 — Background
+    # Section 2 — Background (deepened in Round 5.1)
     slide_client_what_is_vsr,
+    slide_client_what_is_lipreading_not,    # NEW Round 5.1
+    slide_client_canonical_scenario,        # NEW Round 5.1 (coffee shop)
 
-    # Section 3 — Compared to today (Round-5 anchor slide)
+    # Section 3 — Compared to today
     slide_client_compared_to_today,
+    slide_client_human_ceiling,             # NEW Round 5.1 (why 45-52%)
 
     # Section 4 — Why hard
     slide_client_visemes,
@@ -66,9 +67,10 @@ from presentation.slides_client import (
     # Section 5 — Basic idea
     slide_client_pipeline_components,
 
-    # Section 6 — What we built
+    # Section 6 — What we built (multi-speaker moved here in Round 5.1)
     slide_client_what_we_built,
-    slide_client_engineering_journey,   # NEW Round 5
+    slide_client_engineering_journey,
+    slide_client_multi_speaker_today_vs_path,   # MOVED UP from §13
 
     # Section 7 — How to use it
     slide_client_demo_intro,
@@ -77,10 +79,18 @@ from presentation.slides_client import (
 
     # Section 8 — Real outputs
     slide_client_video_gallery,
-    slide_client_examples_intro,
+    # slide_client_examples_intro DROPPED (Round 5.1 — overlaps with deep examples)
     slide_client_example_perfect,
+    slide_client_clean_outputs_gallery,     # NEW Round 5.1 (6-tile gallery of clean outputs)
     slide_client_example_partial,
     slide_client_example_flagged,
+    # 6 client-side judge-example wrappers (verdict-tag instead of WER score strip)
+    slide_client_judge_ex1,
+    slide_client_judge_ex2,
+    slide_client_judge_ex3,
+    slide_client_judge_ex4,
+    slide_client_judge_ex5,
+    slide_client_judge_ex6,
 
     # Section 9 — Headline
     slide_client_headline_numbers,
@@ -89,31 +99,33 @@ from presentation.slides_client import (
     slide_client_confidence_question,
     slide_client_two_layer_confidence,
     slide_client_word_color_coding,
-    slide_client_halluc_problem,        # NEW Round 5
-    slide_client_halluc_real_example,   # NEW Round 5
-    slide_client_halluc_caught,         # NEW Round 5
+    slide_client_halluc_problem,
+    slide_client_halluc_real_example,
+    slide_client_halluc_caught,
     slide_client_seq_confidence_correlation,
     slide_client_trust_dashboard,
-    slide_client_failure_taxonomy,      # NEW Round 5 (client wrapper for the academic block context)
-    slide_client_failure_worked_example,  # NEW Round 5
-    slide_client_hallucination_flag,    # summary stat
+    slide_client_failure_taxonomy_full,     # NEW Round 5.1 (merged 1a+1b)
+    slide_client_failure_worked_example,
+    slide_client_hallucination_flag,
+    slide_client_trust_without_ground_truth, # NEW Round 5.1 (deepest critique answer)
     slide_client_what_this_means,
 
     # Section 11 — Validation
-    slide_client_validation_intro,      # rewritten Round 5 (protocol-named)
+    slide_client_validation_intro,
     slide_client_agreement_chart,
     slide_client_cross_config_stability,
-    slide_client_validation_summary,
+    # slide_client_validation_summary DROPPED (Round 5.1 — restates 82% point)
 
-    # Section 12 — Engineering
+    # Section 12 — Engineering (Round 5.2: bulked up)
+    slide_client_pipeline_detailed,         # NEW Round 5.2 — 8-stage diagram from science deck
     slide_client_deployment_options,
+    # slide_web_ui DROPPED (Round 5.1 — duplicate Live Demo placeholder)
 
     # Section 13 — What's next
-    slide_client_multi_speaker_today_vs_path,  # NEW Round 5 (replaces entity_split)
     slide_client_quality_filter,
     slide_client_preprocessing_summary,
-    slide_client_data_ask,              # NEW Round 5 (replaces stronger_model + more_data + roadmap_phases)
-    slide_client_investment_ask,        # rewritten Round 5 (partnership framing)
+    slide_client_arabic_high_level,         # NEW Round 5.1 (replaces slide_arabic_roadmap)
+    slide_client_partnership_ask,           # NEW Round 5.1 (merged data_ask + investment_ask)
 
     # Section 14 — Close
     slide_client_recap,
@@ -161,38 +173,44 @@ def main():
 
     builders = [
         # ═══════ ACT 1 — IT WORKS (0:00 – 0:30) ═══════
-        # § Hello (2)
+        # § Hello
         slide_client_title,
         slide_client_about_argos,
-        # § Background (1)
+        # § Background (deepened in Round 5.1)
         slide_client_what_is_vsr,
-        # § Compared to today — Round-5 anchor (1)
+        slide_client_what_is_lipreading_not,    # NEW Round 5.1
+        slide_client_canonical_scenario,        # NEW Round 5.1 (coffee shop)
+        # § Compared to today — Round-5 anchor
         slide_client_compared_to_today,
-        # § Why hard (1)
+        slide_client_human_ceiling,             # NEW Round 5.1 (why 45-52%)
+        # § Why hard
         slide_client_visemes,
-        # § Basic idea (1)
+        # § Basic idea
         slide_client_pipeline_components,
-        # § What we built (2)
+        # § What we built — multi-speaker moved here in Round 5.1.
+        # engineering_journey moved from here to §Engineering (Round 5.2) so
+        # the engineering section carries the substantive depth instead of
+        # a thin "what we did" footnote.
         slide_client_what_we_built,
-        slide_client_engineering_journey,
-        # § How to use it — Demo (3)
+        slide_client_multi_speaker_today_vs_path,   # MOVED UP from §13
+        # § How to use it — Demo
         slide_client_demo_intro,
         slide_client_demo_video_embed,
         slide_client_demo_recap,
-        # § Real outputs — Section transition + gallery + 3 Obama + 6 judge_ex
+        # § Real outputs — Section transition + gallery + cleans + 3 Obama + 6 verdict-tagged
         _section_real_outputs,
         slide_client_video_gallery,
-        slide_client_examples_intro,
-        slide_client_example_perfect,
-        slide_client_example_partial,
-        slide_client_example_flagged,
-        # 6 academic-deck judge examples — borrowed, in BORROWED_SLIDES exemption
-        slide_judge_ex1,
-        slide_judge_ex2,
-        slide_judge_ex3,
-        slide_judge_ex4,
-        slide_judge_ex5,
-        slide_judge_ex6,
+        slide_client_example_perfect,           # Obama segment 14 — perfect
+        slide_client_clean_outputs_gallery,     # NEW Round 5.1 — 6 cleans
+        slide_client_example_partial,           # Obama segment 31 — partial
+        slide_client_example_flagged,           # Obama segment 5 — flagged
+        # 6 client-wrapper judge examples (Round 5.1: verdict-tag instead of WER strip)
+        slide_client_judge_ex1,
+        slide_client_judge_ex2,
+        slide_client_judge_ex3,
+        slide_client_judge_ex4,
+        slide_client_judge_ex5,
+        slide_client_judge_ex6,
         # § Headline numbers — lands as summary, not opening
         slide_client_headline_numbers,
 
@@ -208,48 +226,46 @@ def main():
         # Per-segment + sequence confidence
         slide_client_seq_confidence_correlation,
         slide_client_trust_dashboard,
-        # Failure-mode taxonomy block (academic borrows + client wrappers)
-        slide_client_failure_taxonomy,
-        slide_08,                          # Borrowed: bar-chart taxonomy summary
-        slide_failure_deep_1a,             # Borrowed: top-3 modes
-        slide_failure_deep_1b,             # Borrowed: bottom-2 modes
+        # Failure-mode taxonomy (Round 5.1: 1a+1b merged into one slide)
+        slide_client_failure_taxonomy_full,     # NEW Round 5.1 (replaces slide_08 + 1a + 1b)
         slide_client_failure_worked_example,
-        slide_failure_deep_2,              # Borrowed: 3 real ref/hyp cases
-        # Salvage examples (academic borrow)
-        slide_25d,                         # Borrowed: 3 real recoveries
-        slide_25e,                         # Borrowed: domain context
-        # Summary stat + closer
+        slide_failure_deep_2,                   # Borrowed: 3 real ref/hyp cases
+        # Salvage examples (Round 5.1: 25e dropped — jalapeno duplicates judge_ex5)
+        slide_25d,                              # Borrowed: 3 real recoveries
+        # Summary stat + the deepest-critique reframe + closer
         slide_client_hallucination_flag,
+        slide_client_trust_without_ground_truth,    # NEW Round 5.1
         slide_client_what_this_means,
 
-        # § Validation
+        # § Validation (Round 5.1: validation_summary dropped)
         _section_validation,
         slide_client_validation_intro,
         slide_client_agreement_chart,
         slide_client_cross_config_stability,
-        slide_client_validation_summary,
 
         # ═══════ ACT 3 — PATH FORWARD (1:25 – 2:00) ═══════
-        # § Engineering
+        # § Engineering (Round 5.2: bulked up per user feedback — pipeline
+        # diagram from science deck + engineering_journey moved here +
+        # data_flow + deployment options. The engineering section now
+        # carries real depth instead of a single architecture slide.)
         _section_engineering,
-        slide_data_flow,                    # Borrowed: pipeline diagram
-        slide_client_deployment_options,    # Cloud/on-prem
-        slide_web_ui,                       # Borrowed: UI overview
+        slide_client_pipeline_detailed,         # NEW Round 5.2: 8-stage operational pipeline (height-bound)
+        slide_data_flow,                        # Borrowed: 5-step model architecture (LoRA stripped)
+        slide_client_engineering_journey,       # MOVED Round 5.2 from §What-we-built — deeper rewrite
+        slide_client_deployment_options,        # Cloud/on-prem
 
-        # § What's next — multi-speaker leads (the client's canonical case)
+        # § What's next (Round 5.1: data_ask + investment_ask merged into partnership_ask)
         _section_whats_next,
-        slide_client_multi_speaker_today_vs_path,
         slide_client_quality_filter,
         slide_client_preprocessing_summary,
-        slide_arabic_roadmap,               # Borrowed: high-level only
-        slide_client_data_ask,
-        slide_client_investment_ask,
+        slide_client_arabic_high_level,         # NEW Round 5.1 (replaces academic arabic_roadmap)
+        slide_client_partnership_ask,           # NEW Round 5.1 (merged ask)
 
-        # § Close (no transition — flows directly from investment ask)
+        # § Close (no transition — flows directly from partnership ask)
         slide_client_recap,
         slide_client_integration_commitment,
         slide_client_next_steps,
-        slide_thank_you,                    # Borrowed: close
+        slide_thank_you,                        # Borrowed: close
     ]
 
     total = len(builders)

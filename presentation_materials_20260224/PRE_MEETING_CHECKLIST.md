@@ -1,8 +1,9 @@
 # Client Deck — Pre-Meeting Checklist
 
-**Deck:** `Argos_VSP_Client_46slides_Apr2026.pptx`
+**Deck:** `Argos_VSP_Client_Round5_Apr2026.pptx` (61 slides post Round 5.2)
 **Detailed instructions:** [docs/guides/client-deck-powerpoint-checklist.md](../docs/guides/client-deck-powerpoint-checklist.md)
 **OOXML compat scan:** [PP_COMPAT_REPORT.txt](PP_COMPAT_REPORT.txt) in this folder
+**Changelog:** [DECK_CHANGELOG.md](DECK_CHANGELOG.md)
 
 Phone-friendly version. Two passes: at home/office before you leave, then again at the venue right before the meeting starts.
 
@@ -12,16 +13,16 @@ Phone-friendly version. Two passes: at home/office before you leave, then again 
 
 These need access to your dev machine and the deck source, so do them before walking out the door.
 
-### Embed the demo video (slide 6)
+### Embed the demo video (slide 13 post Round 5.2)
 - [ ] Recorded the UI walkthrough following `docs/guides/client-demo-recording-guide.md`
 - [ ] Saved as MP4 / **H.264** codec (the OOXML compat scan flags HEVC — re-encode if needed)
-- [ ] In PowerPoint, slide 6 → Insert → Video → **Video on My PC** (NOT "Online Video")
+- [ ] In PowerPoint, slide 13 → Insert → Video → **Video on My PC** (NOT "Online Video")
 - [ ] Resized to fill the placeholder card
 - [ ] Playback tab → confirmed Start setting (Automatically vs On Click) you want
 - [ ] Pressed F5 → tested the video plays from inside presentation mode
 - [ ] Heard audio through laptop speakers (not just headphones)
 
-### Customize the next-steps slide (slide 45)
+### Customize the next-steps slide (slide 60 post Round 5.2)
 - [ ] Pilot dataset card — replaced "Size, content type, sample source" with client-specific text
 - [ ] Integration scope card — replaced with actual systems to wire into
 - [ ] Timeline card — replaced with realistic weeks/dates
@@ -33,14 +34,21 @@ These need access to your dev machine and the deck source, so do them before wal
 
 ### Click-through dry run
 - [ ] Opened the deck in **real PowerPoint** (not LibreOffice / web preview)
-- [ ] Stepped through all 46 slides at full screen (F5)
-- [ ] Slides where I want extra eyes:
-  - [ ] **Slide 6** — does the ▶ play triangle render? If it shows as a square/box, edit and replace with text
-  - [ ] **Slides 10–12** — Obama examples — green/yellow/red colors visible? Legend at bottom readable?
-  - [ ] **Slides 17, 18** — embedded chart PNGs — crisp, not blurry?
-  - [ ] **Slide 28** — pat/bat/mat cards — three columns balanced?
-  - [ ] **Slide 30** — Cloud / On-premise cards — borders crisp?
-  - [ ] **Slides 33, 34** — entity-split + quality-filter diagrams — readable at full screen?
+- [ ] Stepped through all 61 slides at full screen (F5)
+- [ ] Slides where I want extra eyes (Round 5.2 indices):
+  - [ ] **Slide 13** — Live UI demo placeholder — your video embedded?
+  - [ ] **Slides 17, 19, 20** — Obama examples (perfect / partial / flagged) — green/yellow/red colors visible? Legend at bottom readable?
+  - [ ] **Slide 18** — clean-outputs gallery (6 segments, all green) — readable?
+  - [ ] **Slides 21-26** — six judge examples with verdict tags — does the verdict line read clearly?
+  - [ ] **Slide 31** — per-word color coding screenshot — crisp at full screen?
+  - [ ] **Slide 35** — IS confidence-gate plot — annotation legible?
+  - [ ] **Slide 11** — multi-speaker (today vs path) — both columns balanced?
+  - [ ] **Slide 8** — visemes (pat/bat/mat) — three columns balanced?
+  - [ ] **Slide 49** — 8-stage operational pipeline diagram (NEW Round 5.2) — color-coded stages crisp at full screen?
+  - [ ] **Slide 51** — engineering journey (4 milestones, NEW Round 5.2) — M1-M4 cards balanced?
+  - [ ] **Slide 52** — Cloud / On-premise cards — borders crisp?
+  - [ ] **Slide 54** — quality-filter funnel — readable at full screen?
+  - [ ] **Slide 42** — trust without ground truth — four cards readable?
 
 ### Timing
 - [ ] Out-loud read-through with stopwatch
@@ -108,15 +116,15 @@ Everything that depends on the actual presentation environment.
 
 ### PowerPoint sanity
 - [ ] Deck opens without errors / "missing fonts" warnings
-- [ ] If a font-substitution warning appears: cancel, install Calibri if absent, or accept knowing slides 6/28 may shift slightly
+- [ ] If a font-substitution warning appears: cancel, install Calibri if absent, or accept knowing some slides may shift slightly
 - [ ] **F5 → first slide displays** — check no empty / black slide
-- [ ] Click forward to slide 6 → press play once — **video plays AND audio is audible in the room**
+- [ ] Click forward to slide 13 → press play once — **video plays AND audio is audible in the room**
 - [ ] Click back to slide 1, ready to start
 
 ### Demo video safety net
 - [ ] If the embedded video fails on the venue laptop:
   - Plan A: open the .mp4 directly from a backup USB or local folder
-  - Plan B: skip slide 6 verbally — describe the demo in 30 sec, then jump to slide 7
+  - Plan B: skip slide 13 verbally — describe the demo in 30 sec, then jump to slide 14
 
 ### Timing
 - [ ] Phone or watch on silent in your line of sight (not on the table — distracting)

@@ -713,7 +713,7 @@ def slide_data_flow(prs):
         step_groups.append(group)
 
     add_text(slide,
-        "Visual encoder is frozen (pre-trained on LRS3). Only projection + LoRA adapters are trained.",
+        "Visual encoder is frozen (pre-trained on LRS3). Only projection + trainable adapters are trained.",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 

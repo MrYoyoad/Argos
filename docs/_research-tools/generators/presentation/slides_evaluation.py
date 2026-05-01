@@ -559,7 +559,7 @@ def slide_25d(prs):
         add_text(slide, ex["title"],
                  x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.3),
                  size=Pt(14), color=ex["color"], bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, f'IS {ex["is_score"]}  |  WER {ex["wer"]}  |  Prob {ex["prob"]}',
+        add_text(slide, f'IS {ex["is_score"]}  |  Prob {ex["prob"]}',
                  x + Inches(0.15), cy + Inches(0.4), cw_card - Inches(0.3), Inches(0.25),
                  size=Pt(9), color=LGRAY, align=PP_ALIGN.CENTER)
 
@@ -677,7 +677,7 @@ def slide_25e(prs):
         add_text(slide, ex["title"],
                  x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.3),
                  size=Pt(14), color=ex["color"], bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, f'IS {ex["is_score"]}  |  WER {ex["wer"]}  |  Prob {ex["prob"]}',
+        add_text(slide, f'IS {ex["is_score"]}  |  Prob {ex["prob"]}',
                  x + Inches(0.15), cy + Inches(0.4), cw_card - Inches(0.3), Inches(0.25),
                  size=Pt(9), color=LGRAY, align=PP_ALIGN.CENTER)
 
@@ -1372,8 +1372,15 @@ def slide_llm_judge_30(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def _judge_video_slide(prs, *, vid_key, title, ref, hyp, wer, wwer, is_score,
-                       is_tier, judge, category, annotation, notes):
-    """Reusable builder: single video left, ref/hyp/metrics right."""
+                       is_tier, judge, category, annotation, notes,
+                       client_verdict=None):
+    """Reusable builder: single video left, ref/hyp/metrics right.
+
+    If `client_verdict` is provided (a plain-English string like "Excellent —
+    meaning fully preserved"), replaces the WER/WWER/IS/Judge score header
+    with the verdict tag. The client deck uses this; the academic deck
+    leaves it None and renders the full metrics row.
+    """
     slide = new_slide(prs)
     add_title(slide, title)
     add_accent_line(slide)
@@ -1391,9 +1398,13 @@ def _judge_video_slide(prs, *, vid_key, title, ref, hyp, wer, wwer, is_score,
     badge_colors = {"Y": GREEN, "P": YELLOW, "N": RED}
     badge_col = badge_colors.get(judge, LGRAY)
 
-    # Metrics row
-    metrics_text = (f"WER {wer}   WWER {wwer}   IS {is_score} ({is_tier})   "
-                    f"Judge: {judge}")
+    # Metrics row — academic deck shows full metrics line; client deck
+    # passes `client_verdict` to suppress raw WER/WWER per N9.
+    if client_verdict is not None:
+        metrics_text = client_verdict
+    else:
+        metrics_text = (f"WER {wer}   WWER {wwer}   IS {is_score} ({is_tier})   "
+                        f"Judge: {judge}")
     mt = add_text(slide, metrics_text, rx, CT, rw, Inches(0.4),
                   size=Pt(13), color=badge_col, bold=True)
 

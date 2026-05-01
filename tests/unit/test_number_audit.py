@@ -47,28 +47,15 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Real Outputs — 6 judge examples (academic deck)
-    18,  # slide_judge_ex1 — Bernreuter -> Rogers (named-entity swap)
-    19,  # slide_judge_ex2 — 1980s film (truncated, core preserved)
-    20,  # slide_judge_ex3 — routers -> roads (technical vocab drift)
-    21,  # slide_judge_ex4 — cortisol -> stops (scientific vocab lost)
-    22,  # slide_judge_ex5 — jalapeno -> banana (cooking domain)
-    23,  # slide_judge_ex6 — overhead lights -> ghost whisperer (topic hijack)
-    # Trust story — failure-mode taxonomy block (academic borrows)
-    35,  # slide_08              — taxonomy bar chart
-    36,  # slide_failure_deep_1a — 1/2 (top 3 modes)
-    37,  # slide_failure_deep_1b — 2/2 (bottom 2 modes)
-    39,  # slide_failure_deep_2  — 3 worked examples
-    # Trust story — salvage examples
-    40,  # slide_25d — 3 real recoveries
-    41,  # slide_25e — domain context
-    # Engineering — pipeline diagram + UI
-    50,  # slide_data_flow — pipeline diagram
-    52,  # slide_web_ui    — UI overview
-    # What's next — Arabic
-    57,  # slide_arabic_roadmap
-    # Close
-    63,  # slide_thank_you
+    # Round 5.2: §Engineering bulked up. slide_17_png replaced by a
+    # native client wrapper (slide_client_pipeline_detailed) that uses
+    # the same PNG but height-bound to fit our slide bounds — no
+    # jargon, so no exemption needed for it. slide_client_engineering_
+    # journey moved here from §What-we-built. The deck grew 60 → 61.
+    39,  # slide_failure_deep_2  — 3 worked ref/hyp examples
+    40,  # slide_25d             — salvage recoveries (WER stripped from headers)
+    50,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
+    61,  # slide_thank_you       — close
 }
 
 
