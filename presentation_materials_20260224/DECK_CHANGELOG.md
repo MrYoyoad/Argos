@@ -69,7 +69,7 @@ User reviewed Round 5.3 and flagged two issues:
   deleted to force regeneration.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- 26624e6 — Round 5.4.
 
 ---
 
