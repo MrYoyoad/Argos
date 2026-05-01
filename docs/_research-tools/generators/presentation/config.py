@@ -82,6 +82,16 @@ VID = {
     "judge_cortisol": VIDEOS / "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4",
     "judge_jalapeno": VIDEOS / "a2CS82VZyO4_7__a6316c95_with_hyp.mp4",
     "judge_lights":   VIDEOS / "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4",
+    # Obama bin Laden announcement — lip-crop preprocessed segments. Used as
+    # clickable video posters on the three Obama example slides (Round 5.3,
+    # per Round-4 late ask: "Embed actual video clips on the example slides
+    # — slides 13/14/15 are text-only, REF/HYP color-coded but no video").
+    # Segments 14 and 31 live in `preprocessed_flat_seg12/video/` (lip-crop,
+    # ~165KB). Segment 5 is missing from that dir; using the fast_segments
+    # full-frame version as fallback (~9MB).
+    "obama_perfect":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/video/050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"),
+    "obama_partial":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/video/050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"),
+    "obama_flagged":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4"),
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"

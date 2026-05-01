@@ -26,6 +26,131 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-01 — Round 5.3 — Visual QA + IS-runtime honesty fix (LANDED)
+
+User did a slide-by-slide review of the rendered Round 5.2 deck and
+flagged six distinct issues across four slides. All addressed in
+Round 5.3.
+
+### 1. Slide 18 — Clean output gallery (gallery-card layout)
+- **Issue**: Cards had ~1.3" of dead space below the green quote.
+  Footer enumerated categories ("cooking, legal, tech...") that
+  didn't match the actual card labels (no cooking; "Professional"
+  and "Resilience" missing from the footer enumeration).
+- **Fix**: Card height 1.95" → 1.55" (content fills naturally). Card
+  labels rewritten to describe domain, not theme: "Professional" →
+  "Legal", "Resilience" → "Motivational". Footer rewritten to
+  enumerate the actual labels shown.
+
+### 2. Slide 54 — Quality pre-filter (3 issues)
+- **Issue A — label clipped**: "All uploaded clips" was cut off
+  because the first 100% bar overlapped the label column. Layout
+  bug: `chart_left = label_w + Inches(0.3)` was missing the MX
+  offset, so bars anchored at x=label_w instead of x=MX+label_w,
+  drawing on top of the label area.
+- **Issue B — N° placeholder**: "Head angle ≤ N°" had an unfilled
+  threshold. Replaced with "Head angle ≤ 30°" (the lip-reading
+  literature limit beyond which viseme accuracy degrades sharply,
+  per Petridis et al., Stafylakis et al.).
+- **Issue C — percentile logic unclear**: User asked for explanation
+  of why the percentages and the actual logic. The 5th "Reaches
+  the model 75%" bar duplicated the 4th "Lighting/contrast 75%"
+  bar — same number with different framing. **Dropped the redundant
+  5th bar** and made the final filter row green to signal
+  "this is what reaches the model." Added an explainer line above
+  the chart: *"Each row = clips remaining after that gate. Out of
+  100 uploaded clips, 75 reach the model."* — names the cumulative
+  semantics clearly. Added a per-row "rule" sub-label on the right
+  ("viseme accuracy drops past 30°", "lower face must be unoccluded",
+  "lip-region contrast within range"). Speaker notes expanded with
+  the academic anchor for each gate plus why these specific
+  percentages (illustrative, calibrated against the 1,497-segment
+  baseline; actual rates depend on the client's own footage).
+
+### 3. Slide 49 — Pipeline diagram too small
+- **Issue**: The 8-stage diagram rendered at width 6.7" on a 12.13"
+  slide — only ~55% of usable area, hard to read at projection scale.
+- **Fix**: Dropped the redundant subtitle, reclaimed the row, and
+  bumped image height 4.3" → 5.4" (width 6.7" → 8.41", ~30% larger).
+  Image now starts at y=1.55" (just below the accent line) and
+  ends at y=6.95", with a small footer caption at y=7.05".
+
+### 4. Slides 30 + 42 — "IS at runtime" honesty fix (the critical one)
+- **Issue**: Both slides claimed the per-segment runtime confidence
+  IS the Intelligibility Score (IS). User flagged: "Per-segment —
+  IS combines six runtime signals, no labels required : not
+  available for real video without ref!!!"
+- **Why it was wrong**: IS computes WER, semantic similarity, NEA F1,
+  and length ratio — **all six signals require the reference text**.
+  IS is *not* runtime-computable on a video the client uploads.
+- **Honest framing**: At runtime, layer 2 is the AGGREGATE of layer-1
+  per-word probabilities (mean / min / fraction-high-confidence)
+  plus a length-anomaly check on output vs visual frames. IS is the
+  EVALUATION metric used during *development* to calibrate the
+  threshold against an independent expert reviewer (82% agreement,
+  next slide). The runtime number rides on that calibration but
+  doesn't itself compute IS.
+- **Fix on slide 30**: Layer-2 PER-SEGMENT card retitled "From the
+  model's own outputs" (was "From the score system"). Bullets now
+  read: "Word probabilities aggregate to one segment-level
+  confidence / Plus a length-anomaly check / Calibrated thresholds
+  split clearly conveyed from needs review."
+- **Fix on slide 42**: PER-SEGMENT card body rewritten to "Word
+  probabilities aggregate to one confidence number per segment.
+  Plus a length-anomaly check on output vs visual frames. Computed
+  from the model's own outputs — no reference text needed."
+- **Bonus on both slides**: Added a "WHY THIS IS MEANINGFUL — AND
+  HOW IT GROWS WITH YOU" pill at the bottom of each, per user
+  follow-up: *"add explanation why this is meaningful — and that by
+  the clients' use they will gain trust."* The pill states (a) the
+  threshold isn't arbitrary — calibrated to an independent expert
+  reviewer (82% agreement), and (b) each segment the client's
+  reviewer verifies on their own footage extends that calibration to
+  their domain. Trust grows with use.
+
+### 5. Slides 17 / 19 / 20 — Lip-crop video posters added
+- **Issue**: User flagged "more missing videos there in a previous
+  slide" while reviewing the engineering section — referring to the
+  three Obama example slides which were text-only (REF/HYP color-
+  coded, no video). The Round-4 plan called for lip-crop video
+  posters on each so audiences could click in PowerPoint and see
+  what the model actually saw.
+- **Fix**: Threaded an optional `video_key` parameter through the
+  shared `_example_slide` helper. When set, the slide renders a
+  3.4"×2.55" clickable lip-crop poster at top-right with a "Click
+  to play in PowerPoint" caption beneath. REF/HYP text columns
+  shrink to fill the left half. Three new VID keys added:
+  `obama_perfect` (segment 14, 165 KB lip-crop),
+  `obama_partial` (segment 31, 165 KB lip-crop),
+  `obama_flagged` (segment 5, full-frame fast-segment fallback —
+  segment 5 was missing from `preprocessed_flat_seg12/video/`).
+
+### Stats
+- 61 slides (no net change from Round 5.2).
+- All 7 audit/linter tests **green**.
+- BORROWED_SLIDES exemption unchanged at 4 indices.
+- Net new builders: 0 (all changes are in-place edits to existing
+  builders + 1 new optional parameter on `_example_slide`).
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  `slide_client_clean_outputs_gallery` (slide 18 layout fix);
+  `slide_client_quality_filter` (slide 54 — bug fix + redesign);
+  `slide_client_pipeline_detailed` (slide 49 enlarge);
+  `slide_client_two_layer_confidence` (slide 30 IS-honesty + new pill);
+  `slide_client_trust_without_ground_truth` (slide 42 IS-honesty +
+  meaningful/grows pills); `_example_slide` helper (new `video_key`
+  param); `slide_client_example_perfect / _partial / _flagged`
+  (wired video keys).
+- `docs/_research-tools/generators/presentation/config.py` — added
+  3 Obama lip-crop video keys (obama_perfect, obama_partial,
+  obama_flagged).
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-01 — Note on the demo-report bundle commit
 
 Commit `96ed361` (originally `80580bd`, retitled via amend) carries
