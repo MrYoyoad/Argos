@@ -45,14 +45,35 @@ Tracking completed missions and the prioritized backlog of future work for the A
 - **Summary**: Fixed early prediction cutoff by adjusting `max_len_a` (1.0 -> 2.0) and `max_len_b` (0 -> 200)
 - **Detail**: [MISSION3_MAX_LEN_FIX.md](../changelog/MISSION3_MAX_LEN_FIX.md)
 
+### Mission 4: Confidence Scoring & Quality Filtering
+- **Status**: COMPLETE (April 30, 2026) — pending end-to-end smoke run on real GPU decode
+- **Summary**: Per-token softmax confidence is now produced on every pipeline run and surfaced inside the existing `report.csv` and `report.html` alongside the existing accuracy/IS metrics — on both EC2 and the standalone client container.
+- **Shipped**:
+  - **Default-on**: `lib/decode.sh` flips `VSP_OUTPUT_SCORES` fallback to `:-1`; decoder writes `confidence-{fid}.json` sidecar by default. Opt-out via `export VSP_OUTPUT_SCORES=0`.
+  - **Stage 8**: `lib/outputs.sh` auto-runs `compute_word_confidence.py` on the sidecar, producing `word_confidence.json` (per-segment summaries + per-word records).
+  - **CSV columns**: `report.csv` gains `sentence_confidence`, `min_word_conf`, `n_low_conf_words` right after the IS columns.
+  - **HTML rendering**: each segment shows two clearly-labeled lines — `Accuracy:` (existing green/yellow/red WER alignment) and `Confidence:` (new blue/orange/purple word-level softmax) — and a `Sent Conf` metric cell sits beside `IS`. The two color palettes are deliberately distinct so they cannot be confused.
+  - **Summary JSON**: `intelligibility_summary.json` gains a `confidence_summary` block (mean/median sentence confidence, totals for n_high/n_med/n_low words, pct_low_conf_words).
+  - **Sync**: `compute_word_confidence.py`, `generate_client_demo_report.py`, modified `make_report.py`, refreshed `generate_intelligibility_scores.py`, updated `lib/decode.sh` and `lib/outputs.sh` byte-mirrored across EC2, `vsp_linux_container_FINAL_20260217/`, and `vsp_docker/galaxy_export/`.
+  - **Tests**: 21/21 unit tests pass (`test_compute_word_confidence`, `test_make_report_word_confidence`, `test_vsp_llm_output_scores`).
+  - **Zero new deps** in the standalone container; `run_flat_english_pipeline.sh` not modified on either side.
+- **Backward compat**: if the sidecar is missing (old runs, opt-out, container without scripts), Stage 8 logs and skips; `report.csv`/`report.html` come out byte-identical to pre-change output.
+- **Thresholds** (calibrated against LLaMA-2 literature, see [docs/confidence/threshold_design.md](../confidence/threshold_design.md)):
+  - `conf-high`: prob ≥ 0.85
+  - `conf-med`:  0.40 ≤ prob < 0.85
+  - `conf-low`:  prob < 0.40
+- **Commits**: `3937a9e` (feat: word-level confidence shipped in every pipeline run)
+- **Detail**: [docs/confidence/report_4_confidence_scoring.md](../confidence/report_4_confidence_scoring.md), [docs/container-sync-changelog.md](../container-sync-changelog.md) (Word-Level Confidence in Pipeline Output entry)
+- **Outstanding follow-up** (tracked under Mission 4.1 in the backlog below): calibration analysis on real B3 sidecars (ECE / reliability diagrams, agreement with IS), and optional vsp-ui surfacing of the confidence summary on the completion screen.
+
 ---
 
 ## Phased Roadmap
 
 | Phase | Missions | Theme | Expected Cumulative WER |
 |-------|----------|-------|------------------------|
-| **1 - Quick Wins** | 4, 5, 7 | Confidence scores, metrics, hyperparams | ~55-60% |
-| **2 - Medium Effort** | 6, 8 | N-best aggregation, prompt engineering | ~45-55% |
+| **1 - Quick Wins** | ~~4 (DONE)~~, 4.1, 5, 7 | Confidence scores (shipped), calibration, metrics, hyperparams | ~55-60% |
+| **2 - Medium Effort** | 6, 8 | N-best aggregation (M4 dependency now satisfied), prompt engineering | ~45-55% |
 | **3 - Training** | 9 | AVSpeech fine-tuning (biggest single gain) | ~42-52% |
 | **4 - Deployment** | 10, 11 | Horizon container, Arabic support | — |
 | **5 - Advanced** | 12, 13, 14 | Multi-speaker, streaming, auto-tuning | — |
@@ -62,20 +83,19 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ## Backlog
 
-### Mission 4: Confidence Scoring & Quality Filtering
-- **Priority**: CRITICAL
-- **Goal**: Surface model confidence scores so we can separate good predictions from bad — currently impossible without ground truth (best heuristic: 24% precision)
+### Mission 4.1: Confidence Calibration & Threshold Tuning
+- **Priority**: HIGH (follow-up to completed Mission 4)
+- **Status**: PENDING — needs real B3 GPU decode to produce a non-synthetic confidence dataset
+- **Context**: Mission 4 is shipped (per-token softmax confidence is now in every pipeline run, surfaced in `report.csv` / `report.html` / `intelligibility_summary.json`). The hardcoded thresholds (0.85 high / 0.40 low) come from LLaMA-2 literature. We have not yet validated them against this specific model on this specific data.
 - **Items**:
-  - Extract sequence-level log-probabilities from fairseq sequence generator during decode
-  - `fairseq/sequence_generator.py` already tracks `positional_scores` — need to propagate to report stage
-  - Add `output_scores=True` to `decoder.generate()` call
-  - Compute segment-level confidence (mean/min token probability, beam score)
-  - Add confidence field to JSON report output (`report.json`)
-  - Flag low-confidence segments in client report (HTML/CSV) for human review
-  - Enable quality filtering: discard segments below confidence threshold
-- **Expected Impact**: Sequence score correlation with WER: r = -0.4 to -0.6 (vs. current 0.17 from heuristics). Directly solves the "can we trust this output?" problem
-- **Effort**: Phase 1 (sequence-level): 2-4 hours; Phase 2 (token-level with color-coded words): 1-2 days
-- **Research**: [Report 4 - Confidence Scoring](../confidence/report_4_confidence_scoring.md)
+  - Run a full-baseline decode with `VSP_OUTPUT_SCORES=1` on the 1,497-segment dataset to produce real `confidence-*.json` sidecars
+  - Compute Pearson r(sentence_confidence, WER) and r(sentence_confidence, IS) — expected r(conf, WER) ≈ -0.4 to -0.6
+  - Reliability diagram + Expected Calibration Error (ECE) on per-token probabilities
+  - Cross-check the 0.85 / 0.40 thresholds against the model's actual prob distribution; tune if mass is concentrated unhelpfully
+  - Optional: per-segment quality gating threshold (analogous to NIV) calibrated to a target precision/recall against the LLM judge
+- **Expected Impact**: Validated thresholds, published calibration plots, an empirically defensible "safe to trust" line for client reporting
+- **Effort**: ~1 day GPU + ~2 hours analysis once data is in
+- **Research**: [Report 4 - Confidence Scoring](../confidence/report_4_confidence_scoring.md), [docs/confidence/threshold_design.md](../confidence/threshold_design.md), [docs/confidence/llama2_confidence_literature_review.md](../confidence/llama2_confidence_literature_review.md)
 
 ---
 
@@ -102,18 +122,22 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ---
 
-### Mission 6: N-Best / Beam Aggregation (ROVER & MBR)
+### Mission 6: N-Best / Beam Aggregation (ROVER & MBR) — IMPLEMENTED 2026-05-01
 - **Priority**: HIGH
 - **Goal**: Stop discarding 19 of 20 beam candidates — use them for consensus voting and confidence estimation
-- **Items**:
-  - Save top-N hypotheses + scores from beam search (currently only top-1 saved)
-  - Implement MBR (Minimum Bayes Risk) decoding — select hypothesis with lowest expected WER against all others
-  - Implement ROVER (Recognizer Output Voting Error Reduction) — word-level alignment and voting across N-best
-  - Beam diversity analysis: agreement across beams as a quality signal
-  - Confidence-weighted word selection from N-best list
-- **Expected Impact**: 5-15% relative WER reduction (conservative). MBR/ROVER well-established in ASR literature (Fiscus 1997)
-- **Dependencies**: Mission 4 (confidence scores needed for weighted voting)
+- **Status**: **IMPLEMENTATION COMPLETE** (2026-05-01). Pending full-dataset evaluation (Phase 7b).
+- **Shipped (Phase 1-6)**:
+  - N-best capture: `VSP_NBEST=1` env-var gates writing `nbest-{fid}.json` with all 20 hypotheses, sequence scores, raw log-prob sums, and per-token probs/entropy/top-3 alternatives per beam ([VSP-LLM/src/vsp_llm.py](../../VSP-LLM/src/vsp_llm.py), [VSP-LLM/src/vsp_llm_decode.py](../../VSP-LLM/src/vsp_llm_decode.py))
+  - Bug fix in same PR: existing top-1 entropy/top-3 extraction used `step_scores[::n_beams]` which silently picked the wrong beam after HF reordering. Fixed by gathering via `gen_out.beam_indices`. Affects today's `confidence-{fid}.json` on hard cases.
+  - Five aggregation methods, all CPU-only and offline: MBR (consensus), score-weighted vote (ROVER-style), score×confidence-weighted vote, safe top-1-with-backoff, and cross-segment overlap fusion (`hyp_xseg_merge`). See [lib/nbest_aggregate.py](../../lib/nbest_aggregate.py).
+  - Beam variance & word-level confusion analysis: per-segment `pairwise_mean_wer`, `word_agreement_rate`, `mean_position_entropy`; per-word recall/conf/disagreement stats with NE-only second pass. See [docs/_research-tools/generators/analyze_beam_variance.py](../_research-tools/generators/analyze_beam_variance.py).
+  - Pipeline integration: `lib/decode.sh` forwards `VSP_NBEST`; `lib/outputs.sh` runs aggregator + variance analyzer when sidecar present; `make_report.py` adds five `hyp_*` and `wer_*_%` columns to `report.csv` and logs per-method mean WER deltas.
+  - Tests: 48 new unit tests across `test_alignment_helper.py`, `test_nbest_aggregate.py`, `test_beam_variance.py`. All pass.
+  - Container parity: identical files across EC2 and standalone container (verified via `cmp`).
+- **Expected Impact**: 5-15% relative WER reduction (conservative). MBR/ROVER well-established in ASR literature (Fiscus 1997). Cross-segment merge is novel for this pipeline — exploits physical redundancy in the data, not in the search space.
+- **Dependencies**: Mission 4 (confidence scores needed for weighted voting) — **SATISFIED** as of April 30, 2026.
 - **Research**: [Report 5 - Beam Search Aggregation](../beam-search/report_5_beam_search_aggregation.md)
+- **Pending (Phase 7)**: Run full 1,497-segment decode with `VSP_NBEST=1`, evaluate per-method WER deltas, write up correlation findings (beam variance × confidence) and word-level confusion findings (do confused words have low confidence?).
 
 ---
 

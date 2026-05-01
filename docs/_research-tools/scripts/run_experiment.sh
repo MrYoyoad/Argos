@@ -17,7 +17,7 @@ echo "=============================================="
 # Paths
 ROOT="/home/ubuntu/VSP-LLM"
 MODEL_SRC="${ROOT}/src"
-TUNING_DATA="/home/ubuntu/tuning_results/decode_dataset"
+TUNING_DATA="${TUNING_DATA_OVERRIDE:-/home/ubuntu/tuning_results/decode_dataset}"
 EXP_DIR="/home/ubuntu/tuning_results/${EXP_NAME}"
 RESULT_DIR="${EXP_DIR}/decode_output"
 LLM_PATH="${ROOT}/checkpoints/Llama-2-7b-hf"
