@@ -47,12 +47,12 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Round 5.5: claims/non-claims slide added in the trust section,
-    # shifting §Engineering and downstream slides by +1.
-    39,  # slide_failure_deep_2  — 3 worked ref/hyp examples
-    40,  # slide_25d             — salvage recoveries (WER stripped from headers)
-    51,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    62,  # slide_thank_you       — close
+    # Round 5.6: three-tier policy slide added between word_color_coding
+    # (slide 31) and halluc_problem, shifting all later slides by +1.
+    40,  # slide_failure_deep_2  — 3 worked ref/hyp examples
+    41,  # slide_25d             — salvage recoveries (WER stripped from headers)
+    52,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
+    63,  # slide_thank_you       — close
 }
 
 
@@ -244,6 +244,18 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "13.9%",              # Signal Loss (80)
         "13.8%",              # Right Topic Wrong Details (79)
         "9.1%",               # Accumulated Errors (52)
+    })
+    # Round 5.6 — three-tier UI policy (slide 32). 1,497-segment baseline
+    # tier distribution + reliability bounds. Source: docs/confidence/
+    # threshold_design.md and confidence_full_analysis.md §2.2.
+    approved.update({
+        "22.7%",              # Trust tier share
+        "35.7%",              # Salvage tier share
+        "36.9%",              # Strip tier share
+        "85%",                # P(correct|green) at Trust threshold
+        "50%",                # P(correct|green) at Strip threshold (the "would mislead" boundary)
+        "18%",                # P(correct|green) lower bound across stratification
+        "93%",                # P(correct|green) upper bound across stratification
     })
     # Strip whitespace inside percent tokens
     def norm(s):

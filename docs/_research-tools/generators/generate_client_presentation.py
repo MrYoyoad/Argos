@@ -99,6 +99,7 @@ from presentation.slides_client import (
     slide_client_confidence_question,
     slide_client_two_layer_confidence,
     slide_client_word_color_coding,
+    slide_client_three_tier_policy,        # NEW Round 5.6 — band-reliability + UI policy
     slide_client_halluc_problem,
     slide_client_halluc_real_example,
     slide_client_halluc_caught,
@@ -220,6 +221,7 @@ def main():
         slide_client_confidence_question,
         slide_client_two_layer_confidence,
         slide_client_word_color_coding,
+        slide_client_three_tier_policy,         # NEW Round 5.6 — band-reliability + three-tier UI
         # Hallucination case-study trio
         slide_client_halluc_problem,
         slide_client_halluc_real_example,

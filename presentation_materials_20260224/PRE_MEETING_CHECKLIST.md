@@ -1,6 +1,6 @@
 # Client Deck — Pre-Meeting Checklist
 
-**Deck:** `Argos_VSP_Client_Round5_Apr2026.pptx` (62 slides post Round 5.5)
+**Deck:** `Argos_VSP_Client_Round5_Apr2026.pptx` (63 slides post Round 5.6)
 **Q&A cheat sheet:** [QA_CHEAT_SHEET.md](QA_CHEAT_SHEET.md)
 **Detailed instructions:** [docs/guides/client-deck-powerpoint-checklist.md](../docs/guides/client-deck-powerpoint-checklist.md)
 **OOXML compat scan:** [PP_COMPAT_REPORT.txt](PP_COMPAT_REPORT.txt) in this folder
@@ -23,7 +23,7 @@ These need access to your dev machine and the deck source, so do them before wal
 - [ ] Pressed F5 → tested the video plays from inside presentation mode
 - [ ] Heard audio through laptop speakers (not just headphones)
 
-### Customize the next-steps slide (slide 61 post Round 5.5)
+### Customize the next-steps slide (slide 62 post Round 5.6)
 - [ ] Pilot dataset card — replaced "Size, content type, sample source" with client-specific text
 - [ ] Integration scope card — replaced with actual systems to wire into
 - [ ] Timeline card — replaced with realistic weeks/dates
@@ -35,24 +35,25 @@ These need access to your dev machine and the deck source, so do them before wal
 
 ### Click-through dry run
 - [ ] Opened the deck in **real PowerPoint** (not LibreOffice / web preview)
-- [ ] Stepped through all 62 slides at full screen (F5)
-- [ ] Slides where I want extra eyes (Round 5.5 indices):
+- [ ] Stepped through all 63 slides at full screen (F5)
+- [ ] Slides where I want extra eyes (Round 5.6 indices):
   - [ ] **Slide 13** — Live UI demo placeholder — your video embedded?
+  - [ ] **Slide 11** — multi-speaker (today vs path) — both columns balanced?
+  - [ ] **Slide 8** — visemes (pat/bat/mat) — three columns balanced?
   - [ ] **Slides 17, 19, 20** — Obama examples (perfect / partial / flagged) — clickable lip-crop video on each, REF/HYP green/yellow/red readable?
   - [ ] **Slide 18** — clean-outputs gallery (6 video tiles + label/quote) — videos play?
   - [ ] **Slides 21-26** — six judge examples with verdict tags — verdict line clear?
   - [ ] **Slide 27** — Three numbers (62% review-useful / 23% / 1 in 5) — language reads cleanly?
   - [ ] **Slide 30** — "Confidence is triage, not truth" visible at top?
-  - [ ] **Slide 31** — per-word color coding screenshot — crisp at full screen?
-  - [ ] **Slide 35** — IS confidence-gate plot — annotation legible?
-  - [ ] **Slide 11** — multi-speaker (today vs path) — both columns balanced?
-  - [ ] **Slide 8** — visemes (pat/bat/mat) — three columns balanced?
-  - [ ] **Slide 42** — NEW claims/non-claims — both columns + bottom anchor readable?
-  - [ ] **Slide 43** — trust without ground truth — four cards + meaningful/grows pills readable?
-  - [ ] **Slide 50** — 8-stage operational pipeline diagram — color-coded stages crisp?
-  - [ ] **Slide 52** — engineering journey (4 milestones) — M1-M4 cards balanced?
-  - [ ] **Slide 53** — Cloud / On-premise cards — borders crisp?
-  - [ ] **Slide 55** — quality-filter funnel + "credible system must know when NOT to decode" tagline visible?
+  - [ ] **Slide 31** — per-word color coding screenshot — REAL B3 confidence (regen Round 5.6) — crisp at full screen?
+  - [ ] **Slide 32** — NEW Round 5.6: three-tier UI (Trust / Salvage / Strip) — three cards balanced, percentages 22.7 / 35.7 / 36.9 visible?
+  - [ ] **Slide 36** (was 35) — IS confidence-gate plot — annotation legible?
+  - [ ] **Slide 43** — NEW (Round 5.5) claims/non-claims — both columns + bottom anchor readable?
+  - [ ] **Slide 44** (was 43) — trust without ground truth — four cards + meaningful/grows pills readable?
+  - [ ] **Slide 51** (was 50) — 8-stage operational pipeline diagram — color-coded stages crisp?
+  - [ ] **Slide 53** (was 52) — engineering journey (4 milestones) — M1-M4 cards balanced?
+  - [ ] **Slide 54** (was 53) — Cloud / On-premise cards — borders crisp?
+  - [ ] **Slide 56** (was 55) — quality-filter funnel + "credible system must know when NOT to decode" tagline visible?
 
 ### Timing
 - [ ] Out-loud read-through with stopwatch

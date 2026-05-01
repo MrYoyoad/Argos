@@ -26,6 +26,118 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-01 — Round 5.6 — Confidence findings update (LANDED)
+
+The May 2026 confidence work landed three things since Round 5.5
+shipped: (1) **band-reliability stratification** showing P(correct|green)
+ranges 18-93% across segment quality (overall 80.6%, but 92.8% in
+high-quality segments and 21.8% in low-quality ones), (2) **three-tier
+UI policy** (Trust ≥0.82 / Salvage 0.65–0.82 / Strip <0.65) wired to
+production via `make_report.py` on 2026-05-01, and (3) **B3 sidecar
+landing** so the per-word color-coding screenshot can finally use
+real per-token confidence instead of the synthetic WER-aligned
+version.
+
+The deck's trust section didn't reflect any of this. Round 5.6 is a
+narrow update: one new slide, one screenshot regen, four speaker
+note touch-ups. The new slide turns the band-reliability finding
+into a credibility move ("we measured this and built the UI around
+it") rather than a research caveat.
+
+### NEW slide 32 — `slide_client_three_tier_policy`
+- Title: *"How the report handles uncertainty"*
+- Subtitle: *"Green's reliability isn't uniform. We measured it across
+  23,261 words. Here's the policy that follows."*
+- Three horizontal cards: TRUST (≥0.82, 22.7% of segments, full
+  coloring, green ≥85% reliable) / SALVAGE (0.65–0.82, 35.7%, full
+  coloring + amber banner *"Verify names, numbers, critical details"*)
+  / STRIP (<0.65, 36.9%, coloring removed, plain grey text — green
+  <50% reliable here, would mislead).
+- Bottom anchor: *"P(correct | green) ranges from 18% to 93% across
+  segment quality. The UI removes coloring where it would lie."*
+- Source line: *"Measured on 23,261 words from 1,427 real-world
+  segments. Distribution from the 1,497-segment baseline."*
+- Speaker notes carry the full stratification table (very high 92.8% /
+  high 83.8% / mid 69.6% / mid-low 41.3% / low 21.8% / very low 18.2%)
+  and the asymmetric-cost framing ("wrong-and-green is the only
+  unrecoverable cell — strategy bounds wrong-green rate, not maxes F1").
+- Insertion: between `slide_client_word_color_coding` (slide 31) and
+  `slide_client_halluc_problem`. New position: slide 32.
+
+### REGEN slide 31 — `ui_word_confidence_screenshot.png`
+- Was: synthetic confidence (derived from WER alignment between HYP
+  and known REF) — visible on the screenshot since the original B3
+  sidecar was still being computed.
+- Now: real per-token confidence from B3 sidecar (`/tmp/vsp_b3_full_out/
+  hypo-172610.json` + `confidence-172610.json`, 2026-04-30).
+- Process: ran `generate_client_demo_report.py --decode hypo-172610.json
+  --filter "050111_OsamaBinLadenStatement_HD" --out
+  obama_demo_report.html`, screenshotted via headless Chromium at
+  1920×4500, cropped top 1100px to a single-segment-rich frame.
+- Speaker note rewrite: removed the "currently synthetic" caveat;
+  replaced with *"Real per-token confidence from the B3 sidecar (May
+  2026). Same coloring policy now lives in `make_report.py` and
+  ships with every pipeline run."*
+
+### Speaker note touch-ups
+- **Slide 27 (`headline_numbers`)**: appended note pointing at the
+  three-tier breakdown on slide 32 (Strip 36.9% / Salvage 35.7% /
+  Trust 22.7%) without changing visible numbers.
+- **Slide 30 (`two_layer_confidence`)**: appended IF-ASKED answer
+  for "how reliable is the green coloring?" pointing to slide 32.
+- **Slide 44 (`trust_without_ground_truth`)**: appended note
+  acknowledging that the four runtime signals are NOT uniformly
+  reliable across segment quality; the UI itself enforces the
+  three-tier policy.
+
+### Companion deliverable updates
+- `PRE_MEETING_CHECKLIST.md` — slide indices refreshed for 63-slide
+  layout, dry-run check items renumbered, slide 32 added to the list.
+- `QA_CHEAT_SHEET.md` + `.pdf` — new Q&A *"How reliable is the green
+  coloring?"* with the stratification + three-tier framing. New slide
+  32 cue in the per-slide section. All downstream slide-cue indices
+  shifted by +1.
+
+### Stats
+- **62 → 63 slides** (+1 for the new three-tier policy slide).
+- All 7 audit/linter tests **green**.
+- BORROWED_SLIDES exemption updated for the +1 shift: indices now
+  {40, 41, 52, 63} (was {39, 40, 51, 62}).
+- 7 new percentages added to the canonical-or-derivative whitelist:
+  22.7%, 35.7%, 36.9% (tier shares); 85%, 50% (reliability bounds);
+  18%, 93% (stratification range).
+
+### Deferred to Round 5.7 (per user direction)
+- N-best aggregation slide (Mission 6, 107-segment evaluation):
+  user is updating the analysis. Will weave in once the new numbers
+  land. Code shipped, gated by `VSP_NBEST=1`, default OFF; partial
+  evaluation in `tuning_results/exp_nbest_validation/`.
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  new `slide_client_three_tier_policy` builder; speaker-note
+  touch-ups on `slide_client_headline_numbers`,
+  `slide_client_two_layer_confidence`, `slide_client_word_color_coding`,
+  `slide_client_trust_without_ground_truth`.
+- `docs/_research-tools/generators/generate_client_presentation.py` —
+  imported and inserted `slide_client_three_tier_policy` between
+  `slide_client_word_color_coding` and `slide_client_halluc_problem`.
+- `tests/unit/test_number_audit.py` — BORROWED_SLIDES indices for
+  63-slide layout; whitelist of 7 new approved percentages.
+- `presentation_materials_20260224/01_plots_for_slides/ui_word_confidence_screenshot.png` —
+  regenerated from real B3 sidecar.
+- `presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html` —
+  regenerated for the screenshot capture.
+- `presentation_materials_20260224/PRE_MEETING_CHECKLIST.md` — slide
+  indices refreshed.
+- `presentation_materials_20260224/QA_CHEAT_SHEET.md` + `.pdf` —
+  new Q&A + slide-32 cue + downstream slide-index shift.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-01 — Round 5.5 — Credibility hardening (LANDED)
 
 External critique session (ChatGPT critique → Claude review of the

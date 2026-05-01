@@ -494,7 +494,13 @@ def slide_client_headline_numbers(prs):
         "Don't read out NIV / κ on the slide; they're for your reference here. "
         "Lean into the difficulty caveat — these numbers are on real-world hard "
         "data, not a curated benchmark, and the client should hear that "
-        "explicitly. Anything cleaner-than-YouTube will perform better."
+        "explicitly. Anything cleaner-than-YouTube will perform better. "
+        "\n\n"
+        "Round 5.6: the 1-in-5 auto-flag rate breaks down further into "
+        "the three-tier UI policy on slide 32 — Strip 36.9% (coloring "
+        "removed), Salvage 35.7% (full coloring + amber banner), Trust "
+        "22.7% (full coloring, green ≥85% reliable). Don't anchor on "
+        "those secondary numbers here; they live on slide 32."
     ))
     return slide
 
@@ -761,7 +767,15 @@ def slide_client_two_layer_confidence(prs):
         "video. If asked: yes, IS only exists in the lab; the runtime "
         "number is a calibrated projection from per-word stats. The 82% "
         "expert agreement was earned at calibration time, on labeled data; "
-        "the runtime per-segment confidence rides on that calibration."
+        "the runtime per-segment confidence rides on that calibration. "
+        "\n\n"
+        "Round 5.6 — IF ASKED 'how reliable is the green coloring?': "
+        "see the next slide (slide 32). Green is 92.8% reliable in "
+        "high-quality segments, 21.8% in low-quality ones. The three-tier "
+        "UI policy (Trust / Salvage / Strip) is built on that finding. "
+        "We strip coloring below segment confidence 0.65 — the UI itself "
+        "enforces the asymmetric-cost policy. Pointer: docs/confidence/"
+        "confidence_full_analysis.md §2.2."
     ))
     return slide
 
@@ -842,12 +856,14 @@ def slide_client_word_color_coding(prs):
         "report. Hover or point at a green run, then a yellow word, then the "
         "red mismatch. The recognizable content lets clients track what's "
         "right and what's not even though the audio isn't being played. "
-        "Note that the per-word confidence on THIS screenshot is currently "
-        "synthetic (derived from WER alignment) until B3's real sequence-"
-        "confidence sidecar lands — visual treatment is identical, the "
-        "underlying signal will swap when the GPU run completes. The Obama "
-        "speech is the demo input recommended for your live UI walkthrough "
-        "recording (vsp_input/050111_OsamaBinLadenStatement_HD.mp4)."
+        "\n\n"
+        "Round 5.6: the per-word confidence on this screenshot is REAL — "
+        "from the B3 sidecar that landed May 2026. The same coloring policy "
+        "now lives in make_report.py and ships with every pipeline run. "
+        "The next slide (slide 32) names the three-tier UI policy that "
+        "governs WHEN the colors are shown vs when they're stripped. "
+        "The Obama speech is the demo input recommended for your live UI "
+        "walkthrough recording (vsp_input/050111_OsamaBinLadenStatement_HD.mp4)."
     ))
     return slide
 
@@ -2568,7 +2584,16 @@ def slide_client_trust_without_ground_truth(prs):
         "per-segment number is the aggregate of per-word probabilities "
         "(plus length anomaly) — that IS computable on unseen video. "
         "The validation step (next slide) is how we earned the right to "
-        "trust those runtime signals."
+        "trust those runtime signals. "
+        "\n\n"
+        "Round 5.6 add: the four runtime signals are NOT uniformly "
+        "reliable across segment quality. Per-word coloring fades to "
+        "grey below mean_prob 0.65 — the UI itself enforces the "
+        "asymmetric-cost policy (see slide 32 for the three-tier "
+        "Trust / Salvage / Strip). The 'meaningful today' pill on "
+        "this slide (anchored to 82% blind evaluator agreement) is at "
+        "the development-calibration level; the three-tier UI is what "
+        "actually runs at deployment time."
     ))
     return slide
 
@@ -3285,6 +3310,168 @@ def slide_client_compared_to_today(prs):
         "Critical for cold audience members — first 10 minutes of the "
         "meeting do most of the work for them, this is where they map our "
         "product onto a problem they recognize."
+    ))
+    return slide
+
+
+def slide_client_three_tier_policy(prs):
+    """Round 5.6 — How the report handles uncertainty (three-tier UI).
+
+    Lands between word_color_coding and halluc_problem. Frames the
+    band-reliability finding (P(correct|green) ranges 18-93% across
+    segment quality) as a UI policy, not a research caveat.
+
+    Source data:
+      - docs/confidence/confidence_full_analysis.md §2.2 (stratification)
+      - docs/confidence/threshold_design.md (T_safe=0.82, T_salvage=0.65)
+      - docs/confidence/band_reliability_rollout_plan.md Phase 2 DONE
+      - 1,497-segment baseline tier distribution: 22.7 / 35.7 / 36.9
+      - Production: VSP-LLM/scripts/make_report.py classify_tier()
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "How the report handles uncertainty")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Green's reliability isn't uniform. We measured it across "
+             "23,261 words. Here's the policy that follows.",
+             MX, Inches(1.5), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three horizontal cards
+    card_gap = Inches(0.2)
+    card_w = (CW - 2 * card_gap) / 3
+    card_top = Inches(2.2)
+    card_h = Inches(3.6)
+
+    tiers = [
+        {
+            "name": "TRUST",
+            "thresh": "segment confidence  ≥  0.82",
+            "color": GREEN,
+            "share": "22.7%",
+            "ui": "Full per-word coloring.",
+            "promise": "Green ≥ 85% reliable",
+            "promise_sub": "(stays in deck's original confidence promise)",
+        },
+        {
+            "name": "SALVAGE",
+            "thresh": "0.65  to  0.82",
+            "color": GOLD,
+            "share": "35.7%",
+            "ui": "Full coloring + amber banner.",
+            "promise": "\"Verify names, numbers,",
+            "promise_sub": "critical details\"",
+        },
+        {
+            "name": "STRIP",
+            "thresh": "segment confidence  <  0.65",
+            "color": LGRAY,
+            "share": "36.9%",
+            "ui": "Coloring removed. Plain grey text.",
+            "promise": "Green < 50% reliable here —",
+            "promise_sub": "coloring would mislead",
+        },
+    ]
+    for i, t in enumerate(tiers):
+        x = MX + i * (card_w + card_gap)
+        # Card background
+        add_rect(slide, x, card_top, card_w, card_h,
+                 fill_color=NAVY2, border_color=t["color"],
+                 border_width=Pt(1.5))
+        # Tier name
+        add_text(slide, t["name"],
+                 x + Inches(0.2), card_top + Inches(0.2),
+                 card_w - Inches(0.4), Inches(0.5),
+                 size=Pt(22), bold=True, color=t["color"],
+                 align=PP_ALIGN.CENTER)
+        # Threshold
+        add_text(slide, t["thresh"],
+                 x + Inches(0.15), card_top + Inches(0.85),
+                 card_w - Inches(0.3), Inches(0.35),
+                 size=Pt(11), color=LGRAY, italic=True,
+                 align=PP_ALIGN.CENTER)
+        # UI behavior
+        add_text(slide, t["ui"],
+                 x + Inches(0.2), card_top + Inches(1.4),
+                 card_w - Inches(0.4), Inches(0.6),
+                 size=Pt(13), bold=True, color=WHITE,
+                 align=PP_ALIGN.CENTER)
+        # Reliability promise (two lines)
+        add_text(slide, t["promise"],
+                 x + Inches(0.2), card_top + Inches(2.15),
+                 card_w - Inches(0.4), Inches(0.35),
+                 size=Pt(11), color=t["color"], italic=True,
+                 align=PP_ALIGN.CENTER)
+        add_text(slide, t["promise_sub"],
+                 x + Inches(0.2), card_top + Inches(2.5),
+                 card_w - Inches(0.4), Inches(0.35),
+                 size=Pt(11), color=t["color"], italic=True,
+                 align=PP_ALIGN.CENTER)
+        # Segment share — large number at the bottom
+        add_text(slide, t["share"],
+                 x + Inches(0.2), card_top + Inches(2.95),
+                 card_w - Inches(0.4), Inches(0.45),
+                 size=Pt(28), bold=True, color=WHITE,
+                 align=PP_ALIGN.CENTER)
+        add_text(slide, "of segments",
+                 x + Inches(0.2), card_top + Inches(3.35),
+                 card_w - Inches(0.4), Inches(0.2),
+                 size=Pt(9), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    # Bottom anchor — the core finding
+    bottom_y = card_top + card_h + Inches(0.2)
+    add_rect(slide, MX, bottom_y, CW, Inches(0.6),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
+    add_text(slide,
+             "P(correct | green) ranges from 18% to 93% across segment "
+             "quality. The UI removes coloring where it would lie.",
+             MX + Inches(0.3), bottom_y + Inches(0.15),
+             CW - Inches(0.6), Inches(0.35),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
+
+    # Source line
+    add_text(slide,
+             "Measured on 23,261 words from 1,427 real-world segments. "
+             "Distribution from the 1,497-segment baseline.",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.6 — three-tier UI policy. Sits between word_color_coding "
+        "and the hallucination case-study trio. The slide turns the "
+        "band-reliability finding (P(correct|green) varies 18-93%) into "
+        "a credibility move: 'we measured this and built the UI around "
+        "it.' "
+        "\n\n"
+        "FULL STRATIFICATION TABLE if asked: "
+        "very high (≥0.85) 92.8% — high (0.75-0.85) 83.8% — mid "
+        "(0.65-0.75) 69.6% — mid-low (0.55-0.65) 41.3% — low (0.40-0.55) "
+        "21.8% — very low (<0.40) 18.2%. Yellow overall 38.3%, red "
+        "overall 15.4%. "
+        "\n\n"
+        "ASYMMETRIC-COST FRAMING: 'Wrong-and-green is the only "
+        "unrecoverable cell — a user acts on a falsehood. Strategy "
+        "bounds wrong-green rate, not maxes F1. That's why we strip "
+        "coloring below 0.65 — keeping green there would create a "
+        "false signal for the reviewer.' "
+        "\n\n"
+        "EXPECTED DRIFT: 'Numbers shift as the system improves. Stronger "
+        "LLM lifts P(correct|green) uniformly. More training data shrinks "
+        "numeric/entity leakage (billion->million class). Beam aggregation "
+        "removes fluent-latch failures from green.' "
+        "\n\n"
+        "PRODUCTION STATUS: live in make_report.py since 2026-05-01. "
+        "Every report.html and report.csv from the pipeline carries the "
+        "tier column and applies the three-tier coloring policy. "
+        "\n\n"
+        "Source: docs/confidence/confidence_full_analysis.md §2.2 "
+        "(stratification); threshold_design.md (operating points); "
+        "band_reliability_rollout_plan.md (rollout phases)."
     ))
     return slide
 

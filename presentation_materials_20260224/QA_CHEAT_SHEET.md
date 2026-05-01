@@ -74,7 +74,15 @@ If pressed: "We can run your specific clips through the same pipeline before the
 
 **"Two reasons. One: it's anchored to an independent blind evaluator (82% agreement on our 1,497 calibration set), so the threshold isn't arbitrary. Two: as your reviewers verify segments on your footage, those verdicts extend the calibration to your domain. The signal tightens around your content as you use it."**
 
-Slide 43 has both these beats as the bottom pills ("MEANINGFUL TODAY" / "GROWS IN YOUR HANDS"). Refer them there.
+Slide 44 has both these beats as the bottom pills ("MEANINGFUL TODAY" / "GROWS IN YOUR HANDS"). Refer them there.
+
+---
+
+## "How reliable is the green coloring? Is green always correct?"
+
+**"No. Green is high-confidence, not guaranteed correct. We measured this across 23,261 words: green is 92.8% reliable in high-quality segments and 21.8% reliable in low-quality ones. That range is exactly why our UI runs a three-tier policy. Above segment confidence 0.82, we show full coloring — green is ≥85% reliable there. Between 0.65 and 0.82, we show coloring with an amber 'verify names and numbers' banner. Below 0.65, we strip the coloring entirely — keeping it would mislead the reviewer."**
+
+Slide 32 lands this. Refer them there if asked. The honest framing: *"the UI removes coloring where it would lie."* If pressed for the math: 9.4% of all green words are wrong; 605 of those 2,192 wrong-greens sit in segments below 0.65 — which is exactly the band we now strip.
 
 ---
 
@@ -209,71 +217,75 @@ The lines to land when each slide is up. Slides not listed don't have a specific
 ### Slide 31 — Per-word color coding
 **Land:** *"Every word the model outputs carries its own probability. Green, yellow, red. You see exactly where the model was unsure."*
 
-### Slides 32–34 — Hallucination case study (the centerpiece)
-**Land on 32:** *"The dangerous failure mode. The model can produce confident, fluent text that's completely wrong."*
-**Land on 33:** *"Real example. Reference says 'heroic citizens.' Model says 'Rwanda's genocide.' A wrong fluent transcript is worse than an empty one, because people may act on it."*
-**Land on 34:** *"And the system caught it. Lowest-confidence word at probability 0.02. Length anomaly. Routed to review before a reviewer ever sees the line. Our value isn't that this never happens — it's that this is flagged."*
+### Slide 32 — Three-tier UI: Trust / Salvage / Strip (NEW Round 5.6)
+**Land:** *"Green's reliability isn't uniform. We measured it across 23,261 words. In high-quality segments green is 93% correct; in low-quality ones it drops to 22%. So we built the UI around that finding. Above 0.82 segment confidence, full coloring — green is 85%+ reliable. Between 0.65 and 0.82, full coloring plus an amber 'verify names and numbers' banner. Below 0.65, we strip the coloring. Coloring would lie there. The UI itself enforces the asymmetric-cost policy: wrong-and-green is the only unrecoverable cell."*
+**Note:** Don't read out every percentage. Land the structure (Trust/Salvage/Strip) and the principle (UI removes coloring where it would lie). The 1,497-segment distribution (22.7 / 35.7 / 36.9) is on the slide if a co-partner pulls on it.
+
+### Slides 33–35 — Hallucination case study (the centerpiece)
+**Land on 33:** *"The dangerous failure mode. The model can produce confident, fluent text that's completely wrong."*
+**Land on 34:** *"Real example. Reference says 'heroic citizens.' Model says 'Rwanda's genocide.' A wrong fluent transcript is worse than an empty one, because people may act on it."*
+**Land on 35:** *"And the system caught it. Lowest-confidence word at probability 0.02. Length anomaly. Routed to review before a reviewer ever sees the line. Our value isn't that this never happens — it's that this is flagged."*
 **Note:** This is the strongest credibility moment in the deck. Don't rush it. Use the full 90 seconds.
 
-### Slide 41 — Hallucination flag (1 in 5)
+### Slide 42 — Hallucination flag (1 in 5)
 **Land:** *"One in five segments is auto-flagged before it reaches you. The system finds the bad ones for you."*
 
-### Slide 42 — What we claim / what we do not claim (NEW Round 5.5)
+### Slide 43 — What we claim / what we do not claim (NEW Round 5.5)
 **Land:** *"Where the line is. So you know what you're buying. Six things we claim. Six things we don't. Closing line: Not blind automation. Reviewable visual-speech intelligence with uncertainty attached."*
 **Note:** Read down both columns side by side, two beats per row. This is the credibility-anchor slide — don't rush it.
 
-### Slide 43 — Why trust it on a video you've never seen
+### Slide 44 — Why trust it on a video you've never seen
 **Land:** *"You don't have ground truth on a fresh video. So how can you trust this? Four runtime signals — per word, per segment, hallucination flag, config stability. Calibration is anchored to expert review today. It grows tighter for your domain as your reviewers verify segments."*
-**Note:** The two pills at the bottom — "MEANINGFUL TODAY" and "GROWS IN YOUR HANDS" — are the message. If asked about the validation method, refer to slide 47.
+**Note:** The two pills at the bottom — "MEANINGFUL TODAY" and "GROWS IN YOUR HANDS" — are the message. If asked about the validation method, refer to slide 48.
 
 ## Validation (slides 45–48)
 
-### Slide 47 — Agreement chart
+### Slide 48 — Agreement chart
 **Land:** *"An independent blind evaluator agreed with our scores in eighty-two percent of cases. Across all 1,497 segments. Blind to our reasoning."*
 **Note:** If asked "was that human?" — answer the Q&A line above. Do NOT say "expert reviewer." Say "blind evaluator" or "blind evaluation pass."
 
-### Slide 48 — Cross-config stability
+### Slide 49 — Cross-config stability
 **Land:** *"Sixteen different decode configurations on the same data. The trust signal moves less than a percentage point. It's a property of the model, not the run."*
 
-## Engineering (slides 50–53)
+## Engineering (slides 51–54)
 
-### Slide 50 — The full pipeline
+### Slide 51 — The full pipeline
 **Land:** *"Eight automated stages. Drop in a video, walk away."*
 
-### Slide 52 — What it actually took
+### Slide 53 — What it actually took
 **Land:** *"Four months, four passes. Integration of three research repos. Production refactor — 823-line script into 11 modules, 37 tests. Confidence layer. Dual-environment shipping. Real engineering, real shipped code."*
 
-### Slide 53 — Deployment options
+### Slide 54 — Deployment options
 **Land:** *"Cloud or on-prem. We deploy and integrate. You're not buying an API call — you're buying a working pipeline that runs in your environment."*
 
-## What's next (slides 54–58)
+## What's next (slides 55–59)
 
-### Slide 55 — Quality pre-filter
+### Slide 56 — Quality pre-filter
 **Land:** *"A credible system must know when NOT to decode. Three frame-level checks before the model runs. Out of a hundred uploaded clips, seventy-five reach the model."*
 
-### Slide 57 — Beyond English — Arabic
+### Slide 58 — Beyond English — Arabic
 **Land:** *"Same architecture, same pipeline, different LLM and different visual model. The path is mapped. Specifics in follow-up."*
 **Note:** Three questions to ASK on this slide (write them on a sticky note inside your laptop lid):
 - "Which Arabic? MSA, Levantine, Egyptian, or Gulf?"
 - "What does your canonical video actually look like?"
 - "What does 'good enough' look like for your workflow?"
 
-### Slide 58 — Partnership ask
+### Slide 59 — Partnership ask
 **Land:** *"Today's model is trained on a small slice of public data. Going from prototype to production on your content — that's a partnership. Your data, our pipeline, a shared training run on your domain. Specifics in follow-up — no dollar amounts on the slide on purpose."*
 
-## Close (slides 59–62)
+## Close (slides 60–63)
 
-### Slide 59 — Recap
+### Slide 60 — Recap
 **Land:** *"Three things we came to show you. It works. You can trust it. There's a clear path forward together."*
 
-### Slide 60 — We deploy this on your infrastructure
+### Slide 61 — We deploy this on your infrastructure
 **Land:** *"On-premise install, integration with your existing systems, training and handoff. End-to-end."*
 
-### Slide 61 — Next steps
+### Slide 62 — Next steps
 **Land:** *"A pilot looks like this — three to five canonical clips from your domain, two weeks, end-to-end run, your reviewer evaluates whether the output supports your workflow. No infrastructure ask up front."*
 **Note:** This slide has placeholder text you customize per client before the meeting. Make sure dataset / integration scope / timeline / success criteria are all filled in.
 
-### Slide 62 — Thank you
+### Slide 63 — Thank you
 **Land:** *"Questions."*
 **Note:** That's it. Don't keep talking. Wait.
 
