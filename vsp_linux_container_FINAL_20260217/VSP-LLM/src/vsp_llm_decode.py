@@ -204,6 +204,15 @@ def _main(cfg, output_file):
         default_log_format=("tqdm" if not cfg.common.no_progress_bar else "simple"),
     )
 
+    # Authoritative sample count for the UI's "X / N segments decoded" counter.
+    # The bash side of lib/decode.sh emits an early estimate from the manifest
+    # line count; this overrides it once the dataset has actually loaded.
+    try:
+        _decode_total = len(task.dataset(cfg.dataset.gen_subset))
+        logger.info(f"Decode dataset loaded: {_decode_total} samples")
+    except (TypeError, AttributeError):
+        pass  # Don't fail decode if the dataset doesn't support len()
+
     gen_timer = StopwatchMeter()
     def decode_fn(x):
         symbols_ignore = {"<unk>", "<mask>","<pad>", "</s>"}

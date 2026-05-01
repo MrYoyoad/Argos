@@ -277,6 +277,14 @@ source "${LIB_DIR}/decode.sh"
 # Test function exports
 declare -F run_vsp_decode >/dev/null && pass "run_vsp_decode function exported" || fail "run_vsp_decode not exported"
 
+# The "Decoding N segments..." log line is the first signal the UI's per-segment
+# counter sees. Losing it would leave the counter without a denominator until
+# the python override arrives ~30-60s into model load. Guard against silent
+# regression: this line MUST exist verbatim in lib/decode.sh.
+grep -q 'log_info "Decoding ${segment_count} segments..."' "${LIB_DIR}/decode.sh" \
+    && pass "decode segment-count log line present" \
+    || fail "decode segment-count log line missing — UI counter will lack early total"
+
 info "Skipping full decode test (requires VSP-LLM scripts, model, and data)"
 info "Decode module expects VSP_VENV already activated by caller"
 

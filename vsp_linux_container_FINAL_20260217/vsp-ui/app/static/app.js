@@ -51,6 +51,9 @@ const elements = {
     progressPercent: document.getElementById('progress-percent'),
     stageName: document.getElementById('stage-name'),
     stageDescription: document.getElementById('stage-description'),
+    decodeCounter: document.getElementById('decode-counter'),
+    decodeDone: document.getElementById('decode-done'),
+    decodeTotal: document.getElementById('decode-total'),
     logsContainer: document.getElementById('logs-container'),
     logsOutput: document.getElementById('logs-output'),
 
@@ -1159,6 +1162,16 @@ async function updateProgress() {
     // Update stage info
     elements.stageName.textContent = progress.current_stage_name || 'Initializing...';
     elements.stageDescription.textContent = progress.current_stage_description || '';
+
+    // Update decode counter (only visible during stage 7, once total is known)
+    const showDecodeCounter = progress.current_stage_id === 'decode' && (progress.decode_total || 0) > 0;
+    if (elements.decodeCounter) {
+        elements.decodeCounter.style.display = showDecodeCounter ? 'block' : 'none';
+        if (showDecodeCounter) {
+            elements.decodeDone.textContent = progress.decode_done || 0;
+            elements.decodeTotal.textContent = progress.decode_total;
+        }
+    }
 
     // Update ETA
     // Update logs if visible

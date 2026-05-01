@@ -1695,3 +1695,27 @@ hyp_words = [w for w, _ in hyp_tokens]
 - Backward compatible: when `--word-confidence` is not provided, no `tier` CSV column is emitted, no per-row tier cell or banner is rendered, and the HTML table omits the `Tier` header column. The static legend in `HTML_HEAD` renders unconditionally (same scope as the existing confidence legend it sits next to).
 
 **`run_flat_english_pipeline.sh` is NOT modified** — change is internal to `make_report.py`.
+
+### Decode Progress Counter (Added 2026-05-01)
+
+1. **Per-segment counter on the wait banner**: shows "X / N segments decoded" during stage 7 (LLM decoding). Replaces the multi-hour blank stretch where the percent bar appeared frozen. Not an ETA — just a deterministic count.
+   - Pipeline (bash): `lib/decode.sh` emits `Decoding ${segment_count} segments...` from the manifest line count, right after `log_stage "7"`. Visible immediately, before model load.
+   - Pipeline (python): `VSP-LLM/src/vsp_llm_decode.py` emits `Decode dataset loaded: N samples` after the dataset loads, just before the decode loop. Authoritative — overrides bash count.
+   - Per-segment increment: parses two existing log lines from `vsp_llm_decode.py` — `^HYP:` (one per sample, smooth +1) and `Incremental flush at N samples` (every `VSP_FLUSH_EVERY=25` samples, absolute checkpoint via `max()`).
+   - Backend: `vsp-ui/app/services/progress_tracker.py` adds `decode_total` and `decode_done` fields to `ProgressState` (and `to_dict()`), four compiled regexes, and `_update_decode_counter()`. Counters reset on entry to the decode stage. Stage guard ensures HYP/flush only count while `current_stage_id == "decode"`.
+   - Frontend: `vsp-ui/app/static/index.html` adds `#decode-counter` inside `.stage-info`. `vsp-ui/app/static/app.js` shows it during decode when `decode_total > 0` and updates the two spans. `vsp-ui/app/static/style.css` adds `.decode-counter` (uses `tabular-nums` so digits don't jitter).
+   - Tests: `tests/unit/test_progress_tracker_decode_counter.py` — 17 pytest cases (total parsing, increment, flush reconciliation, stage guards, reset, serialization, end-to-end). `lib/test_all_modules.sh` TEST 10 grep-asserts the bash log line is still present.
+   - Docs: `docs/features/DECODE_PROGRESS_COUNTER.md`.
+
+**Container action**: same edits applied to `vsp_linux_container_FINAL_20260217/` and `vsp_docker/galaxy_export/` — six files in each tree:
+- `lib/decode.sh`
+- `VSP-LLM/src/vsp_llm_decode.py`
+- `vsp-ui/app/services/progress_tracker.py`
+- `vsp-ui/app/static/index.html`
+- `vsp-ui/app/static/app.js`
+- `vsp-ui/app/static/style.css`
+
+For `/workspace/` deployment translate the paths and apply identically. No new dependencies, no new endpoints — the existing `/api/progress` already serializes `to_dict()`.
+
+**Verification**: pytest passes 17/17 in <0.1s; module test suite green; smoke-tested both container trees by importing their `progress_tracker` directly and feeding synthetic decode log lines (HYP × 5 + flush at 25 → done == 25).
+

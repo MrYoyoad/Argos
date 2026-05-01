@@ -32,6 +32,17 @@ run_vsp_decode() {
 
   log_stage "7" "Running VSP-LLM decode"
 
+  # Emit segment count for the UI's "X / N segments decoded" counter.
+  # Bash signal arrives before model load (~30-60s before the python override).
+  # The python decoder will emit "Decode dataset loaded: N samples" once the
+  # dataset is loaded — that becomes the authoritative count.
+  if [ -f "$manifest_root/train.tsv" ]; then
+    segment_count=$(($(wc -l < "$manifest_root/train.tsv") - 1))
+    if [ "$segment_count" -gt 0 ]; then
+      log_info "Decoding ${segment_count} segments..."
+    fi
+  fi
+
   # CRITICAL: Check and build fairseq Cython extensions if needed
   # Container environments may need this on first run due to different Python/CPU architecture
   log_info "Checking fairseq Cython extensions"
@@ -76,12 +87,25 @@ run_vsp_decode() {
     log_info "VSP_OUTPUT_SCORES=1 — confidence sidecar will be written alongside hypo-{fid}.json"
   fi
 
+  # VSP_NBEST (default 0): when set to 1, vsp_llm_decode also returns all 20
+  # surviving beams to disk in nbest-{fid}.json (with per-token probs/entropy
+  # for each beam). Required for n-best aggregation and beam-variance analysis.
+  # Wall-clock cost is ~zero (beam search already explores 20 internally);
+  # disk cost is ~20× the confidence sidecar (~300 MB / 1,497 segments).
+  if [ "${VSP_NBEST:-0}" = "1" ]; then
+    log_info "VSP_NBEST=1 — n-best sidecar (20 beams × per-token probs) will be written"
+    # n-best aggregation needs per-token probs to compute confidence-weighted vote.
+    # Force VSP_OUTPUT_SCORES=1 to match the coupling in vsp_llm_decode.py.
+    export VSP_OUTPUT_SCORES=1
+  fi
+
   LANG="en" \
   SPLIT="train" \
   LRS3_ROOT="$prep_root" \
   LAB_DIR="$lab_dir" \
   WRD_ROOT="$wrd_root" \
   VSP_OUTPUT_SCORES="${VSP_OUTPUT_SCORES:-1}" \
+  VSP_NBEST="${VSP_NBEST:-0}" \
   bash "$vsp_dir/scripts/run_flat_decode.sh" || {
     log_error "VSP-LLM decode failed"
     return 1

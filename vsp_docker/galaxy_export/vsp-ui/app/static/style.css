@@ -318,6 +318,13 @@ header h1 {
     margin-bottom: 16px;
 }
 
+.decode-counter {
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: var(--text-muted, #666);
+    font-variant-numeric: tabular-nums;
+}
+
 .current-stage {
     margin-bottom: 8px;
 }

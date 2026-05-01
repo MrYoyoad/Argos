@@ -32,6 +32,17 @@ run_vsp_decode() {
 
   log_stage "7" "Running VSP-LLM decode"
 
+  # Emit segment count for the UI's "X / N segments decoded" counter.
+  # Bash signal arrives before model load (~30-60s before the python override).
+  # The python decoder will emit "Decode dataset loaded: N samples" once the
+  # dataset is loaded — that becomes the authoritative count.
+  if [ -f "$manifest_root/train.tsv" ]; then
+    segment_count=$(($(wc -l < "$manifest_root/train.tsv") - 1))
+    if [ "$segment_count" -gt 0 ]; then
+      log_info "Decoding ${segment_count} segments..."
+    fi
+  fi
+
   # CRITICAL: Check and build fairseq Cython extensions if needed
   # Container environments may need this on first run due to different Python/CPU architecture
   log_info "Checking fairseq Cython extensions"

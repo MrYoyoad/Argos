@@ -35,6 +35,8 @@ class ProgressState:
     start_time: Optional[float] = None
     stage_start_time: Optional[float] = None
     segment_only: bool = False
+    decode_total: int = 0
+    decode_done: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -52,6 +54,8 @@ class ProgressState:
             "run_id": self.run_id,
             "output_path": self.output_path,
             "segment_only": self.segment_only,
+            "decode_total": self.decode_total,
+            "decode_done": self.decode_done,
         }
 
 
@@ -70,6 +74,16 @@ class ProgressTracker:
         self._completion_pattern = re.compile(COMPLETION_MARKER)
         self._stage_weights = {stage.id: stage.weight for stage in PIPELINE_STAGES}
         self._max_logs = 1000  # Keep last N log lines
+
+        # Decode-phase per-segment progress signals.
+        # Total N comes from two sources: bash (early, from manifest line count)
+        # and Python (authoritative, after dataset load). max() reconciles them.
+        # Per-segment increment: HYP gives smooth +1; flush gives absolute checkpoint
+        # every VSP_FLUSH_EVERY (=25) samples — drop-resilient.
+        self._decode_total_bash = re.compile(r"Decoding (\d+) segments")
+        self._decode_total_py = re.compile(r"Decode dataset loaded: (\d+) samples")
+        self._decode_hyp = re.compile(r"^HYP:")
+        self._decode_flush = re.compile(r"Incremental flush at (\d+) samples")
 
     def reset(self, run_id: Optional[str] = None):
         """Reset tracker for a new pipeline run."""
@@ -130,10 +144,37 @@ class ProgressTracker:
             if path_match:
                 self.state.output_path = path_match.group(1).strip()
 
+        # Decode-phase counter signals
+        self._update_decode_counter(line)
+
         # Update progress percentage
         self._update_progress()
 
         return stage_changed
+
+    def _update_decode_counter(self, line: str):
+        """Track per-segment decode progress for the wait banner."""
+        m = self._decode_total_bash.search(line)
+        if m:
+            self.state.decode_total = max(self.state.decode_total, int(m.group(1)))
+        m = self._decode_total_py.search(line)
+        if m:
+            # Python count is authoritative — overrides bash even if smaller.
+            self.state.decode_total = int(m.group(1))
+
+        # Stage guard: only count completion signals while in decode stage.
+        # Bash and Python are separate processes; the >>> [7] marker can be
+        # buffered behind early HYP lines under rare pipe conditions.
+        if self.state.current_stage_id != "decode":
+            return
+
+        if self._decode_hyp.search(line):
+            self.state.decode_done += 1
+            return
+
+        m = self._decode_flush.search(line)
+        if m:
+            self.state.decode_done = max(self.state.decode_done, int(m.group(1)))
 
     def _transition_to_stage(self, stage_id: str):
         """Transition to a new pipeline stage."""
@@ -146,6 +187,9 @@ class ProgressTracker:
                 self.state.current_stage_description = stage.description
                 self.state.stages_completed = i
                 self.state.stage_start_time = time.time()
+                if stage_id == "decode":
+                    self.state.decode_total = 0
+                    self.state.decode_done = 0
                 break
 
     def _update_progress(self):
