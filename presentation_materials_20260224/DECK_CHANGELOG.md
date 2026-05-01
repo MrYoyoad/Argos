@@ -26,6 +26,42 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-01 — Note on commit 80580bd (bundle correction)
+
+Commit `80580bd` is titled *"client-deck: backfill commit SHA in Round
+5.1 + 5.2 changelog entries"* but actually contains **9 files**, not 1.
+A `git reset` between the Round-5.2 commit and the SHA-backfill commit
+quietly re-staged unrelated demo-report work into the index, which
+then rode along on the SHA-backfill commit.
+
+**What's actually in 80580bd:**
+
+| File | What changed | Belongs to |
+|---|---|---|
+| `presentation_materials_20260224/DECK_CHANGELOG.md` | Filled in real SHA `0ef12b4` for Round 5.1 + 5.2 entries | client-deck (intended) |
+| `docs/_research-tools/generators/generate_client_demo_report.py` | Generalized from Obama-only defaults to `--filter / --title / --subtitle / --source / --prefix-alias` flags | demo-report rework |
+| `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/generate_client_demo_report.py` | Container mirror of the same generalization | demo-report rework |
+| `lib/outputs.sh` | Wires the generalized demo report into the pipeline run | demo-report rework |
+| `vsp_linux_container_FINAL_20260217/lib/outputs.sh` | Container mirror of the outputs.sh change | demo-report rework |
+| `docs/features/argos-demo-report.md` | NEW — feature doc for the generalized demo report | demo-report rework |
+| `docs/container-sync-changelog.md` | EC2↔container sync entry for the demo-report change | demo-report rework |
+| `vsp_linux_container_FINAL_20260217/COMPLETE_CHANGELOG.md` | Container changelog entry for the demo-report change | demo-report rework |
+| `vsp-ui/README.md` | UI README touch-up that was sitting unstaged | demo-report rework |
+
+**Why not amend?** Project rule: *"Always create NEW commits rather
+than amending."* So this entry serves as the human-readable correction.
+The audit/sync trail for the demo-report changes is in
+[`docs/container-sync-changelog.md`](../docs/container-sync-changelog.md)
+(lines ~1500-1566). The DECK_CHANGELOG SHA-backfill itself remains
+correct — `0ef12b4` is the real Round-5.1+5.2 commit.
+
+**No action required** — both the deck and the demo-report rework are
+real, useful, and shipped. Future readers searching git log for the
+demo-report change should find this note instead of being misled by
+the commit subject.
+
+---
+
 ## 2026-05-01 — Round 5.2 — Engineering depth pass (LANDED)
 
 User feedback after Round 5.1: *"the engineering part needs to be more
