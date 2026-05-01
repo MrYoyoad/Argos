@@ -569,47 +569,88 @@ Read the ``billion $\to$ million'' line carefully: the model said ``million'' wi
 \end{tabular}
 \end{table}
 
-\section{Failure-mode profile -- confidence parameters by category}
+\section{Failure-mode profile -- March 5-category taxonomy on confidence parameters}
 
-The 223 hallucinated segments fall into a small set of mutually-exclusive categories defined by simple decode-time rules (no reference required at runtime). The plot and table below show how each category looks on every confidence parameter, with NIV-Y ``healthy'' segments included as a reference distribution.
-
-\textbf{Hallucinated breakdown:} phonetic sub (80), short-seg sub (72), over-generation (43), plausible swap (27), counting/digit (1).
+The 503 below-threshold segments (IS $< 2.0$) classified into 5 mutually-exclusive categories -- each segment gets exactly one label, checked $1 \to 5$. Same taxonomy as the March 2026 deck (\texttt{slide\_failure\_deep\_1a/1b}), grounded in ASR error taxonomy (Fosler-Lussier 2004) and LLM hallucination analysis (ACL 2025). This section asks: \emph{how does each March category look in confidence space?}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.98\textwidth]{conf_failure_mode_profile.png}
-\caption{Boxplots of eight confidence parameters across each failure mode plus the healthy NIV-Y reference. Most categories separate cleanly from the healthy distribution on at least one parameter; ``plausible swap'' is the closest to healthy and the hardest to catch automatically.}
+\caption{Boxplots of eight confidence parameters across the five March failure categories plus the healthy NIV-Y reference. Wrong Topic dominates ($\sim$68\% of bad segments) -- the model commits decisively to a wrong domain. Confidence collapses uniformly on every parameter for failures \emph{except} \texttt{mean\_prob}, where Wrong Topic still hovers in the medium band -- exactly the deck's ``confidence color cannot detect topic substitution'' caveat.}
 \end{figure}
+
+\subsection*{Category cards (March-deck layout)}
+
+\noindent\fcolorbox{argosCoral}{argosNavy!8}{%
+\begin{minipage}{0.96\textwidth}
+\textbf{\textcolor{argosCoral}{1. Wrong Topic}} \quad ($\sim$68.0\%, n=342)\\
+\textbf{What:} Mouth shapes decoded to wrong domain.\\
+\textbf{Rule:} semantic similarity $< 0.2$.\\
+\textbf{Example:} Ref: ``weight loss and diet'' $\to$ Hyp: ``wanted to be a princess.''\\
+\textbf{Confidence signature:} \texttt{mean\_prob} 0.55, \texttt{min\_wp} 0.08, \texttt{entropy} 2.74, \texttt{len\_ratio} 0.97, dur 1.39s.
+\end{minipage}}
+
+\vspace{0.4em}
+\noindent\fcolorbox{argosGold}{argosNavy!8}{%
+\begin{minipage}{0.96\textwidth}
+\textbf{\textcolor{argosGold}{2. Hallucination}} \quad (10.1\%, n=51)\\
+\textbf{What:} Model invented fake text.\\
+\textbf{Rule:} WER $\ge 100\%$ (output longer than reference).\\
+\textbf{Example:} Ref: ``carry strap'' $\to$ Hyp: ``holocaust denier explanation of the final act.''\\
+\textbf{Confidence signature:} \texttt{mean\_prob} 0.59, \texttt{min\_wp} 0.16, \texttt{entropy} 2.27, \texttt{len\_ratio} 1.31, dur 1.19s.
+\end{minipage}}
+
+\vspace{0.4em}
+\noindent\fcolorbox{argosCoral}{argosNavy!8}{%
+\begin{minipage}{0.96\textwidth}
+\textbf{\textcolor{argosCoral}{3. Right Topic, Wrong Details}} \quad (15.1\%, n=76)\\
+\textbf{What:} Roughly right but names/content lost (the ``frustrating near-miss'').\\
+\textbf{Rule:} NEA F1 $< 20\%$ (Semantic $\ge 0.2$).\\
+\textbf{Example:} Ref: ``13th amendment is going'' $\to$ Hyp: ``13th may mean something to him.''\\
+\textbf{Confidence signature:} \texttt{mean\_prob} 0.65, \texttt{min\_wp} 0.16, \texttt{entropy} 1.97, \texttt{len\_ratio} 0.84, dur 1.42s.
+\end{minipage}}
+
+\vspace{0.4em}
+\noindent\fcolorbox{argosGray}{argosNavy!8}{%
+\begin{minipage}{0.96\textwidth}
+\textbf{\textcolor{argosGray}{4. Signal Loss}} \quad (0.2\%, n=1)\\
+\textbf{What:} Nothing came out.\\
+\textbf{Rule:} Empty output OR length\_ratio $< 0.3$.\\
+\textbf{Example:} Ref: ``the thirteenth amendment'' $\to$ Hyp: ``''\\
+\textbf{Confidence signature:} \texttt{mean\_prob} 0.54, \texttt{len\_ratio} 0.24, dur 0.94s.
+\end{minipage}}
+
+\vspace{0.4em}
+\noindent\fcolorbox{argosGold}{argosNavy!8}{%
+\begin{minipage}{0.96\textwidth}
+\textbf{\textcolor{argosGold}{5. Accumulated Errors}} \quad (6.6\%, n=33)\\
+\textbf{What:} Many small errors compound -- death by a thousand cuts.\\
+\textbf{Rule:} IS $< 2.0$ and doesn't match categories 1--4.\\
+\textbf{Example:} Many words slightly wrong throughout, meaning erodes.\\
+\textbf{Confidence signature:} \texttt{mean\_prob} 0.62, \texttt{min\_wp} 0.13, \texttt{entropy} 2.14, \texttt{len\_ratio} 0.74, dur 1.37s.
+\end{minipage}}
+
+\subsection*{Per-category summary}
 
 \begin{table}[H]
 \centering
 \scriptsize
-\begin{tabular}{lrrrrrrrr}
+\begin{tabular}{lrrrrrrrrr}
 \toprule
-\textbf{Category} & \textbf{n} & \textbf{m\_prob} & \textbf{min\_wp} & \textbf{m\_ent} & \textbf{dur (s)} & \textbf{lr} & \textbf{p$<$0.4} & \textbf{IS} \\
+\textbf{Category} & \textbf{n} & \textbf{m\_prob} & \textbf{min\_wp} & \textbf{m\_ent} & \textbf{dur (s)} & \textbf{lr} & \textbf{NEA} & \textbf{WER\%} & \textbf{IS} \\
 \midrule
-phonetic sub      & 80  & 0.55 & \textbf{0.09} & 2.73 & 1.44 & 1.02 & 0.37 & 0.97 \\
-short-seg sub     & 72  & 0.47 & 0.08          & \textbf{3.21} & \textbf{0.85} & 0.97 & 0.46 & 0.98 \\
-over-generation   & 43  & 0.58 & 0.12          & 2.50 & 1.25 & \textbf{2.02} & 0.31 & 0.80 \\
-plausible swap    & 27  & 0.62 & 0.13          & 2.11 & 1.39 & 1.24 & 0.27 & 1.64 \\
-counting/digit    & 1   & \textbf{0.90} & 0.15 & 0.71 & 1.14 & 2.00 & 0.04 & 0.03 \\
+1. Wrong Topic                & 342 & 0.55 & 0.08 & 2.74 & 1.39 & 0.97 & 0.7  & 137 & 1.03 \\
+2. Hallucination              & 51  & 0.59 & 0.16 & 2.27 & 1.19 & \textbf{1.31} & 5.6  & 145 & 1.39 \\
+3. Right Topic, Wrong Details & 76  & 0.65 & 0.16 & 1.97 & 1.42 & 0.84 & 4.4  & 71  & 1.65 \\
+4. Signal Loss                & 1   & 0.54 & 0.12 & 2.84 & 0.94 & \textbf{0.24} & 0    & 100 & 1.91 \\
+5. Accumulated Errors         & 33  & 0.62 & 0.13 & 2.14 & 1.37 & 0.74 & 31.5 & 51  & 1.77 \\
 \midrule
-\textbf{Healthy (NIV-Y)} & 361 & \textbf{0.86} & \textbf{0.32} & \textbf{0.62} & \textbf{1.93} & 0.97 & \textbf{0.06} & \textbf{4.33} \\
+\textbf{Healthy (NIV-Y)}      & 361 & \textbf{0.86} & \textbf{0.32} & \textbf{0.62} & \textbf{1.93} & 0.97 & \textbf{84.6} & \textbf{22} & \textbf{4.33} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Where each category lives in confidence space:}
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Phonetic substitution} (n=80): \texttt{mean\_prob} $\approx 0.55$, \texttt{min\_word\_prob} $\approx 0.09$, \texttt{mean\_entropy} $\approx 2.7$. Visemic confusion (e.g., ``major in acting'' $\to$ ``measure a hacking''). \emph{Best catch:} \texttt{min\_word\_prob}.
-  \item \textbf{Short-segment substitution} (n=72): \texttt{mean\_prob} $\approx 0.47$, \texttt{mean\_entropy} $\approx 3.2$ (highest of any category), duration $\approx 0.85$s. Encoder cannot lock onto too-short clips. \emph{Best catch:} duration filter ($< 1$s).
-  \item \textbf{Over-generation} (n=43): \texttt{mean\_prob} $\approx 0.58$, \texttt{len\_ratio} $\approx 2.0$ (defining feature), WER $\approx 185\%$. \emph{Best catch:} \texttt{len\_ratio} $> 1.5$.
-  \item \textbf{Plausible swap} (n=27): \texttt{mean\_prob} $\approx 0.62$ (highest of hallucinated), \texttt{mean\_entropy} $\approx 2.1$ (lowest of hallucinated), NEA F1 $\approx 26\%$, IS $\approx 1.64$ (highest IS among failures). \emph{Reference-required to detect -- beam aggregation or topic LM.}
-  \item \textbf{Counting/digit loop} (n=1): \texttt{mean\_prob} $\approx 0.90$ (high!), \texttt{mean\_entropy} $\approx 0.71$. The decisive-failure mode. \emph{Best catch:} digit-pattern regex on hyp text.
-\end{itemize}
-
-\textbf{The pattern across all parameters.} Every category except \texttt{counting/digit} and \texttt{plausible swap} separates cleanly from the healthy distribution on at least one parameter. Combining \texttt{mean\_prob}, \texttt{min\_word\_prob}, \texttt{mean\_entropy}, \texttt{len\_ratio}, and duration covers 4 of 5 categories without reference. The remaining holes are the rare counting loop (1 case in 1{,}497, easily caught with a regex) and the genuinely deep ``plausible swap'' failure (27 cases, requires beam aggregation or external context).
+\textbf{Take-away.} Categories 1 and 2 (Wrong Topic + Hallucination) account for $\sim 78\%$ of bad segments and have the lowest confidence signatures of any failure mode -- both are catchable from \texttt{mean\_prob} $< 0.65$ alone. Right Topic Wrong Details (\#3) is the closest to healthy on every confidence parameter -- the model knows the topic but loses entities, and confidence-only signals struggle here. \textbf{This is exactly why Mission 6 (all-20-beams capture) and a topic-conditioned LM are the next-sprint priorities -- categories 3-5 require either beam disagreement or external context to flag at runtime.}
 
 \section{What changes in the codebase}
 

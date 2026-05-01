@@ -1159,46 +1159,62 @@ def analysis_9_false_goods(df: pd.DataFrame, segs: List[Segment],
 # Analysis 11 — Failure-mode profiling
 # ─────────────────────────────────────────────────────────────────────────────
 
-_DIGIT_RE = re.compile(r"^\d+$")
+# March-deck failure-mode taxonomy (slide_failure_deep_1a/1b in
+# slides_research.py). Five mutually exclusive categories, evaluated in
+# order. Applied to segments with IS < 2.0. Grounded in ASR error taxonomy
+# (Fosler-Lussier 2004) and LLM hallucination analysis (ACL 2025).
+def _categorize_failure(semantic_sim: float, wer_pct: float, nea_f1: float,
+                         len_ratio: float, hyp: str) -> str:
+    """Five-category March-deck taxonomy. Order matches the March deck's
+    impact ranking (slide_failure_deep_1a/1b numbering reflects frequency,
+    but the rule check order matters for dual-criteria segments and
+    follows the deck's narrative: topic mismatch first, then length-blowup
+    hallucination, then entity-loss, then signal collapse, leftovers last).
 
-
-def _is_counting_loop(hyp: str) -> bool:
-    if not hyp:
-        return False
-    toks = hyp.split()
-    if len(toks) < 4:
-        return False
-    n_dig = sum(1 for t in toks if _DIGIT_RE.match(t))
-    return n_dig / len(toks) >= 0.5
-
-
-def _categorize_failure(hyp: str, nea_f1: float, len_ratio: float, duration: float) -> str:
-    """Mutually exclusive failure-mode rules, evaluated in order."""
-    if _is_counting_loop(hyp):
-        return "counting/digit"
-    if len_ratio > 1.5:
-        return "over-generation"
-    if len_ratio < 0.5:
-        return "under-generation"
-    if duration < 1.0 and (nea_f1 or 0) == 0:
-        return "short-seg sub"
-    if (nea_f1 or 0) == 0 and 0.5 <= len_ratio <= 1.5 and duration >= 1.0:
-        return "phonetic sub"
-    if (nea_f1 or 0) > 0 and 0.5 <= len_ratio <= 1.5:
-        return "plausible swap"
-    return "other"
+    1. Wrong Topic                — semantic_sim < 0.2
+    2. Hallucination              — WER >= 100% (output longer than reference)
+    3. Right Topic, Wrong Details — semantic_sim >= 0.2 AND nea_f1 < 20%
+    4. Signal Loss                — empty output OR length_ratio < 0.3
+    5. Accumulated Errors         — anything else with IS < 2.0
+    """
+    # Wrong Topic first — semantic mismatch dominates regardless of WER.
+    if semantic_sim < 0.2:
+        return "1. Wrong Topic"
+    if wer_pct >= 100:
+        return "2. Hallucination"
+    if (nea_f1 or 0) < 20:
+        return "3. Right Topic, Wrong Details"
+    if not (hyp or "").strip() or len_ratio < 0.3:
+        return "4. Signal Loss"
+    return "5. Accumulated Errors"
 
 
 def analysis_11_failure_modes(df: pd.DataFrame, baseline_csv: Path) -> Dict[str, Any]:
-    """Categorize hallucinated segments and profile their confidence
-    parameters against a healthy reference (NIV-Y)."""
-    print("\n══ Analysis 11: Failure-mode profiling ══")
+    """March-deck 5-category failure-mode taxonomy applied to IS<2.0 segments.
+    Profiles each category's confidence parameters against the NIV-Y healthy
+    reference. Mirrors slide_failure_deep_1a/1b/2 in the March 2026 deck."""
+    print("\n══ Analysis 11: Failure-mode profiling (March 5-category taxonomy) ══")
     df = df.dropna(subset=["is_score"]).copy()
     df["niv_y"] = (df["is_score"] >= 3.80).astype(int)
     df["duration_s"] = df["utt_id"].map(_utt_duration_seconds)
 
+    # Pull metric components from baseline (WER, NEA F1, hyp).
     baseline_rows = list(csv.DictReader(baseline_csv.open(encoding="utf-8")))
     baseline_by_id = {r["utt_id"]: r for r in baseline_rows}
+
+    # Pull semantic_sim from intelligibility_scores.csv (IS pipeline output).
+    is_csv = REPO_ROOT / "docs" / "evaluation" / "intelligibility" / "intelligibility_scores.csv"
+    semantic_by_id: Dict[str, float] = {}
+    if is_csv.exists():
+        for row in csv.DictReader(is_csv.open(encoding="utf-8")):
+            try:
+                semantic_by_id[row["utt_id"]] = float(row.get("semantic_sim", "") or "nan")
+            except ValueError:
+                pass
+        print(f"  Loaded semantic_sim for {len(semantic_by_id)} segments from {is_csv}")
+    else:
+        print(f"  WARN: {is_csv} not found — semantic_sim unavailable, "
+              "Wrong Topic vs Right Topic categories will collapse")
 
     def _get_field(uid: str, key: str) -> str:
         return (baseline_by_id.get(uid, {}).get(key, "") or "").strip()
@@ -1212,22 +1228,26 @@ def analysis_11_failure_modes(df: pd.DataFrame, baseline_csv: Path) -> Dict[str,
     df["hyp_text"] = df["utt_id"].map(lambda u: _get_field(u, "hyp"))
     df["nea_f1_pct"] = df["utt_id"].map(lambda u: _to_float(_get_field(u, "nea_f1_%")))
     df["wer_pct"] = df["utt_id"].map(lambda u: _to_float(_get_field(u, "wer_%")))
-    df["hallucinated"] = ((df["wer_pct"] >= 100) & (df["len_ratio"] >= 0.5)).astype(int)
+    df["semantic_sim"] = df["utt_id"].map(lambda u: semantic_by_id.get(u, float("nan")))
 
-    hall = df[df["hallucinated"] == 1].copy()
-    hall["category"] = hall.apply(
-        lambda r: _categorize_failure(r["hyp_text"], r["nea_f1_pct"],
-                                       r["len_ratio"], r["duration_s"]),
+    # Apply the March 5-category taxonomy to all IS<2.0 segments.
+    bad = df[df["is_score"] < 2.0].copy()
+    bad["category"] = bad.apply(
+        lambda r: _categorize_failure(r["semantic_sim"], r["wer_pct"],
+                                       r["nea_f1_pct"], r["len_ratio"],
+                                       r["hyp_text"]),
         axis=1,
     )
     healthy = df[df["niv_y"] == 1].copy()
     healthy["category"] = "Healthy (NIV-Y)"
-    combined = pd.concat([hall, healthy[hall.columns]], ignore_index=True)
+    combined = pd.concat([bad, healthy[bad.columns]], ignore_index=True)
 
-    counts = hall["category"].value_counts()
-    print(f"\n  Hallucinated by category (n={len(hall)} total):")
+    counts = bad["category"].value_counts().sort_index()
+    total_bad = max(1, len(bad))
+    print(f"\n  IS < 2.0 segments by category (n={len(bad)} total):")
     for cat, n in counts.items():
-        print(f"    {cat:20s}  {int(n):4d}")
+        pct = n / total_bad * 100
+        print(f"    {cat:36s}  {int(n):4d}  ({pct:5.1f}%)")
     cat_order = list(counts.index) + ["Healthy (NIV-Y)"]
 
     summary = combined.groupby("category").agg(
@@ -1250,15 +1270,14 @@ def analysis_11_failure_modes(df: pd.DataFrame, baseline_csv: Path) -> Dict[str,
                    "mean_margin", "duration_s", "len_ratio",
                    "frac_p_lt_04", "is_score"]].to_string())
 
+    # Match March-deck card colors per category.
     cat_colors = {
-        "counting/digit":   GOLD,
-        "over-generation":  ORANGE,
-        "under-generation": PURPLE,
-        "short-seg sub":    CORAL,
-        "phonetic sub":     "#ff5722",
-        "plausible swap":   "#9c27b0",
-        "other":            MGRAY,
-        "Healthy (NIV-Y)":  GREEN,
+        "1. Wrong Topic":                ORANGE,    # March deck ORANGE
+        "2. Hallucination":              "#ffd54f", # March deck YELLOW
+        "3. Right Topic, Wrong Details": "#e06c75", # March deck RED/CORAL
+        "4. Signal Loss":                "#aaaaaa", # March deck LGRAY
+        "5. Accumulated Errors":         "#ffeb3b", # March deck YELLOW
+        "Healthy (NIV-Y)":               GREEN,
     }
     panels = [
         ("mean_prob",     "mean_prob",       [0, 1.0]),
@@ -1304,15 +1323,36 @@ def analysis_11_failure_modes(df: pd.DataFrame, baseline_csv: Path) -> Dict[str,
         ax.set_ylim(yrng)
     fig.suptitle(
         f"Confidence parameters by failure mode  "
-        f"(n_hallucinated={len(hall)}, n_healthy_ref={len(healthy)})",
+        f"(March 5-category taxonomy on IS<2.0, n={len(bad)}; "
+        f"healthy NIV-Y reference n={len(healthy)})",
         color=WHITE, fontsize=14, fontweight="bold", y=1.0,
     )
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     _save(fig, PLOTS_DIR / "conf_failure_mode_profile.png")
 
+    # Per-category card metadata for the markdown / LaTeX (mirrors the
+    # March deck's slide_failure_deep_1a/1b cards).
+    card_metadata = [
+        ("1. Wrong Topic", "Mouth shapes decoded to wrong domain",
+         "Semantic similarity < 0.2",
+         "Ref: \"weight loss and diet\" → Hyp: \"wanted to be a princess\""),
+        ("2. Hallucination", "Model invented fake text",
+         "WER >= 100% (output longer than reference)",
+         "Ref: \"carry strap\" → Hyp: \"holocaust denier explanation of the final act\""),
+        ("3. Right Topic, Wrong Details", "Roughly right but names/content lost",
+         "NEA F1 < 20% (Semantic >= 0.2)",
+         "Ref: \"13th amendment is going\" → Hyp: \"13th may mean something to him\""),
+        ("4. Signal Loss", "Nothing came out",
+         "Empty output OR length_ratio < 0.3",
+         "Ref: \"the thirteenth amendment\" → Hyp: \"\""),
+        ("5. Accumulated Errors", "Many small errors compound",
+         "IS < 2.0 and doesn't match categories 1-4",
+         "Many words slightly wrong throughout, meaning erodes"),
+    ]
     return {"summary": summary, "counts": counts.to_dict(),
-            "n_hall": len(hall), "n_healthy": len(healthy),
-            "cat_order": cat_order}
+            "n_bad": len(bad), "n_healthy": len(healthy),
+            "cat_order": cat_order,
+            "card_metadata": card_metadata}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1652,43 +1692,67 @@ Based on these findings:
 {reproduce_block}"""
     DOC_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-    # Build Section 11 markdown (failure-mode profile) before splicing.
+    # Build Section 12 markdown (failure-mode profile, March-deck style).
     a11_summary = a11["summary"]
-    s11_table = "| Category | n | mean_prob | min_word_prob | mean_entropy | mean_margin | duration (s) | len_ratio | hyp_words | frac p<0.4 | NEA F1 | WER % | IS |\n"
-    s11_table += "|---|---|---|---|---|---|---|---|---|---|---|---|---|\n"
+    counts = a11["counts"]
+    n_bad = a11["n_bad"]
+    cards = a11["card_metadata"]
+
+    # March-deck "card" rows: name, count, %, rule, example.
+    cards_md = ""
+    for cat, desc, rule, example in cards:
+        n = int(counts.get(cat, 0))
+        pct = (n / max(1, n_bad)) * 100
+        # Pull confidence summary for this category, if present.
+        if cat in a11_summary.index:
+            r = a11_summary.loc[cat]
+            conf_blurb = (
+                f"mean_prob={r['mean_prob']:.2f}, "
+                f"min_wp={r['min_word_prob']:.2f}, "
+                f"entropy={r['mean_entropy']:.2f}, "
+                f"len_ratio={r['len_ratio']:.2f}, "
+                f"dur={r['duration_s']:.2f}s"
+            )
+        else:
+            conf_blurb = "—"
+        cards_md += f"### {cat}  ({pct:.1f}%, n={n})\n\n"
+        cards_md += f"- **What:** {desc}\n"
+        cards_md += f"- **Rule:** {rule}\n"
+        cards_md += f"- **Example:** {example}\n"
+        cards_md += f"- **Confidence signature:** {conf_blurb}\n\n"
+
+    # Full per-category summary table for reference.
+    s11_table = "| Category | n | mean_prob | min_word_prob | mean_entropy | mean_margin | duration (s) | len_ratio | NEA F1 | WER % | IS |\n"
+    s11_table += "|---|---|---|---|---|---|---|---|---|---|---|\n"
     for cat, row in a11_summary.iterrows():
         s11_table += (f"| **{cat}** | {int(row['n'])} | "
                       f"{row['mean_prob']:.2f} | {row['min_word_prob']:.2f} | "
                       f"{row['mean_entropy']:.2f} | {row['mean_margin']:.2f} | "
                       f"{row['duration_s']:.2f} | {row['len_ratio']:.2f} | "
-                      f"{row['len_hyp_words']:.1f} | {row['frac_p_lt_04']:.2f} | "
                       f"{row['nea_f1']:.1f} | {row['wer']:.0f} | "
                       f"{row['is_score']:.2f} |\n")
 
-    counts = a11["counts"]
-    counts_str = ", ".join(f"{cat} ({int(n)})" for cat, n in counts.items())
+    section_11_md = f"""## 12. Failure-mode profile — March 5-category taxonomy on confidence parameters
 
-    section_11_md = f"""## 12. Failure-mode profile — confidence parameters by category
+The {n_bad} below-threshold segments (IS < 2.0) classified into 5 mutually-exclusive categories — each segment gets exactly one label, checked 1→5. Same taxonomy as the March 2026 deck (slide_failure_deep_1a/1b), grounded in ASR error taxonomy (Fosler-Lussier 2004) and LLM hallucination analysis (ACL 2025). This section asks: **how does each March category look in confidence space?**
 
 ![failure-mode profile](../presentation_materials_20260224/01_plots_for_slides/conf_failure_mode_profile.png)
 
-The 223 hallucinated segments fall into a small set of mutually-exclusive categories defined by simple decode-time rules (no reference required at runtime). The plot and table below show how each category looks on every confidence parameter, with NIV-Y "healthy" segments included as a reference distribution.
+{cards_md}
 
-**Hallucinated breakdown:** {counts_str}.
-
-**Per-category mean values** (the bottom row is the healthy reference, NIV-Y at the balanced gate):
+**Per-category summary (bottom row = healthy NIV-Y reference):**
 
 {s11_table}
 
-**Where each category lives in confidence space:**
+**The pattern across confidence parameters:**
 
-- **Phonetic substitution** (n={int(counts.get('phonetic sub', 0))}): mean_prob ≈ 0.55, min_word_prob ≈ 0.09, mean_entropy ≈ 2.7. The model produces a fluent English replacement for the reference text — visemic confusion (e.g. "major in acting" → "measure a hacking"). Entropy IS high, but no single signal is decisive — these distribute across the medium-confidence band. **Best catch: min_word_prob.**
-- **Short-segment substitution** (n={int(counts.get('short-seg sub', 0))}): mean_prob ≈ 0.47, mean_entropy ≈ 3.2 (highest of any category), duration ≈ 0.85s, NEA F1 = 0. Segment is too short for the encoder to lock onto. **Best catch: duration filter (< 1s).**
-- **Over-generation** (n={int(counts.get('over-generation', 0))}): mean_prob ≈ 0.58, len_ratio ≈ 2.0 (defining feature), WER ≈ 185%. Model emits a long fluent string for a short clip. **Best catch: len_ratio > 1.5.**
-- **Plausible swap** (n={int(counts.get('plausible swap', 0))}): mean_prob ≈ 0.62 (highest of the hallucinated categories), mean_entropy ≈ 2.1 (lowest of hallucinated), NEA F1 ≈ 26% (some entities preserved), IS ≈ 1.64 (highest IS among failures — these aren't catastrophic). The chosen text is fluent, length-matched, and partially-relevant. **Reference-required to detect — beam aggregation or topic LM.**
-- **Counting/digit loop** (n={int(counts.get('counting/digit', 0))}): mean_prob ≈ 0.90 (high!), mean_entropy ≈ 0.71. The decisive failure mode — confidence alone won't catch it. **Best catch: digit-pattern regex on hyp text.**
+- **Signal Loss** is trivially detectable — empty output, no per-token confidence to aggregate. The pipeline already filters these.
+- **Hallucination** has elevated `len_ratio` (model generates more than asked) and rising `mean_entropy`. Both are decode-time-free signals.
+- **Wrong Topic** is the LARGEST category and the one our confidence signals separate from healthy *least* cleanly — the model commits decisively to a wrong domain. Semantic similarity is the only reliable separator, but that requires the reference. Beam-aggregation (Mission 6) is the runtime alternative.
+- **Right Topic, Wrong Details** has confidence in the same band as moderate-quality healthy segments — the model knows the topic but loses entities. NEA F1 = 0 is the diagnostic, also reference-required at runtime. **This is the "frustrating near-miss" zone.**
+- **Accumulated Errors** distribute across the middle of every parameter range — no single signal is decisive because every signal is mediocre. Death by a thousand cuts. Best catch: `frac_p_lt_04` ≥ 0.30 (30%+ of tokens in the red band).
 
-**The pattern across all parameters:** every category except `counting/digit` and `plausible swap` separates cleanly from the healthy distribution on at least one parameter. Combining `mean_prob`, `min_word_prob`, `mean_entropy`, `len_ratio`, and `duration` covers 4 of 5 categories without reference. The remaining holes are the rare counting loop (1 case in 1,497, easily caught with a regex) and the genuinely deep "plausible swap" failure (27 cases, requires beam aggregation or external context).
+**Take-away.** Categories 1 and 2 (Signal Loss + Hallucination) are catchable from confidence + length alone — together that's {int(counts.get('1. Signal Loss', 0)) + int(counts.get('2. Hallucination', 0))} of the {n_bad} bad segments. Categories 3-5 require either the reference (semantic / NEA) or beam-level signal — together {int(counts.get('3. Wrong Topic', 0)) + int(counts.get('4. Right Topic, Wrong Details', 0)) + int(counts.get('5. Accumulated Errors', 0))} segments. This is why Mission 6 (all-20-beams capture) and Mission 8 (topic-conditioned LM) sit at the top of the next-sprint list.
 
 """
 

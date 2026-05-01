@@ -421,35 +421,70 @@ The "very low" bucket (mean_prob < 0.40) has only 11 green words in the dataset 
 
 ---
 
-## 12. Failure-mode profile — confidence parameters by category
+## 12. Failure-mode profile — March 5-category taxonomy on confidence parameters
+
+The 503 below-threshold segments (IS < 2.0) classified into 5 mutually-exclusive categories — each segment gets exactly one label, checked 1→5. Same taxonomy as the March 2026 deck (slide_failure_deep_1a/1b), grounded in ASR error taxonomy (Fosler-Lussier 2004) and LLM hallucination analysis (ACL 2025). This section asks: **how does each March category look in confidence space?**
 
 ![failure-mode profile](../presentation_materials_20260224/01_plots_for_slides/conf_failure_mode_profile.png)
 
-The 223 hallucinated segments fall into a small set of mutually-exclusive categories defined by simple decode-time rules (no reference required at runtime). The plot and table below show how each category looks on every confidence parameter, with NIV-Y "healthy" segments included as a reference distribution.
+### 1. Wrong Topic  (68.0%, n=342)
 
-**Hallucinated breakdown:** phonetic sub (80), short-seg sub (72), over-generation (43), plausible swap (27), counting/digit (1).
+- **What:** Mouth shapes decoded to wrong domain
+- **Rule:** Semantic similarity < 0.2
+- **Example:** Ref: "weight loss and diet" → Hyp: "wanted to be a princess"
+- **Confidence signature:** mean_prob=0.55, min_wp=0.08, entropy=2.74, len_ratio=0.97, dur=1.39s
 
-**Per-category mean values** (the bottom row is the healthy reference, NIV-Y at the balanced gate):
+### 2. Hallucination  (10.1%, n=51)
 
-| Category | n | mean_prob | min_word_prob | mean_entropy | mean_margin | duration (s) | len_ratio | hyp_words | frac p<0.4 | NEA F1 | WER % | IS |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **phonetic sub** | 80 | 0.55 | 0.09 | 2.73 | 0.32 | 1.44 | 1.02 | 12.9 | 0.37 | 0.0 | 108 | 0.97 |
-| **short-seg sub** | 72 | 0.47 | 0.07 | 3.21 | 0.24 | 0.85 | 0.97 | 7.5 | 0.46 | 0.0 | 108 | 0.98 |
-| **over-generation** | 43 | 0.58 | 0.12 | 2.50 | 0.37 | 1.25 | 2.02 | 12.4 | 0.31 | 7.0 | 185 | 0.80 |
-| **plausible swap** | 27 | 0.62 | 0.13 | 2.11 | 0.41 | 1.39 | 1.24 | 14.9 | 0.27 | 26.5 | 108 | 1.64 |
-| **counting/digit** | 1 | 0.90 | 0.15 | 0.71 | 0.84 | 1.14 | 2.00 | 12.0 | 0.04 | 0.0 | 200 | 0.03 |
-| **Healthy (NIV-Y)** | 361 | 0.86 | 0.32 | 0.62 | 0.78 | 1.93 | 0.97 | 20.0 | 0.06 | 84.6 | 22 | 4.33 |
+- **What:** Model invented fake text
+- **Rule:** WER >= 100% (output longer than reference)
+- **Example:** Ref: "carry strap" → Hyp: "holocaust denier explanation of the final act"
+- **Confidence signature:** mean_prob=0.59, min_wp=0.16, entropy=2.27, len_ratio=1.31, dur=1.19s
+
+### 3. Right Topic, Wrong Details  (15.1%, n=76)
+
+- **What:** Roughly right but names/content lost
+- **Rule:** NEA F1 < 20% (Semantic >= 0.2)
+- **Example:** Ref: "13th amendment is going" → Hyp: "13th may mean something to him"
+- **Confidence signature:** mean_prob=0.65, min_wp=0.16, entropy=1.97, len_ratio=0.84, dur=1.42s
+
+### 4. Signal Loss  (0.2%, n=1)
+
+- **What:** Nothing came out
+- **Rule:** Empty output OR length_ratio < 0.3
+- **Example:** Ref: "the thirteenth amendment" → Hyp: ""
+- **Confidence signature:** mean_prob=0.54, min_wp=0.12, entropy=2.84, len_ratio=0.23, dur=0.94s
+
+### 5. Accumulated Errors  (6.6%, n=33)
+
+- **What:** Many small errors compound
+- **Rule:** IS < 2.0 and doesn't match categories 1-4
+- **Example:** Many words slightly wrong throughout, meaning erodes
+- **Confidence signature:** mean_prob=0.61, min_wp=0.13, entropy=2.14, len_ratio=0.74, dur=1.36s
 
 
-**Where each category lives in confidence space:**
 
-- **Phonetic substitution** (n=80): mean_prob ≈ 0.55, min_word_prob ≈ 0.09, mean_entropy ≈ 2.7. The model produces a fluent English replacement for the reference text — visemic confusion (e.g. "major in acting" → "measure a hacking"). Entropy IS high, but no single signal is decisive — these distribute across the medium-confidence band. **Best catch: min_word_prob.**
-- **Short-segment substitution** (n=72): mean_prob ≈ 0.47, mean_entropy ≈ 3.2 (highest of any category), duration ≈ 0.85s, NEA F1 = 0. Segment is too short for the encoder to lock onto. **Best catch: duration filter (< 1s).**
-- **Over-generation** (n=43): mean_prob ≈ 0.58, len_ratio ≈ 2.0 (defining feature), WER ≈ 185%. Model emits a long fluent string for a short clip. **Best catch: len_ratio > 1.5.**
-- **Plausible swap** (n=27): mean_prob ≈ 0.62 (highest of the hallucinated categories), mean_entropy ≈ 2.1 (lowest of hallucinated), NEA F1 ≈ 26% (some entities preserved), IS ≈ 1.64 (highest IS among failures — these aren't catastrophic). The chosen text is fluent, length-matched, and partially-relevant. **Reference-required to detect — beam aggregation or topic LM.**
-- **Counting/digit loop** (n=1): mean_prob ≈ 0.90 (high!), mean_entropy ≈ 0.71. The decisive failure mode — confidence alone won't catch it. **Best catch: digit-pattern regex on hyp text.**
+**Per-category summary (bottom row = healthy NIV-Y reference):**
 
-**The pattern across all parameters:** every category except `counting/digit` and `plausible swap` separates cleanly from the healthy distribution on at least one parameter. Combining `mean_prob`, `min_word_prob`, `mean_entropy`, `len_ratio`, and `duration` covers 4 of 5 categories without reference. The remaining holes are the rare counting loop (1 case in 1,497, easily caught with a regex) and the genuinely deep "plausible swap" failure (27 cases, requires beam aggregation or external context).
+| Category | n | mean_prob | min_word_prob | mean_entropy | mean_margin | duration (s) | len_ratio | NEA F1 | WER % | IS |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **1. Wrong Topic** | 342 | 0.55 | 0.08 | 2.74 | 0.32 | 1.39 | 0.97 | 5.3 | 104 | 1.03 |
+| **2. Hallucination** | 51 | 0.59 | 0.16 | 2.27 | 0.41 | 1.19 | 1.31 | 8.9 | 123 | 1.39 |
+| **3. Right Topic, Wrong Details** | 76 | 0.65 | 0.16 | 1.97 | 0.45 | 1.42 | 0.84 | 2.8 | 79 | 1.65 |
+| **4. Signal Loss** | 1 | 0.54 | 0.12 | 2.84 | 0.25 | 0.94 | 0.23 | 66.7 | 88 | 1.91 |
+| **5. Accumulated Errors** | 33 | 0.61 | 0.13 | 2.14 | 0.42 | 1.36 | 0.74 | 27.9 | 80 | 1.77 |
+| **Healthy (NIV-Y)** | 361 | 0.86 | 0.32 | 0.62 | 0.78 | 1.93 | 0.97 | 84.6 | 22 | 4.33 |
+
+
+**The pattern across confidence parameters:**
+
+- **Signal Loss** is trivially detectable — empty output, no per-token confidence to aggregate. The pipeline already filters these.
+- **Hallucination** has elevated `len_ratio` (model generates more than asked) and rising `mean_entropy`. Both are decode-time-free signals.
+- **Wrong Topic** is the LARGEST category and the one our confidence signals separate from healthy *least* cleanly — the model commits decisively to a wrong domain. Semantic similarity is the only reliable separator, but that requires the reference. Beam-aggregation (Mission 6) is the runtime alternative.
+- **Right Topic, Wrong Details** has confidence in the same band as moderate-quality healthy segments — the model knows the topic but loses entities. NEA F1 = 0 is the diagnostic, also reference-required at runtime. **This is the "frustrating near-miss" zone.**
+- **Accumulated Errors** distribute across the middle of every parameter range — no single signal is decisive because every signal is mediocre. Death by a thousand cuts. Best catch: `frac_p_lt_04` ≥ 0.30 (30%+ of tokens in the red band).
+
+**Take-away.** Categories 1 and 2 (Signal Loss + Hallucination) are catchable from confidence + length alone — together that's 51 of the 503 bad segments. Categories 3-5 require either the reference (semantic / NEA) or beam-level signal — together 33 segments. This is why Mission 6 (all-20-beams capture) and Mission 8 (topic-conditioned LM) sit at the top of the next-sprint list.
 
 ## What changes in the codebase
 
