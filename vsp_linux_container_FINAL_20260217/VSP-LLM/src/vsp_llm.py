@@ -356,6 +356,8 @@ class avhubert_llm_seq2seq_cluster_count(BaseFairseqModel):
                 repetition_penalty=1.0,
                 length_penalty=0.0,
                 no_repeat_ngram_size=0,
+                do_sample=False,
+                temperature=1.0,
                   **kwargs,
                 ):
         output = self.encoder(**kwargs)
@@ -381,16 +383,32 @@ class avhubert_llm_seq2seq_cluster_count(BaseFairseqModel):
         llm_input = torch.cat((instruction_embedding, reduced_enc_out), dim=1) 
 
         self.decoder.config.use_cache = True
-        outputs = self.decoder.generate(inputs_embeds=llm_input,
-                        top_p=top_p,
-                        num_beams=num_beams,
-                        max_new_tokens=max_length,
-                        min_length=min_length,
-                        repetition_penalty=repetition_penalty,
-                        do_sample=True,
-                        length_penalty=length_penalty,
-                        no_repeat_ngram_size=no_repeat_ngram_size,
-                        )
+
+        gen_kwargs = dict(
+            inputs_embeds=llm_input,
+            top_p=top_p,
+            num_beams=num_beams,
+            max_new_tokens=max_length,
+            min_length=min_length,
+            repetition_penalty=repetition_penalty,
+            do_sample=do_sample,
+            temperature=temperature,
+            length_penalty=length_penalty,
+            no_repeat_ngram_size=no_repeat_ngram_size,
+        )
+
+        nbest_enabled = os.environ.get("VSP_NBEST", "0") == "1"
+        # n-best requires per-token probs/entropy in the decode loop, so force
+        # output_scores when the user opted into n-best capture.
+        if nbest_enabled or os.environ.get("VSP_OUTPUT_SCORES", "0") == "1":
+            gen_kwargs["output_scores"] = True
+            gen_kwargs["return_dict_in_generate"] = True
+
+        if nbest_enabled:
+            # Return all surviving beams (top-1 unaffected — it stays at index 0).
+            gen_kwargs["num_return_sequences"] = num_beams
+
+        outputs = self.decoder.generate(**gen_kwargs)
 
         return outputs
 
@@ -415,6 +433,11 @@ class avhubert_llm_seq2seq_cluster_count(BaseFairseqModel):
         """Set the number of parameters updates."""
         super().set_num_updates(num_updates)
         self.num_updates = num_updates
+
+    def load_state_dict(self, state_dict, strict=True, model_cfg=None, args=None):
+        # Use strict=False because state_dict() only saves encoder + LoRA + avfeat_to_llm.
+        # Base LLM weights are loaded from HuggingFace in build_model().
+        return super().load_state_dict(state_dict, strict=False, model_cfg=model_cfg, args=args)
 
     def state_dict(self):
         old_state = super().state_dict()
