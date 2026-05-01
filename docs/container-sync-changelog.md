@@ -1547,3 +1547,31 @@ hyp_words = [w for w, _ in hyp_tokens]
 **Container action**: No further action needed — all three copies updated in this commit and verified identical (`md5sum` match).
 
 **Verification**: End-to-end test on `english_full_results/client_outputs/report/report.csv` (1,497 segments): partition is exhaustive (Y=359 + P=564 + N=574 = 1,497); Y+P=923 (61.7%) matches published 922 (61.6%) within 1 segment; boundary cases verified (1.937→N, 3.763→P, 4.342→Y).
+
+### Argos Demo Report Auto-Generation (May 1, 2026)
+
+**Summary**: every pipeline run now drops a polished, dark-themed `argos_demo.html` into `client_outputs/report/`, included in the server's zip download. Previously the Argos-styled report only existed as a one-off Obama-demo artifact in `presentation_materials_20260224/`. Now it is run-agnostic and produced automatically.
+
+**Files changed (all kept byte-identical via md5sum)**:
+
+1. `lib/outputs.sh` — added `run_argos_demo_report()` function and a one-line call after `make_report.py`. Non-fatal on failure (warns, does not abort the pipeline). Mirrored to `vsp_linux_container_FINAL_20260217/lib/outputs.sh`.
+2. `docs/_research-tools/generators/generate_client_demo_report.py` — generalized: removed all Obama-specific defaults, added `--filter` (default `""` = all segments), `--title`, `--subtitle`, `--source`, and `--prefix-alias 'src=dst'` flags. `--decode` and `--out` now required. Mirrored to:
+   - `VSP-LLM/scripts/generate_client_demo_report.py` (canonical, resolved by `outputs.sh`)
+   - `vsp_docker/galaxy_export/VSP-LLM/scripts/generate_client_demo_report.py`
+   - `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/generate_client_demo_report.py`
+
+**Behavior**:
+- When `confidence-{fid}.json` sidecar exists alongside the decode JSON (default since the April 30 confidence shipped), the report uses real per-token softmax probabilities aggregated to per-word.
+- Otherwise falls back to synthetic confidence derived from WER alignment (each segment tagged "synthetic").
+- The original Obama artifact is regeneratable byte-identical via explicit args (verified) — see [docs/features/argos-demo-report.md](features/argos-demo-report.md) for the exact invocation.
+
+**Standalone container compatibility**: zero new Python dependencies (pure stdlib). No change to `INSTALL.sh` needed. `vsp-llm-yoad-venv` already has python3.
+
+**`run_flat_english_pipeline.sh` is NOT modified** — change rides through `lib/outputs.sh` which the orchestrator already sources.
+
+**Container action**: No further action needed — both files copied to `vsp_linux_container_FINAL_20260217/` in this commit and verified identical (`md5sum` match across all four locations).
+
+**Verification**:
+- Module test suite (37 tests) passes.
+- Integration test: ran `run_argos_demo_report` directly against `english_full_results/decode_output/hypo-84361.json` — produced 17 KB HTML with generic title, "Pipeline output" Source card, raw video prefix in segment labels (no Obama hardcoding).
+- Regression test: regenerated original `presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html` via explicit-args invocation — byte-identical to pre-change file.

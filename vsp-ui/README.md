@@ -234,13 +234,15 @@ The HTML report renders per-word confidence with color coding:
 
 **Confidence source**: real per-token softmax probabilities from the LLaMA decoder when `VSP_OUTPUT_SCORES=1` was set during decode (sidecar files `confidence-{fid}.json` written alongside `hypo-{fid}.json`). When no sidecar is available, the renderer falls back to **synthetic confidence derived from WER alignment** so the visualization mechanism still works for archive runs.
 
-**Standalone demo report**: a focused client-facing report on a curated segment set is produced by:
+**Standalone demo report**: every pipeline run automatically produces an Argos-styled HTML report at `client_outputs/report/argos_demo.html` (included in the server zip download). To regenerate from a decode JSON manually:
 
 ```bash
-python3 docs/_research-tools/generators/generate_client_demo_report.py
+python3 docs/_research-tools/generators/generate_client_demo_report.py \
+    --decode <output_dir>/decode_output/hypo-NNNN.json \
+    --out report.html
 ```
 
-It defaults to the 6 segments from the Obama bin Laden announcement (May 1, 2011).
+Optional flags: `--filter <utt_id_substring>` to restrict to a curated subset, `--title`, `--subtitle`, `--source`, and `--prefix-alias 'src=dst'` to rewrite a long utt_id prefix to a friendlier display name in segment labels.
 
 **Aggregator**: sub-token → word aggregation (mean / min / product over BPE pieces) lives at `docs/_research-tools/generators/compute_word_confidence.py`. Both the standalone demo and the standard pipeline report import the same aggregator, so word-level scores are consistent across renders.
 

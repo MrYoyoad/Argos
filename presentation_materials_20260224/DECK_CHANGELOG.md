@@ -104,7 +104,9 @@ slides with concrete engineering content.
   indices for 61-slide layout.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- 0ef12b4 (single commit covers both Round 5.1 and Round 5.2 since Round 5.1
+  changes were never landed before Round 5.2 added the engineering depth
+  pass on top of them).
 
 ---
 
@@ -163,7 +165,7 @@ these via slide-source edits — no rebuild from scratch.
 - DECK SIZE: 63 → 60 slides.
 - AUDITS: 25/25 green (slide-count range stays at 75 cap; new card percentages for human-ceiling and lipreading-NOT slides whitelisted via natural-language framing — no new numeric audit deltas).
 - BORROWED_SLIDES exemption shrunk from 16 → 4 (judge_ex* moved to client wrappers, slide_08 + 1a + 1b + 25e + arabic_roadmap + web_ui all dropped).
-- COMMIT: (pending)
+- COMMIT: 0ef12b4 (combined with Round 5.2 — see entry above).
 
 ## 2026-04-30 — Round 5 — Framing-v2 alignment (LANDED)
 

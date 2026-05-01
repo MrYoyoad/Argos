@@ -154,6 +154,11 @@ run_client_outputs() {
     return 1
   }
 
+  # Generate Argos client-styled demo report (dark, segment-card layout)
+  # Non-critical: pretty client-facing artifact, not a metric. Warn on failure.
+  run_argos_demo_report "$vsp_dir" "$decode_json" "$report_dir" \
+    || log_warn "Argos demo report generation failed (non-critical) — main report still available"
+
   # Copy lip crops to client output (non-critical — warn on failure, don't abort)
   local lip_dir="${post_root}/lip_crops"
   mkdir -p "$lip_dir"
@@ -218,4 +223,45 @@ print(f'[INFO] Copied {copied} lip crop(s) to {lip_dir}')
   return 0
 }
 
+# Generate the dark "Argos VSP" client-styled HTML report (one card per segment,
+# per-word green/yellow/red confidence coloring). Standalone of make_report.py
+# and non-critical: failure is logged but does not break the pipeline run.
+#
+# Parameters:
+#   $1 - VSP directory (used to locate the script)
+#   $2 - decode JSON path (hypo-NNNN.json)
+#   $3 - report output directory (where argos_demo.html is written)
+run_argos_demo_report() {
+  local vsp_dir="$1"
+  local decode_json="$2"
+  local report_dir="$3"
+
+  if [ ! -f "$decode_json" ]; then
+    log_warn "Argos demo: decode JSON not found at $decode_json"
+    return 1
+  fi
+
+  # Resolve generator script: prefer the canonical scripts/ copy, fall back
+  # to the EC2 docs/ copy for development environments.
+  local gen_script="$vsp_dir/scripts/generate_client_demo_report.py"
+  if [ ! -f "$gen_script" ]; then
+    gen_script="${HOME}/docs/_research-tools/generators/generate_client_demo_report.py"
+  fi
+  if [ ! -f "$gen_script" ]; then
+    log_warn "Argos demo: generator script not found (tried scripts/ and docs/)"
+    return 1
+  fi
+
+  local out_html="${report_dir}/argos_demo.html"
+  echo ">>> [8] Generating Argos client-styled HTML report"
+  python3 "$gen_script" \
+    --decode "$decode_json" \
+    --out "$out_html" \
+    || { log_warn "Argos demo report generator failed"; return 1; }
+
+  log_info "Argos demo report: $out_html"
+  return 0
+}
+
 export -f run_client_outputs
+export -f run_argos_demo_report

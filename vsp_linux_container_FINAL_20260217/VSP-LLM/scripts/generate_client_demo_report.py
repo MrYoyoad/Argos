@@ -1,37 +1,33 @@
 #!/usr/bin/env python3
-"""Standalone client-demo HTML report — featuring the Obama bin Laden speech.
+"""Argos client-styled HTML report from a VSP-LLM decode JSON.
 
-Produces a polished, branded HTML report focused on a small curated set of
-segments (Obama's May 1, 2011 bin Laden announcement). The report renders
-each hypothesis with per-word green/yellow/red color coding so it can be:
-
-  1. Used as the source for the Section 4 "word color coding" screenshot
-     (B5 deliverable for slide 17 of the client deck).
-  2. Embedded or shown in the live UI demo recording — the Obama segments
-     are recognizable, well-articulated, frontal-camera content that
-     produces clean output and is famous enough that clients recognize
-     what's being said even with imperfect transcription.
+Produces a polished, dark-themed HTML report with one card per segment and
+per-word green/yellow/red confidence coloring. Suitable for client-facing
+deliverables (zip downloads, demo recordings, screenshots).
 
 Confidence source priority:
 
   1. If a `confidence-{fid}.json` sidecar exists alongside the decode JSON
      (produced when VSP_OUTPUT_SCORES=1 in vsp_llm_decode), use real
      per-token softmax probabilities aggregated to per-word.
-  2. Otherwise (default for now), synthesize confidence from the WER
-     alignment between REF and HYP:
+  2. Otherwise, synthesize confidence from the WER alignment between
+     REF and HYP:
         match        → conf-high (synthetic prob 0.85)
         substitution → conf-med  (synthetic prob 0.50)
         insertion    → conf-low  (synthetic prob 0.20)
+     A "synthetic" badge appears on each segment in this case.
 
-The synthetic path lets us ship the demo report before B3 produces real
-confidence data, with a "synthetic" badge on each segment so reviewers
-know what they're seeing.
+Run (all segments in a decode JSON, default branding):
+    python3 generate_client_demo_report.py --decode <path>/hypo-NNNN.json --out report.html
 
-Output:
-    presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html
-
-Run:
-    python3 docs/_research-tools/generators/generate_client_demo_report.py
+Run (curated subset with custom branding, e.g. the Obama demo artifact):
+    python3 generate_client_demo_report.py \\
+        --decode english_full_results/decode_output/hypo-84361.json \\
+        --filter "050111_OsamaBinLadenStatement_HD" \\
+        --title "Argos VSP — Visual Speech Recognition" \\
+        --subtitle "Client demo · Obama bin Laden announcement (May 1, 2011)" \\
+        --source "Public TV broadcast" \\
+        --out presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html
 """
 
 from __future__ import annotations
@@ -43,13 +39,6 @@ import re
 from html import escape
 from pathlib import Path
 from typing import Iterable, List, Mapping, Optional, Sequence
-
-REPO_ROOT = Path(__file__).resolve().parents[3]
-DECODE_JSON = REPO_ROOT / "english_full_results" / "decode_output" / "hypo-84361.json"
-OUTPUT = REPO_ROOT / "presentation_materials_20260224" / "01_plots_for_slides" / "obama_demo_report.html"
-
-# Filter prefix for the curated demo set.
-DEMO_FILTER = "050111_OsamaBinLadenStatement_HD"
 
 # Synthetic confidence thresholds — match the real ones in
 # compute_word_confidence.py so the same CSS classes apply.
@@ -130,14 +119,23 @@ def render_words_html(words: Sequence[Mapping]) -> str:
     return " ".join(parts)
 
 
-def _segment_label(utt_id: str) -> str:
-    """Strip the directory prefix and return a human-friendly label."""
-    base = utt_id.replace(DEMO_FILTER, "Obama bin Laden speech").strip("_")
-    # Trim the trailing _N_offset_offset numeric suffix
+def _segment_label(utt_id: str, prefix_alias: Optional[Mapping[str, str]] = None) -> str:
+    """Return a human-friendly segment label from an utt_id.
+
+    Format: '{prefix} · segment #N · S.Ss–E.Es' if the trailing numeric
+    suffix is present, otherwise the raw utt_id. `prefix_alias` lets callers
+    rewrite a known utt_id prefix to a friendlier display name.
+    """
+    base = utt_id.strip("_")
+    if prefix_alias:
+        for src, dst in prefix_alias.items():
+            if src and src in base:
+                base = base.replace(src, dst).strip("_")
+                break
     m = re.match(r"(.+?)_(\d{2})_(\d{6})_(\d{6})$", base)
     if m:
         prefix, idx, start_ms, end_ms = m.groups()
-        start_s = int(start_ms) / 100  # frames-100 → seconds approx
+        start_s = int(start_ms) / 100
         end_s = int(end_ms) / 100
         return f"{prefix}  ·  segment #{int(idx)}  ·  {start_s:.1f}s–{end_s:.1f}s"
     return base
@@ -347,15 +345,21 @@ h1 .subtitle {
 
 
 def render_html(records: Sequence[dict], badge: Optional[float],
-                synthetic_confidence: bool) -> str:
+                synthetic_confidence: bool,
+                title: str = "Argos VSP — Visual Speech Recognition",
+                subtitle: Optional[str] = None,
+                source: str = "Pipeline output",
+                prefix_alias: Optional[Mapping[str, str]] = None) -> str:
     """Build the full HTML page."""
     badge_text = f"{badge*100:.0f}%" if badge is not None else "—"
     badge_class = _badge_class(badge)
     n = len(records)
+    if subtitle is None:
+        subtitle = f"{n} segments"
 
     seg_html = []
     for rec in records:
-        label = _segment_label(rec["utt_id"])
+        label = _segment_label(rec["utt_id"], prefix_alias=prefix_alias)
         ref = escape(rec["ref"])
         words_html = render_words_html(rec["words"])
         synthetic_tag = (
@@ -390,8 +394,8 @@ def render_html(records: Sequence[dict], badge: Optional[float],
 </head>
 <body>
   <h1>
-    Argos VSP — Visual Speech Recognition
-    <span class="subtitle">Client demo · Obama bin Laden announcement (May 1, 2011) · {n} segments</span>
+    {escape(title)}
+    <span class="subtitle">{escape(subtitle)}</span>
   </h1>
 
   <div class="summary">
@@ -402,7 +406,7 @@ def render_html(records: Sequence[dict], badge: Optional[float],
     </div>
     <div class="summary-card">
       <div class="label">Source</div>
-      <div class="value" style="font-size:18px">Public TV broadcast</div>
+      <div class="value" style="font-size:18px">{escape(source)}</div>
     </div>
     <div class="summary-card">
       <div class="label">Audio</div>
@@ -474,13 +478,27 @@ def load_records(decode_json: Path, segment_filter: str) -> List[dict]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--decode", type=Path, default=DECODE_JSON,
-                        help=f"decode JSON file (default: {DECODE_JSON})")
-    parser.add_argument("--filter", type=str, default=DEMO_FILTER,
-                        help=f"utt_id substring filter (default: {DEMO_FILTER})")
-    parser.add_argument("--out", type=Path, default=OUTPUT,
-                        help=f"output HTML path (default: {OUTPUT})")
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--decode", type=Path, required=True,
+                        help="decode JSON file (hypo-NNNN.json from VSP-LLM decode)")
+    parser.add_argument("--out", type=Path, required=True,
+                        help="output HTML path")
+    parser.add_argument("--filter", type=str, default="",
+                        help="utt_id substring filter — only segments containing this "
+                             "substring are rendered. Default: '' (all segments).")
+    parser.add_argument("--title", type=str,
+                        default="Argos VSP — Visual Speech Recognition",
+                        help="page H1 title")
+    parser.add_argument("--subtitle", type=str, default=None,
+                        help="page subtitle under H1 (default: 'N segments')")
+    parser.add_argument("--source", type=str, default="Pipeline output",
+                        help="value shown in the 'Source' summary card "
+                             "(e.g. 'Public TV broadcast', dataset name)")
+    parser.add_argument("--prefix-alias", type=str, default=None,
+                        help="rewrite an utt_id prefix in segment labels, format "
+                             "'src=dst' (e.g. '050111_OsamaBinLadenStatement_HD"
+                             "=Obama bin Laden speech')")
     args = parser.parse_args()
 
     if not args.decode.exists():
@@ -492,7 +510,17 @@ def main():
 
     synthetic = all(rec.get("synthetic", True) for rec in records)
     badge = overall_badge(records)
-    html = render_html(records, badge, synthetic)
+
+    prefix_alias = None
+    if args.prefix_alias:
+        if "=" not in args.prefix_alias:
+            raise SystemExit("--prefix-alias must be of the form 'src=dst'")
+        src, dst = args.prefix_alias.split("=", 1)
+        prefix_alias = {src: dst}
+
+    html = render_html(records, badge, synthetic,
+                       title=args.title, subtitle=args.subtitle,
+                       source=args.source, prefix_alias=prefix_alias)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(html, encoding="utf-8")

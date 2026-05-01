@@ -814,6 +814,24 @@ SEGMENTATION_ENABLED=0 ./run_flat_english_pipeline.sh /path/to/short/video.mp4
 
 ---
 
+## Post-1.0 Updates
+
+### Argos Demo Report Auto-Generation (May 1, 2026)
+
+Every pipeline run now produces a polished, dark-themed `argos_demo.html` (one card per segment, per-word green/yellow/red confidence coloring) in `client_outputs/report/`. Included in the UI's zip download alongside the existing `report.html`.
+
+**Files updated in this package**:
+- `lib/outputs.sh` — added `run_argos_demo_report()` function and a one-line call from `run_client_outputs()`. Non-fatal on failure.
+- `VSP-LLM/scripts/generate_client_demo_report.py` — generalized to be run-agnostic (`--decode`, `--out` required; `--filter`, `--title`, `--subtitle`, `--source`, `--prefix-alias` optional). No content-specific defaults.
+
+**No new dependencies** (pure stdlib). No changes to `INSTALL.sh` or `run_flat_english_pipeline.sh`. Compatible with both real per-token confidence (when `VSP_OUTPUT_SCORES=1`) and synthetic WER-derived fallback.
+
+**Verification**: 37 module tests pass; integration test against an existing decode JSON produces a 17 KB HTML report rendered with the generic defaults.
+
+Full detail: `docs/features/argos-demo-report.md` and `docs/container-sync-changelog.md` (in the EC2 source repo) — entry "Argos Demo Report Auto-Generation (May 1, 2026)".
+
+---
+
 **Created**: February 3, 2026
-**Last Updated**: February 3, 2026
-**Package Version**: 1.0.0 FINAL
+**Last Updated**: May 1, 2026 (Argos demo report auto-generation)
+**Package Version**: 1.0.0 FINAL + post-1.0 updates
