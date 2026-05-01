@@ -108,8 +108,48 @@ def hyp_html(tagged: List[Tuple[str, str]]) -> str:
     return " ".join(parts)
 
 
-def conf_html(words: List[Dict[str, Any]]) -> str:
-    """Render per-word confidence-colored HTML from a word_confidence.json segment."""
+# Segment-level reliability tiers (May 2026 finding — see
+# docs/confidence/band_reliability_rollout_plan.md). Keyed on the segment's
+# mean_word_prob (= sentence_confidence column). Boundaries are tuned to the
+# current LLaMA-2-7B + 1,273-segment LoRA pipeline; expect them to shift as
+# the system improves (better backbone, more training data, beam aggregation).
+TIER_TRUST_MIN   = 0.82  # green ≥ 85% reliable in segments above this
+TIER_SALVAGE_MIN = 0.65  # green ≥ 50% reliable; below this coloring is misleading
+
+
+def classify_tier(sent_conf: Any) -> str:
+    """Map sentence_confidence (mean_word_prob) → reliability tier name.
+
+    Returns one of:
+      "Trust"   — full per-word coloring is safe, original promise holds
+      "Salvage" — show coloring with an "uncertainty banner"; user can extract
+                  meaning but should verify names/numbers/critical details
+      "Strip"   — strip per-word coloring; green is < 50% reliable here, paint
+                  would mislead more than inform
+      ""        — no confidence sidecar / not applicable
+    """
+    if not isinstance(sent_conf, (int, float)):
+        return ""
+    if sent_conf >= TIER_TRUST_MIN:
+        return "Trust"
+    if sent_conf >= TIER_SALVAGE_MIN:
+        return "Salvage"
+    return "Strip"
+
+
+def conf_html(words: List[Dict[str, Any]], tier: str = "Trust") -> str:
+    """Render per-word confidence-colored HTML from a word_confidence.json segment.
+
+    The `tier` arg controls coloring policy:
+      - Trust:   full per-word coloring (default; preserves prior behavior)
+      - Salvage: full per-word coloring (visible banner is added separately at
+                 the row level by the caller; this fn only handles per-word paint)
+      - Strip:   NO per-word coloring — render plain text. Below 0.65 segment
+                 mean_word_prob, green leakage > 50% and coloring misleads.
+    """
+    if tier == "Strip":
+        plain = " ".join(escape(str(w.get("word", ""))) for w in (words or []) if w.get("word"))
+        return f'<span class="conf-stripped">{plain}</span>' if plain else ""
     parts = []
     for w in words or []:
         word = str(w.get("word", ""))
@@ -140,6 +180,16 @@ th{background:#f5f5f5; text-align:left}
 .conf-high{background:#cfe2ff; color:#084298; font-weight:700; padding:0 2px; border-radius:2px}
 .conf-med {background:#ffe5b4; color:#8a4b00; font-weight:700; padding:0 2px; border-radius:2px}
 .conf-low {background:#e2c4f0; color:#4b0082; font-weight:800; padding:0 2px; border-radius:2px}
+.conf-stripped{color:#666; font-style:italic}
+.tier-banner{display:block; padding:6px 10px; margin-bottom:6px; border-radius:4px;
+             font-size:0.82em; font-weight:600}
+.tier-banner.salvage{background:#fff7e0; color:#7a5800; border-left:3px solid #d4a017}
+.tier-banner.strip  {background:#f0e0e8; color:#5a1a3a; border-left:3px solid #a04060}
+.tier-pill{display:inline-block; padding:1px 7px; border-radius:9px;
+           font-size:0.78em; font-weight:700; vertical-align:middle}
+.tier-pill.trust  {background:#d4edda; color:#155724}
+.tier-pill.salvage{background:#fff3cd; color:#856404}
+.tier-pill.strip  {background:#f8d7da; color:#721c24}
 .label-acc{display:inline-block; min-width:6.5em; color:#555; font-size:0.85em; font-weight:600}
 .label-conf{display:inline-block; min-width:6.5em; color:#555; font-size:0.85em; font-weight:600}
 small{color:#555}
@@ -149,6 +199,10 @@ pre{white-space:pre-wrap; word-break:break-word; margin:0}
 <h2>ASR Report (REF vs HYP)</h2>
 <p><b>Accuracy:</b> <span class="ok">green</span>=match, <span class="rep">yellow</span>=mismatch/shift, <span class="ins">red</span>=inserted/made-up</p>
 <p><b>Confidence (model softmax):</b> <span class="conf-high">blue</span>=high (&ge;0.85), <span class="conf-med">orange</span>=medium (0.40&ndash;0.85), <span class="conf-low">purple</span>=low (&lt;0.40) &mdash; <i>only shown when per-token scores were captured during decode</i></p>
+<p><b>Reliability tier</b> (segment-level, keyed on sentence_confidence):
+   <span class="tier-pill trust">Trust</span> &ge;0.82 — coloring is reliable as labeled.
+   <span class="tier-pill salvage">Salvage</span> 0.65&ndash;0.82 — coloring shown with caveat banner; verify names, numbers, critical details.
+   <span class="tier-pill strip">Strip</span> &lt;0.65 — per-word coloring removed because green leakage exceeds 50% in this regime; treat the whole hypothesis as unreliable.</p>
 """
 
 HTML_TAIL = "</table></body></html>"
@@ -647,6 +701,8 @@ def main() -> None:
     ap.add_argument("--compute-is", action="store_true", help="Compute Intelligibility Scores")
     ap.add_argument("--word-confidence", default=None,
                     help="word_confidence.json (from compute_word_confidence.py); enables per-word confidence rendering and per-segment confidence columns")
+    ap.add_argument("--aggregated", default=None,
+                    help="aggregated-{fid}.json (from lib/nbest_aggregate.py); enables per-method aggregated hypotheses and their WER in the report")
     args = ap.parse_args()
 
     # Word-level confidence (optional). Format: {utt_id: {words: [...], summary: {...}}}
@@ -659,6 +715,20 @@ def main() -> None:
             print(f"[WARN] Could not load --word-confidence {args.word_confidence}: {e}")
             word_conf = {}
     do_conf = bool(word_conf)
+
+    # N-best aggregated hypotheses (optional). Format from lib/nbest_aggregate.py:
+    # {utt_id: {hyp_top1: str, hyp_mbr: {text: ...}, hyp_vote_score: {...},
+    #           hyp_vote_conf: {...}, hyp_safe: {...}, hyp_xseg_merge: {...}}}
+    AGG_METHODS = ["hyp_mbr", "hyp_vote_score", "hyp_vote_conf", "hyp_safe", "hyp_xseg_merge"]
+    aggregated: Dict[str, Dict[str, Any]] = {}
+    if args.aggregated:
+        try:
+            aggregated = json.loads(Path(args.aggregated).read_text(encoding="utf-8"))
+            print(f"[INFO] Loaded n-best aggregated hypotheses for {len(aggregated)} segments from {args.aggregated}")
+        except Exception as e:
+            print(f"[WARN] Could not load --aggregated {args.aggregated}: {e}")
+            aggregated = {}
+    do_agg = bool(aggregated)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -750,6 +820,8 @@ def main() -> None:
     total_wwer_den = 0.0
     total_nea_recall = 0.0
     total_nea_f1 = 0.0
+    # Per-method aggregated-WER accumulators (mean over segments with refs)
+    total_agg_wer = {m: 0.0 for m in AGG_METHODS}
     total_is = 0.0
     n_with_ref = 0
 
@@ -788,8 +860,12 @@ def main() -> None:
         seg_summary = (seg_conf or {}).get("summary") or {}
         sent_conf_val = seg_summary.get("mean_word_prob") if seg_summary else None
 
+        # Reliability tier — derived from sentence_confidence (mean_word_prob).
+        # Empty string when do_conf is off or sentence confidence is unavailable.
+        seg_tier = classify_tier(sent_conf_val) if do_conf else ""
+
         def _conf_csv_cells():
-            """Return [sentence_confidence, min_word_conf, n_low_conf_words] cells."""
+            """Return [sentence_confidence, min_word_conf, n_low_conf_words, tier] cells."""
             if not do_conf:
                 return []
             if seg_summary:
@@ -800,8 +876,39 @@ def main() -> None:
                     f"{sc:.3f}" if isinstance(sc, (int, float)) else "",
                     f"{mn:.3f}" if isinstance(mn, (int, float)) else "",
                     str(nl) if isinstance(nl, int) else "",
+                    seg_tier,
                 ]
-            return ["", "", ""]
+            return ["", "", "", ""]
+
+        def _agg_csv_cells():
+            """Return [hyp_<method>, wer_<method>_%] cells for each aggregated method.
+
+            Order matches AGG_METHODS. WER uses the same simple-WER formula
+            as the top-1 column, computed against the same reference. When
+            the aggregated sidecar is absent, returns an empty list.
+            """
+            if not do_agg:
+                return []
+            agg_rec = aggregated.get(r.utt_id) or {}
+            cells: list = []
+            for method in AGG_METHODS:
+                v = agg_rec.get(method)
+                # v is either a string (hyp_top1) or a dict with 'text' (everything else)
+                if isinstance(v, str):
+                    text = v
+                elif isinstance(v, dict):
+                    text = v.get("text", "")
+                else:
+                    text = ""
+                cells.append(text)
+                if has_ref and r_toks:
+                    h_method = toks(text) if text else []
+                    w = (editdistance.eval(h_method, r_toks) / len(r_toks) * 100) if r_toks else 0.0
+                    total_agg_wer[method] += w
+                    cells.append(f"{w:.1f}")
+                else:
+                    cells.append("")
+            return cells
 
         # CSV row
         if m:
@@ -814,6 +921,7 @@ def main() -> None:
             if do_is:
                 csv_row += [f"{seg_is[0]:.2f}", str(seg_is[1]), seg_is[2]] if seg_is else ["", "", ""]
             csv_row += _conf_csv_cells()
+            csv_row += _agg_csv_cells()
             rows_csv.append(tuple(csv_row))
         else:
             csv_row = [
@@ -824,6 +932,7 @@ def main() -> None:
             if do_is:
                 csv_row += ["", "", ""]
             csv_row += _conf_csv_cells()
+            csv_row += _agg_csv_cells()
             rows_csv.append(tuple(csv_row))
 
         # HTML row — consistent coloring on all metric cells
@@ -849,27 +958,54 @@ def main() -> None:
                     metrics_cells += f'<td class="{sc_css}" title="mean word prob">{sent_conf_val:.2f}</td>'
                 else:
                     metrics_cells += '<td>-</td>'
+                if seg_tier:
+                    metrics_cells += f'<td><span class="tier-pill {seg_tier.lower()}">{seg_tier}</span></td>'
+                else:
+                    metrics_cells += '<td>-</td>'
         else:
             metrics_cells = '<td>-</td><td>-</td><td>-</td>'
             if do_is:
                 metrics_cells += '<td>-</td>'
             if do_conf:
-                metrics_cells += '<td>-</td>'
+                metrics_cells += '<td>-</td><td>-</td>'
 
-        # Hypothesis cell: accuracy line, plus a confidence line when available
-        hyp_cell_inner = (
-            f'<pre><span class="label-acc">Accuracy:</span>{hyp_html(tagged)}</pre>'
-        )
-        if do_conf and seg_words:
-            hyp_cell_inner += (
-                f'<pre><span class="label-conf">Confidence:</span>{conf_html(seg_words)}</pre>'
-            )
+        # Confidence-colored hyp goes in its own column when do_conf is on.
+        # The reliability tier (Trust / Salvage / Strip) governs whether per-word
+        # coloring is applied and whether a banner is prepended:
+        #   - Trust   → full coloring, no banner
+        #   - Salvage → full coloring + advisory banner ("verify names/numbers")
+        #   - Strip   → coloring stripped; whole hyp rendered plain grey-italic
+        # If no per-segment confidence data, render plain (uncolored) hyp.
+        if do_conf:
+            if seg_words:
+                if seg_tier == "Salvage":
+                    banner = (
+                        '<span class="tier-banner salvage">'
+                        'Model uncertain — verify names, numbers, and critical details.'
+                        '</span>'
+                    )
+                    conf_cell = f'<td>{banner}<pre>{conf_html(seg_words, tier=seg_tier)}</pre></td>'
+                elif seg_tier == "Strip":
+                    banner = (
+                        '<span class="tier-banner strip">'
+                        'Low-confidence segment — per-word coloring removed. '
+                        'Treat hypothesis as unreliable even where it looks fluent.'
+                        '</span>'
+                    )
+                    conf_cell = f'<td>{banner}<pre>{conf_html(seg_words, tier=seg_tier)}</pre></td>'
+                else:  # Trust or empty tier — original behavior
+                    conf_cell = f'<td><pre>{conf_html(seg_words, tier=seg_tier or "Trust")}</pre></td>'
+            else:
+                conf_cell = f'<td><pre>{escape(hyp)}</pre></td>'
+        else:
+            conf_cell = ""
 
         html_rows.append(
             f"<tr><td><b>{escape(dname)}</b><br>"
             f"<small>{escape(r.utt_id)}</small></td>"
             f"<td><pre>{escape(ref)}</pre></td>"
-            f"<td>{hyp_cell_inner}</td>"
+            f"<td><pre>{hyp_html(tagged)}</pre></td>"
+            f"{conf_cell}"
             f"{metrics_cells}</tr>"
         )
 
@@ -947,9 +1083,30 @@ def main() -> None:
         if do_is:
             csv_header += ["is_score", "is_tier", "is_label"]
         if do_conf:
-            csv_header += ["sentence_confidence", "min_word_conf", "n_low_conf_words"]
+            csv_header += ["sentence_confidence", "min_word_conf", "n_low_conf_words", "tier"]
+        if do_agg:
+            for method in AGG_METHODS:
+                csv_header += [method, f"wer_{method}_%"]
         w.writerow(csv_header)
         w.writerows(rows_csv)
+
+    # Per-method aggregated WER summary (logged at end)
+    if do_agg and n_with_ref > 0:
+        method_summary = {m: total_agg_wer[m] / n_with_ref for m in AGG_METHODS}
+        baseline_wer = total_wer_num / n_with_ref
+        print(f"[INFO] Top-1 mean WER: {baseline_wer:.2f}%")
+        for m, mw in method_summary.items():
+            delta = mw - baseline_wer
+            arrow = "↓" if delta < 0 else ("↑" if delta > 0 else "=")
+            print(f"[INFO]   {m}: {mw:.2f}% ({arrow}{abs(delta):.2f}pp vs top-1)")
+        # Also persist to a sidecar for downstream consumers.
+        try:
+            (out_dir / "aggregator_method_wer.json").write_text(
+                json.dumps({"top1": baseline_wer, **method_summary, "n_segments": n_with_ref}, indent=2),
+                encoding="utf-8",
+            )
+        except Exception as _e:
+            pass
 
     if run_params:
         (out_dir / "report_params.json").write_text(
@@ -960,12 +1117,14 @@ def main() -> None:
     html_params = _format_params_html(run_params) if run_params else ""
     html_summary = f'<div class="summary"><b>{escape(summary)}</b></div>'
     is_th = '<th>IS</th>' if do_is else ''
-    conf_th = '<th title="mean per-word softmax probability">Sent Conf</th>' if do_conf else ''
-    hyp_th_label = 'Hypothesis (Accuracy / Confidence)' if do_conf else 'Hypothesis (colored)'
+    sent_conf_th = '<th title="mean per-word softmax probability">Sent Conf</th>' if do_conf else ''
+    tier_th = '<th title="reliability tier — see legend above">Tier</th>' if do_conf else ''
+    conf_hyp_th = '<th title="hypothesis colored by per-word model confidence">Hypothesis (Confidence)</th>' if do_conf else ''
+    hyp_th_label = 'Hypothesis (Accuracy)' if do_conf else 'Hypothesis (colored)'
     html_table = (
         '<table>\n'
-        f'<tr><th>ID</th><th>Reference</th><th>{hyp_th_label}</th>'
-        f'<th>WER</th><th>WWER</th><th>NEA Recall</th>{is_th}{conf_th}</tr>\n'
+        f'<tr><th>ID</th><th>Reference</th><th>{hyp_th_label}</th>{conf_hyp_th}'
+        f'<th>WER</th><th>WWER</th><th>NEA Recall</th>{is_th}{sent_conf_th}{tier_th}</tr>\n'
         + "\n".join(html_rows)
     )
     (out_dir / "report.html").write_text(

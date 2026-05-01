@@ -52,27 +52,28 @@ Update written artefacts so future work starts from the corrected mental model.
 - [ ] [`confidence_full_analysis.tex`](confidence_full_analysis.tex) — mirror §11 in LaTeX, regenerate `.pdf`
 - [ ] Add `green_leakage_examples.csv` to the data appendix in `report_4_*.docx`
 
-### Phase 2 — Reporting code (medium risk, requires testing)
+### Phase 2 — Reporting code ✅ DONE (2026-05-01)
 
 Compute and surface the segment-tier classification in the per-segment outputs that already ship.
 
-- [ ] [`VSP-LLM/scripts/make_report.py`](../../VSP-LLM/scripts/make_report.py) — add a `tier` column to `report.csv`: `Trust` / `Salvage` / `Strip` based on `sentence_confidence` (= mean_prob). One enum, three values.
-- [ ] [`VSP-LLM/scripts/make_report.py`](../../VSP-LLM/scripts/make_report.py) — when rendering `report.html`:
-   - **Trust tier:** existing per-word coloring as today (CONF_HIGH=0.85 / CONF_MED=0.40 unchanged)
-   - **Salvage tier:** existing per-word coloring + a coloured banner above the segment row ("Model uncertainty banner")
-   - **Strip tier:** render hyp text in plain grey; *do not* apply confidence colors
-- [ ] Add a legend entry in `report.html` explaining the three tiers
-- [ ] Sync the same change into [`vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_report.py`](../../vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_report.py) per CLAUDE.md sync rule
-- [ ] Update [`docs/container-sync-changelog.md`](../container-sync-changelog.md) with the diff
-- [ ] Re-run pipeline on a small sample (10 segments spanning the three tiers) to verify rendering
+- [x] [`VSP-LLM/scripts/make_report.py`](../../VSP-LLM/scripts/make_report.py) — added `classify_tier()` helper keyed on `sentence_confidence` (mean_word_prob). Constants `TIER_TRUST_MIN=0.82`, `TIER_SALVAGE_MIN=0.65` documented inline with the "expect to shift" caveat.
+- [x] `report.csv` — new `tier` column emitted as the last confidence column. Distribution on 1,497-segment B3 baseline: Trust 340 (22.7%) / Salvage 535 (35.7%) / Strip 552 (36.9%) / empty 70 (no sidecar).
+- [x] `report.html` — three rendering modes:
+   - **Trust:** existing per-word coloring (unchanged)
+   - **Salvage:** per-word coloring + amber banner ("Model uncertain — verify names, numbers, and critical details")
+   - **Strip:** per-word coloring removed, hyp rendered in grey-italic with magenta banner ("Low-confidence segment — per-word coloring removed. Treat hypothesis as unreliable even where it looks fluent")
+- [x] `report.html` legend — added three-tier pill legend at the top, matching the new column
+- [x] New `Tier` column in the HTML metrics table (right after Sent Conf), with colour-coded pill per tier
+- [x] CSS additions: `.conf-stripped`, `.tier-banner.{salvage,strip}`, `.tier-pill.{trust,salvage,strip}`
+- [x] Container sync — copied to [`vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_report.py`](../../vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_report.py), files identical
+- [x] Smoke test — re-rendered the 1,497-segment baseline; counts match (341 Trust pills incl. 1 legend, 536 Salvage incl. 1, 553 Strip incl. 1; 535 Salvage banners + 552 Strip banners on segment rows)
+- [x] [`docs/container-sync-changelog.md`](../container-sync-changelog.md) — entry added
 
-### Phase 3 — UI (medium risk, user-visible)
+### Phase 3 — UI ✅ NO ACTION NEEDED
 
-Reflect the three-tier view in the live UI so end-users see the right thing.
+`vsp-ui/` is a thin HTTP wrapper around the pipeline outputs — it serves the `client_outputs/` directory verbatim and zips it on download (see [`server.py:840-877`](../../vsp-ui/app/server.py#L840-L877)). It does **not** independently render `report.html` or rebuild segment views from sidecars. Phase 2's changes to `make_report.py` therefore propagate to the UI for free: the next pipeline run produces a tier-aware `report.html` that vsp-ui serves as-is.
 
-- [ ] [`vsp-ui/app/static/`](../../vsp-ui/app/static/) — add CSS class for the salvage banner and a "stripped" segment style (plain grey, no confidence colors applied)
-- [ ] [`vsp-ui/app/services/`](../../vsp-ui/app/services/) — Python service that reads `report.csv`, attaches the `tier` field, and emits per-segment HTML conditioned on tier
-- [ ] Verify on a real run: take an end-to-end pipeline output and inspect a Trust, Salvage, and Strip segment side-by-side in the browser
+If the UI ever grows its own renderer (e.g. a per-segment React view that consumes `report.csv` directly), Phase 3 should be revisited — the CSS classes and tier semantics defined in `make_report.py` are the contract to mirror.
 
 ### Phase 4 — Slides / decks (visible to clients)
 

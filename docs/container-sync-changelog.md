@@ -1614,3 +1614,84 @@ hyp_words = [w for w, _ in hyp_tokens]
 - Integration test: ran `make_burn.py` directly on `english_full_results/decode_output/hypo-84361.json` (no real sidecar → exercises synthetic fallback). 7/8 segments produced colored MP4s; 8th was skipped because no source video exists for that utt_id.
 - Visual verification: extracted frame from a burned video confirmed green/yellow/red text in the dark band, matching what the HTML report shows for the same segment.
 - Backward-compat regression: ran `make_burn.py` with a slim hypo-only JSON (no `ref` field, no `--word_confidence`) — fell back cleanly to the original white `drawtext` path. Output frame visually identical to the pre-change behavior.
+
+
+### N-Best Beam Aggregation (May 1, 2026) — Mission 6
+
+**Summary**: every decode run can now keep all 20 surviving beam hypotheses (not just top-1) and aggregate them via five offline CPU-only methods. Adds `nbest-{fid}.json` sidecar, five new `hyp_*` columns to `report.csv`, and a beam-variance + word-level-confusion analysis bundle. All gated behind `VSP_NBEST=1` (default 0 — pipeline behavior unchanged when the flag is off). Same change also fixes a latent bug in the existing top-1 entropy/top-3 extraction.
+
+**Files changed (EC2 paths; all mirrored to container at the same paths unless noted, verified via `cmp`)**:
+
+1. `VSP-LLM/src/vsp_llm.py` — `generate()` reads `VSP_NBEST` env-var; when 1, sets `num_return_sequences=num_beams` and forces `output_scores=True`. Default off → backward compat.
+
+2. `VSP-LLM/src/vsp_llm_decode.py` — major rewrite of the beam-output unwrap block:
+   - **Bug fix**: `step_scores[::n_beams]` (previous code) silently picked the wrong beam after HF beam-reordering. Replaced with a `gen_out.beam_indices`-driven gather that works for any number of returned sequences. Existing top-1 entropy/top-3 in `confidence-{fid}.json` may differ on hard cases (the new values are correct).
+   - n-best capture writes `nbest-{fid}.json` with one record per utt: `{hypotheses: [{rank, text, sequence_score, raw_logprob_sum, tokens: [{token, prob, entropy, top3}, ...]}, ... ×N]}`.
+   - Atomic incremental flush (`_flush_partial`) extended to write `nbest-{fid}.json` alongside the existing two sidecars.
+   - When `VSP_NBEST=1` and `VSP_OUTPUT_SCORES=0`, the latter is force-enabled with a logged note (per-token probs are required for the conf-weighted vote).
+
+3. `lib/decode.sh` — forwards `VSP_NBEST` env-var (default 0); when 1, exports `VSP_OUTPUT_SCORES=1` to match the coupling in vsp_llm_decode.py.
+
+4. `lib/outputs.sh` — when `nbest-{fid}.json` is present, runs `nbest_aggregate.py` to emit `aggregated.json` (passing `segment_metadata.json` for cross-segment merge), then runs `analyze_beam_variance.py` to write the beam-variance + word-confusion bundle under `report_dir/beam_analysis/`. `make_report.py` invocation gains `--aggregated <path>` so the five aggregated columns and per-method WERs land in `report.csv` and `report.html`.
+
+5. `VSP-LLM/scripts/make_report.py` — new `--aggregated` CLI flag; appends `[hyp_<method>, wer_<method>_%]` pairs for each of the five methods to the CSV header and rows. End-of-run log prints per-method mean WER vs top-1 baseline plus persists to `aggregator_method_wer.json`.
+
+6. `VSP-LLM/scripts/nbest_aggregate.py` (NEW; mirrors `lib/nbest_aggregate.py` on EC2) — five aggregation methods:
+   - `hyp_mbr` — Minimum Bayes Risk under the score-weighted distribution (dedupes duplicate hypotheses by exact text first; raw expected risk, no normalization)
+   - `hyp_vote_score` — multi-way ROVER-style vote, weighted by `softmax(sequence_score)`, anchored on top-1 with Levenshtein alignment
+   - `hyp_vote_conf` — same voter, weight = `softmax(score) × per-word-confidence` (tests "does adding word confidence to the vote help?")
+   - `hyp_safe` — top-1 with backoff: only swaps a word when its confidence < 0.40 AND ≥60% of other beams agree on a different word at the aligned position (conservative low-risk drop-in)
+   - `hyp_xseg_merge` — cross-segment overlap fusion (Phase 2.5): when adjacent segments from the same source video have ≥3 LCS-matching words at their shared edge, swap any substituted word for the higher-confidence side
+
+7. `VSP-LLM/scripts/_alignment.py` (NEW) — shared word-alignment primitive (Levenshtein DP with traceback). Used by `nbest_aggregate`, `analyze_beam_variance`, and `analyze_confidence_full` (which now re-imports its old `_word_correctness_alignment` from this module — single source of truth).
+
+8. `VSP-LLM/scripts/analyze_beam_variance.py` (NEW; mirrors `docs/_research-tools/generators/analyze_beam_variance.py` on EC2) — emits `beam_variance.csv`, `aggregator_wers.csv`, `aggregator_method_summary.json`, `word_level_confusion.csv`, `word_level_ne_confusion.csv` (when spaCy available), correlation heatmap PNG, scatter plots, and two markdown writeups.
+
+9. `tests/unit/test_alignment_helper.py`, `test_nbest_aggregate.py`, `test_beam_variance.py` (NEW, EC2 only — tests do not ship in the container) — 48 unit tests covering each method, edge cases (empty/singleton/all-identical), N=1 equivalence, determinism, and cross-segment merge gating.
+
+**Standalone container compatibility**: zero new Python dependencies. All five aggregation methods are CPU-only and rely on stdlib + numpy + pandas (already in the container). spaCy NER pass in the variance analyzer degrades gracefully when offline. Disk cost: `nbest-{fid}.json` is ~20× larger than `confidence-{fid}.json` (~300 MB across 1,497 segments). Wall-clock cost during decode is unchanged (HF beam search already explores 20 beams internally; we just don't discard the other 19).
+
+**`run_flat_english_pipeline.sh` is NOT modified** — change rides through `lib/decode.sh` and `lib/outputs.sh` which the orchestrator already sources.
+
+**Container action**: All eight Python/shell files synced (`cmp` verified). No INSTALL.sh changes needed.
+
+**Verification**:
+- 48 new pytest cases pass (`pytest tests/unit/test_alignment_helper.py tests/unit/test_nbest_aggregate.py tests/unit/test_beam_variance.py`).
+- Existing 79 unit tests still pass; pre-existing `test_video_files_exist` failure is unrelated (missing video files on disk).
+- `bash lib/test_all_modules.sh` — module suite still green (37 tests).
+- Smoke test: synthetic 4-hypothesis input → all five methods produce sensible outputs; safe-mode swap fires only on low-conf + ≥60% consensus; cross-segment merge swaps slow→fast when neighbor has higher confidence in the overlap region.
+- Backward compat: with `VSP_NBEST=0` (default), no nbest sidecar is written, no aggregator runs, `report.csv` columns are unchanged.
+
+**Pending**: full 1,497-segment evaluation run (Phase 7b in [docs/backlog/mission-backlog.md](backlog/mission-backlog.md) Mission 6). Once complete, per-method WER deltas and the writeup will be added under [docs/beam-search/](beam-search/).
+
+### Reliability-tier classification in pipeline reports (May 1, 2026)
+
+**Summary**: `make_report.py` now classifies each segment into a three-tier reliability label — **Trust** / **Salvage** / **Strip** — keyed on `sentence_confidence` (= `mean_word_prob`). Surfaced as a new `tier` column in `report.csv` and as banners + a tier pill in `report.html`. Below the strip threshold (0.65) the per-word coloring is removed entirely because empirical green-band reliability collapses to <50% in that regime — see [docs/confidence/confidence_full_analysis.md §11](confidence/confidence_full_analysis.md#11-two-tier-policy--when-can-the-user-salvage-a-bad-segment-from-the-per-word-coloring) for the data, [docs/confidence/band_reliability_rollout_plan.md](confidence/band_reliability_rollout_plan.md) for the rationale.
+
+**Why this change is here**: the existing per-word coloring (blue/orange/purple bands) painted uniformly across every segment regardless of overall segment quality. On low-confidence segments (`mean_word_prob < 0.65`), the green band's empirical reliability falls to ~22%, which means painting words green there *misleads* the user (the "There were 2 people..." problem — confident-but-wrong number/entity latches). The fix is a graduated policy keyed on segment confidence, not a flat per-word threshold.
+
+**Tier boundaries** (current LLaMA-2-7B + 1,273-segment LoRA pipeline):
+- `Trust` — `sentence_confidence ≥ 0.82` (green ≥ 85% reliable)
+- `Salvage` — `0.65 ≤ sentence_confidence < 0.82` (green 70–84% reliable; banner advises caution on names/numbers)
+- `Strip` — `sentence_confidence < 0.65` (green < 50% reliable; coloring is removed, hyp rendered grey-italic)
+
+**These boundaries will move** with backbone upgrades (Llama-3.1-8B), more training data (20K+ AVSpeech), and beam-aggregation gating (Mission 6). Re-run [`docs/_research-tools/generators/analyze_band_reliability.py`](_research-tools/generators/analyze_band_reliability.py) after each upgrade and update `TIER_TRUST_MIN` / `TIER_SALVAGE_MIN` constants in `make_report.py`.
+
+**Files changed**:
+- `VSP-LLM/scripts/make_report.py`:
+   - New `classify_tier()` helper + `TIER_TRUST_MIN` / `TIER_SALVAGE_MIN` module-level constants
+   - `conf_html()` gains `tier=` parameter; in Strip mode renders plain grey-italic instead of per-word color spans
+   - CSV header `tier` column appended after `n_low_conf_words`
+   - HTML legend gains a third paragraph documenting the three tiers
+   - HTML rows gain a banner above the confidence cell on Salvage/Strip; new `Tier` metric column with colour-coded pill
+   - New CSS: `.conf-stripped`, `.tier-banner.{salvage,strip}`, `.tier-pill.{trust,salvage,strip}`
+
+**Container action**: `cp` the file across (already done — `cmp` verified). No new dependencies.
+
+**Verification**: re-rendered the 1,497-segment B3 baseline:
+- CSV tier counts: Trust 340 / Salvage 535 / Strip 552 / empty 70
+- HTML tier-pill counts: 341 trust (340 + 1 legend), 536 salvage (535 + 1 legend), 553 strip (552 + 1 legend)
+- HTML banner counts: 535 salvage banners + 552 strip banners — match CSV row-by-row
+- Backward compatible: when `--word-confidence` is not provided, no `tier` CSV column is emitted, no per-row tier cell or banner is rendered, and the HTML table omits the `Tier` header column. The static legend in `HTML_HEAD` renders unconditionally (same scope as the existing confidence legend it sits next to).
+
+**`run_flat_english_pipeline.sh` is NOT modified** — change is internal to `make_report.py`.
