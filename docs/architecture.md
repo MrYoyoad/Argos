@@ -354,3 +354,31 @@ Example: `lrs3,lrs3_video_seg24s/file.mp4,324,1234567890`
   - Training: `vsp-llm-433h-freeze.yaml`
   - Decoding: `s2s_decode.yaml`
 - Override configs via command line: `key=value` syntax in fairseq-hydra-train
+
+### Decode Configuration (Live)
+
+The decode configuration has been **frozen since 2026-02-17** and is the configuration that produced the headline `english_full_results/` baseline (1,497 segments, WER 64.1%, IS 2.52/5.0). Defined in [VSP-LLM/src/conf/s2s_decode.yaml](../VSP-LLM/src/conf/s2s_decode.yaml) and overridden by [VSP-LLM/scripts/decode.sh](../VSP-LLM/scripts/decode.sh).
+
+| Parameter | Value | Notes |
+|---|---|---|
+| `beam` | 20 | Pure beam search, deterministic |
+| `lenpen` | 0.0 | Paper Section 4.2 — do not change |
+| `max_len_a` | 2.0 | dynamic_max_len = 2.0 × src_clusters + 200 |
+| `max_len_b` | 200 | Buffer for short-input segments |
+| `max_len` | 2048 | Hard cap on dynamic_max_len |
+| `no_repeat_ngram_size` | 3 | Blocks degenerate trigram repetitions |
+| `repetition_penalty` | 1.2 | CTRL paper, Keskar 2019 |
+| `do_sample` | false | Deterministic; `temperature`/`top_p` unused |
+| `lm_weight` | 0 | No external LM |
+| `dataset.max_tokens` | 3000 | Override in `decode.sh` |
+| `modalities` | `['video']` | Visual-only |
+| Checkpoint | `checkpoint_finetune.pt` | Released VSP-LLM weights |
+| LLM | Llama-2-7b-hf | Frozen backbone |
+
+**Provenance** (VSP-LLM submodule git history for `src/conf/s2s_decode.yaml`):
+- `2026-02-01` (`0e494cd`) — first `max_len` tweaks (experimental `max_len_a=3.0`, `max_len_b=300`).
+- `2026-02-17` (`585c4d2`) — **operative freeze**: reverted to `max_len_a=2.0`/`max_len_b=200`, added `repetition_penalty=1.2` and `no_repeat_ngram_size=3`.
+- `2026-03-01` (`29327d2`) — added `do_sample`/`temperature`/`top_p` keys with `do_sample: false` default; no behavioral change.
+- No edits since 2026-03-01.
+
+**Hyperparameter experiments**: 13 one-off variations (Exp A–M) were run on 107 segments via command-line overrides — see [docs/tuning/experiment-comparison.csv](tuning/experiment-comparison.csv) and [docs/tuning/report_2_hyperparameter_tuning.md](tuning/report_2_hyperparameter_tuning.md). Variations covered `beam` (greedy=1), `lenpen` (-0.5 / +1 / +2), `repetition_penalty=1.0`, and stochastic sampling (`do_sample=true`, `temperature` ∈ {0.3, 0.5, 1.0, 1.5}, `top_p=0.9`). **None was promoted** — Exp A (the live config) was the most robust on WER/WWER/NEA. Variations were applied via CLI overrides only; the config files were not edited during tuning.
