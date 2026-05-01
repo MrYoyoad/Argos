@@ -115,13 +115,10 @@ def test_html_has_confidence_classes_and_metric(tmp_path):
     assert "conf-med" in html
     assert "conf-low" in html
 
-    # Header cell + table label
+    # Confidence has its own column header (separate from accuracy hyp column)
+    assert "Hypothesis (Accuracy)" in html
+    assert "Hypothesis (Confidence)" in html
     assert "Sent Conf" in html
-    assert "Accuracy / Confidence" in html
-
-    # Per-segment labels
-    assert "Accuracy:" in html
-    assert "Confidence:" in html
 
     # Confidence words actually wrapped in confidence spans
     assert '<span class="conf-high"' in html
@@ -129,7 +126,8 @@ def test_html_has_confidence_classes_and_metric(tmp_path):
 
 
 def test_no_confidence_flag_keeps_legacy_output(tmp_path):
-    """Without --word-confidence, CSV header should not include confidence columns."""
+    """Without --word-confidence, CSV header should not include confidence columns
+    and HTML should not have a Hypothesis (Confidence) column."""
     decode_path, _wc_path = _write_inputs(tmp_path)
     out_dir = tmp_path / "out_legacy"
     _run_make_report(decode_path, out_dir, wc_path=None)
@@ -143,4 +141,4 @@ def test_no_confidence_flag_keeps_legacy_output(tmp_path):
 
     html = (out_dir / "report.html").read_text()
     assert "Sent Conf" not in html
-    assert "Confidence:" not in html
+    assert "Hypothesis (Confidence)" not in html

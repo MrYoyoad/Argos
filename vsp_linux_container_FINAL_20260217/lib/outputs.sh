@@ -113,16 +113,39 @@ run_client_outputs() {
     log_info "[8] No confidence-{fid}.json sidecar — confidence will be skipped"
   fi
 
+  # ---- N-best aggregation (only if nbest sidecar present) ----
+  local nbest_json="${decode_json/hypo-/nbest-}"
+  local agg_json=""
+  if [ -f "$nbest_json" ]; then
+    echo ">>> [8] Aggregating n-best beams (MBR / weighted-vote / safe / xseg-merge)"
+    local agg_script="$vsp_dir/scripts/nbest_aggregate.py"
+    if [ ! -f "$agg_script" ]; then
+      agg_script="${HOME}/lib/nbest_aggregate.py"
+    fi
+    if [ -f "$agg_script" ]; then
+      agg_json="$report_dir/aggregated.json"
+      local seg_meta_arg=""
+      [ -f "$segment_metadata" ] && seg_meta_arg="--seg-meta $segment_metadata"
+      python3 "$agg_script" --nbest "$nbest_json" --out "$agg_json" $seg_meta_arg \
+        || { log_warn "nbest_aggregate.py failed (non-critical)"; agg_json=""; }
+      cp "$nbest_json" "$report_dir/" 2>/dev/null || true
+    else
+      log_warn "nbest_aggregate.py not found — n-best aggregation skipped"
+    fi
+  fi
+
   # Compute Intelligibility Scores in reports
   echo ">>> [8] Intelligibility Scores enabled"
 
-  # Generate report (always with IS scoring; optionally with word confidence)
+  # Generate report (always with IS scoring; optionally with word confidence and aggregated hyps)
   local conf_arg=""
   [ -n "$word_conf_json" ] && conf_arg="--word-confidence $word_conf_json"
+  local agg_arg=""
+  [ -n "$agg_json" ] && [ -f "$agg_json" ] && agg_arg="--aggregated $agg_json"
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
     --out_dir "$report_dir" \
-    $params_arg --compute-is $conf_arg || {
+    $params_arg --compute-is $conf_arg $agg_arg || {
     log_error "make_report.py failed"
     return 1
   }
@@ -141,6 +164,28 @@ run_client_outputs() {
       --device cpu || {
       log_warn "Full Intelligibility analysis failed (non-critical) — basic report still available"
     }
+  fi
+
+  # ---- Beam variance & word-level confusion analysis ----
+  # Runs when the n-best sidecar is present. Light-weight (CPU-only, ~minutes
+  # for 1,500 segments). Outputs go to $report_dir/beam_analysis/.
+  if [ -f "$nbest_json" ] && [ "${VSP_BEAM_ANALYSIS:-1}" = "1" ]; then
+    echo ">>> [8] Running beam variance & word-level confusion analysis"
+    local bva_script="$vsp_dir/scripts/analyze_beam_variance.py"
+    if [ ! -f "$bva_script" ]; then
+      bva_script="${HOME}/docs/_research-tools/generators/analyze_beam_variance.py"
+    fi
+    if [ -f "$bva_script" ]; then
+      local bva_dir="$report_dir/beam_analysis"
+      mkdir -p "$bva_dir"
+      local bva_args=("--nbest" "$nbest_json" "--out-dir" "$bva_dir")
+      [ -n "$agg_json" ] && [ -f "$agg_json" ] && bva_args+=("--aggregated" "$agg_json")
+      [ -f "$report_dir/report.csv" ] && bva_args+=("--baseline-csv" "$report_dir/report.csv")
+      [ -f "$decode_json" ] && bva_args+=("--hypo-json" "$decode_json")
+      [ -f "$confidence_json" ] && bva_args+=("--confidence" "$confidence_json")
+      python3 "$bva_script" "${bva_args[@]}" \
+        || log_warn "analyze_beam_variance.py failed (non-critical)"
+    fi
   fi
 
   # Generate burned videos. When word_confidence.json was produced above,
