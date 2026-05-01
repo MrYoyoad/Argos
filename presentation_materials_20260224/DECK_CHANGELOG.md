@@ -138,7 +138,7 @@ credibility hardening."* All six changes landed in this round.
   pre-filter slide already does this; just added a closing tagline.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- 82eb964 — Round 5.5.
 
 ---
 
