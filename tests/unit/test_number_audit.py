@@ -47,15 +47,12 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Round 5.2: §Engineering bulked up. slide_17_png replaced by a
-    # native client wrapper (slide_client_pipeline_detailed) that uses
-    # the same PNG but height-bound to fit our slide bounds — no
-    # jargon, so no exemption needed for it. slide_client_engineering_
-    # journey moved here from §What-we-built. The deck grew 60 → 61.
+    # Round 5.5: claims/non-claims slide added in the trust section,
+    # shifting §Engineering and downstream slides by +1.
     39,  # slide_failure_deep_2  — 3 worked ref/hyp examples
     40,  # slide_25d             — salvage recoveries (WER stripped from headers)
-    50,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    61,  # slide_thank_you       — close
+    51,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
+    62,  # slide_thank_you       — close
 }
 
 

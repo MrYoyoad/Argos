@@ -107,6 +107,7 @@ from presentation.slides_client import (
     slide_client_failure_taxonomy_full,     # NEW Round 5.1 (merged 1a+1b)
     slide_client_failure_worked_example,
     slide_client_hallucination_flag,
+    slide_client_claims,                    # NEW Round 5.5 (credibility-hardening)
     slide_client_trust_without_ground_truth, # NEW Round 5.1 (deepest critique answer)
     slide_client_what_this_means,
 
@@ -234,6 +235,7 @@ def main():
         slide_25d,                              # Borrowed: 3 real recoveries
         # Summary stat + the deepest-critique reframe + closer
         slide_client_hallucination_flag,
+        slide_client_claims,                        # NEW Round 5.5 — claims/non-claims credibility-harden
         slide_client_trust_without_ground_truth,    # NEW Round 5.1
         slide_client_what_this_means,
 

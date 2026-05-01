@@ -363,8 +363,13 @@ def slide_client_video_gallery(prs):
     add_text(slide,
              "These six are a deliberate spread — best-case to worst-case. "
              "All visually decoded, no audio, on real-world video.",
-             MX, Inches(6.55), CW, Inches(0.4),
+             MX, Inches(6.45), CW, Inches(0.3),
              size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Examples are illustrative. Headline numbers come from the "
+             "full 1,497-segment baseline — not from selected clips.",
+             MX, Inches(6.78), CW, Inches(0.3),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -437,18 +442,22 @@ def slide_client_headline_numbers(prs):
     top = Inches(1.7)
     h = Inches(3.6)
 
+    # Round 5.5 reframe: "62% useful output" → "62% review-useful" with
+    # the explicit "recoverable meaning useful for human review" framing.
+    # Defends against attack: "useful for what?" → "for review, not as
+    # final truth." Three-level ladder is the structure of these cards.
     nums = [
-        ("62%", "useful output",
-         "Six of every ten segments deliver usable text — "
-         "viewers can extract meaning even when the wording isn't perfect.",
+        ("62%", "review-useful",
+         "Six of every ten segments contain enough recoverable meaning "
+         "to be useful for human review.",
          GREEN),
         ("23%", "clearly conveyed",
-         "About one in four segments needs no review — "
-         "delivered cleanly with no further work.",
+         "About one in four segments is clean enough for light "
+         "verification — fast pass.",
          TEAL),
         ("1 in 5", "auto-flagged",
-         "The system flags low-confidence segments before you ever see "
-         "them. You review the flagged ones, not all of them.",
+         "Low-confidence outputs are routed to review instead of "
+         "silently accepted. You review the flagged ones, not all.",
          GOLD),
     ]
     for i, (big, label, body, color) in enumerate(nums):
@@ -470,7 +479,7 @@ def slide_client_headline_numbers(prs):
              MX, Inches(5.55), CW, Inches(0.55),
              size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
     add_text(slide,
-             "Validated against an independent expert reviewer.",
+             "Validated against an independent blind evaluator.",
              MX, Inches(6.05), CW, Inches(0.4),
              size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -481,7 +490,7 @@ def slide_client_headline_numbers(prs):
         "62% = 922/1497 NIV Y+P (rounded from 61.6%). "
         "23% = 346/1497 NIV Y (rounded from 23.1%). "
         "1 in 5 = 20.5% hallucination/auto-flag rate. "
-        "Validation κ=0.818 vs Opus expert judge — phrased as '8 of 10' on slide. "
+        "Validation κ=0.818 vs blind Opus-as-judge calibration — phrased as '8 of 10' on slide. "
         "Don't read out NIV / κ on the slide; they're for your reference here. "
         "Lean into the difficulty caveat — these numbers are on real-world hard "
         "data, not a curated benchmark, and the client should hear that "
@@ -501,7 +510,7 @@ def slide_client_agenda(prs):
         "Live demo — the system processing a real video, end-to-end",
         "Output gallery — what good, partial, and flagged segments look like",
         "How confidence works — per-word color coding and per-segment scoring",
-        "How we validated it — independent expert agreement",
+        "How we validated it — independent blind evaluation",
         "What's next — pre-processing, stronger model, Arabic, integration",
     ], MX, Inches(1.8), CW, Inches(4.5), size=Pt(20))
 
@@ -670,10 +679,21 @@ def slide_client_two_layer_confidence(prs):
     add_title(slide, "Two layers of confidence")
     add_accent_line(slide)
 
+    # Round 5.5 — visible credibility anchor for the whole trust section.
+    # "Confidence is triage, not truth" is the cleanest credibility
+    # sentence in the deck; placed here so every reader sees it before
+    # the per-word / per-segment cards land.
+    add_text(slide,
+             "Confidence is triage, not truth.",
+             MX, Inches(1.45), CW, Inches(0.4),
+             size=Pt(18), bold=True, color=TEAL, italic=True,
+             align=PP_ALIGN.CENTER)
+
     card_w = Inches(5.85)
     gap = Inches(0.4)
-    top = Inches(1.7)
-    h = Inches(3.8)   # Round 5.3: shrunk from 4.4 to leave room for the
+    top = Inches(2.0)   # Round 5.5: pushed down 0.3" to clear the new
+                        # "Confidence is triage, not truth" anchor line.
+    h = Inches(3.5)   # Round 5.3 / 5.5: shrunk to leave room for the
                       # "why this is meaningful + grows" pill at bottom.
 
     # Layer 1 — per-word
@@ -720,7 +740,7 @@ def slide_client_two_layer_confidence(prs):
              size=Pt(12), bold=True, color=TEAL)
     add_text(slide,
              "The thresholds aren't arbitrary — they're calibrated against an "
-             "independent expert reviewer (82% agreement, next slide). Each "
+             "independent blind evaluator (82% agreement, next slide). Each "
              "segment your reviewer verifies on your footage extends that "
              "calibration to your domain. Trust grows with use.",
              MX + Inches(0.3), pill_y + Inches(0.42),
@@ -1058,10 +1078,19 @@ def slide_client_validation_intro(prs):
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "The 'independent expert reviewer' is Claude Opus 4.6 acting as a "
-        "calibration judge — don't name it on the slide; clients hear 'AI "
-        "validating AI' and discount it. Frame it as the methodology that "
-        "produced the calibrated thresholds."
+        "Round 5.5 honesty fix: the 'independent blind evaluator' is Claude "
+        "Opus 4.6 acting as a calibration judge over all 1,497 segments, "
+        "blind to our scores and reasoning. The OLD wording 'expert "
+        "reviewer' implied a human and was a credibility risk. The NEW "
+        "phrasing 'independent blind evaluator' is honest — it doesn't "
+        "name the LLM on the slide (clients hear 'AI validating AI' and "
+        "discount it), but if asked directly: 'For scale, the full 1,497-"
+        "segment calibration used a blind frontier-LLM evaluator with no "
+        "access to our scores. That is not a substitute for human "
+        "validation on your footage. It is the development calibration "
+        "step. The next step is to validate on your domain clips with your "
+        "reviewers.' That answer is honest and strong — do not apologize "
+        "for it."
     ))
     return slide
 
@@ -1070,7 +1099,7 @@ def slide_client_agreement_chart(prs):
     """Bar showing agreement rate (κ translated to 'agrees ~8 of 10 times')."""
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Agrees with the expert reviewer 82% of the time")
+    add_title(slide, "Agrees with the blind evaluator 82% of the time")
     add_accent_line(slide)
 
     # Big visual: a horizontal bar at 82% with the rest at 18%
@@ -1148,7 +1177,7 @@ def slide_client_cross_config_stability(prs):
 def slide_client_validation_summary(prs):
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "An independent expert agreed 82% of the time")
+    add_title(slide, "Independent blind evaluation: 82% agreement")
     add_accent_line(slide)
 
     add_text(slide,
@@ -1390,13 +1419,20 @@ def slide_client_quality_filter(prs):
                      rejected_w, Inches(0.3),
                      size=Pt(9), color=MGRAY, italic=True)
 
-    # Footer caption
+    # Footer caption — Round 5.5: added "credible system must know when
+    # not to decode" tagline as a sharp closing line above the technical
+    # caption. The tagline is the credibility move; the caption underneath
+    # acknowledges the illustrative-rates caveat.
+    add_text(slide,
+             "A credible system must know when NOT to decode.",
+             MX, Inches(6.35), CW, Inches(0.35),
+             size=Pt(13), bold=True, color=TEAL, italic=True, align=PP_ALIGN.CENTER)
     add_text(slide,
              "Three frame-level CV checks, all running locally. Status: "
              "planned ablation. Percentages illustrative — actual rejection "
              "rates depend on your video conditions.",
-             MX, Inches(6.5), CW, Inches(0.6),
-             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             MX, Inches(6.7), CW, Inches(0.4),
+             size=Pt(10), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -2298,6 +2334,111 @@ def slide_client_failure_taxonomy_full(prs):
     return slide
 
 
+def slide_client_claims(prs):
+    """Round 5.5 — 'What we claim / what we do not claim'.
+
+    Critical credibility-hardening slide added per Round 5.5 review:
+    a security-adjacent client will think these limits anyway, so we
+    frame them ourselves rather than being asked. Sits in the trust
+    section, just before slide_client_trust_without_ground_truth.
+
+    Ends with the deck's strongest one-line credibility claim:
+    'Reviewable visual-speech intelligence with uncertainty attached
+     — not blind automation.'
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "What we claim — and what we do not claim")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Where the line is. So you know what you're buying.",
+             MX, Inches(1.5), CW, Inches(0.4),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Two-column table layout
+    col_gap = Inches(0.2)
+    col_w = (CW - col_gap) / 2
+    col_left_x = MX
+    col_right_x = MX + col_w + col_gap
+
+    header_y = Inches(2.05)
+    header_h = Inches(0.45)
+    row_top = header_y + header_h + Inches(0.1)
+
+    # Headers
+    add_rect(slide, col_left_x, header_y, col_w, header_h,
+             fill_color=NAVY3, border_color=GREEN, border_width=Pt(1.0))
+    add_text(slide, "WE CLAIM",
+             col_left_x, header_y + Inches(0.08), col_w, Inches(0.3),
+             size=Pt(13), bold=True, color=GREEN, align=PP_ALIGN.CENTER)
+    add_rect(slide, col_right_x, header_y, col_w, header_h,
+             fill_color=NAVY3, border_color=CORAL, border_width=Pt(1.0))
+    add_text(slide, "WE DO NOT CLAIM",
+             col_right_x, header_y + Inches(0.08), col_w, Inches(0.3),
+             size=Pt(13), bold=True, color=CORAL, align=PP_ALIGN.CENTER)
+
+    # 6 paired rows
+    pairs = [
+        ("Recover useful speech candidates from video-only input.",
+         "Perfect lip-reading."),
+        ("Per-word and per-segment confidence signals on every output.",
+         "Confidence equals factual truth."),
+        ("Many dangerous failure modes flagged before review.",
+         "Every hallucination is caught."),
+        ("Reduce reviewer workload by routing attention to suspicious spans.",
+         "Replace human review in high-stakes use."),
+        ("Improve performance on your domain with your data over time.",
+         "Public-data performance equals your footage."),
+        ("Deploy on your infrastructure, on-prem or cloud.",
+         "Speaker identification or face recognition."),
+    ]
+    row_h = Inches(0.55)
+    row_gap = Inches(0.06)
+    for i, (claim, not_claim) in enumerate(pairs):
+        y = row_top + i * (row_h + row_gap)
+        add_rect(slide, col_left_x, y, col_w, row_h,
+                 fill_color=NAVY2, border_color=None)
+        add_text(slide, "✓  " + claim,
+                 col_left_x + Inches(0.2), y + Inches(0.08),
+                 col_w - Inches(0.4), row_h - Inches(0.16),
+                 size=Pt(11), color=WHITE)
+        add_rect(slide, col_right_x, y, col_w, row_h,
+                 fill_color=NAVY2, border_color=None)
+        add_text(slide, "✗  " + not_claim,
+                 col_right_x + Inches(0.2), y + Inches(0.08),
+                 col_w - Inches(0.4), row_h - Inches(0.16),
+                 size=Pt(11), color=LGRAY, italic=True)
+
+    # Bottom anchor — the one-line credibility claim
+    bottom_y = row_top + 6 * (row_h + row_gap) + Inches(0.05)
+    add_rect(slide, MX, bottom_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
+    add_text(slide,
+             "Not blind automation. Reviewable visual-speech intelligence "
+             "with uncertainty attached.",
+             MX + Inches(0.3), bottom_y + Inches(0.13),
+             CW - Inches(0.6), Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.5 — credibility-hardening slide. A security-adjacent "
+        "client will think these limits anyway. Better to frame them "
+        "ourselves than be asked. The slide makes us look more credible, "
+        "not less: it shows we understand the risk and aren't selling "
+        "fantasy. "
+        "\n\n"
+        "Land this BEFORE slide_client_trust_without_ground_truth — the "
+        "two slides work as a pair: this one names the limits, the next "
+        "one explains the runtime trust signals. Together they answer "
+        "'what does this product actually deliver?'"
+    ))
+    return slide
+
+
 def slide_client_trust_without_ground_truth(prs):
     """Round 5.1 substantive critique #5: why trust matters when there is no
     ground truth at runtime.
@@ -2385,7 +2526,7 @@ def slide_client_trust_without_ground_truth(prs):
              size=Pt(11), bold=True, color=TEAL)
     add_text(slide,
              "The runtime signal isn't an arbitrary threshold — it's anchored "
-             "to an independent expert reviewer who agreed in 82% of cases "
+             "to an independent blind evaluator that agreed in 82% of cases "
              "(next slide).",
              MX + Inches(0.3), pill1_y + Inches(0.32),
              CW - Inches(0.6), Inches(0.32),
@@ -2521,8 +2662,13 @@ def slide_client_clean_outputs_gallery(prs):
     add_text(slide,
              "All six: IS = 5/5. Reference = hypothesis, word for word. "
              "Click any tile to play the original segment in PowerPoint.",
-             MX, Inches(6.5), CW, Inches(0.45),
+             MX, Inches(6.4), CW, Inches(0.3),
              size=Pt(11), color=GREEN, italic=True, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Examples are illustrative. Headline numbers come from the "
+             "full 1,497-segment baseline — not from selected clips.",
+             MX, Inches(6.74), CW, Inches(0.3),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])

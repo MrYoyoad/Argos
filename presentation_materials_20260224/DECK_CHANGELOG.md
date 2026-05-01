@@ -26,6 +26,122 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-01 — Round 5.5 — Credibility hardening (LANDED)
+
+External critique session (ChatGPT critique → Claude review of the
+critique → user adjudication) converged on six high-value changes
+that don't restructure the deck but harden it against attack from a
+skeptical technical audience. The critic's own meta-frame: *"Don't
+treat the deck as fundamentally broken — it's already doing the
+right big thing. The goal is not restructuring. The goal is
+credibility hardening."* All six changes landed in this round.
+
+### 1. "Expert reviewer" → "independent blind evaluator" (CRITICAL)
+- **Risk**: the deck used "independent expert reviewer" repeatedly,
+  implying a human panel had reviewed all 1,497 segments. The actual
+  validation is Claude Opus 4.6 acting as a blind judge. If a
+  technical co-partner asked "was this a human?" mid-meeting, the
+  answer "no — an LLM judge" would land badly because the framing
+  had implied human.
+- **Fix**: every visible "expert reviewer" / "independent expert"
+  phrase rewritten to "independent blind evaluator" / "independent
+  blind evaluation." Speaker notes on the validation slides expanded
+  with the honest Q&A answer ("for scale, the full 1,497-segment
+  calibration used a blind frontier-LLM evaluator with no access to
+  our scores. That is not a substitute for human validation on your
+  footage. It is the development calibration step.").
+- **Files touched**: 6 visible-text instances + 2 speaker-note
+  instances across `slides_client.py`.
+
+### 2. NEW slide: "What we claim — and what we do not claim"
+- 6-row two-column table: WE CLAIM (✓ green) vs WE DO NOT CLAIM
+  (✗ coral). Closes with anchor pill: *"Not blind automation.
+  Reviewable visual-speech intelligence with uncertainty attached."*
+- Lands in the trust section between `slide_client_hallucination_flag`
+  and `slide_client_trust_without_ground_truth` (now slide 42).
+- New builder `slide_client_claims` in `slides_client.py`.
+
+### 3. Reframe 62% headline language
+- **Before**: "62% useful output" / "Six of every ten segments
+  deliver usable text — viewers can extract meaning even when the
+  wording isn't perfect."
+- **After**: "62% review-useful" / "Six of every ten segments contain
+  enough recoverable meaning to be useful for human review."
+- **Why**: harder to attack. "62% useful" invites *"useful for
+  what — court evidence? autonomous decisions?"*. "62% recoverable
+  meaning useful for human review" answers the question pre-emptively.
+- Also reframed the 23% and 1-in-5 cards in the same direction
+  (clean/fast pass; routed instead of silently accepted).
+
+### 4. "Confidence is triage, not truth" visible line
+- Added as a centered subtitle on `slide_client_two_layer_confidence`
+  (slide 30) — the entry point to the trust section. The two-card
+  layout pushed down from y=1.7" → y=2.0" to clear the new anchor.
+- Single sharpest credibility sentence in the deck. The user's
+  critic called it the "cleanest credibility sentence."
+
+### 5. Cherry-pick disclaimer footers on gallery slides
+- Both `slide_client_video_gallery` (slide 16) and
+  `slide_client_clean_outputs_gallery` (slide 18) now carry a
+  small-print footer: *"Examples are illustrative. Headline numbers
+  come from the full 1,497-segment baseline — not from selected
+  clips."* Defuses the "demo magic" question pre-emptively.
+
+### 6. "A credible system must know when NOT to decode" tagline
+- Added to `slide_client_quality_filter` (now slide 55) as a sharp
+  closing tagline above the technical caption. Reframes the
+  quality-pre-filter from "future ablation" to "credibility move."
+
+### NEW deliverable: Q&A cheat sheet
+- `presentation_materials_20260224/QA_CHEAT_SHEET.md` — a
+  phone-readable answer sheet for the 10 most-likely audience
+  questions ("how accurate?", "was the reviewer human?", "could it
+  be misused?", etc.). Includes the cleanest credibility lines, a
+  "do not say" list, and an opening / closing line. Memorize, do
+  not read.
+
+### Stats
+- 61 → **62 slides** (+1 for the new claims/non-claims slide).
+- All 7 audit/linter tests **green**.
+- BORROWED_SLIDES exemption updated for the +1 shift: indices now
+  {39, 40, 51, 62}.
+- Slide indices throughout the deck shifted by +1 after slide 41
+  (where the new claims slide inserted).
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  new `slide_client_claims` builder; "expert reviewer" sweep;
+  headline-numbers card reframe; "Confidence is triage, not truth"
+  anchor on slide 30; cherry-pick footers on gallery slides 16 + 18;
+  slide-55 closing tagline.
+- `docs/_research-tools/generators/generate_client_presentation.py` —
+  imported and inserted `slide_client_claims` in the trust section.
+- `tests/unit/test_number_audit.py` — BORROWED_SLIDES indices for
+  62-slide layout.
+- `presentation_materials_20260224/PRE_MEETING_CHECKLIST.md` — slide
+  indices refreshed to Round 5.5 layout; Q&A cheat sheet linked at
+  the top.
+- `presentation_materials_20260224/QA_CHEAT_SHEET.md` — NEW.
+
+### What we explicitly did NOT do (per critic adjudication)
+- Did NOT restructure the deck order. Round 5.2/5.3 ordering is
+  already iterated and field-tested for a 2-hour meeting.
+- Did NOT cut examples. User explicitly directed us to ADD examples
+  in earlier rounds (after diagnosing the deck as hollow); reverting
+  that without explicit override would discard 4 rounds of work.
+- Did NOT add "verified corrections feed future calibration" claims.
+  That feedback loop doesn't exist as a feature; shipping a slide
+  claiming it would be a fabrication risk.
+- Did NOT replace "near-zero, flagged" with "no silent model error."
+  Latter overclaims in a different direction.
+- Did NOT add a separate go/no-go gate slide — the existing quality
+  pre-filter slide already does this; just added a closing tagline.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-01 — Round 5.4 — Video correction + slide 18 video tiles (LANDED)
 
 User reviewed Round 5.3 and flagged two issues:
