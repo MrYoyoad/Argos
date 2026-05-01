@@ -2458,49 +2458,69 @@ def slide_client_clean_outputs_gallery(prs):
     # Pulled from english_full_results report.csv, top-IS segments.
     # Labels describe domain/content type, not theme, so the footer
     # enumeration matches what the audience sees on each card.
+    # Round 5.4: each card now also embeds a clickable video tile so the
+    # audience can play the actual segment in PowerPoint.
     items = [
         ("Conversational",
-         "I'm always open to new ideas and new things to try"),
+         "I'm always open to new ideas and new things to try",
+         "clean_conversational"),
         ("Legal",
-         "It enabled me to find my voice in the courtroom"),
+         "It enabled me to find my voice in the courtroom",
+         "clean_legal"),
         ("Public address",
-         "Next week I will be making my debut"),
+         "Next week I will be making my debut",
+         "clean_public"),
         ("Technology",
-         "To this wave of artificial intelligence that is slowly taking..."),
+         "To this wave of artificial intelligence that is slowly taking...",
+         "clean_tech"),
         ("Motivational",
-         "You've got to get back up again because we all fall, we all fail"),
+         "You've got to get back up again because we all fall, we all fail",
+         "clean_motivational"),
         ("Historical speech (Obama, seg 19)",
-         "Office, I directed Leon Panetta, the director of the CIA, to make..."),
+         "Office, I directed Leon Panetta, the director of the CIA, to make...",
+         "clean_obama19"),
     ]
 
-    # 3 columns x 2 rows. Cards sized to fit the content (2-3 lines of
-    # 14pt italic) without leaving dead space below the quote.
+    # 3 columns x 2 rows. Round 5.4: cards taller to accommodate a video
+    # tile on the LEFT half + label/quote on the RIGHT. Layout per card:
+    #   [video poster | label-on-top, quote-below ]
     cols = 3
     col_w = Inches(3.95)
-    row_h = Inches(1.55)
+    row_h = Inches(1.95)
     gap_x = Inches(0.15)
-    gap_y = Inches(0.2)
-    grid_top = Inches(2.4)
+    gap_y = Inches(0.18)
+    grid_top = Inches(2.0)
 
-    for i, (label, body) in enumerate(items):
+    for i, (label, body, video_key) in enumerate(items):
         col = i % cols
         row = i // cols
         x = MX + col * (col_w + gap_x)
         y = grid_top + row * (row_h + gap_y)
-        add_rect(slide, x, y, col_w, row_h, fill_color=NAVY2, border_color=GREEN, border_width=Pt(0.75))
-        add_text(slide, label, x + Inches(0.2), y + Inches(0.12),
-                 col_w - Inches(0.4), Inches(0.32),
-                 size=Pt(11), bold=True, color=TEAL)
-        # The decoded text in green (it matches the reference verbatim)
+        add_rect(slide, x, y, col_w, row_h, fill_color=NAVY2,
+                 border_color=GREEN, border_width=Pt(0.75))
+        # Video tile — left half of card. Full card height minus 0.15"
+        # padding top/bottom. Width ~1.65" so the right-side text column
+        # gets ~2.15" for the quote.
+        vid_w = Inches(1.65)
+        vid_h = row_h - Inches(0.2)
+        vid_x = x + Inches(0.1)
+        vid_y = y + Inches(0.1)
+        add_video(slide, video_key, vid_x, vid_y, vid_w, vid_h)
+        # Right-side text column
+        text_x = vid_x + vid_w + Inches(0.1)
+        text_w = col_w - (text_x - x) - Inches(0.15)
+        add_text(slide, label, text_x, y + Inches(0.15),
+                 text_w, Inches(0.32),
+                 size=Pt(10), bold=True, color=TEAL)
+        # The decoded text in green (matches the reference verbatim)
         add_text(slide, '"' + body + '"',
-                 x + Inches(0.2), y + Inches(0.5),
-                 col_w - Inches(0.4), row_h - Inches(0.6),
-                 size=Pt(14), color=GREEN, italic=True)
+                 text_x, y + Inches(0.5),
+                 text_w, row_h - Inches(0.6),
+                 size=Pt(11), color=GREEN, italic=True)
 
     add_text(slide,
              "All six: IS = 5/5. Reference = hypothesis, word for word. "
-             "Across conversational, legal, public-address, technology, "
-             "motivational, and historical speech.",
+             "Click any tile to play the original segment in PowerPoint.",
              MX, Inches(6.5), CW, Inches(0.45),
              size=Pt(11), color=GREEN, italic=True, align=PP_ALIGN.CENTER)
 

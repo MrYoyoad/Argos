@@ -82,16 +82,27 @@ VID = {
     "judge_cortisol": VIDEOS / "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4",
     "judge_jalapeno": VIDEOS / "a2CS82VZyO4_7__a6316c95_with_hyp.mp4",
     "judge_lights":   VIDEOS / "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4",
-    # Obama bin Laden announcement — lip-crop preprocessed segments. Used as
-    # clickable video posters on the three Obama example slides (Round 5.3,
-    # per Round-4 late ask: "Embed actual video clips on the example slides
-    # — slides 13/14/15 are text-only, REF/HYP color-coded but no video").
-    # Segments 14 and 31 live in `preprocessed_flat_seg12/video/` (lip-crop,
-    # ~165KB). Segment 5 is missing from that dir; using the fast_segments
-    # full-frame version as fallback (~9MB).
-    "obama_perfect":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/video/050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"),
-    "obama_partial":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/video/050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"),
+    # Obama bin Laden announcement — full-frame segments. Used as clickable
+    # video posters on the three Obama example slides (Round 5.3, per
+    # Round-4 late ask: "Embed actual video clips on the example slides —
+    # slides 13/14/15 are text-only, REF/HYP color-coded but no video").
+    # Round 5.3 fix: originally used lip-crop versions from
+    # preprocessed_flat_seg12/video/ for segs 14 and 31 — those were
+    # tight mouth-region crops (~165KB) and the user flagged them as
+    # wrong. Switched all three to fast_segments/ which carry the full
+    # frame (Obama at the podium, etc., ~9MB each).
+    "obama_perfect":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"),
+    "obama_partial":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"),
     "obama_flagged":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4"),
+    # Clean-output gallery (Round 5.4) — six IS=5.0 / WER=0% segments,
+    # one per card. Sources are burned-video MP4s (HYP overlay matches
+    # the quote shown on the card) so the picture and text agree.
+    "clean_conversational": VIDEOS / "1Mv8z6DPycU_0__18461b8b_with_hyp.mp4",
+    "clean_legal":          VIDEOS / "XyIBts7qRwQ_11__0dba2a61_with_hyp.mp4",
+    "clean_public":         VIDEOS / "FLRU5qzb6hc_9__b6ede2d3_with_hyp.mp4",
+    "clean_tech":           VIDEOS / "K0h33Ps7vz4_11__e66d3063_with_hyp.mp4",
+    "clean_motivational":   VIDEOS / "5RJU2GoOvoM_0__d181c4ad_with_hyp.mp4",
+    "clean_obama19":        Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_19_005694_006053.mp4"),
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"

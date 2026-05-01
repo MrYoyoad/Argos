@@ -26,6 +26,53 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-01 — Round 5.4 — Video correction + slide 18 video tiles (LANDED)
+
+User reviewed Round 5.3 and flagged two issues:
+
+1. **Wrong Obama videos on slides 17 + 19**. The videos were the
+   *lip-crop* preprocessed versions from `preprocessed_flat_seg12/
+   video/` — tight mouth-only crops (~165 KB) that show what the
+   model sees, not what humans see. Slide 20 (segment 5) was already
+   using the full-frame `fast_segments/` version and was fine.
+   **Fix**: switched all three Obama VID keys to `fast_segments/`
+   (~9 MB, full-frame Obama at the podium). Cleared the cached
+   poster frames at `.poster_frames/obama_*.jpg` so the helper
+   regenerates them from the correct source.
+
+2. **Slide 18 had no videos**. The clean-output gallery was 6 cards
+   of label + quote with no playable video. **Fix**: added a clickable
+   video tile per card (1.65" wide × 1.75" tall), with label/quote
+   in a right-side column. Card height bumped 1.55" → 1.95" to fit.
+   Six new VID keys (`clean_conversational`, `clean_legal`,
+   `clean_public`, `clean_tech`, `clean_motivational`, `clean_obama19`)
+   point to burned-video MP4s — the HYP overlay matches the quote
+   shown so picture and text agree. Five burned videos copied from
+   `english_full_results/client_outputs/burned_videos/` into
+   `presentation_materials_20260224/06_demo_videos/`.
+
+### Stats
+- 61 slides (no net change). All 7 audits green.
+- 11 new VID keys total (3 obama_* in 5.3 + 6 clean_* in 5.4).
+- 5 video files copied into `06_demo_videos/`.
+- Cached poster frames invalidated; helpers regenerate from sources.
+
+### Files
+- `docs/_research-tools/generators/presentation/config.py` — switched
+  obama_perfect/_partial/_flagged to fast_segments/ paths; added
+  6 clean_* keys.
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  `slide_client_clean_outputs_gallery` re-laid out for video + text.
+- `presentation_materials_20260224/06_demo_videos/` — 5 burned
+  video MP4s copied in.
+- `presentation_materials_20260224/.poster_frames/obama_*.jpg` —
+  deleted to force regeneration.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-01 — Round 5.3 — Visual QA + IS-runtime honesty fix (LANDED)
 
 User did a slide-by-slide review of the rendered Round 5.2 deck and
