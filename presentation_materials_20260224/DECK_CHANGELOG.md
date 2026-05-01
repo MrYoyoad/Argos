@@ -26,6 +26,72 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-01 — Round 5.7 — Aggregate strategy notes (LANDED, no visible slide)
+
+User updated the n-best aggregation analysis (107-segment evaluation
++ temperature-scaling calibration). Per-method calibration JSON
+landed at 22:07 alongside the existing aggregator-method WER table;
+full 1,497-segment evaluation kicked off in `english_full_nbest_eval/`
+and is still running. Per Round 5.6 plan, this stays out of the
+visible deck — a partial-eval headline is too premature for a
+client claim, and the data is rich enough to defend in Q&A from
+speaker notes alone.
+
+### What landed
+- **Speaker note expansion on slide 53** (`engineering_journey`) —
+  Mission 6 shipped May 1, partial 107-segment eval shows
+  hyp_vote_conf winning every metric (WER 59.35% → 57.20%, IS +0.029,
+  NIV-Y+P +0.9pp), agreement-vs-posterior caveat (voting inflates
+  per-word agreement scores because beams aren't independent samples),
+  temperature-scaling fix validated (calibrated ECE 0.064 for
+  vote_conf vs 0.086 for top-1), full 1,497-segment eval running.
+- **NEW Q&A in `QA_CHEAT_SHEET.md`** — *"Is there more you can do to
+  improve accuracy beyond the current numbers?"* — pull-question
+  answer with the 3.6%-relative-WER number, the temperature-scaling
+  caveat, and the framing *"vote_conf for the transcript, top-1 for
+  the trust signal"*.
+
+### What did NOT land
+- No new visible slide. The §What's Next section is already 4 slides
+  (quality_filter, preprocessing_summary, arabic, partnership_ask)
+  ending in the partnership ask; adding a 5th between would dilute
+  the close. The trust section already has 17 slides; aggregation is
+  not a credibility beat, it's an accuracy beat — wrong section.
+- No headline number anywhere visible. 107 ≠ 1,497. Framing the
+  partial result as a hard claim would invite the same overclaim
+  trap Round 5.5 hardened against.
+
+### Why notes-only is the right call
+The aggregation result is real and partially validated; pulling a
+co-partner thread on it gives you 3-5 minutes of substantive
+engineering material. But the meeting's narrative weight is on
+trust + workflow (the headline numbers, the three-tier UI, the
+hallucination case study). Keeping aggregation in notes preserves
+the deck's pose: ship what's validated, defend what's measured, talk
+about what's coming.
+
+### Sources cited in the speaker note
+- `docs/beam-search/n_best_implementation.md` — full writeup
+- `tuning_results/exp_nbest_validation/aggregator_method_summary.json`
+  — WER table
+- `tuning_results/exp_nbest_validation/calibration.json` —
+  T-scaling experiment results
+- `english_full_nbest_eval/decode_output/decode.log` — running
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  speaker-note expansion on `slide_client_engineering_journey`.
+- `presentation_materials_20260224/QA_CHEAT_SHEET.md` + `.pdf` —
+  new pull-question Q&A on accuracy improvements.
+- `presentation_materials_20260224/Argos_VSP_Client_Round5_Apr2026.pptx`
+  + `.pdf` — rebuilt to embed the updated speaker note (no visible
+  slide change).
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-01 — Round 5.6 — Confidence findings update (LANDED)
 
 The May 2026 confidence work landed three things since Round 5.5

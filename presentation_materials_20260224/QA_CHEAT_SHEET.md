@@ -78,6 +78,16 @@ Slide 44 has both these beats as the bottom pills ("MEANINGFUL TODAY" / "GROWS I
 
 ---
 
+## "Is there more you can do to improve accuracy beyond the current numbers?"
+
+**"Yes — beam aggregation is the next gain we're shipping. Beam search internally produces 20 candidate hypotheses per segment, and currently only the top-1 is kept. Voting across the 20 candidates, weighted by per-word confidence, recovers errors top-1 misses. On a 107-segment evaluation, this dropped WER from 59 percent to 57 percent — about 3.6 percent relative — and lifted intelligibility scores too. Code shipped May 1; it's gated behind an environment variable while we run the full 1,497-segment evaluation. The honest caveat is that the agreement scores from voting need a one-time temperature calibration to act as proper confidence numbers — that experiment ran cleanly and the calibrated voting method has the best calibration error of any method we've measured."**
+
+If pressed: "After full evaluation, we'd ship the voting method as the default decoder for transcript output, while keeping the simpler top-1 confidence path for the trust signal. Both are real, both are validated, both are in code today."
+
+Sources for follow-up: `docs/beam-search/n_best_implementation.md`, `tuning_results/exp_nbest_validation/`. Don't volunteer this answer — it's a pull-question response only.
+
+---
+
 ## "How reliable is the green coloring? Is green always correct?"
 
 **"No. Green is high-confidence, not guaranteed correct. We measured this across 23,261 words: green is 92.8% reliable in high-quality segments and 21.8% reliable in low-quality ones. That range is exactly why our UI runs a three-tier policy. Above segment confidence 0.82, we show full coloring — green is ≥85% reliable there. Between 0.65 and 0.82, we show coloring with an amber 'verify names and numbers' banner. Below 0.65, we strip the coloring entirely — keeping it would mislead the reviewer."**
