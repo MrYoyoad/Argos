@@ -63,6 +63,25 @@ python3 docs/_research-tools/generators/generate_client_demo_report.py \
 
 This produces a byte-identical artifact to the version in [docs/_research-tools/generators/presentation/slides_client.py](../_research-tools/generators/presentation/slides_client.py).
 
+## Burned videos: per-word confidence colors
+
+**Shipped May 1, 2026.** [VSP-LLM/scripts/make_burn.py](../../VSP-LLM/scripts/make_burn.py) now accepts `--word_confidence` and renders each hypothesis word in green/yellow/red inside the burned MP4 — same color story as the HTML report, so the artifacts tell the same story whether viewed as HTML or video.
+
+How it works:
+- Coloring is drawn via libass (an ASS subtitle file is generated per segment with inline `{\1c&HBBGGRR&}` color overrides) over the same dark band that previously held white drawtext.
+- Color source priority per segment:
+  1. Real per-word probabilities from `word_confidence.json` (output of `compute_word_confidence.py`, written by Stage 8 when a `confidence-{fid}.json` sidecar exists).
+  2. Synthetic colors from REF↔HYP alignment when only the decode JSON's `ref` field is available (match → high, substitution → med, insertion → low).
+  3. Plain white drawtext (original pre-change behavior) when neither is available.
+- [lib/outputs.sh](../../lib/outputs.sh) passes `--word_confidence "$word_conf_json"` to `make_burn.py` automatically when the file exists. No changes required to `run_flat_english_pipeline.sh`.
+
+Color palette (BGR for libass, matches the HTML CSS):
+- `conf-high` (≥ 0.85) → `&H50AF4C&` (CSS `#4caf50` green)
+- `conf-med` (0.40–0.85) → `&H07C1FF&` (CSS `#ffc107` amber)
+- `conf-low` (< 0.40) → `&H756CE0&` (CSS `#e06c75` red)
+
+ffmpeg dependency: needs libass support (`ffmpeg --enable-libass`). Both the EC2 host (`ffmpeg 4.4.2-0ubuntu0.22.04.1`) and the standalone container's Ubuntu 22.04 base ffmpeg ship with libass enabled.
+
 ## Sync state
 
 The generator is mirrored verbatim across all three deployment locations (verified by md5sum):

@@ -1575,3 +1575,42 @@ hyp_words = [w for w, _ in hyp_tokens]
 - Module test suite (37 tests) passes.
 - Integration test: ran `run_argos_demo_report` directly against `english_full_results/decode_output/hypo-84361.json` — produced 17 KB HTML with generic title, "Pipeline output" Source card, raw video prefix in segment labels (no Obama hardcoding).
 - Regression test: regenerated original `presentation_materials_20260224/01_plots_for_slides/obama_demo_report.html` via explicit-args invocation — byte-identical to pre-change file.
+
+### Per-Word Confidence in Burned Videos (May 1, 2026)
+
+**Summary**: every burned MP4 produced by the pipeline now renders the hypothesis with per-word green/yellow/red coloring inside the existing dark band — same color story as the HTML report. Previously the burned text was uniformly white.
+
+**Files changed (all kept byte-identical via md5sum)**:
+
+1. `VSP-LLM/scripts/make_burn.py` — added:
+   - `--word_confidence <path>` CLI flag (optional)
+   - `synthetic_words_from_alignment(ref, hyp)` — REF↔HYP fallback
+   - `load_word_confidence(path)` — reads `word_confidence.json` (output of `compute_word_confidence.py`)
+   - `load_references(path)` — pulls `ref` field from the same decode JSON for the synthetic fallback
+   - `build_ass_file(words, ...)` — writes a temporary ASS subtitle file with inline `{\1c&HBBGGRR&}` color overrides
+   - Filter graph branch: when per-word data is available, replaces `drawtext` with `subtitles=` (libass); otherwise falls back to the original drawtext path. Same dark band, same position.
+   Mirrored to: `VSP-LLM/scripts/make_burn.py` (canonical), `vsp_docker/galaxy_export/VSP-LLM/scripts/make_burn.py`, `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_burn.py`.
+
+2. `lib/outputs.sh` — pass `--word_confidence "$word_conf_json"` to `make_burn.py` when the file exists. Single-line addition. Mirrored to `vsp_linux_container_FINAL_20260217/lib/outputs.sh`.
+
+**Color palette** (BGR for libass, matches the HTML CSS):
+- `conf-high` (>=0.85) → `&H50AF4C&` (CSS `#4caf50` green)
+- `conf-med` (0.40-0.85) → `&H07C1FF&` (CSS `#ffc107` amber)
+- `conf-low` (<0.40) → `&H756CE0&` (CSS `#e06c75` red)
+
+**Color source priority per segment**:
+1. Real `word_confidence.json` (from `compute_word_confidence.py` — only available when `VSP_OUTPUT_SCORES=1` was set during decode and a `confidence-{fid}.json` sidecar exists)
+2. Synthetic from REF↔HYP alignment (uses the decode JSON's `ref` field — always present in pipeline output)
+3. Plain white drawtext (original pre-change behavior — backward compatible when neither is available)
+
+**Standalone container compatibility**: zero new Python dependencies (pure stdlib: `re`, `difflib`, `tempfile`). The standalone container already ships ffmpeg with libass enabled (Ubuntu 22.04 base + the `--enable-libass` flag in the system ffmpeg). No change to `INSTALL.sh` needed.
+
+**`run_flat_english_pipeline.sh` is NOT modified** — change rides through `lib/outputs.sh` which the orchestrator already sources.
+
+**Container action**: No further action needed — both files copied to `vsp_linux_container_FINAL_20260217/` in this commit and verified identical (`md5sum` match).
+
+**Verification**:
+- Module test suite (37 tests) still passes.
+- Integration test: ran `make_burn.py` directly on `english_full_results/decode_output/hypo-84361.json` (no real sidecar → exercises synthetic fallback). 7/8 segments produced colored MP4s; 8th was skipped because no source video exists for that utt_id.
+- Visual verification: extracted frame from a burned video confirmed green/yellow/red text in the dark band, matching what the HTML report shows for the same segment.
+- Backward-compat regression: ran `make_burn.py` with a slim hypo-only JSON (no `ref` field, no `--word_confidence`) — fell back cleanly to the original white `drawtext` path. Output frame visually identical to the pre-change behavior.

@@ -3,12 +3,156 @@ from __future__ import annotations
 
 import argparse
 import ast
+import difflib
 import json
+import re
 import subprocess
 import tempfile
 import textwrap
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+# Per-word confidence colors (BGR for libass; matches the HTML report palette).
+# CSS green #4caf50 → BGR 50AF4C; amber #ffc107 → BGR 07C1FF; red #e06c75 → BGR 756CE0.
+ASS_COLOR_HIGH = "&H50AF4C&"   # green  (conf >= 0.85)
+ASS_COLOR_MED  = "&H07C1FF&"   # amber  (0.40 <= conf < 0.85)
+ASS_COLOR_LOW  = "&H756CE0&"   # red    (conf < 0.40)
+ASS_COLOR_NONE = "&HFFFFFF&"   # white  (no confidence data — fallback)
+
+# Matches the thresholds in compute_word_confidence.py and the HTML report.
+SYNTH_PROBS = {"match": 0.85, "sub": 0.50, "ins": 0.20}
+
+
+def _normalize_words(text: str) -> List[str]:
+    if not text:
+        return []
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9'\s]", " ", text)
+    return [w for w in text.split() if w]
+
+
+def _conf_class(prob: Optional[float]) -> str:
+    if prob is None:
+        return "conf-unknown"
+    if prob >= 0.85:
+        return "conf-high"
+    if prob >= 0.40:
+        return "conf-med"
+    return "conf-low"
+
+
+def _ass_color_for(conf_class: str) -> str:
+    return {
+        "conf-high": ASS_COLOR_HIGH,
+        "conf-med":  ASS_COLOR_MED,
+        "conf-low":  ASS_COLOR_LOW,
+    }.get(conf_class, ASS_COLOR_NONE)
+
+
+def synthetic_words_from_alignment(ref: str, hyp: str) -> List[Dict[str, Any]]:
+    """Build per-word confidence list from the WER alignment between REF and HYP.
+
+    Used as a fallback when no real confidence sidecar is available — the same
+    fallback path the standalone HTML demo report uses.
+    """
+    ref_words = _normalize_words(ref)
+    hyp_words = _normalize_words(hyp)
+    matcher = difflib.SequenceMatcher(a=ref_words, b=hyp_words, autojunk=False)
+    out: List[Dict[str, Any]] = []
+    for op, i1, i2, j1, j2 in matcher.get_opcodes():
+        if op == "equal":
+            for j in range(j1, j2):
+                out.append({"word": hyp_words[j], "prob": SYNTH_PROBS["match"],
+                            "conf_class": "conf-high"})
+        elif op == "replace":
+            for j in range(j1, j2):
+                out.append({"word": hyp_words[j], "prob": SYNTH_PROBS["sub"],
+                            "conf_class": "conf-med"})
+        elif op == "insert":
+            for j in range(j1, j2):
+                out.append({"word": hyp_words[j], "prob": SYNTH_PROBS["ins"],
+                            "conf_class": "conf-low"})
+        # 'delete' — words present in REF but missing from HYP — not rendered.
+    return out
+
+
+def load_word_confidence(path: Optional[str]) -> Dict[str, List[Dict[str, Any]]]:
+    """Load a word_confidence.json (output of compute_word_confidence.py).
+
+    Returns {utt_id: [{"word", "prob", "conf_class", ...}, ...]} or {} on failure.
+    """
+    if not path:
+        return {}
+    p = Path(path)
+    if not p.exists():
+        print(f"[INFO] word_confidence not found at {path} — colors will use synthetic fallback")
+        return {}
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"[WARN] Cannot read {path}: {e}")
+        return {}
+    out: Dict[str, List[Dict[str, Any]]] = {}
+    for uid, rec in data.items():
+        words = rec.get("words", []) if isinstance(rec, dict) else []
+        if isinstance(words, list) and words:
+            out[uid] = words
+    return out
+
+
+def _ass_escape(text: str) -> str:
+    """Escape characters that have special meaning inside an ASS Dialogue line."""
+    return (text
+            .replace("\\", r"\\")
+            .replace("{", r"\{")
+            .replace("}", r"\}"))
+
+
+def build_ass_file(words: List[Dict[str, Any]],
+                   plain_text: str,
+                   video_w: int, video_h: int,
+                   fontsize: int, margin_v: int) -> Optional[str]:
+    """Write a temporary ASS subtitle file with per-word color overrides.
+
+    Returns the file path, or None if `words` is empty (caller should fall
+    back to the plain drawtext path).
+    """
+    if not words:
+        return None
+
+    parts = []
+    for i, w in enumerate(words):
+        color = _ass_color_for(w.get("conf_class") or _conf_class(w.get("prob")))
+        word = _ass_escape(str(w.get("word", "")))
+        sep = " " if i < len(words) - 1 else ""
+        parts.append(f"{{\\1c{color}}}{word}{sep}")
+    dialogue_text = "".join(parts)
+
+    # ASS Dialogue spans the whole clip — burned video is one segment.
+    # Style: Arial, given fontsize, alignment=2 (bottom-center), MarginV in pixels.
+    ass = f"""[Script Info]
+ScriptType: v4.00+
+PlayResX: {video_w}
+PlayResY: {video_h}
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,{fontsize},&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,20,20,{margin_v},1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,9:59:59.00,Default,,0,0,0,,{dialogue_text}
+"""
+
+    tf = tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".ass", delete=False)
+    try:
+        tf.write(ass)
+        tf.flush()
+        return tf.name
+    finally:
+        tf.close()
 
 
 def wrap_text(s: str, width: int, max_lines: int) -> str:
@@ -162,6 +306,58 @@ def load_predictions(path: Path) -> Dict[str, str]:
     return {}
 
 
+def load_references(path: Path) -> Dict[str, str]:
+    """Load REF strings keyed by utt_id from the same JSON used for hypotheses.
+
+    Mirrors `load_predictions` but pulls the 'ref' field. Used for the
+    synthetic-confidence fallback (REF↔HYP alignment) when no real per-token
+    sidecar is available. Returns {} if no refs are present.
+    """
+    raw = path.read_text(encoding="utf-8", errors="replace")
+    if not raw.strip():
+        return {}
+
+    lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
+
+    if len(lines) >= 2 and all(ln.startswith("{") for ln in lines[:2]):
+        out: Dict[str, str] = {}
+        for ln in lines:
+            d = _loads_json_or_py(ln)
+            if not isinstance(d, dict):
+                continue
+            uid = d.get("utt_id") or d.get("id")
+            ref = d.get("ref") or d.get("reference") or ""
+            if uid:
+                out[str(uid)] = str(ref).strip()
+        return out
+
+    obj = _loads_json_or_py(raw)
+
+    if isinstance(obj, list):
+        out: Dict[str, str] = {}
+        for rec in obj:
+            if not isinstance(rec, dict):
+                continue
+            uid = rec.get("utt_id") or rec.get("id")
+            ref = rec.get("ref") or rec.get("reference") or ""
+            if uid:
+                out[str(uid)] = str(ref).strip()
+        return out
+
+    if isinstance(obj, dict):
+        utts = obj.get("utt_id") or obj.get("id")
+        refs = obj.get("ref") or obj.get("reference")
+        if isinstance(utts, list) and isinstance(refs, list):
+            out: Dict[str, str] = {}
+            n = min(len(utts), len(refs))
+            for i in range(n):
+                if utts[i] is None:
+                    continue
+                out[str(utts[i])] = ("" if refs[i] is None else str(refs[i])).strip()
+            return out
+    return {}
+
+
 def load_segment_metadata(metadata_path: Path) -> Dict[str, Any]:
     """Load segment metadata JSON file."""
     if not metadata_path.exists():
@@ -288,6 +484,13 @@ def main() -> None:
     ap.add_argument("--pad_y", type=int, default=16)
     ap.add_argument("--line_spacing", type=int, default=6)
 
+    ap.add_argument("--word_confidence", default=None,
+                    help="optional path to word_confidence.json (output of "
+                         "compute_word_confidence.py). When provided, hypotheses "
+                         "are rendered with per-word green/yellow/red coloring "
+                         "via libass. When absent or missing a segment, a synthetic "
+                         "fallback colors words by REF vs HYP alignment.")
+
     args = ap.parse_args()
 
     out_dir = Path(args.out_dir)
@@ -304,6 +507,15 @@ def main() -> None:
     if not hyps:
         print(f"[WARN] No records loaded from {args.jsonl}")
         return
+
+    # Per-word confidence sources for color coding (optional).
+    # Priority per segment: real sidecar > synthetic from REF↔HYP alignment > none.
+    word_conf = load_word_confidence(args.word_confidence)
+    refs = load_references(Path(args.jsonl))
+    if word_conf:
+        print(f"[INFO] Loaded word_confidence for {len(word_conf)} segments — burned videos will be colored")
+    elif refs:
+        print(f"[INFO] No real word_confidence — falling back to synthetic colors from REF↔HYP alignment ({len(refs)} refs)")
 
     # Build display names for Part naming in output filenames
     # Group by base video ID to determine single vs multi-segment
@@ -450,6 +662,12 @@ def main() -> None:
 
         dst = out_dir / _file_names.get(uid, f"{uid}_with_hyp.mp4")
 
+        # Resolve per-word coloring source for this segment.
+        # Priority: real word_confidence sidecar > synthetic from REF↔HYP > none.
+        seg_words: List[Dict[str, Any]] = word_conf.get(uid, [])
+        if not seg_words and uid in refs:
+            seg_words = synthetic_words_from_alignment(refs[uid], hyp)
+
         tf = tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".txt", delete=False)
         try:
             tf.write(txt)
@@ -458,21 +676,42 @@ def main() -> None:
         finally:
             tf.close()
 
-        textfile_for_filter = textfile.replace("'", r"\'")
-
         # IMPORTANT: ffmpeg-4.4 friendly expressions: no parentheses
         # use h/iw/ih variables safely
         y_box = f"h-{box_h}"
         y_text = f"h-{box_h}+{pad_y}"
 
-        vf = (
-            f"drawbox=x=0:y={y_box}:w=iw:h={box_h}:color=black@0.65:t=fill,"
-            f"drawtext=textfile='{textfile_for_filter}':"
-            f"expansion=none:"
-            f"fontcolor=white:fontsize={fs}:"
-            f"x={margin}:y={y_text}:"
-            f"line_spacing={args.line_spacing}"
-        )
+        # Build filter graph. Two paths:
+        #   (a) per-word colored ASS subtitle via libass (when seg_words is non-empty)
+        #   (b) original drawtext path (white text) — used as backward-compatible fallback
+        ass_file: Optional[str] = None
+        if seg_words:
+            # libass measures fontsize differently than ffmpeg drawtext — scale up
+            # ~30% so the colored text reads at roughly the same visual size as
+            # the white drawtext fallback.
+            ass_fs = max(14, int(round(fs * 1.30)))
+            margin_v = max(8, box_h - pad_y - ass_fs)
+            ass_file = build_ass_file(seg_words, txt, w, h,
+                                      fontsize=ass_fs, margin_v=margin_v)
+
+        textfile_for_filter = textfile.replace("'", r"\'")
+
+        if ass_file:
+            # libass needs the path single-quoted and any colon escaped.
+            ass_for_filter = ass_file.replace(":", r"\:").replace("'", r"\'")
+            vf = (
+                f"drawbox=x=0:y={y_box}:w=iw:h={box_h}:color=black@0.65:t=fill,"
+                f"subtitles='{ass_for_filter}'"
+            )
+        else:
+            vf = (
+                f"drawbox=x=0:y={y_box}:w=iw:h={box_h}:color=black@0.65:t=fill,"
+                f"drawtext=textfile='{textfile_for_filter}':"
+                f"expansion=none:"
+                f"fontcolor=white:fontsize={fs}:"
+                f"x={margin}:y={y_text}:"
+                f"line_spacing={args.line_spacing}"
+            )
 
         cmd = [
             "ffmpeg", "-y", "-nostdin",
@@ -498,6 +737,11 @@ def main() -> None:
             Path(textfile).unlink(missing_ok=True)
         except Exception:
             pass
+        if ass_file:
+            try:
+                Path(ass_file).unlink(missing_ok=True)
+            except Exception:
+                pass
 
         # Clean up temporary extracted segment if we created one
         if temp_extracted and temp_extracted.exists():

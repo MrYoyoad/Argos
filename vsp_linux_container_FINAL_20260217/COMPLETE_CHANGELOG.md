@@ -830,8 +830,24 @@ Every pipeline run now produces a polished, dark-themed `argos_demo.html` (one c
 
 Full detail: `docs/features/argos-demo-report.md` and `docs/container-sync-changelog.md` (in the EC2 source repo) — entry "Argos Demo Report Auto-Generation (May 1, 2026)".
 
+### Per-Word Confidence in Burned Videos (May 1, 2026)
+
+Every burned MP4 produced by `make_burn.py` now renders the hypothesis with per-word green/yellow/red coloring inside the existing dark band — same color story as the HTML report. Previously the burned text was uniformly white.
+
+**Files updated in this package**:
+- `VSP-LLM/scripts/make_burn.py` — added `--word_confidence` CLI flag and per-segment coloring via libass (ASS subtitles with inline `{\1c&HBBGGRR&}` overrides). Falls back to synthetic colors from REF↔HYP alignment when no real per-word data is available, and finally to the original white drawtext when neither is present (backward-compatible).
+- `lib/outputs.sh` — passes `--word_confidence "$word_conf_json"` to `make_burn.py` automatically when the file exists.
+
+**No new dependencies** — pure stdlib (`re`, `difflib`, `tempfile`). The standalone container's ffmpeg already ships with libass enabled (`ffmpeg --enable-libass` in the Ubuntu 22.04 base). No changes to `INSTALL.sh` or `run_flat_english_pipeline.sh`.
+
+**Color palette** (matches the Argos HTML report CSS): green `#4caf50` for confidence ≥ 0.85, amber `#ffc107` for 0.40–0.85, red `#e06c75` for < 0.40.
+
+**Verification**: 37 module tests pass; integration test on `english_full_results/decode_output/hypo-84361.json` (synthetic-fallback path) produced colored MP4s; backward-compat regression with hypo-only JSON falls back cleanly to white drawtext.
+
+Full detail: `docs/features/argos-demo-report.md` and `docs/container-sync-changelog.md` (in the EC2 source repo) — entry "Per-Word Confidence in Burned Videos (May 1, 2026)".
+
 ---
 
 **Created**: February 3, 2026
-**Last Updated**: May 1, 2026 (Argos demo report auto-generation)
+**Last Updated**: May 1, 2026 (per-word confidence colors in burned videos)
 **Package Version**: 1.0.0 FINAL + post-1.0 updates

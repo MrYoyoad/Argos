@@ -143,13 +143,19 @@ run_client_outputs() {
     }
   fi
 
-  # Generate burned videos
+  # Generate burned videos. When word_confidence.json was produced above,
+  # pass it so make_burn.py can render per-word green/yellow/red coloring
+  # via libass. When absent, make_burn.py falls back to the synthetic
+  # WER-alignment colors (REF↔HYP), and finally to plain white drawtext.
+  local burn_conf_arg=""
+  [ -n "$word_conf_json" ] && [ -f "$word_conf_json" ] && burn_conf_arg="--word_confidence $word_conf_json"
   python3 "$vsp_dir/scripts/make_burn.py" \
     --jsonl "$decode_json" \
     --video_dir "$flat_vid_dir" \
     --segment_dir "$segment_vid_dir" \
     --segment_metadata "$segment_metadata" \
-    --out_dir "$burn_dir" || {
+    --out_dir "$burn_dir" \
+    $burn_conf_arg || {
     log_error "make_burn.py failed"
     return 1
   }
