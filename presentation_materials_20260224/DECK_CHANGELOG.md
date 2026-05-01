@@ -26,15 +26,19 @@ Reverse-chronological: newest entry on top.
 
 ---
 
-## 2026-05-01 — Note on commit 80580bd (bundle correction)
+## 2026-05-01 — Note on the demo-report bundle commit
 
-Commit `80580bd` is titled *"client-deck: backfill commit SHA in Round
-5.1 + 5.2 changelog entries"* but actually contains **9 files**, not 1.
-A `git reset` between the Round-5.2 commit and the SHA-backfill commit
-quietly re-staged unrelated demo-report work into the index, which
-then rode along on the SHA-backfill commit.
+Commit `96ed361` (originally `80580bd`, retitled via amend) carries
+**9 files**, not the 1 its first title suggested. A `git reset`
+between the Round-5.2 commit and a SHA-backfill commit on
+DECK_CHANGELOG quietly re-staged unrelated demo-report work into the
+index, which then rode along on the backfill. The commit was later
+amended from *"client-deck: backfill commit SHA in Round 5.1 + 5.2
+changelog entries"* → *"feat: auto-generate Argos client-styled HTML
+report in every pipeline run"* so the title now matches the bulk of
+what's in the diff.
 
-**What's actually in 80580bd:**
+**What's actually in `96ed361`:**
 
 | File | What changed | Belongs to |
 |---|---|---|
@@ -48,17 +52,16 @@ then rode along on the SHA-backfill commit.
 | `vsp_linux_container_FINAL_20260217/COMPLETE_CHANGELOG.md` | Container changelog entry for the demo-report change | demo-report rework |
 | `vsp-ui/README.md` | UI README touch-up that was sitting unstaged | demo-report rework |
 
-**Why not amend?** Project rule: *"Always create NEW commits rather
-than amending."* So this entry serves as the human-readable correction.
-The audit/sync trail for the demo-report changes is in
-[`docs/container-sync-changelog.md`](../docs/container-sync-changelog.md)
-(lines ~1500-1566). The DECK_CHANGELOG SHA-backfill itself remains
-correct — `0ef12b4` is the real Round-5.1+5.2 commit.
+**Audit trail.** The commit log title now accurately describes the
+demo-report rework (post-amend). The full sync trail for those
+changes is in [`docs/container-sync-changelog.md`](../docs/container-sync-changelog.md)
+(lines ~1500-1566). The Round-5.1+5.2 deck commit (`0ef12b4`) is
+unaffected.
 
 **No action required** — both the deck and the demo-report rework are
-real, useful, and shipped. Future readers searching git log for the
-demo-report change should find this note instead of being misled by
-the commit subject.
+real, useful, and shipped. The DECK_CHANGELOG SHA backfill still
+landed inside `96ed361`; the deck-only diff there is the 6-line edit
+that filled in `0ef12b4` for the Round-5.1+5.2 entries.
 
 ---
 
