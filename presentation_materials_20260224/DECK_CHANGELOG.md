@@ -147,7 +147,7 @@ Round 5.3.
   obama_flagged).
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- 1dc6c5c — Round 5.3.
 
 ---
 
