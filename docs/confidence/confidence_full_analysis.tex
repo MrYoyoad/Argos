@@ -14,6 +14,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{float}
 
 % Brand colors
 \definecolor{argosNavy}{HTML}{0d1b2a}
@@ -295,6 +297,186 @@ $r(\text{top3\_entropy}, \text{IS})$            & $-0.803$ \\
 \end{table}
 
 Top-3 entropy is \textbf{almost perfectly redundant with full entropy} ($r \approx +0.95$), so it adds no information beyond what we already capture. Genuine beam-level signal requires capturing all 20 hypotheses with their per-step probability trails -- the cheap version is not enough. This is a Mission 6 candidate.
+
+\section{Operating-point selection -- precision vs recall vs false-bads}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.98\textwidth]{conf_operating_points.png}
+\caption{Left: precision-recall trade-off. Cyan curve sweeps \texttt{mean\_word\_prob} alone; coloured dots overlay duration- / entropy- / triple-signal gates. Right: number of false-bads (NIV-N) inside the trusted set as recall grows.}
+\end{figure}
+
+The headline correlation tells us confidence \emph{carries} the signal; this section asks the deployment question -- at which threshold is the trade-off best, and how do extra signals (duration, entropy) move the curve?
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{0.40\textwidth}rrrr}
+\toprule
+\textbf{Operating point} & \textbf{Gate} & \textbf{Prec.} & \textbf{Recall} & \textbf{False-bads} & \textbf{Vol.\,\%} \\
+\midrule
+Loose, high recall      & \texttt{mwp $\ge$ 0.75}                                          & 59.3\% & 91.7\% & 16 & 39.1\% \\
+\textbf{Balanced (recommended)} & \texttt{mwp $\ge$ 0.80}                                  & \textbf{69.9\%} & \textbf{78.4\%} & 9  & 28.4\% \\
+Strict precision        & \texttt{mwp $\ge$ 0.85}                                          & 81.0\% & 54.3\% & 3  & 17.0\% \\
+$+$ duration filter     & \texttt{mwp $\ge$ 0.85 AND dur $\ge$ 1.5s}                       & 87.9\% & 32.1\% & 0  & 9.3\%  \\
+\textbf{Zero-false-bad gate} & \texttt{mwp $\ge$ 0.85 AND dur $\ge$ 1.5s AND ent $\le$ 0.7} & \textbf{88.7\%} & \textbf{30.5\%} & \textbf{0}  & 8.7\%  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Reading the trade-off.} Single-signal \texttt{mean\_word\_prob} peaks at $F_1 \approx 0.74$ around the $0.80$ threshold (78\% recall, 70\% precision, \textbf{9 false-bads} out of 405 trusted segments). Tightening to $0.85$ keeps a few fewer false-bads but loses $\sim 25$ percentage points of recall. Adding constraints (\texttt{min\_word\_prob}, \texttt{len\_ratio}, entropy) pushes precision up but trades recall faster than it adds purity -- the same $F_1$ budget, redistributed.
+
+\textbf{Recommendation.} For most use cases pick \texttt{mean\_word\_prob $\ge$ 0.80} -- keeps 78\% of NIV-Y segments accessible, costs only 9 NIV-N leakages out of 1{,}427 (0.6\% of corpus). For zero-tolerance deployments, gate \texttt{mean\_word\_prob $\ge$ 0.85 AND duration\_s $\ge$ 1.5 AND mean\_entropy $\le$ 0.7} -- that gate produces \textbf{zero false-bads} at $\sim 30\%$ recall, useful for legal / medical / broadcast captioning where any wrong-trust is unacceptable.
+
+\section{False-good characterisation -- what slips through, can context catch it?}
+
+At the recommended balanced gate (\texttt{mean\_word\_prob $\ge$ 0.80}), 9 segments are trusted but actually NIV-N. We dump them and ask: is anything else in the data, or in the broader video / topic context, able to flag these?
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.98\textwidth]{conf_false_good_signatures.png}
+\caption{Density of true-good (green) vs false-bad (coral) segments at \texttt{mean\_word\_prob} $\ge 0.80$. False-bads are systematically shorter (median 0.98s vs 1.86s), have fewer hypothesis words (9 vs 19), and have higher mean entropy ($+0.20$). The chosen-token max-softmax stays high; the dispersion across the distribution leaks elsewhere.}
+\end{figure}
+
+\textbf{Feature gap (false-bads vs true-goods at the gate).}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Feature} & \textbf{False-bad mean} & \textbf{True-good mean} & \textbf{Gap} \\
+\midrule
+Segment duration (s)   & 1.22  & 1.99  & $-0.78$ \\
+Hyp word count         & 11.67 & 20.83 & $-9.16$ \\
+Ref word count         & 13.89 & 21.42 & $-7.53$ \\
+Mean entropy           & 0.68  & 0.48  & $+0.20$ \\
+Length ratio           & 1.18  & 0.98  & $+0.21$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{The smoking gun: false-bads are SHORT.} Median segment duration is \textbf{0.98s} for false-bads vs \textbf{1.86s} for true-goods. False-bads are systematically segments where the model has too little material to constrain its output -- short clips with a handful of words give the language prior room to commit to a fluent-but-wrong answer.
+
+\textbf{Mean entropy is $+0.20$ higher on false-bads.} The model \emph{is} uncertain on these -- it just compensates by picking a high-prob single token at each position. Per-token max-softmax misses the dispersion; entropy preserves it.
+
+\subsection*{The 9 false-good cases at the balanced gate}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{utt\_id (truncated)} & \textbf{dur (s)} & \textbf{ref$\to$hyp} & \textbf{mwp} & \textbf{min\_wp} & \textbf{ent} & \textbf{WER\%} \\
+\midrule
+\texttt{NzP4ZzCCTXU\_0\_725f\dots} & 2.39 & 49$\to$34 (lr 0.69) & 0.81 & \textbf{0.09} & 1.01 & 51  \\
+\texttt{VQfytKqzC1E\_0\_fe65\dots} & 1.92 & 25$\to$17 (lr 0.68) & 0.83 & \textbf{0.15} & 0.79 & 64  \\
+\texttt{JDpiI6GTCUM\_7\_a1a8\dots} & 1.22 & 13$\to$8  (lr 0.62) & 0.80 & 0.56          & 0.45 & 77  \\
+\texttt{PNUbsGx13NI\_12\_86d7\dots} & 1.14 & 6$\to$12  (lr 2.00) & 0.82 & \textbf{0.15} & 0.71 & 200 \\
+\texttt{0kRnNot68TI\_5\_8d93\dots} & 0.87 & 7$\to$5   (lr 0.71) & 0.85 & 0.63          & 0.70 & 71  \\
+\texttt{Hl08kKKS1lw\_13\_1c5e\dots} & 0.98 & 11$\to$9 (lr 0.82) & 0.80 & \textbf{0.35} & 0.86 & 64  \\
+\texttt{GRqF3po8ip0\_19\_0bca\dots} & 0.92 & 6$\to$6   (lr 1.00) & 0.86 & 0.40          & 0.56 & 100 \\
+\texttt{gzljNv0U75Y\_6\_14da\dots} & 0.91 & 3$\to$10  (lr 3.33) & 0.88 & 0.45          & 0.56 & 300 \\
+\texttt{xITCbZxwLn4\_0\_23fb\dots} & 0.59 & 5$\to$4   (lr 0.80) & 0.86 & 0.46          & 0.46 & 60  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Failure-mode taxonomy}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{p{0.18\textwidth}p{0.32\textwidth}p{0.22\textwidth}p{0.22\textwidth}}
+\toprule
+\textbf{Mode} & \textbf{Example} & \textbf{What gives it away} & \textbf{Catchable from} \\
+\midrule
+Counting / digit loop & ``1 2 3 4 5 6 7 8 9 10 11 12'' & \texttt{min\_word\_prob} 0.15, regex match & confidence + post-hoc text rule \\
+Phonetic substitution & ``major in acting'' $\to$ ``measure a hacking'' & low NEA F1, missed entities, plausible English & NEA / topic LM \\
+Plausible swap & ``all right i'm gonna read you'' $\to$ ``great i'm going to do this'' & reference required to detect & beam disagreement, surrounding-context LM \\
+Over-generation & ``link down there'' (3w) $\to$ ``\dots over there \dots'' (10w) & \texttt{len\_ratio} $> 2$, hyp\_words $\gg$ dur & confidence + duration \\
+Short-segment substitution & ``insurance examination'' $\to$ ``initial contamination'' & dur $< 1$s, NEA F1 $= 0$ & duration filter \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Could visual cues or broad-conversation context catch these?}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Visual cues.} Segment duration is a free proxy for visual quality (very short clips have less material for the visual encoder to lock onto). Adding \texttt{duration $\ge$ 1.5s} cuts most short-segment false-bads out of the trusted set. \emph{A real visual quality model} (lip occlusion, face-frame coverage, head-pose) would catch more -- not built into the pipeline today; candidate for next sprint.
+  \item \textbf{Topic context.} False-bads frequently lose specific entities (numbers, proper nouns, domain words). NEA F1 $= 0\%$ on most cases. A surrounding-sentence language model conditioned on the \emph{source video's} topic could rescore the hyp and flag drift -- also not in the pipeline today.
+  \item \textbf{Beam disagreement.} For cases like ``great i'm going to do this'', the chosen beam is decisive but unrelated to the reference. Capturing all 20 beams would let us ask whether \emph{any} alternative beam was closer to the reference -- a genuine quality signal that confidence-of-chosen-beam alone cannot expose. Mission 6.
+\end{itemize}
+
+\textbf{Take-away.} The three free signals already in our sidecar (\texttt{mean\_word\_prob}, \texttt{mean\_entropy}, segment duration) catch every false-bad that has any objective signature. The residual cases -- phonetically plausible, length-matched, fluent -- are out of reach of confidence alone and will require either visual-quality scoring or beam-aggregation to flag automatically. Until then, the deck should footnote the residual rate at the chosen operating point ($2.2\%$ false-bad among trusted at \texttt{mwp $\ge$ 0.80}).
+
+\section{Extra scatters -- confidence pairs vs hallucination, IS, and WER}
+
+Section 5 shows a single 2D scatter (\texttt{mean\_prob} $\times$ \texttt{mean\_entropy}, colored by hallucination). The plots below extend that view to other confidence pairs and to continuous IS / WER targets, and add a precision-recall sweep that visualizes the sweet spot from Section 8 across multiple metrics at once.
+
+\subsection*{Hallucination scatter -- alternative confidence pairs}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{conf_hallucination_pairs_scatter.png}
+\caption{Four confidence pairs colored by hallucinated label. Hallucinated mass piles up consistently in the same corner across all four pairs -- the dangerous-quadrant count stays at $\sim 3 / 223$ regardless of which projection we use. Max-softmax, entropy, margin, and red/green fractions are different shadows of the same underlying confidence collapse, not independent failure detectors.}
+\end{figure}
+
+\subsection*{Confidence vs Intelligibility Score (continuous)}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{conf_metrics_vs_is_scatter.png}
+\caption{Per-segment scatter of the four leading confidence metrics against IS, with OLS fit and $R^2$. Three of the four signals explain $\sim$65--67\% of IS variance with a single linear term; \texttt{min\_word\_prob} is meaningfully weaker.}
+\end{figure}
+
+\subsection*{Confidence vs WER (continuous)}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{conf_metrics_vs_wer_scatter.png}
+\caption{Same four metrics against WER. Confidence predicts IS more cleanly than WER ($R^2 \approx 0.65$ vs $0.48$). The gap is the hallucination tail: WER $\ge 100\%$ segments cluster at low mean\_prob and pull the WER axis sharply, while IS varies smoothly because it credits semantic and phonetic similarity.}
+\end{figure}
+
+\subsection*{Sweet-spot sweep -- F1 over NIV-Y across six gates}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{conf_sweet_spot_pr.png}
+\caption{Six metrics swept simultaneously, with the F1-max threshold for NIV-Y (IS $\ge 3.80$) marked on each curve.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcrrrrrr}
+\toprule
+\textbf{Metric} & \textbf{Sweet-spot gate} & \textbf{F1 (Y)} & \textbf{Prec} & \textbf{Recall$_Y$} & \textbf{Vol kept} & \textbf{IS kept} & \textbf{WER kept} \\
+\midrule
+\texttt{mean\_prob}      & \textbf{$\ge 0.82$} & \textbf{0.75} & 0.71 & 78.9\% & 28.0\% & \textbf{4.01} & \textbf{27.5\%} \\
+\texttt{mean\_word\_prob}& $\ge 0.79$ & 0.75 & 0.68 & 82.8\% & 30.8\% & 3.97 & 28.3\% \\
+\texttt{mean\_entropy}   & $\le 0.91$ & 0.74 & 0.67 & 82.8\% & 31.2\% & 3.92 & 30.3\% \\
+\texttt{mean\_margin}    & $\ge 0.70$ & 0.71 & 0.67 & 76.2\% & 28.8\% & 3.92 & 29.7\% \\
+\texttt{frac\_p\_ge\_085}& $\ge 0.64$ & 0.71 & 0.67 & 76.2\% & 28.9\% & 3.93 & 29.1\% \\
+\texttt{min\_word\_prob} & $\ge 0.19$ & 0.55 & 0.46 & 67.3\% & 36.8\% & 3.46 & 42.1\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Reading the table.} ``IS kept'' / ``WER kept'' are the averages on the segments that pass the gate -- what the user actually sees if we trust this filter at runtime. Base rate (no gate) is IS $= 2.52$, WER $= 64.1\%$.
+
+\textbf{Best single-feature gate: \texttt{mean\_prob} $\ge 0.82$.} F1 $= 0.75$ against NIV-Y is the highest single-metric score available. Precision 71\% means \emph{7 of every 10 trusted segments are NIV-Y}, vs 25.3\% in the unfiltered population. Recall 79\% means we catch $\sim 4$ in 5 of the genuinely good segments. Mean IS of trusted segments rises from $2.52 \to \mathbf{4.01}$ (well above the NIV-Y bar of 3.80); mean WER drops from $64.1\% \to \mathbf{27.5\%}$ (in the LRS3 paper's reported range).
+
+\textbf{Why this is the sweet spot.} Below $T = 0.82$, recall climbs but precision sags. Above $T = 0.82$ the curve goes nearly vertical: each additional 0.01 in $T$ loses 4--6\% of recall to gain $\le 2$pp of precision. The F1-elbow at 0.82 is where those slopes cross.
+
+\textbf{Why 0.82 here vs 0.80 in Section 8.} Section 8 gates on \texttt{mean\_word\_prob} (per-word aggregation), which peaks at $T = 0.79$. Gating on \texttt{mean\_prob} (per-token) the F1 peak is at $T = 0.82$. Both yield F1 $\approx 0.75$ -- the operating point is equivalent, only the variable name changes.
+
+\textbf{Trade-off menu} if you want a different operating point:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{High recall:} \texttt{mean\_prob $\ge 0.75$} -- keeps $\sim 40\%$ volume, F1 $\approx 0.74$, precision $\sim 64\%$.
+  \item \textbf{High precision:} \texttt{mean\_prob $\ge 0.90$} -- keeps $\sim 14\%$ volume, F1 $\approx 0.65$, precision $\sim 85\%$.
+  \item \textbf{Zero-tolerance:} combine with \texttt{dur $\ge 1.5$s AND mean\_entropy $\le 0.7$} (Section 8) -- F1 $\approx 0.46$, zero false-bads at $\sim 30\%$ recall.
+\end{itemize}
 
 \section{What changes in the codebase}
 

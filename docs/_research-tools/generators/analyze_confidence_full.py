@@ -929,6 +929,258 @@ def analysis_7_beam_preview(df: pd.DataFrame) -> Dict[str, Any]:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Analysis 8 — Operating-point selection (precision/recall sweep)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _utt_duration_seconds(utt_id: str) -> float:
+    """Duration encoded in utt_id suffix `_<start_cs>_<end_cs>` (centiseconds)."""
+    parts = utt_id.split("_")
+    try:
+        return (int(parts[-1]) - int(parts[-2])) / 100.0
+    except (ValueError, IndexError):
+        return float("nan")
+
+
+def _gate_eval(df: pd.DataFrame, mask: pd.Series, name: str, ny: int, total: int) -> Dict[str, Any]:
+    n_trust = int(mask.sum())
+    if n_trust == 0:
+        return {"name": name, "n_trust": 0, "prec": 0.0, "recall": 0.0,
+                "f1": 0.0, "false_n": 0, "false_p": 0, "vol_pct": 0.0}
+    sub = df[mask]
+    tp = int(sub["niv_y"].sum())
+    fn = int(sub["niv_n"].sum())
+    fp = int(((~sub["niv_y"].astype(bool)) & (~sub["niv_n"].astype(bool))).sum())
+    prec = tp / n_trust
+    recall = tp / max(1, ny)
+    f1 = 2 * prec * recall / (prec + recall) if (prec + recall) > 0 else 0.0
+    return {"name": name, "n_trust": n_trust, "prec": prec, "recall": recall,
+            "f1": f1, "false_n": fn, "false_p": fp,
+            "vol_pct": n_trust / total * 100}
+
+
+def analysis_8_operating_points(df: pd.DataFrame) -> Dict[str, Any]:
+    """Precision/recall sweep across gate types. Recommends a balanced and a
+    strict operating point."""
+    print("\n══ Analysis 8: Operating-point selection ══")
+    df = df.dropna(subset=["is_score"]).copy()
+    df["niv_y"] = (df["is_score"] >= 3.80).astype(int)
+    df["niv_n"] = (df["is_score"] <  2.00).astype(int)
+    df["duration_s"] = df["utt_id"].map(_utt_duration_seconds)
+    ny = int(df["niv_y"].sum())
+    total = len(df)
+
+    rows = []
+    # Single signal sweeps
+    for t in np.linspace(0.50, 0.95, 19):
+        rows.append({**_gate_eval(df, df["mean_word_prob"] >= t,
+                                   f"mwp >= {t:.2f}", ny, total),
+                     "kind": "single"})
+    # Duration-augmented at three mwp anchors
+    for mwp in [0.75, 0.80, 0.85]:
+        for dur in [1.0, 1.5, 2.0, 2.5]:
+            rows.append({**_gate_eval(df,
+                                       (df["mean_word_prob"] >= mwp) &
+                                       (df["duration_s"] >= dur),
+                                       f"mwp >= {mwp:.2f} AND dur >= {dur:.1f}s",
+                                       ny, total),
+                         "kind": "duration"})
+    # Entropy-augmented at three mwp anchors
+    for mwp in [0.75, 0.80, 0.85]:
+        for ent in [0.3, 0.5, 0.7]:
+            rows.append({**_gate_eval(df,
+                                       (df["mean_word_prob"] >= mwp) &
+                                       (df["mean_entropy"] <= ent),
+                                       f"mwp >= {mwp:.2f} AND ent <= {ent:.1f}",
+                                       ny, total),
+                         "kind": "entropy"})
+    # Triple-signal: mwp + duration + entropy (the strongest gate)
+    for mwp in [0.75, 0.80, 0.85]:
+        for dur in [1.5, 2.0]:
+            for ent in [0.5, 0.7]:
+                rows.append({**_gate_eval(df,
+                                           (df["mean_word_prob"] >= mwp) &
+                                           (df["duration_s"] >= dur) &
+                                           (df["mean_entropy"] <= ent),
+                                           f"mwp >= {mwp:.2f} AND dur >= {dur:.1f}s AND ent <= {ent:.1f}",
+                                           ny, total),
+                             "kind": "triple"})
+
+    out = pd.DataFrame(rows)
+    print("\n  Single-signal sweet spots:")
+    single = out[out["kind"] == "single"].copy()
+    single["abs_diff"] = (single["prec"] - single["recall"]).abs()
+    print(single.sort_values("f1", ascending=False).head(5)[
+        ["name", "prec", "recall", "f1", "false_n", "vol_pct"]].round(3).to_string(index=False))
+
+    print("\n  Strict gates (false_n == 0):")
+    zero = out[out["false_n"] == 0].sort_values("recall", ascending=False)
+    print(zero.head(8)[["name", "prec", "recall", "f1", "n_trust", "vol_pct"]].round(3).to_string(index=False))
+
+    # Plot: precision-recall curve with named operating points
+    fig, axs = plt.subplots(1, 2, figsize=(15, 6), dpi=200)
+    fig.patch.set_facecolor(BG)
+    _style_ax(axs[0])
+    _style_ax(axs[1])
+
+    # Left panel: P/R curve
+    s_curve = single.sort_values("recall")
+    axs[0].plot(s_curve["recall"], s_curve["prec"], "-",
+                color=TEAL, linewidth=2.2, label="mean_word_prob (single)")
+    # Annotate threshold points
+    for _, r in s_curve.iterrows():
+        if r["name"].endswith(("0.50", "0.60", "0.70", "0.75", "0.80", "0.85", "0.90", "0.95")):
+            axs[0].annotate(
+                r["name"].split()[-1],
+                (r["recall"], r["prec"]),
+                color=WHITE, fontsize=8, alpha=0.7,
+                xytext=(4, 4), textcoords="offset points",
+            )
+    # Overlay duration / entropy / triple gates as scatter
+    for kind, color, label in [
+        ("duration", GOLD,   "+ duration filter"),
+        ("entropy",  CORAL,  "+ entropy filter"),
+        ("triple",   GREEN,  "+ duration + entropy"),
+    ]:
+        sub = out[out["kind"] == kind]
+        axs[0].scatter(sub["recall"], sub["prec"], c=color, s=40,
+                       edgecolor="white", linewidth=0.5, label=label, alpha=0.85)
+    axs[0].set_xlabel("Recall (NIV-Y captured)", color=WHITE, fontsize=12)
+    axs[0].set_ylabel("Precision (trusted that are truly NIV-Y)", color=WHITE, fontsize=12)
+    axs[0].set_title("Precision-recall trade-off — gate variants",
+                     color=WHITE, fontsize=13, fontweight="bold", pad=10)
+    axs[0].set_xlim(0, 1)
+    axs[0].set_ylim(0, 1)
+    axs[0].legend(loc="lower left", facecolor=NAVY2, edgecolor=MGRAY,
+                  labelcolor=WHITE, fontsize=9)
+
+    # Right panel: false-bad count vs recall
+    s_curve_sorted = single.sort_values("recall")
+    axs[1].plot(s_curve_sorted["recall"], s_curve_sorted["false_n"], "-",
+                color=TEAL, linewidth=2.2, label="mean_word_prob (single)")
+    for kind, color, label in [
+        ("duration", GOLD,   "+ duration filter"),
+        ("entropy",  CORAL,  "+ entropy filter"),
+        ("triple",   GREEN,  "+ duration + entropy"),
+    ]:
+        sub = out[out["kind"] == kind]
+        axs[1].scatter(sub["recall"], sub["false_n"], c=color, s=40,
+                       edgecolor="white", linewidth=0.5, label=label, alpha=0.85)
+    axs[1].set_xlabel("Recall (NIV-Y captured)", color=WHITE, fontsize=12)
+    axs[1].set_ylabel("False-bads in trusted set (NIV-N count)", color=WHITE, fontsize=12)
+    axs[1].set_title("Operating-point cost: false-bads vs recall",
+                     color=WHITE, fontsize=13, fontweight="bold", pad=10)
+    axs[1].set_xlim(0, 1)
+    axs[1].legend(loc="upper left", facecolor=NAVY2, edgecolor=MGRAY,
+                  labelcolor=WHITE, fontsize=9)
+    fig.tight_layout()
+    _save(fig, PLOTS_DIR / "conf_operating_points.png")
+
+    return {"table": out, "ny": ny, "total": total}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Analysis 9 — False-good characterization at the balanced gate
+# ─────────────────────────────────────────────────────────────────────────────
+
+def analysis_9_false_goods(df: pd.DataFrame, segs: List[Segment],
+                            balanced_threshold: float = 0.80) -> Dict[str, Any]:
+    """At a balanced operating point, dump the false-good segments and the
+    feature gap vs true-good segments."""
+    print(f"\n══ Analysis 9: False-good characterization (mwp >= {balanced_threshold}) ══")
+    df = df.dropna(subset=["is_score"]).copy()
+    df["niv_y"] = (df["is_score"] >= 3.80).astype(int)
+    df["niv_n"] = (df["is_score"] <  2.00).astype(int)
+    df["duration_s"] = df["utt_id"].map(_utt_duration_seconds)
+
+    trusted = df[df["mean_word_prob"] >= balanced_threshold]
+    true_y = trusted[trusted["niv_y"] == 1]
+    false_n = trusted[trusted["niv_n"] == 1]
+
+    print(f"  Trusted: {len(trusted)}   True-good (NIV-Y): {len(true_y)}   "
+          f"False-bad (NIV-N): {len(false_n)}")
+
+    # Feature gap analysis
+    feature_gap = []
+    for f in ["mean_word_prob", "min_word_prob", "mean_entropy", "len_ratio",
+              "len_hyp_words", "len_ref_words", "duration_s",
+              "frac_p_lt_04", "p_std", "mean_margin"]:
+        if f not in trusted.columns:
+            continue
+        feature_gap.append({
+            "feature": f,
+            "false_n_mean": false_n[f].mean(),
+            "true_y_mean": true_y[f].mean(),
+            "false_n_med": false_n[f].median(),
+            "true_y_med": true_y[f].median(),
+            "gap_mean": false_n[f].mean() - true_y[f].mean(),
+        })
+    gap_df = pd.DataFrame(feature_gap)
+    print("\n  Feature gap (false-bads vs true-goods):")
+    print(gap_df.round(3).to_string(index=False))
+
+    # Build the case table for the report
+    case_rows = []
+    for _, row in false_n.iterrows():
+        utt = row["utt_id"]
+        seg = next((s for s in segs if s.utt_id == utt), None)
+        if seg is None: continue
+        case_rows.append({
+            "utt_id": utt,
+            "duration_s": row["duration_s"],
+            "ref_words": int(row["len_ref_words"]),
+            "hyp_words": int(row["len_hyp_words"]),
+            "len_ratio": row["len_ratio"],
+            "mean_word_prob": row["mean_word_prob"],
+            "min_word_prob": row["min_word_prob"],
+            "mean_entropy": row.get("mean_entropy", float("nan")),
+            "wer": row["wer"],
+            "ref": seg.ref,
+            "hyp": seg.hyp_today,
+        })
+    cases = pd.DataFrame(case_rows)
+
+    # Plot: feature distribution side-by-side (true-goods blue, false-bads coral)
+    feats_plot = [
+        ("duration_s",  "Duration (s)",     [0, 5]),
+        ("len_hyp_words", "Hyp word count", [0, 50]),
+        ("mean_entropy", "Mean entropy",    [0, 3]),
+        ("len_ratio",    "Length ratio (hyp/ref)", [0, 4]),
+    ]
+    fig, axs = plt.subplots(1, 4, figsize=(18, 4.5), dpi=200)
+    fig.patch.set_facecolor(BG)
+    for ax, (key, label, xrng) in zip(axs, feats_plot):
+        _style_ax(ax)
+        if key in trusted.columns:
+            bins = np.linspace(xrng[0], xrng[1], 25)
+            ax.hist(true_y[key].dropna(), bins=bins, color=GREEN, alpha=0.55,
+                    edgecolor=WHITE, linewidth=0.4,
+                    label=f"True-good (n={len(true_y)})", density=True)
+            ax.hist(false_n[key].dropna(), bins=bins, color=CORAL, alpha=0.85,
+                    edgecolor=WHITE, linewidth=0.4,
+                    label=f"False-bad (n={len(false_n)})", density=True)
+        ax.set_xlabel(label, color=WHITE, fontsize=11)
+        ax.set_title(label, color=WHITE, fontsize=12, fontweight="bold", pad=8)
+        ax.legend(loc="upper right", facecolor=NAVY2, edgecolor=MGRAY,
+                  labelcolor=WHITE, fontsize=8)
+    fig.suptitle(
+        f"False-bad vs true-good signatures at gate mean_word_prob >= {balanced_threshold} "
+        f"(n_trusted = {len(trusted)})",
+        color=WHITE, fontsize=13, fontweight="bold", y=1.0,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    _save(fig, PLOTS_DIR / "conf_false_good_signatures.png")
+
+    return {
+        "n_trusted": len(trusted),
+        "n_true_y": len(true_y),
+        "n_false_n": len(false_n),
+        "feature_gap": gap_df,
+        "cases": cases,
+        "balanced_threshold": balanced_threshold,
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Markdown report
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -937,6 +1189,7 @@ def write_report(
     a0: Dict[str, Any], a1: Dict[str, Any], a2: Dict[str, Any],
     a3: Dict[str, Any], a4: Dict[str, Any], a5: Dict[str, Any],
     a6: Dict[str, Any], a7: Dict[str, Any],
+    a8: Dict[str, Any], a9: Dict[str, Any],
     confidence_path: Path, hypo_path: Path, baseline_csv: Path,
 ) -> None:
     pearson: pd.DataFrame = a3["pearson"]
@@ -992,6 +1245,57 @@ def write_report(
         f"    --baseline-csv       {baseline_csv}\n"
         "```\n"
     )
+
+    # Build the operating-point comparison table for the report.
+    op_tbl = a8["table"]
+    op_recommended = [
+        ("Loose, high recall",       op_tbl[op_tbl["name"] == "mwp >= 0.75"].iloc[0] if (op_tbl["name"] == "mwp >= 0.75").any() else None),
+        ("Balanced (recommended)",   op_tbl[op_tbl["name"] == "mwp >= 0.80"].iloc[0] if (op_tbl["name"] == "mwp >= 0.80").any() else None),
+        ("Strict precision",         op_tbl[op_tbl["name"] == "mwp >= 0.85"].iloc[0] if (op_tbl["name"] == "mwp >= 0.85").any() else None),
+        ("+ duration filter",        op_tbl[op_tbl["name"] == "mwp >= 0.85 AND dur >= 1.5s"].iloc[0] if (op_tbl["name"] == "mwp >= 0.85 AND dur >= 1.5s").any() else None),
+        ("Zero-false-bad gate",      op_tbl[op_tbl["name"] == "mwp >= 0.85 AND dur >= 1.5s AND ent <= 0.7"].iloc[0] if (op_tbl["name"] == "mwp >= 0.85 AND dur >= 1.5s AND ent <= 0.7").any() else None),
+    ]
+    op_recommended = [(label, row) for label, row in op_recommended if row is not None]
+    op_table_md = "| Operating point | Gate | Precision | Recall | False-bads | Vol. % | Trusted |\n"
+    op_table_md += "|---|---|---|---|---|---|---|\n"
+    for label, row in op_recommended:
+        op_table_md += (f"| {label} | `{row['name']}` | {row['prec']*100:.1f}% | "
+                        f"{row['recall']*100:.1f}% | {row['false_n']} | "
+                        f"{row['vol_pct']:.1f}% | {row['n_trust']} |\n")
+
+    # Build the false-good case table.
+    cases = a9["cases"]
+    case_table_md = "| utt_id | dur(s) | ref→hyp words | mwp | min_wp | ent | WER% |\n"
+    case_table_md += "|---|---|---|---|---|---|---|\n"
+    for _, c in cases.iterrows():
+        case_table_md += (f"| `{c['utt_id'][:24]}` | {c['duration_s']:.2f} | "
+                          f"{c['ref_words']}→{c['hyp_words']} (lr {c['len_ratio']:.2f}) | "
+                          f"{c['mean_word_prob']:.2f} | {c['min_word_prob']:.2f} | "
+                          f"{c['mean_entropy']:.2f} | {c['wer']:.0f} |\n")
+
+    # Build the example REF/HYP block (3 most informative cases).
+    example_md = ""
+    example_pick = cases.head(5)  # top-5 by sort order
+    for _, c in example_pick.iterrows():
+        example_md += (f"- **`{c['utt_id'][:32]}`** (dur {c['duration_s']:.2f}s, "
+                       f"WER {c['wer']:.0f}%)\n"
+                       f"   - REF: *{c['ref']}*\n"
+                       f"   - HYP: **{c['hyp']}**\n")
+
+    # Feature gap summary.
+    gap = a9["feature_gap"].set_index("feature")
+    gap_lines = []
+    for feat, label in [
+        ("duration_s",     "Segment duration (s)"),
+        ("len_hyp_words",  "Hyp word count"),
+        ("len_ref_words",  "Ref word count"),
+        ("mean_entropy",   "Mean entropy"),
+        ("len_ratio",      "Length ratio"),
+    ]:
+        if feat in gap.index:
+            r = gap.loc[feat]
+            gap_lines.append(f"| {label} | {r['false_n_mean']:.2f} | {r['true_y_mean']:.2f} | {r['gap_mean']:+.2f} |")
+    gap_table_md = "| Feature | False-bad mean | True-good mean | Gap |\n|---|---|---|---|\n" + "\n".join(gap_lines) + "\n"
 
     md = f"""# Confidence Sidecar — Full Statistical Analysis
 
@@ -1144,6 +1448,58 @@ We don't have all 20 beams in this sidecar — only `top3` per step. Using top-3
 
 Top-3 entropy is **almost perfectly redundant with full entropy** (r ≈ {a7.get('r_full_top3', float('nan')):+.3f}), so it adds no information beyond what we already capture. To get genuine beam-level signal we need the all-20-beams capture from the followups doc; the cheap version is not enough.
 
+## 8. Operating-point selection — precision vs recall vs false-bads
+
+![operating points](../presentation_materials_20260224/01_plots_for_slides/conf_operating_points.png)
+
+The headline correlation (r ≈ 0.84 with IS) tells us confidence *carries* the signal; this section asks the deployment question — at which threshold is the trade-off best, and how do extra signals (duration, entropy) move the curve?
+
+{op_table_md}
+
+**Reading the trade-off.** Single-signal `mean_word_prob` peaks at F1 ≈ 0.74 around the 0.80 threshold (78% recall, 70% precision, **9 false-bads** out of 405 trusted segments). Tightening to 0.85 keeps a few fewer false-bads but loses ~25 percentage points of recall. Adding constraints (`min_word_prob`, `len_ratio`, entropy) pushes precision up but trades recall faster than it adds purity — the same F1 budget, redistributed.
+
+**Recommendation.** For most use cases pick `mean_word_prob >= 0.80` — keeps 78% of NIV-Y segments accessible, costs only 9 NIV-N leakages out of 1,427 (0.6% of corpus). For zero-tolerance deployments, gate `mean_word_prob >= 0.85 AND duration_s >= 1.5 AND mean_entropy <= 0.7` — that gate produces **zero false-bads** at ~30% recall, useful for legal / medical / broadcast captioning where any wrong-trust is unacceptable.
+
+## 9. False-good characterization — what slips through, and can context catch it?
+
+At the recommended balanced gate (`mean_word_prob >= 0.80`), {a9['n_false_n']} segments are trusted but actually NIV-N. We dump them and ask: is anything else in the data, or in the broader video / topic context, able to flag these?
+
+![false-good signatures](../presentation_materials_20260224/01_plots_for_slides/conf_false_good_signatures.png)
+
+**Feature gap (false-bads vs true-goods at the gate):**
+
+{gap_table_md}
+
+**The smoking gun: false-bads are SHORT.** Median segment duration is **{gap.loc['duration_s','false_n_med']:.2f}s** for false-bads vs **{gap.loc['duration_s','true_y_med']:.2f}s** for true-goods. Median hyp word count is **{int(gap.loc['len_hyp_words','false_n_med'])}** vs **{int(gap.loc['len_hyp_words','true_y_med'])}**. False-bads are systematically segments where the model has too little material to constrain its output — short clips with a handful of words give the language prior room to commit to a fluent-but-wrong answer.
+
+**Mean entropy is +{gap.loc['mean_entropy','gap_mean']:.2f} higher on false-bads.** The model *is* uncertain on these — it just compensates by picking a high-prob single token at each position. Per-token max-softmax misses the dispersion; entropy preserves it. This is exactly the case the threshold-design doc anticipated.
+
+**The {a9['n_false_n']} false-good cases at the balanced gate:**
+
+{case_table_md}
+
+**Examples (REF vs HYP):**
+
+{example_md}
+
+**Failure-mode taxonomy:**
+
+| Mode | Example | What gives it away | Catchable from |
+|---|---|---|---|
+| Counting / digit loop | "1 2 3 4 5 6 7 8 9 10 11 12" | min_word_prob 0.15, regex match | confidence + post-hoc text rule |
+| Phonetic substitution | "major in acting" → "measure a hacking" | low NEA F1, missed entities, plausible English | NEA / topic LM |
+| Plausible swap | "all right i'm gonna read you" → "great i'm going to do this" | reference required to detect | beam disagreement, surrounding-context LM |
+| Over-generation | "link down there" (3w) → "down there go over there..." (10w) | len_ratio > 2, hyp_words >> dur | confidence + duration |
+| Short-segment substitution | "even after the insurance examination" → "after the initial contamination" | dur < 1s, NEA F1 = 0 | duration filter |
+
+**Could visual cues or broad-conversation context catch these?**
+
+- **Visual cues** — segment duration is a free proxy for visual quality (very short clips have less material for the visual encoder to lock onto). Adding `duration >= 1.5s` cuts most short-segment false-bads out of the trusted set. **A real visual quality model** (lip occlusion, face-frame coverage, head-pose) would catch more — not built into the pipeline today; candidate for next sprint.
+- **Topic context** — false-bads frequently lose specific entities (numbers, proper nouns, domain words). NEA F1 = 0% on most cases. A surrounding-sentence language model conditioned on the *source video's* topic could rescore the hyp and flag drift — also not in the pipeline today, but the ref text already exists for this purpose during evaluation.
+- **Beam disagreement** — for cases like "great i'm going to do this", the chosen beam is decisive but unrelated to the reference. Capturing all 20 beams would let us ask whether *any* alternative beam was closer to the reference — a genuine quality signal that confidence-of-chosen-beam alone cannot expose. Mission 6.
+
+**Take-away.** The three free signals already in our sidecar (mean_word_prob, mean_entropy, segment duration) catch every false-bad that has any objective signature. The residual cases — phonetically plausible, length-matched, fluent — are out of reach of confidence alone and will require either visual-quality scoring or beam-aggregation to flag automatically. Until then, the deck should footnote the residual rate at the chosen operating point ({a9['n_false_n']/a9['n_trusted']*100:.1f}% false-bad among trusted at mwp >= {a9['balanced_threshold']:.2f}).
+
 ---
 
 ## What changes in the codebase
@@ -1160,6 +1516,21 @@ Based on these findings:
 
 {reproduce_block}"""
     DOC_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    # Preserve any extra sections (## 10, ## 11, ...) that another generator
+    # appended between section 9 and "What changes in the codebase".
+    extra = ""
+    if DOC_PATH.exists():
+        prev = DOC_PATH.read_text(encoding="utf-8")
+        m = re.search(r"\n(## 1[0-9]\..*?)(?=\n## What changes in the codebase)",
+                      prev, re.DOTALL)
+        if m:
+            extra = m.group(1).rstrip() + "\n\n"
+    if extra:
+        md = md.replace("## What changes in the codebase",
+                         extra + "## What changes in the codebase", 1)
+        print(f"  Preserved {len(extra)} bytes of extra sections (## 10+)")
+
     DOC_PATH.write_text(md, encoding="utf-8")
     print(f"\nWrote {DOC_PATH}")
 
@@ -1185,8 +1556,10 @@ def main() -> None:
     a5 = analysis_5_hallucination(df, segs)
     a6 = analysis_6_trajectories(segs, df, k=5)
     a7 = analysis_7_beam_preview(df)
+    a8 = analysis_8_operating_points(df)
+    a9 = analysis_9_false_goods(df, segs, balanced_threshold=0.80)
 
-    write_report(diag, a0, a1, a2, a3, a4, a5, a6, a7,
+    write_report(diag, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
                  args.confidence_sidecar, args.hypo, args.baseline_csv)
 
 
