@@ -134,7 +134,7 @@ it") rather than a research caveat.
   new Q&A + slide-32 cue + downstream slide-index shift.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- d7ca96c — Round 5.6.
 
 ---
 
