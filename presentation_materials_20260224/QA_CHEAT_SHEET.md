@@ -132,3 +132,155 @@ Answer with restraint:
 **"Yes. That's why we ship it as a reviewable evidence stream, not as autonomous truth. The output requires human review by design. We won't deploy it in a workflow that doesn't include human verification — that's a deal-breaker for us, not a feature request from clients."**
 
 This answer signals seriousness. Don't sidestep — say it directly. The audience is asking partly because they're testing your judgment.
+
+---
+
+# Per-slide talking points
+
+The lines to land when each slide is up. Slides not listed don't have a specific cue — let them speak for themselves or transition through.
+
+## Opening
+
+### Slide 1 — Title
+**Land:** *"Thanks for having us. We're going to walk through what this is, what it isn't, and where it goes from here together. Two hours, with a pause around the halfway mark."*
+
+### Slide 2 — About Argos
+**Land:** *"We build production-grade visual speech recognition. Not research code — a deployable pipeline."*
+
+## Framing the problem (slides 3–7)
+
+### Slide 4 — What this is NOT
+**Land:** *"Three things to clear up first. This is NOT audio transcription. NOT closed captioning. NOT face recognition. We do one specific thing: visual speech recognition, on cases where audio failed."*
+**Note:** Land this firmly. Most audiences arrive with one of those three mental models and you need to evict it before slide 5 makes sense.
+
+### Slide 5 — Canonical scenario
+**Land:** *"Two friends in a coffee shop. Observer thirty feet away. iPhone footage. No usable audio. That's the problem we're solving — and it's your problem too."*
+
+### Slide 6 — Compared to today (THE ANCHOR)
+**Land:** *"Three rows on this slide. Expert human lip readers — 45 to 52 percent word accuracy, hours of work per video. Don't do it at all — zero, the information's lost. Argos plus a reviewer — 55 to 70 percent in minutes, with hallucinations flagged. That's the deal."*
+**Note:** This is the most important slide in Act 1. Don't rush it. Pause after each row. Let the comparison register.
+
+### Slide 7 — Human ceiling
+**Land:** *"Why even experts cap at 45–52 percent? Half of English phonemes are visually invisible — 'p', 'b', 'm' look identical on the lips. There's a hard floor here, even for humans."*
+
+## Why hard / basic idea (slides 8–9)
+
+### Slide 8 — Visemes
+**Land:** *"Pat, bat, mat. Try saying them in a mirror with no sound — they look the same. That's what the model is up against on every word."*
+
+## What we built (slides 10–11)
+
+### Slide 10 — What we built, concretely
+**Land:** *"Six things we built. Pipeline. Web UI. Model. Confidence layer. Evaluation. Integration. We deploy this on your infrastructure end-to-end."*
+**Note:** Don't dwell on each. Read across, move on.
+
+### Slide 11 — Multi-speaker today vs path
+**Land:** *"The honest gap. Today's model assumes one centered face. Two-person footage needs entity-split preprocessing — track each face, generate separate mouth crops, decode each speaker separately. That's engineering work, about three weeks to a working ablation on your data. Not research, not vague."*
+**Note:** This slide is for the audience that came specifically about two-person footage. Land it crisply — concrete plan, concrete timeline.
+
+## Demo (slides 12–14)
+
+### Slide 13 — Live UI demo
+**Land:** *"Watch this. Drag in a video, walk away, come back to a confidence-scored report."*
+**Note:** Play 90 seconds, max 2 minutes. Don't narrate everything; let the colors speak. Pause briefly on a flagged segment so the audience sees the trust signal in action.
+
+## Real outputs (slides 15–26)
+
+### Slide 16 — Video gallery
+**Land:** *"Six real videos. Three best-case, three failure modes. The point isn't to convince you with one demo — it's to show you the range. Click any tile."*
+**Note:** Pre-pick which tile to click. Recommend the perfect one (sets the bar) then jump to the hallucination one (shows the system catches the bad ones). Don't play all six.
+
+### Slides 17, 19, 20 — Obama trio (perfect / partial / flagged)
+**Land:** *"Same speaker, same speech, three different outputs. Clean — green confidence, the reviewer doesn't have to look. Partial — model knows where it slipped, yellow on the substitutions. Flagged — model fabricated 'Rwanda's genocide' and the system caught it. That's the spread."*
+**Note:** Each slide has the actual lip-crop video on the right; click to play in PowerPoint if asked.
+
+## The headline (slide 27)
+
+### Slide 27 — Three numbers
+**Land:** *"Three numbers, in plain English. Sixty-two percent review-useful — six of every ten segments contain enough recoverable meaning to be useful for human review. Twenty-three percent clearly conveyed. One in five auto-flagged. These are on the full 1,497-segment baseline, unfiltered real-world video. Not curated."*
+**Note:** This is your number-anchor for the meeting. Memorize the exact phrasing — "review-useful," "recoverable meaning useful for human review." Don't slip into "62% accurate."
+
+## Trust section (slides 28–44) — the most important segment
+
+### Slide 30 — Two layers of confidence
+**Land:** *"Confidence is triage, not truth. Green doesn't mean correct — green means review faster. Red doesn't mean wrong — red means review first."*
+**Note:** This is the cleanest credibility line in the deck. Say it slowly, and reinforce — the line is on screen.
+
+### Slide 31 — Per-word color coding
+**Land:** *"Every word the model outputs carries its own probability. Green, yellow, red. You see exactly where the model was unsure."*
+
+### Slides 32–34 — Hallucination case study (the centerpiece)
+**Land on 32:** *"The dangerous failure mode. The model can produce confident, fluent text that's completely wrong."*
+**Land on 33:** *"Real example. Reference says 'heroic citizens.' Model says 'Rwanda's genocide.' A wrong fluent transcript is worse than an empty one, because people may act on it."*
+**Land on 34:** *"And the system caught it. Lowest-confidence word at probability 0.02. Length anomaly. Routed to review before a reviewer ever sees the line. Our value isn't that this never happens — it's that this is flagged."*
+**Note:** This is the strongest credibility moment in the deck. Don't rush it. Use the full 90 seconds.
+
+### Slide 41 — Hallucination flag (1 in 5)
+**Land:** *"One in five segments is auto-flagged before it reaches you. The system finds the bad ones for you."*
+
+### Slide 42 — What we claim / what we do not claim (NEW Round 5.5)
+**Land:** *"Where the line is. So you know what you're buying. Six things we claim. Six things we don't. Closing line: Not blind automation. Reviewable visual-speech intelligence with uncertainty attached."*
+**Note:** Read down both columns side by side, two beats per row. This is the credibility-anchor slide — don't rush it.
+
+### Slide 43 — Why trust it on a video you've never seen
+**Land:** *"You don't have ground truth on a fresh video. So how can you trust this? Four runtime signals — per word, per segment, hallucination flag, config stability. Calibration is anchored to expert review today. It grows tighter for your domain as your reviewers verify segments."*
+**Note:** The two pills at the bottom — "MEANINGFUL TODAY" and "GROWS IN YOUR HANDS" — are the message. If asked about the validation method, refer to slide 47.
+
+## Validation (slides 45–48)
+
+### Slide 47 — Agreement chart
+**Land:** *"An independent blind evaluator agreed with our scores in eighty-two percent of cases. Across all 1,497 segments. Blind to our reasoning."*
+**Note:** If asked "was that human?" — answer the Q&A line above. Do NOT say "expert reviewer." Say "blind evaluator" or "blind evaluation pass."
+
+### Slide 48 — Cross-config stability
+**Land:** *"Sixteen different decode configurations on the same data. The trust signal moves less than a percentage point. It's a property of the model, not the run."*
+
+## Engineering (slides 50–53)
+
+### Slide 50 — The full pipeline
+**Land:** *"Eight automated stages. Drop in a video, walk away."*
+
+### Slide 52 — What it actually took
+**Land:** *"Four months, four passes. Integration of three research repos. Production refactor — 823-line script into 11 modules, 37 tests. Confidence layer. Dual-environment shipping. Real engineering, real shipped code."*
+
+### Slide 53 — Deployment options
+**Land:** *"Cloud or on-prem. We deploy and integrate. You're not buying an API call — you're buying a working pipeline that runs in your environment."*
+
+## What's next (slides 54–58)
+
+### Slide 55 — Quality pre-filter
+**Land:** *"A credible system must know when NOT to decode. Three frame-level checks before the model runs. Out of a hundred uploaded clips, seventy-five reach the model."*
+
+### Slide 57 — Beyond English — Arabic
+**Land:** *"Same architecture, same pipeline, different LLM and different visual model. The path is mapped. Specifics in follow-up."*
+**Note:** Three questions to ASK on this slide (write them on a sticky note inside your laptop lid):
+- "Which Arabic? MSA, Levantine, Egyptian, or Gulf?"
+- "What does your canonical video actually look like?"
+- "What does 'good enough' look like for your workflow?"
+
+### Slide 58 — Partnership ask
+**Land:** *"Today's model is trained on a small slice of public data. Going from prototype to production on your content — that's a partnership. Your data, our pipeline, a shared training run on your domain. Specifics in follow-up — no dollar amounts on the slide on purpose."*
+
+## Close (slides 59–62)
+
+### Slide 59 — Recap
+**Land:** *"Three things we came to show you. It works. You can trust it. There's a clear path forward together."*
+
+### Slide 60 — We deploy this on your infrastructure
+**Land:** *"On-premise install, integration with your existing systems, training and handoff. End-to-end."*
+
+### Slide 61 — Next steps
+**Land:** *"A pilot looks like this — three to five canonical clips from your domain, two weeks, end-to-end run, your reviewer evaluates whether the output supports your workflow. No infrastructure ask up front."*
+**Note:** This slide has placeholder text you customize per client before the meeting. Make sure dataset / integration scope / timeline / success criteria are all filled in.
+
+### Slide 62 — Thank you
+**Land:** *"Questions."*
+**Note:** That's it. Don't keep talking. Wait.
+
+---
+
+# The closing line
+
+Memorize this. If nothing else lands all meeting, land this:
+
+> **"We are not asking you to trust the model. We give your reviewers the model's output, its uncertainty, its failure flags, and the evidence needed to decide what deserves human attention."**
