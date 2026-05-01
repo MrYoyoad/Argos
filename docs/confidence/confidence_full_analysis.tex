@@ -25,12 +25,7 @@
 \definecolor{argosGold}{HTML}{ffd54f}
 \definecolor{argosGray}{HTML}{555555}
 
-\hypersetup{
-  colorlinks=true,
-  linkcolor=argosTeal,
-  urlcolor=argosTeal,
-  citecolor=argosTeal,
-}
+\hypersetup{colorlinks=true, linkcolor=argosTeal, urlcolor=argosTeal, citecolor=argosTeal}
 
 \titleformat{\section}{\Large\bfseries\color{argosNavy}}{\thesection}{1em}{}
 \titleformat{\subsection}{\large\bfseries\color{argosNavy}}{\thesubsection}{1em}{}
@@ -64,51 +59,63 @@
 \begin{minipage}{0.97\textwidth}
 \textbf{Source.} Per-token confidence from \texttt{/tmp/vsp\_b3\_1497\_out/confidence-172610.json}, joined with the per-segment ground truth in \texttt{english\_full\_results/client\_outputs/report/report.csv}. Aggregation by \texttt{compute\_word\_confidence.py}; analysis by \texttt{analyze\_confidence\_full.py}.
 
-\textbf{Sample sizes.} 1{,}497 segments matched in confidence $\times$ hypothesis. 1{,}497 segments joined with baseline IS/WER. 23{,}261 hypothesis words aligned to references for calibration.
+\textbf{Sample sizes.} 1{,}497 segments matched in confidence $\times$ hypothesis. 1{,}497 segments joined with baseline IS/WER. 23{,}261 hypothesis words aligned to references for calibration. Hypotheses are bit-identical to the baseline run -- the 59.17\% pooled WER vs 64.1\% mean-of-segment WER gap is purely the well-known pooled-vs-averaged divergence on a heavy-tailed distribution. Confidence-side joins are exact.
 \end{minipage}}
 
 \vspace{0.4cm}
 
 \section*{Headline findings}
 
+\textbf{TL;DR.} The average per-word confidence inside a segment (mean of the model's max-softmax probabilities, one per output word) tells you the segment's overall quality with high reliability -- Pearson $r = +0.84$ against the Intelligibility Score. That single number is enough to filter the bad outputs out at runtime. The per-word green / yellow / red coloring on the kept segments only works \emph{inside} segments that are confident as a whole; in unconfident segments the coloring is misleading.
+
+\subsection*{Term key (used throughout)}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{IS} -- Intelligibility Score (0--5), our 6-signal composite quality metric. Mean across the 1{,}497-segment baseline = 2.52.
+  \item \textbf{NIV-Y} (``clearly intelligible'') -- a segment with IS $\ge 3.80$; the bar for a clean win, calibrated against an Opus-as-Judge gold standard.
+  \item \textbf{NIV-N} (``not intelligible'') -- a segment with IS $< 2.00$; clear failure.
+  \item \texttt{\textbf{mean\_word\_prob}} -- per-segment average of per-word probabilities; each per-word prob is the \emph{minimum} max-softmax across the sub-tokens that compose the word.
+  \item \texttt{\textbf{mean\_prob}} -- per-segment average of per-token max-softmax probabilities (no word-level grouping).
+  \item \textbf{WER / WWER} -- word error rate / weighted WER (high-value content tokens count $2\times$).
+\end{itemize}
+
+\subsection*{The story in six points}
+
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Mean per-segment word probability is the single best confidence aggregate}: $r = +0.837$ with IS, $-0.714$ with WER, $-0.749$ with WWER ($n=1{,}427$).
-  \item \textbf{Confidence-only filtering is strong}: AUC $= 0.917$ detecting NIV-N (bad) and $0.921$ detecting NIV-Y (good) using \texttt{mean\_prob} alone.
-  \item \textbf{Calibration is reasonable but the green band leaks}: $P(\text{correct} \mid \text{green } p \ge 0.85) = 80.6\%$ ($n=11{,}309$ green words), short of the $90\%+$ ``trust without review'' promise. ECE $= 17.4\%$.
-  \item \textbf{Hallucinations are mostly low-confidence -- max-softmax catches them}: only $3 / 223$ (1.3\%) hallucinated segments slip through with \texttt{mean\_prob} $\ge 0.85$. Entropy and max-softmax separate the two populations equally well; AUCs are tied. Entropy is \emph{redundant}, not better, on this data.
-  \item \textbf{Trajectory clustering identifies a clean failure shape}: best cluster has mean WER $31\%$ and IS $3.89$; worst cluster has mean WER $104\%$, IS $1.14$, and a $92\%$ NIV-N rate.
+
+\item \textbf{Mean word probability is the single best confidence aggregate.} Pearson $r = +0.837$ with IS, $-0.714$ with WER, $-0.749$ with WWER ($n = 1{,}427$). Geometric mean, mean entropy, mean margin (top1 $-$ top2), and \texttt{frac\_p\_ge\_0.85} all sit within $\sim 0.03$ $r$ -- they are different shadows of the same signal. Spearman $\rho$ tracks Pearson $r$ within $0.06$ for confidence-vs-IS pairs, so the relationship is not a linearity artifact. \emph{Practical reading:} at runtime we don't need anything fancier than averaging the per-word probs the model already produces.
+
+\item \textbf{Confidence is a strong segment-level filter.} AUC $= 0.917$ detecting NIV-N and $0.921$ detecting NIV-Y from \texttt{mean\_prob} alone -- both above the $0.80$ ``deployable as a single signal'' cutoff. At \texttt{mean\_word\_prob} $\ge 0.80$, we keep \textbf{78\%} of NIV-Y and admit only \textbf{9 NIV-N} out of 405 trusted segments (2.2\% false-trust). For zero-tolerance use cases, add \texttt{duration} $\ge 1.5$s AND \texttt{mean\_entropy} $\le 0.7$ $\to$ zero false-bads at $\sim 30\%$ recall.
+
+\item \textbf{The green band's reliability depends on the segment.} Across 23{,}261 hyp words, a green word (per-word $p \ge 0.85$) is correct \textbf{80.6\%} of the time on average -- but that ranges from \textbf{18.2\%} (low-quality segments, mean prob $< 0.4$) to \textbf{92.8\%} (high-quality segments, mean prob $\ge 0.85$). ECE on raw max-softmax $= 17.4\%$. \emph{Practical reading:} show coloring only when the segment's \texttt{mean\_word\_prob} $\ge 0.82$. Below $0.65$, green reliability falls under 50\% and the coloring becomes net-misleading.
+
+\item \textbf{Confidence catches hallucinations almost completely.} Of 223 hallucinated segments (WER $\ge 100\%$ AND length ratio $\ge 0.5$: fluent-but-wrong), only \textbf{3} (1.3\%) have \texttt{mean\_prob} $\ge 0.85$. Median \texttt{mean\_prob}: $0.541$ vs $0.759$ healthy. Median entropy: $2.82$ vs $1.20$. AUC for hallucination detection: \texttt{mean\_prob} $= 0.917$, entropy $= 0.913$ -- tied. The literature's worst-case ``fluent fabrications at $p > 0.95$'' is rare in this data; entropy is redundant.
+
+\item \textbf{Different failure modes need different signals.} The 503 IS$<$2 segments classify (March 5-category taxonomy): Wrong Topic 68\% ($n=342$), Hallucination 10\% ($n=51$), Right Topic Wrong Details 15\% ($n=76$), Signal Loss 0.2\% ($n=1$), Accumulated Errors 7\% ($n=33$). Hallucination + Signal Loss ($\approx 10\%$ of bad) are catchable from confidence + length-ratio. The remaining $\sim 90\%$ require the reference -- Mission 6 (all-20-beams) and Mission 8 (topic-LM) are the next-sprint priorities.
+
+\item \textbf{Trajectory shape predicts outcome.} k=5 k-means on length-normalized per-position prob trajectories yields a flat-high cluster (mean WER \textbf{31\%}, mean IS $3.89$, 64\% NIV-Y) and an uncertain-throughout cluster (mean WER \textbf{104\%}, mean IS $1.14$, \textbf{92\% NIV-N}). The shape difference is visible after just a few tokens -- viable as a runtime ``give up early'' hook (Mission 11).
+
 \end{enumerate}
 
-\section{WER reconciliation (sanity check)}
+\vspace{0.4cm}
+\hrule
+\vspace{0.4cm}
 
-Today's run reports a corpus-pooled WER of $59.17\%$ vs the prior baseline $64.1\%$ on the same 1{,}497 segments with the same config. That delta needed an explanation before any correlation against baseline metrics could be trusted.
+% =====================================================================
+\section{What confidence is, and what it predicts}
+% =====================================================================
 
-\begin{table}[h]
-\centering
-\begin{tabular}{lr}
-\toprule
-\textbf{Metric} & \textbf{Value} \\
-\midrule
-Hypotheses identical to baseline & 1{,}427 \\
-Hypotheses different from baseline & 0 \\
-Today, pooled WER & 59.17\% \\
-Today, mean-of-segment WER & 64.05\% \\
-Baseline, mean-of-segment WER & 64.1\% \\
-\bottomrule
-\end{tabular}
-\end{table}
+This chapter establishes the basic statistics: the distributions of the four confidence signals we capture (\texttt{prob}, \texttt{word\_prob}, \texttt{entropy}, \texttt{margin}), their correlation with the quality metrics (IS, WER, WWER, NEA F1), and the answer to the deployment question -- \emph{which} confidence aggregate is the best predictor of segment quality.
 
-\textbf{Hypotheses match baseline exactly.} The today-vs-baseline WER gap is purely \textbf{pooled vs averaged}, a known divergence on the heavy-tailed segment-WER distribution. Confidence-side joins are exact.
+\subsection{Distributions}
 
-\section{Distributions}
-
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{conf_full_distributions.png}
-\caption{Confidence-signal distributions across 27{,}721 tokens / 23{,}261 words / 1{,}497 segments.}
+\caption{Confidence-signal distributions across 27{,}721 tokens, 23{,}261 words, 1{,}497 segments. Per-token prob and per-word prob (top row) are heavily right-skewed -- most positions are confident -- with a long left tail. Per-token entropy (bottom-left) is the inverse -- most tokens have low entropy, with a tail toward $\sim 4$ nats. Margin (top1 $-$ top2) is bimodal: many tokens are decisive (margin $\to 1$), some are competitive (margin $< 0.2$).}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \small
 \begin{tabular}{lcccc}
@@ -123,45 +130,19 @@ Per-token margin (top1$-$top2) & 0.584 & 0.666 & 0.049 & 0.997 \\
 \end{tabular}
 \end{table}
 
-The 33-Obama small sample showed $89.7\%$ green / $6.8\%$ yellow / $3.4\%$ red on word level. On the diverse 1{,}497-segment dataset the same thresholds (0.85 / 0.40) produce \textbf{$48.6\%$ green / $32.1\%$ yellow / $19.3\%$ red} -- exactly the rebalancing the threshold-design doc anticipated.
+The 33-Obama small sample (used to design the green / yellow / red bands) showed 89.7\% green / 6.8\% yellow / 3.4\% red on word level. On the diverse 1{,}497-segment dataset the same thresholds (0.85 / 0.40) produce \textbf{48.6\% green / 32.1\% yellow / 19.3\% red} -- the rebalancing the threshold-design doc anticipated.
 
-\section{Calibration -- do the bands honor their promises?}
+\subsection{Correlation map}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.7\textwidth]{conf_calibration_curve.png}
-\caption{Calibration curve. Solid line: empirical correctness rate per probability bin. Dashed: perfect calibration. Bars: word count per bin (right axis). Vertical guides at the band boundaries.}
-\end{figure}
-
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{lccc}
-\toprule
-\textbf{Band} & \textbf{Threshold} & \textbf{n words} & \textbf{P(correct)} \\
-\midrule
-green  & $p \ge 0.85$ & 11{,}309 & \textbf{80.6\%} \\
-yellow & $0.40 \le p < 0.85$ & 7{,}470 & 38.3\% \\
-red    & $p < 0.40$ & 4{,}482 & 15.4\% \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Expected Calibration Error (10 bins): 17.4\%} -- within the 5--15 percentage-point band the literature predicts for fine-tuned LLaMA-2 generation. Bands are well-ordered (green $>$ yellow $>$ red empirically) but the model is consistently \emph{over-confident}: predicted prob $>$ empirical accuracy across every bin.
-
-\textbf{Decision per \texttt{threshold\_design.md}:} P(correct $|$ green) $= 80.6\%$ falls in the $80$--$90\%$ band. Footnote the deck (``green $\approx 81\%$ reliable'') rather than tightening, since tightening loses substantial green coverage without a proportional reliability gain.
-
-\section{Correlation map -- which confidence aggregate predicts quality?}
-
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{conf_correlation_heatmap.png}
-\caption{Pearson correlation matrix. Rows: confidence-derived features. Columns: quality metrics (lower is better for WER/WWER; higher for NEA F1, IS, NIV-Y; higher NIV-N rate is worse).}
+\caption{Pearson correlation matrix. Rows: confidence-derived features. Columns: quality metrics. Mean-aggregates of probability, entropy, margin, and ``green-band-fraction'' all hit $|r| \ge 0.7$ against IS / WER / WWER -- they're interchangeable as quality signals. \texttt{min\_word\_prob} is meaningfully weaker (one bad word can occur in an otherwise-fine segment).}
 \end{figure}
 
-Top-5 confidence features by $|r|$ with IS score:
+Top-5 confidence features by $|r|$ with IS:
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \small
 \begin{tabular}{lr}
@@ -189,104 +170,31 @@ Top-5 confidence features by $|r|$ with IS score:
 \end{tabular}
 \end{table}
 
-Restricting to confidence aggregates vs IS, max $|\text{Pearson} - \text{Spearman}| = 0.061$ -- linear and rank correlations agree. The full-matrix maximum is $0.428$, driven entirely by \texttt{len\_ratio vs WER} where WER's heavy tail breaks linearity; that pair is not load-bearing for confidence triage.
+Restricting to confidence aggregates vs IS, max $|\text{Pearson} - \text{Spearman}| = 0.061$ -- linear and rank correlations agree.
 
-\section{Filter ROC -- confidence-only quality gate}
+\subsection{Continuous fit -- confidence vs IS and WER}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{conf_roc_filter.png}
-\caption{ROC curves for confidence-only detectors of NIV-N (bad, IS $< 2.0$, left) and NIV-Y (good, IS $\ge 3.8$, right). Each curve is a different segment-level confidence aggregate.}
+\includegraphics[width=0.92\textwidth]{conf_metrics_vs_is_scatter.png}
+\caption{Per-segment scatter of the four leading confidence metrics against IS, with OLS fit and $R^2$. Three of the four signals (\texttt{mean\_prob}, \texttt{mean\_entropy}, \texttt{mean\_margin}) explain $\sim 65\%$ of IS variance with a single linear term.}
 \end{figure}
 
-\begin{table}[h]
+\begin{figure}[H]
 \centering
-\small
-\begin{tabular}{lcc}
-\toprule
-\textbf{Feature} & \textbf{NIV-N detector AUC} & \textbf{NIV-Y detector AUC} \\
-\midrule
-\texttt{mean\_prob}       & \textbf{0.917} & \textbf{0.921} \\
-\texttt{mean\_entropy}    & 0.913 & 0.917 \\
-\texttt{mean\_margin}     & 0.901 & 0.906 \\
-\texttt{frac\_p\_lt\_04}  & 0.899 & 0.878 \\
-\texttt{frac\_p\_ge\_085} & 0.888 & 0.908 \\
-\texttt{min\_word\_prob}  & 0.753 & 0.749 \\
-\texttt{seq\_score}       & 0.746 & 0.766 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-A confidence-only gate using \texttt{mean\_prob} reaches $\text{AUC} \approx 0.92$ on both bad-segment and good-segment detection. This is strong enough to act on at runtime without invoking the full IS pipeline. \texttt{mean\_prob} is computed for free at decode time -- the marginal cost is zero.
-
-\section{Hallucination detection -- does entropy catch what max-softmax misses?}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.85\textwidth]{conf_hallucination_scatter.png}
-\caption{Per-segment scatter: \texttt{mean\_prob} (x) vs \texttt{mean\_entropy} (y), colored by hallucination status (WER $\ge 100\%$ AND len\_ratio $\ge 0.5$). Hallucinated segments cluster in the upper-left (low prob, high entropy). The ``dangerous'' quadrant (high prob, hallucinated) contains only 3 points.}
+\includegraphics[width=0.92\textwidth]{conf_metrics_vs_wer_scatter.png}
+\caption{Same metrics against WER. Confidence predicts IS more cleanly than WER ($R^2 \approx 0.65$ vs $0.48$): WER's heavy tail (the WER $\ge 100\%$ hallucination stripe and length-blowup tail above 150\%) breaks linearity, while IS varies smoothly because it credits semantic and phonetic similarity.}
 \end{figure}
 
-\begin{table}[h]
+\subsection{Beam preview is redundant with full entropy}
+
+We capture top-3 alternatives per step in the sidecar. Using top-3-only entropy as a poor man's beam diversity:
+
+\begin{table}[H]
 \centering
 \small
 \begin{tabular}{lr}
 \toprule
-\textbf{Quantity} & \textbf{Value} \\
-\midrule
-Hallucinated (WER $\ge 100\%$, len\_ratio $\ge 0.5$) & \textbf{223} \\
-Dangerous (above + \texttt{mean\_prob} $\ge 0.85$) & \textbf{3} \\
-Median \texttt{mean\_prob}, hallucinated & 0.541 \\
-Median \texttt{mean\_prob}, healthy & 0.759 \\
-Median \texttt{mean\_entropy}, hallucinated & 2.817 \\
-Median \texttt{mean\_entropy}, healthy & 1.203 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Mann--Whitney U on \texttt{mean\_prob} and \texttt{mean\_entropy} both reject equality of the hallucinated vs healthy distributions at $p < 10^{-50}$. Both signals separate the two populations strongly. The literature warned that fluent hallucinations would land in a ``dangerous quadrant'' of high prob $\times$ hallucinated; we found only $3 / 223$ ($1.3\%$) of hallucinated segments there. The failure mode exists but is rare on this dataset.
-
-\textbf{Take-away.} For filtering at runtime, \texttt{mean\_prob} $< 0.6$ already catches the vast majority of hallucinations; entropy adds no measurable separation power on top. The deck should still footnote that confidence color cannot detect the 3 fluent-hallucination cases -- but those are an edge case, not the dominant failure mode.
-
-\section{Trajectory clustering -- failure modes in confidence space}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.95\textwidth]{conf_trajectory_clusters.png}
-\caption{Top: $k=5$ k-means cluster centroids on length-normalized per-position confidence trajectories. Bottom: per-cluster mean WER (coral) and mean IS rescaled by $20\times$ (green).}
-\end{figure}
-
-Sorted by mean IS, best-first:
-
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{lrrrrr}
-\toprule
-\textbf{Cluster} & \textbf{n} & \textbf{Mean WER \%} & \textbf{Mean IS} & \textbf{NIV-Y rate} & \textbf{NIV-N rate} \\
-\midrule
-C3 (flat-high)      & 462 & \textbf{30.8} & \textbf{3.89} & 64.1\% & 3.0\% \\
-C0 (slow ramp-up)   & 228 & 62.5 & 2.55 & 10.1\% & 29.8\% \\
-C2 (flat-mid)       & 223 & 65.8 & 2.49 & 11.7\% & 33.2\% \\
-C4 (rising mid)     & 245 & 71.8 & 2.25 & 6.5\% & 40.8\% \\
-C1 (uncertain throughout) & 260 & \textbf{104.4} & \textbf{1.14} & 0.0\% & \textbf{91.9\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The cluster centroids in the figure show two canonical shapes: a \textbf{flat-high} cluster (high confidence start to finish, lowest WER, highest IS) and a \textbf{flat-low / uncertain throughout} cluster (collapses early or never recovers, $92\%$ NIV-N rate). This validates the trajectory-monitoring hypothesis from the follow-ups doc: if a decode mid-loop already shows a low-flat profile, we have actionable evidence that the rest of the segment is going to fail.
-
-\section{Beam-aggregation preview (cheap version)}
-
-The sidecar stores \texttt{top3} per step, not all 20 beams. Using top-3-only entropy as a poor man's beam diversity:
-
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{lr}
-\toprule
-\textbf{Correlation} & \textbf{r} \\
-\midrule
 $r(\text{full\_entropy}, \text{top3\_entropy})$ & $+0.946$ \\
 $r(\text{full\_entropy}, \text{WER})$           & $+0.688$ \\
 $r(\text{top3\_entropy}, \text{WER})$           & $+0.699$ \\
@@ -296,201 +204,45 @@ $r(\text{top3\_entropy}, \text{IS})$            & $-0.803$ \\
 \end{tabular}
 \end{table}
 
-Top-3 entropy is \textbf{almost perfectly redundant with full entropy} ($r \approx +0.95$), so it adds no information beyond what we already capture. Genuine beam-level signal requires capturing all 20 hypotheses with their per-step probability trails -- the cheap version is not enough. This is a Mission 6 candidate.
+Top-3 entropy is \textbf{almost perfectly redundant} with full-distribution entropy -- the cheap version isn't enough to expose new signal. Genuine beam-level information requires capturing all 20 hypotheses with their per-step probability trails (Mission 6).
 
-\section{Operating-point selection -- precision vs recall vs false-bads}
+% =====================================================================
+\section{Calibration: does the green band mean what it claims?}
+% =====================================================================
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.98\textwidth]{conf_operating_points.png}
-\caption{Left: precision-recall trade-off. Cyan curve sweeps \texttt{mean\_word\_prob} alone; coloured dots overlay duration- / entropy- / triple-signal gates. Right: number of false-bads (NIV-N) inside the trusted set as recall grows.}
-\end{figure}
+The previous chapter showed that confidence \emph{predicts} quality on average. This chapter asks whether the per-word color promise (``green = trust without review, $\ge 85\%$ correct'') actually holds in practice -- and discovers that it does, but only inside segments that are confident as a whole.
 
-The headline correlation tells us confidence \emph{carries} the signal; this section asks the deployment question -- at which threshold is the trade-off best, and how do extra signals (duration, entropy) move the curve?
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{lp{0.40\textwidth}rrrr}
-\toprule
-\textbf{Operating point} & \textbf{Gate} & \textbf{Prec.} & \textbf{Recall} & \textbf{False-bads} & \textbf{Vol.\,\%} \\
-\midrule
-Loose, high recall      & \texttt{mwp $\ge$ 0.75}                                          & 59.3\% & 91.7\% & 16 & 39.1\% \\
-\textbf{Balanced (recommended)} & \texttt{mwp $\ge$ 0.80}                                  & \textbf{69.9\%} & \textbf{78.4\%} & 9  & 28.4\% \\
-Strict precision        & \texttt{mwp $\ge$ 0.85}                                          & 81.0\% & 54.3\% & 3  & 17.0\% \\
-$+$ duration filter     & \texttt{mwp $\ge$ 0.85 AND dur $\ge$ 1.5s}                       & 87.9\% & 32.1\% & 0  & 9.3\%  \\
-\textbf{Zero-false-bad gate} & \texttt{mwp $\ge$ 0.85 AND dur $\ge$ 1.5s AND ent $\le$ 0.7} & \textbf{88.7\%} & \textbf{30.5\%} & \textbf{0}  & 8.7\%  \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Reading the trade-off.} Single-signal \texttt{mean\_word\_prob} peaks at $F_1 \approx 0.74$ around the $0.80$ threshold (78\% recall, 70\% precision, \textbf{9 false-bads} out of 405 trusted segments). Tightening to $0.85$ keeps a few fewer false-bads but loses $\sim 25$ percentage points of recall. Adding constraints (\texttt{min\_word\_prob}, \texttt{len\_ratio}, entropy) pushes precision up but trades recall faster than it adds purity -- the same $F_1$ budget, redistributed.
-
-\textbf{Recommendation.} For most use cases pick \texttt{mean\_word\_prob $\ge$ 0.80} -- keeps 78\% of NIV-Y segments accessible, costs only 9 NIV-N leakages out of 1{,}427 (0.6\% of corpus). For zero-tolerance deployments, gate \texttt{mean\_word\_prob $\ge$ 0.85 AND duration\_s $\ge$ 1.5 AND mean\_entropy $\le$ 0.7} -- that gate produces \textbf{zero false-bads} at $\sim 30\%$ recall, useful for legal / medical / broadcast captioning where any wrong-trust is unacceptable.
-
-\section{False-good characterisation -- what slips through, can context catch it?}
-
-At the recommended balanced gate (\texttt{mean\_word\_prob $\ge$ 0.80}), 9 segments are trusted but actually NIV-N. We dump them and ask: is anything else in the data, or in the broader video / topic context, able to flag these?
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.98\textwidth]{conf_false_good_signatures.png}
-\caption{Density of true-good (green) vs false-bad (coral) segments at \texttt{mean\_word\_prob} $\ge 0.80$. False-bads are systematically shorter (median 0.98s vs 1.86s), have fewer hypothesis words (9 vs 19), and have higher mean entropy ($+0.20$). The chosen-token max-softmax stays high; the dispersion across the distribution leaks elsewhere.}
-\end{figure}
-
-\textbf{Feature gap (false-bads vs true-goods at the gate).}
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{lrrr}
-\toprule
-\textbf{Feature} & \textbf{False-bad mean} & \textbf{True-good mean} & \textbf{Gap} \\
-\midrule
-Segment duration (s)   & 1.22  & 1.99  & $-0.78$ \\
-Hyp word count         & 11.67 & 20.83 & $-9.16$ \\
-Ref word count         & 13.89 & 21.42 & $-7.53$ \\
-Mean entropy           & 0.68  & 0.48  & $+0.20$ \\
-Length ratio           & 1.18  & 0.98  & $+0.21$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{The smoking gun: false-bads are SHORT.} Median segment duration is \textbf{0.98s} for false-bads vs \textbf{1.86s} for true-goods. False-bads are systematically segments where the model has too little material to constrain its output -- short clips with a handful of words give the language prior room to commit to a fluent-but-wrong answer.
-
-\textbf{Mean entropy is $+0.20$ higher on false-bads.} The model \emph{is} uncertain on these -- it just compensates by picking a high-prob single token at each position. Per-token max-softmax misses the dispersion; entropy preserves it.
-
-\subsection*{The 9 false-good cases at the balanced gate}
-
-\begin{table}[H]
-\centering
-\scriptsize
-\begin{tabular}{lrrrrrr}
-\toprule
-\textbf{utt\_id (truncated)} & \textbf{dur (s)} & \textbf{ref$\to$hyp} & \textbf{mwp} & \textbf{min\_wp} & \textbf{ent} & \textbf{WER\%} \\
-\midrule
-\texttt{NzP4ZzCCTXU\_0\_725f\dots} & 2.39 & 49$\to$34 (lr 0.69) & 0.81 & \textbf{0.09} & 1.01 & 51  \\
-\texttt{VQfytKqzC1E\_0\_fe65\dots} & 1.92 & 25$\to$17 (lr 0.68) & 0.83 & \textbf{0.15} & 0.79 & 64  \\
-\texttt{JDpiI6GTCUM\_7\_a1a8\dots} & 1.22 & 13$\to$8  (lr 0.62) & 0.80 & 0.56          & 0.45 & 77  \\
-\texttt{PNUbsGx13NI\_12\_86d7\dots} & 1.14 & 6$\to$12  (lr 2.00) & 0.82 & \textbf{0.15} & 0.71 & 200 \\
-\texttt{0kRnNot68TI\_5\_8d93\dots} & 0.87 & 7$\to$5   (lr 0.71) & 0.85 & 0.63          & 0.70 & 71  \\
-\texttt{Hl08kKKS1lw\_13\_1c5e\dots} & 0.98 & 11$\to$9 (lr 0.82) & 0.80 & \textbf{0.35} & 0.86 & 64  \\
-\texttt{GRqF3po8ip0\_19\_0bca\dots} & 0.92 & 6$\to$6   (lr 1.00) & 0.86 & 0.40          & 0.56 & 100 \\
-\texttt{gzljNv0U75Y\_6\_14da\dots} & 0.91 & 3$\to$10  (lr 3.33) & 0.88 & 0.45          & 0.56 & 300 \\
-\texttt{xITCbZxwLn4\_0\_23fb\dots} & 0.59 & 5$\to$4   (lr 0.80) & 0.86 & 0.46          & 0.46 & 60  \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection*{Failure-mode taxonomy}
-
-\begin{table}[H]
-\centering
-\footnotesize
-\begin{tabular}{p{0.18\textwidth}p{0.32\textwidth}p{0.22\textwidth}p{0.22\textwidth}}
-\toprule
-\textbf{Mode} & \textbf{Example} & \textbf{What gives it away} & \textbf{Catchable from} \\
-\midrule
-Counting / digit loop & ``1 2 3 4 5 6 7 8 9 10 11 12'' & \texttt{min\_word\_prob} 0.15, regex match & confidence + post-hoc text rule \\
-Phonetic substitution & ``major in acting'' $\to$ ``measure a hacking'' & low NEA F1, missed entities, plausible English & NEA / topic LM \\
-Plausible swap & ``all right i'm gonna read you'' $\to$ ``great i'm going to do this'' & reference required to detect & beam disagreement, surrounding-context LM \\
-Over-generation & ``link down there'' (3w) $\to$ ``\dots over there \dots'' (10w) & \texttt{len\_ratio} $> 2$, hyp\_words $\gg$ dur & confidence + duration \\
-Short-segment substitution & ``insurance examination'' $\to$ ``initial contamination'' & dur $< 1$s, NEA F1 $= 0$ & duration filter \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection*{Could visual cues or broad-conversation context catch these?}
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Visual cues.} Segment duration is a free proxy for visual quality (very short clips have less material for the visual encoder to lock onto). Adding \texttt{duration $\ge$ 1.5s} cuts most short-segment false-bads out of the trusted set. \emph{A real visual quality model} (lip occlusion, face-frame coverage, head-pose) would catch more -- not built into the pipeline today; candidate for next sprint.
-  \item \textbf{Topic context.} False-bads frequently lose specific entities (numbers, proper nouns, domain words). NEA F1 $= 0\%$ on most cases. A surrounding-sentence language model conditioned on the \emph{source video's} topic could rescore the hyp and flag drift -- also not in the pipeline today.
-  \item \textbf{Beam disagreement.} For cases like ``great i'm going to do this'', the chosen beam is decisive but unrelated to the reference. Capturing all 20 beams would let us ask whether \emph{any} alternative beam was closer to the reference -- a genuine quality signal that confidence-of-chosen-beam alone cannot expose. Mission 6.
-\end{itemize}
-
-\textbf{Take-away.} The three free signals already in our sidecar (\texttt{mean\_word\_prob}, \texttt{mean\_entropy}, segment duration) catch every false-bad that has any objective signature. The residual cases -- phonetically plausible, length-matched, fluent -- are out of reach of confidence alone and will require either visual-quality scoring or beam-aggregation to flag automatically. Until then, the deck should footnote the residual rate at the chosen operating point ($2.2\%$ false-bad among trusted at \texttt{mwp $\ge$ 0.80}).
-
-\section{Extra scatters -- confidence pairs vs hallucination, IS, and WER}
-
-Section 5 shows a single 2D scatter (\texttt{mean\_prob} $\times$ \texttt{mean\_entropy}, colored by hallucination). The plots below extend that view to other confidence pairs and to continuous IS / WER targets, and add a precision-recall sweep that visualizes the sweet spot from Section 8 across multiple metrics at once.
-
-\subsection*{Hallucination scatter -- alternative confidence pairs}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.95\textwidth]{conf_hallucination_pairs_scatter.png}
-\caption{Four confidence pairs colored by hallucinated label. Hallucinated mass piles up consistently in the same corner across all four pairs -- the dangerous-quadrant count stays at $\sim 3 / 223$ regardless of which projection we use. Max-softmax, entropy, margin, and red/green fractions are different shadows of the same underlying confidence collapse, not independent failure detectors.}
-\end{figure}
-
-\subsection*{Confidence vs Intelligibility Score (continuous)}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.95\textwidth]{conf_metrics_vs_is_scatter.png}
-\caption{Per-segment scatter of the four leading confidence metrics against IS, with OLS fit and $R^2$. Three of the four signals explain $\sim$65--67\% of IS variance with a single linear term; \texttt{min\_word\_prob} is meaningfully weaker.}
-\end{figure}
-
-\subsection*{Confidence vs WER (continuous)}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.95\textwidth]{conf_metrics_vs_wer_scatter.png}
-\caption{Same four metrics against WER. Confidence predicts IS more cleanly than WER ($R^2 \approx 0.65$ vs $0.48$). The gap is the hallucination tail: WER $\ge 100\%$ segments cluster at low mean\_prob and pull the WER axis sharply, while IS varies smoothly because it credits semantic and phonetic similarity.}
-\end{figure}
-
-\subsection*{Sweet-spot sweep -- F1 over NIV-Y across six gates}
+\subsection{Overall calibration}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{conf_sweet_spot_pr.png}
-\caption{Six metrics swept simultaneously, with the F1-max threshold for NIV-Y (IS $\ge 3.80$) marked on each curve.}
+\includegraphics[width=0.7\textwidth]{conf_calibration_curve.png}
+\caption{Calibration curve. Solid line: empirical correctness rate per probability bin. Dashed: perfect calibration. Bars: word count per bin (right axis). The model is consistently over-confident: predicted prob $>$ empirical accuracy at every bin.}
 \end{figure}
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{lcrrrrrr}
+\begin{tabular}{lccc}
 \toprule
-\textbf{Metric} & \textbf{Sweet-spot gate} & \textbf{F1 (Y)} & \textbf{Prec} & \textbf{Recall$_Y$} & \textbf{Vol kept} & \textbf{IS kept} & \textbf{WER kept} \\
+\textbf{Band} & \textbf{Threshold} & \textbf{n words} & \textbf{P(correct)} \\
 \midrule
-\texttt{mean\_prob}      & \textbf{$\ge 0.82$} & \textbf{0.75} & 0.71 & 78.9\% & 28.0\% & \textbf{4.01} & \textbf{27.5\%} \\
-\texttt{mean\_word\_prob}& $\ge 0.79$ & 0.75 & 0.68 & 82.8\% & 30.8\% & 3.97 & 28.3\% \\
-\texttt{mean\_entropy}   & $\le 0.91$ & 0.74 & 0.67 & 82.8\% & 31.2\% & 3.92 & 30.3\% \\
-\texttt{mean\_margin}    & $\ge 0.70$ & 0.71 & 0.67 & 76.2\% & 28.8\% & 3.92 & 29.7\% \\
-\texttt{frac\_p\_ge\_085}& $\ge 0.64$ & 0.71 & 0.67 & 76.2\% & 28.9\% & 3.93 & 29.1\% \\
-\texttt{min\_word\_prob} & $\ge 0.19$ & 0.55 & 0.46 & 67.3\% & 36.8\% & 3.46 & 42.1\% \\
+green  & $p \ge 0.85$ & 11{,}309 & \textbf{80.6\%} \\
+yellow & $0.40 \le p < 0.85$ & 7{,}470 & 38.3\% \\
+red    & $p < 0.40$ & 4{,}482 & 15.4\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Reading the table.} ``IS kept'' / ``WER kept'' are the averages on the segments that pass the gate -- what the user actually sees if we trust this filter at runtime. Base rate (no gate) is IS $= 2.52$, WER $= 64.1\%$.
+Bands are well-ordered (green $>$ yellow $>$ red empirically) and ECE = 17.4\% sits within the 5--15\,pp range the post-RLHF LLaMA-2 calibration literature predicts. The headline number (80.6\% reliable green) falls in the 80--90\% band -- footnote-able but not yet at the $\ge 90\%$ ``trust without review'' bar.
 
-\textbf{Best single-feature gate: \texttt{mean\_prob} $\ge 0.82$.} F1 $= 0.75$ against NIV-Y is the highest single-metric score available. Precision 71\% means \emph{7 of every 10 trusted segments are NIV-Y}, vs 25.3\% in the unfiltered population. Recall 79\% means we catch $\sim 4$ in 5 of the genuinely good segments. Mean IS of trusted segments rises from $2.52 \to \mathbf{4.01}$ (well above the NIV-Y bar of 3.80); mean WER drops from $64.1\% \to \mathbf{27.5\%}$ (in the LRS3 paper's reported range).
-
-\textbf{Why this is the sweet spot.} Below $T = 0.82$, recall climbs but precision sags. Above $T = 0.82$ the curve goes nearly vertical: each additional 0.01 in $T$ loses 4--6\% of recall to gain $\le 2$pp of precision. The F1-elbow at 0.82 is where those slopes cross.
-
-\textbf{Why 0.82 here vs 0.80 in Section 8.} Section 8 gates on \texttt{mean\_word\_prob} (per-word aggregation), which peaks at $T = 0.79$. Gating on \texttt{mean\_prob} (per-token) the F1 peak is at $T = 0.82$. Both yield F1 $\approx 0.75$ -- the operating point is equivalent, only the variable name changes.
-
-\textbf{Trade-off menu} if you want a different operating point:
-\begin{itemize}[leftmargin=*]
-  \item \textbf{High recall:} \texttt{mean\_prob $\ge 0.75$} -- keeps $\sim 40\%$ volume, F1 $\approx 0.74$, precision $\sim 64\%$.
-  \item \textbf{High precision:} \texttt{mean\_prob $\ge 0.90$} -- keeps $\sim 14\%$ volume, F1 $\approx 0.65$, precision $\sim 85\%$.
-  \item \textbf{Zero-tolerance:} combine with \texttt{dur $\ge 1.5$s AND mean\_entropy $\le 0.7$} (Section 8) -- F1 $\approx 0.46$, zero false-bads at $\sim 30\%$ recall.
-\end{itemize}
-
-\section{Two-tier policy -- when can a user ``salvage'' a bad segment from per-word coloring?}
-
-Sections 8 and 10 frame the gate as binary: trust the segment, or drop it. But the per-word coloring offers a \emph{third option} -- show a marginal segment with coloring and let the user mentally discount yellows / reds. This is only safe if green words remain trustworthy; if green leakage gets worse in low-confidence segments, the user is being misled (the ``There were 2 people\dots'' problem -- the model latches on a wrong number with high softmax, the UI paints it green, the user trusts it).
-
-The relevant metric is therefore $P(\text{correct} \mid \text{green word, segment quality})$ -- does the green-band promise hold across the whole confidence range?
+\subsection{Stratified by segment quality -- the green band collapses in low-quality segments}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.98\textwidth]{conf_band_reliability_combined.png}
-\caption{Per-word band reliability stratified by segment-level \texttt{mean\_prob} bucket. Green-band reliability ranges from 18\% (very-low quality segments) to 93\% (very-high quality segments) -- the colour stays the same, the meaning does not.}
+\includegraphics[width=0.95\textwidth]{conf_band_reliability_combined.png}
+\caption{Per-word band reliability stratified by segment-level \texttt{mean\_prob} bucket. Top: P(word correct $|$ band) per bucket. Bottom: word-count composition. The green band's reliability ranges from 18\% in low-quality segments to 93\% in high-quality segments -- the colour stays the same, the meaning does not.}
 \end{figure}
-
-\subsection*{The green band collapses in low-quality segments}
 
 \begin{table}[H]
 \centering
@@ -511,11 +263,11 @@ very high ($\ge 0.85$)    & 5{,}755 & \textbf{92.8\%} & 60.3\% & 28.5\% \\
 \end{tabular}
 \end{table}
 
-\textbf{The green band's reliability ranges from 18\% to 93\% depending on the segment it lives in.} A green word in a segment with \texttt{mean\_prob} 0.50 is correct only 22\% of the time -- worse than a coin flip the wrong way. A green word in a segment with \texttt{mean\_prob} 0.90 is correct 93\% of the time. The colour stays the same; the meaning of the colour does not. Across the corpus, 2{,}192 wrong-and-green words exist; 605 of them sit in segments with \texttt{mean\_prob} $< 0.65$ -- the danger zone where coloring misleads more than it informs.
+Across the corpus, 2{,}192 wrong-and-green words exist; 605 of them sit in segments with \texttt{mean\_prob} $< 0.65$ -- the danger zone where coloring misleads more than it informs.
 
-\subsection*{The ``21 $\to$ 2'' failure is real and measurable}
+\subsection{The ``21 $\to$ 2'' problem}
 
-40 wrong-and-green words exist where both reference and hypothesis are numbers -- the cognitively most dangerous variant. Top examples:
+40 wrong-and-green words exist where both reference and hypothesis are numbers -- the cognitively most dangerous variant (a user reading the green ``2'' will trust it). Top examples:
 
 \begin{table}[H]
 \centering
@@ -527,9 +279,7 @@ very high ($\ge 0.85$)    & 5{,}755 & \textbf{92.8\%} & 60.3\% & 28.5\% \\
 7      & \textbf{four}    & 0.998 & 0.70 & 80  & Number swapped, very high prob \\
 06     & \textbf{six}     & 0.989 & 0.87 & 44  & ``six'' looks plausible from ``06'' \\
 000    & \textbf{2000}    & 0.987 & 0.79 & 41  & Off by 2{,}000$\times$ \\
-5s     & \textbf{three}   & 0.976 & 0.61 & 104 & Number swapped \\
 \textbf{billion} & \textbf{million} & 0.965 & 0.82 & 58 & Off by 1{,}000$\times$ -- most dangerous \\
-5      & \textbf{five}    & 0.962 & 0.77 & 59  & Surface-form swap (ok-ish) \\
 1024   & \textbf{24}      & 0.958 & 0.67 & 88  & Lost the leading ``10'' \\
 2011   & \textbf{2000}    & 0.894 & 0.79 & 62  & Year off by 11 \\
 1156   & \textbf{you}     & 0.977 & 0.64 & 94  & Number $\to$ unrelated word \\
@@ -537,9 +287,9 @@ very high ($\ge 0.85$)    & 5{,}755 & \textbf{92.8\%} & 60.3\% & 28.5\% \\
 \end{tabular}
 \end{table}
 
-Read the ``billion $\to$ million'' line carefully: the model said ``million'' with \textbf{96.5\% confidence} in a segment with \textbf{0.82 mean\_prob} (above our T\_safe), and it was painted green. A user reading this would be off by a factor of 1{,}000. No purely confidence-based system can catch this -- it requires beam disagreement, source-context priors, or visual disambiguation to flag.
+The ``billion $\to$ million'' line: the model said ``million'' with 96.5\% confidence in a segment with 0.82 mean\_prob -- above our T\_safe threshold -- and it was painted green. A user would be off by a factor of 1{,}000. No purely confidence-based system can catch this -- it requires beam disagreement, source-context priors, or visual disambiguation.
 
-\subsection*{Three-tier policy emerges naturally}
+\subsection{A natural three-tier policy}
 
 \begin{table}[H]
 \centering
@@ -550,7 +300,7 @@ Read the ``billion $\to$ million'' line carefully: the model said ``million'' wi
 \midrule
 \textbf{T\_salv}  & \textbf{0.74} & Green is $\ge 75\%$ reliable -- useful with a caveat \\
 \textbf{T\_safe}  & \textbf{0.82} & Green is $\ge 85\%$ reliable -- trustworthy as labeled \\
-\textbf{T\_trust} & \textbf{0.89} & Green is $\ge 90\%$ reliable -- high trust, near-paper-grade \\
+\textbf{T\_trust} & \textbf{0.89} & Green is $\ge 90\%$ reliable -- high trust \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -558,28 +308,133 @@ Read the ``billion $\to$ million'' line carefully: the model said ``million'' wi
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{p{0.13\textwidth}p{0.18\textwidth}p{0.40\textwidth}r}
+\begin{tabular}{p{0.13\textwidth}p{0.18\textwidth}p{0.42\textwidth}r}
 \toprule
-\textbf{Zone} & \textbf{Segment mean\_prob} & \textbf{What to show user} & \textbf{Volume} \\
+\textbf{Zone} & \textbf{seg mean\_prob} & \textbf{What to show user} & \textbf{Volume} \\
 \midrule
-\textbf{Trust}    & $\ge 0.82$           & Full sentence with coloring; green is reliable & 28\% \\
-\textbf{Salvage}  & 0.65 -- 0.82         & Sentence with coloring + visible ``low confidence'' banner & 38\% \\
-\textbf{Drop}     & $< 0.65$             & Hide segment OR mark ``unreliable -- do not trust greens'' & 34\% \\
+\textbf{Trust}    & $\ge 0.82$    & Full sentence with coloring; green is reliable & 28\% \\
+\textbf{Salvage}  & 0.65 -- 0.82  & Sentence with coloring + visible ``low confidence'' banner & 38\% \\
+\textbf{Drop}     & $< 0.65$      & Hide segment OR mark ``unreliable -- do not trust greens'' & 34\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Failure-mode profile -- March 5-category taxonomy on confidence parameters}
+% =====================================================================
+\section{Filtering with confidence: operating points and what slips through}
+% =====================================================================
 
-The 503 below-threshold segments (IS $< 2.0$) classified into 5 mutually-exclusive categories -- each segment gets exactly one label, checked $1 \to 5$. Same taxonomy as the March 2026 deck (\texttt{slide\_failure\_deep\_1a/1b}), grounded in ASR error taxonomy (Fosler-Lussier 2004) and LLM hallucination analysis (ACL 2025). This section asks: \emph{how does each March category look in confidence space?}
+We've shown confidence is a strong signal and that the green-band promise holds inside confident segments. This chapter answers the deployment question: at what threshold should we gate, what's the precision-recall trade-off, and which segments still slip through?
+
+\subsection{ROC -- confidence-only quality gate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{conf_roc_filter.png}
+\caption{ROC curves for confidence-only detectors of NIV-N (bad, IS $< 2.0$, left) and NIV-Y (good, IS $\ge 3.8$, right). \texttt{mean\_prob} reaches AUC $\approx 0.92$ on both -- usable as a single gate without the full IS pipeline.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Feature} & \textbf{NIV-N detector AUC} & \textbf{NIV-Y detector AUC} \\
+\midrule
+\texttt{mean\_prob}       & \textbf{0.917} & \textbf{0.921} \\
+\texttt{mean\_entropy}    & 0.913 & 0.917 \\
+\texttt{mean\_margin}     & 0.901 & 0.906 \\
+\texttt{frac\_p\_lt\_04}  & 0.899 & 0.878 \\
+\texttt{frac\_p\_ge\_085} & 0.888 & 0.908 \\
+\texttt{min\_word\_prob}  & 0.753 & 0.749 \\
+\texttt{seq\_score}       & 0.746 & 0.766 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Operating points -- where to set the threshold}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{conf_operating_points.png}
+\caption{Left: precision-recall trade-off. Cyan curve sweeps \texttt{mean\_word\_prob} alone; coloured dots overlay duration- / entropy- / triple-signal gates. Right: false-bad count (NIV-N inside trusted set) as recall grows. Adding constraints trades recall faster than it adds precision, but enables zero-false-bad operating points for high-stakes use.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{0.38\textwidth}rrrr}
+\toprule
+\textbf{Operating point} & \textbf{Gate} & \textbf{Prec.} & \textbf{Recall} & \textbf{False-bads} & \textbf{Vol.\,\%} \\
+\midrule
+Loose, high recall      & \texttt{mwp $\ge 0.75$}                                          & 59.3\% & 91.7\% & 16 & 39.1\% \\
+\textbf{Balanced}       & \texttt{mwp $\ge 0.80$}                                          & \textbf{69.9\%} & \textbf{78.4\%} & 9  & 28.4\% \\
+Strict precision        & \texttt{mwp $\ge 0.85$}                                          & 81.0\% & 54.3\% & 3  & 17.0\% \\
+$+$ duration filter     & \texttt{mwp $\ge 0.85$ AND dur $\ge 1.5$s}                       & 87.9\% & 32.1\% & 0  & 9.3\%  \\
+\textbf{Zero-false-bad} & \texttt{mwp $\ge 0.85$ AND dur $\ge 1.5$s AND ent $\le 0.7$}     & \textbf{88.7\%} & \textbf{30.5\%} & \textbf{0}  & 8.7\%  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{conf_sweet_spot_pr.png}
+\caption{Six metrics swept simultaneously, with the F1-max threshold for NIV-Y marked. \texttt{mean\_prob} $\ge 0.82$ is the F1-elbow ($F_1 = 0.75$, precision 71\%, recall 79\%, mean IS of trusted = 4.01, mean WER of trusted = 27.5\%).}
+\end{figure}
+
+\subsection{Who slips through? False-good profile}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{conf_false_good_signatures.png}
+\caption{Density of true-good (green) vs false-bad (coral) at \texttt{mean\_word\_prob} $\ge 0.80$. \textbf{The smoking gun: false-bads are systematically SHORT.} Median duration 0.98s vs 1.86s; median hyp word count 9 vs 19; mean entropy is $+0.20$ higher.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Feature} & \textbf{False-bad mean} & \textbf{True-good mean} & \textbf{Gap} \\
+\midrule
+Segment duration (s)   & 1.22  & 1.99  & $-0.78$ \\
+Hyp word count         & 11.67 & 20.83 & $-9.16$ \\
+Mean entropy           & 0.68  & 0.48  & $+0.20$ \\
+Length ratio           & 1.18  & 0.98  & $+0.21$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Visual cues and broad-conversation context.} Segment duration is a free runtime proxy for visual quality (very short clips give the visual encoder little material to lock onto). A real visual quality model (lip occlusion, face-frame coverage, head pose) would catch more, but is out-of-pipeline today. Topic context -- a surrounding-sentence language model conditioned on the source video's topic -- could rescore the hyp and flag drift; also out-of-pipeline. Beam disagreement (Mission 6) is the most tractable next-sprint signal for the truly fluent-and-plausible cases that confidence alone cannot detect.
+
+% =====================================================================
+\section{Failure modes: what ``bad'' looks like in confidence space}
+% =====================================================================
+
+The previous chapter focused on detection thresholds. This chapter goes deeper: \emph{which} kinds of failures slip past a confidence gate, and how each kind looks across the confidence parameters. The taxonomy is the March 2026 deck's 5-category model.
+
+\subsection{Hallucination scatter}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{conf_hallucination_scatter.png}
+\caption{Per-segment scatter: \texttt{mean\_prob} (x) vs \texttt{mean\_entropy} (y), colored by hallucinated label (WER $\ge 100\%$ AND len\_ratio $\ge 0.5$). Hallucinated mass piles up in the upper-left (low prob, high entropy). The dangerous quadrant (high prob, hallucinated) contains only 3 of 223 cases.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{conf_hallucination_pairs_scatter.png}
+\caption{Four alternative confidence pairs colored by hallucinated label. Hallucinated mass piles up consistently in the same corner across all four pairs -- the dangerous-quadrant count stays at $\sim 3 / 223$ regardless of which projection we use. Max-softmax, entropy, margin, and red/green fractions are different shadows of the same underlying confidence collapse, not independent failure detectors.}
+\end{figure}
+
+\subsection{Five-category failure-mode taxonomy (March deck)}
+
+The 503 IS$<$2 segments classify into five mutually-exclusive categories, evaluated $1 \to 5$.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.98\textwidth]{conf_failure_mode_profile.png}
-\caption{Boxplots of eight confidence parameters across the five March failure categories plus the healthy NIV-Y reference. Wrong Topic dominates ($\sim$68\% of bad segments) -- the model commits decisively to a wrong domain. Confidence collapses uniformly on every parameter for failures \emph{except} \texttt{mean\_prob}, where Wrong Topic still hovers in the medium band -- exactly the deck's ``confidence color cannot detect topic substitution'' caveat.}
+\caption{Boxplots of eight confidence parameters across the five March failure categories plus the healthy NIV-Y reference. Wrong Topic dominates ($\sim 68\%$) -- the model commits decisively to a wrong domain. Confidence collapses uniformly on every parameter for failures \emph{except} \texttt{mean\_prob}, where Wrong Topic still hovers in the medium band -- the deck's ``confidence color cannot detect topic substitution'' caveat.}
 \end{figure}
-
-\subsection*{Category cards (March-deck layout)}
 
 \noindent\fcolorbox{argosCoral}{argosNavy!8}{%
 \begin{minipage}{0.96\textwidth}
@@ -590,7 +445,7 @@ The 503 below-threshold segments (IS $< 2.0$) classified into 5 mutually-exclusi
 \textbf{Confidence signature:} \texttt{mean\_prob} 0.55, \texttt{min\_wp} 0.08, \texttt{entropy} 2.74, \texttt{len\_ratio} 0.97, dur 1.39s.
 \end{minipage}}
 
-\vspace{0.4em}
+\vspace{0.3em}
 \noindent\fcolorbox{argosGold}{argosNavy!8}{%
 \begin{minipage}{0.96\textwidth}
 \textbf{\textcolor{argosGold}{2. Hallucination}} \quad (10.1\%, n=51)\\
@@ -600,7 +455,7 @@ The 503 below-threshold segments (IS $< 2.0$) classified into 5 mutually-exclusi
 \textbf{Confidence signature:} \texttt{mean\_prob} 0.59, \texttt{min\_wp} 0.16, \texttt{entropy} 2.27, \texttt{len\_ratio} 1.31, dur 1.19s.
 \end{minipage}}
 
-\vspace{0.4em}
+\vspace{0.3em}
 \noindent\fcolorbox{argosCoral}{argosNavy!8}{%
 \begin{minipage}{0.96\textwidth}
 \textbf{\textcolor{argosCoral}{3. Right Topic, Wrong Details}} \quad (15.1\%, n=76)\\
@@ -610,61 +465,94 @@ The 503 below-threshold segments (IS $< 2.0$) classified into 5 mutually-exclusi
 \textbf{Confidence signature:} \texttt{mean\_prob} 0.65, \texttt{min\_wp} 0.16, \texttt{entropy} 1.97, \texttt{len\_ratio} 0.84, dur 1.42s.
 \end{minipage}}
 
-\vspace{0.4em}
+\vspace{0.3em}
 \noindent\fcolorbox{argosGray}{argosNavy!8}{%
 \begin{minipage}{0.96\textwidth}
 \textbf{\textcolor{argosGray}{4. Signal Loss}} \quad (0.2\%, n=1)\\
 \textbf{What:} Nothing came out.\\
 \textbf{Rule:} Empty output OR length\_ratio $< 0.3$.\\
-\textbf{Example:} Ref: ``the thirteenth amendment'' $\to$ Hyp: ``''\\
-\textbf{Confidence signature:} \texttt{mean\_prob} 0.54, \texttt{len\_ratio} 0.24, dur 0.94s.
+\textbf{Example:} Ref: ``the thirteenth amendment'' $\to$ Hyp: ``''
 \end{minipage}}
 
-\vspace{0.4em}
+\vspace{0.3em}
 \noindent\fcolorbox{argosGold}{argosNavy!8}{%
 \begin{minipage}{0.96\textwidth}
 \textbf{\textcolor{argosGold}{5. Accumulated Errors}} \quad (6.6\%, n=33)\\
 \textbf{What:} Many small errors compound -- death by a thousand cuts.\\
 \textbf{Rule:} IS $< 2.0$ and doesn't match categories 1--4.\\
-\textbf{Example:} Many words slightly wrong throughout, meaning erodes.\\
 \textbf{Confidence signature:} \texttt{mean\_prob} 0.62, \texttt{min\_wp} 0.13, \texttt{entropy} 2.14, \texttt{len\_ratio} 0.74, dur 1.37s.
 \end{minipage}}
 
-\subsection*{Per-category summary}
+\vspace{0.5em}
 
 \begin{table}[H]
 \centering
 \scriptsize
-\begin{tabular}{lrrrrrrrrr}
+\begin{tabular}{lrrrrrrrr}
 \toprule
-\textbf{Category} & \textbf{n} & \textbf{m\_prob} & \textbf{min\_wp} & \textbf{m\_ent} & \textbf{dur (s)} & \textbf{lr} & \textbf{NEA} & \textbf{WER\%} & \textbf{IS} \\
+\textbf{Category} & \textbf{n} & \textbf{m\_prob} & \textbf{min\_wp} & \textbf{m\_ent} & \textbf{dur (s)} & \textbf{NEA} & \textbf{WER\%} & \textbf{IS} \\
 \midrule
-1. Wrong Topic                & 342 & 0.55 & 0.08 & 2.74 & 1.39 & 0.97 & 0.7  & 137 & 1.03 \\
-2. Hallucination              & 51  & 0.59 & 0.16 & 2.27 & 1.19 & \textbf{1.31} & 5.6  & 145 & 1.39 \\
-3. Right Topic, Wrong Details & 76  & 0.65 & 0.16 & 1.97 & 1.42 & 0.84 & 4.4  & 71  & 1.65 \\
-4. Signal Loss                & 1   & 0.54 & 0.12 & 2.84 & 0.94 & \textbf{0.24} & 0    & 100 & 1.91 \\
-5. Accumulated Errors         & 33  & 0.62 & 0.13 & 2.14 & 1.37 & 0.74 & 31.5 & 51  & 1.77 \\
+1. Wrong Topic                & 342 & 0.55 & 0.08 & 2.74 & 1.39 & 0.7  & 137 & 1.03 \\
+2. Hallucination              & 51  & 0.59 & 0.16 & 2.27 & 1.19 & 5.6  & 145 & 1.39 \\
+3. Right Topic, Wrong Details & 76  & 0.65 & 0.16 & 1.97 & 1.42 & 4.4  & 71  & 1.65 \\
+4. Signal Loss                & 1   & 0.54 & 0.12 & 2.84 & 0.94 & 0    & 100 & 1.91 \\
+5. Accumulated Errors         & 33  & 0.62 & 0.13 & 2.14 & 1.37 & 31.5 & 51  & 1.77 \\
 \midrule
-\textbf{Healthy (NIV-Y)}      & 361 & \textbf{0.86} & \textbf{0.32} & \textbf{0.62} & \textbf{1.93} & 0.97 & \textbf{84.6} & \textbf{22} & \textbf{4.33} \\
+\textbf{Healthy (NIV-Y)}      & 361 & \textbf{0.86} & \textbf{0.32} & \textbf{0.62} & \textbf{1.93} & \textbf{84.6} & \textbf{22} & \textbf{4.33} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Take-away.} Categories 1 and 2 (Wrong Topic + Hallucination) account for $\sim 78\%$ of bad segments and have the lowest confidence signatures of any failure mode -- both are catchable from \texttt{mean\_prob} $< 0.65$ alone. Right Topic Wrong Details (\#3) is the closest to healthy on every confidence parameter -- the model knows the topic but loses entities, and confidence-only signals struggle here. \textbf{This is exactly why Mission 6 (all-20-beams capture) and a topic-conditioned LM are the next-sprint priorities -- categories 3-5 require either beam disagreement or external context to flag at runtime.}
+\subsection{Trajectory clusters -- failure shapes through time}
 
-\section{What changes in the codebase}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{conf_trajectory_clusters.png}
+\caption{Top: $k=5$ cluster centroids on length-normalized per-position confidence trajectories. Bottom: per-cluster mean WER (coral) and mean IS rescaled $20\times$ (green). The flat-high cluster (C3) and the uncertain-throughout cluster (C1) are at opposite ends of every quality axis.}
+\end{figure}
 
-Based on these findings:
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Cluster} & \textbf{n} & \textbf{Mean WER \%} & \textbf{Mean IS} & \textbf{NIV-Y rate} & \textbf{NIV-N rate} \\
+\midrule
+C3 (flat-high)            & 462 & \textbf{30.8} & \textbf{3.89} & 64.1\% & 3.0\% \\
+C0 (slow ramp-up)         & 228 & 62.5 & 2.55 & 10.1\% & 29.8\% \\
+C2 (flat-mid)             & 223 & 65.8 & 2.49 & 11.7\% & 33.2\% \\
+C4 (rising mid)           & 245 & 71.8 & 2.25 & 6.5\%  & 40.8\% \\
+C1 (uncertain throughout) & 260 & \textbf{104.4} & \textbf{1.14} & 0.0\% & \textbf{91.9\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The shape difference between flat-high (C3) and flat-low (C1) is visible after only a few tokens -- enough material to support a mid-decode ``give up early'' hook (Mission 11 candidate). For each segment we'd track the rolling-mean per-position prob and abort if it crosses a flat-low signature before the full sequence is generated.
+
+% =====================================================================
+\section{What confidence cannot tell us, and what's next}
+% =====================================================================
+
+Confidence has three blind spots, all visible in the failure-mode breakdown:
 
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Keep \texttt{CONF\_HIGH} $= 0.85$ / \texttt{CONF\_MED} $= 0.40$.} Calibration is in-band. Tightening green to $0.90$ would cost substantial green coverage without proportional reliability gains.
-  \item \textbf{Add \texttt{mean\_prob} to per-segment review triage.} The pipeline already emits \texttt{sentence\_confidence} via \texttt{make\_report.py --word-confidence}. Flag segments with \texttt{mean\_prob} $< 0.6$ for human review -- this catches roughly $92\%$ of NIV-N segments at modest false-positive cost.
-  \item \textbf{Do NOT promote entropy to a primary gate yet.} Marginal improvement over max-softmax, harder to explain to clients, doesn't beat hallucinations. Keep capturing it for archaeology.
-  \item \textbf{Schedule the all-20-beams decode change for next sprint} (Mission 6). The cheap top-3 preview is a near-clone of full entropy.
-  \item \textbf{Trajectory clustering belongs in the runtime stack as a ``give up early'' signal} (Mission 11 candidate). Mid-decode trajectory shape predicts segment quality before the full sequence finishes.
+  \item \textbf{Wrong Topic} (68\% of bad segments). The model commits decisively to a wrong domain; \texttt{mean\_prob} sits in the medium band, no signal in confidence space sharp enough to flag. Needs semantic similarity (reference-required) or a runtime substitute -- a topic-conditioned LM scoring the hyp for surprise relative to the source video's topic. \emph{Mission 8.}
+  \item \textbf{Right Topic, Wrong Details} (15\% of bad segments). Confidence is the closest of any failure mode to healthy. The model knows the topic but loses the specific entities (numbers, proper nouns). Needs NEA F1 (reference-required) or beam disagreement -- if the chosen beam dropped a number that other beams kept, that's a flag. \emph{Mission 6 (all-20-beams capture).}
+  \item \textbf{The ``billion $\to$ million'' problem} -- a single high-confidence wrong content word inside an otherwise-fine segment. Bypasses all current signals because the model is decisive on the wrong answer. Needs source-context priors (was the conversation about money?) or visual disambiguation. \emph{Long-term.}
 \end{enumerate}
 
-\section{Reproduce}
+\textbf{Recommendations.}
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Keep CONF\_HIGH = 0.85 / CONF\_MED = 0.40 for per-word coloring}, but gate the \emph{display} on segment-level \texttt{mean\_word\_prob} $\ge 0.82$. Below that threshold, hide the segment or banner ``unreliable -- do not trust greens.'' Sections 2.2--2.4.
+  \item \textbf{Use \texttt{mean\_word\_prob} $\ge 0.80$ as the runtime quality gate.} Already exposed via \texttt{make\_report.py --word-confidence} as \texttt{sentence\_confidence}. Section 3.2.
+  \item \textbf{Don't promote entropy to a primary gate.} Tied with max-softmax (Section 4.1), harder to explain. Keep capturing it for archaeology.
+  \item \textbf{Mission 6 (all-20-beams capture) is the highest-leverage next-sprint item.} Top-3 entropy is $r = 0.95$ redundant with full entropy (Section 1.4); we need genuine beam disagreement to expose Right-Topic-Wrong-Details and the dangerous decisive-but-wrong cases.
+  \item \textbf{Mission 8 (topic-conditioned LM for hyp rescoring) handles the Wrong Topic hole.} 68\% of bad segments fall here; the reference contains topic context that a runtime LM could approximate.
+  \item \textbf{Mission 11 (mid-decode trajectory monitoring) is the runtime ``give up early'' hook.} Section 4.3 shows the flat-low cluster is identifiable from just a few tokens.
+\end{enumerate}
+
+\section*{Reproduce}
 
 \begin{verbatim}
 python3 docs/_research-tools/generators/analyze_confidence_full.py \
@@ -673,6 +561,6 @@ python3 docs/_research-tools/generators/analyze_confidence_full.py \
     --baseline-csv       english_full_results/client_outputs/report/report.csv
 \end{verbatim}
 
-Outputs land in \texttt{docs/confidence/confidence\_full\_analysis.md} and \texttt{presentation\_materials\_20260224/01\_plots\_for\_slides/conf\_*.png}. The Markdown report is the canonical living version; this PDF is the stable snapshot.
+The Markdown writeup at \texttt{docs/confidence/confidence\_full\_analysis.md} is the canonical living version generated by the analysis script. This PDF is the stable, narrative snapshot.
 
 \end{document}
