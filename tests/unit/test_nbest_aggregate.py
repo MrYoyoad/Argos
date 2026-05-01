@@ -208,6 +208,73 @@ def test_vote_empty():
 # safe_topk (bias-preference)
 # ──────────────────────────────────────────────────────────────────────────────
 
+def test_vote_conf_emits_agreement_higher_than_individual_beams():
+    """When 4 of 5 beams agree on the same word with moderate per-beam conf,
+    the conf-weighted voter's *agreement score* for that word must be
+    substantially higher than any single beam's raw confidence. NOTE: this
+    score is NOT a true Bayesian posterior — beams share prefix history and
+    are highly correlated. See nbest_aggregate.weighted_vote() docstring for
+    citations. We test the agreement-share property only."""
+    hyps = [
+        {"rank": 0, "text": "cat", "sequence_score": -1.0,
+         "tokens": [{"token": W + "cat", "prob": 0.30}]},  # outlier wrong word
+        {"rank": 1, "text": "bat", "sequence_score": -1.05,
+         "tokens": [{"token": W + "bat", "prob": 0.60}]},
+        {"rank": 2, "text": "bat", "sequence_score": -1.10,
+         "tokens": [{"token": W + "bat", "prob": 0.65}]},
+        {"rank": 3, "text": "bat", "sequence_score": -1.15,
+         "tokens": [{"token": W + "bat", "prob": 0.70}]},
+        {"rank": 4, "text": "bat", "sequence_score": -1.20,
+         "tokens": [{"token": W + "bat", "prob": 0.55}]},
+    ]
+    text, meta = A.weighted_vote(hyps, "score_x_conf")
+    assert text == "bat"
+    word_confs = meta["word_confs"]
+    assert len(word_confs) == 1 and word_confs[0][0] == "bat"
+    agreement = word_confs[0][1]
+    individual_confs = [0.60, 0.65, 0.70, 0.55]
+    assert agreement is not None
+    # Agreement-share for the consensus word should exceed any individual
+    # contributing beam's raw confidence — the agreement mass dominates.
+    assert agreement > max(individual_confs), (
+        f"agreement {agreement:.3f} should exceed max individual conf {max(individual_confs):.3f}"
+    )
+
+
+def test_safe_swap_promotes_to_agreement_rate():
+    """When safe-mode swaps, the new word's reported confidence is the
+    agreement rate K/(N-1) among other beams (NOT a posterior probability —
+    see safe_topk docstring re: beam non-independence). Unswapped slots keep
+    top-1's raw conf."""
+    hyps = [
+        {"rank": 0, "text": "the cat sat", "sequence_score": -1.0,
+         "tokens": [{"token": W + "the", "prob": 0.95},
+                    {"token": W + "cat", "prob": 0.30},   # low-conf wrong word
+                    {"token": W + "sat", "prob": 0.95}]},
+        {"rank": 1, "text": "the bat sat", "sequence_score": -1.1,
+         "tokens": [{"token": W + "the", "prob": 0.9},
+                    {"token": W + "bat", "prob": 0.6},
+                    {"token": W + "sat", "prob": 0.9}]},
+        {"rank": 2, "text": "the bat sat", "sequence_score": -1.2,
+         "tokens": [{"token": W + "the", "prob": 0.9},
+                    {"token": W + "bat", "prob": 0.55},
+                    {"token": W + "sat", "prob": 0.9}]},
+        {"rank": 3, "text": "the bat sat", "sequence_score": -1.3,
+         "tokens": [{"token": W + "the", "prob": 0.9},
+                    {"token": W + "bat", "prob": 0.5},
+                    {"token": W + "sat", "prob": 0.9}]},
+    ]
+    text, meta = A.safe_topk(hyps)
+    assert "bat" in text
+    word_confs = dict(meta["word_confs"])
+    # 3 of 3 other beams agreed on 'bat' → agreement rate = 1.0
+    # (Caveat: not a true posterior — see docstring on beam non-independence)
+    assert word_confs.get("bat") == 1.0, f"expected 1.0, got {word_confs.get('bat')}"
+    # Unswapped words keep their top-1 conf
+    assert word_confs.get("the") == 0.95
+    assert word_confs.get("sat") == 0.95
+
+
 def test_safe_swap_only_when_low_conf_and_consensus():
     # Top-1 has 'cat' at conf 0.30 (low); 3/3 others say 'bat' → swap.
     hyps = [

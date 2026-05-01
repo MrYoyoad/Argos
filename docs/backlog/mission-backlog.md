@@ -122,10 +122,18 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ---
 
-### Mission 6: N-Best / Beam Aggregation (ROVER & MBR) — IMPLEMENTED 2026-05-01
+### Mission 6: N-Best / Beam Aggregation (ROVER & MBR) — IMPLEMENTED + VALIDATED 2026-05-01
 - **Priority**: HIGH
 - **Goal**: Stop discarding 19 of 20 beam candidates — use them for consensus voting and confidence estimation
-- **Status**: **IMPLEMENTATION COMPLETE** (2026-05-01). Pending full-dataset evaluation (Phase 7b).
+- **Status**: **IMPLEMENTATION COMPLETE + tuning-set validated** (2026-05-01). Full 1,497-segment evaluation running.
+- **Tuning-set results (107 segments)**:
+  - **`hyp_vote_conf` (score × per-word-conf vote): WER 57.20% vs top-1 59.35% (↓2.15pp, ~3.6% relative); IS 2.695 vs 2.666; NIV-Y+P 71.0% vs 70.1%.** Best method on every metric.
+  - `hyp_mbr` (MBR consensus): WER 58.57% (↓0.78pp); IS 2.684. Best calibration: at sent_conf≥0.85, r between (1−recall) and confidence drops from top-1's −0.322 to MBR's **−0.458** (r_content = −0.708).
+  - `hyp_vote_score`: WER 58.89% (↓0.46pp).
+  - `hyp_safe`: WER 59.36% (=baseline; conservative by design).
+  - `hyp_xseg_merge`: no-op on tuning set (no overlapping segments).
+  - **Per-word posterior confidence** is now emitted by every method. Voting methods promote mean conf from 0.735 → 0.905; >50% of voted words sit at posterior=1.000 (perfect consensus). Implication: existing CONF_HIGH=0.85/CONF_MED=0.40 thresholds need recalibration for voted text.
+  - **Word-level confusion finding**: Pearson r between (1−recall) and confidence is **−0.16 unconditional** (weak), but decomposes into **opposite directions for function vs content words** when conditioned on segment quality. At sent_conf≥0.85: function words r = **−0.518** (confidence is honest), content words r = **+0.274** (confidence is an anti-signal — fluent-hallucination effect).
 - **Shipped (Phase 1-6)**:
   - N-best capture: `VSP_NBEST=1` env-var gates writing `nbest-{fid}.json` with all 20 hypotheses, sequence scores, raw log-prob sums, and per-token probs/entropy/top-3 alternatives per beam ([VSP-LLM/src/vsp_llm.py](../../VSP-LLM/src/vsp_llm.py), [VSP-LLM/src/vsp_llm_decode.py](../../VSP-LLM/src/vsp_llm_decode.py))
   - Bug fix in same PR: existing top-1 entropy/top-3 extraction used `step_scores[::n_beams]` which silently picked the wrong beam after HF reordering. Fixed by gathering via `gen_out.beam_indices`. Affects today's `confidence-{fid}.json` on hard cases.

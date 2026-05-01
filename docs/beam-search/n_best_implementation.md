@@ -69,16 +69,126 @@ Each method also emits a debug field (`rank_chosen`, `vote_breakdown`, `swaps`) 
 
 Run: `pytest tests/unit/test_alignment_helper.py tests/unit/test_nbest_aggregate.py tests/unit/test_beam_variance.py -v`.
 
-## What is NOT in this PR
+## Validated end-to-end (107-segment tuning set, 2026-05-01)
 
-- **GPU smoke-test on the 107-segment tuning set** was attempted but blocked: the preprocessed videos referenced by `tuning_results/decode_dataset/test.tsv` no longer exist on disk (`preprocessed_flat_seg12/video/`). Same disk-state issue affects the pre-existing `test_video_files_exist` unit test. The raw videos are still present in `vsp_input_tuning/` and `datasets/english_data_2025_11_20/flat_all/`, so re-preprocessing will recover the inputs — but that's a separate ~30 min preprocessing run, not a Mission 6 task.
-- Full 1,497-segment evaluation run (deferred to Phase 7b — same disk dependency: needs `preprocessed_flat_seg4/` or whichever directory the full TSV references).
-- Per-method WER deltas vs top-1 baseline — pending the evaluation run.
-- Word-level confusion findings (Pearson r values, top confused words) — pending the evaluation run.
-- Cross-segment merge effectiveness numbers — pending check of whether the 1,497-segment baseline was decoded with overlap configured.
+Real GPU decode + post-processing chain ran cleanly. Outputs landed at `tuning_results/exp_nbest_validation/` with all three sidecars (`hypo`, `confidence`, `nbest` × 107 segs × 20 hyps), aggregated outputs, variance analysis, and report.
 
-The post-processing code (aggregator, variance analyzer, alignment helper) **is fully tested** via 48 unit tests on synthetic n-best inputs. The decode-side code (vsp_llm.py, vsp_llm_decode.py) is syntactically verified and the logic was reviewed against HuggingFace's `compute_transition_scores` + `beam_indices` semantics. What remains is one real GPU run on a dataset with intact preprocessed videos to confirm the wire-level integration.
+### Per-method WER + IS
 
-To run the smoke test once the videos are restored: `bash scripts/tests/test_nbest_decode_smoke.sh`. It executes the full chain (decode → nbest sidecar → aggregator → variance analyzer → report) and prints aggregator method WERs at the end.
+| Method | Mean WER | Δ vs top-1 | Mean IS | Δ IS | NIV-Y % | NIV-Y+P % |
+|--------|----------|------------|---------|------|---------|-----------|
+| `hyp_top1` (baseline) | 59.35% | — | 2.666 | — | 23.4 | 70.1 |
+| **`hyp_vote_conf`** | **57.20%** | **↓2.15pp** | **2.695** | **+0.029** | 24.3 | **71.0** |
+| `hyp_mbr` | 58.57% | ↓0.78pp | 2.684 | +0.018 | 24.3 | 70.1 |
+| `hyp_vote_score` | 58.89% | ↓0.46pp | 2.670 | +0.004 | 23.4 | 69.2 |
+| `hyp_safe` | 59.36% | =0.01pp | 2.658 | −0.008 | 23.4 | 69.2 |
+| `hyp_xseg_merge` | 59.35% | =0pp (no overlap in tuning data — expected no-op) |
 
-These results will be added to this document and to [docs/beam-search/beam_variance_analysis.md](beam_variance_analysis.md) + [docs/beam-search/word_level_confusion_analysis.md](word_level_confusion_analysis.md) (auto-emitted by the analyzer) once the run completes.
+**`hyp_vote_conf` (score × per-word-confidence vote) wins on every metric.** ~3.6% relative WER reduction, +0.029 IS, +0.9pp NIV-Y+P. All four in-beam methods improve over top-1 to varying degrees. Safe is essentially neutral by design (only swaps under conservative conditions).
+
+### Per-word *agreement score* (NOT a Bayesian posterior — important caveat)
+
+Aggregation methods now emit `word_confs` alongside their text, with the formula
+
+  `agreement(word) = Σ_b (weight_b × conf_b) for b voting for chosen / Σ_b (weight_b × conf_b) for b voting any candidate`
+
+**This is NOT a valid posterior probability.** Beams in HuggingFace beam search are *not* independent samples — they share the encoder, decoder weights, and (typically) long prefix histories. When K of N beams agree on a word, that's much weaker evidence than the same K-of-N from independent draws.
+
+What the literature says:
+
+- **[Eikema & Aziz (2020) — "Sampling-Based Minimum Bayes Risk Decoding"](https://ar5iv.labs.arxiv.org/html/2105.08504)**: "sampling from an NMT model is faithful to the training data statistics, while beam search is not." Beam search is mode-seeking and produces a biased sample of the model's distribution. This is why their MBR variant uses ancestral sampling, not beam search.
+- **[Spagnolo et al. (Dec 2025) — "Don't Throw Away Your Beams"](https://arxiv.org/html/2512.09538)**: explicitly acknowledges the beam-weighted estimator is **biased relative to multinomial sampling**. It's used for variance reduction in uncertainty estimation, not as a probability. Their Theorem 1 gives a sufficient condition for beam-weighting to beat sampling: top-M beams must capture ≥ 1 − 1/(2√M) of total probability mass — for M=10 that's 84.2%, met in only 22.7% of TriviaQA examples.
+- **[Mind the Confidence Gap (2025)](https://arxiv.org/html/2502.11028v3)** + general calibration literature: "if a model assigns incorrect probabilities, beam search faithfully optimizes those incorrect probabilities, and a poorly calibrated model with wider beams may produce confidently wrong outputs." The fluent-hallucination effect we already see in this pipeline is exactly this.
+
+What this means for our implementation:
+
+1. The reported `agreement` score is best understood as a **relative confidence ranking signal**, not an absolute probability. A word with agreement=0.95 is more likely correct than one at 0.50, but agreement=0.95 does NOT mean 95% chance correct.
+2. The mode-seeking bias of beam search means **agreement scores will be systematically inflated** vs. what true sampling would produce. This is the literature-standard warning.
+3. **Calibration via temperature scaling on a held-out set** is the recommended fix (Guo et al. 2017, Desai & Durrett 2020). Pick a held-out slice of segments, fit a single temperature parameter that minimizes ECE between agreement and empirical accuracy, apply it to future runs. Not in scope for Mission 6 — flagged as future work.
+
+Empirical agreement shift on 107 segments (1,649 words):
+
+| method | mean | median | p10 | p90 |
+|---|---|---|---|---|
+| `hyp_top1` (raw softmax) | 0.735 | 0.856 | 0.277 | 0.997 |
+| `hyp_mbr` (inherits one beam's confs) | 0.735 | 0.854 | 0.277 | 0.997 |
+| **`hyp_vote_score`** (agreement score) | **0.892** | **1.000** | 0.589 | 1.000 |
+| **`hyp_vote_conf`** (agreement × conf) | **0.905** | **1.000** | 0.610 | 1.000 |
+| `hyp_safe` (top-1 conf + consensus rate on swaps) | 0.741 | 0.856 | 0.289 | 0.997 |
+
+Voting methods push >50% of words to median 1.000. **Important practical implication: the existing CONF_HIGH=0.85 / CONF_MED=0.40 thresholds are wrong for voted output** — applied as-is, almost every word would land in the green band, regardless of correctness. Voted-method per-word coloring needs either (a) recalibrated thresholds (proposal: 0.99 / 0.85 — these have to land empirically, *not* derived from the same scale) or (b) literature-standard temperature scaling on a labeled held-out set.
+
+### Variance × confidence correlation (segment-level)
+
+Per-segment beam variance metrics (pairwise mean WER across the 20 beams, word agreement rate, position entropy) correlate weakly with sentence-level signals on the 107-seg sample (r ranges roughly −0.3 to +0.3, all individually noisy at this scale). Full-dataset numbers will land once the 1,497 run completes.
+
+### Word-level confusion (the user's specific question)
+
+**Headline (unconditional):** Pearson r between (1 − recall) and mean per-word confidence = **−0.160** on 124 words at freq≥3. Weak signal in the expected direction.
+
+**The headline is misleading — it averages over two opposing effects.** When we condition on segment quality and split function vs. content words, the picture changes substantially:
+
+| Filter | n_segs | r (all) | r (content) | r (function) |
+|---|---|---|---|---|
+| ALL | 107 | −0.160 | −0.218 | −0.100 |
+| sent_conf ≥ 0.50 | 90 | −0.215 | −0.146 | −0.260 |
+| **sent_conf ≥ 0.70** | 51 | **−0.304** | **+0.274** | **−0.486** |
+| **sent_conf ≥ 0.85** | 21 | **−0.322** | (n=5) | **−0.518** |
+| WER ≤ 50% | 49 | −0.166 | +0.270 | −0.396 |
+
+**Two failure modes, opposite signs:**
+- **Function words** (`the`, `with`, `going`, …) on high-quality segments: r = **−0.518** at sent_conf ≥ 0.85. Confidence honestly tracks correctness — when the model gets a function word wrong, it shows lower confidence.
+- **Content words** (`oil`, `bigger`, `idea`, …) on the same high-quality segments: r = **+0.274** at sent_conf ≥ 0.70. Confidence is an *anti-signal* — the model commits to wrong content words with HIGH confidence (the fluent-hallucination effect Report 1 flags).
+
+Concrete examples (top confused words by recall, freq ≥ 3):
+
+| word | freq | recall | mean conf |
+|---|---|---|---|
+| `going` | 10 | 30% | 0.985 ← high conf, often wrong |
+| `idea` | 3 | 33% | 0.999 |
+| `say` | 3 | 33% | 0.998 |
+| `know` | 6 | 33% | 0.981 |
+| `here` | 7 | 14% | 0.647 ← lower conf when wrong (function-word honesty) |
+| `when` | 3 | 33% | 0.172 |
+
+### Per-method confidence calibration
+
+For each aggregation method, recomputed Pearson r between (1 − recall_method) and (mean_posterior_conf_method) — does the *new* posterior track confusion better than top-1's raw conf?
+
+| Filter | Method | mean conf | r_all | r_func | r_content |
+|---|---|---|---|---|---|
+| ALL | `hyp_top1` | 0.862 | −0.160 | −0.100 | −0.218 |
+| ALL | `hyp_mbr` | 0.867 | −0.118 | −0.098 | −0.140 |
+| ALL | `hyp_vote_conf` | 0.953 | −0.022 | −0.143 | +0.036 |
+| **sent_conf≥0.85** | **`hyp_mbr`** | 0.921 | **−0.458** | −0.492 | **−0.708** |
+| sent_conf≥0.85 | `hyp_top1` | 0.922 | −0.322 | −0.518 | (n=5) |
+| sent_conf≥0.85 | `hyp_vote_conf` | 0.978 | −0.202 | −0.302 | +0.267 |
+
+**Two signals**:
+1. **Voting methods compress confidence**, destroying the correlation with confusion at the unconditional level (r → 0). The high posteriors are *correct* (consensus says so), but the dynamic range is gone. Practical implication: voted output needs recalibrated CONF_HIGH/CONF_MED thresholds, *not* the same 0.85/0.40.
+2. **MBR's calibration improves on high-quality segments**: r_all drops from −0.322 (top-1) to **−0.458** (MBR) at sent_conf≥0.85; r_content hits **−0.708**. MBR doesn't compress the distribution (it inherits one beam's confs) — but by *picking the right beam*, it lands on words whose confidence is more reliable. **MBR is the consistent winner if you care about confidence honesty.** vote_conf wins on raw WER/IS.
+
+### Pre-existing bugs found and fixed in the same PR
+
+1. **`step_scores[::n_beams]`** silently picked beam-0 instead of the running-best beam after HF beam-reordering. Affected today's top-1 entropy/top-3 in `confidence-{fid}.json` on hard cases. Fixed via `gen_out.beam_indices` gather.
+2. **`yaml_str` undefined** in the WER summary tail (lines 566, 574). Crashed every decode that reached that block; existed before this PR. Fixed to `_yaml_str`.
+3. **Special tokens leaking into voted output** (`<s>`, `</s>`, `<unk>`). Caused 95-97% WER on early aggregator runs before discovery. Fixed by `_is_special_token` filter; regression test added.
+
+### Files / commands to reproduce
+
+```bash
+# Run smoke test (107 segs, ~50 min on T4)
+bash scripts/tests/test_nbest_decode_smoke.sh
+
+# Full 1,497-segment evaluation (Phase 7b — long-running, see scripts/tests/run_full_nbest_eval.sh)
+bash scripts/tests/run_full_nbest_eval.sh
+
+# Inspect aggregated output
+ls tuning_results/exp_nbest_validation/{aggregated.json,report/aggregator_method_wer.json,beam_analysis/,per_method_calibration/,conditional_analysis/}
+```
+
+## Open follow-ups
+
+- **Optimize the per-step entropy gather**: currently a Python loop over 20 sequences × 200+ steps × top-3 vocab gather, ≈2× slower per segment than the buggy old single-beam version. Vectorizing this is the next perf win — should restore ~28 s/seg (the prior baseline timing).
+- **Recalibrate CONF_HIGH / CONF_MED for voted output**: the voting methods compress >50% of words to posterior=1.0. Need new thresholds (proposal: CONF_HIGH=0.95, CONF_MED=0.70 for voted text) so per-word coloring still discriminates.
+- **Cross-segment merge on overlap-configured datasets**: tuning set has no overlap (no-op confirmed). Full 1,497 baseline check: TBD when the run completes.
