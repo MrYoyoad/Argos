@@ -241,6 +241,96 @@ def test_vote_conf_emits_agreement_higher_than_individual_beams():
     )
 
 
+def test_temperature_scale_identity_at_T_one():
+    """T=1 should be a no-op (preserves input exactly)."""
+    for p in [0.1, 0.5, 0.9, 0.999]:
+        assert A._temperature_scale(p, 1.0) == pytest.approx(p, abs=1e-9)
+
+
+def test_temperature_scale_flattens_overconfident():
+    """T>1 should pull a high probability toward 0.5."""
+    high = 0.99
+    flattened = A._temperature_scale(high, 5.0)
+    assert flattened is not None
+    assert 0.5 < flattened < high  # pulled down but still > 0.5
+
+
+def test_temperature_scale_sharpens_underconfident():
+    """T<1 should push a moderate probability toward the extremes."""
+    moderate = 0.7
+    sharpened = A._temperature_scale(moderate, 0.5)
+    assert sharpened is not None
+    assert sharpened > moderate  # pushed toward 1
+
+
+def test_temperature_scale_handles_none():
+    assert A._temperature_scale(None, 2.0) is None
+
+
+def test_load_calibration_full_format(tmp_path):
+    """Output of calibrate_temperature.py uses {'methods': {m: {'T_pool': ...}}}"""
+    cal = {"methods": {
+        "hyp_top1": {"T_pool": 2.5, "ece_uncalibrated": 0.16},
+        "hyp_vote_conf": {"T_pool": 14.0},
+    }}
+    p = tmp_path / "cal.json"
+    p.write_text(json.dumps(cal))
+    T = A._load_calibration(str(p))
+    assert T["hyp_top1"] == 2.5
+    assert T["hyp_vote_conf"] == 14.0
+    # Methods not in the file get T=1.0 default
+    assert T["hyp_mbr"] == 1.0
+
+
+def test_load_calibration_flat_format(tmp_path):
+    """Also accept a flat {method: T} mapping."""
+    cal = {"hyp_top1": 2.0, "hyp_safe": 3.0}
+    p = tmp_path / "cal_flat.json"
+    p.write_text(json.dumps(cal))
+    T = A._load_calibration(str(p))
+    assert T["hyp_top1"] == 2.0
+    assert T["hyp_safe"] == 3.0
+
+
+def test_load_calibration_missing_file_returns_unit_temperatures():
+    T = A._load_calibration("/no/such/path.json")
+    assert all(t == 1.0 for t in T.values())
+
+
+def test_run_with_calibration_writes_calibrated_word_confs(tmp_path):
+    """End-to-end: aggregator output should carry both raw and calibrated
+    word_confs when --calibration is provided."""
+    nbest = {
+        "u": {"hypotheses": [
+            {"rank": 0, "text": "the cat sat", "sequence_score": -1.0,
+             "tokens": [{"token": W + "the", "prob": 0.95},
+                        {"token": W + "cat", "prob": 0.99},
+                        {"token": W + "sat", "prob": 0.95}]},
+            {"rank": 1, "text": "the cat sat", "sequence_score": -1.1,
+             "tokens": [{"token": W + "the", "prob": 0.92},
+                        {"token": W + "cat", "prob": 0.96},
+                        {"token": W + "sat", "prob": 0.92}]},
+        ]}
+    }
+    cal = {"methods": {
+        "hyp_top1":       {"T_pool": 2.5},
+        "hyp_vote_conf":  {"T_pool": 10.0},
+    }}
+    nb_p = tmp_path / "nb.json";  nb_p.write_text(json.dumps(nbest))
+    cal_p = tmp_path / "cal.json"; cal_p.write_text(json.dumps(cal))
+    out_p = tmp_path / "agg.json"
+    A.run(str(nb_p), str(out_p), None, str(cal_p))
+    out = json.loads(out_p.read_text())["u"]
+    # top-1 calibrated confs should be lower than raw (T>1 flattens overconfidence).
+    raw = dict(out["hyp_top1_word_confs"])
+    cal_confs = dict(out["hyp_top1_word_confs_calibrated"])
+    assert cal_confs["cat"] < raw["cat"]
+    # vote_conf with T=10 should be much more compressed
+    vc = out["hyp_vote_conf"]
+    assert "word_confs" in vc and "word_confs_calibrated" in vc
+    assert vc["calibration_T"] == 10.0
+
+
 def test_safe_swap_promotes_to_agreement_rate():
     """When safe-mode swaps, the new word's reported confidence is the
     agreement rate K/(N-1) among other beams (NOT a posterior probability —

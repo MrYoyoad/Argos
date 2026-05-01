@@ -881,11 +881,15 @@ def main() -> None:
             return ["", "", "", ""]
 
         def _agg_csv_cells():
-            """Return [hyp_<method>, wer_<method>_%] cells for each aggregated method.
+            """Return [hyp_<method>, wer_<method>_%, <method>_mean_conf_calib] cells
+            for each aggregated method. Order matches AGG_METHODS.
 
-            Order matches AGG_METHODS. WER uses the same simple-WER formula
-            as the top-1 column, computed against the same reference. When
-            the aggregated sidecar is absent, returns an empty list.
+            - text       : the method's hypothesis
+            - wer_%      : simple WER vs ref (same formula as top-1)
+            - mean_conf  : per-segment mean of the method's *calibrated* per-word
+                           confidence (Option A: keep raw `sentence_confidence`
+                           untouched; add per-method calibrated stat alongside)
+            When the aggregated sidecar is absent, returns an empty list.
             """
             if not do_agg:
                 return []
@@ -893,7 +897,6 @@ def main() -> None:
             cells: list = []
             for method in AGG_METHODS:
                 v = agg_rec.get(method)
-                # v is either a string (hyp_top1) or a dict with 'text' (everything else)
                 if isinstance(v, str):
                     text = v
                 elif isinstance(v, dict):
@@ -908,6 +911,16 @@ def main() -> None:
                     cells.append(f"{w:.1f}")
                 else:
                     cells.append("")
+                # Calibrated mean conf (per-segment) — pulled from word_confs_calibrated
+                # (or word_confs if no calibration was applied). We avoid muddling the
+                # existing `sentence_confidence` column, which always reflects top-1.
+                wcs_cal = []
+                if method == "hyp_top1":
+                    wcs_cal = agg_rec.get("hyp_top1_word_confs_calibrated") or agg_rec.get("hyp_top1_word_confs") or []
+                elif isinstance(v, dict):
+                    wcs_cal = v.get("word_confs_calibrated") or v.get("word_confs") or []
+                vals = [p for (_w, p) in wcs_cal if isinstance(p, (int, float))]
+                cells.append(f"{sum(vals)/len(vals):.3f}" if vals else "")
             return cells
 
         # CSV row
@@ -1086,7 +1099,7 @@ def main() -> None:
             csv_header += ["sentence_confidence", "min_word_conf", "n_low_conf_words", "tier"]
         if do_agg:
             for method in AGG_METHODS:
-                csv_header += [method, f"wer_{method}_%"]
+                csv_header += [method, f"wer_{method}_%", f"{method}_mean_conf_calib"]
         w.writerow(csv_header)
         w.writerows(rows_csv)
 

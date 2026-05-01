@@ -192,3 +192,40 @@ ls tuning_results/exp_nbest_validation/{aggregated.json,report/aggregator_method
 - **Optimize the per-step entropy gather**: currently a Python loop over 20 sequences × 200+ steps × top-3 vocab gather, ≈2× slower per segment than the buggy old single-beam version. Vectorizing this is the next perf win — should restore ~28 s/seg (the prior baseline timing).
 - **Recalibrate CONF_HIGH / CONF_MED for voted output**: the voting methods compress >50% of words to posterior=1.0. Need new thresholds (proposal: CONF_HIGH=0.95, CONF_MED=0.70 for voted text) so per-word coloring still discriminates.
 - **Cross-segment merge on overlap-configured datasets**: tuning set has no overlap (no-op confirmed). Full 1,497 baseline check: TBD when the run completes.
+
+## Calibration shipped (Option A — 2026-05-01)
+
+Temperature scaling per Guo et al. 2017, fitted on 107-segment tuning data via 5-fold CV. The fitted T's transferred well to held-out folds (CV ECE within ±0.005pp of pool ECE), so the same calibration is shipped as the default for full-1,497 use until that decode lands and we re-fit.
+
+| method | T | pre-cal ECE | post-cal ECE |
+|---|---|---|---|
+| `hyp_top1` | 2.43 | 0.159 | 0.089 |
+| `hyp_mbr` | 2.42 | 0.152 | 0.083 |
+| `hyp_vote_score` | 14.21 | 0.305 | 0.074 |
+| `hyp_vote_conf` | 14.18 | 0.301 | **0.066** ← best calibrated |
+| `hyp_safe` | 2.47 | 0.163 | 0.093 |
+
+**Where it lives:**
+- Default file: `docs/_research-tools/calibration/calibration.json` (mirrored to container)
+- Auto-discovered by `nbest_aggregate.py` if no `--calibration` flag is passed
+- Override per-run via `--calibration <path>` to use a re-fitted file
+
+**What gets emitted:**
+- `aggregated.json` now carries both raw `word_confs` AND `word_confs_calibrated` per method
+- `report.csv` adds a `<method>_mean_conf_calib` column per method (Option A: original `sentence_confidence` column from the existing `compute_word_confidence.py` chain stays untouched and continues to reflect raw top-1)
+- HTML/burned-video coloring is unchanged for now (Option B — recalibrate the per-word color thresholds to use the calibrated values — is a separate follow-up)
+
+**Re-fitting procedure** (when full 1,497 lands or a new decode is run on different data):
+
+```bash
+# 1. Decode with VSP_NBEST=1 + reference labels available
+# 2. Run aggregator without calibration to get raw word_confs
+python3 lib/nbest_aggregate.py --nbest path/nbest-{fid}.json --out raw_agg.json
+# 3. Fit fresh temperatures on the labeled data
+python3 docs/_research-tools/generators/calibrate_temperature.py \
+    --aggregated raw_agg.json --hypo path/hypo-{fid}.json \
+    --out new_calibration.json
+# 4. Re-run aggregator with the new calibration
+python3 lib/nbest_aggregate.py --nbest path/nbest-{fid}.json \
+    --out final_agg.json --calibration new_calibration.json
+```

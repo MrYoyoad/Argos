@@ -62,6 +62,24 @@ def _is_special_token(tstr: str) -> bool:
 # Threshold for "low confidence" word in safe-mode swaps. Matches CONF_MED in
 # compute_word_confidence.py (tightened 2026-04-30).
 SAFE_LOW_CONF = 0.40
+
+# Temperature scaling defaults (Guo et al. 2017 binary calibration). These
+# are deliberately conservative: T=1 means "no calibration applied", and
+# callers pass --calibration <json> to use empirically-fitted values.
+_EPS = 1e-7
+
+
+def _temperature_scale(p: Optional[float], T: float) -> Optional[float]:
+    """Apply binary temperature scaling: sigmoid(logit(p) / T).
+    T > 1 flattens an over-confident distribution; T < 1 sharpens.
+    """
+    if p is None or T is None or T <= 0:
+        return p
+    if T == 1.0:
+        return p
+    pp = max(_EPS, min(1.0 - _EPS, float(p)))
+    logit = math.log(pp / (1.0 - pp))
+    return 1.0 / (1.0 + math.exp(-logit / T))
 # Minimum fraction of OTHER beams that must agree on a different word for safe
 # mode to swap.
 SAFE_AGREE_FRAC = 0.60
@@ -539,6 +557,12 @@ def load_segment_neighbors(seg_meta_path: Optional[str], aggregated_records: Dic
 # Top-level run
 # ──────────────────────────────────────────────────────────────────────────────
 
+def _apply_calibration_to_word_confs(wc: List[Tuple[str, Optional[float]]], T: float) -> List[Tuple[str, Optional[float]]]:
+    if T == 1.0:
+        return list(wc)
+    return [(w, _temperature_scale(p, T)) for (w, p) in wc]
+
+
 def aggregate_one(rec: dict) -> dict:
     """Run all in-beam aggregation methods on one segment's hypotheses.
     Cross-segment merge is applied separately (it needs all segments).
@@ -572,13 +596,57 @@ def aggregate_one(rec: dict) -> dict:
     }
 
 
-def run(nbest_path: str, out_path: str, seg_meta_path: Optional[str] = None) -> dict:
+def _load_calibration(path: Optional[str]) -> Dict[str, float]:
+    """Load fitted temperatures per method from a calibration.json file.
+
+    Format: either the full output of calibrate_temperature.py
+    (`{"methods": {method: {"T_pool": float, ...}}}`) or a flat
+    `{method: T}` mapping. Returns {method: T} with T=1.0 default.
+    """
+    out = {m: 1.0 for m in [
+        "hyp_top1", "hyp_mbr", "hyp_vote_score", "hyp_vote_conf", "hyp_safe", "hyp_xseg_merge"
+    ]}
+    if not path or not os.path.isfile(path):
+        return out
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except Exception:
+        return out
+    methods = data.get("methods", data)
+    for method, info in methods.items():
+        if isinstance(info, dict):
+            t = info.get("T_pool") or info.get("T") or info.get("T_cv_mean")
+        else:
+            t = info
+        if isinstance(t, (int, float)) and t > 0:
+            out[method] = float(t)
+    return out
+
+
+def run(nbest_path: str, out_path: str, seg_meta_path: Optional[str] = None,
+        calibration_path: Optional[str] = None) -> dict:
     with open(nbest_path) as f:
         nbest = json.load(f)
 
+    calibration_T = _load_calibration(calibration_path)
+
     aggregated: Dict[str, dict] = {}
     for utt_id, rec in nbest.items():
-        aggregated[utt_id] = aggregate_one(rec)
+        agg = aggregate_one(rec)
+        # Add calibrated word-conf list per method (alongside the raw one).
+        for method in ["hyp_top1", "hyp_mbr", "hyp_vote_score", "hyp_vote_conf", "hyp_safe"]:
+            T = calibration_T.get(method, 1.0)
+            if method == "hyp_top1":
+                wc = agg.get("hyp_top1_word_confs") or []
+                agg["hyp_top1_word_confs_calibrated"] = _apply_calibration_to_word_confs(wc, T)
+            else:
+                v = agg.get(method) or {}
+                if isinstance(v, dict):
+                    wc = v.get("word_confs") or []
+                    v["word_confs_calibrated"] = _apply_calibration_to_word_confs(wc, T)
+                    v["calibration_T"] = T
+        aggregated[utt_id] = agg
 
     # Cross-segment merge (Phase 2.5).
     neighbors_map = load_segment_neighbors(seg_meta_path, aggregated)
@@ -603,6 +671,9 @@ def run(nbest_path: str, out_path: str, seg_meta_path: Optional[str] = None) -> 
         )
         if not nbs_resolved or not meta["swaps"]:
             no_overlap_count += 1
+        T_xseg = calibration_T.get("hyp_xseg_merge", 1.0)
+        meta["word_confs_calibrated"] = _apply_calibration_to_word_confs(meta.get("word_confs", []), T_xseg)
+        meta["calibration_T"] = T_xseg
         agg["hyp_xseg_merge"] = {"text": text, **meta}
 
     # Strip internal fields before writing.
@@ -616,32 +687,49 @@ def run(nbest_path: str, out_path: str, seg_meta_path: Optional[str] = None) -> 
     # aggregation step? When the consensus is strong, posterior confidences
     # should be substantially higher than top-1's per-word probs.
     method_keys = [
-        ("hyp_top1", "hyp_top1_word_confs"),
-        ("hyp_mbr", "hyp_mbr"),
-        ("hyp_vote_score", "hyp_vote_score"),
-        ("hyp_vote_conf", "hyp_vote_conf"),
-        ("hyp_safe", "hyp_safe"),
-        ("hyp_xseg_merge", "hyp_xseg_merge"),
+        ("hyp_top1",       "hyp_top1_word_confs",            "hyp_top1_word_confs_calibrated"),
+        ("hyp_mbr",        "hyp_mbr",                        None),
+        ("hyp_vote_score", "hyp_vote_score",                 None),
+        ("hyp_vote_conf",  "hyp_vote_conf",                  None),
+        ("hyp_safe",       "hyp_safe",                       None),
+        ("hyp_xseg_merge", "hyp_xseg_merge",                 None),
     ]
     conf_summary: Dict[str, dict] = {}
-    for method, key in method_keys:
-        all_confs: List[float] = []
+    import statistics
+
+    def _summarize(values: List[float]) -> dict:
+        s = sorted(values)
+        n = len(values)
+        return {
+            "n_words": n,
+            "mean": statistics.fmean(values),
+            "median": statistics.median(values),
+            "p10": s[max(0, n // 10 - 1)],
+            "p90": s[min(n - 1, int(n * 0.9))],
+        }
+
+    for method, raw_key, _ in method_keys:
+        raw_confs: List[float] = []
+        cal_confs: List[float] = []
         for agg in aggregated.values():
-            if key == "hyp_top1_word_confs":
-                wcs = agg.get(key) or []
+            if raw_key.endswith("_word_confs"):  # hyp_top1
+                wcs_raw = agg.get(raw_key) or []
+                wcs_cal = agg.get(raw_key + "_calibrated") or []
             else:
-                wcs = (agg.get(key) or {}).get("word_confs") or []
-            for _, p in wcs:
+                v = agg.get(raw_key) or {}
+                wcs_raw = v.get("word_confs") or []
+                wcs_cal = v.get("word_confs_calibrated") or []
+            for _, p in wcs_raw:
                 if p is not None:
-                    all_confs.append(float(p))
-        if all_confs:
-            import statistics
+                    raw_confs.append(float(p))
+            for _, p in wcs_cal:
+                if p is not None:
+                    cal_confs.append(float(p))
+        if raw_confs:
             conf_summary[method] = {
-                "n_words": len(all_confs),
-                "mean": statistics.fmean(all_confs),
-                "median": statistics.median(all_confs),
-                "p10": sorted(all_confs)[max(0, len(all_confs) // 10 - 1)],
-                "p90": sorted(all_confs)[min(len(all_confs) - 1, int(len(all_confs) * 0.9))],
+                "raw":       _summarize(raw_confs),
+                "calibrated": _summarize(cal_confs) if cal_confs else None,
+                "T":         calibration_T.get(method, 1.0),
             }
 
     summary = {
@@ -653,26 +741,56 @@ def run(nbest_path: str, out_path: str, seg_meta_path: Optional[str] = None) -> 
     return summary
 
 
+def _default_calibration_path() -> Optional[str]:
+    """Look for a shipped calibration.json at the canonical locations."""
+    candidates = [
+        os.path.join(os.path.dirname(_HERE), "docs", "_research-tools", "calibration", "calibration.json"),
+        os.path.join(_HERE, "calibration.json"),
+        "/home/ubuntu/docs/_research-tools/calibration/calibration.json",
+    ]
+    for c in candidates:
+        if os.path.isfile(c):
+            return c
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser(description="N-best beam aggregation for VSP-LLM")
     ap.add_argument("--nbest", required=True, help="Path to nbest-{fid}.json")
     ap.add_argument("--out", required=True, help="Path to write aggregated-{fid}.json")
     ap.add_argument("--seg-meta", default=None, help="Optional segment_metadata.json for cross-segment merge")
+    ap.add_argument("--calibration", default=None,
+                    help="Path to calibration.json (output of calibrate_temperature.py). "
+                         "If omitted, looks for the default shipped calibration; if none found, uses T=1 (no scaling).")
     args = ap.parse_args()
 
-    summary = run(args.nbest, args.out, args.seg_meta)
+    cal_path = args.calibration or _default_calibration_path()
+    summary = run(args.nbest, args.out, args.seg_meta, cal_path)
     print(f"[nbest_aggregate] wrote {summary['out_path']} "
           f"({summary['n_segments']} segments, "
           f"{summary['n_with_no_overlap']} with no usable cross-segment overlap)")
+    if cal_path:
+        print(f"  calibration: {cal_path}")
+    else:
+        print(f"  calibration: none (T=1 — no temperature scaling applied)")
     cs = summary.get("per_word_conf_summary") or {}
     if cs:
-        print(f"\n  Per-word confidence shift after aggregation:")
-        print(f"  {'method':<18} {'n_words':>8} {'mean':>7} {'median':>8} {'p10':>7} {'p90':>7}")
+        print(f"\n  Per-word confidence (raw → calibrated):")
+        print(f"  {'method':<18} {'T':>5}  {'mean R→C':>14}  {'median R→C':>14}  {'p10 R→C':>14}  {'p90 R→C':>14}")
         for m in ["hyp_top1", "hyp_mbr", "hyp_vote_score", "hyp_vote_conf", "hyp_safe", "hyp_xseg_merge"]:
             s = cs.get(m)
             if not s:
                 continue
-            print(f"  {m:<18} {s['n_words']:>8} {s['mean']:>7.3f} {s['median']:>8.3f} {s['p10']:>7.3f} {s['p90']:>7.3f}")
+            r = s["raw"]
+            c = s["calibrated"] or {}
+            T = s.get("T", 1.0)
+            def fmt(rk, ck):
+                rv = r.get(rk)
+                cv = c.get(ck) if c else None
+                if rv is None: return ""
+                if cv is None: return f"{rv:>5.3f}"
+                return f"{rv:>5.3f} → {cv:.3f}"
+            print(f"  {m:<18} {T:>5.2f}  {fmt('mean','mean'):>14}  {fmt('median','median'):>14}  {fmt('p10','p10'):>14}  {fmt('p90','p90'):>14}")
 
 
 if __name__ == "__main__":
