@@ -253,9 +253,14 @@ english_full_results/flat_kmeans_200.bin
 english_full_results/flat_labels/
 english_full_results/manifests/
 english_full_results/segment_metadata.json
+english_full_results_*/
 outputs/
 vsp_input_tuning/
 tuning_results/
+
+# ---------- Logs & Transferable Resources ----------
+logs/
+generally_useful/
 
 # ---------- Generated HTML Reports ----------
 # Tuning experiment reports (regenerable, findings captured in CSVs and markdown)
