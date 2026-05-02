@@ -1,6 +1,6 @@
 # Argos VSP Client Deck — Changelog
 
-**File:** `Argos_VSP_Client_*.pptx` (currently `Argos_VSP_Client_49slides_Apr2026.pptx`)
+**File:** `Argos_VSP_Client_*.pptx` (currently `Argos_VSP_Client_Round6_May2026.pptx`)
 **Generator:** `docs/_research-tools/generators/generate_client_presentation.py`
 **Builders:** `docs/_research-tools/generators/presentation/slides_client.py`
 
@@ -23,6 +23,34 @@ Each entry:
 - **COMMIT** (short SHA, looked up via `git log`)
 
 Reverse-chronological: newest entry on top.
+
+---
+
+## 2026-05-02 — **Round 6 cut — `Argos_VSP_Client_Round6_May2026.pptx`** (LANDED)
+
+The 5.x sub-versions piled up to a substantive jump. Promoted to Round 6.
+
+**File rename**: `Argos_VSP_Client_Round5_Apr2026.pptx` → `Argos_VSP_Client_Round6_May2026.pptx`. Generator output path + both audit `DECK` constants updated. Old Round-5 file kept on disk as a frozen reference.
+
+**What's new since Round 5.0**:
+
+- **Trust section rebuilt and substantially expanded** — three-tier UI policy slide (31), how-to-read (32), worked Salvage example (33), case studies (34, 35), pitfalls (36), hallucination trio (37–39), confidence-gate plot (40), failure taxonomy (42–44), claims/non-claims (47), trust-without-ground-truth (48), trust operating points (49). The trust section is now ~22 visible slides — the differentiator of the deck.
+- **N-best aggregation production switch** (engineering): `VSP_NBEST=1` flipped to default in `lib/decode.sh` so the model evaluates 20 alternative readings on every video by default. `hyp_mbr` is the default displayed output (judge-validated +40 net Y+P verdicts vs top-1, paired McNemar p=0.0002). MBR confidence + the three-tier UI policy now apply to all videos.
+- **Headline numbers refreshed** to the latest 1,497-segment evaluation: NIV-Y 23%→24%, three-tier shares 22.7/35.7/36.9 → 23.8/37.5/38.7. Rounded headlines (62% / 24% / 1 in 5) hold under both top1 and MBR.
+- **MBR screenshot** rendered from real production output replaces the older synthetic/top1 PNG.
+- **6 judge example slides rebuilt** in client style — uniform 2-column layout (REF/HYP left, READER'S VIEW right card), plain-English takeaways, no jargon.
+- **Click-reveal animations on 32 visible slides** — true bullet-by-bullet pacing (entry shows title + subtitle only; every card requires a click). 0 OOXML issues, 71 fade transitions intact.
+- **Multiple jargon scrubs** — visible slides now say "overall confidence ≥ 82%" instead of "segment confidence ≥ 0.82", "Green words right ~9 in 10" instead of "Green ≥ 85% reliable", "20 alternative readings" instead of "n-best aggregation", etc. Concrete numbers stay; math notation goes.
+- **Audit bug fix**: caught a stale "23%" → "24%" on slide 18.
+
+**Validation under PowerPoint**:
+- 71 slides total / 60 visible during presentation / 11 hidden in appendix.
+- 38 animated slides — 32 with bullet-by-bullet click-reveal, 6 with 3-step entry/click/click pattern (judge examples).
+- Every animated shape has a valid shape-id reference. Timing trees use the 3-level par nesting PowerPoint 365 expects.
+- Every slide has a fade transition.
+- 7/7 audits green (number_audit + style_compliance).
+
+**Container engineering changes** carried separately in `docs/container-sync-changelog.md` entries #30 + #31.
 
 ---
 
