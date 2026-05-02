@@ -26,6 +26,16 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.16f — True bullet-by-bullet click-reveal everywhere (LANDED, 7ade2be)
+
+**11 more slides got click-reveals** (subagent): 5 (NOT cards), 8 (human-ceiling cards), 9 (visemes), 29 (two-layer columns + anchor), 42 (5 failure modes), 60 (deployment options), 62 (quality-filter funnel), 65 (next-milestone cards), 66 (feedback-loop ask), 69 (recap), 70 (next steps), + 6 judge-example slides via the shared `_client_judge_ex_slide` helper.
+
+**Critical pacing fix**: flipped all 20 `add_animations(...)` calls from `click_reveal=True` → `False`. With True, the first card was visible on slide entry; only the rest revealed on click. With False, every card requires a click — true bullet-by-bullet pacing. Slide entry now shows just title + subtitle + footer.
+
+**PPTX OOXML validation**: scanned all 38 animated slides — 0 orphan shape-id references, timing trees well-formed, 71 fade transitions intact. Audits 7/7.
+
+---
+
 ## 2026-05-02 — Round 5.16e — Audit pass: tightening, click-reveals, judge-ex rebuild (LANDED)
 
 User-driven audit pass with parallel-agent execution.
