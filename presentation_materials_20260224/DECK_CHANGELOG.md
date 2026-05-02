@@ -26,6 +26,18 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.16d — Tighter jargon-vs-precision balance on tier slides (LANDED)
+
+User feedback on 5.16c: "they are not stupid children just not probabilities jargon, you can use numbers where reasonable." Re-tightened slide 31 + salvage/strip case studies + slide 32 footer to keep concrete numbers, drop only the math notation.
+
+- **Slide 31 (three-tier):** thresholds now show as `overall confidence ≥ 82%` / `65–82%` / `< 65%` (was vague "high/medium/low"). Promise lines: "Green words right ~9 in 10 (85–93% depending on segment quality)" / "Green right ~7 in 10 here — verify names, numbers, dates" / "Green would be right <5 in 10 — coloring would mislead, so we hide it." Bottom anchor restored to a numeric range: "How often a green word is right runs from 18% to 93% depending on the segment. Below 65% overall confidence we hide the colors rather than mislead."
+- **Salvage / Strip case studies:** "Medium/Low overall confidence" → "Overall confidence 79% (Salvage tier)" / "Overall confidence 21% (Strip tier)" — concrete values with tier label parenthetical.
+- **Slide 32 footer:** "Aggregation now runs by default..." → "By default, the model considers 20 alternative readings of every segment and shows the safest consensus — on every video." Concrete + actionable.
+- **Audit:** added 79% / 21% to canonical percentage list; 7/7 green.
+- **COMMIT**: TBD.
+
+---
+
 ## 2026-05-02 — Round 5.16c — MBR screenshot + jargon scrub + deep number audit (LANDED)
 
 - **WHAT**:
