@@ -110,7 +110,7 @@ All slides after slide 32 shifted by +3:
   refreshed.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- 26255bc — Round 5.9.
 
 ---
 
