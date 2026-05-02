@@ -2208,6 +2208,169 @@ def slide_client_arabic_high_level(prs):
     return slide
 
 
+def slide_client_next_milestone(prs):
+    """Round 5.8 — the technical direction behind the partnership ask.
+
+    Lands BEFORE partnership_ask in §What's Next. Names the two
+    bottlenecks (stronger LLM backbone, more domain data), grounds
+    them in the empirical evidence (data-limited fine-tuning hit a
+    clean ceiling), preserves the "very usable today" framing by
+    explicitly tying back to the 62% review-useful headline.
+
+    No specific Llama version on the slide — speaker notes name
+    Llama 3.1 8B / Llama 4 if asked. No specific lift number on the
+    slide — speaker notes carry "we expect substantial improvement"
+    voice framing. Avoids the same overclaim trap Round 5.5 hardened
+    against.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "What the next milestone changes")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Today's results are what's possible at the current data scale. "
+             "Here's what production scale unlocks.",
+             MX, Inches(1.5), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Two technical cards
+    card_gap = Inches(0.3)
+    card_w = (CW - card_gap) / 2
+    card_top = Inches(2.2)
+    card_h = Inches(3.3)
+
+    # LEFT: Stronger LLM backbone
+    x1 = MX
+    add_rect(slide, x1, card_top, card_w, card_h,
+             fill_color=NAVY2, border_color=TEAL, border_width=Pt(1.5))
+    add_text(slide, "STRONGER LLM BACKBONE",
+             x1 + Inches(0.25), card_top + Inches(0.2),
+             card_w - Inches(0.5), Inches(0.4),
+             size=Pt(15), bold=True, color=TEAL,
+             align=PP_ALIGN.CENTER)
+    add_text(slide, "TODAY",
+             x1 + Inches(0.25), card_top + Inches(0.75),
+             Inches(1.0), Inches(0.3),
+             size=Pt(10), bold=True, color=LGRAY)
+    add_text(slide,
+             "Seven-billion-parameter language brain. Two generations "
+             "behind state-of-the-art.",
+             x1 + Inches(0.25), card_top + Inches(1.05),
+             card_w - Inches(0.5), Inches(0.6),
+             size=Pt(13), color=WHITE)
+    add_text(slide, "PATH",
+             x1 + Inches(0.25), card_top + Inches(1.75),
+             Inches(1.0), Inches(0.3),
+             size=Pt(10), bold=True, color=GREEN)
+    add_text(slide,
+             "Drop-in upgrade to a newer, larger, better-trained LLM. "
+             "Same architecture, better grasp of uncommon vocabulary, "
+             "names, and domain terms. No integration change.",
+             x1 + Inches(0.25), card_top + Inches(2.05),
+             card_w - Inches(0.5), Inches(1.15),
+             size=Pt(13), color=WHITE)
+
+    # RIGHT: More domain data
+    x2 = MX + card_w + card_gap
+    add_rect(slide, x2, card_top, card_w, card_h,
+             fill_color=NAVY2, border_color=GOLD, border_width=Pt(1.5))
+    add_text(slide, "MORE DOMAIN DATA",
+             x2 + Inches(0.25), card_top + Inches(0.2),
+             card_w - Inches(0.5), Inches(0.4),
+             size=Pt(15), bold=True, color=GOLD,
+             align=PP_ALIGN.CENTER)
+    add_text(slide, "TODAY",
+             x2 + Inches(0.25), card_top + Inches(0.75),
+             Inches(1.0), Inches(0.3),
+             size=Pt(10), bold=True, color=LGRAY)
+    add_text(slide,
+             "A small training slice from public data — below the "
+             "empirical floor for stable retraining.",
+             x2 + Inches(0.25), card_top + Inches(1.05),
+             card_w - Inches(0.5), Inches(0.6),
+             size=Pt(13), color=WHITE)
+    add_text(slide, "PATH",
+             x2 + Inches(0.25), card_top + Inches(1.75),
+             Inches(1.0), Inches(0.3),
+             size=Pt(10), bold=True, color=GREEN)
+    add_text(slide,
+             "Production-scale dataset on YOUR domain — your speakers, "
+             "your vocabulary, your camera conditions. Especially "
+             "powerful paired with the stronger backbone.",
+             x2 + Inches(0.25), card_top + Inches(2.05),
+             card_w - Inches(0.5), Inches(1.15),
+             size=Pt(13), color=WHITE)
+
+    # Bottom anchor pill — empirical evidence. Compact: title + one-line
+    # body to fit cleanly within the footer band.
+    anchor_y = card_top + card_h + Inches(0.15)
+    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
+    add_text(slide, "WHY YOU SHOULD BELIEVE THIS:",
+             MX + Inches(0.3), anchor_y + Inches(0.13),
+             Inches(2.5), Inches(0.3),
+             size=Pt(11), bold=True, color=TEAL)
+    add_text(slide,
+             "small fine-tuning experiments hit the data-limit ceiling "
+             "cleanly — empirical proof.",
+             MX + Inches(2.85), anchor_y + Inches(0.13),
+             CW - Inches(3.15), Inches(0.3),
+             size=Pt(11), color=WHITE, italic=True)
+
+    # Footer — ties back to "very usable today"
+    add_text(slide,
+             "This is the next gain on top of the 62% review-useful you saw "
+             "today. Direction is known. Magnitude lands in the partnership.",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.8 — the technical direction behind the partnership ask. "
+        "Pairs with slide 60 (partnership_ask, the logistics close). "
+        "\n\n"
+        "IF A CO-PARTNER ASKS WHICH LLM: today's backbone is LLaMA-2-7B. "
+        "Strong candidates for the upgrade: Llama 3.1 8B (drop-in same "
+        "size, much better trained), Llama 3.3 70B (if their compute "
+        "supports), or whatever the current state-of-the-art open model "
+        "is at the time of the engagement. Don't commit to a specific "
+        "version on the slide — that ages out. The architecture stays "
+        "identical; only the LLM-on-the-back swaps. "
+        "\n\n"
+        "IF ASKED FOR SPECIFICS ON THE 'EMPIRICAL FLOOR': we ran two "
+        "small fine-tuning experiments at different parameter scales. "
+        "Both severely overfit (around 95% training accuracy, 60% "
+        "validation). That's a clean signal we're below the data "
+        "threshold needed for stable generalization. Specific counts "
+        "and the validation methodology are in the appendix-tier "
+        "research notes — point them to docs/finetuning/training-"
+        "research-notes.md if they want depth. The production-scale "
+        "target is order-of-magnitude larger; exact number depends on "
+        "the client's data and the stronger LLM's capacity. "
+        "\n\n"
+        "IF PRESSED ON LIFT SIZE: 'We expect substantial improvement.' "
+        "Don't promise a number. Honest framing: 'WER on the current "
+        "model is data-limited, not architecture-limited. Both axes "
+        "moving — newer LLM, more data — should lift the curve "
+        "meaningfully. Magnitude is what the partnership measures, "
+        "not what we assert.' That answer is defensible. "
+        "\n\n"
+        "VOICE FRAMING (say it OUT LOUD, do not put on slide): "
+        "'Today's 62% review-useful is what's possible at this data "
+        "scale. We expect production scale to improve this a lot — "
+        "newer LLM, more data on your domain, both validated as the "
+        "binding constraints. The next milestone is what we build "
+        "together.' "
+        "\n\n"
+        "TRANSITION TO NEXT SLIDE: this slide says WHAT we invest in; "
+        "the next slide (partnership_ask) says HOW the partnership "
+        "runs. Together they are the close."
+    ))
+    return slide
+
+
 def slide_client_partnership_ask(prs):
     """Round 5.1 merge of data_ask + investment_ask.
 

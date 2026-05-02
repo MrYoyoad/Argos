@@ -1,6 +1,6 @@
 # Client Deck — Pre-Meeting Checklist
 
-**Deck:** `Argos_VSP_Client_Round5_Apr2026.pptx` (63 slides post Round 5.6)
+**Deck:** `Argos_VSP_Client_Round5_Apr2026.pptx` (64 slides post Round 5.8)
 **Q&A cheat sheet:** [QA_CHEAT_SHEET.md](QA_CHEAT_SHEET.md)
 **Detailed instructions:** [docs/guides/client-deck-powerpoint-checklist.md](../docs/guides/client-deck-powerpoint-checklist.md)
 **OOXML compat scan:** [PP_COMPAT_REPORT.txt](PP_COMPAT_REPORT.txt) in this folder
@@ -23,7 +23,7 @@ These need access to your dev machine and the deck source, so do them before wal
 - [ ] Pressed F5 → tested the video plays from inside presentation mode
 - [ ] Heard audio through laptop speakers (not just headphones)
 
-### Customize the next-steps slide (slide 62 post Round 5.6)
+### Customize the next-steps slide (slide 63 post Round 5.8)
 - [ ] Pilot dataset card — replaced "Size, content type, sample source" with client-specific text
 - [ ] Integration scope card — replaced with actual systems to wire into
 - [ ] Timeline card — replaced with realistic weeks/dates
@@ -35,8 +35,8 @@ These need access to your dev machine and the deck source, so do them before wal
 
 ### Click-through dry run
 - [ ] Opened the deck in **real PowerPoint** (not LibreOffice / web preview)
-- [ ] Stepped through all 63 slides at full screen (F5)
-- [ ] Slides where I want extra eyes (Round 5.6 indices):
+- [ ] Stepped through all 64 slides at full screen (F5)
+- [ ] Slides where I want extra eyes (Round 5.8 indices):
   - [ ] **Slide 13** — Live UI demo placeholder — your video embedded?
   - [ ] **Slide 11** — multi-speaker (today vs path) — both columns balanced?
   - [ ] **Slide 8** — visemes (pat/bat/mat) — three columns balanced?
@@ -54,6 +54,8 @@ These need access to your dev machine and the deck source, so do them before wal
   - [ ] **Slide 53** (was 52) — engineering journey (4 milestones) — M1-M4 cards balanced?
   - [ ] **Slide 54** (was 53) — Cloud / On-premise cards — borders crisp?
   - [ ] **Slide 56** (was 55) — quality-filter funnel + "credible system must know when NOT to decode" tagline visible?
+  - [ ] **Slide 59** — NEW Round 5.8: "What the next milestone changes" — two-card layout (Stronger LLM Backbone / More Domain Data) with TODAY/PATH structure, "Why you should believe this" anchor + "62% review-useful" footer all readable?
+  - [ ] **Slide 60** (was 59) — partnership ask — bridge pill ("data without budget is a folder...") readable?
 
 ### Timing
 - [ ] Out-loud read-through with stopwatch

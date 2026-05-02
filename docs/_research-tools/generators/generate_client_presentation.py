@@ -127,6 +127,7 @@ from presentation.slides_client import (
     slide_client_quality_filter,
     slide_client_preprocessing_summary,
     slide_client_arabic_high_level,         # NEW Round 5.1 (replaces slide_arabic_roadmap)
+    slide_client_next_milestone,            # NEW Round 5.8 (technical direction behind the ask)
     slide_client_partnership_ask,           # NEW Round 5.1 (merged data_ask + investment_ask)
 
     # Section 14 — Close
@@ -263,7 +264,8 @@ def main():
         slide_client_quality_filter,
         slide_client_preprocessing_summary,
         slide_client_arabic_high_level,         # NEW Round 5.1 (replaces academic arabic_roadmap)
-        slide_client_partnership_ask,           # NEW Round 5.1 (merged ask)
+        slide_client_next_milestone,            # NEW Round 5.8 — what investment buys (stronger LLM + more data)
+        slide_client_partnership_ask,           # NEW Round 5.1 (merged ask) — partnership logistics
 
         # § Close (no transition — flows directly from partnership ask)
         slide_client_recap,

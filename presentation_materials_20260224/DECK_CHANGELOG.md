@@ -26,6 +26,104 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.8 — "What the next milestone changes" (LANDED)
+
+User feedback: the deck is too gentle on the technical direction
+behind the partnership ask. `slide_client_partnership_ask` (now slide
+60) talks about LOGISTICS — your data / our pipeline / one training
+run — but doesn't name WHAT the investment buys technically. A
+reader walks away thinking "they need money" without thinking "they
+need money for THIS specific upgrade with THIS evidence."
+
+Round 5.8 inserts ONE new slide before `partnership_ask` that names
+the technical direction (stronger LLM backbone + more domain data),
+grounds it in the empirical evidence (data-limited fine-tuning
+hit the ceiling cleanly), and preserves the "still very usable
+today" framing by tying back explicitly to the 62% review-useful
+headline.
+
+### NEW slide 59 — `slide_client_next_milestone`
+- Title: *"What the next milestone changes"*
+- Subtitle: *"Today's results are what's possible at the current data
+  scale. Here's what production scale unlocks."*
+- Two technical cards with TODAY/PATH structure:
+  - **STRONGER LLM BACKBONE** (teal border):
+    TODAY = "Seven-billion-parameter language brain. Two generations
+    behind state-of-the-art."
+    PATH = "Drop-in upgrade to a newer, larger, better-trained LLM.
+    Same architecture, better grasp of uncommon vocabulary, names,
+    and domain terms. No integration change."
+  - **MORE DOMAIN DATA** (gold border):
+    TODAY = "A small training slice from public data — below the
+    empirical floor for stable retraining."
+    PATH = "Production-scale dataset on YOUR domain — your speakers,
+    your vocabulary, your camera conditions. Especially powerful
+    paired with the stronger backbone."
+- Bottom anchor pill: *"WHY YOU SHOULD BELIEVE THIS: small fine-
+  tuning experiments hit the data-limit ceiling cleanly — empirical
+  proof."*
+- Footer: *"This is the next gain on top of the 62% review-useful
+  you saw today. Direction is known. Magnitude lands in the
+  partnership."*
+
+### What stayed off the slide (deliberate restraint)
+- **No specific Llama version**. "Stronger LLM backbone" is durable;
+  "Llama 3.1 8B" dates the slide. Speaker notes name Llama 3.1 8B,
+  3.3 70B, or current state-of-the-art for if asked.
+- **No specific lift number**. "Substantial improvement" is fine in
+  voice; a slide with "WER → 30%" would be a credibility trap.
+- **No LoRA r-values, no 1,273-segment count**. Both are in
+  FORBIDDEN_PATTERNS per Round 3 (training-mechanics jargon stays
+  out of client slides). Speaker notes describe the experiments
+  generically ("two small fine-tuning experiments at different
+  parameter scales, both severely overfit at ~95% train / ~60% val").
+
+### Speaker notes
+Carry the IF-ASKED defenses:
+- IF asked WHICH LLM → name Llama 3.1 8B / 3.3 70B / current SOTA
+- IF asked about the empirical floor → describe the overfit signal
+  generically + point to docs/finetuning/training-research-notes.md
+- IF pressed on lift size → "we expect substantial improvement;
+  magnitude is what the partnership measures, not what we assert"
+- VOICE FRAMING (out loud, not on slide): "Today's 62% review-
+  useful is what's possible at this data scale. We expect production
+  scale to improve this a lot — newer LLM, more data on your domain,
+  both validated as the binding constraints."
+
+### Stats
+- 63 → **64 slides** (+1 for the new milestone slide).
+- All 7 audit/linter tests **green**.
+- BORROWED_SLIDES: only the last index shifts (slide_thank_you 63 →
+  64). Earlier borrows unchanged.
+- No new percentages added; no FORBIDDEN_PATTERNS triggered after
+  fixing the v1 draft (had 1,273 + r=16/r=64 in speaker notes,
+  rewritten to generic phrasings).
+
+### Companion deliverable updates
+- `PRE_MEETING_CHECKLIST.md` — slide indices refreshed to 64-slide
+  layout; new dry-run check item for slide 59.
+- `QA_CHEAT_SHEET.md` + `.pdf` — new per-slide LAND line for slide
+  59 + IF-ASKED Llama-version answer + lift-size restraint note.
+  All downstream slide-cue indices shifted by +1.
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  new `slide_client_next_milestone` builder (~120 lines).
+- `docs/_research-tools/generators/generate_client_presentation.py` —
+  imported and inserted between `slide_client_arabic_high_level`
+  (slide 58) and `slide_client_partnership_ask` (now slide 60).
+- `tests/unit/test_number_audit.py` — BORROWED_SLIDES last index
+  bumped 63 → 64.
+- `presentation_materials_20260224/PRE_MEETING_CHECKLIST.md` and
+  `QA_CHEAT_SHEET.md` + `.pdf` — slide indices refreshed; new cue.
+- `presentation_materials_20260224/Argos_VSP_Client_Round5_Apr2026.pptx`
+  + `.pdf` — rebuilt.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-01 — Round 5.7 — Aggregate strategy notes (LANDED, no visible slide)
 
 User updated the n-best aggregation analysis (107-segment evaluation

@@ -280,22 +280,26 @@ The lines to land when each slide is up. Slides not listed don't have a specific
 - "What does your canonical video actually look like?"
 - "What does 'good enough' look like for your workflow?"
 
-### Slide 59 — Partnership ask
+### Slide 59 — What the next milestone changes (NEW Round 5.8)
+**Land:** *"Today's results — the 62% review-useful you saw — are what's possible at the current data scale. Two things change with production scale. One: a stronger LLM backbone. The current model is two generations behind state-of-the-art. Drop-in upgrade, same architecture, much better grasp of uncommon vocabulary, names, and domain terms. Two: more domain data. Today's training slice is below the empirical floor for stable retraining; production scale on YOUR content is what passes that threshold. Both are validated bottlenecks — small fine-tuning experiments hit the data-limit ceiling cleanly. We expect substantial improvement; the magnitude lands in the partnership."*
+**Note:** Don't put a specific lift number on screen or in voice. "Substantial improvement" is fine; "WER will drop to 30%" would be a credibility trap. If a co-partner asks WHICH LLM: "Llama 3.1 8B drop-in same size, or 3.3 70B if compute supports — whichever is current state-of-the-art at engagement time. Architecture stays identical." Tie back to slide 60 (partnership): *this slide says WHAT we invest in; next slide says HOW the partnership runs.*
+
+### Slide 60 — Partnership ask
 **Land:** *"Today's model is trained on a small slice of public data. Going from prototype to production on your content — that's a partnership. Your data, our pipeline, a shared training run on your domain. Specifics in follow-up — no dollar amounts on the slide on purpose."*
 
-## Close (slides 60–63)
+## Close (slides 61–64)
 
-### Slide 60 — Recap
+### Slide 61 — Recap
 **Land:** *"Three things we came to show you. It works. You can trust it. There's a clear path forward together."*
 
-### Slide 61 — We deploy this on your infrastructure
+### Slide 62 — We deploy this on your infrastructure
 **Land:** *"On-premise install, integration with your existing systems, training and handoff. End-to-end."*
 
-### Slide 62 — Next steps
+### Slide 63 — Next steps
 **Land:** *"A pilot looks like this — three to five canonical clips from your domain, two weeks, end-to-end run, your reviewer evaluates whether the output supports your workflow. No infrastructure ask up front."*
 **Note:** This slide has placeholder text you customize per client before the meeting. Make sure dataset / integration scope / timeline / success criteria are all filled in.
 
-### Slide 63 — Thank you
+### Slide 64 — Thank you
 **Land:** *"Questions."*
 **Note:** That's it. Don't keep talking. Wait.
 
