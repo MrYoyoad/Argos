@@ -538,8 +538,8 @@ def slide_client_demo_intro(prs):
     add_accent_line(slide)
 
     add_text(slide,
-             "Nothing here is pre-cached. The pipeline runs in your browser. "
-             "Drag in, walk away, come back to color-coded results.",
+             "A short walkthrough of the actual pipeline. "
+             "Drag in a video, walk away, come back to color-coded results.",
              MX, Inches(1.8), CW, Inches(1.2),
              size=Pt(20), color=LGRAY, italic=True)
 
@@ -1364,7 +1364,7 @@ def slide_client_quality_filter(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Pre-processing 2 — Quality pre-filter")
+    add_title(slide, "Quality pre-filter — reject bad clips before decode")
     add_accent_line(slide)
 
     add_text(slide,
@@ -3344,14 +3344,16 @@ def slide_client_next_steps(prs):
                  card_w - Inches(0.6), h - Inches(1.05),
                  size=Pt(13), color=LGRAY, italic=True)
 
-    add_text(slide,
-             "Customize per-client during prep — placeholder copy intentionally generic.",
-             MX, Inches(6.55), CW, Inches(0.4),
-             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
-
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
-    set_notes(slide, "Customize before the meeting. Use the client's own language for each bullet.")
+    set_notes(slide, (
+        "PRESENTER NOTE: customize all four cards per-client during prep. "
+        "The placeholder copy here (\"Size, content type, sample source,\" "
+        "\"Systems and pipelines to wire into,\" etc.) is intentionally "
+        "generic — replace with the client's own language for each bullet "
+        "before the meeting. The PRE_MEETING_CHECKLIST has this in the "
+        "before-leaving section."
+    ))
     return slide
 
 
@@ -3679,9 +3681,9 @@ def slide_client_how_to_read(prs):
             "num": "2",
             "color": GREEN,
             "head": "READ THE COLORS",
-            "body": "Blue means confident. Orange means best guess. "
-                    "Purple means uncertain. The colors mean "
-                    "different things in different tiers.",
+            "body": "Green means confident. Yellow means best guess. "
+                    "Red means uncertain. The colors mean different "
+                    "things in different tiers.",
         },
         {
             "num": "3",
@@ -3689,7 +3691,7 @@ def slide_client_how_to_read(prs):
             "head": "OVERRIDE FOR NUMBERS AND NAMES",
             "body": "Whenever a segment has a number, name, date, or "
                     "amount, verify against the video — even when "
-                    "blue. The model's confidence on these isn't "
+                    "green. The model's confidence on these isn't "
                     "well-calibrated.",
         },
     ]
@@ -3853,7 +3855,7 @@ def slide_client_reader_example(prs):
              Inches(2.5), Inches(0.3),
              size=Pt(11), bold=True, color=GOLD)
     add_text(slide,
-             "Blue spine: \"different approach… find a way… existing… "
+             "Green spine: \"different approach… find a way… existing… "
              "and enable them for research.\" That's the meaning. Two "
              "of the red words (\"design\", \"roads\") are wrong, but "
              "a reviewer who discounts them recovers a faithful gist: "
@@ -4248,7 +4250,7 @@ def slide_client_pitfalls(prs):
             "color": GOLD,
             "head": "NUMBERS AND NAMES",
             "head_sub": "need the video",
-            "body": "Even when blue. Real example from the evaluation: "
+            "body": "Even when green. Real example from the evaluation: "
                     "the model said \"1 million CFUs\" when the speaker "
                     "said \"1 billion CFUs\" — at 96% confidence. "
                     "Always verify numbers, dates, dollar amounts, "
@@ -4267,10 +4269,10 @@ def slide_client_pitfalls(prs):
             "color": TEAL,
             "head": "THE TIER COMES FIRST",
             "head_sub": "before the colors",
-            "body": "A blue word in a Strip segment isn't the same as "
-                    "a blue word in a Trust segment. Its reliability "
-                    "is roughly half. Always check the tier before "
-                    "trusting any color.",
+            "body": "A green word in a Strip segment isn't the same "
+                    "as a green word in a Trust segment. Its "
+                    "reliability is roughly half. Always check the "
+                    "tier before trusting any color.",
         },
     ]
     for i, r in enumerate(rules):

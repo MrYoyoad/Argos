@@ -1756,9 +1756,8 @@ def slide_thank_you(prs):
              size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
 
     add_text(slide,
-        "1,497 segments  \u2022  6 quality signals  \u2022  5 failure categories  "
-        "\u2022  13 experiments\n"
-        "8-stage pipeline  \u2022  37 bugs fixed  \u2022  8 research reports",
+        "1,497 segments  \u2022  Trust / Salvage / Strip three-tier UI  \u2022  "
+        "8-stage pipeline  \u2022  cloud or on-prem deployment",
         MX, Inches(4.8), CW, Inches(0.8),
         size=Pt(15), color=LGRAY, align=PP_ALIGN.CENTER)
 

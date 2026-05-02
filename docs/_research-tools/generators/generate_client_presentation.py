@@ -304,10 +304,34 @@ def main():
         except Exception as e:
             print(f"ERROR: {e}")
 
+    # Round 5.11 — Mark redundant / now-redundant slides as hidden so they
+    # stay in the .pptx file as backup but PowerPoint skips them during
+    # presentation. python-pptx has no direct hide-slide API; set the
+    # show="0" attribute on <p:sldId> directly. 1-based indices.
+    HIDDEN_SLIDES = [
+        21,  # Output Example 2 — Truncated but Core Preserved (judge_ex2 — overlaps with example_partial)
+        23,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4 — overlaps with judge_ex3 Technical Drift)
+        24,  # Output Example 5 — Cooking Domain (judge_ex5 — domain too specific for surveillance audience)
+        41,  # trust_dashboard "62% useful — on real-world video" — duplicates slide 26 headline
+        45,  # slide_25d (LLM Salvage 3 cases) — overlaps with new Round 5.10 case-study slides 34/35
+        46,  # hallucination_flag "1 in 5" — duplicates slide 26 headline + slides 34/35 demonstrate flagging
+        59,  # _section_whats_next transition — Act 3's What's Next pivot is implicit; trim transition
+    ]
+    if HIDDEN_SLIDES:
+        from pptx.oxml.ns import qn
+        sldIdLst = prs.slides._sldIdLst
+        sld_ids = list(sldIdLst.findall(qn("p:sldId")))
+        for n in HIDDEN_SLIDES:
+            if 1 <= n <= len(sld_ids):
+                sld_ids[n - 1].set("show", "0")
+                print(f"  HIDDEN  slide {n:2d} (preserved in file, skipped in presentation)")
+            else:
+                print(f"  WARNING: hidden-slide index {n} out of range")
+
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT))
     print(f"\nSaved: {OUTPUT}")
-    print(f"Slides: {len(prs.slides)}")
+    print(f"Slides: {len(prs.slides)} total ({len(prs.slides) - len(HIDDEN_SLIDES)} visible during presentation)")
 
 
 if __name__ == "__main__":

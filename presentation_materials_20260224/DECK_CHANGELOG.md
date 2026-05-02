@@ -26,6 +26,112 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.11 — Coherence audit cleanup (LANDED)
+
+External visual-QA agent audited all 68 slides as fresh eyes. Findings
+synthesized into prioritized fixes; user approved the cuts. Round 5.11
+applies obvious-win cleanups + 7 hide-slide trims.
+
+### Color palette consistency (slides 32 + 36)
+The deck uses **green / yellow / red** on Obama trio (17, 19), per-word
+color screenshot (30), and case-study slides (33, 34). Slides 32 and
+36 inherited blue/orange/purple wording from `docs/features/per-word-
+confidence-user-guide.md` (the user guide explicitly notes both palettes
+exist). Confusing for the audience to encounter both. Round 5.11
+rewrites all visible blue/orange/purple references to green/yellow/red:
+- Slide 32 card 2: *"Green means confident. Yellow means best guess.
+  Red means uncertain."*
+- Slide 32 card 3: *"...verify against the video — even when green."*
+- Slide 33 reader's-view: *"Green spine: ..."*
+- Slide 36 numbers/names card: *"Even when green. Real example..."*
+- Slide 36 tier-comes-first card: *"A green word in a Strip segment
+  isn't the same as a green word in a Trust segment."*
+- Speaker notes that say "blue spine / purples" left in place
+  (presenter-only, doesn't reach audience).
+
+### Slide-content fixes
+- **Slide 12 (`demo_intro`)** — was *"Nothing here is pre-cached. The
+  pipeline runs in your browser."* but slide 13 frames it as
+  *"End-to-end demo recorded by the presenter."* Reconciled: slide
+  12 now says *"A short walkthrough of the actual pipeline."* — no
+  more live-vs-recorded contradiction.
+- **Slide 60 (`quality_filter`)** — title was *"Pre-processing 2 —
+  Quality pre-filter"* but no Pre-processing 1 exists in the visible
+  deck (entity-split is on slide 11 but isn't numbered). Renamed to
+  *"Quality pre-filter — reject bad clips before decode."*
+- **Slide 67 (`next_steps`)** — visible footer *"Customize per-client
+  during prep — placeholder copy intentionally generic."* removed;
+  moved to speaker notes (presenter-facing only). Audience no longer
+  sees the staging signal.
+- **Slide 68 (`thank_you`)** — stats line referenced metrics never
+  mentioned in the body (37 bugs, 8 research reports, 13 experiments,
+  6 quality signals, 5 failure categories). Trimmed to: *"1,497
+  segments • Trust / Salvage / Strip three-tier UI • 8-stage pipeline
+  • cloud or on-prem deployment"* — all of which are in the body.
+
+### NEW: HIDDEN_SLIDES post-build XML mechanism
+Per user direction *"put the old ones in hide,"* added a post-build
+step in `generate_client_presentation.py` that walks the saved
+`<p:sldId>` elements and sets `show="0"` on selected indices. Slides
+stay physically in the .pptx file (preserved as backup, easy to
+re-enable) but PowerPoint skips them during presentation.
+
+**7 slides hidden:**
+- **21** — Output Example 2 (judge_ex2 "Truncated but Core Preserved").
+  Overlaps `slide_client_example_partial` (slide 19).
+- **23** — Output Example 4 (judge_ex4 "Scientific Vocabulary Lost").
+  Overlaps Output Example 3 (judge_ex3 "Technical Vocabulary Drift",
+  kept). Per-user "cut to 3" judge-example trim.
+- **24** — Output Example 5 (judge_ex5 "Cooking Domain"). Domain too
+  specific for surveillance audience. Per-user "cut to 3" trim.
+- **41** — `trust_dashboard` "62% useful — on real-world video, not
+  benchmark data." Duplicates slide 26 headline + footer caveat.
+- **45** — `slide_25d` (LLM Salvage 3 cases). Per Round 5.10, the
+  new Mode 2.2 + Mode 3.1 case-study slides (34, 35) cover similar
+  ground with stronger framing.
+- **46** — `slide_client_hallucination_flag` "1 in 5 segments
+  auto-flagged." Duplicates slide 26's "1 in 5" headline + slides
+  34/35 SHOW the flagging mechanism rather than telling.
+- **59** — `_section_whats_next` transition. Five section transitions
+  was too many for a 2-hour meeting; Act 3's What's Next pivot is
+  implicit from the partnership ask sequence.
+
+### Stats
+- **68 total slides → 61 visible during presentation** (7 hidden,
+  preserved in file).
+- All 7 audit/linter tests **green**.
+- BORROWED_SLIDES indices unchanged — physical positions preserved.
+- No new percentages added; no FORBIDDEN_PATTERNS triggered.
+
+### Visual-QA findings explicitly NOT acted on
+- "Aspect ratio mismatch on slides 16, 20-25, 34, 35" — verified false
+  positive. Deck slide_width × slide_height = 13.333 × 7.500 in (16:9)
+  uniformly. The agent's perception was a soffice rendering artifact
+  on slides containing video shapes.
+- "Slide 17/19 video posters look like blank discs in PDF" — soffice
+  doesn't render video posters in PDF; in PowerPoint these are
+  clickable poster frames showing the actual lip-crop.
+- "Slide 51 validation methodology should be 3-step visual" — punted.
+  The current paragraph reads cleanly and the validation section is
+  short enough that restructuring brings little benefit.
+- "Slide 1 logo treatment vs other slides" — punted. Title-slide
+  treatment is intentional per Round 5 framing-v2 alignment.
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  color-palette text rewrites on slides 32 + 33 + 36 + slide 12 demo
+  framing + slide 60 title rename + slide 67 footer removal (moved
+  to notes).
+- `docs/_research-tools/generators/presentation/slides_future.py` —
+  `slide_thank_you` stats line trimmed.
+- `docs/_research-tools/generators/generate_client_presentation.py` —
+  added HIDDEN_SLIDES list + post-build XML hide mechanism.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-02 — Round 5.10 — Case-study slides + redundancy cut (LANDED)
 
 User wrote `docs/features/aggregation-and-confidence-case-studies.md`
