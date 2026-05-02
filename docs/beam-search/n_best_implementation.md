@@ -2,6 +2,92 @@
 
 Mission 6 implementation notes (May 1, 2026). Companion to [Report 5](report_5_beam_search_aggregation.md), which describes the techniques in the abstract; this document describes what actually shipped.
 
+## Full-set validation (May 2 2026, 1,497 segments)
+
+Full-corpus decode finished 2026-05-02 09:39 (beam=20, lenpen=0, repetition_penalty=1.2 — same config as the 64.1% greedy baseline). Results: [english_full_nbest_eval/aggregated_is.json](../../english_full_nbest_eval/aggregated_is.json), [english_full_nbest_eval/per_method_calibration/](../../english_full_nbest_eval/per_method_calibration/), [english_full_nbest_eval/beam_analysis/](../../english_full_nbest_eval/beam_analysis/).
+
+### Headline numbers
+
+| Method | Mean WER | Δ vs top-1 | Mean IS | NIV-Y % | NIV-Y+P % | Tier 5 / Tier 1 |
+|---|---|---|---|---|---|---|
+| `hyp_top1` (baseline) | 64.05% | — | 2.532 | 23.98 | 61.66 | 288 / 237 |
+| `hyp_mbr` | 63.84% | ↓0.22pp | 2.547 | 23.91 | 61.92 | 291 / 241 |
+| `hyp_vote_score` | 63.67% | ↓0.39pp | 2.538 | 23.98 | 61.86 | 292 / 237 |
+| **`hyp_vote_conf`** | **62.49%** | **↓1.56pp** (~2.4% rel) | **2.545** | **24.05** | **62.26** | **299 / 239** |
+| `hyp_safe` | 64.02% | ↓0.03pp | 2.533 | 24.05 | 61.66 | 287 / 237 |
+| `hyp_xseg_merge` | 64.05% | =0pp (no overlap in dataset) | 2.532 | 23.98 | 61.66 | 288 / 237 |
+
+`hyp_vote_conf` remains the WER winner on the full set, but the gap shrank from −2.15pp (107 seg) to **−1.56pp** (1,497). All four in-beam methods still improve on top-1; `hyp_safe` is again essentially neutral (by design); `hyp_xseg_merge` is a no-op (the full dataset has no configured cross-segment overlap either). NIV-Y / NIV-Y+P barely move (+0.07 / +0.60pp for vote_conf — useful-output capture is roughly unchanged).
+
+### Calibration on full set
+
+Pearson r between per-word (1 − recall) and per-word posterior confidence, by method and stratum (n = word-types with freq ≥ 5):
+
+| Filter | Method | mean conf | r (all) | r (function) | r (content) |
+|---|---|---|---|---|---|
+| ALL (n=622) | `hyp_top1` | 0.866 | −0.256 | −0.462 | −0.232 |
+| ALL | `hyp_mbr` | 0.867 | −0.260 | **−0.539** | −0.224 |
+| ALL | `hyp_vote_conf` | 0.965 | −0.179 | −0.432 | −0.156 |
+| sent_conf≥0.70 (n=379) | `hyp_top1` | 0.900 | −0.258 | −0.476 | −0.180 |
+| sent_conf≥0.70 | **`hyp_mbr`** | 0.899 | −0.234 | **−0.573** | −0.123 |
+| sent_conf≥0.85 (n=156) | `hyp_top1` | 0.936 | −0.248 | −0.423 | −0.020 |
+| sent_conf≥0.85 | `hyp_mbr` | 0.934 | **−0.285** | −0.412 | −0.103 |
+| sent_conf≥0.85 | `hyp_vote_conf` | 0.983 | −0.085 | −0.161 | +0.059 |
+
+**On the full set, MBR's r at sent_conf≥0.85 is −0.285** — directionally consistent with the tuning-set finding (MBR ≥ top-1 in calibration) but the gap is much smaller than the −0.458 / −0.708 we saw on 107 segments. The tuning-set calibration win was overstated by sample size: on 1,497 segs the calibration ranking still favors MBR, just less dramatically. Voting methods still collapse the dynamic range (r→0 at high sent_conf) — same fluent-hallucination effect, same conclusion: don't reuse the 0.85/0.40 thresholds for voted output.
+
+### Beam variance
+
+Per-segment beam metrics ([beam_analysis/beam_variance_analysis.md](../../english_full_nbest_eval/beam_analysis/beam_variance_analysis.md)) over 1,497 segments:
+
+```
+                   mean   std    p50    p75    max
+n_unique_hyps     19.90  0.39  20.0   20.0   20.0
+pairwise_mean_wer  0.324 0.192  0.276  0.423  1.41
+word_agreement     0.762 0.266  0.857  0.944  1.00
+position_entropy   0.465 0.386  0.361  0.622  2.42
+```
+
+The model's 20 beams are nearly always distinct (≥20 unique hyps in ≥75% of segs). Pairwise mean WER between beams averages 32% — non-trivial diversity is present, which is why aggregation moves the needle at all. ~25% of segments have word_agreement_rate ≥ 0.94 (model self-consistent → not much room for aggregation to help); the bottom quartile sits at ≤ 0.67 (where aggregation should help most).
+
+### Top systematic word substitutions (baseline hyp, 1,427 segs with both ref & hyp)
+
+Computed via SequenceMatcher alignment, top ref → hyp substitution pairs:
+
+| count | ref → hyp | count | ref → hyp |
+|---|---|---|---|
+| 13 | the → to | 9 | the → you |
+| 11 | the → a | 9 | and → a |
+| 11 | in → and | 9 | we're → we |
+| 11 | and → in | 8 | to → into |
+| 11 | you're → you | 8 | it's → is |
+| 10 | that → and | 7 | i → and |
+| 10 | gonna → going | 7 | you → you're |
+| 9 | a → the | 7 | is → it's |
+| 9 | a → to | 7 | the → this |
+
+Dominated by short function-word swaps (`the/a/and/in`) and contraction loss (`you're → you`, `we're → we`, `it's → is`, `gonna → going` — 10x). These are exactly the "function-word honesty" cases Mission 6 identified — confidence already tracks them well; the wins come from MBR/vote_conf overriding them when most beams disagree. Content-word systematic confusions are sparse (long tail — 6,527 unique substitution pairs, no single content pair exceeds 6 occurrences).
+
+### Tuning-set vs full-set deltas (107 → 1,497)
+
+| Finding | Tuning (107) | Full (1,497) | Held? |
+|---|---|---|---|
+| `hyp_vote_conf` is WER winner | ↓2.15pp | ↓1.56pp | **Yes** (smaller margin) |
+| `hyp_mbr` 2nd-best WER | ↓0.78pp | ↓0.22pp | **Yes** (smaller margin) |
+| `hyp_mbr` best calibration at sent_conf≥0.85 | r=−0.458 | r=−0.285 | **Yes, directionally** (gap shrank) |
+| Voting compresses confidence | mean 0.95+, p50=1.000 | mean 0.96+ | **Yes** |
+| `hyp_xseg_merge` no-op | yes | yes | **Yes** (no overlap configured) |
+| `hyp_safe` neutral by design | =0.01pp | =0.03pp | **Yes** |
+| NIV-Y+P improves with vote_conf | +0.9pp | +0.60pp | **Yes** (smaller) |
+
+**No sign flips, no inversions.** All tuning-set rankings replicated. The consistent pattern: every tuning-set effect size shrunk by roughly half on the full set — typical of a small-N tuning regime where extreme observations average out. The headline conclusions hold.
+
+### Conclusion
+
+`hyp_vote_conf` is the production drop-in for raw quality (~2.4% relative WER reduction on 1,497 segs) but ships with confidence that is no longer Bayesian-meaningful — keep voted output for transcripts, keep `hyp_top1` or `hyp_mbr` for any UI surface that uses per-word confidence shading until thresholds are recalibrated. `hyp_mbr` remains the calibration recommendation for confidence-honest workflows.
+
+---
+
 ## What landed
 
 **Two missions in one PR**, gated behind `VSP_NBEST=1` (default 0 — pipeline behavior unchanged when off):
