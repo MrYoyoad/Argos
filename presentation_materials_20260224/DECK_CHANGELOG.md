@@ -34,7 +34,7 @@ Reverse-chronological: newest entry on top.
   - `lib/decode.sh`: VSP_NBEST default 0 → 1 — MBR confidence + tier filtering now run on every video. Container overlay synced.
 - **WHY**: User directive — "the MBR confidence and confidence-dependent filtering should apply to all videos." Plus the v3 judge writeup landed and supersedes the v1-contaminated framing in earlier slides.
 - **FILES**: `slides_client.py` (aggregation_safety, engineering_journey notes), `lib/decode.sh`, `vsp_linux_container_FINAL_20260217/lib/decode.sh`, `docs/container-sync-changelog.md` (entry #31), `docs/paper/presentation-remarks-log.md` (Batch 21, items 267–269).
-- **COMMIT**: TBD.
+- **COMMIT**: d475a63.
 
 ---
 
