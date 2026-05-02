@@ -416,9 +416,18 @@ The biggest reliability boost happens in Salvage segments — exactly where user
 
 Old rule: function green P=0.806, content green P=0.809 (tied). New rule: function P=0.894, content P=**0.904**. Content green is now slightly *more* reliable than function — the agreement gate removed the confident-hallucination content cell that was the whole motivation for the work.
 
-### Numeric tokens
+### Numeric tokens — and why the hard cap is justified
 
-Under the new rule **0 numbers are ever painted green** (vs 75 under the old rule, P=0.693). Lip-reading can't disambiguate digits; the hard cap to yellow is binding and correctly applied.
+Under the new rule **0 numbers are ever painted green** (vs 75 under the old rule, P=0.693). The hard cap was originally proposed on intuition ("lip-reading can't disambiguate digits"). Post-shipment, we tested whether the cap is justified empirically — i.e., do numbers that *would* meet the joint green criteria actually deliver the green-band promise?
+
+| Numbers passing joint green criteria | n | P(correct) |
+|---|---|---|
+| conf ≥ 0.95 AND agree ≥ 0.80 (proposed green) | 39 | **0.744** |
+| conf ≥ 0.95 AND agree ≥ 0.95 (strictest cell) | 31 | 0.742 |
+| Content words at same threshold (reference) | 3,272 | 0.904 |
+| Green-band promise | — | ≥ 0.85 |
+
+Even at the strictest joint cell, numbers hit only ~74% reliability — 16pp behind content words and 11pp below the green-band's reliability promise. The cap is not arbitrary: numbers genuinely fail to clear the bar. They look confident to the model in ways the model's posterior cannot detect. The cap reflects an honest limit of the visual modality, not a UX preference.
 
 ### Sentence promise
 

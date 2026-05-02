@@ -79,7 +79,9 @@ def classify(prob: Optional[float]) -> str:
 
 
 def classify_joint(prob: Optional[float], agreement: Optional[float], is_num: bool) -> str:
-    """Joint confidence + beam-agreement band. Numbers cap at conf-med."""
+    """Joint confidence + beam-agreement band. Numbers cap at conf-med — empirically
+    they hit only P(correct)=0.744 at the joint green threshold (conf>=0.95 AND
+    agree>=0.80), well below the 0.85 promise. See SAFETY_ANALYSIS.md."""
     if prob is None:
         return "conf-unknown"
     if is_num:
