@@ -3906,6 +3906,319 @@ def slide_client_reader_example(prs):
     return slide
 
 
+def slide_client_case_topic_shift(prs):
+    """Round 5.10 — case study: topic-shift hallucination caught by colors.
+
+    Source: docs/features/aggregation-and-confidence-case-studies.md
+    §Mode 2 → Example 2.2. The reference is a gardening/landscaping
+    discussion (woody beds, hula culture). The model hallucinated a
+    completely different topic — nuclear weapons, Cuban missile crisis —
+    in fluent, internally consistent prose. Without colors, downstream
+    pipelines record nuclear-weapons content. With colors, every
+    topic-defining wrong word is flagged.
+
+    This is the most dangerous failure mode the colors save you from.
+    Lands BETWEEN slide_client_reader_example (Salvage networking,
+    benign topic) and slide_client_pitfalls.
+
+    Layout: tier badge + banner → REF + colored HYP (left) + video
+    poster (right) → READER'S VIEW pill at bottom.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "When the model invents a different topic — colors catch it")
+    add_accent_line(slide)
+
+    # Tier badge + banner row
+    badge_y = Inches(1.45)
+    badge_w = Inches(2.8)
+    add_rect(slide, MX, badge_y, badge_w, Inches(0.4),
+             fill_color=NAVY3, border_color=GOLD, border_width=Pt(1.0))
+    add_text(slide, "SALVAGE TIER",
+             MX, badge_y + Inches(0.05),
+             badge_w, Inches(0.3),
+             size=Pt(13), bold=True, color=GOLD,
+             align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "segment confidence 0.79 — banner shown to the reviewer: "
+             "\"Reading carefully — verify names, numbers, critical details.\"",
+             MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
+             CW - badge_w - Inches(0.2), Inches(0.3),
+             size=Pt(10), color=LGRAY, italic=True)
+
+    # Video poster on the right
+    vid_w = Inches(3.4)
+    vid_h = Inches(2.55)
+    vid_x = MX + CW - vid_w
+    vid_y = Inches(2.0)
+    add_video(slide, "case_topic_shift", vid_x, vid_y, vid_w, vid_h)
+    add_text(slide, "Click to play in PowerPoint",
+             vid_x, vid_y + vid_h + Inches(0.05), vid_w, Inches(0.25),
+             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # REF + HYP text block on the left
+    text_right = vid_x - Inches(0.25)
+    text_label_w = Inches(1.4)
+    text_body_left = MX + text_label_w + Inches(0.1)
+    text_body_w = text_right - text_body_left
+
+    # REF — gardening/landscaping content
+    ref_y = Inches(2.0)
+    add_text(slide, "REFERENCE (a gardening discussion)",
+             MX, ref_y, text_body_left - MX, Inches(0.3),
+             size=Pt(10), bold=True, color=LGRAY)
+    add_text(slide,
+             "\"…what we're going to look at now is what happens if "
+             "we start bringing the concept of woody beds or hula "
+             "culture into this and a little bit of excavation…\"",
+             MX, ref_y + Inches(0.32),
+             text_right - MX, Inches(1.0),
+             size=Pt(12), color=LGRAY, italic=True)
+
+    # HYP — nuclear weapons hallucination
+    hyp_y = Inches(3.5)
+    add_text(slide, "HYPOTHESIS (model invented a different topic)",
+             MX, hyp_y, text_right - MX, Inches(0.3),
+             size=Pt(10), bold=True, color=WHITE)
+    runs = [
+        ("we're ",         {"size": Pt(13), "color": YELLOW}),
+        ("going ",         {"size": Pt(13), "color": YELLOW}),
+        ("to ",            {"size": Pt(13), "color": GREEN}),
+        ("look ",          {"size": Pt(13), "color": GREEN}),
+        ("at ",            {"size": Pt(13), "color": GREEN}),
+        ("now ",           {"size": Pt(13), "color": GREEN}),
+        ("is ",            {"size": Pt(13), "color": GREEN}),
+        ("what ",          {"size": Pt(13), "color": GREEN}),
+        ("happens ",       {"size": Pt(13), "color": GREEN}),
+        ("if ",            {"size": Pt(13), "color": GREEN}),
+        ("we ",            {"size": Pt(13), "color": GREEN}),
+        ("start ",         {"size": Pt(13), "color": GREEN}),
+        ("playing ",       {"size": Pt(13), "color": CORAL}),
+        ("the ",           {"size": Pt(13), "color": GREEN}),
+        ("concept ",       {"size": Pt(13), "color": GREEN}),
+        ("of ",            {"size": Pt(13), "color": GREEN}),
+        ("warheads ",      {"size": Pt(13), "color": CORAL, "bold": True}),
+        ("or ",            {"size": Pt(13), "color": GREEN}),
+        ("nuclear ",       {"size": Pt(13), "color": YELLOW, "bold": True}),
+        ("deterrence ",    {"size": Pt(13), "color": CORAL, "bold": True}),
+        ("and ",           {"size": Pt(13), "color": YELLOW}),
+        ("a ",             {"size": Pt(13), "color": GREEN}),
+        ("little ",        {"size": Pt(13), "color": GREEN}),
+        ("bit ",           {"size": Pt(13), "color": GREEN}),
+        ("of ",            {"size": Pt(13), "color": GREEN}),
+        ("escalation ",    {"size": Pt(13), "color": YELLOW, "bold": True}),
+        ("and ",           {"size": Pt(13), "color": GREEN}),
+        ("how ",           {"size": Pt(13), "color": GREEN}),
+        ("we ",            {"size": Pt(13), "color": GREEN}),
+        ("got ",           {"size": Pt(13), "color": CORAL}),
+        ("into ",          {"size": Pt(13), "color": YELLOW}),
+        ("the ",           {"size": Pt(13), "color": GREEN}),
+        ("cuban ",         {"size": Pt(13), "color": CORAL, "bold": True}),
+        ("missile ",       {"size": Pt(13), "color": GREEN, "bold": True}),
+        ("crisis",         {"size": Pt(13), "color": GREEN, "bold": True}),
+    ]
+    add_rich_text(slide, [runs], MX, hyp_y + Inches(0.32),
+                  text_right - MX, Inches(1.4))
+
+    # READER'S VIEW pill — bottom
+    rv_y = Inches(5.4)
+    add_rect(slide, MX, rv_y, CW, Inches(1.3),
+             fill_color=NAVY2, border_color=CORAL, border_width=Pt(1.0))
+    add_text(slide, "READER'S VIEW",
+             MX + Inches(0.3), rv_y + Inches(0.15),
+             Inches(2.5), Inches(0.3),
+             size=Pt(11), bold=True, color=CORAL)
+    add_text(slide,
+             "Without colors, a downstream pipeline records this segment "
+             "as a discussion of nuclear weapons. Wrong tags, wrong "
+             "summaries, wrong searches. With colors, every topic-"
+             "defining wrong word is flagged. The reader knows the "
+             "topic isn't nuclear weapons — and goes to the video. "
+             "The cost of getting this wrong silently is much higher "
+             "than the cost of admitting uncertainty out loud.",
+             MX + Inches(0.3), rv_y + Inches(0.45),
+             CW - Inches(0.6), Inches(0.8),
+             size=Pt(12), color=WHITE)
+
+    # Closing line
+    add_text(slide,
+             "This is the failure mode the colors are built to catch.",
+             MX, Inches(6.85), CW, Inches(0.3),
+             size=Pt(11), color=CORAL, italic=True, bold=True,
+             align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "GREEN: confident   YELLOW: review   RED: likely error",
+             MX, Inches(7.15), CW, Inches(0.25),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.10 — Mode 2.2 case study from the case-studies doc. "
+        "The reference is gardening/landscaping. The hypothesis is "
+        "nuclear weapons. The model produced fluent, plausible expert "
+        "speech on the wrong topic — the most dangerous kind of "
+        "hallucination. "
+        "\n\n"
+        "WALK-THROUGH (out loud): 'Read the reference. Speaker is "
+        "talking about gardening — woody beds, hula culture, "
+        "excavation. Now look at what the model produced: nuclear "
+        "weapons. Warheads, nuclear deterrence, Cuban missile crisis. "
+        "Internally consistent expert speech on a totally wrong topic. "
+        "If a downstream pipeline acts on this without confidence "
+        "signals, you get the wrong topic tag, wrong summary, wrong "
+        "search hits. With confidence signals: every topic-defining "
+        "wrong word is flagged red or yellow. The reader sees the "
+        "warning and goes to the video.' "
+        "\n\n"
+        "Source: docs/features/aggregation-and-confidence-case-"
+        "studies.md §Example 2.2. Real segment: "
+        "o6Zwa1rEWpM_1__2e8fce13. WER 42.1%, IS 2.75."
+    ))
+    return slide
+
+
+def slide_client_case_strip_save(prs):
+    """Round 5.10 — case study: Strip tier catches fluent fabrication.
+
+    Source: docs/features/aggregation-and-confidence-case-studies.md
+    §Mode 3 → Example 3.1. Segment confidence 0.21 (Strip). REF was
+    "china to take off to cross the pacific ocean can you tell us"
+    but the model produced "i don't think that's a good idea" — every
+    word wrong, every word ~10% confidence. Without the Strip badge,
+    a downstream pipeline records a fabricated quote. With the Strip
+    badge, the segment is correctly labelled "no signal."
+
+    Lands AFTER topic_shift case (Mode 2.2) and BEFORE pitfalls.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "When the model has no signal — Strip catches fluent fabrication")
+    add_accent_line(slide)
+
+    # Tier badge + banner row
+    badge_y = Inches(1.45)
+    badge_w = Inches(2.8)
+    add_rect(slide, MX, badge_y, badge_w, Inches(0.4),
+             fill_color=NAVY3, border_color=LGRAY, border_width=Pt(1.0))
+    add_text(slide, "STRIP TIER",
+             MX, badge_y + Inches(0.05),
+             badge_w, Inches(0.3),
+             size=Pt(13), bold=True, color=LGRAY,
+             align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "segment confidence 0.21 — banner shown: \"Model is "
+             "unsure — text may not be reliable, even where it looks confident.\"",
+             MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
+             CW - badge_w - Inches(0.2), Inches(0.3),
+             size=Pt(10), color=LGRAY, italic=True)
+
+    # Video poster on the right
+    vid_w = Inches(3.4)
+    vid_h = Inches(2.55)
+    vid_x = MX + CW - vid_w
+    vid_y = Inches(2.0)
+    add_video(slide, "case_strip_save", vid_x, vid_y, vid_w, vid_h)
+    add_text(slide, "Click to play in PowerPoint",
+             vid_x, vid_y + vid_h + Inches(0.05), vid_w, Inches(0.25),
+             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    text_right = vid_x - Inches(0.25)
+
+    # REF
+    ref_y = Inches(2.0)
+    add_text(slide, "REFERENCE (what was actually said)",
+             MX, ref_y, text_right - MX, Inches(0.3),
+             size=Pt(10), bold=True, color=LGRAY)
+    add_text(slide,
+             "\"china to take off to cross the pacific ocean "
+             "can you tell us…\"",
+             MX, ref_y + Inches(0.32),
+             text_right - MX, Inches(0.6),
+             size=Pt(13), color=LGRAY, italic=True)
+
+    # HYP — shown in plain grey italic per Strip policy
+    hyp_y = Inches(3.2)
+    add_text(slide, "HYPOTHESIS (Strip tier — coloring removed in the UI)",
+             MX, hyp_y, text_right - MX, Inches(0.3),
+             size=Pt(10), bold=True, color=WHITE)
+    add_text(slide,
+             "\"i don't think that's a good idea\"",
+             MX, hyp_y + Inches(0.35),
+             text_right - MX, Inches(0.5),
+             size=Pt(15), color=LGRAY, italic=True)
+
+    # Per-word confidence numbers
+    pw_y = Inches(4.05)
+    add_text(slide, "PER-WORD CONFIDENCE",
+             MX, pw_y, text_right - MX, Inches(0.3),
+             size=Pt(10), bold=True, color=CORAL)
+    add_text(slide,
+             "\"i\" 6%   \"don't\" 4%   \"think\" 14%   "
+             "\"that's\" 14%   \"a\" 22%   \"good\" 35%   \"idea\" 53%",
+             MX, pw_y + Inches(0.32),
+             text_right - MX, Inches(0.5),
+             size=Pt(12), color=CORAL, italic=True)
+
+    # READER'S VIEW pill — bottom
+    rv_y = Inches(5.0)
+    add_rect(slide, MX, rv_y, CW, Inches(1.65),
+             fill_color=NAVY2, border_color=LGRAY, border_width=Pt(1.0))
+    add_text(slide, "READER'S VIEW",
+             MX + Inches(0.3), rv_y + Inches(0.15),
+             Inches(2.5), Inches(0.3),
+             size=Pt(11), bold=True, color=LGRAY)
+    add_text(slide,
+             "The hypothesis reads as a confident opinion. Every word "
+             "is wrong. Every word is below 25% confidence. Without "
+             "this signal, a downstream pipeline records a fabricated "
+             "quote — \"the speaker said this is a bad idea\" — that "
+             "the speaker never said. With this signal, the segment "
+             "is correctly labelled \"no signal\" and the reader goes "
+             "to the video. No false belief is created.",
+             MX + Inches(0.3), rv_y + Inches(0.45),
+             CW - Inches(0.6), Inches(1.15),
+             size=Pt(12), color=WHITE)
+
+    # Closing line
+    add_text(slide,
+             "Strip tier is the system refusing to mislead you.",
+             MX, Inches(6.85), CW, Inches(0.3),
+             size=Pt(11), color=TEAL, italic=True, bold=True,
+             align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.10 — Mode 3.1 case study from the case-studies doc. "
+        "Strip-tier segment where the model produced a fluent, "
+        "grammatically perfect English sentence with no underlying "
+        "signal. Per-word probabilities all under 0.55, mostly under "
+        "0.25. Tier classified as Strip — the UI removes coloring on "
+        "purpose. "
+        "\n\n"
+        "WALK-THROUGH (out loud): 'The reference says — China to "
+        "take off to cross the Pacific Ocean. The model produced — "
+        "I don't think that's a good idea. Grammatically perfect "
+        "English, sounds like a confident opinion. Every single word "
+        "is wrong. Every single word is below 25 percent confidence. "
+        "If we showed this without the Strip tier, a downstream "
+        "pipeline would record a fabricated quote attributed to a "
+        "real speaker. With the Strip tier, the segment is labelled "
+        "no signal — and the reader goes to the video.' "
+        "\n\n"
+        "WHY THIS MATTERS: this is the failure mode that's invisible "
+        "without confidence. Slide 32 (three-tier UI) is what "
+        "prevents this. Slide 35 (pitfalls) is what teaches reviewers "
+        "to recognize it. "
+        "\n\n"
+        "Source: docs/features/aggregation-and-confidence-case-"
+        "studies.md §Example 3.1. Real segment: "
+        "EMfcKvHA5Uc_0__b74dba61. WER 100%."
+    ))
+    return slide
+
+
 def slide_client_pitfalls(prs):
     """Round 5.9 — three operational rules every reviewer learns.
 
@@ -3935,10 +4248,11 @@ def slide_client_pitfalls(prs):
             "color": GOLD,
             "head": "NUMBERS AND NAMES",
             "head_sub": "need the video",
-            "body": "Even when blue. Numbers, dates, dollar amounts, "
-                    "proper names — verify against the video before "
-                    "using them. The model's confidence on these "
-                    "isn't well-calibrated.",
+            "body": "Even when blue. Real example from the evaluation: "
+                    "the model said \"1 million CFUs\" when the speaker "
+                    "said \"1 billion CFUs\" — at 96% confidence. "
+                    "Always verify numbers, dates, dollar amounts, "
+                    "and proper names against the video.",
         },
         {
             "color": CORAL,

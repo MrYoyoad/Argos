@@ -26,6 +26,134 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.10 — Case-study slides + redundancy cut (LANDED)
+
+User wrote `docs/features/aggregation-and-confidence-case-studies.md`
+— a richer, more dramatic worked-examples deepening of the per-word
+confidence user guide. Two new examples are particularly powerful
+and weren't in the deck before: Mode 2.2 (gardening segment
+hallucinated as nuclear-weapons content — fluent, plausible expert
+speech on the wrong topic) and Mode 3.1 (Strip-tier segment where
+the model produced "I don't think that's a good idea" — every word
+wrong, every word at <25% confidence). Round 5.10 brings both into
+the deck and cuts one now-redundant slide to keep the count under
+control.
+
+### NEW slide 34 — `slide_client_case_topic_shift` (Mode 2.2)
+The most dangerous failure mode the colors save you from. REF is
+gardening (woody beds, hula culture, excavation). HYP is nuclear
+weapons (warheads, nuclear deterrence, Cuban missile crisis).
+Internally consistent fluent speech on a totally wrong topic.
+Layout: Salvage badge + banner → REF + color-coded HYP on the left
+→ video poster on the right (real speaker at a whiteboard) →
+READER'S VIEW pill explaining the save: *"Without colors, a
+downstream pipeline records this segment as a discussion of nuclear
+weapons. Wrong tags, wrong summaries, wrong searches. With colors,
+every topic-defining wrong word is flagged."* Closing line: *"This
+is the failure mode the colors are built to catch."*
+
+### NEW slide 35 — `slide_client_case_strip_save` (Mode 3.1)
+Strip tier catches fluent fabrication. REF was about China crossing
+the Pacific Ocean. HYP was *"I don't think that's a good idea"* —
+grammatically perfect English, sounds like a confident opinion,
+every word wrong, every word below 25% confidence. Layout: Strip
+badge + banner → REF + plain-grey HYP (per Strip policy) →
+per-word confidence numbers (i 6%, don't 4%, think 14%, …) →
+video poster (the actual segment) → READER'S VIEW: *"With this
+signal, the segment is correctly labelled 'no signal' and the
+reader goes to the video. No false belief is created."* Closing:
+*"Strip tier is the system refusing to mislead you."*
+
+### Cuts: slide_client_example_flagged dropped from active deck
+The Round 5 Obama trio (slides 17/19/20: perfect/partial/flagged)
+duplicated content with the hallucination trio (slides 36-38, now
+37-39). Both showed Obama segment 5's "Rwanda's genocide" failure.
+Round 5.10 drops the §Real-Outputs flagged slide; the dramatic
+hallucination-trio version remains. The Obama duo (perfect +
+partial) still anchors §Real Outputs with recognizable content.
+
+The builder `slide_client_example_flagged` stays defined in
+`slides_client.py` — only removed from the orchestrator import +
+builders[] list. Easy to re-import if the user wants the trio back.
+
+### Pitfalls slide enriched (slide 36)
+First card body updated to include a concrete real-world example
+from the case-studies doc: *"Real example from the evaluation: the
+model said '1 million CFUs' when the speaker said '1 billion CFUs'
+— at 96% confidence. Always verify numbers, dates, dollar amounts,
+and proper names against the video."* Makes the abstract rule
+concrete in one beat without overcrowding the card.
+
+### Renumbering impact
+Net +1 slide vs Round 5.9 (+2 added, −1 dropped). Slide indices
+between dropped position (20) and insertion point (after slide 33)
+shifted −1; slides at or after insertion point shifted +1.
+
+| Slide | Title |
+|---|---|
+| 17, 19 | Obama duo (perfect/partial); was Obama trio |
+| 20–25 | Six judge examples (was 21–26) |
+| 26 | Three numbers (was 27) |
+| 29 | Two layers ("triage not truth") (was 30) |
+| 30 | Per-word color coding (was 31) |
+| 31 | Three-tier UI (was 32) |
+| 32 | How to read (was 33) |
+| 33 | Salvage worked example (was 34) |
+| **34** | **NEW Mode 2.2 — topic-shift hallucination** |
+| **35** | **NEW Mode 3.1 — Strip catches fluent fabrication** |
+| 36 | Three rules (was 35) — now enriched with 1M/1B example |
+| 37–39 | Hallucination trio (was 36–38) |
+| 47 | Claims/non-claims (was 46) |
+| 55 | 8-stage pipeline (was 54) |
+| 63 | Next milestone (was 62) |
+| 64 | Partnership ask (was 63) |
+| 68 | Thank you (was 67) |
+
+### Stats
+- 67 → **68 slides** (+2 new − 1 dropped).
+- All 7 audit/linter tests **green**.
+- BORROWED_SLIDES indices updated for net +1: now `{44, 45, 56,
+  68}` (was `{43, 44, 55, 67}`).
+- 4 new percentages added to the canonical-or-derivative whitelist:
+  25%, 35%, 53%, 96% (Mode 3.1 per-word probabilities and the 1M/1B
+  numeric/entity false-confidence example on the pitfalls slide).
+- 1 new VID key (`case_topic_shift`) + 1 alias (`case_strip_save`
+  reuses an existing video file via a semantically-named key).
+- 1 video file copied into `06_demo_videos/`
+  (`o6Zwa1rEWpM_1__2e8fce13.mp4`).
+
+### Companion deliverable updates
+- `PRE_MEETING_CHECKLIST.md` — slide indices refreshed to 68-slide
+  layout; new dry-run check items for slides 34 + 35; Obama-trio
+  reference updated to the duo.
+- `QA_CHEAT_SHEET.md` + `.pdf` — two new per-slide LAND lines (34,
+  35); existing slide cues renumbered for the −1/+2 shift; Obama
+  trio cue now references slide 39 in the hallucination trio for
+  the "Rwanda's genocide" content.
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  two new builders: `slide_client_case_topic_shift`,
+  `slide_client_case_strip_save`. Updated `slide_client_pitfalls`
+  first card body with the 1M/1B example.
+- `docs/_research-tools/generators/presentation/config.py` — added
+  `case_topic_shift` and `case_strip_save` VID keys.
+- `docs/_research-tools/generators/generate_client_presentation.py`
+  — imported the two new builders, inserted into builders list
+  between `slide_client_reader_example` and `slide_client_pitfalls`;
+  removed `slide_client_example_flagged` from imports + builders.
+- `tests/unit/test_number_audit.py` — BORROWED_SLIDES indices +1
+  shift; whitelist of 4 new approved percentages.
+- `presentation_materials_20260224/06_demo_videos/o6Zwa1rEWpM_1__2e8fce13.mp4`
+  — NEW (copied from `vsp_input_backup/`).
+- `presentation_materials_20260224/PRE_MEETING_CHECKLIST.md`,
+  `QA_CHEAT_SHEET.md` + `.pdf` — refreshed.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-02 — Round 5.9 — "How to read a transcript" operational slides (LANDED)
 
 User wrote `docs/features/per-word-confidence-user-guide.md` (May 1)

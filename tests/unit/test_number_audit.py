@@ -47,13 +47,14 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Round 5.9: three operational "how to read" slides inserted between
-    # three_tier_policy and the hallucination trio, shifting all later
-    # slides by +3.
-    43,  # slide_failure_deep_2  — 3 worked ref/hyp examples
-    44,  # slide_25d             — salvage recoveries (WER stripped from headers)
-    55,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    67,  # slide_thank_you       — close
+    # Round 5.10: dropped slide_client_example_flagged (Obama segment 5,
+    # redundant with halluc_real_example) and added two case-study
+    # slides (topic-shift + Strip-save) in the how-to-read sequence.
+    # Net +1 vs Round 5.9. All earlier borrows shift +1.
+    44,  # slide_failure_deep_2  — 3 worked ref/hyp examples
+    45,  # slide_25d             — salvage recoveries (WER stripped from headers)
+    56,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
+    68,  # slide_thank_you       — close
 }
 
 
@@ -257,6 +258,18 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "50%",                # P(correct|green) at Strip threshold (the "would mislead" boundary)
         "18%",                # P(correct|green) lower bound across stratification
         "93%",                # P(correct|green) upper bound across stratification
+    })
+    # Round 5.10 — case-study illustrative numbers from
+    # docs/features/aggregation-and-confidence-case-studies.md.
+    # Per-word confidence values shown verbatim on the Mode 3.1 Strip
+    # case-study slide ("'good' 35%, 'idea' 53%, below 25% confidence")
+    # and the concrete numeric/entity false-confidence example on the
+    # pitfalls slide (1 million vs 1 billion at 96% confidence).
+    approved.update({
+        "25%",                # "below 25% confidence" (Strip example phrasing)
+        "35%",                # "good" word probability (Mode 3.1 verbatim)
+        "53%",                # "idea" word probability (Mode 3.1 verbatim)
+        "96%",                # numeric/entity false-confidence example (1 billion → 1 million)
     })
     # Strip whitespace inside percent tokens
     def norm(s):

@@ -103,6 +103,14 @@ VID = {
     "clean_tech":           VIDEOS / "K0h33Ps7vz4_11__e66d3063_with_hyp.mp4",
     "clean_motivational":   VIDEOS / "5RJU2GoOvoM_0__d181c4ad_with_hyp.mp4",
     "clean_obama19":        Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_19_005694_006053.mp4"),
+    # Round 5.10 case studies — backed by docs/features/aggregation-and-confidence-case-studies.md.
+    # Mode 2.2 — gardening segment hallucinated as nuclear-weapons content.
+    "case_topic_shift":     VIDEOS / "o6Zwa1rEWpM_1__2e8fce13.mp4",
+    # Mode 3.1 — Strip-tier segment where the model produced a fluent
+    # "I don't think that's a good idea" with no real signal.
+    # (Same source video as the legacy `entity_destroy` key — referenced
+    # via a separate, semantically-named key for the case-study slide.)
+    "case_strip_save":      VIDEOS / "EMfcKvHA5Uc_0__b74dba61_with_hyp.mp4",
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"

@@ -202,116 +202,123 @@ The lines to land when each slide is up. Slides not listed don't have a specific
 **Land:** *"Watch this. Drag in a video, walk away, come back to a confidence-scored report."*
 **Note:** Play 90 seconds, max 2 minutes. Don't narrate everything; let the colors speak. Pause briefly on a flagged segment so the audience sees the trust signal in action.
 
-## Real outputs (slides 15–26)
+## Real outputs (slides 15–25)
 
 ### Slide 16 — Video gallery
 **Land:** *"Six real videos. Three best-case, three failure modes. The point isn't to convince you with one demo — it's to show you the range. Click any tile."*
 **Note:** Pre-pick which tile to click. Recommend the perfect one (sets the bar) then jump to the hallucination one (shows the system catches the bad ones). Don't play all six.
 
-### Slides 17, 19, 20 — Obama trio (perfect / partial / flagged)
-**Land:** *"Same speaker, same speech, three different outputs. Clean — green confidence, the reviewer doesn't have to look. Partial — model knows where it slipped, yellow on the substitutions. Flagged — model fabricated 'Rwanda's genocide' and the system caught it. That's the spread."*
+### Slides 17, 19 — Obama duo (perfect / partial)
+**Land:** *"Same speaker, same speech, two outputs. Clean — green confidence, the reviewer doesn't have to look. Partial — model knows where it slipped, yellow on the substitutions. The third Obama segment (the 'Rwanda's genocide' fluent hallucination) lives on slide 39 in the hallucination trio — same content, dramatically framed."*
 **Note:** Each slide has the actual lip-crop video on the right; click to play in PowerPoint if asked.
 
-## The headline (slide 27)
+## The headline (slide 26)
 
-### Slide 27 — Three numbers
+### Slide 26 — Three numbers
 **Land:** *"Three numbers, in plain English. Sixty-two percent review-useful — six of every ten segments contain enough recoverable meaning to be useful for human review. Twenty-three percent clearly conveyed. One in five auto-flagged. These are on the full 1,497-segment baseline, unfiltered real-world video. Not curated."*
 **Note:** This is your number-anchor for the meeting. Memorize the exact phrasing — "review-useful," "recoverable meaning useful for human review." Don't slip into "62% accurate."
 
-## Trust section (slides 28–44) — the most important segment
+## Trust section (slides 27–46) — the most important segment
 
-### Slide 30 — Two layers of confidence
+### Slide 29 — Two layers of confidence
 **Land:** *"Confidence is triage, not truth. Green doesn't mean correct — green means review faster. Red doesn't mean wrong — red means review first."*
 **Note:** This is the cleanest credibility line in the deck. Say it slowly, and reinforce — the line is on screen.
 
-### Slide 31 — Per-word color coding
+### Slide 30 — Per-word color coding
 **Land:** *"Every word the model outputs carries its own probability. Green, yellow, red. You see exactly where the model was unsure."*
 
-### Slide 32 — Three-tier UI: Trust / Salvage / Strip (NEW Round 5.6)
+### Slide 31 — Three-tier UI: Trust / Salvage / Strip
 **Land:** *"Green's reliability isn't uniform. We measured it across 23,261 words. In high-quality segments green is 93% correct; in low-quality ones it drops to 22%. So we built the UI around that finding. Above 0.82 segment confidence, full coloring — green is 85%+ reliable. Between 0.65 and 0.82, full coloring plus an amber 'verify names and numbers' banner. Below 0.65, we strip the coloring. Coloring would lie there. The UI itself enforces the asymmetric-cost policy: wrong-and-green is the only unrecoverable cell."*
-**Note:** Don't read out every percentage. Land the structure (Trust/Salvage/Strip) and the principle (UI removes coloring where it would lie). The 1,497-segment distribution (22.7 / 35.7 / 36.9) is on the slide if a co-partner pulls on it.
+**Note:** Don't read out every percentage. Land the structure (Trust/Salvage/Strip) and the principle (UI removes coloring where it would lie).
 
-### Slide 33 — How a reviewer actually reads the output (NEW Round 5.9)
-**Land:** *"Three steps. Thirty seconds per segment. One: check the tier. Trust, Salvage, or Strip — that tells you how to read what's below. Two: read the colors. Blue means confident, orange means best guess, purple means uncertain. Three: override for numbers and names. Whenever a segment has a number, name, date, or amount, verify against the video — even when blue. The model's confidence on these isn't well-calibrated."*
-**Note:** This is the operational instruction. Land it as practical, not theoretical. *"Reading the output well is using both signals — tier first, colors second."*
+### Slide 32 — How a reviewer actually reads the output
+**Land:** *"Three steps. Thirty seconds per segment. One: check the tier. Two: read the colors. Three: override for numbers and names — verify against the video, even when blue."*
+**Note:** Operational instruction. *"Reading the output well is using both signals — tier first, colors second."*
 
-### Slide 34 — Worked example: how Salvage works in practice (NEW Round 5.9)
-**Land:** *"Salvage tier. The reviewer sees this banner: 'verify names, numbers, critical details.' The blue spine — different approach… find a way… existing… enable them — carries the meaning. Two of the red words, design and roads, are wrong; the original was 'routers' and 'switches'. But a reviewer who treats red as 'discount' recovers a faithful gist: a new approach that uses existing components for research. The colors converted a 50%-WER segment into a usable summary. This is what 'review-useful' means in practice."*
-**Note:** Don't dwell on the network-infrastructure topic — the topic is incidental. The point is the colors did the work. If asked WHY this looks good: 50% per-word WER, but the reviewer extracts a faithful gist anyway.
+### Slide 33 — Worked example: how Salvage works in practice
+**Land:** *"Salvage tier. The reviewer sees this banner: 'verify names, numbers, critical details.' The blue spine — different approach… find a way… existing… enable them — carries the meaning. Two of the red words, design and roads, are wrong; the original was 'routers' and 'switches'. But a reviewer who treats red as 'discount' recovers a faithful gist. The colors converted a 50%-WER segment into a usable summary."*
 
-### Slide 35 — Three rules every reviewer learns (NEW Round 5.9)
-**Land:** *"Three rules. Numbers and names always need the video — even when blue. Strip-tier segments aren't for word-by-word reading — use them as topic hints, not transcripts. And the tier comes first, before the colors — a blue word in a Strip segment is half as reliable as a blue word in a Trust segment. These ship with every pilot. Reviewers learn them in the first hour."*
-**Note:** This signals the system has a real workflow, not just confidence theater. Co-partners will appreciate this slide in particular — it shows we've thought about how the output gets used, not just how it gets produced.
+### Slide 34 — When the model invents a different topic (NEW Round 5.10)
+**Land:** *"This is the most dangerous failure mode the colors save you from. The reference is gardening — woody beds, hula culture, excavation. The model produced fluent, internally consistent expert speech on a totally wrong topic — warheads, nuclear deterrence, Cuban missile crisis. Without the colors, a downstream pipeline records a discussion of nuclear weapons. With the colors, every topic-defining wrong word is flagged. The reader knows the topic isn't nuclear weapons and goes to the video."*
+**Note:** Don't shy away from the drama on this one. The "fluent expert speech on the wrong topic" failure mode is the worst possible quiet failure. The colors are what catch it. Click the video if a co-partner pulls; the speaker is at a whiteboard discussing real gardening, with a still-confident-sounding hypothesis showing.
 
-### Slides 36–38 — Hallucination case study (the centerpiece)
-**Land on 36:** *"The dangerous failure mode. The model can produce confident, fluent text that's completely wrong."*
-**Land on 37:** *"Real example. Reference says 'heroic citizens.' Model says 'Rwanda's genocide.' A wrong fluent transcript is worse than an empty one, because people may act on it."*
-**Land on 38:** *"And the system caught it. Lowest-confidence word at probability 0.02. Length anomaly. Routed to review before a reviewer ever sees the line. Our value isn't that this never happens — it's that this is flagged."*
+### Slide 35 — When the model has no signal (NEW Round 5.10)
+**Land:** *"Strip tier. Segment confidence 0.21. The reference said the speaker was talking about China crossing the Pacific. The model produced 'I don't think that's a good idea' — grammatically perfect English, sounds like a confident opinion. Every word is wrong. Every word is below 25% confidence. Without this signal, a downstream pipeline records a fabricated quote. With this signal, the segment is correctly labelled 'no signal' and the reader goes to the video. Strip tier is the system refusing to mislead you."*
+**Note:** Pair this with slide 34 — together they're the two-slide answer to *"how does the system handle catastrophic failure?"*. Mode 2.2 (slide 34) is fluent-but-wrong-topic; Mode 3.1 (slide 35) is fluent-but-no-signal. Both invisible without confidence; both flagged with it.
+
+### Slide 36 — Three rules every reviewer learns
+**Land:** *"Three rules. Numbers and names always need the video — even when blue. Real example we measured: the model said '1 million CFUs' when the speaker said '1 billion' — at 96% confidence. Strip-tier segments aren't for word-by-word reading. And the tier comes first, before the colors — a blue word in a Strip segment is half as reliable as a blue word in a Trust segment. These ship with every pilot."*
+**Note:** The "1 million / 1 billion" example concrete-izes the abstract "verify numbers" rule. Don't add more numeric examples than that one — the slide stays clean.
+
+### Slides 37–39 — Hallucination case study (the centerpiece)
+**Land on 37:** *"The dangerous failure mode. The model can produce confident, fluent text that's completely wrong."*
+**Land on 38:** *"Real example. Reference says 'heroic citizens.' Model says 'Rwanda's genocide.' A wrong fluent transcript is worse than an empty one, because people may act on it."*
+**Land on 39:** *"And the system caught it. Lowest-confidence word at probability 0.02. Length anomaly. Routed to review before a reviewer ever sees the line. Our value isn't that this never happens — it's that this is flagged."*
 **Note:** This is the strongest credibility moment in the deck. Don't rush it. Use the full 90 seconds.
 
-### Slide 45 — Hallucination flag (1 in 5)
+### Slide 46 — Hallucination flag (1 in 5)
 **Land:** *"One in five segments is auto-flagged before it reaches you. The system finds the bad ones for you."*
 
-### Slide 46 — What we claim / what we do not claim (NEW Round 5.5)
+### Slide 47 — What we claim / what we do not claim
 **Land:** *"Where the line is. So you know what you're buying. Six things we claim. Six things we don't. Closing line: Not blind automation. Reviewable visual-speech intelligence with uncertainty attached."*
 **Note:** Read down both columns side by side, two beats per row. This is the credibility-anchor slide — don't rush it.
 
-### Slide 47 — Why trust it on a video you've never seen
+### Slide 48 — Why trust it on a video you've never seen
 **Land:** *"You don't have ground truth on a fresh video. So how can you trust this? Four runtime signals — per word, per segment, hallucination flag, config stability. Calibration is anchored to expert review today. It grows tighter for your domain as your reviewers verify segments."*
-**Note:** The two pills at the bottom — "MEANINGFUL TODAY" and "GROWS IN YOUR HANDS" — are the message. If asked about the validation method, refer to slide 51.
+**Note:** The two pills at the bottom — "MEANINGFUL TODAY" and "GROWS IN YOUR HANDS" — are the message. If asked about the validation method, refer to slide 52.
 
 ## Validation (slides 45–48)
 
-### Slide 51 — Agreement chart
+### Slide 52 — Agreement chart
 **Land:** *"An independent blind evaluator agreed with our scores in eighty-two percent of cases. Across all 1,497 segments. Blind to our reasoning."*
 **Note:** If asked "was that human?" — answer the Q&A line above. Do NOT say "expert reviewer." Say "blind evaluator" or "blind evaluation pass."
 
-### Slide 52 — Cross-config stability
+### Slide 53 — Cross-config stability
 **Land:** *"Sixteen different decode configurations on the same data. The trust signal moves less than a percentage point. It's a property of the model, not the run."*
 
-## Engineering (slides 54–57)
+## Engineering (slides 55–58)
 
-### Slide 54 — The full pipeline
+### Slide 55 — The full pipeline
 **Land:** *"Eight automated stages. Drop in a video, walk away."*
 
-### Slide 56 — What it actually took
+### Slide 57 — What it actually took
 **Land:** *"Four months, four passes. Integration of three research repos. Production refactor — 823-line script into 11 modules, 37 tests. Confidence layer. Dual-environment shipping. Real engineering, real shipped code."*
 
-### Slide 57 — Deployment options
+### Slide 58 — Deployment options
 **Land:** *"Cloud or on-prem. We deploy and integrate. You're not buying an API call — you're buying a working pipeline that runs in your environment."*
 
-## What's next (slides 58–63)
+## What's next (slides 59–64)
 
-### Slide 59 — Quality pre-filter
+### Slide 60 — Quality pre-filter
 **Land:** *"A credible system must know when NOT to decode. Three frame-level checks before the model runs. Out of a hundred uploaded clips, seventy-five reach the model."*
 
-### Slide 61 — Beyond English — Arabic
+### Slide 62 — Beyond English — Arabic
 **Land:** *"Same architecture, same pipeline, different LLM and different visual model. The path is mapped. Specifics in follow-up."*
 **Note:** Three questions to ASK on this slide (write them on a sticky note inside your laptop lid):
 - "Which Arabic? MSA, Levantine, Egyptian, or Gulf?"
 - "What does your canonical video actually look like?"
 - "What does 'good enough' look like for your workflow?"
 
-### Slide 62 — What the next milestone changes (Round 5.8)
+### Slide 63 — What the next milestone changes
 **Land:** *"Today works — the 62% review-useful you saw is real. Two things make it noticeably better. One: a smarter model. The brain that turns lip-reading signals into text is a few years old; we swap in a newer one. Same plumbing, better text out the other end — especially stronger on names and uncommon words. Two: train it on your content. Right now the model has only seen public video — none of it looks like yours. Train on your footage and it gets meaningfully better at the work you actually do. We've already tested smaller versions of both. Both work. The data path matters most. Tomorrow's number is bigger than today's. The gap is the partnership."*
-**Note:** Plain English throughout — no parameter counts, no "empirical floor," no "drop-in upgrade." Don't put a specific lift number anywhere. If a co-partner asks WHICH model specifically: speaker notes name Llama 3.1 8B / 3.3 70B / current SOTA — say it in voice if asked, never on the slide. Tie to slide 63: *this slide says WHAT improves; next slide says HOW the partnership runs.*
+**Note:** Plain English throughout. Don't put a specific lift number anywhere. If asked WHICH model specifically: Llama 3.1 8B / 3.3 70B / current SOTA — say it in voice if asked, never on the slide. Tie to slide 64: *this slide says WHAT improves; next slide says HOW the partnership runs.*
 
-### Slide 63 — Partnership ask
+### Slide 64 — Partnership ask
 **Land:** *"Today's model is trained on a small slice of public data. Going from prototype to production on your content — that's a partnership. Your data, our pipeline, a shared training run on your domain. Specifics in follow-up — no dollar amounts on the slide on purpose."*
 
-## Close (slides 64–67)
+## Close (slides 65–68)
 
-### Slide 64 — Recap
+### Slide 65 — Recap
 **Land:** *"Three things we came to show you. It works. You can trust it. There's a clear path forward together."*
 
-### Slide 65 — We deploy this on your infrastructure
+### Slide 66 — We deploy this on your infrastructure
 **Land:** *"On-premise install, integration with your existing systems, training and handoff. End-to-end."*
 
-### Slide 66 — Next steps
+### Slide 67 — Next steps
 **Land:** *"A pilot looks like this — three to five canonical clips from your domain, two weeks, end-to-end run, your reviewer evaluates whether the output supports your workflow. No infrastructure ask up front."*
 **Note:** This slide has placeholder text you customize per client before the meeting. Make sure dataset / integration scope / timeline / success criteria are all filled in.
 
-### Slide 67 — Thank you
+### Slide 68 — Thank you
 **Land:** *"Questions."*
 **Note:** That's it. Don't keep talking. Wait.
 

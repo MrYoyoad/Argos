@@ -83,7 +83,11 @@ from presentation.slides_client import (
     slide_client_example_perfect,
     slide_client_clean_outputs_gallery,     # NEW Round 5.1 (6-tile gallery of clean outputs)
     slide_client_example_partial,
-    slide_client_example_flagged,
+    # slide_client_example_flagged — DROPPED Round 5.10 from active deck
+    # (builder kept defined in slides_client.py; can be re-imported if
+    # the Obama-flagged example is wanted back). Same Obama segment 5
+    # content lives on slide_client_halluc_real_example in the
+    # hallucination trio.
     # 6 client-side judge-example wrappers (verdict-tag instead of WER score strip)
     slide_client_judge_ex1,
     slide_client_judge_ex2,
@@ -102,6 +106,8 @@ from presentation.slides_client import (
     slide_client_three_tier_policy,        # NEW Round 5.6 — band-reliability + UI policy
     slide_client_how_to_read,              # NEW Round 5.9 — operational instruction (decision flow)
     slide_client_reader_example,           # NEW Round 5.9 — Salvage worked example
+    slide_client_case_topic_shift,         # NEW Round 5.10 — topic-shift hallucination caught
+    slide_client_case_strip_save,          # NEW Round 5.10 — Strip catches fluent fabrication
     slide_client_pitfalls,                 # NEW Round 5.9 — three rules every reviewer learns
     slide_client_halluc_problem,
     slide_client_halluc_real_example,
@@ -209,7 +215,12 @@ def main():
         slide_client_example_perfect,           # Obama segment 14 — perfect
         slide_client_clean_outputs_gallery,     # NEW Round 5.1 — 6 cleans
         slide_client_example_partial,           # Obama segment 31 — partial
-        slide_client_example_flagged,           # Obama segment 5 — flagged
+        # slide_client_example_flagged DROPPED Round 5.10 — redundant with
+        # slide_client_halluc_real_example (same Obama segment 5 content,
+        # same "Rwanda's genocide" failure mode). The hallucination trio
+        # (slides 36-38 in Round 5.10) tells this story more dramatically.
+        # New Mode 2.2 + Mode 3.1 case-study slides cover topic-shift and
+        # Strip-saves (genuinely different failure modes) in §how-to-read.
         # 6 client-wrapper judge examples (Round 5.1: verdict-tag instead of WER strip)
         slide_client_judge_ex1,
         slide_client_judge_ex2,
@@ -228,7 +239,9 @@ def main():
         slide_client_three_tier_policy,         # NEW Round 5.6 — band-reliability + three-tier UI
         # How a reviewer reads the output (operational instruction)
         slide_client_how_to_read,               # NEW Round 5.9 — decision flow (tier → colors → numbers/names)
-        slide_client_reader_example,            # NEW Round 5.9 — Salvage worked example
+        slide_client_reader_example,            # NEW Round 5.9 — Salvage worked example (networking, gist recovered)
+        slide_client_case_topic_shift,          # NEW Round 5.10 — topic-shift hallucination caught (gardening → nuclear)
+        slide_client_case_strip_save,           # NEW Round 5.10 — Strip catches fluent fabrication
         slide_client_pitfalls,                  # NEW Round 5.9 — three rules
         # Hallucination case-study trio
         slide_client_halluc_problem,
