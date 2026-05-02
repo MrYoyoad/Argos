@@ -4280,12 +4280,14 @@ def slide_client_pitfalls(prs):
         {
             "color": GOLD,
             "head": "NUMBERS AND NAMES",
-            "head_sub": "need the video",
-            "body": "Even when green. Real example from the evaluation: "
-                    "the model said \"1 million CFUs\" when the speaker "
-                    "said \"1 billion CFUs\" — at 96% confidence. "
-                    "Always verify numbers, dates, dollar amounts, "
-                    "and proper names against the video.",
+            "head_sub": "always verify against the video",
+            "body": "Numbers are now capped at yellow by the band rule — "
+                    "lip-reading cannot disambiguate digits, so the system "
+                    "stops painting them green even when the model is "
+                    "confident. Real example: \"1 million CFUs\" vs "
+                    "\"1 billion CFUs\" at 96% confidence — exactly the "
+                    "case the cap exists to flag. Treat names the same "
+                    "way: always verify against the video.",
         },
         {
             "color": CORAL,

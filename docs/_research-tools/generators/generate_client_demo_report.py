@@ -416,9 +416,12 @@ def render_html(records: Sequence[dict], badge: Optional[float],
 
   <div class="legend">
     Per-word confidence:
-    <span class="swatch conf-high">high</span>
-    <span class="swatch conf-med">review</span>
-    <span class="swatch conf-low">likely error</span>
+    <span class="swatch conf-high">trust</span> = confident AND beams agreed
+    &nbsp;·&nbsp;
+    <span class="swatch conf-med">review</span> = some signal, verify
+    &nbsp;·&nbsp;
+    <span class="swatch conf-low">avoid</span>
+    &nbsp;·&nbsp; Numbers stay yellow at most.
     &nbsp; · &nbsp;Hover any word to see its confidence value.
   </div>
 
