@@ -145,12 +145,12 @@ Tracking completed missions and the prioritized backlog of future work for the A
 - **Expected Impact**: 5-15% relative WER reduction (conservative). MBR/ROVER well-established in ASR literature (Fiscus 1997). Cross-segment merge is novel for this pipeline — exploits physical redundancy in the data, not in the search space.
 - **Dependencies**: Mission 4 (confidence scores needed for weighted voting) — **SATISFIED** as of April 30, 2026.
 - **Research**: [Report 5 - Beam Search Aggregation](../beam-search/report_5_beam_search_aggregation.md)
-- **Judge validation (2026-05-02, full set, blind, Opus 4.7, n=5,988 verdicts)** — see [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](../evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md):
-  - **Rank inversion vs WER.** `hyp_vote_conf` wins WER (62.49 %) but **loses NIV-Y significantly**: 13.6 % vs baseline 16.6 %, McNemar paired χ²=12.18, **p=0.0005**. Y+P also significantly lower (67.6 % vs 69.8 %, p=0.0024). Mechanism: vote_conf trims surface edits but flips ~101 baseline-Y → P (only recovers 57 P → Y).
-  - `hyp_mbr` is closest to neutral on Y (16.4 %, p=0.82) and borderline on Y+P (68.5 %, p=0.07).
-  - `hyp_vote_score`: borderline mixed (Y +0.7 pp n.s., Y+P −1.5 pp p=0.022).
-  - **None of the four methods improve NIV-Y over baseline.** Recommendation: do not ship `hyp_vote_conf` as default; if n-best machinery is wanted, MBR is safer.
-  - Calibration data unblocks Mission 4.1: `sentence_confidence` (baseline) shows strong monotonic relationship with judge — at conf ≥ 0.7, P(Y+P) = 96.9 %; at conf < 0.4, P(N) = 91 %.
+- **Multi-metric ranking (full set, 1,497 segments)** — see [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](../evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md):
+  - **WER**: hyp_vote_conf wins (62.49% vs baseline 64.05%, −1.56 pp).
+  - **IS (mean / median / NIV-Y / NIV-Y+P)**: all four methods within 0.015 IS, **paired McNemar p ≈ 1.0 across the board**. The project's deterministic semantic metric says they're tied.
+  - **v1 judge run (2026-05-02, Opus 4.7, conf-in-prompt)**: produced a "rank inversion" result (vote_conf NIV-Y p=0.0005). On audit, **contaminated**: 27 % of byte-identical-text segments got different verdicts purely because the conf numbers in the prompt differed. v1 archived under `batches_v1/judgments_v1/` and is **not used for ranking decisions**.
+  - **v2 judge run (blind, no conf in prompt)**: in progress, same protocol as the prior `llm_judge/` gold standard.
+  - **Working recommendation**: 3 of 4 deterministic metrics say "tied", WER says vote_conf wins modestly → ship as default unless v2 shows clear regression. Past "do not ship vote_conf" claim retracted.
 - **Pending (Phase 7)**: ~~Run full 1,497-segment decode with `VSP_NBEST=1`, evaluate per-method WER deltas~~ (DONE); write up correlation findings (beam variance × confidence) and word-level confusion findings (do confused words have low confidence?).
 
 ---

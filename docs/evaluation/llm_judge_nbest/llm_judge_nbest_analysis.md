@@ -1,22 +1,62 @@
-# n-best LLM-as-a-Judge — analysis
+# n-best LLM-as-a-Judge — analysis (v1, contaminated)
 
-**Run**: 2026-05-02. Judge model: Claude Opus 4.7 (in-conversation).
-**Scope**: 1,497 segments × 4 aggregation methods (baseline, `hyp_mbr`, `hyp_vote_score`, `hyp_vote_conf`) = **5,988 verdicts**, 60 batch files, 0 missing, 0 partial.
+> ⚠️ **This v1 run is contaminated by a prompt-design bug.** The judge was shown sentence and per-word confidence values during judging, instructed to "use as soft cue, not as verdict shortcut." It did not. On 134/494 (27 %) segments where all four methods produced byte-identical text, verdicts split anyway — the only thing that differed in the prompt was confidence numbers. The headline "rank inversion" finding is partly real (~75 %) and partly artifact (~25 %). A clean v2 re-judge with no confidence in the prompt is being staged. **Do not act on this v1 output as-is.**
 
-## TL;DR
+**v1 run**: 2026-05-02. Judge: Claude Opus 4.7 (in-conversation).
+**Scope**: 1,497 segments × 4 aggregation methods = 5,988 verdicts.
 
-Mission 6 ranks `hyp_vote_conf` first on WER (−1.56 pp, 62.49 %). The judge ranks it **last** on the operating point we ship against:
+## Multi-metric ranking — what the OTHER metrics already say
 
-| method | NIV-Y rate | Δ vs baseline | NIV-Y+P rate | Δ vs baseline | WER (full set) |
+Before drawing conclusions from a contaminated judge run, look at the deterministic metrics that don't have this problem:
+
+| metric | baseline | hyp_mbr | hyp_vote_score | hyp_vote_conf | who wins |
 |---|---|---|---|---|---|
-| **baseline (1-best)** | **16.6 %** | — | **69.8 %** | — | 64.05 % |
-| `hyp_mbr` | 16.4 % | −0.2 pp (n.s.) | 68.5 % | −1.3 pp (p=0.07) | 63.83 % |
-| `hyp_vote_score` | 17.3 % | +0.7 pp (n.s.) | 68.3 % | −1.5 pp (p=0.022) | — |
-| `hyp_vote_conf` | **13.6 %** | **−3.0 pp (p=0.0005)** | **67.6 %** | **−2.2 pp (p=0.0024)** | **62.49 %** |
+| WER (lower better) | 64.05 % | 63.84 % | 63.67 % | **62.49 %** | hyp_vote_conf (−1.56 pp) |
+| mean IS | 2.532 | 2.547 | 2.538 | 2.545 | tied (within 0.015) |
+| median IS | 2.559 | 2.600 | 2.582 | 2.579 | hyp_mbr / vote slight |
+| IS-NIV-Y % | 23.98 | 23.91 | 23.98 | 24.05 | tied |
+| IS-NIV-Y+P % | 61.66 | 61.92 | 61.86 | 62.26 | tied (vote_conf +0.6) |
 
-McNemar tests are paired by `utt_id`, continuity-corrected, two-sided. **None of the n-best methods improve NIV-Y or NIV-Y+P over the 1-best baseline**, and `hyp_vote_conf` significantly regresses both.
+Paired McNemar on the IS-derived NIV-Y verdict (per-segment, IS ≥ 3.80 → Y):
 
-This is a **rank inversion between WER and NIV** — the metric we use to decide what ships disagrees with the metric we ranked candidates by.
+| method vs baseline | method-only Y | baseline-only Y | p |
+|---|---|---|---|
+| hyp_mbr | 12 | 13 | 1.00 |
+| hyp_vote_score | 9 | 9 | 0.81 |
+| hyp_vote_conf | 19 | 18 | 1.00 |
+
+**On IS, the project's own semantic metric, all three n-best methods are statistically indistinguishable from baseline.** Per-segment median IS delta is 0.000 for every method. WER says vote_conf is marginally better; IS says they're tied. That is the cleanest reading of the *uncontaminated* evidence.
+
+## v1 judge results (contaminated — for the record)
+
+| method | NIV-Y rate | Δ vs baseline | NIV-Y+P rate | Δ vs baseline |
+|---|---|---|---|---|
+| **baseline (1-best)** | **16.6 %** | — | **69.8 %** | — |
+| `hyp_mbr` | 16.4 % | −0.2 pp (p=0.82) | 68.5 % | −1.3 pp (p=0.07) |
+| `hyp_vote_score` | 17.3 % | +0.7 pp (p=0.51) | 68.3 % | −1.5 pp (p=0.022) |
+| `hyp_vote_conf` | 13.6 % | −3.0 pp (p=0.0005) | 67.6 % | −2.2 pp (p=0.0024) |
+
+Restricted to text-differing segments (removes the worst of the prompt confound):
+
+| method vs baseline | n (text differs) | Y verdict<br>method only | Y verdict<br>baseline only | p (Y) | p (Y+P) |
+|---|---|---|---|---|---|
+| hyp_mbr | 580 | 31 | 38 | 0.47 | 0.13 |
+| hyp_vote_score | 480 | 31 | 23 | 0.34 | 0.24 |
+| hyp_vote_conf | 940 | 30 | 64 | 0.0007 | 0.012 |
+
+`hyp_vote_conf` remains significantly worse than baseline even on text-differing segments — but this is still a confounded judge (per-word conf differs between method and baseline even when whole sentences happen to match), and it disagrees with IS on the same segments. **Treat the v1 judge result as one signal among several, not as the ground truth.**
+
+## Combined cross-metric read
+
+| who's right? | what they say |
+|---|---|
+| **WER** | vote_conf marginally wins (−1.56 pp) |
+| **Mean / median IS** | all four tied |
+| **IS-NIV-Y / Y+P** | all four tied (paired p ≈ 1.0) |
+| **v1 judge (contaminated)** | vote_conf significantly loses |
+| **v2 judge (blind, no conf)** | being staged — see `batches_v2/` |
+
+When 3 of 4 metrics say "essentially tied" and the 4th is contaminated, the honest summary is: **n-best aggregation does not materially change semantic quality on this dataset; vote_conf gets the best WER and that's the only meaningful difference**. The "do not ship vote_conf" conclusion is downgraded to "ship is acceptable on the evidence; clean v2 judge will confirm or refute."
 
 ## What this answers
 
@@ -48,17 +88,29 @@ hyp_vote_conf             Y     P     N
 
 `hyp_vote_conf` downgrades **101 baseline-Y → P** and only recovers **57 baseline-P → Y**. The net swing on the Y line is **−44**. Same pattern shows up on Y+P: vote_conf moves 71 baseline-P out to N and only recovers 39 baseline-N to P (net −32).
 
-## Regression mechanism — vote_conf trims surface edits, not meaning
+## Regression mechanism (text-differing subset only)
 
-A representative regression case (`-29kYQQ3Kos_11`):
+Of the 940 segments where `hyp_vote_conf` produced different text from baseline, the regression cases have a consistent shape: vote_conf drops a small connective or swaps a function word, which lowers WER by one substitution but pushes the judge from Y → P. Examples:
 
-- ref: *"that are going to allow you to work with the team in a more"*
-- baseline (verdict Y): *"are going to allow you to work with a team and more"*
-- vote_conf (verdict P): *"are going to allow you to work with a team and more"* (same sentence; vote_conf's per-word agreement nudged judge from Y to P on a near-identical hypothesis)
+```
+ref:        "in the creation of these children or in the making"
+baseline:   "in the creation of these children's orders and then in the making of"   (Y)
+vote_conf:  "in the creation of these children's orders then in the making of"       (P)
+                                                          ^^^ "and" dropped
+```
 
-More substantive ones drop a single connective ("then" → "and then" missing, "is one" → "kid is one"), which lowers WER by one substitution but pushes the judge from "meaning conveyed" to "partial." The vote-by-confidence weighting concentrates votes on the most-confident word at each position; when several beams confidently disagree on a function word, voting picks the surface-frequent one and skips the connective the reference actually has.
+```
+ref:        "he is now 7 years old my third one will also be a male, he is 1 years old..."
+baseline:   "is now seven years old my third one will also be a boy, a kid is one year old..."  (Y)
+vote_conf:  "is now seven years old my third one will also be a boy, kid is one year old..."   (P)
+                                                                       ^^^ "a" dropped
+```
 
-This is consistent with what memory already records: the per-word vote_conf "confidence" is an **agreement score**, not a Bayesian posterior (Eikema & Aziz 2020; Spagnolo 2025). High agreement among wrong-but-similar beams produces fluent-but-meaning-shifted output.
+The vote-by-confidence weighting concentrates votes on the most-confident word at each position; when several beams confidently disagree on a function word, voting picks the surface-frequent one and skips the connective the reference actually has. Lower WER (one fewer substitution), but the judge reads the result as partial.
+
+This is consistent with the existing literature note in memory: the per-word vote_conf "confidence" is an **agreement score**, not a Bayesian posterior (Eikema & Aziz 2020; Spagnolo 2025). High agreement among wrong-but-similar beams produces fluent-but-meaning-shifted output.
+
+⚠️ **An earlier draft of this section cited a different example where all four methods produced byte-identical text**. That was confounded — the verdict difference came from the prompt-level confidence cues, not from the text. See "The confidence-in-prompt confound" caveat below for the proper accounting.
 
 ## Intra-rater reliability (30 duplicate pairs per method)
 
@@ -94,9 +146,55 @@ Same shape for `hyp_mbr` (e.g., bin [0.8, 0.9) → 76 % Y, 100 % Y+P, n=97).
 
 ## Important caveats
 
-1. **Judge model change vs prior gold standard.** The prior `llm_judge/` run (March 2026) used Opus 4.6 and produced 23.0 % Y on baseline. This run on Opus 4.7 produces 16.6 % Y on baseline. The shift is partly model version and partly the per-word + sentence confidence cues now being shown to the judge. **Cross-run absolute Y rates are not comparable; within-run rankings and McNemar paired tests are.** All headline claims here use within-run paired comparisons.
-2. **Confidence-in-prompt confound.** The judge sees per-word and sentence conf during judgment. We tell it to use them as soft cues only, but cannot rule out a small influence on borderline calls. The rank inversion finding doesn't depend on this — `hyp_vote_conf` has the highest mean conf of the four methods, so any "high conf → judge nudges Y" bias would *help* it, not hurt it; that the rank inversion appears anyway makes the finding more robust.
-3. **Auto-N rows count toward N.** ~70 segments per method (mostly empty hyps) are auto-classified N. Removing them shifts absolute rates but not rankings.
+### The confidence-in-prompt confound is real and large — not theoretical
+
+In **494/1,497 segments (33 %)** all four methods produced **byte-identical** hypothesis text (the 20 candidate beams agreed strongly enough that the four aggregation algorithms returned the same string). Of those 494 identical-text segments, **134 (27 %)** received different verdicts across methods.
+
+Concrete example (`-29kYQQ3Kos_11`):
+
+```
+ref:           "that are going to allow you to work with the team in a more"
+all 4 methods: "are going to allow you to work with a team and more"  (byte-identical)
+
+verdicts:
+  baseline       Y    sentence_conf=0.91
+  hyp_mbr        Y    sentence_conf=0.83
+  hyp_vote_score P    sentence_conf=0.66
+  hyp_vote_conf  P    sentence_conf=0.67
+```
+
+Identical text → different verdicts. The only thing that changed in the prompt is the confidence numbers (`sentence_conf` and per-word `[.NN]` tags). The judge **let confidence drive the verdict** despite our instruction "use as soft cue, NOT as a verdict shortcut."
+
+Pairwise drift on identical-text segments vs baseline (showing only `hyp_vote_conf`):
+
+```
+hyp_vote_conf, identical text to baseline (557 segments):
+  Y → P   38   (Y lost)
+  P → Y   27   (Y gained)
+  P → N   22   (Y+P lost)
+  N → P   12   (Y+P gained)
+  net Y movement: -11   net Y+P movement: -10
+```
+
+### What survives when you remove the confound
+
+Restricting McNemar to **segments where the method's text actually differs from baseline**:
+
+| method vs baseline | n (text differs) | Y verdict<br>method only | Y verdict<br>baseline only | chi² | p | Y+P p |
+|---|---|---|---|---|---|---|
+| hyp_mbr | 580 | 31 | 38 | 0.52 | 0.47 (n.s.) | 0.13 (n.s.) |
+| hyp_vote_score | 480 | 31 | 23 | 0.91 | 0.34 (n.s.) | 0.24 (n.s.) |
+| **hyp_vote_conf** | **940** | **30** | **64** | **11.59** | **0.0007** | **0.012** |
+
+`hyp_vote_conf` remains significantly worse than baseline even after removing identical-text segments. The full-set Y deficit was 102 baseline-only minus 57 method-only = −45 Ys; about −11 of that came from identical-text drift (artifact), the remaining ~−34 from text-differing segments (real). **Roughly 75 % of the rank inversion is robust to the confound, 25 % is artifact.**
+
+For `hyp_mbr` and `hyp_vote_score`, removing identical-text segments dropped both already-weak effects below significance, which is consistent with their full-set findings being borderline anyway.
+
+### Other caveats
+
+1. **Judge model change vs prior gold standard.** The March 2026 `llm_judge/` run used Opus 4.6 and produced 23.0 % Y on baseline. This run on Opus 4.7 produces 16.6 % Y on baseline. The shift is partly model version, partly the per-word + sentence conf cues now being shown to the judge (the very confound documented above). **Cross-run absolute Y rates are not comparable; within-run paired comparisons are.**
+2. **Auto-N rows count toward N.** ~70 segments per method (mostly empty hyps) are auto-classified N. Removing them shifts absolute rates but not rankings.
+3. **Methodology fix for any future run**: do the judging blind on text alone, no confidence numbers in the prompt. If we want a confidence-vs-verdict calibration table, build it post-hoc by joining the judge verdicts with the confidence values stored in `report.csv` — don't show conf to the judge during judging.
 
 ## What to do with this
 

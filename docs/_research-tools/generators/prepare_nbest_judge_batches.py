@@ -41,6 +41,13 @@ AGGREGATED_JSON = "/home/ubuntu/english_full_nbest_eval/aggregated.json"
 OUTPUT_DIR = "/home/ubuntu/docs/evaluation/llm_judge_nbest"
 BATCHES_DIR = os.path.join(OUTPUT_DIR, "batches")
 
+# v2 (May 2026): no confidence in prompt — judge sees ref + hyp text only.
+# v1 emitted `NNN|ref|word[.NN] word[.NN] ...|sentence_conf` which contaminated
+# the judge: 27% of byte-identical-text segments got different verdicts purely
+# because the conf numbers in the prompt differed across methods. Set
+# INJECT_CONF = False for the clean v2 protocol.
+INJECT_CONF = False
+
 # Per-method key in aggregated-{fid}.json that holds the calibrated per-word confs.
 AGG_WORDCONF_KEY = {
     "baseline":       ("hyp_top1",        "hyp_top1_word_confs_calibrated"),
@@ -176,6 +183,10 @@ def extract_method_rows(merged, method_label, hyp_col, conf_source, conf_col, pe
             hyp_inline = fallback
             hyp_plain = fallback
 
+        # v2: when conf injection is disabled, the judge sees plain hyp only.
+        if not INJECT_CONF:
+            hyp_inline = hyp_plain
+
         is_tier = row.get("is_tier", "0")
         out.append({
             "utt_id": uid,
@@ -253,14 +264,21 @@ def create_batches(rows, duplicates, batch_size, seed_offset_main=0, seed_offset
 
 
 # ---------- Writers ----------
-HEADER_LINE = (
-    "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs "
-    "| format: NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf "
-    "| Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost "
-    "| Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] "
-    "([--] if missing). The trailing column is the method's sentence-level confidence. "
-    "Use as soft cues, NOT as verdict shortcuts."
-)
+if INJECT_CONF:
+    HEADER_LINE = (
+        "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs "
+        "| format: NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf "
+        "| Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost "
+        "| Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] "
+        "([--] if missing). The trailing column is the method's sentence-level confidence. "
+        "Use as soft cues, NOT as verdict shortcuts."
+    )
+else:
+    HEADER_LINE = (
+        "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs "
+        "| format: NNN|ref|hyp "
+        "| Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost"
+    )
 
 
 def write_batch_files(method_label, batches, out_dir):
@@ -276,7 +294,10 @@ def write_batch_files(method_label, batches, out_dir):
                 # Sanitize: replace pipe in ref/hyp to avoid breaking the format
                 ref_s = ref.replace("|", "/")
                 hyp_s = hyp.replace("|", "/")
-                f.write(f"{idx + 1:03d}|{ref_s}|{hyp_s}|{conf}\n")
+                if INJECT_CONF:
+                    f.write(f"{idx + 1:03d}|{ref_s}|{hyp_s}|{conf}\n")
+                else:
+                    f.write(f"{idx + 1:03d}|{ref_s}|{hyp_s}\n")
 
 
 def write_batch_index(all_method_batches, out_dir):

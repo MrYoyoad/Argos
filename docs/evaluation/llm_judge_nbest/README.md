@@ -1,20 +1,26 @@
-# n-best LLM-as-a-Judge — workflow
+# n-best LLM-as-a-Judge — workflow (v2, blind, no conf in prompt)
 
 This directory holds the in-conversation Claude judging run for Mission 6's n-best
 aggregation methods (baseline, `hyp_mbr`, `hyp_vote_score`, `hyp_vote_conf`) on the
-full 1,497-segment set. The judge is **Claude Opus 4.6**, judging happens **inside
-fresh Claude Code conversations** (not via API), matching the prior `llm_judge/`
-gold-standard protocol.
+full 1,497-segment set.
+
+> **v1 was contaminated and is now archived.** v1 injected sentence + per-word
+> confidence numbers into the judge prompt. On 27 % of identical-text segments,
+> verdicts split anyway — the judge let conf drive the call. Archived under
+> `batches_v1/`, `judgments_v1/`, `batch_index_v1.json`, `auto_judgments_v1.csv`.
+> See `llm_judge_nbest_analysis.md` for the v1 contamination analysis.
+>
+> **v2 is blind on text only.** Format is `NNN|ref|hyp` — same protocol as the
+> prior `llm_judge/` gold standard.
 
 ## Why this run
 
-WER says `hyp_vote_conf` wins by 1.56 pp (62.49 %), but the project ships against
-**NIV thresholds calibrated to the LLM judge** (κ=0.690 for Y, κ=0.818 for Y+P).
-This run answers two open questions:
-
-1. Does `hyp_vote_conf`'s WER win translate to more **Y** verdicts (meaning conveyed)?
-2. Does `sentence_confidence` (when shown to the judge) predict Y / Y+P verdicts —
-   the calibration data Mission 4.1 needs.
+WER says `hyp_vote_conf` wins by 1.56 pp (62.49 %). IS (the project's deterministic
+semantic metric) says all four methods are tied within 0.015 IS, with paired
+McNemar p ≈ 1.0 on IS-NIV-Y. v1 judge said `hyp_vote_conf` significantly lost on
+NIV-Y (p=0.0005) but was contaminated. v2 is the deciding test: do n-best
+aggregation methods change *meaning* delivery vs the 1-best baseline, when the
+judge sees nothing but ref + hyp text?
 
 ## Files
 
@@ -34,24 +40,21 @@ llm_judge_nbest/
 └── llm_judge_nbest_analysis.md
 ```
 
-## Batch format
+## Batch format (v2)
 
 Each batch file has a single header line then `---` then one row per pair. The
-hypothesis column is annotated **per-word** with calibrated confidence in `[0,1]`:
+hypothesis column is **plain text only** — no confidence annotations.
 
 ```
-BASELINE | BATCH 01/15 | 103 pairs | format: NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] ([--] if missing). The trailing column is the method's sentence-level confidence. Use as soft cues, NOT as verdict shortcuts.
+BASELINE | BATCH 01/15 | 103 pairs | format: NNN|ref|hyp | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
 ---
-001|we will give up some of our individual choice for the sake of the community decision|will[.71] give[.83] up[.92] some[.88] of[.95] our[.91] individual[.42] choices[.57] for[.94] the[.97] sake[.85] of[.95] the[.97] community[.62] and[.41]|0.85
+001|we will give up some of our individual choice for the sake of the community decision|will give up some of our individual choices for the sake of the community and
 002|...
 ```
 
-- Per-word conf comes from `aggregated-172610.json` produced by `lib/nbest_aggregate.py`:
-  - `baseline` → `hyp_top1_word_confs_calibrated`
-  - `hyp_mbr` / `hyp_vote_score` / `hyp_vote_conf` → `<method>.word_confs_calibrated`
-- `[.NN]` is two-decimal `.34` form; `[1.0]` for fully agreed; `[--]` if missing.
-- Sentence-level conf (last column) is unchanged: `sentence_confidence` for baseline,
-  `hyp_<method>_mean_conf_calib` for n-best methods.
+This matches the prior `llm_judge/` gold-standard protocol exactly. Confidence is
+NOT shown to the judge during judging; if a confidence-vs-verdict calibration table
+is wanted, it's built post-hoc from `report.csv` after judging completes.
 
 ## Verdict codes
 
@@ -84,13 +87,10 @@ the next un-judged batch):
 > done, stop and tell me.
 >
 > **Step 2 — read it.** The first line is a header (skip it), then `---`, then one
-> segment per line in the format
-> `NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf`:
+> segment per line in the format `NNN|ref|hyp`:
 > - `NNN` — 3-digit index
-> - `ref` — ground-truth transcript (plain text, no annotations)
-> - `wordI[.NN]` — each hyp word followed by its calibrated confidence in `[0, 1]`
->   (`[1.0]` for fully agreed, `[--]` if missing)
-> - `sentence_conf` — method's sentence-level confidence in `[0, 1]` (or `n/a`)
+> - `ref` — ground-truth transcript (plain text)
+> - `hyp` — hypothesis text (plain text)
 >
 > **Step 3 — judge each line.** Decide whether the hypothesis conveys the meaning of
 > the reference:
@@ -101,11 +101,14 @@ the next un-judged batch):
 >   subset of `{key, struct, sem, phon, detail, num, entity}`. Examples:
 >   `P:key+sem/-detail`, `P:struct/-key`. Plain `P:` is allowed.
 >
-> Treat per-word conf and sentence conf as **soft cues only** — very low conf may tip
-> a borderline case toward N, very high conf toward Y, but never let it override your
-> reading of meaning. Stay strictly blind: do **not** open `report.csv`,
-> `segment_features.csv`, or anything else in `english_full_nbest_eval/` or
-> `docs/evaluation/`. Be conservative on ties (Y vs P → P; P vs N → N).
+> Stay strictly blind: do **not** open `report.csv`, `segment_features.csv`, or
+> anything else in `english_full_nbest_eval/` or `docs/evaluation/`. Judge on
+> reference-vs-hypothesis text only. Be conservative on ties (Y vs P → P;
+> P vs N → N).
+>
+> If two hypotheses you've seen in this session look essentially identical, give
+> them the same verdict — don't second-guess. The aggregation methods often produce
+> matching text on easy segments and we want intra-rater stability there.
 >
 > **Step 4 — write the output.** Write
 > `/home/ubuntu/docs/evaluation/llm_judge_nbest/judgments/batch_<method>_NN_judgments.txt`
