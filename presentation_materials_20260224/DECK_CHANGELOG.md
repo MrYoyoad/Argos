@@ -44,7 +44,7 @@ BORROWED_SLIDES: {44, 45, 58, 70} (was {44, 45, 57, 69}).
 All 7 audits green.
 
 ### COMMIT
-- (pending)
+- 90d4afe.
 
 ---
 
