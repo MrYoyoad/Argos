@@ -134,6 +134,40 @@ run_client_outputs() {
     fi
   fi
 
+  # ---- Per-word beam-agreement sidecar + joint band rule ----
+  # When BOTH nbest + confidence sidecars exist, build agreement-{fid}.json and
+  # regenerate word_confidence.json under the joint conf+agreement rule
+  # (see TRUST_DIAGNOSTIC.md, May 2 2026). Fails gracefully if missing.
+  local agree_json=""
+  if [ -f "$nbest_json" ] && [ -f "$confidence_json" ] && [ -n "$word_conf_json" ]; then
+    local agree_script="$vsp_dir/scripts/compute_word_agreement.py"
+    if [ ! -f "$agree_script" ]; then
+      agree_script="${HOME}/VSP-LLM/scripts/compute_word_agreement.py"
+    fi
+    if [ -f "$agree_script" ]; then
+      echo ">>> [8] Computing per-word beam agreement"
+      agree_json="$report_dir/agreement-$(basename "$nbest_json" | sed -E 's/^nbest-//; s/\.json$//').json"
+      python3 "$agree_script" \
+        --nbest "$nbest_json" \
+        --confidence "$confidence_json" \
+        --out "$agree_json" \
+        || { log_warn "compute_word_agreement.py failed (non-critical)"; agree_json=""; }
+      if [ -n "$agree_json" ] && [ -f "$agree_json" ]; then
+        echo ">>> [8] Re-aggregating per-word confidence with joint conf+agreement rule"
+        local conf_script2="$vsp_dir/scripts/compute_word_confidence.py"
+        if [ ! -f "$conf_script2" ]; then
+          conf_script2="${HOME}/docs/_research-tools/generators/compute_word_confidence.py"
+        fi
+        python3 "$conf_script2" "$confidence_json" \
+          --agreement "$agree_json" \
+          --out "$word_conf_json" \
+          || log_warn "compute_word_confidence.py (joint pass) failed (non-critical)"
+      fi
+    else
+      log_warn "compute_word_agreement.py not found — joint band rule skipped"
+    fi
+  fi
+
   # Compute Intelligibility Scores in reports
   echo ">>> [8] Intelligibility Scores enabled"
 
