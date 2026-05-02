@@ -240,7 +240,7 @@ def slide_client_what_we_built(prs):
         "we research.' The footnote is the closer: don't oversell future "
         "improvements."
     ))
-    add_animations(slide, items_groups, click_reveal=True)
+    add_animations(slide, items_groups, click_reveal=False)
     return slide
 
 
@@ -518,7 +518,7 @@ def slide_client_headline_numbers(prs):
         "~0.70); tier thresholds will be re-tuned for MBR in a "
         "follow-up so the per-word reliability promise holds."
     ))
-    add_animations(slide, num_groups, click_reveal=True)
+    add_animations(slide, num_groups, click_reveal=False)
     return slide
 
 
@@ -720,55 +720,58 @@ def slide_client_two_layer_confidence(prs):
                       # "why this is meaningful + grows" pill at bottom.
 
     # Layer 1 — per-word
+    col1_group = []
     x1 = MX
-    add_rect(slide, x1, top, card_w, h, fill_color=NAVY2, border_color=None)
-    add_text(slide, "1. PER-WORD", x1 + Inches(0.3), top + Inches(0.3),
-             card_w - Inches(0.6), Inches(0.4), size=Pt(14), bold=True, color=GREEN)
-    add_text(slide, "From the model itself",
+    col1_group.append(add_rect(slide, x1, top, card_w, h, fill_color=NAVY2, border_color=None))
+    col1_group.append(add_text(slide, "1. PER-WORD", x1 + Inches(0.3), top + Inches(0.3),
+             card_w - Inches(0.6), Inches(0.4), size=Pt(14), bold=True, color=GREEN))
+    col1_group.append(add_text(slide, "From the model itself",
              x1 + Inches(0.3), top + Inches(0.85),
-             card_w - Inches(0.6), Inches(0.5), size=Pt(20), bold=True, color=WHITE)
-    add_bullets(slide, [
+             card_w - Inches(0.6), Inches(0.5), size=Pt(20), bold=True, color=WHITE))
+    col1_group.append(add_bullets(slide, [
         "Every predicted word has a probability the model assigned it",
         "We surface those as green / yellow / red inline in the report",
         "You see exactly where the model was unsure",
     ], x1 + Inches(0.3), top + Inches(1.7), card_w - Inches(0.6), Inches(2.0),
-       size=Pt(14))
+       size=Pt(14)))
 
     # Layer 2 — per-segment
+    col2_group = []
     x2 = MX + card_w + gap
-    add_rect(slide, x2, top, card_w, h, fill_color=NAVY2, border_color=None)
-    add_text(slide, "2. PER-SEGMENT", x2 + Inches(0.3), top + Inches(0.3),
-             card_w - Inches(0.6), Inches(0.4), size=Pt(14), bold=True, color=TEAL)
-    add_text(slide, "From the model's own outputs",
+    col2_group.append(add_rect(slide, x2, top, card_w, h, fill_color=NAVY2, border_color=None))
+    col2_group.append(add_text(slide, "2. PER-SEGMENT", x2 + Inches(0.3), top + Inches(0.3),
+             card_w - Inches(0.6), Inches(0.4), size=Pt(14), bold=True, color=TEAL))
+    col2_group.append(add_text(slide, "From the model's own outputs",
              x2 + Inches(0.3), top + Inches(0.85),
-             card_w - Inches(0.6), Inches(0.5), size=Pt(20), bold=True, color=WHITE)
-    add_bullets(slide, [
+             card_w - Inches(0.6), Inches(0.5), size=Pt(20), bold=True, color=WHITE))
+    col2_group.append(add_bullets(slide, [
         "Word probabilities aggregate to one segment-level confidence",
         "Plus a length-anomaly check — output too short or too long for the visual frames is flagged",
         "Calibrated thresholds split clearly conveyed from needs review",
     ], x2 + Inches(0.3), top + Inches(1.7), card_w - Inches(0.6), Inches(2.0),
-       size=Pt(14))
+       size=Pt(14)))
 
     # Round 5.3: bottom pill explaining (a) why the calibration is
     # meaningful (anchored to expert review, not arbitrary), and (b) how
     # the client's own usage tightens that calibration around their
     # domain over time. Per user feedback: "explain why this is
     # meaningful — and that by the clients' use they will gain trust."
+    anchor_group = []
     pill_y = top + h + Inches(0.2)
-    add_rect(slide, MX, pill_y, CW, Inches(0.95),
-             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
-    add_text(slide, "WHY THIS IS MEANINGFUL — AND HOW IT GROWS WITH YOU",
+    anchor_group.append(add_rect(slide, MX, pill_y, CW, Inches(0.95),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75)))
+    anchor_group.append(add_text(slide, "WHY THIS IS MEANINGFUL — AND HOW IT GROWS WITH YOU",
              MX + Inches(0.3), pill_y + Inches(0.1),
              CW - Inches(0.6), Inches(0.3),
-             size=Pt(12), bold=True, color=TEAL)
-    add_text(slide,
+             size=Pt(12), bold=True, color=TEAL))
+    anchor_group.append(add_text(slide,
              "The thresholds aren't arbitrary — they're calibrated against an "
              "independent blind evaluator (82% agreement, next slide). Each "
              "segment your reviewer verifies on your footage extends that "
              "calibration to your domain. Trust grows with use.",
              MX + Inches(0.3), pill_y + Inches(0.42),
              CW - Inches(0.6), Inches(0.5),
-             size=Pt(12), color=WHITE, italic=True)
+             size=Pt(12), color=WHITE, italic=True))
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -794,6 +797,7 @@ def slide_client_two_layer_confidence(prs):
         "enforces the asymmetric-cost policy. Pointer: docs/confidence/"
         "confidence_full_analysis.md §2.2."
     ))
+    add_animations(slide, [col1_group, col2_group, anchor_group], click_reveal=False)
     return slide
 
 
@@ -1232,7 +1236,7 @@ def slide_client_trust_operating_points(prs):
         "_calibration.py (re-runnable generator). LLM-and-decoder-"
         "specific: Llama-2-7b, beam=20, lenpen=0."
     ))
-    add_animations(slide, point_groups + [anchor_group], click_reveal=True)
+    add_animations(slide, point_groups + [anchor_group], click_reveal=False)
     return slide
 
 
@@ -1518,7 +1522,7 @@ def slide_client_aggregation_safety(prs):
         "with statistical evidence; it's not 'twice as good.' Stay "
         "with the floor-not-ceiling framing."
     ))
-    add_animations(slide, cards_groups + [anchor_group], click_reveal=True)
+    add_animations(slide, cards_groups + [anchor_group], click_reveal=False)
     return slide
 
 
@@ -1741,31 +1745,33 @@ def slide_client_quality_filter(prs):
          "7 of 100 rejected — too dark / washed out",
          "lip-region contrast within range  →  REACHES THE MODEL"),
     ]
+    tiers_groups = [[] for _ in tiers]
     for i, (label, frac, color, rejected, rule) in enumerate(tiers):
         y = chart_top + i * (bar_h + bar_gap)
         bar_w = max_bar_w * frac
         bar_x = chart_center - bar_w / 2
+        tg = tiers_groups[i]
         # Tier label (left)
-        add_text(slide, label, MX, y + Inches(0.12), label_w, Inches(0.4),
-                 size=Pt(13), bold=True, color=WHITE, align=PP_ALIGN.RIGHT)
+        tg.append(add_text(slide, label, MX, y + Inches(0.12), label_w, Inches(0.4),
+                 size=Pt(13), bold=True, color=WHITE, align=PP_ALIGN.RIGHT))
         # Bar
-        add_rect(slide, bar_x, y, bar_w, bar_h,
-                 fill_color=color, border_color=None)
+        tg.append(add_rect(slide, bar_x, y, bar_w, bar_h,
+                 fill_color=color, border_color=None))
         # Percentage in bar
         pct = f"{int(frac * 100)}%"
-        add_text(slide, pct, bar_x, y + Inches(0.12), bar_w, Inches(0.4),
-                 size=Pt(15), bold=True, color=BG, align=PP_ALIGN.CENTER)
+        tg.append(add_text(slide, pct, bar_x, y + Inches(0.12), bar_w, Inches(0.4),
+                 size=Pt(15), bold=True, color=BG, align=PP_ALIGN.CENTER))
         # Rejected sub-label (right) — top line shows count, bottom line
         # explains the rule for this gate.
         if rejected:
-            add_text(slide, rejected,
+            tg.append(add_text(slide, rejected,
                      chart_left + max_bar_w + Inches(0.3), y + Inches(0.05),
                      rejected_w, Inches(0.3),
-                     size=Pt(10), color=LGRAY, italic=True)
-            add_text(slide, rule,
+                     size=Pt(10), color=LGRAY, italic=True))
+            tg.append(add_text(slide, rule,
                      chart_left + max_bar_w + Inches(0.3), y + Inches(0.32),
                      rejected_w, Inches(0.3),
-                     size=Pt(9), color=MGRAY, italic=True)
+                     size=Pt(9), color=MGRAY, italic=True))
 
     # Footer caption — Round 5.5: added "credible system must know when
     # not to decode" tagline as a sharp closing line above the technical
@@ -1813,6 +1819,7 @@ def slide_client_quality_filter(prs):
         "Frame as 'highest-leverage work per dollar' — the model is "
         "never tested in isolation; what reaches it is what matters."
     ))
+    add_animations(slide, tiers_groups, click_reveal=False)
     return slide
 
 
@@ -2027,19 +2034,22 @@ def slide_client_recap(prs):
         ("YOU CAN TRUST IT", "Two layers of confidence — per word and per segment.", TEAL),
         ("WE DEPLOY IT", "End-to-end on your infrastructure, not an API call.", GOLD),
     ]
+    items_groups = [[] for _ in items]
     for i, (label, body, color) in enumerate(items):
         x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
-        add_text(slide, label, x, top + Inches(0.5),
+        ig = items_groups[i]
+        ig.append(add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None))
+        ig.append(add_text(slide, label, x, top + Inches(0.5),
                  card_w, Inches(0.7),
-                 size=Pt(28), bold=True, color=color, align=PP_ALIGN.CENTER)
-        add_text(slide, body, x + Inches(0.3), top + Inches(1.7),
+                 size=Pt(28), bold=True, color=color, align=PP_ALIGN.CENTER))
+        ig.append(add_text(slide, body, x + Inches(0.3), top + Inches(1.7),
                  card_w - Inches(0.6), h - Inches(1.7),
-                 size=Pt(15), color=WHITE, align=PP_ALIGN.CENTER)
+                 size=Pt(15), color=WHITE, align=PP_ALIGN.CENTER))
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, "The three emotional beats from the deck — in order. Repeat them out loud.")
+    add_animations(slide, items_groups, click_reveal=False)
     return slide
 
 
@@ -2356,48 +2366,51 @@ def _client_judge_ex_slide(prs, *, title, subtitle, ref_text, hyp_runs,
     col_gap = Inches(0.3)
     col_w = (CW - col_gap) / 2
 
-    # LEFT: REF + HYP
+    # LEFT: REF + HYP — group 1 (visible on entry)
+    refhyp_group = []
     ref_y = Inches(2.15)
-    add_text(slide, "REFERENCE",
+    refhyp_group.append(add_text(slide, "REFERENCE",
              MX, ref_y, Inches(1.4), Inches(0.35),
-             size=Pt(11), bold=True, color=LGRAY)
-    add_text(slide, ref_text,
+             size=Pt(11), bold=True, color=LGRAY))
+    refhyp_group.append(add_text(slide, ref_text,
              MX, ref_y + Inches(0.4), col_w, Inches(1.55),
-             size=Pt(13), color=LGRAY, italic=True)
+             size=Pt(13), color=LGRAY, italic=True))
 
     hyp_y = Inches(4.05)
-    add_text(slide, "HYPOTHESIS",
+    refhyp_group.append(add_text(slide, "HYPOTHESIS",
              MX, hyp_y, Inches(1.4), Inches(0.35),
-             size=Pt(11), bold=True, color=WHITE)
-    add_rich_text(slide, [hyp_runs],
-                  MX, hyp_y + Inches(0.4), col_w, Inches(2.0))
+             size=Pt(11), bold=True, color=WHITE))
+    refhyp_group.append(add_rich_text(slide, [hyp_runs],
+                  MX, hyp_y + Inches(0.4), col_w, Inches(2.0)))
 
-    # RIGHT: READER'S VIEW card
+    # RIGHT: READER'S VIEW card — group 2 (first click)
+    reader_group = []
     rv_x = MX + col_w + col_gap
     rv_y = ref_y
     rv_h = Inches(4.4)
-    add_rect(slide, rv_x, rv_y, col_w, rv_h,
-             fill_color=NAVY2, border_color=card_border, border_width=Pt(1.0))
-    add_text(slide, "READER'S VIEW",
+    reader_group.append(add_rect(slide, rv_x, rv_y, col_w, rv_h,
+             fill_color=NAVY2, border_color=card_border, border_width=Pt(1.0)))
+    reader_group.append(add_text(slide, "READER'S VIEW",
              rv_x + Inches(0.25), rv_y + Inches(0.2),
              col_w - Inches(0.5), Inches(0.3),
-             size=Pt(12), bold=True, color=card_border)
-    add_text(slide, reader_view_lead,
+             size=Pt(12), bold=True, color=card_border))
+    reader_group.append(add_text(slide, reader_view_lead,
              rv_x + Inches(0.25), rv_y + Inches(0.6),
              col_w - Inches(0.5), Inches(1.4),
-             size=Pt(13), color=WHITE, bold=True)
-    add_text(slide, reader_view_body,
+             size=Pt(13), color=WHITE, bold=True))
+    reader_group.append(add_text(slide, reader_view_body,
              rv_x + Inches(0.25), rv_y + Inches(2.15),
              col_w - Inches(0.5), Inches(2.1),
-             size=Pt(13), color=WHITE)
+             size=Pt(13), color=WHITE))
 
-    # Closing line
-    add_text(slide, closing_line,
+    # Closing line — group 3 (second click)
+    closing_group = []
+    closing_group.append(add_text(slide, closing_line,
              MX, Inches(6.55), CW, Inches(0.4),
              size=Pt(12), color=closing_color, italic=True,
-             align=PP_ALIGN.CENTER)
+             align=PP_ALIGN.CENTER))
 
-    # Tiny legend
+    # Tiny legend (static)
     add_text(slide,
              "GREEN: confident   YELLOW: review   RED: likely error",
              MX, Inches(7.0), CW, Inches(0.3),
@@ -2406,6 +2419,8 @@ def _client_judge_ex_slide(prs, *, title, subtitle, ref_text, hyp_runs,
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, notes)
+    add_animations(slide, [refhyp_group, reader_group, closing_group],
+                   click_reveal=False)
     return slide
 
 
@@ -2781,81 +2796,84 @@ def slide_client_next_milestone(prs):
     card_h = Inches(3.3)
 
     # LEFT: A smarter model
+    left_group = []
     x1 = MX
-    add_rect(slide, x1, card_top, card_w, card_h,
-             fill_color=NAVY2, border_color=TEAL, border_width=Pt(1.5))
-    add_text(slide, "A SMARTER MODEL",
+    left_group.append(add_rect(slide, x1, card_top, card_w, card_h,
+             fill_color=NAVY2, border_color=TEAL, border_width=Pt(1.5)))
+    left_group.append(add_text(slide, "A SMARTER MODEL",
              x1 + Inches(0.25), card_top + Inches(0.2),
              card_w - Inches(0.5), Inches(0.4),
              size=Pt(16), bold=True, color=TEAL,
-             align=PP_ALIGN.CENTER)
-    add_text(slide, "TODAY",
+             align=PP_ALIGN.CENTER))
+    left_group.append(add_text(slide, "TODAY",
              x1 + Inches(0.25), card_top + Inches(0.75),
              Inches(1.0), Inches(0.3),
-             size=Pt(10), bold=True, color=LGRAY)
-    add_text(slide,
+             size=Pt(10), bold=True, color=LGRAY))
+    left_group.append(add_text(slide,
              "The brain that turns lip-reading signals into "
              "text is a few years old.",
              x1 + Inches(0.25), card_top + Inches(1.05),
              card_w - Inches(0.5), Inches(0.6),
-             size=Pt(14), color=WHITE)
-    add_text(slide, "PATH",
+             size=Pt(14), color=WHITE))
+    left_group.append(add_text(slide, "PATH",
              x1 + Inches(0.25), card_top + Inches(1.85),
              Inches(1.0), Inches(0.3),
-             size=Pt(10), bold=True, color=GREEN)
-    add_text(slide,
+             size=Pt(10), bold=True, color=GREEN))
+    left_group.append(add_text(slide,
              "Retrain on a newer, larger LLM. Same architecture — "
              "much stronger on names, uncommon words, industry "
              "vocabulary. Real training run, not a config flip.",
              x1 + Inches(0.25), card_top + Inches(2.15),
              card_w - Inches(0.5), Inches(1.05),
-             size=Pt(14), color=WHITE)
+             size=Pt(14), color=WHITE))
 
     # RIGHT: Trained on your content
+    right_group = []
     x2 = MX + card_w + card_gap
-    add_rect(slide, x2, card_top, card_w, card_h,
-             fill_color=NAVY2, border_color=GOLD, border_width=Pt(1.5))
-    add_text(slide, "TRAINED ON YOUR CONTENT",
+    right_group.append(add_rect(slide, x2, card_top, card_w, card_h,
+             fill_color=NAVY2, border_color=GOLD, border_width=Pt(1.5)))
+    right_group.append(add_text(slide, "TRAINED ON YOUR CONTENT",
              x2 + Inches(0.25), card_top + Inches(0.2),
              card_w - Inches(0.5), Inches(0.4),
              size=Pt(16), bold=True, color=GOLD,
-             align=PP_ALIGN.CENTER)
-    add_text(slide, "TODAY",
+             align=PP_ALIGN.CENTER))
+    right_group.append(add_text(slide, "TODAY",
              x2 + Inches(0.25), card_top + Inches(0.75),
              Inches(1.0), Inches(0.3),
-             size=Pt(10), bold=True, color=LGRAY)
-    add_text(slide,
+             size=Pt(10), bold=True, color=LGRAY))
+    right_group.append(add_text(slide,
              "The model learned from public video. "
              "None of it looks like yours.",
              x2 + Inches(0.25), card_top + Inches(1.05),
              card_w - Inches(0.5), Inches(0.6),
-             size=Pt(14), color=WHITE)
-    add_text(slide, "PATH",
+             size=Pt(14), color=WHITE))
+    right_group.append(add_text(slide, "PATH",
              x2 + Inches(0.25), card_top + Inches(1.85),
              Inches(1.0), Inches(0.3),
-             size=Pt(10), bold=True, color=GREEN)
-    add_text(slide,
+             size=Pt(10), bold=True, color=GREEN))
+    right_group.append(add_text(slide,
              "Train on your footage — your speakers, "
              "your settings, your vocabulary. Coordinated "
              "training run; data + compute + engineering "
              "time, scoped together.",
              x2 + Inches(0.25), card_top + Inches(2.15),
              card_w - Inches(0.5), Inches(1.05),
-             size=Pt(14), color=WHITE)
+             size=Pt(14), color=WHITE))
 
     # Bottom anchor pill — plain-English version of the empirical-evidence
     # claim. No "data-limit ceiling," no "fine-tuning experiments,"
     # no "empirical proof."
+    anchor_group = []
     anchor_y = card_top + card_h + Inches(0.15)
-    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
-             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
-    add_text(slide,
+    anchor_group.append(add_rect(slide, MX, anchor_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75)))
+    anchor_group.append(add_text(slide,
              "We've already tested smaller versions of both. "
              "Both work. The data path matters most.",
              MX + Inches(0.3), anchor_y + Inches(0.13),
              CW - Inches(0.6), Inches(0.3),
              size=Pt(13), bold=True, color=WHITE, italic=True,
-             align=PP_ALIGN.CENTER)
+             align=PP_ALIGN.CENTER))
 
     # Footer — ties back to "very usable today" in plain English.
     add_text(slide,
@@ -2907,6 +2925,7 @@ def slide_client_next_milestone(prs):
         "the next slide (partnership_ask) says HOW the partnership "
         "runs. Together they are the close."
     ))
+    add_animations(slide, [left_group, right_group, anchor_group], click_reveal=False)
     return slide
 
 
@@ -2955,28 +2974,31 @@ def slide_client_feedback_loop_ask(prs):
          "it mislead? Which segments do they re-watch? That's "
          "the next round of calibration."),
     ]
+    items_groups = [[] for _ in items]
     for i, (label, color, body) in enumerate(items):
         x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
-        add_text(slide, label, x + Inches(0.2), top + Inches(0.25),
+        ig = items_groups[i]
+        ig.append(add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None))
+        ig.append(add_text(slide, label, x + Inches(0.2), top + Inches(0.25),
                  card_w - Inches(0.4), Inches(0.4),
-                 size=Pt(13), bold=True, color=color)
-        add_text(slide, body, x + Inches(0.2), top + Inches(0.85),
+                 size=Pt(13), bold=True, color=color))
+        ig.append(add_text(slide, body, x + Inches(0.2), top + Inches(0.85),
                  card_w - Inches(0.4), h - Inches(1.0),
-                 size=Pt(13), color=WHITE)
+                 size=Pt(13), color=WHITE))
 
     # Bottom anchor — why this is the right ask
+    anchor_group = []
     anchor_y = Inches(6.05)
-    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
-             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
-    add_text(slide,
+    anchor_group.append(add_rect(slide, MX, anchor_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75)))
+    anchor_group.append(add_text(slide,
              "We did the engineering. The end-user signal closes "
              "the loop — and the calibration tightens around your "
              "actual content.",
              MX + Inches(0.3), anchor_y + Inches(0.13),
              CW - Inches(0.6), Inches(0.3),
              size=Pt(13), bold=True, color=WHITE, italic=True,
-             align=PP_ALIGN.CENTER)
+             align=PP_ALIGN.CENTER))
 
     # Footer
     add_text(slide,
@@ -3011,6 +3033,7 @@ def slide_client_feedback_loop_ask(prs):
         "calibration tightens with use; THIS slide names what 'with "
         "use' actually requires from the client."
     ))
+    add_animations(slide, items_groups + [anchor_group], click_reveal=False)
     return slide
 
 
@@ -3094,7 +3117,7 @@ def slide_client_partnership_ask(prs):
         "loud. Be ready for the price question; answer 'specifics in "
         "follow-up' and let them name a budget."
     ))
-    add_animations(slide, beats_groups + [anchor_group], click_reveal=True)
+    add_animations(slide, beats_groups + [anchor_group], click_reveal=False)
     return slide
 
 
@@ -3128,19 +3151,21 @@ def slide_client_failure_taxonomy_full(prs):
         ("Right Topic Wrong Details", "13.8% (79)", "Gist right, specific names/content lost", TEAL),
         ("Accumulated Errors",       "9.1% (52)",   "Many small errors compound", ORANGE),
     ]
+    rows_groups = [[] for _ in rows]
     for i, (mode, freq, rule, color) in enumerate(rows):
         y = table_top + i * row_h
-        add_rect(slide, MX, y, label_w, row_h - Inches(0.1),
-                 fill_color=NAVY2, border_color=None)
-        add_text(slide, mode, MX + Inches(0.15), y + Inches(0.18),
+        rg = rows_groups[i]
+        rg.append(add_rect(slide, MX, y, label_w, row_h - Inches(0.1),
+                 fill_color=NAVY2, border_color=None))
+        rg.append(add_text(slide, mode, MX + Inches(0.15), y + Inches(0.18),
                  label_w - Inches(0.2), Inches(0.4),
-                 size=Pt(13), bold=True, color=color)
-        add_text(slide, freq, MX + label_w + Inches(0.1), y + Inches(0.18),
+                 size=Pt(13), bold=True, color=color))
+        rg.append(add_text(slide, freq, MX + label_w + Inches(0.1), y + Inches(0.18),
                  pct_w, Inches(0.4),
-                 size=Pt(14), bold=True, color=WHITE)
-        add_text(slide, rule, MX + label_w + pct_w + Inches(0.3),
+                 size=Pt(14), bold=True, color=WHITE))
+        rg.append(add_text(slide, rule, MX + label_w + pct_w + Inches(0.3),
                  y + Inches(0.22), rule_w, Inches(0.4),
-                 size=Pt(12), color=LGRAY, italic=True)
+                 size=Pt(12), color=LGRAY, italic=True))
 
     add_text(slide,
              "Frequencies on the 574 segments the system rated below the useful threshold.",
@@ -3155,6 +3180,7 @@ def slide_client_failure_taxonomy_full(prs):
         "on one slide. The framing-doc canonical numbers (44.4 / 18.8 / "
         "13.9 / 13.8 / 9.1%) are the same as failure_taxonomy.py."
     ))
+    add_animations(slide, rows_groups, click_reveal=False)
     return slide
 
 
@@ -3269,7 +3295,7 @@ def slide_client_claims(prs):
     # claim/not-claim pair per click, then the bottom credibility line.
     add_animations(slide,
                    [headers] + pair_groups + [bottom_group],
-                   click_reveal=True)
+                   click_reveal=False)
     return slide
 
 
@@ -3414,7 +3440,7 @@ def slide_client_trust_without_ground_truth(prs):
     # signal card per click, then the two bottom pills one by one.
     add_animations(slide,
                    signal_groups + [pill1_group, pill2_group],
-                   click_reveal=True)
+                   click_reveal=False)
     return slide
 
 
@@ -3636,16 +3662,18 @@ def slide_client_what_is_lipreading_not(prs):
          "Identity is a separate question (often paired with this in a "
          "downstream system, but out of scope for the lip-reading model)."),
     ]
+    cards_groups = [[] for _ in cards]
     for i, (label, color, body) in enumerate(cards):
         x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2,
-                 border_color=color, border_width=Pt(0.75))
-        add_text(slide, label, x + Inches(0.2), top + Inches(0.3),
+        cg = cards_groups[i]
+        cg.append(add_rect(slide, x, top, card_w, h, fill_color=NAVY2,
+                 border_color=color, border_width=Pt(0.75)))
+        cg.append(add_text(slide, label, x + Inches(0.2), top + Inches(0.3),
                  card_w - Inches(0.4), Inches(0.6),
-                 size=Pt(13), bold=True, color=color, align=PP_ALIGN.CENTER)
-        add_text(slide, body, x + Inches(0.25), top + Inches(1.1),
+                 size=Pt(13), bold=True, color=color, align=PP_ALIGN.CENTER))
+        cg.append(add_text(slide, body, x + Inches(0.25), top + Inches(1.1),
                  card_w - Inches(0.5), h - Inches(1.3),
-                 size=Pt(13), color=WHITE)
+                 size=Pt(13), color=WHITE))
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -3655,6 +3683,7 @@ def slide_client_what_is_lipreading_not(prs):
         "captioning?' or 'is this face recognition?' Land this slide before "
         "the demo so the question doesn't derail Act 1."
     ))
+    add_animations(slide, cards_groups, click_reveal=False)
     return slide
 
 
@@ -3695,16 +3724,18 @@ def slide_client_human_ceiling(prs):
          "Without per-speaker calibration, readers average across "
          "very different templates."),
     ]
+    cards_groups = [[] for _ in cards]
     for i, (label, color, body) in enumerate(cards):
         x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2,
-                 border_color=color, border_width=Pt(0.75))
-        add_text(slide, label, x + Inches(0.2), top + Inches(0.3),
+        cg = cards_groups[i]
+        cg.append(add_rect(slide, x, top, card_w, h, fill_color=NAVY2,
+                 border_color=color, border_width=Pt(0.75)))
+        cg.append(add_text(slide, label, x + Inches(0.2), top + Inches(0.3),
                  card_w - Inches(0.4), Inches(0.5),
-                 size=Pt(12), bold=True, color=color, align=PP_ALIGN.CENTER)
-        add_text(slide, body, x + Inches(0.25), top + Inches(1.0),
+                 size=Pt(12), bold=True, color=color, align=PP_ALIGN.CENTER))
+        cg.append(add_text(slide, body, x + Inches(0.25), top + Inches(1.0),
                  card_w - Inches(0.5), h - Inches(1.2),
-                 size=Pt(13), color=WHITE)
+                 size=Pt(13), color=WHITE))
 
     add_text(slide,
              "Range from trained-human lip-reading studies "
@@ -3727,6 +3758,7 @@ def slide_client_human_ceiling(prs):
         "is fatigue-free + language context. Lands the comparison harder "
         "than the bare 45-52% number alone."
     ))
+    add_animations(slide, cards_groups, click_reveal=False)
     return slide
 
 
@@ -3830,18 +3862,20 @@ def slide_client_visemes(prs):
         ("LOOK IDENTICAL", "thin  ·  fin  ·  shin",  "Fricatives — invisible airflow",   GOLD),
         ("LOOK IDENTICAL", "see  ·  zee  ·  thee",   "Voicing — invisible vibration",    CORAL),
     ]
+    examples_groups = [[] for _ in examples]
     for i, (label, words, why, color) in enumerate(examples):
         x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
-        add_text(slide, label, x + Inches(0.3), top + Inches(0.25),
+        eg = examples_groups[i]
+        eg.append(add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None))
+        eg.append(add_text(slide, label, x + Inches(0.3), top + Inches(0.25),
                  card_w - Inches(0.6), Inches(0.4),
-                 size=Pt(11), bold=True, color=color)
-        add_text(slide, words, x + Inches(0.3), top + Inches(0.85),
+                 size=Pt(11), bold=True, color=color))
+        eg.append(add_text(slide, words, x + Inches(0.3), top + Inches(0.85),
                  card_w - Inches(0.6), Inches(0.7),
-                 size=Pt(22), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-        add_text(slide, why, x + Inches(0.3), top + Inches(1.7),
+                 size=Pt(22), bold=True, color=WHITE, align=PP_ALIGN.CENTER))
+        eg.append(add_text(slide, why, x + Inches(0.3), top + Inches(1.7),
                  card_w - Inches(0.6), h - Inches(1.8),
-                 size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
+                 size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER, italic=True))
 
     add_text(slide,
              "The system uses language context and confidence scoring to pick the right one — and tells you when it can't.",
@@ -3855,6 +3889,7 @@ def slide_client_visemes(prs):
         "Don't say 'visemes' on the slide. The teaching beat is: this is why "
         "the problem is hard, and why our confidence signal matters."
     ))
+    add_animations(slide, examples_groups, click_reveal=False)
     return slide
 
 
@@ -3939,23 +3974,26 @@ def slide_client_deployment_options(prs):
          ["Air-gapped operation supported", "GPU on your own machines (T4 minimum)", "We support and maintain remotely"],
          GOLD),
     ]
+    options_groups = [[] for _ in options]
     for i, (label, blurb, bullets, color) in enumerate(options):
         x = MX + i * (card_w + gap)
-        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=color)
-        add_text(slide, label, x + Inches(0.3), top + Inches(0.3),
+        og = options_groups[i]
+        og.append(add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=color))
+        og.append(add_text(slide, label, x + Inches(0.3), top + Inches(0.3),
                  card_w - Inches(0.6), Inches(0.6),
-                 size=Pt(28), bold=True, color=color)
-        add_text(slide, blurb, x + Inches(0.3), top + Inches(1.1),
+                 size=Pt(28), bold=True, color=color))
+        og.append(add_text(slide, blurb, x + Inches(0.3), top + Inches(1.1),
                  card_w - Inches(0.6), Inches(1.0),
-                 size=Pt(14), color=WHITE)
-        add_bullets(slide, bullets,
+                 size=Pt(14), color=WHITE))
+        og.append(add_bullets(slide, bullets,
                     x + Inches(0.3), top + Inches(2.1),
                     card_w - Inches(0.6), Inches(1.4),
-                    size=Pt(13))
+                    size=Pt(13)))
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, "Headline: same code, two deployment models.")
+    add_animations(slide, options_groups, click_reveal=False)
     return slide
 
 
@@ -3982,18 +4020,20 @@ def slide_client_next_steps(prs):
         ("Timeline",               "Weeks to first end-to-end run on your data", GREEN),
         ("Success criteria",       "What good looks like for your team", CORAL),
     ]
+    items_groups = [[] for _ in items]
     for i, (label, prompt, color) in enumerate(items):
         col = i % 2
         row = i // 2
         x = MX + col * (card_w + gap)
         y = top + row * (h + Inches(0.3))
-        add_rect(slide, x, y, card_w, h, fill_color=NAVY2, border_color=None)
-        add_text(slide, label, x + Inches(0.3), y + Inches(0.25),
+        ig = items_groups[i]
+        ig.append(add_rect(slide, x, y, card_w, h, fill_color=NAVY2, border_color=None))
+        ig.append(add_text(slide, label, x + Inches(0.3), y + Inches(0.25),
                  card_w - Inches(0.6), Inches(0.5),
-                 size=Pt(20), bold=True, color=color)
-        add_text(slide, prompt, x + Inches(0.3), y + Inches(0.95),
+                 size=Pt(20), bold=True, color=color))
+        ig.append(add_text(slide, prompt, x + Inches(0.3), y + Inches(0.95),
                  card_w - Inches(0.6), h - Inches(1.05),
-                 size=Pt(13), color=LGRAY, italic=True)
+                 size=Pt(13), color=LGRAY, italic=True))
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -4005,6 +4045,7 @@ def slide_client_next_steps(prs):
         "before the meeting. The PRE_MEETING_CHECKLIST has this in the "
         "before-leaving section."
     ))
+    add_animations(slide, items_groups, click_reveal=False)
     return slide
 
 
@@ -4128,7 +4169,7 @@ def slide_client_compared_to_today(prs):
         "meeting do most of the work for them, this is where they map our "
         "product onto a problem they recognize."
     ))
-    add_animations(slide, rows_groups, click_reveal=True)
+    add_animations(slide, rows_groups, click_reveal=False)
     return slide
 
 
@@ -4310,7 +4351,7 @@ def slide_client_three_tier_policy(prs):
     # then one click per tier card, then one click for the bottom anchor.
     add_animations(slide,
                    [card_groups[0], card_groups[1], card_groups[2], bottom_group],
-                   click_reveal=True)
+                   click_reveal=False)
     return slide
 
 
@@ -4434,7 +4475,7 @@ def slide_client_how_to_read(prs):
         "\n\n"
         "Source: docs/features/per-word-confidence-user-guide.md."
     ))
-    add_animations(slide, step_groups + [anchor_group], click_reveal=True)
+    add_animations(slide, step_groups + [anchor_group], click_reveal=False)
     return slide
 
 
@@ -5016,7 +5057,7 @@ def slide_client_pitfalls(prs):
         "Source: docs/features/per-word-confidence-user-guide.md "
         "§Common mistakes."
     ))
-    add_animations(slide, rule_groups, click_reveal=True)
+    add_animations(slide, rule_groups, click_reveal=False)
     return slide
 
 
@@ -5483,7 +5524,7 @@ def slide_client_engineering_journey(prs):
         "contaminated — 27% drift on byte-identical-text segments. "
         "Don't cite v1 numbers."
     ))
-    add_animations(slide, milestones_groups, click_reveal=True)
+    add_animations(slide, milestones_groups, click_reveal=False)
     return slide
 
 
