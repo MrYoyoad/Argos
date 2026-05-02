@@ -198,7 +198,12 @@ pre{white-space:pre-wrap; word-break:break-word; margin:0}
 </style></head><body>
 <h2>ASR Report (REF vs HYP)</h2>
 <p><b>Accuracy:</b> <span class="ok">green</span>=match, <span class="rep">yellow</span>=mismatch/shift, <span class="ins">red</span>=inserted/made-up</p>
-<p><b>Confidence (model softmax):</b> <span class="conf-high">blue</span>=high (&ge;0.85), <span class="conf-med">orange</span>=medium (0.40&ndash;0.85), <span class="conf-low">purple</span>=low (&lt;0.40) &mdash; <i>only shown when per-token scores were captured during decode</i></p>
+<p><b>Confidence (joint top-1 prob &amp; beam agreement):</b>
+   <span class="conf-high">blue</span>=high (prob&ge;0.95 <i>and</i> &ge;80% of beams agree),
+   <span class="conf-med">orange</span>=some signal (prob&ge;0.65 <i>and</i> &ge;50% beams agree),
+   <span class="conf-low">purple</span>=avoid (low prob or disagreed beams) &mdash;
+   <i>only shown when n-best + per-token scores were captured during decode</i></p>
+<p><b>Numeric tokens:</b> digits and number-words (e.g. "billion", "1024") are capped at orange regardless of softmax probability &mdash; lip-reading cannot disambiguate them.</p>
 <p><b>Reliability tier</b> (segment-level, keyed on sentence_confidence):
    <span class="tier-pill trust">Trust</span> &ge;0.82 — coloring is reliable as labeled.
    <span class="tier-pill salvage">Salvage</span> 0.65&ndash;0.82 — coloring shown with caveat banner; verify names, numbers, critical details.

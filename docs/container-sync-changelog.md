@@ -1719,3 +1719,31 @@ For `/workspace/` deployment translate the paths and apply identically. No new d
 
 **Verification**: pytest passes 17/17 in <0.1s; module test suite green; smoke-tested both container trees by importing their `progress_tracker` directly and feeding synthetic decode log lines (HYP × 5 + flush at 25 → done == 25).
 
+### 29. Joint conf+agreement band rule + agreement sidecar (May 2, 2026)
+
+**Summary**: The per-word confidence band classification now combines softmax probability with **per-word beam agreement** (fraction of n-best beams that emit the same surface word). High-band ("blue") words must satisfy `prob >= 0.95 AND agreement >= 0.80`; mid-band ("orange") needs `prob >= 0.65 AND agreement >= 0.50`. Numeric tokens (digits and number-words like "billion", "1024") are capped at orange regardless of softmax — lip-reading cannot disambiguate them. The pipeline produces a new `agreement-{fid}.json` sidecar and regenerates `word_confidence.json` under the joint rule when both `nbest-{fid}.json` and `confidence-{fid}.json` are present.
+
+**Why**: Empirical analysis of 23,261 words (B3 baseline) found that the conf-only rule painted "billion → million" green (off by 1000×) and similar confident-but-wrong number/entity latches. Joint conf+agreement filtering catches those cases: when the model is confident but the beams disagree, the word drops to orange/purple — see [docs/confidence/confidence_shape_and_beam_disagree_design.md](confidence/confidence_shape_and_beam_disagree_design.md) for the design rationale and [english_full_nbest_eval/trust_diagnostic/TRUST_DIAGNOSTIC.md](../english_full_nbest_eval/trust_diagnostic/TRUST_DIAGNOSTIC.md) for the empirical numbers backing the thresholds. Lessons learned recap: [docs/confidence/lessons_learned_band_rule_v2.md](confidence/lessons_learned_band_rule_v2.md).
+
+**Files mirrored from EC2** (commits `26a6165` in `VSP-LLM/` submodule + `911b725` in parent repo):
+
+- **NEW** `VSP-LLM/scripts/compute_word_agreement.py` (105 lines) — reads `nbest-{fid}.json` + `confidence-{fid}.json`, emits per-word agreement fractions to `agreement-{fid}.json`.
+- `VSP-LLM/scripts/compute_word_confidence.py` (223 → 281 lines) — adds module-level thresholds (`T_GREEN_CONF=0.95`, `T_GREEN_AGREE=0.80`, `T_YELLOW_CONF=0.65`, `T_YELLOW_AGREE=0.50`), `is_numeric()` helper, `classify_joint()` function, `--agreement` CLI flag, and optional `agreement_records` arg to `aggregate_segment_records()`. **Backward-compatible**: when `--agreement` is not supplied, behavior is byte-for-byte identical to the prior conf-only rule.
+- `VSP-LLM/scripts/make_report.py` (1175 → 1180 lines) — legend HTML updated only (no code-path change). Documents the joint rule and the numeric cap.
+- `lib/outputs.sh` (318 → 352 lines) — new "Per-word beam-agreement sidecar + joint band rule" block inserted after the n-best aggregation block (line ~136). The block runs `compute_word_agreement.py` when both sidecars exist, then re-runs `compute_word_confidence.py --agreement` to overwrite `word_confidence.json` under the joint rule. Falls through silently if either sidecar or script is missing.
+
+**Container action for already-running deployments**:
+1. Drop in the three Python files (verbatim copy from EC2 source — no path edits needed; scripts use relative imports + JSON/CSV files).
+2. Apply the new outputs.sh block (already done in `vsp_linux_container_FINAL_20260217/lib/outputs.sh`).
+3. To regenerate `word_confidence.json` under the new rule on existing decode output, re-run stage 8 (`outputs.sh::run_outputs`) — no need to re-decode. The new block consumes existing `nbest-{fid}.json` + `confidence-{fid}.json` sidecars.
+
+**Backward compatibility**: Pipelines decoded **without** `VSP_NBEST=1` will lack `nbest-{fid}.json`. The new block in `outputs.sh` is gated on `[ -f "$nbest_json" ] && [ -f "$confidence_json" ]`, so the joint rule is silently skipped and the conf-only band rule (the prior behavior) continues to apply. No agreement sidecar is produced. End users see no change unless they opt into n-best decoding.
+
+**Verification**:
+- `diff` between EC2 and container for all three Python files: clean (no differences).
+- Line counts match EC2: `compute_word_agreement.py` 105, `compute_word_confidence.py` 281, `make_report.py` 1180, `lib/outputs.sh` 352.
+- `bash -n` on container `lib/outputs.sh`: syntax OK.
+- Smoke test: `classify_joint(0.97, 0.85, False) == "conf-high"`; `classify_joint(0.97, 0.85, True) == "conf-med"` (numeric cap). Both pass on container Python.
+
+**Path translation note**: The container sources are at `/home/ubuntu/vsp_linux_container_FINAL_20260217/...` (this repo's overlay). For `/workspace/` deployment, translate paths identically — none of the Python scripts hardcode `/home/ubuntu/` or `/workspace/`, and `outputs.sh` already uses `${HOME}` fallbacks for both `compute_word_agreement.py` and `compute_word_confidence.py` lookups. No new dependencies (only `re`, `json`, stdlib).
+

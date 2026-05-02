@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Iterable, List, Mapping, Optional, Sequence
 
@@ -40,6 +41,31 @@ WORD_START_MARKER = "▁"
 CONF_HIGH = 0.85
 CONF_MED = 0.40
 
+# Joint conf + beam-agreement thresholds (see TRUST_DIAGNOSTIC.md, May 2 2026).
+T_GREEN_CONF = 0.95
+T_GREEN_AGREE = 0.80
+T_YELLOW_CONF = 0.65
+T_YELLOW_AGREE = 0.50
+
+_NUMBER_WORDS = frozenset(
+    "zero one two three four five six seven eight nine ten eleven twelve "
+    "thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty "
+    "thirty forty fifty sixty seventy eighty ninety hundred thousand "
+    "million billion trillion".split()
+)
+
+
+def is_numeric(word: Optional[str]) -> bool:
+    """True if word contains a digit or is a known number-word."""
+    if not word:
+        return False
+    w = re.sub(r"[^a-z0-9]", "", str(word).lower())
+    if not w:
+        return False
+    if any(c.isdigit() for c in w):
+        return True
+    return w in _NUMBER_WORDS
+
 
 def classify(prob: Optional[float]) -> str:
     """Map a probability to a CSS-friendly confidence class."""
@@ -48,6 +74,23 @@ def classify(prob: Optional[float]) -> str:
     if prob >= CONF_HIGH:
         return "conf-high"
     if prob >= CONF_MED:
+        return "conf-med"
+    return "conf-low"
+
+
+def classify_joint(prob: Optional[float], agreement: Optional[float], is_num: bool) -> str:
+    """Joint confidence + beam-agreement band. Numbers cap at conf-med."""
+    if prob is None:
+        return "conf-unknown"
+    if is_num:
+        if prob >= T_YELLOW_CONF and (agreement is None or agreement >= T_YELLOW_AGREE):
+            return "conf-med"
+        return "conf-low"
+    if agreement is None:
+        return classify(prob)
+    if prob >= T_GREEN_CONF and agreement >= T_GREEN_AGREE:
+        return "conf-high"
+    if prob >= T_YELLOW_CONF and agreement >= T_YELLOW_AGREE:
         return "conf-med"
     return "conf-low"
 
@@ -126,24 +169,27 @@ def aggregate_subtokens_to_words(tokens: Iterable[Mapping]) -> List[dict]:
 
 def aggregate_segment_records(
     confidence_records: Mapping[str, Mapping],
+    agreement_records: Optional[Mapping[str, List[float]]] = None,
 ) -> dict:
     """Aggregate every segment in a confidence sidecar into word-level confidence.
 
-    Args:
-        confidence_records: mapping of utt_id -> {"sequence_score", "tokens"}.
-
-    Returns:
-        mapping of utt_id -> {
-            "sequence_score": float | None,
-            "words": [...],
-            "summary": {"max_word_prob", "min_word_prob", "mean_word_prob",
-                        "n_words", "n_high", "n_med", "n_low"},
-        }
+    When ``agreement_records`` is provided, each per-word dict gains
+    ``agreement`` and ``is_numeric`` keys, and ``conf_class`` reflects the
+    joint conf+agreement rule from ``classify_joint``.
     """
     out: dict = {}
+    use_joint = agreement_records is not None
     for utt_id, rec in confidence_records.items():
         tokens = rec.get("tokens", [])
         words = aggregate_subtokens_to_words(tokens)
+        if use_joint:
+            agreements = list(agreement_records.get(utt_id, []) or [])
+            for i, w in enumerate(words):
+                a = agreements[i] if i < len(agreements) else None
+                num = is_numeric(w.get("word"))
+                w["agreement"] = a
+                w["is_numeric"] = num
+                w["conf_class"] = classify_joint(w.get("prob"), a, num)
         probs = [w["prob"] for w in words if w["prob"] is not None]
         summary = {
             "max_word_prob": max(probs) if probs else None,
@@ -200,12 +246,24 @@ def main() -> None:
         default=None,
         help="output path (default: <input>.words.json next to input)",
     )
+    parser.add_argument(
+        "--agreement",
+        type=Path,
+        default=None,
+        help="optional agreement-{fid}.json (from compute_word_agreement.py); "
+             "enables the joint conf+beam-agreement band rule",
+    )
     args = parser.parse_args()
 
     with args.input.open("r", encoding="utf-8") as f:
         confidence_records = json.load(f)
 
-    per_segment = aggregate_segment_records(confidence_records)
+    agreement_records: Optional[Mapping[str, List[float]]] = None
+    if args.agreement is not None:
+        with args.agreement.open("r", encoding="utf-8") as f:
+            agreement_records = json.load(f)
+
+    per_segment = aggregate_segment_records(confidence_records, agreement_records)
 
     out_path = args.out or args.input.with_suffix("").with_name(
         args.input.stem + ".words.json"
