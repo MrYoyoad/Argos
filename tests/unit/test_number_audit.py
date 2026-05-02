@@ -268,6 +268,8 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "35%",                # "good" word probability (Mode 3.1 verbatim)
         "53%",                # "idea" word probability (Mode 3.1 verbatim)
         "96%",                # numeric/entity false-confidence example (1 billion → 1 million)
+        "79%",                # Salvage-tier case study segment overall confidence (Round 5.16c)
+        "21%",                # Strip-tier case study segment overall confidence (Round 5.16c)
     })
     # Round 5.15 — trust operating points from
     # docs/confidence/client_trust_calibration.md (full 1,497-segment eval).

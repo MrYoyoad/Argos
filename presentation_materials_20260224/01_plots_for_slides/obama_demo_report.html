@@ -186,7 +186,7 @@ h1 .subtitle {
 <body>
   <h1>
     Argos VSP — Lip-Reading Demo Report
-    <span class="subtitle">Obama bin Laden announcement (33-segment lip-crop, real per-token confidence)</span>
+    <span class="subtitle">33 segments · B3 decode 2026-04-30 · confidence-172610.json</span>
   </h1>
 
   <div class="summary">
@@ -197,7 +197,7 @@ h1 .subtitle {
     </div>
     <div class="summary-card">
       <div class="label">Source</div>
-      <div class="value" style="font-size:18px">B3 sidecar 2026-04-30 — confidence-172610.json</div>
+      <div class="value" style="font-size:18px">Not used — vision only</div>
     </div>
     <div class="summary-card">
       <div class="label">Audio</div>
@@ -207,9 +207,12 @@ h1 .subtitle {
 
   <div class="legend">
     Per-word confidence:
-    <span class="swatch conf-high">high</span>
-    <span class="swatch conf-med">review</span>
-    <span class="swatch conf-low">likely error</span>
+    <span class="swatch conf-high">trust</span> = confident AND beams agreed
+    &nbsp;·&nbsp;
+    <span class="swatch conf-med">review</span> = some signal, verify
+    &nbsp;·&nbsp;
+    <span class="swatch conf-low">avoid</span>
+    &nbsp;·&nbsp; Numbers stay yellow at most.
     &nbsp; · &nbsp;Hover any word to see its confidence value.
   </div>
 

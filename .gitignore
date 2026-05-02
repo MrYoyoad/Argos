@@ -275,3 +275,9 @@ html_report_top.png
 snap/
 *.sha256
 *.gif
+
+# Loose images dropped at repo root (screenshots, working artifacts).
+# Place presentation images under presentation_materials_*/ or docs/.
+/*.png
+/*.jpg
+/*.jpeg

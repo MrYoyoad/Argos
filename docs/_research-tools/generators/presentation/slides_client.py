@@ -1452,8 +1452,8 @@ def slide_client_aggregation_safety(prs):
     # Footer — Round 5.16: aggregation is now on by default for every video.
     # Plain-English; the technical name (MBR) lives in speaker notes.
     add_text(slide,
-             "Aggregation now runs by default on every video — "
-             "the safer hypothesis is the one shown.",
+             "By default, the model considers 20 alternative readings of every "
+             "segment and shows the safest consensus — on every video.",
              MX, Inches(7.0), CW, Inches(0.3),
              size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -3956,30 +3956,30 @@ def slide_client_three_tier_policy(prs):
     tiers = [
         {
             "name": "TRUST",
-            "thresh": "high overall confidence",
+            "thresh": "overall confidence  ≥  82%",
             "color": GREEN,
             "share": "23.8%",
             "ui": "Full per-word coloring.",
-            "promise": "Green words right ~9 out of 10",
-            "promise_sub": "Original colored-transcript promise.",
+            "promise": "Green words right ~9 in 10",
+            "promise_sub": "(85–93% depending on segment quality)",
         },
         {
             "name": "SALVAGE",
-            "thresh": "medium overall confidence",
+            "thresh": "overall confidence  65 – 82%",
             "color": GOLD,
             "share": "37.5%",
             "ui": "Full coloring + review banner.",
-            "promise": "\"Verify names, numbers,",
-            "promise_sub": "critical details\"",
+            "promise": "Green right ~7 in 10 here —",
+            "promise_sub": "verify names, numbers, dates",
         },
         {
             "name": "STRIP",
-            "thresh": "low overall confidence",
+            "thresh": "overall confidence  <  65%",
             "color": LGRAY,
             "share": "38.7%",
             "ui": "Coloring removed. Plain grey text.",
-            "promise": "Green would mislead here.",
-            "promise_sub": "Show the words; hide the colors.",
+            "promise": "Green would be right <5 in 10 —",
+            "promise_sub": "coloring would mislead, so we hide it",
         },
     ]
     for i, t in enumerate(tiers):
@@ -4033,8 +4033,8 @@ def slide_client_three_tier_policy(prs):
     add_rect(slide, MX, bottom_y, CW, Inches(0.6),
              fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
     add_text(slide,
-             "Whether a green word is right depends on the segment it sits in. "
-             "Below low overall confidence, the colors would mislead — so we hide them.",
+             "How often a green word is right runs from 18% to 93% depending on the segment. "
+             "Below 65% overall confidence we hide the colors rather than mislead.",
              MX + Inches(0.3), bottom_y + Inches(0.15),
              CW - Inches(0.6), Inches(0.35),
              size=Pt(13), bold=True, color=WHITE, italic=True,
@@ -4398,7 +4398,7 @@ def slide_client_case_topic_shift(prs):
              size=Pt(13), bold=True, color=GOLD,
              align=PP_ALIGN.CENTER)
     add_text(slide,
-             "Medium overall confidence — banner shown to the reviewer: "
+             "Overall confidence 79% (Salvage tier) — banner shown to the reviewer: "
              "\"Reading carefully — verify names, numbers, critical details.\"",
              MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
              CW - badge_w - Inches(0.2), Inches(0.3),
@@ -4566,7 +4566,7 @@ def slide_client_case_strip_save(prs):
              size=Pt(13), bold=True, color=LGRAY,
              align=PP_ALIGN.CENTER)
     add_text(slide,
-             "Low overall confidence — banner shown: \"Model is "
+             "Overall confidence 21% (Strip tier) — banner shown: \"Model is "
              "unsure — text may not be reliable, even where it looks confident.\"",
              MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
              CW - badge_w - Inches(0.2), Inches(0.3),
