@@ -62,7 +62,7 @@ BORROWED_SLIDES: {44, 45, 59, 71} (was {44, 45, 58, 70}).
 All 7 audits green. Fade transitions still apply to all slides.
 
 ### COMMIT
-- (pending)
+- 0486b2c.
 
 ---
 
