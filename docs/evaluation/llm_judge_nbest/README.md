@@ -36,18 +36,22 @@ llm_judge_nbest/
 
 ## Batch format
 
-Each batch file has a single header line then `---` then one row per pair:
+Each batch file has a single header line then `---` then one row per pair. The
+hypothesis column is annotated **per-word** with calibrated confidence in `[0,1]`:
 
 ```
-BASELINE | BATCH 01/15 | 103 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+BASELINE | BATCH 01/15 | 103 pairs | format: NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] ([--] if missing). The trailing column is the method's sentence-level confidence. Use as soft cues, NOT as verdict shortcuts.
 ---
-001|<reference>|<hypothesis>|<conf>
+001|we will give up some of our individual choice for the sake of the community decision|will[.71] give[.83] up[.92] some[.88] of[.95] our[.91] individual[.42] choices[.57] for[.94] the[.97] sake[.85] of[.95] the[.97] community[.62] and[.41]|0.85
 002|...
 ```
 
-`conf` is the method's own confidence: `sentence_confidence` for baseline, or
-`hyp_<method>_mean_conf_calib` for the n-best methods. Rounded to 2 decimals.
-`n/a` when missing.
+- Per-word conf comes from `aggregated-172610.json` produced by `lib/nbest_aggregate.py`:
+  - `baseline` → `hyp_top1_word_confs_calibrated`
+  - `hyp_mbr` / `hyp_vote_score` / `hyp_vote_conf` → `<method>.word_confs_calibrated`
+- `[.NN]` is two-decimal `.34` form; `[1.0]` for fully agreed; `[--]` if missing.
+- Sentence-level conf (last column) is unchanged: `sentence_confidence` for baseline,
+  `hyp_<method>_mean_conf_calib` for n-best methods.
 
 ## Verdict codes
 
@@ -66,18 +70,57 @@ Each batch is independent and resumable. Spawn a fresh Opus 4.6 conversation per
 session (not 4.7 — preserves comparability with the existing 1,497-pair gold
 standard).
 
-In the session, give Claude this prompt template (substitute the batch path):
+In the session, give Claude this prompt template (paste verbatim — it self-selects
+the next un-judged batch):
 
-> Read `/home/ubuntu/docs/evaluation/llm_judge_nbest/batches/batch_<METHOD>_<NN>.txt`.
-> Each line is `NNN|ref|hyp|conf`. Judge each pair Y/P/N per the header. The `conf`
-> column is the model's sentence-level confidence — use it as a soft cue (e.g., very
-> low conf may make a borderline P feel more like an N) but do **not** let it override
-> your reading of meaning. Stay blind: do not look at `report.csv` or any other file.
+> I need you to judge reference-vs-hypothesis pairs for an n-best aggregation evaluation.
+> The job is resumable — pick any batch that has not been judged yet and process it.
 >
-> Write your verdicts to
-> `/home/ubuntu/docs/evaluation/llm_judge_nbest/judgments/batch_<METHOD>_<NN>_judgments.txt`,
-> one line per pair in the format `NNN,JUDGMENT` (e.g., `001,Y`, `002,P:key+sem/-detail`,
-> `003,N`). One pair per line, no extra commentary in the file.
+> **Step 1 — pick a batch.** List the files in
+> `/home/ubuntu/docs/evaluation/llm_judge_nbest/batches/` (60 files named
+> `batch_<method>_NN.txt`). For each one, check whether the matching judgments file
+> exists at `/home/ubuntu/docs/evaluation/llm_judge_nbest/judgments/batch_<method>_NN_judgments.txt`.
+> Pick the first batch that does **not** yet have a judgments file. If all 60 are
+> done, stop and tell me.
+>
+> **Step 2 — read it.** The first line is a header (skip it), then `---`, then one
+> segment per line in the format
+> `NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf`:
+> - `NNN` — 3-digit index
+> - `ref` — ground-truth transcript (plain text, no annotations)
+> - `wordI[.NN]` — each hyp word followed by its calibrated confidence in `[0, 1]`
+>   (`[1.0]` for fully agreed, `[--]` if missing)
+> - `sentence_conf` — method's sentence-level confidence in `[0, 1]` (or `n/a`)
+>
+> **Step 3 — judge each line.** Decide whether the hypothesis conveys the meaning of
+> the reference:
+> - **Y** — meaning fully conveyed (small wording differences are fine)
+> - **N** — meaning lost (wrong topic, fluent garbage, hallucinated content, key
+>   information replaced or absent)
+> - **P** — partial. Annotate as `P:preserved/-lost` where each side is a `+`-joined
+>   subset of `{key, struct, sem, phon, detail, num, entity}`. Examples:
+>   `P:key+sem/-detail`, `P:struct/-key`. Plain `P:` is allowed.
+>
+> Treat per-word conf and sentence conf as **soft cues only** — very low conf may tip
+> a borderline case toward N, very high conf toward Y, but never let it override your
+> reading of meaning. Stay strictly blind: do **not** open `report.csv`,
+> `segment_features.csv`, or anything else in `english_full_nbest_eval/` or
+> `docs/evaluation/`. Be conservative on ties (Y vs P → P; P vs N → N).
+>
+> **Step 4 — write the output.** Write
+> `/home/ubuntu/docs/evaluation/llm_judge_nbest/judgments/batch_<method>_NN_judgments.txt`
+> (matching the batch filename, with `_judgments.txt` instead of `.txt`). One line
+> per pair in the format `NNN,JUDGMENT`. No commentary, no blank lines, no header.
+> Cover every `NNN` in the batch — no skips. Examples:
+> ```
+> 001,Y
+> 002,P:key+sem/-detail
+> 003,N
+> ```
+>
+> **Step 5 — repeat.** Go back to Step 1 and judge the next un-done batch. Continue
+> until all 60 are done or you run out of room. When you stop, report which batches
+> are now complete.
 
 A single batch is ~100 pairs and fits comfortably in one Opus 4.6 turn. 60 batches
 total. Sessions can run in any order; the analysis script aggregates whatever is

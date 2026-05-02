@@ -37,8 +37,17 @@ MIN_HYP_WORDS_FOR_SHORT = 3   # auto-N if hyp has fewer words AND ref > 5 words
 
 REPORT_CSV = "/home/ubuntu/english_full_nbest_eval/report/report.csv"
 FEATURES_CSV = "/home/ubuntu/english_full_nbest_eval/conditional_analysis/segment_features.csv"
+AGGREGATED_JSON = "/home/ubuntu/english_full_nbest_eval/aggregated.json"
 OUTPUT_DIR = "/home/ubuntu/docs/evaluation/llm_judge_nbest"
 BATCHES_DIR = os.path.join(OUTPUT_DIR, "batches")
+
+# Per-method key in aggregated-{fid}.json that holds the calibrated per-word confs.
+AGG_WORDCONF_KEY = {
+    "baseline":       ("hyp_top1",        "hyp_top1_word_confs_calibrated"),
+    "hyp_mbr":        ("hyp_mbr",         "word_confs_calibrated"),
+    "hyp_vote_score": ("hyp_vote_score",  "word_confs_calibrated"),
+    "hyp_vote_conf":  ("hyp_vote_conf",   "word_confs_calibrated"),
+}
 
 METHODS = [
     # (label, hyp_column_in_report,    conf_source,   conf_column)
@@ -73,6 +82,57 @@ def join_data(report_rows, features_rows):
     return merged
 
 
+def load_per_word_confs(path):
+    """Load aggregated-{fid}.json and return dict[utt_id][method_label] = [(word, conf), ...]."""
+    with open(path) as f:
+        agg = json.load(f)
+    out = {}
+    for uid, methods in agg.items():
+        per = {}
+        for label, (agg_key, wc_key) in AGG_WORDCONF_KEY.items():
+            if agg_key == "hyp_top1":
+                wc = methods.get(wc_key) or []
+            else:
+                v = methods.get(agg_key) or {}
+                wc = v.get(wc_key) or []
+            # JSON loads tuples as lists; normalize to tuples.
+            per[label] = [(w, c) for w, c in wc]
+        out[uid] = per
+    return out
+
+
+def format_word_conf_inline(word_confs):
+    """Render [(word, conf), ...] as 'word[.34] yourself[.71] ...'.
+    Conf rendered as `.NN` (two decimals, leading zero stripped). None -> `[--]`.
+    Pipe / bracket characters in words are sanitized to avoid breaking the row format.
+    Returns the inline string AND the plain word-only text (for fallback/auto-N checks).
+    """
+    parts = []
+    plain = []
+    for w, c in word_confs:
+        ws = w.replace("|", "/").replace("[", "(").replace("]", ")").strip()
+        if not ws:
+            continue
+        plain.append(ws)
+        if c is None:
+            parts.append(f"{ws}[--]")
+        else:
+            try:
+                cf = float(c)
+                # Render .NN form. Clamp to [0, 1].
+                cf = max(0.0, min(1.0, cf))
+                if cf >= 0.995:
+                    tag = "1.0"
+                else:
+                    tag = f"{cf:.2f}"
+                    if tag.startswith("0."):
+                        tag = tag[1:]  # ".34" instead of "0.34"
+                parts.append(f"{ws}[{tag}]")
+            except (TypeError, ValueError):
+                parts.append(f"{ws}[--]")
+    return " ".join(parts), " ".join(plain)
+
+
 # ---------- Per-method extraction ----------
 def fmt_conf(conf_str):
     """Format a confidence value to 2 decimals; return 'n/a' if empty/non-numeric."""
@@ -84,39 +144,61 @@ def fmt_conf(conf_str):
         return "n/a"
 
 
-def extract_method_rows(merged, method_label, hyp_col, conf_source, conf_col):
+def extract_method_rows(merged, method_label, hyp_col, conf_source, conf_col, per_word):
     """
-    For one method, build a list of dicts: utt_id, ref, hyp, conf, is_tier.
-    is_tier preserved for tier-stratified duplicate selection.
+    For one method, build a list of dicts: utt_id, ref, hyp, hyp_plain, conf, is_tier.
+
+    `hyp` is the inline-annotated string `word[.NN] word[.NN] ...` (per-word confs).
+    `hyp_plain` is the word-only text — used for the auto-N short-hyp check, since the
+    annotated string is no longer space-tokenizable into words.
+    `conf` is the sentence-level confidence (kept as the 4th column).
+
+    `per_word` is dict[utt_id][method] = [(word, conf), ...]. Falls back gracefully
+    when the segment / method is missing.
     """
     out = []
+    n_missing_pw = 0
     for uid, row in merged.items():
         ref = row.get("ref", "").strip()
-        hyp = row.get(hyp_col, "").strip()
         if conf_source == "features":
             conf_raw = row.get("sentence_confidence", "")
         else:
             conf_raw = row.get(conf_col, "")
-        conf = fmt_conf(conf_raw)
+        sentence_conf = fmt_conf(conf_raw)
+
+        wc = per_word.get(uid, {}).get(method_label, [])
+        if wc:
+            hyp_inline, hyp_plain = format_word_conf_inline(wc)
+        else:
+            n_missing_pw += 1
+            # Fall back to report.csv text without per-word annotations.
+            fallback = row.get(hyp_col, "").strip()
+            hyp_inline = fallback
+            hyp_plain = fallback
+
         is_tier = row.get("is_tier", "0")
         out.append({
             "utt_id": uid,
             "ref": ref,
-            "hyp": hyp,
-            "conf": conf,
+            "hyp": hyp_inline,
+            "hyp_plain": hyp_plain,
+            "conf": sentence_conf,
             "is_tier": is_tier,
         })
+    if n_missing_pw:
+        print(f"  WARN: {n_missing_pw} segments had no per-word confs for {method_label} — fell back to plain hyp.")
     return out
 
 
 # ---------- Auto-classify ----------
 def auto_classify(method_rows):
-    """Auto-N empty or trivially-short hypotheses. Returns (auto_n, remaining)."""
+    """Auto-N empty or trivially-short hypotheses (judged on hyp_plain). Returns (auto_n, remaining)."""
     auto_n, remaining = [], []
     for r in method_rows:
         ref_words = len(r["ref"].split()) if r["ref"] else 0
-        hyp_words = len(r["hyp"].split()) if r["hyp"] else 0
-        if not r["hyp"] or hyp_words == 0:
+        hyp_plain = r.get("hyp_plain", "")
+        hyp_words = len(hyp_plain.split()) if hyp_plain else 0
+        if not hyp_plain or hyp_words == 0:
             auto_n.append((r["utt_id"], "empty_hypothesis"))
         elif hyp_words < MIN_HYP_WORDS_FOR_SHORT and ref_words > 5:
             auto_n.append((r["utt_id"], "trivially_short"))
@@ -172,10 +254,12 @@ def create_batches(rows, duplicates, batch_size, seed_offset_main=0, seed_offset
 
 # ---------- Writers ----------
 HEADER_LINE = (
-    "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs | format: NNN|ref|hyp|conf "
+    "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs "
+    "| format: NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf "
     "| Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost "
-    "| `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — "
-    "use as a soft cue, NOT as a verdict shortcut"
+    "| Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] "
+    "([--] if missing). The trailing column is the method's sentence-level confidence. "
+    "Use as soft cues, NOT as verdict shortcuts."
 )
 
 
@@ -252,9 +336,16 @@ def main():
     all_method_batches = {}
     all_auto = []
 
+    print(f"Loading per-word confs from {AGGREGATED_JSON} ...")
+    if not os.path.exists(AGGREGATED_JSON):
+        print(f"ERROR: {AGGREGATED_JSON} missing. Re-run nbest_aggregate first.", file=sys.stderr)
+        sys.exit(2)
+    per_word = load_per_word_confs(AGGREGATED_JSON)
+    print(f"  Loaded per-word confs for {len(per_word)} utterances")
+
     for label, hyp_col, conf_source, conf_col in METHODS:
         print(f"\n--- Method: {label} ---")
-        rows = extract_method_rows(merged, label, hyp_col, conf_source, conf_col)
+        rows = extract_method_rows(merged, label, hyp_col, conf_source, conf_col, per_word)
         auto_n, remaining = auto_classify(rows)
         print(f"  Auto-N: {len(auto_n)} (empty/trivially short)")
         print(f"  Remaining for judgment: {len(remaining)}")
