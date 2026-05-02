@@ -34,7 +34,7 @@ User feedback on 5.16c: "they are not stupid children just not probabilities jar
 - **Salvage / Strip case studies:** "Medium/Low overall confidence" → "Overall confidence 79% (Salvage tier)" / "Overall confidence 21% (Strip tier)" — concrete values with tier label parenthetical.
 - **Slide 32 footer:** "Aggregation now runs by default..." → "By default, the model considers 20 alternative readings of every segment and shows the safest consensus — on every video." Concrete + actionable.
 - **Audit:** added 79% / 21% to canonical percentage list; 7/7 green.
-- **COMMIT**: 7c8bf91.
+- **COMMIT**: `bcfd282`.
 
 ---
 
