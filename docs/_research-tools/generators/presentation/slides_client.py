@@ -2229,101 +2229,100 @@ def slide_client_next_milestone(prs):
     add_accent_line(slide)
 
     add_text(slide,
-             "Today's results are what's possible at the current data scale. "
-             "Here's what production scale unlocks.",
+             "Today works. Two things make it noticeably better.",
              MX, Inches(1.5), CW, Inches(0.5),
-             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    # Two technical cards
+    # Two cards — plain-English, no jargon, no parameter counts.
     card_gap = Inches(0.3)
     card_w = (CW - card_gap) / 2
     card_top = Inches(2.2)
     card_h = Inches(3.3)
 
-    # LEFT: Stronger LLM backbone
+    # LEFT: A smarter model
     x1 = MX
     add_rect(slide, x1, card_top, card_w, card_h,
              fill_color=NAVY2, border_color=TEAL, border_width=Pt(1.5))
-    add_text(slide, "STRONGER LLM BACKBONE",
+    add_text(slide, "A SMARTER MODEL",
              x1 + Inches(0.25), card_top + Inches(0.2),
              card_w - Inches(0.5), Inches(0.4),
-             size=Pt(15), bold=True, color=TEAL,
+             size=Pt(16), bold=True, color=TEAL,
              align=PP_ALIGN.CENTER)
     add_text(slide, "TODAY",
              x1 + Inches(0.25), card_top + Inches(0.75),
              Inches(1.0), Inches(0.3),
              size=Pt(10), bold=True, color=LGRAY)
     add_text(slide,
-             "Seven-billion-parameter language brain. Two generations "
-             "behind state-of-the-art.",
+             "The brain that turns lip-reading signals into "
+             "text is a few years old.",
              x1 + Inches(0.25), card_top + Inches(1.05),
              card_w - Inches(0.5), Inches(0.6),
-             size=Pt(13), color=WHITE)
+             size=Pt(14), color=WHITE)
     add_text(slide, "PATH",
-             x1 + Inches(0.25), card_top + Inches(1.75),
+             x1 + Inches(0.25), card_top + Inches(1.85),
              Inches(1.0), Inches(0.3),
              size=Pt(10), bold=True, color=GREEN)
     add_text(slide,
-             "Drop-in upgrade to a newer, larger, better-trained LLM. "
-             "Same architecture, better grasp of uncommon vocabulary, "
-             "names, and domain terms. No integration change.",
-             x1 + Inches(0.25), card_top + Inches(2.05),
-             card_w - Inches(0.5), Inches(1.15),
-             size=Pt(13), color=WHITE)
+             "Swap in a newer, smarter one. Same plumbing — "
+             "better text out the other end. Especially "
+             "stronger on names, uncommon words, and "
+             "industry vocabulary.",
+             x1 + Inches(0.25), card_top + Inches(2.15),
+             card_w - Inches(0.5), Inches(1.05),
+             size=Pt(14), color=WHITE)
 
-    # RIGHT: More domain data
+    # RIGHT: Trained on your content
     x2 = MX + card_w + card_gap
     add_rect(slide, x2, card_top, card_w, card_h,
              fill_color=NAVY2, border_color=GOLD, border_width=Pt(1.5))
-    add_text(slide, "MORE DOMAIN DATA",
+    add_text(slide, "TRAINED ON YOUR CONTENT",
              x2 + Inches(0.25), card_top + Inches(0.2),
              card_w - Inches(0.5), Inches(0.4),
-             size=Pt(15), bold=True, color=GOLD,
+             size=Pt(16), bold=True, color=GOLD,
              align=PP_ALIGN.CENTER)
     add_text(slide, "TODAY",
              x2 + Inches(0.25), card_top + Inches(0.75),
              Inches(1.0), Inches(0.3),
              size=Pt(10), bold=True, color=LGRAY)
     add_text(slide,
-             "A small training slice from public data — below the "
-             "empirical floor for stable retraining.",
+             "The model learned from public video. "
+             "None of it looks like yours.",
              x2 + Inches(0.25), card_top + Inches(1.05),
              card_w - Inches(0.5), Inches(0.6),
-             size=Pt(13), color=WHITE)
+             size=Pt(14), color=WHITE)
     add_text(slide, "PATH",
-             x2 + Inches(0.25), card_top + Inches(1.75),
+             x2 + Inches(0.25), card_top + Inches(1.85),
              Inches(1.0), Inches(0.3),
              size=Pt(10), bold=True, color=GREEN)
     add_text(slide,
-             "Production-scale dataset on YOUR domain — your speakers, "
-             "your vocabulary, your camera conditions. Especially "
-             "powerful paired with the stronger backbone.",
-             x2 + Inches(0.25), card_top + Inches(2.05),
-             card_w - Inches(0.5), Inches(1.15),
-             size=Pt(13), color=WHITE)
+             "Train it on your footage — your speakers, "
+             "your settings, your vocabulary. It gets "
+             "meaningfully better at the work you "
+             "actually do.",
+             x2 + Inches(0.25), card_top + Inches(2.15),
+             card_w - Inches(0.5), Inches(1.05),
+             size=Pt(14), color=WHITE)
 
-    # Bottom anchor pill — empirical evidence. Compact: title + one-line
-    # body to fit cleanly within the footer band.
+    # Bottom anchor pill — plain-English version of the empirical-evidence
+    # claim. No "data-limit ceiling," no "fine-tuning experiments,"
+    # no "empirical proof."
     anchor_y = card_top + card_h + Inches(0.15)
     add_rect(slide, MX, anchor_y, CW, Inches(0.55),
              fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
-    add_text(slide, "WHY YOU SHOULD BELIEVE THIS:",
+    add_text(slide,
+             "We've already tested smaller versions of both. "
+             "Both work. The data path matters most.",
              MX + Inches(0.3), anchor_y + Inches(0.13),
-             Inches(2.5), Inches(0.3),
-             size=Pt(11), bold=True, color=TEAL)
-    add_text(slide,
-             "small fine-tuning experiments hit the data-limit ceiling "
-             "cleanly — empirical proof.",
-             MX + Inches(2.85), anchor_y + Inches(0.13),
-             CW - Inches(3.15), Inches(0.3),
-             size=Pt(11), color=WHITE, italic=True)
+             CW - Inches(0.6), Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
 
-    # Footer — ties back to "very usable today"
+    # Footer — ties back to "very usable today" in plain English.
     add_text(slide,
-             "This is the next gain on top of the 62% review-useful you saw "
-             "today. Direction is known. Magnitude lands in the partnership.",
+             "Today's 62% review-useful is real. Tomorrow's number is "
+             "bigger. The gap is the partnership.",
              MX, Inches(7.0), CW, Inches(0.3),
-             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+             size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
