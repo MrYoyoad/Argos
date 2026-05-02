@@ -227,6 +227,11 @@ When making changes, ALWAYS:
 
 **Bottom Line**: Treat every EC2 change as incomplete until it's documented and ready for Linux container deployment.
 
+### Two deploy targets, different roles (read [docs/guides/deploy-targets.md](docs/guides/deploy-targets.md) before touching either)
+
+- **`vsp_linux_container_FINAL_<date>/`** — patch overlay, primary deployment route. Sync EVERY EC2 change here.
+- **`vsp_docker/galaxy_export/`** — Docker build context for fresh images. **Do NOT sync per-commit.** Deferred until the next planned image rebuild; see the rebuild checklist in [docs/guides/deploy-targets.md](docs/guides/deploy-targets.md).
+
 ## Documentation Map
 
 All documentation is organized under `docs/` with subdirectories for easy discovery:

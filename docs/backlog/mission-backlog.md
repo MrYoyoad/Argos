@@ -122,10 +122,10 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ---
 
-### Mission 6: N-Best / Beam Aggregation (ROVER & MBR) — IMPLEMENTED + VALIDATED 2026-05-01
+### Mission 6: N-Best / Beam Aggregation (ROVER & MBR) — SHIPPED 2026-05-02
 - **Priority**: HIGH
 - **Goal**: Stop discarding 19 of 20 beam candidates — use them for consensus voting and confidence estimation
-- **Status**: **IMPLEMENTATION COMPLETE + tuning-set validated** (2026-05-01). Full 1,497-segment evaluation running.
+- **Status**: **SHIPPED VIA OVERLAY** (2026-05-02). Implementation + tuning-set validation (107 segs) + full-set validation (1,497 segs) all complete. Code is in EC2 + the patch overlay (`vsp_linux_container_FINAL_20260217/`); deferred from `vsp_docker/galaxy_export/` until the next planned Docker image rebuild — see [docs/guides/deploy-targets.md](../guides/deploy-targets.md) for the rebuild checklist.
 - **Tuning-set results (107 segments)**:
   - **`hyp_vote_conf` (score × per-word-conf vote): WER 57.20% vs top-1 59.35% (↓2.15pp, ~3.6% relative); IS 2.695 vs 2.666; NIV-Y+P 71.0% vs 70.1%.** Best method on every metric.
   - `hyp_mbr` (MBR consensus): WER 58.57% (↓0.78pp); IS 2.684. Best calibration: at sent_conf≥0.85, r between (1−recall) and confidence drops from top-1's −0.322 to MBR's **−0.458** (r_content = −0.708).
