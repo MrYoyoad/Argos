@@ -47,6 +47,60 @@ Restating the table above with the function/content split as the headline:
 
 **Operational consequence.** In segments the model is most confident about, its per-word confidence has essentially zero signal for content-word correctness. This is the regime where the dangerous numeric/entity errors live (`billion → million` at 0.965, `1024 → 24` at 0.958 — see [band_reliability_lesson.md](../../.claude/projects/-home-ubuntu/memory/band_reliability_lesson.md)). The three-tier UI policy (Trust ≥0.82 / Salvage 0.65–0.82 / Strip <0.65) is reliable for function words but cannot catch content-word hallucination at high `mean_prob`. A POS-aware confidence threshold (stricter for content words) is the natural next iteration.
 
+### Top-15 most-confused words on the full set (May 2 2026)
+
+Per-word recall + per-occurrence confidence (correct vs wrong, top-1 hyp). Computed by [top_confused_words.py](../_research-tools/generators/top_confused_words.py) — a 100-line replacement for `word_confusion_conditional.py` (which ran past 2h wall-clock and was killed). Outputs at [conditional_analysis/content_words.csv](../../english_full_nbest_eval/conditional_analysis/content_words.csv), [function_words.csv](../../english_full_nbest_eval/conditional_analysis/function_words.csv).
+
+**Top 15 most-confused CONTENT words** (recall ↑, freq tiebreak):
+
+| word | freq | recall | conf when correct | conf when wrong |
+|---|---|---|---|---|
+| `gonna` | 28 | 0.00 | — | **0.796** |
+| `hello` | 8 | 0.00 | — | 0.190 |
+| `quick` | 7 | 0.00 | — | **0.801** |
+| `cross` | 7 | 0.00 | — | 0.402 |
+| `x` | 7 | 0.00 | — | 0.474 |
+| `8` | 7 | 0.00 | — | 0.706 |
+| `d` | 7 | 0.00 | — | 0.487 |
+| `hi` | 6 | 0.00 | — | 0.245 |
+| `recover` | 6 | 0.00 | — | 0.449 |
+| `table` | 6 | 0.00 | — | 0.284 |
+| `feature` | 6 | 0.00 | — | 0.265 |
+| `drop` | 6 | 0.00 | — | 0.493 |
+| `books` | 6 | 0.00 | — | 0.651 |
+| `7` | 6 | 0.00 | — | 0.661 |
+| `huge` | 5 | 0.00 | — | 0.554 |
+
+**Top 15 most-confused FUNCTION words**:
+
+| word | freq | recall | conf when correct | conf when wrong |
+|---|---|---|---|---|
+| `during` | 3 | 0.00 | — | 0.366 |
+| `you'll` | 10 | 0.10 | 0.532 | 0.789 |
+| `i'll` | 17 | 0.12 | 0.832 | 0.584 |
+| `its` | 8 | 0.12 | 0.997 | 0.356 |
+| `here` | 71 | 0.14 | 0.775 | 0.563 |
+| `they're` | 40 | 0.15 | 0.692 | 0.616 |
+| `does` | 15 | 0.20 | 0.848 | 0.606 |
+| `he's` | 18 | 0.22 | 0.566 | 0.544 |
+| `isn't` | 8 | 0.25 | 0.571 | 0.705 |
+| `she's` | 4 | 0.25 | 0.917 | 0.313 |
+| `again` | 23 | 0.26 | 0.904 | 0.404 |
+| `we're` | 76 | 0.26 | 0.683 | 0.595 |
+| `may` | 15 | 0.27 | 0.979 | 0.691 |
+| `it's` | 159 | 0.31 | 0.709 | 0.539 |
+| `her` | 19 | 0.32 | 0.835 | 0.625 |
+
+**Three findings drop out:**
+
+1. **`gonna` is the single most systematic failure** — 28 ref-side occurrences, 0% recall, **0.796 conf when wrong**. The model confidently outputs `going` (matches the +10 systematic substitution count from the earlier ref→hyp table) and *believes its answer*. Same pattern at smaller scale for `quick` (0.801), `8` (0.706), `7` (0.661), `books` (0.651).
+
+2. **Content failures are confidently wrong** — most 0%-recall content words show conf|wrong in the 0.4–0.8 range. The model is hallucinating, not abstaining. This is the danger pattern: an end user reading the green-tier output cannot tell `gonna` was meant.
+
+3. **Function failures are honestly uncertain** — every function word with both columns populated shows **conf|correct > conf|wrong** (sometimes by 0.5+: `again` 0.904 vs 0.404, `may` 0.979 vs 0.691). The confidence signal works for function words even when they're frequently wrong, which is why the function-word calibration r is so strong.
+
+Numbers and single letters (`8`, `7`, `x`, `d`) all 0% recall — visual disambiguation between digits is essentially random for lip-reading. Any UI surface that exposes numeric output should display it with explicit low-confidence styling regardless of `mean_prob`.
+
 ### Beam variance
 
 Per-segment beam metrics ([beam_analysis/beam_variance_analysis.md](../../english_full_nbest_eval/beam_analysis/beam_variance_analysis.md)) over 1,497 segments:
@@ -290,7 +344,7 @@ ls tuning_results/exp_nbest_validation/{aggregated.json,report/aggregator_method
 - **Recalibrate CONF_HIGH / CONF_MED for voted output**: the voting methods compress >50% of words to posterior=1.0. Need new thresholds (proposal: CONF_HIGH=0.95, CONF_MED=0.70 for voted text) so per-word coloring still discriminates.
 - **POS-aware confidence threshold**: function-word calibration is r ≈ −0.45; content-word calibration collapses to ~0 at sent_conf ≥ 0.85. A stricter band for content words (e.g. green only at p ≥ 0.95 for content, p ≥ 0.82 for function) should reduce green-but-wrong leakage on entities/numbers.
 - **Cross-segment merge on overlap-configured datasets**: tuning set has no overlap (no-op confirmed). Full 1,497 also has no overlap configured (`hyp_xseg_merge` = `hyp_top1` exactly).
-- **Conditional script (pending, in flight as of 2026-05-02 13:00Z)**: [word_confusion_conditional.py](../_research-tools/generators/word_confusion_conditional.py) is still computing top-15 most-confused content/function words and additional mask cuts (sent_conf≥0.50; WER≤30/50). Once it lands, append top-15 lists to this file as a follow-up commit.
+- **Optimize / replace `word_confusion_conditional.py`**: original conditional script ran past 2h wall-clock on the full set (terminated 2026-05-02 13:35Z). The headline finding (function vs content calibration) was already in [per_method_calibration/](../../english_full_nbest_eval/per_method_calibration/), and [top_confused_words.py](../_research-tools/generators/top_confused_words.py) now produces the top-15 lists in ~12 s. Either retire the old script or vectorize its `per_position_disagreement` hot loop and add tqdm progress.
 
 ## Calibration shipped (Option A — 2026-05-01)
 
