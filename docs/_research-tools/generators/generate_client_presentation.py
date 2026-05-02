@@ -119,6 +119,7 @@ from presentation.slides_client import (
     slide_client_hallucination_flag,
     slide_client_claims,                    # NEW Round 5.5 (credibility-hardening)
     slide_client_trust_without_ground_truth, # NEW Round 5.1 (deepest critique answer)
+    slide_client_trust_operating_points,    # NEW Round 5.15 — permissive/moderate/strict thresholds
     slide_client_what_this_means,
 
     # Section 11 — Validation
@@ -264,6 +265,7 @@ def main():
         slide_client_hallucination_flag,
         slide_client_claims,                        # NEW Round 5.5 — claims/non-claims credibility-harden
         slide_client_trust_without_ground_truth,    # NEW Round 5.1
+        slide_client_trust_operating_points,        # NEW Round 5.15 — permissive/moderate/strict thresholds
         slide_client_what_this_means,
 
         # § Validation (Round 5.1: validation_summary dropped)
@@ -330,17 +332,16 @@ def main():
         41,  # trust_dashboard "62% useful — on real-world video" — duplicates slide 26 headline
         45,  # slide_25d (LLM Salvage 3 cases) — overlaps with new Round 5.10 case-study slides 34/35
         46,  # hallucination_flag "1 in 5" — duplicates slide 26 headline + slides 34/35 demonstrate flagging
-        49,  # what_this_means "What this means for your workflow" — Round 5.12: thin transition,
-             # the trust section already conveys the workflow implication
-        56,  # slide_client_pipeline_detailed (8-stage diagram) — Round 5.12 user feedback
-             # "unclear and not in animation"; the simpler 3-component overview at slide 4
-             # (slide_client_pipeline_components, moved up) covers this beat better.
-             # Index shifted 55 → 56 in Round 5.14 after aggregation_safety added to validation.
-        60,  # _section_whats_next transition — Act 3's What's Next pivot is implicit; trim transition.
-             # Index shifted 59 → 60 in Round 5.14.
-        67,  # recap "Three things to take with you" — Round 5.12: trim close section
-             # (close: integration_commitment + next_steps + thank_you is enough).
-             # Index shifted 66 → 67 in Round 5.14.
+        50,  # what_this_means "What this means for your workflow" — thin transition,
+             # the trust section already conveys the workflow implication.
+             # Index 49 → 50 in Round 5.15.
+        57,  # slide_client_pipeline_detailed (8-stage diagram) — too unclear;
+             # simpler 3-component overview at slide 4 covers this beat.
+             # Index 56 → 57 in Round 5.15.
+        61,  # _section_whats_next transition — Act 3's What's Next pivot is implicit.
+             # Index 60 → 61 in Round 5.15.
+        68,  # recap "Three things to take with you" — trim close section.
+             # Index 67 → 68 in Round 5.15.
     ]
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn

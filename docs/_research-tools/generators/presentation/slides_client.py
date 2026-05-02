@@ -1068,6 +1068,160 @@ def slide_client_hallucination_flag(prs):
     return slide
 
 
+def slide_client_trust_operating_points(prs):
+    """Round 5.15 — three named trust thresholds (permissive/moderate/strict).
+
+    Source: docs/confidence/client_trust_calibration.md (May 2 2026,
+    full 1,497-segment evaluation under the joint conf+agreement
+    band rule). Surfaces the operational tradeoff: pick a green-fraction
+    threshold; here's what you get.
+
+    Lands AFTER trust_without_ground_truth — gives the client agency
+    over the precision/recall point. Pairs with the three-tier UI
+    policy (slide 32, system-side discipline) by adding the workflow-
+    side configurability ("how aggressive should YOUR team be").
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Three trust thresholds — your team picks one")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Trust segments where ≥ T% of the words are green. "
+             "Pick T based on the workflow.",
+             MX, Inches(1.5), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three cards
+    card_w = Inches(3.85)
+    gap = Inches(0.25)
+    top = Inches(2.25)
+    h = Inches(3.95)
+
+    points = [
+        {
+            "name": "PERMISSIVE",
+            "thresh": "≥ 30% green",
+            "color": GREEN,
+            "recall": "Recovers 65% of useful segments",
+            "precision": "About 1 misled in 22 trusted",
+            "use": "Default for most workflows.",
+        },
+        {
+            "name": "MODERATE",
+            "thresh": "≥ 50% green",
+            "color": GOLD,
+            "recall": "Recovers 34% of useful segments",
+            "precision": "About 1 misled in 35 trusted",
+            "use": "When precision matters more than recall.",
+        },
+        {
+            "name": "STRICT",
+            "thresh": "≥ 70% green",
+            "color": CORAL,
+            "recall": "Recovers 8% of useful segments",
+            "precision": "About 1 misled in 71 trusted",
+            "use": "High-stakes downstream decisions.",
+        },
+    ]
+    for i, p in enumerate(points):
+        x = MX + i * (card_w + gap)
+        add_rect(slide, x, top, card_w, h,
+                 fill_color=NAVY2, border_color=p["color"],
+                 border_width=Pt(1.5))
+        # Tier name
+        add_text(slide, p["name"],
+                 x + Inches(0.2), top + Inches(0.25),
+                 card_w - Inches(0.4), Inches(0.45),
+                 size=Pt(20), bold=True, color=p["color"],
+                 align=PP_ALIGN.CENTER)
+        # Threshold
+        add_text(slide, p["thresh"],
+                 x + Inches(0.2), top + Inches(0.85),
+                 card_w - Inches(0.4), Inches(0.4),
+                 size=Pt(15), bold=True, color=WHITE,
+                 align=PP_ALIGN.CENTER)
+        # Recall
+        add_text(slide, p["recall"],
+                 x + Inches(0.25), top + Inches(1.5),
+                 card_w - Inches(0.5), Inches(0.45),
+                 size=Pt(13), color=WHITE,
+                 align=PP_ALIGN.CENTER)
+        # Precision
+        add_text(slide, p["precision"],
+                 x + Inches(0.25), top + Inches(2.05),
+                 card_w - Inches(0.5), Inches(0.45),
+                 size=Pt(13), color=p["color"], italic=True,
+                 align=PP_ALIGN.CENTER)
+        # Use case
+        add_text(slide, p["use"],
+                 x + Inches(0.25), top + Inches(2.95),
+                 card_w - Inches(0.5), Inches(0.85),
+                 size=Pt(12), color=LGRAY, italic=True,
+                 align=PP_ALIGN.CENTER)
+
+    # Bottom anchor
+    anchor_y = top + h + Inches(0.2)
+    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
+    add_text(slide,
+             "We default to permissive. Each downstream workflow can dial "
+             "its own threshold against precision/recall tradeoff.",
+             MX + Inches(0.3), anchor_y + Inches(0.13),
+             CW - Inches(0.6), Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
+
+    # Footer
+    add_text(slide,
+             "Measured on the full 1,497-segment evaluation under the "
+             "joint confidence + agreement band rule. Re-runnable.",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.15 — three named operating points from "
+        "docs/confidence/client_trust_calibration.md. "
+        "\n\n"
+        "FULL NUMBERS (paste from client_trust_calibration.md table): "
+        "PERMISSIVE (≥ 30% green): 630 trusted, 602 useful caught "
+        "(65.2% recall), 28 false positives (5.6% FPR), 95.6% "
+        "precision; 52.5% of trusted are NIV-Y (clearly conveyed). "
+        "MODERATE (≥ 50%): 321 trusted, 312 useful (33.8%), 9 FP "
+        "(1.8%), 97.2% precision; 72% NIV-Y. "
+        "STRICT (≥ 70%): 71 trusted, 70 useful (7.6%), 1 FP (0.2%), "
+        "98.6% precision; 88.7% NIV-Y. "
+        "\n\n"
+        "STRUCTURAL CEILING (mention if asked): 322 of 924 useful "
+        "segments (35%) are below the 30%-green threshold and remain "
+        "structurally invisible to the band-fraction trust rule. "
+        "Recovering them needs a different signal (post-hoc rerank, "
+        "topic-conditional priors, semantic-coherence check). The "
+        "operating-point table is the ceiling on band-fraction trust "
+        "alone, on this LLM and decoder. "
+        "\n\n"
+        "PAIRS WITH SLIDE 32 (three-tier UI): slide 32 = the system's "
+        "built-in safety policy (Trust / Salvage / Strip — controls "
+        "what the UI shows). THIS slide = the client workflow's "
+        "configurable trust knob (how many green words constitute "
+        "trust). They're complementary, not redundant. "
+        "\n\n"
+        "VOICE FRAMING: 'Pick the threshold that matches your workflow. "
+        "Most teams start permissive — surface as much useful content "
+        "as possible. High-stakes workflows go strict — fewer trusted "
+        "segments, but each one is calibrated. We default to permissive; "
+        "your team can override.' "
+        "\n\n"
+        "Source files: client_trust_calibration.md (polished), "
+        "client_trust_calibration.csv (data), analyze_client_trust"
+        "_calibration.py (re-runnable generator). LLM-and-decoder-"
+        "specific: Llama-2-7b, beam=20, lenpen=0."
+    ))
+    return slide
+
+
 def slide_client_what_this_means(prs):
     slide = new_slide(prs)
     _auto_num[0] += 1

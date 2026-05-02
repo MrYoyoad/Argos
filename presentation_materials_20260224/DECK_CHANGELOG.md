@@ -26,6 +26,46 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.15 — Three trust thresholds (operating points) in trust section (LANDED)
+
+NEW slide 49 (`slide_client_trust_operating_points`) — three named
+operating points from `docs/confidence/client_trust_calibration.md`
+(full 1,497-segment evaluation under the joint confidence + agreement
+band rule). Three cards: PERMISSIVE (≥30% green / 65% recall / 1 in
+22 misled / default for most workflows), MODERATE (≥50% / 34% / 1
+in 35 / when precision > recall), STRICT (≥70% / 8% / 1 in 71 /
+high-stakes downstream). Anchor: *"We default to permissive. Each
+downstream workflow can dial its own threshold against precision/
+recall tradeoff."* Footer: *"Measured on the full 1,497-segment
+evaluation under the joint confidence + agreement band rule.
+Re-runnable."*
+
+Pairs with slide 32 (three-tier UI policy) — slide 32 = the system's
+built-in safety policy (Trust/Salvage/Strip controls what the UI
+shows); slide 49 = the client workflow's configurable trust knob
+(how many green words constitute trust). Complementary, not
+redundant. Inserted in §Trust after `trust_without_ground_truth`.
+
+Source files:
+- `docs/confidence/client_trust_calibration.md` (polished operational
+  reference)
+- `docs/_research-tools/generators/analyze_client_trust_calibration.py`
+  (re-runnable generator)
+- `english_full_nbest_eval/client_trust/CLIENT_TRUST_CALIBRATION.md`
+  + `client_trust_calibration.csv` (auto-generated source data)
+
+Stats: 70 → **71 slides** (+1 visible). 59 → 60 visible.
+HIDDEN_SLIDES indices shifted +1 for slides at/after position 49:
+{50, 57, 61, 68} (was {49, 56, 60, 67}).
+BORROWED_SLIDES: {44, 45, 59, 71} (was {44, 45, 58, 70}).
+3 new approved percentages: 65%, 34%, 8% (the three recall figures).
+All 7 audits green. Fade transitions still apply to all slides.
+
+### COMMIT
+- (pending)
+
+---
+
 ## 2026-05-02 — Round 5.14 — Aggregation-safety evidence in validation (LANDED, terse)
 
 NEW slide 54 (`slide_client_aggregation_safety`) — n-best aggregation

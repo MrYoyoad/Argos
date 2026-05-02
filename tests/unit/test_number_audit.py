@@ -47,12 +47,12 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Round 5.14: aggregation_safety slide added after cross_config_stability;
-    # slides at and after position 54 shifted +1.
+    # Round 5.15: trust_operating_points slide added after trust_without_ground_truth;
+    # slides at and after position 49 shifted +1.
     44,  # slide_failure_deep_2  — 3 worked ref/hyp examples
     45,  # slide_25d             — salvage recoveries (WER stripped from headers)
-    58,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    70,  # slide_thank_you       — close
+    59,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
+    71,  # slide_thank_you       — close
 }
 
 
@@ -268,6 +268,14 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "35%",                # "good" word probability (Mode 3.1 verbatim)
         "53%",                # "idea" word probability (Mode 3.1 verbatim)
         "96%",                # numeric/entity false-confidence example (1 billion → 1 million)
+    })
+    # Round 5.15 — trust operating points from
+    # docs/confidence/client_trust_calibration.md (full 1,497-segment eval).
+    # Recall figures for the three named thresholds (permissive/moderate/strict).
+    approved.update({
+        "65%",                # Permissive (≥30% green): 65.2% recall of useful segments
+        "34%",                # Moderate (≥50% green): 33.8% recall — rounded to 34%
+        "8%",                 # Strict (≥70% green): 7.6% recall — rounded to 8%
     })
     # Strip whitespace inside percent tokens
     def norm(s):
