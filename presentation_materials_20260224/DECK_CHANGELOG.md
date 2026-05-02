@@ -26,6 +26,31 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.16e — Audit pass: tightening, click-reveals, judge-ex rebuild (LANDED)
+
+User-driven audit pass with parallel-agent execution.
+
+**Bullet-by-bullet click-reveal animations** (entries fade in one by one as the speaker clicks; ends N1-N10 walls-of-text):
+- slide 26 (3 headline numbers), slide 31 (3 tier cards + bottom anchor), slide 32 (3 numbered steps + anchor), slide 36 (3 reviewer rules), slide 47 (6 paired claims + anchor), slide 48 (4 trust signals + 2 footer pills), slide 49 (3 trust thresholds + anchor) — main agent.
+- slide 7 (3 comparison rows), slide 10 (6 build cards), slide 55 (3 aggregation cards + anchor), slide 59 (4 milestones), slide 67 (3 partnership cards + anchor) — subagent.
+
+**6 judge example slides rebuilt in client style** (slides 20, 21H, 22, 23H, 24H, 25 — dropped older academic typography, unified to 2-column layout matching `slide_client_reader_example`: title + accent + italic subtitle + REF/HYP left, READER'S VIEW gold-bordered card right, color-coded HYP, plain-English takeaway, closing line, legend). Subagent introduced `_client_judge_ex_slide` helper to enforce uniformity. Speaker notes preserved.
+
+**Tightening** (audit medium/low items):
+- slide 5: dropped trailing italic line; three cards already do the work.
+- slide 18: dropped defensive footnote ("Headline numbers come from full 1,497 baseline").
+- slide 8: trimmed citation block + 3 card bodies.
+- slide 33: 2-column rework (REF/HYP left, READER'S VIEW right card full-height).
+- slide 35: dropped per-word percentage list; "Every word below 25% confidence — no signal anywhere."
+- slide 36 card 1 (NUMBERS AND NAMES): trimmed 75 words → 45 words; same point.
+- slide 48 (4 trust signals): each card body trimmed ~20%.
+
+Audits 7/7 green. Deck rebuilt at 71 slides, 60 visible.
+
+- **COMMIT**: TBD.
+
+---
+
 ## 2026-05-02 — Round 5.16d — Tighter jargon-vs-precision balance on tier slides (LANDED)
 
 User feedback on 5.16c: "they are not stupid children just not probabilities jargon, you can use numbers where reasonable." Re-tightened slide 31 + salvage/strip case studies + slide 32 footer to keep concrete numbers, drop only the math notation.
