@@ -82,7 +82,7 @@ Adding 1 visible slide before partnership_ask shifted later slides by +1:
   slide count refreshed.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- bbcc6fa — Round 5.13.
 
 ---
 
