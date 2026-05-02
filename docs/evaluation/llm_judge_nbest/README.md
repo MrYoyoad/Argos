@@ -1,17 +1,23 @@
-# n-best LLM-as-a-Judge — workflow (v2, blind, no conf in prompt)
+# n-best LLM-as-a-Judge — workflow (v3, dual-conf prompt)
 
 This directory holds the in-conversation Claude judging run for Mission 6's n-best
 aggregation methods (baseline, `hyp_mbr`, `hyp_vote_score`, `hyp_vote_conf`) on the
 full 1,497-segment set.
 
-> **v1 was contaminated and is now archived.** v1 injected sentence + per-word
-> confidence numbers into the judge prompt. On 27 % of identical-text segments,
-> verdicts split anyway — the judge let conf drive the call. Archived under
-> `batches_v1/`, `judgments_v1/`, `batch_index_v1.json`, `auto_judgments_v1.csv`.
-> See `llm_judge_nbest_analysis.md` for the v1 contamination analysis.
+> **v1 (contaminated, archived under `*_v1/`)**: injected per-word + method
+> sentence conf only. 27 % of byte-identical-text segments got different verdicts
+> across methods because identical text → different conf cues.
 >
-> **v2 is blind on text only.** Format is `NNN|ref|hyp` — same protocol as the
-> prior `llm_judge/` gold standard.
+> **v3 (current — what you'll judge)**: per-word conf + **two trailing columns**:
+> `baseline_conf` (the model's standalone sentence-level confidence, IDENTICAL
+> across all 4 methods on a given segment) and `method_conf` (this method's own
+> sentence-level confidence). The mixing is intentional: the judge sees both and
+> can compare them; identical-text segments share the baseline_conf anchor.
+> Verdict drift on identical text may still occur via per-word and method_conf
+> differences — accepted as part of the experimental design.
+>
+> v2 (blind, no conf at all) was prepped between v1 and v3 but never judged;
+> v3 supersedes it.
 
 ## Why this run
 
@@ -40,21 +46,31 @@ llm_judge_nbest/
 └── llm_judge_nbest_analysis.md
 ```
 
-## Batch format (v2)
-
-Each batch file has a single header line then `---` then one row per pair. The
-hypothesis column is **plain text only** — no confidence annotations.
+## Batch format (v3, dual-conf)
 
 ```
-BASELINE | BATCH 01/15 | 103 pairs | format: NNN|ref|hyp | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
+BASELINE | BATCH 01/15 | 103 pairs | format: NNN|ref|word1[.NN] word2[.NN] ...|baseline_conf|method_conf | Y=...
 ---
-001|we will give up some of our individual choice for the sake of the community decision|will give up some of our individual choices for the sake of the community and
-002|...
+001|that are going to allow you to work with the team in a more|are[.54] going[.92] to[.98] allow[.91] you[.92] to[.93] work[.95] with[.90] a[.72] team[.96] and[.77] more[.51]|0.91|0.91
 ```
 
-This matches the prior `llm_judge/` gold-standard protocol exactly. Confidence is
-NOT shown to the judge during judging; if a confidence-vs-verdict calibration table
-is wanted, it's built post-hoc from `report.csv` after judging completes.
+For the **same segment** in a different method's batch:
+
+```
+HYP_VOTE_CONF | BATCH 06/15 | ...
+015|that are going to allow you to work with the team in a more|are[.53] going[.58] to[.66] allow[.76] you[.76] to[.76] work[.76] with[.76] a[.58] team[.76] and[.58] more[.51]|0.91|0.67
+```
+
+Note `baseline_conf` is **0.91 in both** (segment-level, method-independent).
+`method_conf` differs (0.91 vs 0.67). Per-word `[.NN]` is the method's own
+per-word agreement / posterior — flatter for voting methods (mostly 0.5–0.8),
+peakier for baseline / MBR.
+
+- `baseline_conf` is `sentence_confidence` from `segment_features.csv`.
+- `method_conf` is `hyp_<method>_mean_conf_calib` from `report.csv` (or
+  `sentence_confidence` for the baseline method, in which case both columns
+  carry the same number).
+- Per-word conf comes from `aggregated.json`'s `*_word_confs_calibrated`.
 
 ## Verdict codes
 
@@ -87,24 +103,32 @@ the next un-judged batch):
 > done, stop and tell me.
 >
 > **Step 2 — read it.** The first line is a header (skip it), then `---`, then one
-> segment per line in the format `NNN|ref|hyp`:
+> segment per line in the format
+> `NNN|ref|word1[.NN] word2[.NN] ...|baseline_conf|method_conf`:
 > - `NNN` — 3-digit index
 > - `ref` — ground-truth transcript (plain text)
-> - `hyp` — hypothesis text (plain text)
+> - `wordI[.NN]` — each hyp word followed by its calibrated confidence in `[0, 1]`
+>   (`[1.0]` for fully agreed, `[--]` if missing)
+> - `baseline_conf` — model's standalone sentence-level confidence, **same value
+>   across all 4 methods on a given segment**
+> - `method_conf` — this method's own sentence-level confidence (for baseline rows
+>   it equals `baseline_conf`)
 >
 > **Step 3 — judge each line.** Decide whether the hypothesis conveys the meaning of
 > the reference:
-> - **Y** — meaning fully conveyed (small wording differences are fine)
+> - **Y** — meaning fully conveyed (small wording differences fine)
 > - **N** — meaning lost (wrong topic, fluent garbage, hallucinated content, key
 >   information replaced or absent)
 > - **P** — partial. Annotate as `P:preserved/-lost` where each side is a `+`-joined
 >   subset of `{key, struct, sem, phon, detail, num, entity}`. Examples:
 >   `P:key+sem/-detail`, `P:struct/-key`. Plain `P:` is allowed.
 >
-> Stay strictly blind: do **not** open `report.csv`, `segment_features.csv`, or
-> anything else in `english_full_nbest_eval/` or `docs/evaluation/`. Judge on
-> reference-vs-hypothesis text only. Be conservative on ties (Y vs P → P;
-> P vs N → N).
+> Treat all confidence numbers as **soft cues only**. Comparing `baseline_conf` to
+> `method_conf` tells you whether aggregation moved the model's self-assessed
+> confidence — useful context, but never a verdict shortcut. Stay strictly blind:
+> do **not** open `report.csv`, `segment_features.csv`, or anything else in
+> `english_full_nbest_eval/` or `docs/evaluation/`. Be conservative on ties
+> (Y vs P → P; P vs N → N).
 >
 > If two hypotheses you've seen in this session look essentially identical, give
 > them the same verdict — don't second-guess. The aggregation methods often produce

@@ -41,12 +41,22 @@ AGGREGATED_JSON = "/home/ubuntu/english_full_nbest_eval/aggregated.json"
 OUTPUT_DIR = "/home/ubuntu/docs/evaluation/llm_judge_nbest"
 BATCHES_DIR = os.path.join(OUTPUT_DIR, "batches")
 
-# v2 (May 2026): no confidence in prompt — judge sees ref + hyp text only.
-# v1 emitted `NNN|ref|word[.NN] word[.NN] ...|sentence_conf` which contaminated
-# the judge: 27% of byte-identical-text segments got different verdicts purely
-# because the conf numbers in the prompt differed across methods. Set
-# INJECT_CONF = False for the clean v2 protocol.
-INJECT_CONF = False
+# Conf-injection mode (May 2026):
+#   "none"                 — v2 clean protocol; judge sees only ref + hyp text.
+#                            Format: NNN|ref|hyp
+#   "method_only"          — v1 protocol; method's per-word + sentence conf
+#                            (CONTAMINATED — caused 27% verdict drift on
+#                            byte-identical-text segments because identical
+#                            text → different conf cues).
+#                            Format: NNN|ref|word[.NN]...|method_sent_conf
+#   "baseline_plus_method" — v3 protocol; method's per-word + BOTH baseline
+#                            and method sentence conf as separate trailing
+#                            columns. Baseline conf is per-segment and
+#                            therefore IDENTICAL across all 4 method batches
+#                            for a given utt_id. The mixing is intentional
+#                            (user can compare baseline vs method conf).
+#                            Format: NNN|ref|word[.NN]...|baseline_conf|method_conf
+CONF_MODE = "baseline_plus_method"
 
 # Per-method key in aggregated-{fid}.json that holds the calibrated per-word confs.
 AGG_WORDCONF_KEY = {
@@ -153,38 +163,43 @@ def fmt_conf(conf_str):
 
 def extract_method_rows(merged, method_label, hyp_col, conf_source, conf_col, per_word):
     """
-    For one method, build a list of dicts: utt_id, ref, hyp, hyp_plain, conf, is_tier.
+    For one method, build a list of dicts: utt_id, ref, hyp, hyp_plain, baseline_conf, method_conf, is_tier.
 
-    `hyp` is the inline-annotated string `word[.NN] word[.NN] ...` (per-word confs).
-    `hyp_plain` is the word-only text — used for the auto-N short-hyp check, since the
-    annotated string is no longer space-tokenizable into words.
-    `conf` is the sentence-level confidence (kept as the 4th column).
+    `hyp` is the inline-annotated string `word[.NN] word[.NN] ...` (per-word confs)
+    when conf injection is on; plain text otherwise.
+    `hyp_plain` is the word-only text — used for the auto-N short-hyp check.
+    `baseline_conf` is segment_features.csv `sentence_confidence` (same for every
+    method on a given utt_id — that's the point in baseline_plus_method mode).
+    `method_conf` is this method's own sentence-level confidence.
 
-    `per_word` is dict[utt_id][method] = [(word, conf), ...]. Falls back gracefully
-    when the segment / method is missing.
+    `per_word` is dict[utt_id][method] = [(word, conf), ...].
     """
     out = []
     n_missing_pw = 0
     for uid, row in merged.items():
         ref = row.get("ref", "").strip()
+
+        # baseline (per-segment) confidence — independent of method
+        baseline_conf = fmt_conf(row.get("sentence_confidence", ""))
+
+        # method's own sentence-level confidence
         if conf_source == "features":
-            conf_raw = row.get("sentence_confidence", "")
+            method_conf_raw = row.get("sentence_confidence", "")
         else:
-            conf_raw = row.get(conf_col, "")
-        sentence_conf = fmt_conf(conf_raw)
+            method_conf_raw = row.get(conf_col, "")
+        method_conf = fmt_conf(method_conf_raw)
 
         wc = per_word.get(uid, {}).get(method_label, [])
         if wc:
             hyp_inline, hyp_plain = format_word_conf_inline(wc)
         else:
             n_missing_pw += 1
-            # Fall back to report.csv text without per-word annotations.
             fallback = row.get(hyp_col, "").strip()
             hyp_inline = fallback
             hyp_plain = fallback
 
-        # v2: when conf injection is disabled, the judge sees plain hyp only.
-        if not INJECT_CONF:
+        # When conf is suppressed, judge sees plain hyp only.
+        if CONF_MODE == "none":
             hyp_inline = hyp_plain
 
         is_tier = row.get("is_tier", "0")
@@ -193,7 +208,8 @@ def extract_method_rows(merged, method_label, hyp_col, conf_source, conf_col, pe
             "ref": ref,
             "hyp": hyp_inline,
             "hyp_plain": hyp_plain,
-            "conf": sentence_conf,
+            "baseline_conf": baseline_conf,
+            "method_conf": method_conf,
             "is_tier": is_tier,
         })
     if n_missing_pw:
@@ -240,14 +256,14 @@ def select_duplicates(rows, n_per_tier=6, seed_offset=1):
 def create_batches(rows, duplicates, batch_size, seed_offset_main=0, seed_offset_dup=2):
     """Shuffle rows, split into batches, then insert duplicates into different batches."""
     rng = random.Random(SEED + seed_offset_main)
-    items = [(r["utt_id"], r["ref"], r["hyp"], r["conf"], False) for r in rows]
+    items = [(r["utt_id"], r["ref"], r["hyp"], r["baseline_conf"], r["method_conf"], False) for r in rows]
     rng.shuffle(items)
 
     batches = [items[i : i + batch_size] for i in range(0, len(items), batch_size)]
 
     rng2 = random.Random(SEED + seed_offset_dup)
     for d in duplicates:
-        dup = (d["utt_id"], d["ref"], d["hyp"], d["conf"], True)
+        dup = (d["utt_id"], d["ref"], d["hyp"], d["baseline_conf"], d["method_conf"], True)
         # find original batch
         orig_idx = None
         for bi, b in enumerate(batches):
@@ -264,16 +280,27 @@ def create_batches(rows, duplicates, batch_size, seed_offset_main=0, seed_offset
 
 
 # ---------- Writers ----------
-if INJECT_CONF:
+if CONF_MODE == "method_only":
     HEADER_LINE = (
         "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs "
         "| format: NNN|ref|word1[.NN] word2[.NN] ...|sentence_conf "
         "| Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost "
         "| Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] "
-        "([--] if missing). The trailing column is the method's sentence-level confidence. "
-        "Use as soft cues, NOT as verdict shortcuts."
+        "([--] if missing). The trailing column is the method's sentence-level confidence."
     )
-else:
+elif CONF_MODE == "baseline_plus_method":
+    HEADER_LINE = (
+        "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs "
+        "| format: NNN|ref|word1[.NN] word2[.NN] ...|baseline_conf|method_conf "
+        "| Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost "
+        "| Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] "
+        "([--] if missing). Trailing columns: baseline_conf is the model's standalone "
+        "sentence-level confidence (same value across all 4 methods on a given segment); "
+        "method_conf is THIS method's own sentence-level confidence. For baseline rows the "
+        "two are equal. Comparing them tells you whether aggregation moved the model's "
+        "self-assessed confidence. Use all conf values as soft cues, NOT verdict shortcuts."
+    )
+else:  # "none"
     HEADER_LINE = (
         "{label} | BATCH {n:02d}/{total:02d} | {pairs} pairs "
         "| format: NNN|ref|hyp "
@@ -290,13 +317,14 @@ def write_batch_files(method_label, batches, out_dir):
         with open(path, "w") as f:
             f.write(HEADER_LINE.format(label=method_label.upper(), n=bn, total=n, pairs=len(batch)) + "\n")
             f.write("---\n")
-            for idx, (uid, ref, hyp, conf, _is_dup) in enumerate(batch):
-                # Sanitize: replace pipe in ref/hyp to avoid breaking the format
+            for idx, (uid, ref, hyp, baseline_conf, method_conf, _is_dup) in enumerate(batch):
                 ref_s = ref.replace("|", "/")
                 hyp_s = hyp.replace("|", "/")
-                if INJECT_CONF:
-                    f.write(f"{idx + 1:03d}|{ref_s}|{hyp_s}|{conf}\n")
-                else:
+                if CONF_MODE == "method_only":
+                    f.write(f"{idx + 1:03d}|{ref_s}|{hyp_s}|{method_conf}\n")
+                elif CONF_MODE == "baseline_plus_method":
+                    f.write(f"{idx + 1:03d}|{ref_s}|{hyp_s}|{baseline_conf}|{method_conf}\n")
+                else:  # "none"
                     f.write(f"{idx + 1:03d}|{ref_s}|{hyp_s}\n")
 
 
@@ -307,7 +335,10 @@ def write_batch_index(all_method_batches, out_dir):
         for bi, batch in enumerate(batches):
             key = f"batch_{method}_{bi+1:02d}"
             index[key] = []
-            for idx, (uid, ref, hyp, conf, is_dup) in enumerate(batch):
+            for idx, item in enumerate(batch):
+                # item is (uid, ref, hyp, baseline_conf, method_conf, is_dup)
+                uid = item[0]
+                is_dup = item[-1]
                 index[key].append({
                     "index": idx + 1,
                     "utt_id": uid,

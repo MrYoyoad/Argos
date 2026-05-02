@@ -1,29 +1,29 @@
-BASELINE | BATCH 15/15 | 27 pairs | format: NNN|ref|hyp | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost
+BASELINE | BATCH 15/15 | 27 pairs | format: NNN|ref|word1[.NN] word2[.NN] ...|baseline_conf|method_conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | Each [.NN] after a hyp word is that word's calibrated confidence in [0,1] ([--] if missing). Trailing columns: baseline_conf is the model's standalone sentence-level confidence (same value across all 4 methods on a given segment); method_conf is THIS method's own sentence-level confidence. For baseline rows the two are equal. Comparing them tells you whether aggregation moved the model's self-assessed confidence. Use all conf values as soft cues, NOT verdict shortcuts.
 ---
-001|how long will he work for in his working life there's a boy by the way a boy|me so thank you very much for listening
-002|just sit tight i will start you soon now remember and those of you who you're all ddm members|i will start you as two now remember for those of you who are all the income earners too
-003|has its own density and will fall in the liquid|has its own destiny and will fall and in the liquid
-004|i haven't tried co2 oil i know it's available but i haven't tried it|to try to steal your story or to develop their own
-005|you know earlier you mentioned that maybe i was opposed to medical marijuana and i said no i was just|no i don't think there's any reason to think that maybe it was moore's law we all know that it was
-006|scale this is the cheapest best one i'll show you guys after|cell so that intership experience will ensure that everything
-007|another girl asked what happens when you're|another grade what happened was
-008|have these phones they can also use your website in order to select a phone number so they can receive calls as well on their ip phone or adapter these phone numbers are very useful|these phones it can also use a website in order to select a phone number so they can receive calls as well on their ipod phone for example these phone numbers
-009|i'll do this it's okay|but
-010|people so the correct one is|so the correct one is nuts
-011|cabin fever has hit some of the members of the rainbow aero modeler society rc club check out this clip shot during the new year's freeze fly in franklin wisconsin|if you guessed it's some of the members of the rabo air balloon club check out this clip shattering the current free flight record it was cast
-012|and produce it there we feel it's a safer bet to produce it here|and producing there were villages every few miles producing
-013|this is the camera and this is it the adapter it's supposed to go on like this|it's like a hammer and that's the only way to fix the world
-014|of results based seminars here in tampa|citizens of what's called space because the area is
-015|mode or single player mode by the way this is also a|mode single player mode by any way this is also
-016|the comments or not all the links will be in the description for the channels and then you could check for the songs if they publish it this|columns on the internet or being in an exhibition for your channels and then you can check for controls if they're published or
-017|auto suggest box we're not implementing search i just want you to be able to successfully use the visual state manager to show and hide|i'm going to suggest please with the prime minister's association one you would have been able to a successful history of short term management to show
-018|so my second worst memory happened to me when i was probably about 23 or 24|so my second mistake happened to me when i was probably about 23 or 24
-019|they treated her like she was that ain't shit|three years old and i said what what did you say look at that
-020|i could not believe i'm like i didn't have some of those conversations as in a|i could not believe i mean i did have some of those conversations as
-021|of afro latinos so from colombia|african single so from uganda to
-022|but so yeah it's you know it was obviously just a demo but|but so yeah it was obviously just a demo but you
-023|and he pledged 10 and he will be getting a letter in the post very soon|i planted sunflowers and we'll be getting electricity very soon
-024|vi we said was zero so that goes away so vf is f delta t|v i would say we're zero so that goes away so v i have the lead staff to tell the team
-025|written to me all the consultations and all of that i think that is a really important thing to do as well and i think it suits you know the first month of the year|the reason so many hold consultations in hawaii i think it's really important that they do as well and they choose the first month of the year
-026|without such adjustments the normal metabolism would not exist and nor would the normal psyche|team without such adjustments the normal metabolism would not exist a normal nor mal
-027|way to the left to make the shadows really dark all the way to the right|when i was a little girl i always wanted to be a princess
+001|how long will he work for in his working life there's a boy by the way a boy|me[.21] so[.25] thank[.40] you[.89] very[.58] much[.79] for[.62] listening[.32]|0.49|0.49
+002|just sit tight i will start you soon now remember and those of you who you're all ddm members|i[.26] will[.60] start[.76] you[.67] as[.67] two[.61] now[.66] remember[.95] for[.45] those[.60] of[.92] you[.93] who[.64] are[.75] all[.68] the[.65] income[.33] earners[.47] too[.50]|0.72|0.72
+003|has its own density and will fall in the liquid|has[.71] its[.92] own[.97] destiny[.74] and[.89] will[.63] fall[.94] and[.59] in[.68] the[.80] liquid[.80]|0.92|0.92
+004|i haven't tried co2 oil i know it's available but i haven't tried it|to[.26] try[.34] to[.55] steal[.46] your[.47] story[.55] or[.44] to[.52] develop[.39] their[.52] own[.73]|0.45|0.45
+005|you know earlier you mentioned that maybe i was opposed to medical marijuana and i said no i was just|no[.22] i[.31] don't[.38] think[.38] there's[.23] any[.43] reason[.42] to[.61] think[.46] that[.48] maybe[.71] it[.45] was[.76] moore's[.25] law[.93] we[.33] all[.31] know[.57] that[.51] it[.40] was[.52]|0.41|0.41
+006|scale this is the cheapest best one i'll show you guys after|cell[.28] so[.60] that[.39] intership[.33] experience[.46] will[.47] ensure[.34] that[.78] everything[.38]|0.38|0.38
+007|another girl asked what happens when you're|another[.61] grade[.55] what[.68] happened[.89] was[.89]|0.85|0.85
+008|have these phones they can also use your website in order to select a phone number so they can receive calls as well on their ip phone or adapter these phone numbers are very useful|these[.78] phones[.92] it[.47] can[.67] also[.96] use[.75] a[.43] website[.75] in[.90] order[.97] to[.96] select[.86] a[.87] phone[.94] number[.97] so[.89] they[.74] can[.93] receive[.91] calls[.81] as[.90] well[.95] on[.84] their[.87] ipod[.56] phone[.59] for[.90] example[.44] these[.59] phone[.90] numbers[.86]|0.89|0.89
+009|i'll do this it's okay|but[.15]|0.01|0.01
+010|people so the correct one is|so[.50] the[.65] correct[.39] one[.79] is[.88] nuts[.51]|0.68|0.68
+011|cabin fever has hit some of the members of the rainbow aero modeler society rc club check out this clip shot during the new year's freeze fly in franklin wisconsin|if[.14] you[.60] guessed[.40] it's[.37] some[.83] of[.93] the[.94] members[.94] of[.94] the[.91] rabo[.56] air[.42] balloon[.47] club[.43] check[.65] out[.92] this[.59] clip[.68] shattering[.47] the[.79] current[.27] free[.54] flight[.68] record[.67] it[.53] was[.87] cast[.38]|0.66|0.66
+012|and produce it there we feel it's a safer bet to produce it here|and[.54] producing[.62] there[.33] were[.38] villages[.62] every[.28] few[.39] miles[.61] producing[.68]|0.50|0.50
+013|this is the camera and this is it the adapter it's supposed to go on like this|it's[.18] like[.40] a[.41] hammer[.35] and[.32] that's[.32] the[.43] only[.33] way[.45] to[.56] fix[.42] the[.41] world[.54]|0.29|0.29
+014|of results based seminars here in tampa|citizens[.19] of[.43] what's[.35] called[.61] space[.35] because[.46] the[.49] area[.62] is[.45]|0.39|0.39
+015|mode or single player mode by the way this is also a|mode[.26] single[.56] player[.77] mode[.81] by[.76] any[.83] way[.56] this[.75] is[.72] also[.83]|0.80|0.80
+016|the comments or not all the links will be in the description for the channels and then you could check for the songs if they publish it this|columns[.21] on[.40] the[.56] internet[.41] or[.50] being[.52] in[.51] an[.66] exhibition[.48] for[.74] your[.43] channels[.40] and[.48] then[.56] you[.63] can[.68] check[.64] for[.74] controls[.42] if[.35] they're[.47] published[.53] or[.52]|0.53|0.53
+017|auto suggest box we're not implementing search i just want you to be able to successfully use the visual state manager to show and hide|i'm[.34] going[.65] to[.94] suggest[.68] please[.38] with[.47] the[.46] prime[.38] minister's[.56] association[.75] one[.59] you[.55] would[.67] have[.57] been[.94] able[.90] to[.94] a[.18] successful[.72] history[.42] of[.77] short[.51] term[.59] management[.48] to[.35] show[.68]|0.63|0.63
+018|so my second worst memory happened to me when i was probably about 23 or 24|so[.49] my[.69] second[.61] mistake[.16] happened[.64] to[.76] me[.70] when[.59] i[.92] was[.88] probably[.61] about[.60] 23[.50] or[.54] 24[.70]|0.73|0.73
+019|they treated her like she was that ain't shit|three[.22] years[.51] old[.59] and[.46] i[.56] said[.62] what[.57] what[.47] did[.28] you[.55] say[.48] look[.32] at[.49] that[.57]|0.47|0.47
+020|i could not believe i'm like i didn't have some of those conversations as in a|i[.66] could[.70] not[.92] believe[.91] i[.77] mean[.62] i[.85] did[.50] have[.65] some[.73] of[.80] those[.85] conversations[.89] as[.53]|0.87|0.87
+021|of afro latinos so from colombia|african[.21] single[.41] so[.60] from[.49] uganda[.27] to[.54]|0.37|0.37
+022|but so yeah it's you know it was obviously just a demo but|but[.49] so[.47] yeah[.62] it[.60] was[.70] obviously[.76] just[.86] a[.50] demo[.40] but[.73] you[.70]|0.71|0.71
+023|and he pledged 10 and he will be getting a letter in the post very soon|i[.35] planted[.34] sunflowers[.23] and[.48] we'll[.59] be[.88] getting[.84] electricity[.53] very[.68] soon[.97]|0.60|0.60
+024|vi we said was zero so that goes away so vf is f delta t|v[.42] i[.52] would[.53] say[.82] we're[.49] zero[.81] so[.75] that[.86] goes[.87] away[.87] so[.62] v[.68] i[.67] have[.52] the[.43] lead[.48] staff[.48] to[.63] tell[.49] the[.50] team[.37]|0.67|0.67
+025|written to me all the consultations and all of that i think that is a really important thing to do as well and i think it suits you know the first month of the year|the[.43] reason[.54] so[.39] many[.89] hold[.52] consultations[.48] in[.45] hawaii[.37] i[.70] think[.90] it's[.46] really[.63] important[.92] that[.46] they[.86] do[.92] as[.79] well[.95] and[.56] they[.23] choose[.43] the[.61] first[.87] month[.89] of[.95] the[.88] year[.87]|0.70|0.70
+026|without such adjustments the normal metabolism would not exist and nor would the normal psyche|team[.51] without[.74] such[.86] adjustments[.47] the[.78] normal[.86] metabolism[.90] would[.65] not[.51] exist[.83] a[.68] normal[.81] nor[.37] mal[.55]|0.77|0.77
+027|way to the left to make the shadows really dark all the way to the right|when[.15] i[.50] was[.46] a[.34] little[.43] girl[.60] i[.49] always[.30] wanted[.49] to[.76] be[.53] a[.54] princess[.48]|0.44|0.44
