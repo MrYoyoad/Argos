@@ -426,9 +426,18 @@ v3 says n-best aggregation **modestly improves the broader Y+P operating point**
 
 **The judge sees something IS doesn't.** IS at the segment level says all four methods are tied. The judge says MBR and vote_conf rescue marginal segments (baseline-N → method-P transitions), apparently below the IS rubric's tier-3 threshold so IS misses them.
 
-### Working recommendation
+### Final recommendation — ship pure MBR (May 2026)
 
-Ship `hyp_mbr` or `hyp_vote_conf` as the default. MBR is the stronger judge-Y+P win; vote_conf is comparable on Y+P and wins on WER. Both are defensible upgrades over baseline.
+**Decision: `hyp_mbr` is the default displayed output when n-best aggregation runs.** Wiring is shipped in `make_report.py` (new `--display-method` flag) and `lib/outputs.sh` (defaults the flag to `hyp_mbr` when `aggregated.json` exists; overridable via env var `VSP_DISPLAY_METHOD=top1`).
+
+Why MBR over the alternatives:
+
+- **MBR vs vote_score (Y+P paired)**: MBR-only=60, vote_score-only=33, **p=0.0070** — significant.
+- **MBR vs vote_conf (Y+P paired)**: tied (p=0.39) on Y+P, slight edge MBR on Y (p=0.08). vote_conf wins WER by 1.07 pp; that's the only axis it wins on.
+- **Intra-rater stability**: MBR 86.7 % (matches the prior `llm_judge/` gold standard) vs vote_conf 80 %, vote_score 76.7 %.
+- **Per-word confidence interpretation**: MBR emits a calibrated posterior (per-token min-prob from the chosen beam, same structure as baseline). Voting methods emit an agreement score across beams, NOT a posterior — narrow [0.4, 0.8] dynamic range, weaker for the band-reliability UI.
+
+Hybrid gating (use baseline if confident, else MBR) was considered and rejected. The trade-off plateaus at T_sc≈0.85 with +36 net rescues vs pure MBR's +37 — one extra rescue out of 1,497 segments. The hybrid adds a threshold to maintain at no measurable quality benefit. Pure MBR is the simpler, statistically equivalent choice.
 
 **Methodology note (logged)**: showing only the model's own confidence to the judge biases against the variant under test (its conf is in a different range than baseline's). Showing baseline + method conf together removes the bias. Future judge runs that inject confidence into the prompt should use the dual-conf design or skip conf entirely.
 

@@ -176,10 +176,20 @@ run_client_outputs() {
   [ -n "$word_conf_json" ] && conf_arg="--word-confidence $word_conf_json"
   local agg_arg=""
   [ -n "$agg_json" ] && [ -f "$agg_json" ] && agg_arg="--aggregated $agg_json"
+  # Display method (Mission 6 production switch, May 2026):
+  # When aggregated.json is available, default to using hyp_mbr as the displayed
+  # output. Judge-validated: +40 net Y+P verdicts vs top1 (paired McNemar
+  # p=0.0002, n=1,497). Override with VSP_DISPLAY_METHOD=top1 if needed.
+  local display_arg=""
+  if [ -n "$agg_json" ] && [ -f "$agg_json" ]; then
+    local method="${VSP_DISPLAY_METHOD:-hyp_mbr}"
+    display_arg="--display-method $method"
+    echo ">>> [8] Display method: $method (override with VSP_DISPLAY_METHOD)"
+  fi
   python3 "$vsp_dir/scripts/make_report.py" \
     --jsonl "$decode_json" \
     --out_dir "$report_dir" \
-    $params_arg --compute-is $conf_arg $agg_arg || {
+    $params_arg --compute-is $conf_arg $agg_arg $display_arg || {
     log_error "make_report.py failed"
     return 1
   }

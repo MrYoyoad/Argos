@@ -1747,3 +1747,31 @@ For `/workspace/` deployment translate the paths and apply identically. No new d
 
 **Path translation note**: The container sources are at `/home/ubuntu/vsp_linux_container_FINAL_20260217/...` (this repo's overlay). For `/workspace/` deployment, translate paths identically — none of the Python scripts hardcode `/home/ubuntu/` or `/workspace/`, and `outputs.sh` already uses `${HOME}` fallbacks for both `compute_word_agreement.py` and `compute_word_confidence.py` lookups. No new dependencies (only `re`, `json`, stdlib).
 
+
+### 30. MBR as default displayed output (May 2, 2026)
+
+**Summary**: When the n-best aggregator runs (`VSP_NBEST=1` → `aggregated.json` exists), the displayed/primary hypothesis in `report.csv` and `report.html` now defaults to **`hyp_mbr`** instead of the model's top-1 generation. Per-word confidence in the report also swaps to MBR's `word_confs_calibrated`. Override via env var `VSP_DISPLAY_METHOD=top1` (or any of `hyp_vote_score`, `hyp_vote_conf`, `hyp_safe`).
+
+**Why**: Judge-validated on the full 1,497-segment set (May 2 2026, n=5,988 verdicts, dual-conf prompt). MBR rescues **+40 net Y+P verdicts vs top1**, paired McNemar **p=0.0002**. Holds on text-differing subset (p=0.004). MBR also has the strongest intra-rater stability (86.7% — matches the prior `llm_judge/` gold standard) and emits a calibrated per-word posterior (per-token min-prob from chosen beam) that is structurally compatible with the existing band-reliability UI thresholds. Voting variants (vote_score, vote_conf) tie or lose on Y+P and emit an agreement-score for per-word that lives in a narrow [0.4, 0.8] range — weaker for the band UI. Full analysis: [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md).
+
+**Files mirrored from EC2**:
+
+- `VSP-LLM/scripts/make_report.py` — added `--display-method {top1, hyp_mbr, hyp_vote_score, hyp_vote_conf, hyp_safe}` CLI flag (default `top1` for backwards compatibility) and a record-mutation block after `load_records()` that swaps `r.hypo` and `word_conf[r.utt_id]` with the chosen method's text + `word_confs_calibrated` from `aggregated.json`. Downstream metrics, HTML, and CSV all read the swapped values automatically. Falls back to top1 with a `[WARN]` if `--aggregated` was not supplied or the segment is missing from the sidecar.
+- `lib/outputs.sh` — when `aggregated.json` exists, defaults `--display-method` to `${VSP_DISPLAY_METHOD:-hyp_mbr}` and forwards to `make_report.py`. Logs `>>> [8] Display method: <method>` so the choice is auditable in pipeline logs.
+
+**Container action for already-running deployments**:
+1. Drop in the patched `make_report.py` (only the argument parser + the new swap block at the top of the per-record processing in `main()` are different; the rest is byte-identical).
+2. Apply the small `outputs.sh` insertion (~10 lines around the existing `make_report.py` invocation).
+3. No re-decode needed. Stage 8 re-runs against existing `aggregated.json` and produces an MBR-default `report.csv` / `report.html`.
+4. To opt out per-run: `VSP_DISPLAY_METHOD=top1 ./run_flat_english_pipeline.sh ...`. To opt out globally: edit `lib/outputs.sh` and change the default from `${VSP_DISPLAY_METHOD:-hyp_mbr}` to `${VSP_DISPLAY_METHOD:-top1}`.
+
+**Backward compatibility**:
+- Pipelines decoded **without** `VSP_NBEST=1` produce no `aggregated.json`. The new code path is gated on `[ -n "$agg_json" ] && [ -f "$agg_json" ]`, so the `--display-method` flag is omitted entirely and `make_report.py` defaults to `top1`. End users see no change unless they opt into n-best decoding.
+- The aggregator's auxiliary columns (`hyp_mbr`, `wer_hyp_mbr_%`, `hyp_mbr_mean_conf_calib`, etc.) remain in `report.csv` regardless of the display method choice — this is intentional so per-method comparison data is always available.
+
+**Verification**:
+- Smoke test on EC2 with the existing `english_full_nbest_eval/aggregated.json`: `make_report.py --display-method=hyp_mbr` → first-segment `hyp` column matches `hyp_mbr` column (byte-identical), `wer_%` matches `wer_hyp_mbr_%` (62.5%), `sentence_confidence` matches `hyp_mbr_mean_conf_calib` (0.529).
+- Container files updated: `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_report.py` and `vsp_linux_container_FINAL_20260217/lib/outputs.sh`.
+- `vsp_docker/galaxy_export/` Docker build context: **deferred** per CLAUDE.md sync rules. Will sync at next planned image rebuild (see [docs/guides/deploy-targets.md](guides/deploy-targets.md)).
+
+**Path translation note**: No hardcoded paths in either change. EC2 paths and `/workspace/` paths translate identically.

@@ -196,32 +196,48 @@ This is itself a finding about prompt design for in-conversation LLM-as-judge wi
 
 **The judge sees something IS doesn't.** IS at the segment level says all four methods are equivalent. The judge says MBR and vote_conf are meaningfully better at the broader Y+P operating point. The mechanism — cleanest explanation — is that aggregation rescues marginal segments (baseline-N → method-P transitions), and the IS rubric thresholds (P ≈ tier 3 ≈ IS ≥ 2.0) are slightly above where these rescues land, so IS misses them.
 
-## Production recommendation — hybrid gating by `sentence_confidence`
+## Production recommendation — ship pure MBR
 
-The conditional plot showed aggregation helps low-IS segments and slightly hurts high-IS ones. The natural follow-up: **only run aggregation on uncertain segments**. Since IS isn't available at decode time (it needs the reference), we gate on `sentence_confidence` — already in `report.csv`.
+**Decision (May 2026): pure `hyp_mbr` is the default displayed output when `aggregated.json` is available.** No hybrid gating.
 
-Rule: `sc ≥ T → keep baseline; sc < T → use hyp_mbr`.
+### Why MBR over the alternatives
+
+| comparison | result |
+|---|---|
+| MBR vs vote_score (Y+P paired) | MBR-only=60, vote_score-only=33, **p=0.0070 (sig)** |
+| MBR vs vote_conf (Y+P paired) | MBR-only=48, vote_conf-only=39, p=0.39 (tied) |
+| MBR vs vote_conf (Y verdict) | MBR-only=74, vote_conf-only=53, p=0.08 (borderline edge MBR) |
+
+| | MBR | vote_conf | vote_score | baseline |
+|---|---|---|---|---|
+| Y+P paired vs baseline | **+40 (p=0.0002)** | +31 (p=0.0026) | +13 (n.s.) | — |
+| WER | 63.84 % | 62.49 % ← wins | 63.67 % | 64.05 % |
+| Intra-rater exact | **86.7 %** ← matches gold std | 80.0 % | 76.7 % | 83.3 % |
+| Per-word conf interpretation | per-token min-prob from chosen beam — calibrated posterior | agreement score across beams (NOT a posterior) | agreement score | per-token min-prob |
+| Per-word band UI compatibility | strong — same `T_safe=0.82 / T_salvage=0.74` thresholds carry over | weak — narrow [0.4, 0.8] dynamic range | weak | strong (current) |
+
+MBR wins or ties on every judge axis, has the highest intra-rater stability, and emits a calibrated per-word posterior (not an agreement score) — so the existing band-reliability UI thresholds carry over with at most a small re-calibration check.
+
+### Why not hybrid gating
+
+We considered gating on `sentence_confidence`: keep baseline if confident, else use MBR. The trade-off plot below shows the curve plateaus at T=0.85 (+36 net of pure MBR's +37). The hybrid avoids degrading ~12 tier-5 segments that pure MBR slightly degrades, and saves a few seconds of CPU. Both gains are negligible:
+
+- Quality: +37 vs +36 net rescues = one extra segment out of 1,497.
+- Compute: aggregation is offline CPU, ~minutes for the full set.
+- Complexity: a threshold to maintain that needs re-tuning if the LLM, dataset, or upstream signal changes.
+
+Pure MBR is simpler and statistically equivalent. We ship it.
 
 ![Hybrid trade-off + sentence_conf distribution](figures/hybrid_threshold_sweep.png)
 
-| T_sc | % use baseline | % run MBR | net Y+P rescues | p (paired) |
-|---|---|---|---|---|
-| 0.65 | 61 % | 39 % | +22 | 0.016 |
-| 0.70 | 51 % | 49 % | +29 | 0.003 |
-| **0.75** | **39 %** | **61 %** | **+34 (92 % of pure MBR)** | **0.0008** |
-| 0.80 | 28 % | 72 % | +35 | 0.0006 |
-| 0.85 | 17 % | 83 % | +36 (97 % of pure MBR) | 0.0005 |
-| 0.90 | 8 % | 92 % | +36 | 0.0006 |
-| pure MBR | 0 % | 100 % | +37 | 0.0004 |
+*Trade-off curve kept for the record — it shows that any gating threshold above 0.75 captures essentially all of MBR's gain. Pure MBR (right edge, "+37 (run on 100%)") is the simplest point on the curve.*
 
-**Recommendation**: gate at **T_sc = 0.75**. Captures 92 % of pure-MBR's quality gain while skipping aggregation on 39 % of segments (~600 of 1,497 in this dataset). Plateau at T=0.85 — past that, you're paying compute for one extra rescue. `min_word_conf` gating works comparably (T_mwc=0.50 → +36 net) but isn't more efficient per percentile.
+### Wiring (shipped)
 
-What you actually gain by going hybrid vs pure MBR:
-1. **Strict safety on confident segments**. Pure MBR slightly degrades 12 tier-5 segments; the hybrid avoids that by construction.
-2. **Compute saving**. Aggregation runs only on the bottom 60–70 % of segments by confidence.
-3. **Equal quality**. Statistically indistinguishable from pure MBR on Y+P (+34 vs +37, both p < 0.001).
-
-To wire this into `lib/decode.sh`: keep `VSP_NBEST=1` and the existing aggregator, but add a gate in `lib/outputs.sh` that picks `report.csv` `hyp` (top-1) when `sentence_confidence ≥ 0.75`, else `hyp_mbr`. Single column rewrite per row, no decode-time changes.
+- **`make_report.py`**: new `--display-method {top1, hyp_mbr, hyp_vote_score, hyp_vote_conf, hyp_safe}` flag (default `top1` for backward compatibility). When set, replaces `r.hypo` and per-word conf data with the chosen method's text + `word_confs_calibrated` from `aggregated.json`. Downstream metrics, HTML, and per-word coloring all read the swapped values.
+- **`lib/outputs.sh`**: when `aggregated.json` exists, defaults `--display-method` to `hyp_mbr` (override via env var `VSP_DISPLAY_METHOD=top1`).
+- **Container overlay (`vsp_linux_container_FINAL_20260217/`)**: synced.
+- **Docker build context (`vsp_docker/galaxy_export/`)**: deferred per CLAUDE.md sync rules; will sync at next planned image rebuild.
 
 ## Files
 

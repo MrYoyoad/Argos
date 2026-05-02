@@ -708,6 +708,13 @@ def main() -> None:
                     help="word_confidence.json (from compute_word_confidence.py); enables per-word confidence rendering and per-segment confidence columns")
     ap.add_argument("--aggregated", default=None,
                     help="aggregated-{fid}.json (from lib/nbest_aggregate.py); enables per-method aggregated hypotheses and their WER in the report")
+    ap.add_argument("--display-method", default="top1",
+                    choices=["top1", "hyp_mbr", "hyp_vote_score", "hyp_vote_conf", "hyp_safe"],
+                    help="Which hypothesis to use as the displayed/primary output. "
+                         "`top1` (default) uses the model's first-best from the decode JSON. "
+                         "`hyp_mbr` (recommended for production) uses the n-best MBR consensus from --aggregated; "
+                         "rescues +40 net Y+P verdicts vs top1 (paired McNemar p=0.0002, judge-validated). "
+                         "Voting variants are available but not recommended (per-word conf is an agreement score, not a posterior).")
     args = ap.parse_args()
 
     # Word-level confidence (optional). Format: {utt_id: {words: [...], summary: {...}}}
@@ -751,6 +758,56 @@ def main() -> None:
     if not recs:
         print(f"[WARN] No records loaded from {args.jsonl}")
         return
+
+    # ---- Display-method swap (Mission 6 production switch, May 2026) ----
+    # Override `r.hypo` and per-word conf data with the selected aggregation method.
+    # Validated on 1,497-segment LLM-as-Judge run: hyp_mbr +40 Y+P vs top1 (p=0.0002).
+    # No-op when --display-method=top1 (default), preserving backwards compatibility.
+    if args.display_method != "top1":
+        if not aggregated:
+            print(f"[WARN] --display-method={args.display_method} requested but --aggregated not provided; "
+                  f"falling back to top1.")
+        else:
+            n_swapped = 0
+            n_missing = 0
+            for r in recs:
+                rec = aggregated.get(r.utt_id)
+                if not rec:
+                    n_missing += 1
+                    continue
+                v = rec.get(args.display_method)
+                if isinstance(v, dict):
+                    new_text = v.get("text", "")
+                    new_wc = v.get("word_confs_calibrated") or v.get("word_confs") or []
+                else:
+                    new_text = v if isinstance(v, str) else ""
+                    new_wc = rec.get("hyp_top1_word_confs_calibrated") or rec.get("hyp_top1_word_confs") or []
+                if not new_text:
+                    n_missing += 1
+                    continue
+                r.hypo = new_text
+                if new_wc:
+                    words_payload = []
+                    probs = []
+                    for entry in new_wc:
+                        if isinstance(entry, (list, tuple)) and len(entry) >= 2:
+                            w, p = entry[0], entry[1]
+                        else:
+                            w, p = str(entry), None
+                        words_payload.append({"word": w, "prob": p})
+                        if isinstance(p, (int, float)):
+                            probs.append(float(p))
+                    summary = {}
+                    if probs:
+                        summary["mean_word_prob"] = sum(probs) / len(probs)
+                        summary["min_word_prob"] = min(probs)
+                        summary["n_low"] = sum(1 for p in probs if p < 0.65)
+                    word_conf[r.utt_id] = {"words": words_payload, "summary": summary}
+                n_swapped += 1
+            if n_swapped:
+                do_conf = bool(word_conf)
+            print(f"[INFO] Display method: {args.display_method} — swapped {n_swapped} segments, "
+                  f"{n_missing} fell back to top1 (no aggregated record or empty method text).")
 
     # Build display names and sort by (base_video_id, segment_index)
     display_names = build_display_names(recs)
