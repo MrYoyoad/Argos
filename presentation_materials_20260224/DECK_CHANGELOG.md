@@ -150,7 +150,7 @@ shifted −1; slides at or after insertion point shifted +1.
   `QA_CHEAT_SHEET.md` + `.pdf` — refreshed.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- eec6d09 — Round 5.10.
 
 ---
 
