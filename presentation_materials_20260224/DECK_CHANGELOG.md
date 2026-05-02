@@ -120,7 +120,7 @@ Carry the IF-ASKED defenses:
   + `.pdf` — rebuilt.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- ebfddfc — Round 5.8.
 
 ---
 
