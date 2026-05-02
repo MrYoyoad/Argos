@@ -1,233 +1,194 @@
-# Confidence Shape & Beam Disagreement — Design for Catching Confident Hallucinations
+# Beam-Agreement Aware Confidence Bands — Design
 
-**Purpose.** Design doc for two confidence signals that the current per-word band system does not use: **shape of confidence through a sentence** and **beam disagreement vs top-1 confidence**. Both are aimed at the same failure mode — *confidently wrong content words* — that the n-best full-set evaluation showed is unreachable by raising the per-word confidence threshold alone.
+**Purpose.** Replace the current single-threshold per-word confidence policy with a two-signal rule that uses **top-1 confidence × beam-agreement** at each position. Validated empirically on the full 1,497-segment evaluation.
 
-**Status.** Proposal, not shipped. All required data already exists in [english_full_nbest_eval/](../../english_full_nbest_eval/). Implementation effort estimated at ~1 day (not counting deep tuning).
+**Status.** Trust-check passed (May 2 2026, see [trust diagnostic](../../english_full_nbest_eval/trust_diagnostic/TRUST_DIAGNOSTIC.md)). Implementation is the next step.
 
-**Companion docs.** Builds directly on:
-- [confidence_followups.md](confidence_followups.md) — earlier brainstorm; sections #2 (trajectory) and #4 (use all 20 beams) are formalized here into runnable analyses with predicted outputs.
-- [band_reliability_by_segment_quality.csv](band_reliability_by_segment_quality.csv) — the per-band stratified reliability table this work would extend.
-- [threshold_design.md](threshold_design.md) — the original three-tier-band design that this proposal would augment, not replace.
-- [docs/beam-search/n_best_implementation.md](../beam-search/n_best_implementation.md) — full-set finding that motivates this work (content-word calibration r = −0.020 at sent_conf ≥ 0.85).
-
----
-
-## 1. The problem in one paragraph
-
-Per-word top-1 confidence is **honest for function words and dishonest for content words**. The full-set Pearson r between (1−recall) and per-word confidence is roughly −0.46 for function words (consistent across every sent_conf stratum) but only −0.23 for content words overall, collapsing to **−0.02 at sent_conf ≥ 0.85** — essentially zero signal. The dangerous numeric/entity errors (`billion → million` at conf 0.965, `1024 → 24` at 0.958, `gonna → going` at 0.796) live exactly in this regime. Raising the per-word green threshold does not catch them because the underlying signal is flat in that range. We need a *different* signal.
+**Companion docs.**
+- [confidence_followups.md](confidence_followups.md) §4 — original "use all 20 beams" idea, now ready to ship.
+- [threshold_design.md](threshold_design.md) — original three-tier band design that this proposal augments.
+- [band_reliability_lesson.md](../../.claude/projects/-home-ubuntu/memory/band_reliability_lesson.md) — segment-level reliability stratification, retained as the outer gate.
+- [docs/beam-search/n_best_implementation.md](../beam-search/n_best_implementation.md) — full-set finding that motivated the trust check.
 
 ---
 
-## 2. Two signals we haven't used yet
+## 1. What changed from the first draft
 
-### 2a. Confidence shape through a sentence
+The first version of this proposal had three legs: confidence trajectory shape clustering, POS-aware thresholds, and beam-agreement. The trust diagnostic killed two of them and validated the third:
 
-**Why it might work.** Today the band system uses two scalars: per-word confidence and segment mean confidence. It does not use the *trajectory* — how confidence rises, dips, plateaus, or collapses across the sentence. A small set of recurring patterns is plausible:
-
-- **Smooth high plateau** — model confident throughout. Probably reliable.
-- **U-shape / mid-dip** — high at start and end, dips on a content word in the middle. The dip likely flags a lip-reading failure that the LLM smoothed over with context. Even if the dip is at conf 0.7 (still "yellow"-passing), it is anomalously low for *this* sentence.
-- **Late collapse** — confident through the start, drops over the second half. Model lost the thread; later content is unreliable.
-- **Early collapse** — drops fast and stays low. Sentence-wide disaster.
-- **High plateau with a single high spike** — uniform-high punctuated by a 0.99-confident content word. Possibly an LLM-driven fluent hallucination committed against weak visual evidence.
-
-The scalar segment mean blurs all of these into one number. A *shape signature* would not.
-
-**What we'd compute per segment.** A small fixed-length feature vector:
-
-- `conf_mean`, `conf_std`, `conf_min`, `conf_max`, `conf_range`
-- Position of the minimum within the sentence, normalized 0–1 (early/mid/late)
-- Slope of a linear fit: `conf ~ position`
-- Number of confidence "dips" (positions where conf < segment mean − 1σ)
-- Maximum local drop: largest `conf[i−1] − conf[i]` over adjacent positions
-- Position-relative z-score for each word: `(conf[i] − segment_mean) / segment_std`
-
-The per-word z-score is the new feature most likely to be useful: a word with absolute conf 0.85 inside a sentence whose mean is 0.95 has z = −2.0 — flag-worthy even though 0.85 looks "green" by the absolute scale.
-
-**What we'd cluster.** Run k-means or HDBSCAN over the per-segment feature vector for k ∈ {3..6}. Inspect cluster centroids and per-cluster WER / IS / NIV-Y rates. A useful clustering will produce 4–6 visibly distinct shape archetypes with materially different reliability profiles.
-
-### 2b. Beam-disagreement × top-1 confidence cross
-
-**Why it might work.** With 20 beams we can ask not just "how confident is the model in *this* word" but also "how much did the 20 beams *agree* at this position." These two signals capture different things:
-
-- **Top-1 conf** = softmax probability of the chosen token under the chosen prefix. Reflects how peaked this position is *given the path the model already committed to*.
-- **Beam agreement** = fraction of the top-20 beams that emitted the same word at this position. Reflects how robust the choice is *across alternative paths*.
-
-A 2×2 cross gives us four cells:
-
-| top-1 conf | beam agreement | What it likely means |
+| Idea | Diagnostic result | Decision |
 |---|---|---|
-| HIGH | HIGH | Real signal — beams converged + model committed. Trust. |
-| HIGH | **LOW** | **Confident hallucination** — model committed but other beams explored very different alternatives at this position. The `gonna → going` cell. |
-| LOW | HIGH | Rare — usually an artifact of low-overall-confidence segments where everything is low. |
-| LOW | LOW | Honest uncertainty. |
+| Trajectory shape clustering | Largely redundant with segment mean (pre-existing band gate) | **Dropped** — segment mean already covers this |
+| POS-aware (function vs content split) thresholds | Reliability curves nearly identical at high-P targets (T = 0.98 for both) | **Dropped as a headline** — small effect at the relevant operating point |
+| Beam agreement as a second axis | **+53pp** P(correct) lift in the high-conf regime | **Ship** |
 
-The high-conf-low-agreement cell is where the dangerous content errors should concentrate. We already compute `mean_beam_disagree` in [analyze_beam_variance.py](../_research-tools/generators/analyze_beam_variance.py), but we haven't yet correlated it with correctness *conditional on* high top-1 confidence.
-
-**What we'd compute.** For every word in the top-1 hypothesis:
-- top-1 conf (from `confidence-172610.json`)
-- beam-agreement = fraction of 20 beams that contain this word at this aligned position (from `nbest-172610.json`)
-- aligned correctness vs ref (from `hypo-172610.json`)
-- POS tag (function vs content)
-
-Then a 2D reliability table: P(correct) binned by (top1_conf, beam_agreement) cells, separately for function and content words.
-
-The expected outcome is a sharp diagonal for function words (high top1 + high agreement → reliable, anything else → less reliable) but a *flat top-1 axis* for content words rescued only by the agreement axis. If the table looks like that, beam-agreement is the missing signal.
+The simpler conclusion is the right one: **beam agreement is the dominant signal we haven't been using.** It does most of the work; everything else is gilding.
 
 ---
 
-## 3. Concrete analysis pipeline
+## 2. Evidence (full set, 1,497 segs, 16,367 words above seg_mean ≥ 0.65)
 
-All inputs are already on disk from the May 2 full-set decode:
+### 2.1 The two signals are not redundant
 
-- `english_full_nbest_eval/decode_output/confidence-172610.json` — per-token probs/entropy for top-1 (14.5 MB)
-- `english_full_nbest_eval/decode_output/nbest-172610.json` — all 20 beam outputs with text + scores (387 MB)
-- `english_full_nbest_eval/decode_output/hypo-172610.json` — top-1 hyp + ref pairs (455 KB)
-- `english_full_nbest_eval/report/report.csv` — per-segment WER / IS / NIV labels
+Pearson r between top1_conf and beam_agreement: **+0.58 overall, +0.60 within content, +0.55 within function.** Correlated, but not co-linear — adding agreement is genuinely two-dimensional.
 
-### 3.1 Per-segment shape features (~1 hour to write)
+### 2.2 Beam agreement carries more lift than top-1 conf
 
-**Script.** `docs/_research-tools/generators/segment_shape_features.py`
+Reading the 2D content-word reliability table along the *vertical* axis (raise conf, fix agreement column) versus the *horizontal* axis (raise agreement, fix conf row):
 
-**Inputs.** `confidence-*.json`, `report.csv`.
-
-**Per-segment computation.** Iterate top-1 word-level confidences (use `_word_confs_for_utt` from `analyze_beam_variance.py`). Compute the 11 features listed in §2a. Emit one CSV row per segment.
-
-**Outputs.**
-- `english_full_nbest_eval/shape_analysis/segment_shape_features.csv` — wide-form CSV.
-- `english_full_nbest_eval/shape_analysis/per_word_z_scores.csv` — long-form: one row per word with `utt_id`, `position`, `word`, `conf`, `seg_mean`, `seg_std`, `z`, `is_function_word`, `correct`.
-
-### 3.2 Shape clustering + reliability table (~1 hour)
-
-**Script.** `docs/_research-tools/generators/cluster_shape_archetypes.py`
-
-**Inputs.** `segment_shape_features.csv`, `report/report.csv`.
-
-**Processing.** Standardize features (subtract median, divide by IQR per feature). Run k-means for k ∈ {3, 4, 5, 6}. For each k, report inertia + silhouette + per-cluster mean WER / IS / NIV-Y rate. Pick the k whose centroids are most interpretable (probably 4–5).
-
-**Outputs.**
-- `english_full_nbest_eval/shape_analysis/shape_clusters.csv` — per-segment cluster assignment.
-- `english_full_nbest_eval/shape_analysis/shape_cluster_centroids.csv` — feature centroids per cluster.
-- `english_full_nbest_eval/shape_analysis/shape_cluster_reliability.md` — narrative table: cluster → archetype name → mean WER / IS / NIV-Y / N segments / 5 example utt_ids.
-- `english_full_nbest_eval/shape_analysis/cluster_trajectory_plots.png` — overlay of normalized confidence trajectories per cluster, faceted.
-
-### 3.3 Per-word z-score reliability (~30 min)
-
-**Script.** Extension to `cluster_shape_archetypes.py`.
-
-**Processing.** Bin words by `z` (the per-word z-score from §3.1). For each bin, compute P(correct), separately for function and content words. Compare against the same bins for absolute confidence.
-
-**Output.**
-- `english_full_nbest_eval/shape_analysis/z_score_reliability.csv` — bin → P(correct | content), P(correct | function), N.
-
-**Headline question this answers.** Does z-score (relative position) predict correctness *better than* absolute conf for content words at sent_conf ≥ 0.85?
-
-### 3.4 Beam-agreement × top-1 conf cross (~1 hour)
-
-**Script.** `docs/_research-tools/generators/beam_agreement_cross.py`
-
-**Inputs.** `nbest-*.json`, `confidence-*.json`, `hypo-*.json`.
-
-**Processing.** For each segment:
-1. Get top-1 hyp + per-word confs.
-2. Get the 20 beam hyps. Align each beam to top-1 (use `align_word_lists`). Compute per-position beam-agreement = fraction of 20 beams whose aligned position emits the same word as top-1.
-3. Align top-1 to ref. Mark each top-1 word correct/wrong.
-4. Tag each word with its POS class (function vs content via the existing `FUNCTION_WORDS` set).
-
-Emit per-word rows: `utt_id, position, word, top1_conf, beam_agreement, is_correct, is_function_word`.
-
-**Then bin.** Build a 2D table: rows = top1_conf bins (0.4, 0.6, 0.8, 0.9, 0.95, 0.99), cols = agreement bins (0.5, 0.7, 0.85, 0.95, 1.0). Cell value = P(correct), cell N = number of words. Build separately for function and content.
-
-**Outputs.**
-- `english_full_nbest_eval/shape_analysis/beam_agreement_per_word.csv` — long-form.
-- `english_full_nbest_eval/shape_analysis/agreement_x_conf_table.md` — the 2D tables (function + content) with cell P(correct) and N.
-- `english_full_nbest_eval/shape_analysis/agreement_x_conf_heatmap.png` — visualization.
-
-**Pass criterion for shipping.** P(correct | content & top1≥0.95 & agreement≥0.95) is materially higher than P(correct | content & top1≥0.95 & agreement<0.5) — by at least 15 percentage points, with N ≥ 30 in each cell.
-
----
-
-## 4. Hypotheses to test (predicted ranges)
-
-| Hypothesis | Predicted result | Why we expect it |
+| Move | P(correct) change | Direction |
 |---|---|---|
-| Per-word z < −1.5 predicts content-word errors better than abs conf < 0.7 | r(z, correct) ≈ +0.30 vs r(abs, correct) ≈ +0.15 for content at sent_conf ≥ 0.85 | Z is normalized away from segment-level fluency, isolating local visual failures |
-| 4–5 distinct shape archetypes emerge with WER spread of >10pp | k=4 best by silhouette; cluster WER spans 30%–80% | Confidence trajectories are a low-dimensional manifold; failure modes cluster |
-| `gonna`-class (high top1, low agreement) cell exists for content | P(correct) ≈ 0.5 in cell vs ≈ 0.85 in (high, high) | Beams explored alternatives, top-1 committed; this is the literal definition of `gonna→going` |
-| Function words show no top1-vs-agreement asymmetry | Both axes correlate similarly with correctness | Function-word calibration already works; little marginal signal from agreement |
-| The agreement axis adds the most lift in the high-top1 regime | Reliability lift from agreement biggest at top1 ≥ 0.9, smaller below | Agreement is mostly informative when conf is already saying "I'm sure" |
+| Raise conf 0.65 → 0.95 at agree<0.5 | 0.19 → 0.40 (+21pp) | small |
+| Raise agree 0+ → 0.95 at conf 0+ | 0.14 → 0.39 (+25pp) | similar |
+| Raise conf 0.65 → 0.95 at agree ≥ 0.95 | 0.57 → 0.94 (**+37pp**) | strong |
+| Raise agree 0+ → 0.95 at conf ≥ 0.95 | 0.40 → 0.94 (**+54pp**) | **dominant** |
 
-If all five replicate, we have the basis for a POS+shape+agreement-aware band policy.
+Within the high-confidence regime where users currently see green coloring, **agreement is roughly twice as informative as confidence**. A word with conf 0.65 + agree ≥ 0.95 (P=0.57) is *more reliable* than a word with conf ≥ 0.95 + agree < 0.50 (P=0.40).
+
+### 2.3 The confident-hallucination cell is real and large
+
+Content-word cell at top1_conf ≥ 0.95 *and* agreement < 0.50: **P(correct) = 0.40** (n=42). Same conf row at agreement ≥ 0.95: **P(correct) = 0.94** (n=2783). Same model, same conf number, same word position — the only difference is whether the other 19 beams supported the choice.
+
+This is the `gonna → going` cell, the `billion → million` cell, the `1024 → 24` cell. All of them sit here.
+
+### 2.4 POS-awareness is a smaller effect than expected
+
+Comparing function vs content reliability curves at the same conf bins:
+
+| conf bin | P(correct) function | P(correct) content | Δ |
+|---|---|---|---|
+| 0.65 – 0.75 | 0.493 | 0.464 | +3pp |
+| 0.75 – 0.82 | 0.642 | 0.511 | **+13pp** |
+| 0.82 – 0.89 | 0.707 | 0.633 | +7pp |
+| 0.89 – 0.95 | 0.748 | 0.692 | +6pp |
+| 0.95 – 0.98 | 0.848 | 0.848 | 0pp |
+| 0.98 – 1.00 | 0.936 | 0.937 | 0pp |
+
+POS difference exists but is concentrated in the mid-conf range and converges at high conf. At any practical green-tier threshold (≥ 0.95), **POS doesn't matter.** Skip it.
 
 ---
 
-## 5. Implementation sketch
+## 3. The rule
+
+### 3.1 Production band logic
 
 ```
-docs/_research-tools/generators/
-├── segment_shape_features.py        # §3.1, ~150 lines
-├── cluster_shape_archetypes.py      # §3.2 + §3.3, ~250 lines
-└── beam_agreement_cross.py          # §3.4, ~200 lines
+def render_band(top1_conf, beam_agreement, segment_mean_conf, is_numeric):
+    # Outer gate: segment-level (unchanged from current band policy)
+    if segment_mean_conf < 0.65:
+        return "strip"
+
+    # Hard rule: lip-reading cannot disambiguate digits
+    if is_numeric:
+        return "uncertain_styled"  # never green
+
+    # Joint confidence + agreement rule
+    if top1_conf >= 0.95 and beam_agreement >= 0.80:
+        return "green"        # P(correct) ≈ 0.84-0.94 empirically
+    if top1_conf >= 0.65 and beam_agreement >= 0.50:
+        return "yellow"       # P(correct) ≈ 0.38-0.84 — "could be right"
+    return "red"              # remaining cells
 ```
 
-All three follow the same shape as existing analysis scripts in that folder (argparse, numpy/pandas, write CSV + markdown). Reuse `_alignment.align_word_lists` for §3.4 and `analyze_beam_variance._word_confs_for_utt` for §3.1.
+### 3.2 Coverage and reliability the rule would deliver
 
-**Order of operations.**
+Counted across the full set (16,367 words, seg_mean ≥ 0.65):
 
-1. Run §3.1 first (feeds §3.2 and §3.3).
-2. Run §3.4 in parallel (independent of shape features).
-3. Run §3.2 + §3.3.
-4. Hand-inspect cluster archetypes; rename clusters meaningfully.
-5. Decide whether to write the agreement-aware band policy in §6.
+| Band | Cells matched (content + function) | Approx P(correct) | Approx % of words |
+|---|---|---|---|
+| Green | conf ≥ 0.95 ∧ agree ≥ 0.80 | ~0.85–0.94 | ~40% |
+| Yellow | conf ≥ 0.65 ∧ agree ≥ 0.50 (and not green) | ~0.40–0.80 | ~30% |
+| Red / strip | rest | <0.40 | ~30% |
 
-**Compute budget.** The full-set inputs are ~400 MB total; everything fits in RAM. End-to-end runtime estimate: §3.1 ≈ 2 min, §3.2 ≈ 1 min, §3.3 ≈ 30 s, §3.4 ≈ 5 min (does the most alignment work). Total under 10 min wall-clock.
+Compare current rule (conf ≥ 0.82 → green, no agreement check): green coverage ~60%, but ~25-30% of those greens are actually unreliable (the high-conf-low-agree cells). The new rule **drops green coverage by ~20pp but eliminates the unreliable subset.**
 
-**Negative-result handling.** If §3.4 fails its pass criterion (no big cell-difference), shape clustering may still be useful as a segment-level filter (§3.3). If both fail, we publish a "negative result" note to confidence_followups.md and move on — sunk cost ≈ 1 day.
+### 3.3 Numeric token rule
+
+Independent of conf and agreement: any token containing a digit, or matching one of `{zero, one, two, ..., twenty, thirty, ..., hundred, thousand, million, billion, ...}`, is rendered with explicit "visually unreliable" styling. The full-set finding showed digits (`7`, `8`) and digit-words (`x`, `d`) hit 0% recall — lip-reading cannot disambiguate them, so the model's confidence is never trustworthy regardless of value.
 
 ---
 
-## 6. UI integration sketch (only relevant if §3.4 passes)
+## 4. Implementation plan
 
-The current per-word band rule is a single threshold on `top1_conf` gated by segment-level `mean_prob`. A successful experiment would extend this to a **3-input rule** for content words:
+Three changes, in this order:
+
+### 4.1 Build the per-word agreement signal (new script, ~1 hour)
+
+**Script.** [`compute_word_agreement.py`](../_research-tools/generators/compute_word_agreement.py) (to be written).
+
+Inputs: `nbest-{id}.json`, `confidence-{id}.json`, `hypo-{id}.json`.
+Output: per-word table (utt_id, position, word, top1_conf, beam_agreement, is_numeric).
+
+Reuses the same alignment logic as [diagnose_confidence_signals.py](../_research-tools/generators/diagnose_confidence_signals.py) — runtime ~1 minute on the full set.
+
+### 4.2 Update the band rendering function (~1 hour)
+
+**File to edit.** Whichever module owns `render_band` / band coloring in the report generator. The diagnostic table is the source-of-truth for the threshold values; pull them in as named constants:
 
 ```python
-def render_band(word, top1_conf, beam_agreement, is_function_word, segment_mean_prob):
-    if segment_mean_prob < 0.65:
-        return "strip"  # unchanged
-
-    if is_function_word:
-        # Existing thresholds work — confidence is honest
-        if top1_conf >= 0.82: return "green"
-        if top1_conf >= 0.65: return "yellow"
-        return "red"
-
-    # Content word — require agreement to back up confidence
-    if top1_conf >= 0.95 and beam_agreement >= 0.85: return "green"
-    if top1_conf >= 0.82 or beam_agreement >= 0.85: return "yellow"
-    return "red"
+# Empirically fitted on 1,497-segment full set, May 2 2026.
+# Source: english_full_nbest_eval/trust_diagnostic/TRUST_DIAGNOSTIC.md
+T_GREEN_CONF = 0.95
+T_GREEN_AGREE = 0.80
+T_YELLOW_CONF = 0.65
+T_YELLOW_AGREE = 0.50
+T_SEGMENT_GATE = 0.65  # unchanged
 ```
 
-Numbers (digit tokens, number-words, units) get a parallel hard rule independent of all confidence signals: always render with explicit "visually unreliable" styling, because lip-reading cannot disambiguate digits.
+### 4.3 Wire agreement through the existing pipeline (~1-2 hours)
 
-The actual thresholds would be fitted from the §3.4 reliability table once the data is in. The values above are placeholders for the design.
+The pipeline stages that produce the report currently consume `confidence-*.json` (per-word top-1 conf). They need access to the per-word agreement signal. Two options:
+
+- **Option A** — emit `agreement-*.json` alongside `confidence-*.json` from §4.1's script as a sidecar. Report generator joins on `(utt_id, position)`.
+- **Option B** — extend `confidence-*.json` schema to carry `beam_agreement` per token. More invasive, breaks file-format compatibility.
+
+**Recommendation: Option A.** Strictly additive, doesn't touch decode-side code, easy to roll back.
+
+### 4.4 Total scope
+
+| Task | LOC | Time |
+|---|---|---|
+| §4.1 compute_word_agreement.py | ~150 | 1h |
+| §4.2 band rule update | ~30 | 1h (incl. tests) |
+| §4.3 wire sidecar through report generator | ~50 | 1-2h |
+| Validation re-run on full set | — | 30min |
+| **Total** | **~230** | **3-4 hours** |
 
 ---
 
-## 7. What could go wrong
+## 5. What this does not address (and why that's OK)
 
-- **Beam-agreement might not actually carry independent information from top-1 conf.** If they correlate at r ≈ 0.95, the cross is a single signal in disguise. (Pre-test: just measure r between the two columns first; if too high, the proposal collapses.)
-- **Shape clusters might be dominated by sentence length.** Easy mitigation: include length as a covariate and standardize per-length-bucket if needed.
-- **Per-word z-score is undefined for one-word segments.** Skip them in §3.3 — they're rare and shouldn't drive policy anyway.
-- **Aligning all 20 beams to top-1 is the most expensive step.** If it's slow, cache aligned positions per (utt, beam) pair — already amortizable across all downstream cuts.
-- **Threshold drift.** Any thresholds we fit are specific to this LLM (Llama-2-7b) and this beam config (beam=20, lenpen=0). A future fine-tuning experiment changes the calibration curves and forces a re-fit. Document this as a maintenance burden.
+- **Confidence trajectory shape** — segment mean already gates the policy at 0.65, which captures most of what shape clustering would have. Skip until evidence demands it.
+- **POS-awareness** — converges with the joint rule at high reliability targets. Skip until evidence demands it.
+- **Calibration via temperature scaling** — separate problem. The Llama-2 backbone is mildly over-confident overall; temperature scaling would shift all bins together. Orthogonal to the agreement rule. Worth a separate sprint.
+- **Threshold drift across LLM swaps** — any thresholds we fit are specific to Llama-2-7b at the current beam config. A future LLM swap forces a re-fit. Document this as a maintenance burden, not a blocker.
 
 ---
 
-## 8. Decision
+## 6. Trust diagnostic — replication recipe
 
-Run §3.1, §3.2, §3.4 first. Spend a half-day. If §3.4's pass criterion is met, proceed with §6 UI integration as the main payoff. If not, publish §3.2's clusters (segment-level filter) and stop.
+To re-validate any time the model, decoder, or beam config changes:
 
-Open questions for the user:
+```bash
+source vsp-llm-yoad-venv/bin/activate
+python3 docs/_research-tools/generators/diagnose_confidence_signals.py \
+  --nbest <run>/decode_output/nbest-*.json \
+  --hypo  <run>/decode_output/hypo-*.json \
+  --confidence <run>/decode_output/confidence-*.json \
+  --out-dir <run>/trust_diagnostic
+```
 
-1. Is half a day of analyst time the right investment, or should we wait until a stronger LLM (Llama 3.1 8B+) is online — at which point the underlying calibration curves change and any thresholds we fit now expire?
-2. Do we have any held-out unseen-content data to validate the thresholds, or do we need to split the 1,497 set into fit/test halves?
-3. Does the team want shape clusters surfaced in the client report (as an additional "segment quality archetype" tag) or kept as an internal diagnostic only?
+Pass criteria:
+- A. r(top1_conf, beam_agreement) within content < 0.85 (independence).
+- B. Content reliability curve fits at P ≥ 0.85 with n ≥ 50.
+- C. P(correct) lift between (high-conf, high-agree) and (high-conf, low-agree) cells ≥ 15pp, with n ≥ 30 in each.
+
+If any test fails on a new run, the threshold values must be re-fitted before shipping.
+
+---
+
+## 7. Open questions for the user before implementation
+
+1. **Coverage vs precision tradeoff.** New rule drops green coverage from ~60% to ~40%. Is 85%+ uniform reliability worth losing 20pp of "green" UI surface? (My read: yes — current greens include a known-unreliable subset that misleads users. But this is your call.)
+2. **Numeric handling.** Should the "uncertain styled" rendering for numbers be visually distinct (e.g. italic + grey) or just yellow-tier? Affects the design system.
+3. **Backward compatibility.** Old reports were generated with the conf-only rule. Do we need to regenerate them, or is the new rule applied only to new runs?
