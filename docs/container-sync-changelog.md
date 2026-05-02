@@ -1737,7 +1737,15 @@ For `/workspace/` deployment translate the paths and apply identically. No new d
 2. Apply the new outputs.sh block (already done in `vsp_linux_container_FINAL_20260217/lib/outputs.sh`).
 3. To regenerate `word_confidence.json` under the new rule on existing decode output, re-run stage 8 (`outputs.sh::run_outputs`) — no need to re-decode. The new block consumes existing `nbest-{fid}.json` + `confidence-{fid}.json` sidecars.
 
-**Backward compatibility**: Pipelines decoded **without** `VSP_NBEST=1` will lack `nbest-{fid}.json`. The new block in `outputs.sh` is gated on `[ -f "$nbest_json" ] && [ -f "$confidence_json" ]`, so the joint rule is silently skipped and the conf-only band rule (the prior behavior) continues to apply. No agreement sidecar is produced. End users see no change unless they opt into n-best decoding.
+**SCOPE — joint rule applies to ALL videos, past and future**:
+
+- **Future videos**: any pipeline run with `VSP_NBEST=1` automatically applies the joint rule in stage 8. No flag, no opt-in. This is the production default on EC2 and in the container overlay.
+- **Past videos decoded with `VSP_NBEST=1`** (typically May 2 2026 onward, plus any earlier opt-in runs): re-run stage 8 (`run_outputs`) to apply the joint rule retroactively. Minutes, not hours — no re-decode. The existing `nbest-{fid}.json` + `confidence-{fid}.json` sidecars on disk are sufficient. Bulk-regeneration recipe in [docs/features/per-word-confidence-user-guide.md](features/per-word-confidence-user-guide.md) under "Retroactive application".
+- **Past videos decoded without `VSP_NBEST=1`**: no `nbest-{fid}.json` exists, so the joint rule cannot be computed retroactively. The pipeline silently falls back to the conf-only rule (the previous behavior). To upgrade, re-decode with `VSP_NBEST=1` — decoding is the expensive step; aggregation and report generation are minutes.
+
+The joint rule is **not** an experimental opt-in. It is the production default as of May 2 2026. Reports painted under the old conf-only rule should be regenerated when convenient. The same retroactive stage-8 re-run also picks up the **MBR-as-default-displayed-output** change (entry #30), so a single pass aligns past videos with current production behavior on both axes.
+
+**Backward compatibility**: Pipelines decoded **without** `VSP_NBEST=1` will lack `nbest-{fid}.json`. The new block in `outputs.sh` is gated on `[ -f "$nbest_json" ] && [ -f "$confidence_json" ]`, so the joint rule is silently skipped and the conf-only band rule continues to apply. No agreement sidecar is produced. End users see no change unless they opt into n-best decoding.
 
 **Verification**:
 - `diff` between EC2 and container for all three Python files: clean (no differences).

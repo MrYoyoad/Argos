@@ -6,6 +6,18 @@
 
 ---
 
+## Scope — applies to all videos, past and future
+
+The **joint conf + beam-agreement band rule** (described below) is the canonical rule for word coloring across the project. It applies to:
+
+- **Future videos**: any pipeline run with `VSP_NBEST=1` produces a `nbest-{fid}.json` sidecar; stage 8 (`outputs.sh::run_outputs`) automatically computes per-word beam agreement and re-paints `word_confidence.json` under the joint rule. No flag to set, no opt-in. This is the default behavior on EC2 and in the container overlay (`vsp_linux_container_FINAL_20260217/`).
+- **Past videos** (decoded before May 2 2026): existing reports on disk were painted under the old conf-only rule. **Re-run stage 8 to apply the joint rule retroactively** — no re-decode required, the existing `nbest-{fid}.json` and `confidence-{fid}.json` sidecars are sufficient. Recipe at the bottom of this guide.
+- **Videos decoded without `VSP_NBEST=1`**: no `nbest-{fid}.json` sidecar exists, so the joint rule cannot be computed. The pipeline silently falls back to the conf-only rule for these. To upgrade, re-decode with `VSP_NBEST=1` (which also produces the n-best aggregator outputs).
+
+> The joint rule is **not** an experimental opt-in. It is the production default as of May 2 2026. Reports painted under the old conf-only rule (typically dated April 30 – May 1) should be regenerated when convenient.
+
+---
+
 ## TL;DR — The 30-second rule
 
 When you open a transcript card, look at things in this order:
@@ -171,6 +183,45 @@ When in doubt, the source video is always available and is always the ground tru
 ## Where this comes from
 
 - Tier policy: [docs/confidence/band_reliability_rollout_plan.md](../confidence/band_reliability_rollout_plan.md)
+- Joint conf + beam-agreement band rule design: [docs/confidence/confidence_shape_and_beam_disagree_design.md](../confidence/confidence_shape_and_beam_disagree_design.md)
+- Lessons learned (why the rule was changed): [docs/confidence/lessons_learned_band_rule_v2.md](../confidence/lessons_learned_band_rule_v2.md)
 - Calibration numbers (NIV-stratified): [docs/confidence/band_reliability_by_niv.md](../confidence/band_reliability_by_niv.md)
 - Calibration numbers (segment-mean-prob-stratified): [docs/confidence/band_reliability_by_segment_quality.csv](../confidence/band_reliability_by_segment_quality.csv)
 - Implementation: [VSP-LLM/scripts/make_report.py:110-205](../../VSP-LLM/scripts/make_report.py#L110-L205) (tier classification, CSS, legend)
+- Container sync entry: [docs/container-sync-changelog.md](../container-sync-changelog.md) entry #29 (joint rule shipping) and #30 (MBR as default displayed output).
+
+---
+
+## Retroactive application — applying the joint rule to past videos
+
+If you have transcripts on disk that were generated before May 2 2026 (or with the conf-only band rule), you can regenerate the reports under the joint rule **without re-decoding**. The decode-time sidecars (`hypo-{fid}.json`, `confidence-{fid}.json`, `nbest-{fid}.json` if `VSP_NBEST=1` was set) are sufficient.
+
+The fast path: re-run stage 8 only — no re-decode, no re-segmentation. From a typical `outputs/<run-id>/` directory:
+
+```bash
+# EC2:
+cd /home/ubuntu
+source lib/outputs.sh
+run_outputs   /path/to/outputs/<run-id>/decode_dir   /path/to/outputs/<run-id>/report
+
+# Container:
+cd /workspace
+source lib/outputs.sh
+run_outputs   /path/to/outputs/<run-id>/decode_dir   /path/to/outputs/<run-id>/report
+```
+
+If the prior decode was run **without** `VSP_NBEST=1`, no `nbest-{fid}.json` exists and the joint rule cannot be computed retroactively — the pipeline will silently fall back to the conf-only rule. To upgrade those segments, re-decode with `VSP_NBEST=1`. (Decoding is the expensive step; aggregation and report generation are minutes.)
+
+To bulk-regenerate all archived reports under a single root:
+
+```bash
+for run in /path/to/outputs/*/; do
+  decode="$run/decode_dir"
+  report="$run/report"
+  [ -d "$decode" ] && [ -d "$report" ] || continue
+  echo "Regenerating $run ..."
+  ( source /home/ubuntu/lib/outputs.sh && run_outputs "$decode" "$report" ) || echo "  failed: $run"
+done
+```
+
+This same approach applies to MBR shipping (`hyp_mbr` as the displayed hyp) — re-running stage 8 picks up both the joint band rule **and** the MBR-default output, so a single retroactive pass aligns past videos with the current production behavior.
