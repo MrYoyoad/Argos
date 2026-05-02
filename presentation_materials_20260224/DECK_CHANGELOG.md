@@ -47,7 +47,7 @@ User-driven audit pass with parallel-agent execution.
 
 Audits 7/7 green. Deck rebuilt at 71 slides, 60 visible.
 
-- **COMMIT**: TBD.
+- **COMMIT**: bf08729.
 
 ---
 
