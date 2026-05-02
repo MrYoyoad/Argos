@@ -1,0 +1,103 @@
+HYP_VOTE_CONF | BATCH 09/15 | 101 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|500 companies so he's been doing this for years|hundred companies so he's been doing this for years and|0.66
+002|the art of adding multiple poles of articulation alongside and parallel to the main conductors of the cable we then started to ask ourselves well we've got this ability to do this|art of adding multiple poles of articulation side in parallel to the main conductor of the cable we then started to ask ourselves well we've got this ability to do|0.70
+003|this thing and what none of his family|of fine but no|0.53
+004|out this kind of stuff the three union members then proceeded to knock mr gladney to the ground and repeatedly punch and kick him now let me answer the question that this left wing union member asked|design itself the three us members the brazil's congress are likely to go out and repeal the ipcc now let me ask you the question that the us member has|0.70
+005|today we're going to give you a behind the scenes look at what we've been doing in the stage 3 colts lesson|say i'm really to be here thank you much for being here it's an honor to have you|0.64
+006|very quietly he tipped it|very quietly into|0.67
+007|but also i don't like about contention|when i was a little girl i always wanted to be a princess|0.57
+008|you were given a paragraph and you had to fill in the blanks based on the context so let's see what you got|underwater diving for your parachute and you asked to fill in the blanks based on the context so let's see one you got|0.69
+009|output 3 7 volts|uncomfortable to keep myself in fault and|0.56
+010|typing your name and it's going to start auto populating|you name it auto populating|0.59
+011|was given is to go to those schools and meet with the people you have no idea if you're going to really mesh with the type of people at the different schools obviously like|you have no idea if you're going to really mess with a couple of people that you just met|0.62
+012|now we're talking about the packaging itself is really starting to change in this digital environment and when we need to go to the store|of back into itself so it's not just status the individual but we we need to is is the whole|0.54
+013|really highlighted the enormous problems facing that army now we've looked at|really highlighted that's an enormous problem we're fixing the economy now we've got|0.66
+014|is a virus that infects a bacteria cell you will also sometimes hear a bacteriophage referred to as just a phage|the virus that infects the malaria parasite is called plasmodium falciparum so it's just a fancy name|0.68
+015|this book ain't just narrated by one fool tellin us what's up with the dun|speak as see i write about what feel not the other way around|0.55
+016|from what he was thinking i'm not sure|from where he was sitting i'm not sure but|0.63
+017|well we've got this ability to do this now|we've got this ability to do this now|0.68
+018|told me that was how you learned what was going on and my sister|exposure to i in the air and|0.54
+019|things like a little wire splitter here that allows me to send one signal into two different pieces of led tape and some extension cables as well so i can run the tape down the length of my truss|things like a little wire splitter that allows me to send one signal into two different pieces of editing tape and some extension tables as well so i can run the tape down the length of my truck|0.72
+020|if i have him in my arms and i just want him to go to sleep but he's not but i know lullabies help him i can say hey google turn on lullaby music for baby|if i have him in my arms then i just want him to go to sleep peacefully on my own on the back couch i take kids a turn on the lap of a baby|0.71
+021|including some standard colors patches and ramps from black to white and you have seen me do this before|some standard colors patterns and wrapped it from black to white you have seen me do this before|0.67
+022|all you have to do is unscrew|all you have to do is not to|0.68
+023|but so yeah it's you know it was obviously just a demo but|but yeah it was obviously just a demo but you|0.63
+024|maximizing quantity i'll step one up|based in on equality the way up and|0.54
+025|rotates all the way around once the dial that looks like a clock it means that you've used 7 48|process all the way around once you to the end of the clock it means that you viewed 7 or 7 48|0.61
+026|that man from the intellectual point of view logos but then pathos you trust that man because you're feeling that the intention|be the intellectual product of your own but then by those you are sitting back because you are feeling that the other's|0.65
+027|when you know how to grow instagram when you know how to get millions of impressions when you can consistently generate a million impressions a week on your profile when you can|where you go out and grow a strawberry where you grow out and get peaches from branches where you can see the|0.66
+028|i'd say that it would become a threat of anybody that i work with that's successful financial athletes people in politics it's hunger you know you and i both know intelligence is a pretty damn valuable tool but there are a lot of very smart people that can't fight their|i said it would harm the reputation of anybody that worked with successful financial athletes people in politics it's hunky doo number two intelligence is pretty damn valuable tool but there are a lot of very smart people that can't find their way|0.72
+029|neptune gives us a long time to learn and experience the energies and wisdom it has to bring you will find over the next few weeks|you give a a long time to learn and experience the energies and wisdom that it brings you will find over the|0.68
+030|would make me weep and i'd have to pull over to the side of the room|make me weak but i have to pull it over to the side of the|0.67
+031|i met some years back now like 2010 five six years ago|aim of some years back now like 2009 5 years ago|0.69
+032|how would you unite your empire well i can tell you what constantine wanted he wanted to unite the roman empire|how did you unite your empire well i can tell you we lost won wanted he wanted to unite the roman empire|0.69
+033|i also don't want them to confuse their clients i also as it gets passed on i don't want it to get changed too much in a way that's not actually what it's supposed to be you know like that|i also don't want them to confuse their clients i also as it passed on i don t want it to change too much in the way that it's not actually what it s supposed to be|0.72
+034|her brother and they're kinda half brothers and sisters and his dad didn't do anything about it and so absalom wants to avenge tamar's rape and maybe among other things|her brother and then her half brother and sisters and they get attacked and do anything about it and so hops are brought to a rage tamer's rape maybe among other|0.68
+035|yeah well with amlid we have individual pixels being lit versus one big black light which|i'm like i don't know if work appropriate for me to be was this i think i|0.53
+036|and most do not cause symptoms at all|most do not to symptoms at all|0.70
+037|and so the when and the why kind of combine and based on genetics and kind of extenuating circumstances but certainly the less you move the knee the less|and so the when and the why kind of set genetics and kind of exacerbated circumstances but certainly the less you move the less|0.72
+038|like your breath will be so bad it'll clear chat room|your breath would be so bad in a chat room|0.65
+039|does this in any way relate to that and maybe it doesn't|doesn't anyway relate to that or maybe it does|0.63
+040|as were as they were supposed to be a let's say an answer to so|was it supposed to be a let's say an answer to sonia|0.64
+041|and his most recent film loveless|in this most recent film lovely about|0.60
+042|and how we can kind of turbocharge this whole thing|and how he got into the urban church so|0.66
+043|if you're not even anxious about your own death and demise and it gets into some philosophical and religious concepts it becomes very difficult to talk about because some people say well i'm going to heaven i don't care what happens now|very anxious about her own death and i think this is a philosophical religious concept that became very difficult to talk about because some people didn't want me really down that road what happened to that|0.72
+044|people so the correct one is|so the correct one is nuts|0.62
+045|florida or wherever you are|the world whatever you want and if you see|0.60
+046|or maybe headspace it would be most common that the young person wouldn't pay anything at all many care would cover that but if the young person comes to the psychologist and they're a private|maybe headspace it would be most common that the young person wouldn't make anything to medicate with all but if a young person came to a psychologist and they're a private|0.70
+047|i have dreams of collaborating with some of the greatest people|have dreams of collaborating with some of the greatest people|0.71
+048|because i was gonna be i was gonna be the next joe morgan|because i was going to be destiny somewhere someday|0.67
+049|even to the extent of one's personal survival|just gives you a sense of what it's like to push your survival to the|0.59
+050|you say well i can do all these yes you can but what will it do|can do all this yes she can but what will it do|0.70
+051|what is a tearoom a tearoom is a public restroom|actually grew up in a public housing|0.62
+052|between 30 and 66 on mine and there's|the movement authority and citizen's arrest permit already and there's still|0.57
+053|so it's taken me a couple of attempts i've managed to get it on however|which has taken me a couple of years i've managed to get all the way to|0.69
+054|this is probably the biggest difference between the two countries the closest thing that i can compare it to would probably be|is probably the biggest difference between those two countries to be honest is that lighting up a cigarette would probably be like|0.65
+055|and then we usually keep an eye on things and observe|that we used to keep it of sight out of|0.61
+056|but because of the nazi party it was very suppressed|killers want to hunt but because of the gatsby party it was very surprising|0.67
+057|and on top of my lungs saying that i wanted to see my lawyers saying that i wanted to see the ambassador|and on top of my notes he said that i want to see my notes that i wanted to see them matter|0.75
+058|on your phone whatever you just you hold it up if you can use voice technology you know like voice dictation you should be utilizing that as much as possible i do all the time|on your phone whatever you're holding it up if you can use voice technology like voice recognition you should be utilizing that as much as possible i do all the time i get|0.74
+059|for best for highest probability of success in the future okay how well do you know yourself how well do you know the programs okay in|for peace for i have probably such things in the future i want to know this stuff i to start programs in|0.68
+060|fingerprint scanner they put in the home button of the newly redesigned|months later they put the home button of the new 6s and i|0.65
+061|made an ironic icar canned beef monument|an ironic high diet beef monument|0.62
+062|welcome to lesson number two what are we going to be doing in this lesson we are going to be reading the introductory section paragraph one and two we're going to look at the purpose of anecdotes|welcome to lesson number two what are we going to be doing in this lesson we are going to read in the introduction section of what and do we're going to look at the purpose of adding notes|0.73
+063|it was really hard to come out to them i understand that my mother was very religious when i came out to her|really hard to come out as gay but i understand that my mother was very religious when i came out to her|0.72
+064|the key is to acknowledge that you're stressed and to find out how stress affects you|is to acknowledge that you're stressed and to find out how stress affects you so|0.71
+065|because i have tried to use it that is more on that in another video soon|because i have tried to use and that is more that in another video soon|0.66
+066|i have done like all the combo cards like 800 1240 1480|it like on your mobile phone like 123456|0.61
+067|that is something special and unique to summertech|that is something special and unique to summer|0.71
+068|favorite i would say was american ballet theatre even though it was their|i would say was a belly belly even though it was|0.71
+069|community so there's a lot of people that need|i was to years old i|0.53
+070|nice pyramids|is ostracized and|0.60
+071|face to bring it home in anticipation that one day this piece|it to be always in space that one day this peace|0.59
+072|the air in the bottle between trials|and the between the trees with|0.56
+073|i have to be advised to read religion this is everybody you'll|want to my very believer that everybody this|0.50
+074|back at people that's sort of to me and a lot of our cases have been those intrusion cases sort of the basic cases here in our area|people that sort of to me a lot of our cases have been the social cases the basic cases in our area|0.75
+075|is the first time i ever heard an ad for bariatric surgery i mean they even had a|first time i ever heard i had memorize the the table i mean they even had a|0.62
+076|especially with trial students that may not want to interact with me|especially when children are concerned but i want to interact with|0.62
+077|it's a picture of marilyn monroe if you have a suggestion for wallpaper leave it as a comment below and i may use it in next week's show so we're going to get started right with the news i'm sorry i don't have any comments to feature|picture of marilyn monroe if you have a suggestion for wallpaper leave it in the comments below and i'll make you 16 next week so we're going to start right with the news i'm sorry i don't have any comics to finish over|0.71
+078|pouches they come with too so these are my speed lights these are the yn562s that i use here|pounds and i'm with you so these are my speaking cases on the why in 562 little little|0.61
+079|like you know it would be stable you know with the camera down with my black rapid strap my flash down and gravity kind of pulling things forward that this would stay on the flash but actually this right here this um|like know it to be stable with the camera down with my black garment strap my flash down and gravity kind of pulling things forward this was taken all the flash so naturally this right here things out|0.69
+080|it's really easy for me to play this up to speed and at a certain tempo because i mean i've been doing this for a while so my right foot likes to play it at a certain tempo so when i get really slow|why i can't even play this song to be honest because i mean i've been doing this for a while so my right wrist likes to play at a certain tempo so when i get really slow|0.69
+081|youtube is your girl baby d coming with you with a video review update on gerrit hall|so make sure you're able to see the number with the green video button on it or that stuff is|0.67
+082|g'day i'm all3nz welcome back to my youtube channel|and i'm probably say why spend some money on a time now|0.57
+083|now if you have the opposite problem and have a hard time focusing on distant objects then you have myopia|have the opposite problem and have a hard time focusing on distant objects then you have myopia or|0.69
+084|i want you to remember all these i want you to memorize them|i want you to remember all the things that want to memorize|0.70
+085|we will give up some of our individual choice for the sake of the community decision|will give up some of our individual sovereignty for the sake of the community and|0.68
+086|is also very heavy and is seven and a half pounds over 11 and a half inches|also very heavy at 7 5 pounds and over 11 5 inches|0.63
+087|but whereas bessel had been looking at astrometric deviations of order of a few arc seconds jacob was looking at something much much smaller just 80 milli arc seconds that's 25 times smaller moreover|where it's best to look at astronomical detections of lensed rays and x rays at something much much smaller just 80 millionths of a second that's 25 times smaller than even a chicken|0.64
+088|sts 120 discovery up there right now so far|is what feel right now so far so|0.63
+089|personal belongings from me and put me in jail|who agree with me and probably the|0.53
+090|so therefore it's attractive and then of course the large manufacturers of soft rings they can apply their distribution networks|is a default tracker and then of course the hardware manufacturers of softwares they can apply their distribution networks|0.68
+091|lights up and it was just great like it was it worked really well|top and it was just great it worked really well|0.62
+092|as this eternal light of creative intelligence awareness and power|self as an internal guide through native intelligence awareness and power|0.64
+093|to take the insurance you'll place half of your current bet|shirts shirts you'll pay half of the shirt price|0.56
+094|this is my new tree frog|is this my new dream work|0.54
+095|james and will talk about street photography and other|we want to talk about street photography and the|0.63
+096|here's a small fact you're all gonna die|it was what my mother taught me along with the data|0.52
+097|get our hands dirty we had to be separate and when you separate from the culture when the godly people get out|our hands we had to be separate and when you separate from the culture when the godly people get out|0.69
+098|by mcclelland premium imports mississauga ontario|mind my is probably a bit more my dislikes i'll tell you|0.62
+099|from whom they're trying to help and this is documented in kelly kearney and ray's ghost symptoms break the spell and be well|from being trained to help this is documented in ethical ways in local symptoms the way to spot them so well|0.66
+100|but generally there are a few things and each one is so different|but generally enough to say that i quite enjoyed you|0.67
+101|out how he's going to get to school is he going to ride a car is he going to ride a bike what is he going to do|out how did he get to school did he take a red car did he ride a bike did he|0.62

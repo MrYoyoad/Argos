@@ -1,0 +1,104 @@
+HYP_MBR | BATCH 03/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|are constantly scanning people's brains while they look at maps|are constantly scanning people's brains while they're learning maps|0.83
+002|and subscribe see you guys next time bye|and subscribe to tedx by|0.65
+003|lures all with punch out hooks that go along with it this is no bigger than a credit card guys|is one of the largest oil rigs in the gulf of mexico it's no bigger than the grand canyon|0.51
+004|we use i won't get into brands but different stuccoes have different suctions and so ghosting effects if you know how to get the suction right|i don't know if it's a coincidence or not but|0.39
+005|typing your name and it's going to start auto populating|you name it start auto populating|0.53
+006|shipping addresses some billing addresses private messages|gps trackers building addresses private messages and|0.56
+007|and articulate a response when opportunities arise in class in your study groups among your peers on campus and in your communities|formed an articulate response when opportunities arise in class in your study groups among your peers on campus and in your communities no|0.78
+008|and you start over again now let me go to dance with the counts|so good today i like hospitals and doctors|0.44
+009|sometimes my wife is busy doing recipes or doing whatever else and i'll i want to play with my son i want to be around my son but you know really cuts into my work schedule|my wife and kids do whatever it is right now i'm going to play with my son and my grandson but really i see my work go so i don't|0.63
+010|christ the messiah throughout the world|just to say that david foster wallace|0.39
+011|starting a business is very similar to creating a painting or writing a song it's something that didn't exist before but your vision and your will brought it to life if you're a person who wants to do something in life such as writing a book or writing a book you can get involved in a group of people who are willing to care about you you can make it bigger you can build your own life you can do it better you can do it better you can build your own life you can do it better you can do it better you can do it better you can do it better|in business is very similar you end up painting or running a law it's something that didn't exist before but your vision your will brought it into life if you're a person who wants to do something like this guy's running|0.72
+012|and for catalase guanylate cyclase it is stored in the form of ferritin you can find it within the body|that ferguson is a legend it is stored in the form of folklore and you can find it within the body|0.74
+013|what's going on guys this is vince with vshred com and today i'm going to be showing you guys three ways to fix your muscular imbalance|what's going on guys this is rachel with freetrader com and today i'm going to show you guys three ways to fix your muscular imbalances|0.69
+014|so one solution is to empty the box of matches and nail this box on the wall|one solution is to update the parts of matrix that lie on these parts of the wall|0.67
+015|likely don't have it there are situations where you can still have it|don't have it you're in trouble you have to do something|0.52
+016|you're unable to learn languages and despite this over|up to your house and despite this all|0.52
+017|we have a special offer buy one get one free|we have a special offer buy one get one free|0.77
+018|i think my fondest memory is actually how i started in the music department five years ago mr borna asked me to go to the st patrick's day parade and i told him no and while i was on the bus|and then my fondest memory is actually how i started in the music department five years ago mr martinez asked me to go to the samurai temple and i told him no and while i was on the bus|0.77
+019|point turn your upper body to the right|so i went to the amazon rainforest and|0.45
+020|i bought a custom well not a custom this is off the shelf but it's much more expensive router bit meant to do this exact operation|putting on a costume well our costumes of the show but it's much more expansive around being meant to do this exact operation|0.64
+021|if it's from the microphone i think it's from the camera itself where there's a bumping noise|from the monkey forest i think it's from the camera itself where there's like a bumping noise that|0.71
+022|hello everybody welcome back to daily easy english expression ah boy today we have something very good fomo|everybody welcome back to tedxtehran today we have something very good vemo is|0.58
+023|could also go buzz or your alarm in the morning|also going but is it or are you alarm in the morning or|0.60
+024|i also don't want them to confuse their clients i also as it gets passed on i don't want it to get changed too much in a way that's not actually what it's supposed to be you know like that|i also don't want them to confuse their clients i also as it gets passed on i don t want it to change too much in the way that it's not actually what it s supposed to be you know like that ted|0.73
+025|at that moment the dental surgeon enters the room he seems so serious|at that moment the dancer turns and enters the room she seems to be|0.64
+026|and where is jeff|he wore his jeans|0.56
+027|hi i'm paul barr and i went|in prague was|0.37
+028|we're seeing that in our energy prices and in the energy boom that's happening in the united states|is any indication our interrupters are surprised that this is happening in the united states|0.55
+029|text on her arm which happens to be simplified chinese|cancer's arm which happens to be a deeply funded chain in the bushveld|0.62
+030|got that choreographed by paul james and yanni toft anderson|guide that to promote self esteem and joy of learning|0.53
+031|some points here such that the intersection is not empty|right that's exactly the direction i'm headed|0.38
+032|i was born with congenital rubella syndrome|i was born with congenital rebellion|0.81
+033|so i kind of want to address what you and i were talking about first|it's like i don't know what to do with myself|0.43
+034|my little practice pieces and i always start off black and white|praise be and i always love black and|0.67
+035|and she loves the acting on it to me csi miami is excretable|my auntie and she loves the idea of it with me because she's a yam i mean yam is edible|0.53
+036|next two weeks or so going after another link network|the next two weeks or so going after another lead that we're going|0.74
+037|use all those controls for any one system you use them|i was just looking for relief i was looking for something to make me feel|0.50
+038|this book ain't just narrated by one fool tellin us what's up with the dun|speak as i see i write about what i feel not the other way around|0.54
+039|i love my experience i thought it was really fun and it's a nice job|funny words i thought it was really fun and it's charming|0.61
+040|indoor professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if you were shooting|in your professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if you|0.85
+041|and he turned around and said uh have you tried eating with the men i'm like yes it felt unnatural|he turned around and said have you tried any with meat i guess it felt unnatural|0.68
+042|but the soviet union seemed to have done just fine without|the storytellers seem to have done just fine without|0.65
+043|of course the lens on the x100f isn't interchangeable and that's one of the things that people love about the camera it makes it really compact but it's also one of the weaknesses of the system without an interchangeable lens it's difficult to get different|course digitally as we hear today is interchangeable and that's one of the things that people love about the camera it makes it really come back but it's also one of its weaknesses to the system without any interchangable lenses difficult and difficult|0.75
+044|and that all sits at the heart of our 2020 goals|years is the hardest if you're 23 years old|0.55
+045|it's just bad it's real bad it's gross there's pictures more let's move on|bad real bad it's gross there's pictures we need to move on|0.69
+046|they made a deal to buy so you know how much power it takes and then you can look at the ratios of those numbers and figure out for a data center where you don't have that information you can figure out but maybe you only have one of those|a deal to post how much power it takes and then you can look at the ratios of those numbers and figure out for a tesla where you don't have that information you can figure out but maybe you only have one of those|0.77
+047|and the security was sort of hovering around the side and i watched a nurse just gently go up and put a hand on this gentleman's arm|and she knew it was a whale shark around the side and i wanted to gently go up and put a hand off on the shark's team|0.66
+048|and sherry whereas before it was bourbon|this is what it was before it was a moment of|0.48
+049|terminal window if we type that again and the shortcut for doing that by the way is up arrow will repeat the last command|i'm going to quote david attenborough the naturalist and broadcaster from the british television channel|0.45
+050|pretty expensive for headphones so like i said earlier in this video or like i would continue to say please do try them out before you buy them so you can you know you're really sure that this is what you really want|pretty expensive for hand phones so like after harry and david go i would continue to say please do check them out before you buy them so you know you are really sure and this is what you really want|0.71
+051|and hopefully that's not a subconscious indication of its pyrotechnical potential|hopefully this has led us to the edge of spinal technical potential like|0.60
+052|with my iq and my background following all these scientists that's a terrible setup|my aunt who may be listening following all the science and then there's the human|0.54
+053|what do i keep telling you roman empire unfunded liabilities|a new frontier where one day beings will wake up on a funny land called planet earth|0.50
+054|over five we're doing all of these|over five we were shooting all of the|0.66
+055|a price that was beyond what the limit was they gave in the commercial for this commercial they gave a limit that will actually like you can get a mac with everything that she's saying so|and i'll tell you what i'm|0.42
+056|this doesn't this is not a corpse this just looks like a statue|this is not corpses this is just like it's not just food|0.58
+057|i don't think there's a better time to share the good news with somebody|there's a better time to show you something|0.59
+058|now what has happened is|what has happened is the|0.68
+059|on every receipt of any local businesses|are never recipients of financial contributions that|0.47
+060|month to run the aircon if i was to be living there and working in the condo full time so on average you're probably looking at about 120 per month in the philippines|month to run the yacht if i was to live there working in the country full time so on average you're probably looking at about 120 us dollars per month in the philippines|0.69
+061|photoplasmic projections of the collective|he asked me to judge his case|0.44
+062|devices idle connected to a un muted network or charger the job scheduler is one of my favourite features and i love it i'm happy with it and i will share it with you soon the job scheduler is one of my favourite features and i love it|to the iron connected to the aluminum network also charged the job changer is one of my|0.66
+063|chronic ocular oncocerciasis is also associated with oncocorioretinitis chronic inflammation of the retina and choroid as well as op|red octahedron under your eyes is also associated with uncoordinated right eye nystagmus red information of the right ocular cortex as well as optic atrophy|0.61
+064|is neither i actually use the overhead lights which are mostly fluorescent which i know is a big no no but this camera|together i actually used the overheard ghost whisperer music for that which i know is about to go on but the team runs|0.59
+065|underpinnings to her|her meetings to her|0.50
+066|i put an apology like sorry this was dictated not text|yeah i'm going to go out on a limb and say that's calling this business sense|0.60
+067|hi and i'd like to talk to you about|i'd like to talk to you about|0.83
+068|if you're judging someone you're not loving them|if you're not just doing it wrong you are not loved either|0.58
+069|so i just try to search in other ways like the text like his portrait in my qp i write|when i was 11 years old i was diagnosed with type 1 diabetes|0.49
+070|so many stories have been spreading around the internet about the 1 5 million dollar powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people|many stories have been spreading around the internet about the 1 5 million powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people|0.84
+071|us anything it's that exploring for energy has safety risks|right now i'd like to take a moment to reflect and as david foster|0.47
+072|an important property of sets of solutions to homogeneous equations is the concept of superposition|important property of text of solutions to our machine learning algorithms is the concept of superposition|0.73
+073|about how what we're learning about the neurobiology of social emotions that is emotions that we feel about other people and the emotions|about how what we're learning about the biology of social emotions and emotions that we feel about other people and the emotions|0.83
+074|i got this 08 mazda 3 with 130 miles on it|i don't know a hundred miles is 1000 miles|0.51
+075|finally we beg for traveling mercies as we return home to|we pay for traveling merchants as we return their homes|0.60
+076|let's try sketchy edges this one's pretty fun so if we click on|trying to catch the catching agents which was really fun so if you're going to|0.52
+077|face to bring it home in anticipation that one day this piece|it to be always in space that one day this piece|0.61
+078|and mind you he's deaf and i was doing all the nice things you do with the hearing|by doing stuff and i was doing all the ted things you would think of|0.62
+079|this is probably the biggest difference between the two countries the closest thing that i can compare it to would probably be|is probably the biggest difference between those two countries to be honest is that lighting up a cigarette would probably be like|0.67
+080|drop my gun out of my mouth like bleh|come out of my mouth like|0.73
+081|it looks very pretty i must say that|in history books maybe not yet but|0.46
+082|it's a good point and most of my rhythmic growth is evolutionary he's a canadian american musician and author|it's a good point and most of my retirement growth is invested in canadian american mutual funds and authors|0.62
+083|baseball of course i wrote about baseball and she said there's one caveat to this assignment and that is that you need a source|part of course i wrote my bestseller just like this one caviar to this assignment and that is that you need a source|0.70
+084|another useful expression i'm afraid there's been a mistake or i'm afraid there's been a mistake|another useful expression i'm afraid there's been a mishap or i m afraid there s|0.74
+085|been out there the ocean occupies about 80 of the earth's surface there is almost a limitless supply of sea vegetables|been out there the ocean occupies about 80 percent of the earth's surface and there is almost a limitless supply of sea vegetables and|0.80
+086|sensor is in range of the magnet so it would be closed|that sort of range of the magnitude so it would be closed i|0.63
+087|so we've got what looks like a walking dead or zombies button so that's pretty cool it can go with the other ones on my backpack|so we've got a walking stick or a zombie spike so that's pretty cool hanging here with the ones on my backpack|0.70
+088|usually after lunch i'll get kind of sleepy so i'll have some iced coffee|you just have to relax sit back and enjoy life and have some coffee|0.54
+089|but there's not so we'll have to enjoy this one together|but let's try to do this as quickly as we can|0.54
+090|one series of experiments that we did was to demonstrate that the nanorobots|one series of experiments that we did was to demonstrate that that automatic|0.64
+091|revolutions of the past half billion years|used in the past half billion years|0.75
+092|and in the last i don't know if you pay attention to the last thing the code is actually from benjamin|i stood on the runway from bangalore to the last leg the cockpit of the aircraft was|0.48
+093|because as far as i know i haven't seen it|because as far as i know i haven't seen it|0.71
+094|to her new home but it was too late|to grow but it was too late|0.64
+095|expresses in concrete and symbolic and beautifully real deep|suppresses the concrete and the symbolic and the beautiful real|0.59
+096|and he basically nothing fancy missed his point|was really missing the point|0.53
+097|out this kind of stuff the three union members then proceeded to knock mr gladney to the ground and repeatedly punch and kick him now let me answer the question that this left wing union member asked|design itself the three us members at brazil's congress are likely to go out and repeal the ipcc now let me ask you the question that this us member has|0.68
+098|so i just want to spend a minute talking about the relationship between haydn and ludwig because it was it had its it had its|so i just wanted to spend a bit of time on the relationship between light and darkness|0.72
+099|or in measurements across parts per the same drawing|michelangelo's paintings by the same story|0.58
+100|pouches they come with too so these are my speed lights these are the yn562s that i use here|pounds and i'm with you so these are my speaking cases on the why in 562 a little bit|0.51
+101|that wanted to install deities in their sankhya tan vehicle|wanted to show dealers and distributors and|0.55
+102|comes with a usb cable which basically turns your monitor into a usb hub giving it a few a couple extra ports|was the only usb cable which basically turned your computer into a usb hub i gave it a couple extra ports to|0.60

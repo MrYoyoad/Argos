@@ -1,0 +1,34 @@
+HYP_MBR | BATCH 15/15 | 32 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|my period ended i'd say maybe a week ago so i'm coming to you with my opinion my experience with this line|period is not as they made me a week ago so i'm coming to you with my opinion my experience with this line|0.79
+002|has been following the water and this|has been flowing the water and these things|0.68
+003|in trying to make this business work or that business work and i've learned more in doterra|trying to make this business work or that business work and i feel more and so scared|0.68
+004|just asking if anybody is taking your class and would like to share a book|asking if anybody else is taking our class we'd like to share input or|0.66
+005|sheet stock then you need to try and make sure that you get a 32 teeth per inch blade|sheet song and you get to try to make sure that you're getting through it too quickly but you play it|0.62
+006|so that's something to consider but if you have a platinum card i called the date of|so that's the misconception but if you have a black and white i call the day|0.60
+007|i can see he's angry we don't want him getting|why is it that we don't worry about you|0.49
+008|some limonene hash oil some d limonene hash oil|being an actress being an actor|0.62
+009|weight so they're really concerned about being very|i'm going to tell you|0.46
+010|like another layer of activity|another layer of|0.63
+011|fingerprint scanner they put in the home button of the newly redesigned|months later they put the home button of the new iphone 6s and i|0.60
+012|another girl asked what happens when you're|another grade what happened was|0.73
+013|probably 90 chance of that happening and then there is the camera probably the biggest question mark ever|probably 90 percent chance of that happening then there is the camera probably the biggest question mark ever|0.77
+014|for the american people do we have more freedom or less|i think we have to wait more for freedom than that|0.58
+015|for that you will use preter because that's what happened what people did|for that you will lose what happened or people that will|0.58
+016|and straightforward and to them that's a good thing so they come to you and they're so honest they're brutally honest and they point their finger at you and they tell you what they're doing wrong and to you that's a really bad behavior so you shut down|straight forward it's just a matter of releasing the love hormone oxytocin and the more they finger you they tell you what they're doing all along so that's a really bad behavior so you check that out|0.58
+017|canada was founded with four provinces in 1867 canada now has ten provinces|canada we found out we were the fourth province to legalize it and now all the time provinces|0.53
+018|this is the camera and this is it the adapter it's supposed to go on like this|it's like a hammer and that's the only way to fix the world|0.39
+019|of results based seminars here in tampa|citizens of what's called space because the area is|0.44
+020|the house that we built is called a remote wall|house that would be in the hollywood|0.55
+021|this also came in like many different colors like teal cream i think this came in like|also coming in many different colors like green and this still coming|0.56
+022|to share inwardly his likeness that he might become the firstborn among many|to share equally his likeness that he might become the first porn among me|0.74
+023|make yourself at home make yourself at home si ntase como en casa so repeat|make yourself i still home make yourself at home take things in your own hands don't repeat make your|0.56
+024|when einstein came to america he worked at princeton university there he was somewhat of a celebrity now he did win the nobel peace prize back in 1921 but because of his|einstein came to america he worked at princeton university there he was awarded the nobel peace prize back in 1921 but because|0.73
+025|note that the modified system is|so our decentralized flight system can|0.50
+026|i mean it's a number i knew my screen resolution at the time was 1024 by 768|is in a book you must do your research at the time which is day 24 by stephen covey and|0.58
+027|real merged reality so then there's a lathe that's spinning and so you can like put your finger in the lathe and it looks like your fingers being chopped up or you can put your phone in the lathe but so yeah it's you know it was obvious|immersed in reality so that there's a lane that's spinning and so you can like put your finger in the lane and then it looks like your finger is being chopped up or put on your phone and they had a helmet on and so yeah it was obviously|0.67
+028|to this wave of artificial intelligence that is slowly taking place|to this wave of artificial intelligence that is slowly taking place|0.88
+029|click into the test mode link right below that the test mode link will obviously give you the opportunity|into the test mode link right below that the testmode link will obviously give you the opportunity|0.76
+030|written to me all the consultations and all of that i think that is a really important thing to do as well and i think it suits you know the first month of the year|the reason too many hold consultations in airports i think that's really important they do as well and i think it's used the first month of the year|0.64
+031|actually hear what the recorder sounds like this category has a lot of similarities guys but there are subtle differences between each product|in the real world record soundtrack and this category has a lot of similarity sites but there are single differences between each product|0.73
+032|is a virus that infects a bacteria cell you will also sometimes hear a bacteriophage referred to as just a phage|the virus that infects the malaria parasite is called plasmodium falciparum so it's just a fancy name|0.52

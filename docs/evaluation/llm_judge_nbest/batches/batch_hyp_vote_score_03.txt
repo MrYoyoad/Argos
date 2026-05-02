@@ -1,0 +1,107 @@
+HYP_VOTE_SCORE | BATCH 03/15 | 105 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|lures all with punch out hooks that go along with it this is no bigger than a credit card guys|is one of the largest oil rigs in the gulf of mexico it's no bigger than grand canyon|0.62
+002|like where the extra income was gonna come from but i told myself i was gonna quit my job|where the internet was going to come from i told myself i'm going to quit my job and|0.68
+003|supposed to be you know like that telephone game if you whisper something to|supposed to be like that the telephone game if you whisper something|0.68
+004|people to guide them and that's where the health coaches come in and this is why doctors need people to help them implement these things but once a person experiences how much better they feel when they|books inside them and that's where now nurses come in this is why doctors need people to help them implement these skills but once a person experiences how much better they feel when they|0.72
+005|pascal like william james disagreed with this line of reasoning because he saw great personal benefit in being a believer|like william james disagreed with this line of reasoning because he saw a great personal benefit in being a believer|0.70
+006|and believe it or not that was the first time i've been|and believe it or not it was the first time i'd been|0.69
+007|sometimes my wife is busy doing recipes or doing whatever else and i'll i want to play with my son i want to be around my son but you know really cuts into my work schedule|my wife and kids do whatever it is right now i'm going to play with my son and my grandson but really i see my work go so i don't|0.68
+008|popular with republican presidential candidates|unpopular with republican presidential candidates|0.72
+009|chlamydia one of the leading causes of infertility|in media one of the leading causes of infant mortality|0.60
+010|and ask us what plane to put this sketch on so we'll click|it doesn't take a genius to see that i don't want to|0.61
+011|so let's go and let's reduce that action by multiplying top and bottom by a common factor|so let's go with this do that actually my most song right now by calm and fat|0.61
+012|3 million users about 12 million people who speak about us for our community|three million users about 12 million people who speak about it through their communities|0.69
+013|this course is all about transitions this video is all about transitions|this course is all about transition in this video i'm going to talk about transition by|0.66
+014|teaspoon of baking soda and salt you may say|beethoven's concerto and it's going to take you about 15|0.68
+015|as this eternal light of creative intelligence awareness and power|self as an internal guide through the native intelligence awareness and power|0.62
+016|weight so they're really concerned about being very|i'm going to tell you|0.57
+017|who runs around my house destroys everything he touches i love him to death and she works as a registered nurse now there was an issue when i was going into high school|out stories around my house the stories of the ancients and she wanted to hear my stories too there was a year when i was going to high school|0.69
+018|now let's fill in the punnet square|to feel like the monkey square for the|0.58
+019|from firefly which is an itunes server also an awesome name that lets you stream music|from firefly which is an tv show on abc that lets you stream music|0.60
+020|hello everybody welcome back to daily easy english expression ah boy today we have something very good fomo|everybody welcome back to tehran today we have something very good vemo is|0.70
+021|in this regard it always helps me to think of stephen covey's notion of|this card always helps me to think of steve jobs's no shift|0.66
+022|i got this 08 mazda 3 with 130 miles on it|i don't know a hundred miles is 1000|0.61
+023|from people's stem cells that they would not reject over time and we were very near to a cure for things like aids|from people's stem cells that they would not reject over time and we were very eager to cure for things like aids why is it|0.70
+024|egg hunts we're going to find them all we're really excited|is we are going to find them all we are ready to|0.66
+025|now inside here you have to go and search for the section file now this section|there is second that you have no energy for this fight that you can find there is a discussion|0.62
+026|most of it's about relationships i think you know it depends where you're at|most of it's built relationships and i think it depends where you're at in|0.67
+027|something to make it easier to bring native code to the web|can make a difference and what can do|0.54
+028|the house that we built is called a remote wall|house that would be in the hollywood walk of fame|0.57
+029|likely don't have it there are situations where you can still have it|don't have it you're in trouble you something|0.60
+030|face to bring it home in anticipation that one day this piece|it to be always in space that one day this peace|0.59
+031|even after the insurance examination|after the initial contamination|0.65
+032|devices idle connected to a un muted network or charger the job scheduler is one of my favourite features and i love it i'm happy with it and i will share it with you soon the job scheduler is one of my favourite features and i love it|to iron connected to the qaeda network also charged the job changer is one of my|0.66
+033|mistakes and i think if you don't get out of that rut you just end up|not anything you can get out of that run in your chimp|0.68
+034|these out of course club members you get the club discount regular price is only 12 88 and our club members only pay 10 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a club member thanks so much|down of course club members do get the club discount regular prices are only 12 88 airline club members can save up to 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be club member thanks so much|0.72
+035|so therefore it's attractive and then of course the large manufacturers of soft rings they can apply their distribution networks|is a default tracker and then of course the hardware manufacturers of softwares they can apply their distribution networks|0.67
+036|been out there the ocean occupies about 80 of the earth's surface there is almost a limitless supply of sea vegetables|been out there the ocean occupies about 80 percent of the earth's surface and there is almost a limitless supply of sea vegetables and|0.70
+037|up the order and just a little bit over the edge|to the neurosurgeon she's sitting up in the operating|0.55
+038|i surrendered good quite i surrendered to the low security|years ago when i was|0.60
+039|indoor professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if you were shooting|in your professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if|0.72
+040|i'm not sure if you're aware of it but yes there has been a class action suit filed against apple for that very thing and yes technically speaking it wasn't a wine it was a beer|i'm not sure if you're aware of it but yes there has been a class action student filed a lawsuit for that very thing and yes now technically speaking it wasn't a wine it was a beer|0.69
+041|to get into the regular modes we simply just hold it down that will cycle you into your regular|get into the rhythm most when is holding down that will cycle into your rhythm|0.65
+042|we're doing everything we can to make our wood as environmentally|doing everything we can to make our world a better|0.69
+043|tool for studying the concept behind absolute zero you can|studied at singapore polytechnic during my|0.51
+044|this book ain't just narrated by one fool tellin us what's up with the dun|speak as i see i write about what i feel not the other way around|0.54
+045|if you don't build your business correctly some of the cons can be you'll get burned out you get stressed out and you'll work 24 seven and have no boundaries in life and feel like you always have to be on and you're|build your business correctly some things can't be you don't get burned out you get stressed out and you work 24 7 and have your own boundaries in life and feel like you always have to be on and you're carrying|0.72
+046|and the security was sort of hovering around the side and i watched a nurse just gently go up and put a hand on this gentleman's arm|and she knew it was shark around the side and i wanted to gently go up and put a hand off on the shark's team|0.71
+047|i like salt in my chocolate so i use my seaweed salt the cheney cabot seaweed salt so there are your basic ingredients|i'd like to talk to you about chocolate so what i'm going to do is see if we can change that can with the basic theory is|0.59
+048|christ the messiah throughout the world|just to say that david foster wallace|0.55
+049|that's a major or that's a major seventh or that's a you know diminished chord or that's augmented or you know that chord there happens to be a dominant seventh so that's where|a major seventh or a minor seventh that's a consonant chord or that dissonant message and so that chord later happens to be a dominant seventh so that is where this|0.70
+050|got that choreographed by paul james and yanni toft anderson|that to promote esteem and a joy of learning|0.58
+051|personally i think it's a safe bet to say that we will see the device between september and october it'll feature an a5|personally i think it's a safe bet to say that we will see the iphone 5 sometime in november or early fall|0.67
+052|when you put everything in the pot you need to cook until everything is dissolved|when you put everything in pause looking sure you know everything is solved and|0.66
+053|from another game that is doing that oh intentionally|for a long time that is doing that so let's|0.62
+054|of a boy who is going to bat|the boy who was going to beat|0.68
+055|so many stories have been spreading around the internet about the 1 5 million dollar powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people|many stories have been spreading around the internet about the 1 5 million powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people|0.71
+056|joking is that it oh my gosh i thought i had so many more books on here i do have a lot more books on here i just have ones i haven't even started reading yet so anyways that's all for here|so like saying oh my gosh i think i'm in love with someone personally i don't get to be in love like i used to have once again when i was a teenager and so anyone can say it all over again|0.72
+057|people tied they worked they had sound doctrine|people's eyes that weren't shielded to it|0.61
+058|on every receipt of any local businesses|are never recipients of financial contributions that|0.52
+059|beneficial regardless of whether you are performing or you're doing administration|we're going to be able to|0.50
+060|is agents being transactional if you will be a transactional agent the customer has the ability to treat us like a commodity if we're just going to be transactional|that's just being a transactor if you would be a transactional agent in the hitchhiker's guide to the galaxy it's like a commodity if we're going to start being the|0.71
+061|discussion we will look into how stress|discussion we were going to allow stress|0.70
+062|you do have this in your bag and you|have in the|0.67
+063|too much because our arv for a property like it once it was fixed up to the standards we were planning to do was only gonna be 200 000|much because our head off property like it once it was fixed up and the standards we replaced it to was only going to be 2000|0.71
+064|but when we first started this series i wondered if we'd actually get through it you know all great ideas|when we first started this series i wondered if we'd actually get through it you know all great ideas|0.66
+065|to give me the insurance policy at all because i had very high cholesterol high triglycerides and hypertension and meanwhile at the same time i had horrible irritable bowel syndrome i mean like|me an interest in psychology because i have a very high iq i trained as a clinical psychologist and meanwhile at the same time i got horrible grades from my math teachers maybe like|0.63
+066|thus was born the idea of positive ticketing each year police in richmond issue a|that's what's born the idea of positive thinking each year buddies enrichment eco|0.66
+067|what that meant is that we need a radically different approach we basically need to find a way how we can take existing routers existing switches existing links and enable them for research|their masses and we need a radically different approach we must indeed find a way we can design existing roads to exist with existing cities and enable them for reuse so|0.68
+068|to stay quiet for a whole week maybe a whole year|she cried for a whole week maybe a whole year|0.66
+069|so we have here six apples because we find|we have in our six children because we feel|0.66
+070|while busiest woman in show business and so we're just going to be talking about all kinds of stuff we're going to talk about selling dots|in the business world and show business and so we're just going to be talking about all of this because it is|0.69
+071|let's start by asking who's doing well well unfortunately there's no international ranking tables for teacher feedback systems|let's start by asking who's doing well unfortunately there's no international ranking tables for teacher feedback systems|0.69
+072|so we've got what looks like a walking dead or zombies button so that's pretty cool it can go with the other ones on my backpack|so we've got a walking stick or a zombie spike so that's pretty cool hanging here with the ones on my backpack|0.73
+073|that all the world leaders are expecting something to happen|they all for expecting something to happen|0.61
+074|so in theory that makes facebook's job a lot easier you build a single solid|so in theory that makes vice president's job a lot easier you're merely a stealer solid for|0.67
+075|i should have it at the patriot nurses website the patriot nurses supply stash the bragg's liquid aminos is organic soy sauce basically|and i should have another petition on our website that petition to ban plastic wrap because it's an organic toxin and|0.62
+076|finally we beg for traveling mercies as we return home to|we pay for traveling merchants as we return their homes|0.70
+077|that you tell them what is the way it is and what they should do the way it should be|to tell them what the next step is what they should do or what they|0.62
+078|what's going on guys this is vince with vshred com and today i'm going to be showing you guys three ways to fix your muscular imbalance|what's going on guys this is rachel with freetrader com and today i'm going to show you guys three ways to fix your muscular imbalances|0.66
+079|but i have siblings who did|but i have double citizenship|0.66
+080|you screwed up you made a mistake|pointed up you made a mistake|0.72
+081|the nsa spies on its own citizens does data mining|specialty shows that just doesn't add up|0.57
+082|anyways make sure you have a white rag handy because this grease is greasy|so when you have a white bread sandwich|0.73
+083|and put all my body weight on it and my heel snaps off my boot completely and i go|and put all my body weight on it and my knees snap off my boot completely and i go|0.67
+084|to take the insurance you'll place half of your current bet|these that you'll pay half of the shirt's price|0.56
+085|the thing is i just acquired this ammo last week so i don't really know the conditions under which it's been stored but|the highest score on the quiz last week so i don't really know the conditions under which this was measured but|0.63
+086|as co creators of this reality|as the co creators of this reality|0.53
+087|hey everybody it's jon stabley i'm here with brian mayo everybody's favorite tech guru today we're gonna|money is just an idea that has no|0.54
+088|or you can actually bring the pro controller with you on the go|to actually bring the broken dollar with you on the go|0.67
+089|usually after lunch i'll get kind of sleepy so i'll have some iced coffee|you just have to relax sit back and enjoy life have some coffee|0.69
+090|expresses in concrete and symbolic and beautifully real deep|suppresses the concrete and the symbolic and the beautiful and the real|0.56
+091|everything i just use a little bit of that to shear it down or use it full strength|to get everything and you put it on and you shorten it or you lengthen it so if you're taller maybe|0.71
+092|look at this here's two dollars and a self addressed stamped envelope first things first the bender|look at this there are two arrows instead of intersecting at the same time they're parallel to each better|0.64
+093|going to wonder whether or not that sort of nudged or propelled you into|when i was a teenager in the 90s and early 2000s|0.55
+094|a lot more success than if you were shooting your son's high school game just because there's more light|lot more success if you wish you could succeed at school games just because there's more like|0.70
+095|so that's all i have that's all i got for christmas and i really enjoy my presents and if you like christmas and if you like this video give it a thumbs up comment down below and subscribe see you guys next time|that's all i got for christmas and i really enjoyed my present and if you like christmas then if you'd like to give your thumbs up comment down below and subscribe to the guys next time|0.70
+096|hey what's up it's donna today we're gonna be talking about gruselcoin and i'm gonna break the video down into parts and timestamps can be found down below|we're going to be talking about crucial coin and i'm going to break the video down into parts and time stamp can be found down below|0.71
+097|malahim they are servants of our father and they are also the bible says they are our brethren|team they also serve as their fathers and they are also the babysitters on long plane trips|0.70
+098|out this kind of stuff the three union members then proceeded to knock mr gladney to the ground and repeatedly punch and kick him now let me answer the question that this left wing union member asked|design itself the three us members at brazil's congress are likely to go out and repeal the ipcc now let me ask you the question that this us member has|0.70
+099|so i just want to spend a minute talking about the relationship between haydn and ludwig because it was it had its it had its|so i just wanted to spend a bit of time on the relationship between light and darkness|0.71
+100|with your partner|yeah i'm with the opera and|0.52
+101|that wanted to install deities in their sankhya tan vehicle|wanted to know show dealers and understand and to|0.56
+102|pouches they come with too so these are my speed lights these are the yn562s that i use here|pounds and i'm with you so these are my speaking cases on the why in 562 little bit|0.61
+103|five six a hinge half turn to the left|that's why i'm here because|0.53
+104|i can't tell the difference but something here in this female is telling her to either mate with him or not or pass them up and try to choose a different mate so the females actually have a different mate|i can't tell the difference but sometimes i can hear that this female is telling him that either beat him or not or punch him up and try to do stuff for paying so it's the females actually have a choice|0.72
+105|a tremendous opportunity it's just very exciting|tremendous opportunity interesting and it exciting|0.63

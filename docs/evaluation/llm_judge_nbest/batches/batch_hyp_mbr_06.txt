@@ -1,0 +1,104 @@
+HYP_MBR | BATCH 06/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|how you can use your customer database to earn more there are four powerful processes to save money and increase sales|in utah as a renewable energy source there are four powerful presences that save money and increase yields|0.64
+002|he is now 7 years old my third one will also be a male he is 1 years old right now his name is michael|is now seven years old my third one will also be a boy a kid is one year old right now his name is|0.75
+003|is going to make two different sized versions of the iphone 6 either remember to resolution|i had two different surgeries off the aortic valve i had open heart surgery|0.57
+004|you've got the rain outside i don't|when i was 18 years old i|0.46
+005|by the social conventions in other cultures like the hopi|by the social innovators in our culture at the open|0.63
+006|i don't trust it because it's the first generation of drone and we all|trust anybody is the first generation to grow like we all|0.65
+007|so it might be something you want to invest in but there's that book|so it may be something you want to invest in but there's that book|0.78
+008|english especially but not i mean there are lots of different languages|i mean there are lots of different languages they|0.68
+009|anything about the new administration but i'm pretty sure they're working behind|anything about this new administration but i'm pretty sure you won't mind|0.69
+010|because i cared a great deal about the company and about|second increase is around the corner it's about|0.46
+011|you know cause your gums and your mouth is affected by like everything in your body whether it's medication or your diet or your general health|either a certain hums that your mouth is effected by like everything in your body whether it's medication or your diet or your general health|0.73
+012|very honored to be here and i have been in many biennials i met bose and shweta for the first time in sao paulo when i was showing at the sao paulo biennial|radio economy and they helped me many many years i met paul rusesabagina for the first time in 2004 when he was telling his story at the mandela|0.58
+013|and it's almost every word in a sentence fuck the fucking fuckers|should never be in a sentence fighting fires as soon|0.55
+014|time to transfer to my computer and do all this other stuff|to let it transfer onto my computer and do all this other stuff so i did|0.78
+015|about it in this book|it's also a metaphor for feeling|0.57
+016|that are going to allow you to work with the team in a more|are going to allow you to work with a team and more|0.83
+017|terminal window if we type that again and the shortcut for doing that by the way is up arrow will repeat the last command|i'm going to quote david attenborough the naturalist and broadcaster from the british television channel|0.45
+018|lowered immune system and also being able to control your growing medium for your own food all of these things most of the people that i know that home|when i was 11 years old|0.41
+019|see it as not just a toxic chemical in the environment like something like a heavy metal a plastic we all hear about bisphenol a but it could be any|i think it's really cool that you're|0.37
+020|now if you were ever in years ago that was completely not okay if you joined a c org the only organization in scientology you could work for again|you now if you were ever in india years ago that was completely not okay if you joined a sect the only organization sanctioned to work for it was the|0.67
+021|elements can i build a visit as a new patient or can i use the time element|me to say can i move this desk or can i|0.55
+022|was showing at the bahia sao paulo bahia|story about the power of healing through|0.51
+023|make this quilt what you're going to need is two yards of a light a medium and a dark we've used cotton couture by|this quill wants you to need is two yards of a light a medium and a dark what if you saw the door by my|0.68
+024|try to rein you back in pull push you pull you back in back in the old way back in this coach's way|to knee to back put your push put your back all the way back into the hips and|0.56
+025|crop loss because it would burn up the crops it would cause eye disease because your pupils would open up and it would allow the uv rays to get in|cause these remarkable gaps it will cause gas to leak into the supernovae will open up and we can then serve the amazing|0.59
+026|for that he was successful because i found it entertaining and i well i would like my own microscope to someday but it really got me thinking if|for that it was successful because i found it entertaining and i outlined my own microscope so someday but i really got at thinking and|0.74
+027|can be more valuable than two years of unfocused work|work can be more valuable than two years of unfocused work|0.74
+028|it's called lord forgive me when i whine|all god forgive me where i was|0.78
+029|being used to murder palestinians every day so we in the west|used tomorrow palestinians every day to wave the west|0.67
+030|you wonder how do things get to be like this and why|course how do you think it gets to be like this and why|0.63
+031|you will get a choice of create a profile or calibrate your printer|institute for non profit called animal welfare|0.48
+032|i surrendered good quite i surrendered to the low security|years ago when i was|0.42
+033|and his most recent film loveless|in this most recent film lovely about|0.57
+034|own rail system for a few bucks|system for a few years|0.68
+035|favorite i would say was american ballet theatre even though it was their|fit i would say it was a miracle belly even though it was|0.69
+036|you form your leadership at home|so from your relationship at home|0.67
+037|when he talks about it is vital that independent critical thinking be developed in the young human being i'm not sure how young he was talking about maybe that's where we would differ from what he was thinking i'm not sure|he talks about this fight or that incident or little thing that we develop as young human beings i'm not sure how young he was talking about maybe that's what made it different from what he was saying i am not sure|0.68
+038|center of a picture to give you an even pattern of light|official to give you an even better for it|0.56
+039|if you're expecting that moving from snapdragon 821 to the exynos 8890|if you were expecting that moving from snapchat 2016 to tiktok|0.74
+040|controller showchatcontroller like that wouldn't that be nice well we can't do that right now because we don't have a reference|all the things i should have done or not done that would have led to this outcome we will never have any reference|0.49
+041|on your phone whatever you just you hold it up if you can use voice technology you know like voice dictation you should be utilizing that as much as possible i do all the time|on your phone whatever you're holding it up if you can use voice technology like voice recognition you should be utilizing that as much as possible i do all the time i get up there and go|0.74
+042|that they're worried about i don't know if you guys have any requests for them on like advice or whatever just let me know and i'll try to get them|worried i don't know if you guys have any requests for them or any advice or whatever just let me know and i'll try to get them in|0.71
+043|the american chestnut tree at one time approximately 100|about justice for the one time and possibility is|0.53
+044|but on a completely raw diet once i had left my produce manager's job the amount of time that i spent trying to find|on a completely wrong diet once i had left my brother's manager's job the amount of time that i spent trying to find|0.79
+045|type of a container is going to last you probably your lifetime maybe two lifetimes|feet taller it's going to last two probably three lifetimes maybe two life times|0.59
+046|that god is everywhere and god will have a witness in every situation|god is everywhere and god will have a witness in every situation|0.78
+047|i'm gonna put it right here right here this stuff i love|going to put it right here right here this stuff i love|0.80
+048|my aunt at that time was 8th grade pass and what she did which at that time was|at that time was like 300 bucks and what she did was she took that time to|0.63
+049|vote they never thought that the community could organize its ranks|vote the individuals in the community who organize these rallies|0.54
+050|there was little they could do|to look sexy they could do|0.50
+051|month of the year now i have made|month of the year now i have my role|0.78
+052|i hear a lot of people always ask me does this cooler work on 1156 it's like but it says it's only for 1155 yes because 1155 and 1156 are exactly the same|if you're going to do a tour where you love 50 cities but you just don't have the time to visit them because if you visit five cities you can sell the same|0.56
+053|this means that australia has promised not to send refugees back|this means that australia's promise not to send refugees back|0.81
+054|so i worked at liz for two years and i promised myself like going into that second year that i would quit my job i didn't know how i didn't know how i didn't know why i didn't know where the extra income was going to come from|so i worked at things for two years and i promised myself like going into that second year i'm going to quit my job i didn't know how i had no idea where the extra income was going to come from|0.76
+055|forum suggests a part of a very very big human sustainability movement i really appreciated the opportunity to a person like me with my iq and my background following|freeform vortex is part of a very very big human sustainability improvement i really appreciate you taking the opportunity to talk to a person like me with my hat on and my beard following|0.62
+056|or you're reading something you know don't spend all the time piling with your friends like oh we're gonna fight oh fight after skate you guys are like a whole|you're reading something you know don't smell the same body lotion with your friends they all want your fragrance that's like the|0.57
+057|so how you say things are more important than what you're actually saying as most of us have heard growing up communication is 90 body language and that is more important|how you say things are more important than what you're actually saying as most of us have heard growing up communication is 90 percent body language and that's more|0.85
+058|let's talk about the two most accurate tests|about to do most accurate test|0.67
+059|on the linux battlefield there are many many many|so in my own field there may be many|0.55
+060|of fat source when eating turmeric the beneficial compounds in turmeric like curcumin are more fat soluble than water soluble so to aid absorption include a source of|fact source we need to absorb the beneficial compounds in turmeric like curcumin are more absorbable in water soluble so dandelion absorption includes a source of|0.64
+061|it's more of a level of i mean it's more of a consistent demand|a lot of what i want to talk about this morning is going to be about|0.57
+062|i now have 50 stitches on my needle and so now we're ready to begin the decreases if you look at our sample|now have 50 stitches on my neck and so now we're ready to begin the skin grafting on samuel|0.74
+063|you can get electrocuted working on them that's one damn thing that's a big danger|much the year under water that's where shape gets a bit dangerous|0.49
+064|has now carried you home|i dare you to hear the new roar|0.59
+065|500 companies so he's been doing this for years|hundred companies so he's been doing this for years and|0.79
+066|which is why we always trade steady state markets|which is why we always trade in the same markets|0.78
+067|simpler and practical enough for anyone to do and if not how could that be changed in the future i think the future is in the hands of the future|i'm so happy to be here|0.40
+068|that you tell them what is the way it is and what they should do the way it should be|to tell them what the next step is and what they should do or what they|0.58
+069|so i have two and a half of these size cups which is probably like the equivalent of|i have two and a half of these nice cups which is probably like the equivalent of|0.79
+070|your account where you will have to pay long term fee assessment|your account where you have to pay long term fees and|0.69
+071|i'm not sure if you're aware of it but yes there has been a class action suit filed against apple for that very thing and yes technically speaking it wasn't a wine it was a beer|i'm not sure if you're aware of it but yes there has been a class action student filed a lawsuit for that very thing and yes now technically speaking it wasn't a wine it was a beer|0.75
+072|youtube is your girl baby d coming with you with a video review update on gerrit hall|so make sure you're able to see the number with the green video logo on it or that stuff is|0.58
+073|teaspoon of baking soda and salt you may say|beethoven's sonata and it's going to take you about 15|0.52
+074|probably not going to get hurt at all and the padding|this was to get called get called and the patriarch|0.49
+075|electronics internals to make this just a little bit faster than before|electronic tunes to make these just a little bit faster than before so they look|0.69
+076|charge it every night just to keep it going through the day but i think that's a pretty good battery for a nice slim phone like this|it every night just to keep it going through the day but i think that's pretty good about it for her and i see some feel like this|0.74
+077|everyday conversation it is usually said as just which is room if it's my room it would be if it's|the end of the year he goes to his dad and says dad i want to buy a bicycle and dad for my birthday it will be a bike but|0.53
+078|is good in terms of we're trying to|when i was 11 years old i was diagnosed with type 1 diabetes|0.49
+079|on a charge|and he can get charged without having to|0.61
+080|from another game that is doing that oh intentionally|a long time that is doing that so let's|0.71
+081|she was bleeding and the nurses were standing on the side and everybody was just looking|with pink and all these words that i can't even pronounce|0.42
+082|and these amazing gadgets we now all hold in our hand and we|these amazing gadgets we now all hold in our hand|0.63
+083|to see advanced jesus and talk to them about it|so i'm going to tell you a story|0.46
+084|last section on part a cross side recover cross side recover jazz box cross back side forward|good evening ladies and gentlemen thank you so much for attending this evening towards the end we'll have a jazz band towards the back in the corner towards the|0.55
+085|here's a requirement you can look at this and say you know|it's a requirement in the state of|0.46
+086|and saying hey tell me what to play i need a hot stock pick you are letting them shove their hands you get the point and you are becoming a puppet|today tell me what do you play at high stakes poker do you raise your hands do you bluff do you come in a pot|0.56
+087|goes on to say frank sachs lead author on the report said he has no idea why people think coconut oil is healthy it's almost 100 fat he says|goes on to say france as the lead author on the report said he has no idea why people think going north is south it's almost 100 percent fat kills us|0.71
+088|in this series we will learn new words by the pms method personal meaning system|in this series we will learn new words by the b amp m accelerated person meaning system|0.71
+089|saying specific things about these items and i have denied and always will deny those sort of|specific things about these items that i have denied and always will deny those sort of|0.81
+090|now let's take a look at how to write n in c|now let's take a look at how to create energy|0.75
+091|we all live in our yellow submarine|we want to live in our own|0.68
+092|how much better they feel when they make these lifestyle changes it's very easy to keep|is how much better they feel when they make these lifestyle changes it's very easy to keep|0.84
+093|we will give up some of our individual choice for the sake of the community decision|will give up some of our individual sovereignty for the sake of the community and|0.78
+094|really highlighted the enormous problems facing that army now we've looked at|really highlighted that's an enormous problem we're fixing the economy now we've got|0.70
+095|and received a generous paycheck so|received a certificate of appreciation so|0.56
+096|mastectomy chemo and no chemo living or dying|sent me an email no email living or dying|0.59
+097|you've got to be aware of this math and it can get you in trouble in a hurry especially if you start averaging down and averaging down|this path any trouble occurring especially if you start averaging down he had averaged down and|0.61
+098|of a method so if you have this unprecedented hack which 1 2 billion is certainly unprecedented you expect them to be using unprecedented methods|for methods so if you have this unprecedented hacker which is 1 2 million certainly unpresidented you expect him to be using unpresented methods|0.69
+099|allowing the humans to focus on design and compositional choices|group is to focus on designing opposition choices|0.74
+100|wouldn't let their daughters and they had six daughters no sons wouldn't let them read|like their son is the last son or no sons we're going to get married|0.53
+101|forth i forget exactly how it works but it also controls the volume|i forget exactly how it works but it also controls the volume|0.85
+102|of calls on when are you going to notify my creditors that i filed that's not really the function of the role|focus on where you going to go and fight by the way you're going to fight that's not really the function of the role|0.65

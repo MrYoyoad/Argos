@@ -1,0 +1,103 @@
+HYP_MBR | BATCH 10/15 | 101 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|but generally there are a few things and each one is so different|but generally enough to say that i quite enjoyed the|0.47
+002|to keep protein high and calories low and i said no|grows nine calories a day and i said no|0.64
+003|because it's so much kind of simpler to get started and hosted and everything and then i played with a few frameworks like codeigniter and eventually wrote laravel|maybe it's because i'm a little bit that i have some grey hairs and wrinkles and everything and then i play with a full five piece orchestra and if you see the whole interview|0.58
+004|one twitch is all you do|one to reach is all the|0.60
+005|supplier it would be i think very difficult for that individual|it would be i think very difficult for that individual|0.74
+006|now if you have the opposite problem and have a hard time focusing on distant objects then you have myopia|have the opposite problem and have a hard time focusing on distant objects then you have myopia or|0.82
+007|and as you did those gestures it would convert your body into an avatar it would send it through the network and friends teammates groups of people would have to guess what gesture you were making|and add to interjection to an existing body into an adjoining sentence through the other and find sleep like groups of people who would have the task of judging your making|0.56
+008|very quietly he tipped it|very quietly deep into|0.66
+009|even after the insurance examination|after the initial contamination|0.79
+010|and julia totes over well thank god|julia chooses over real the|0.46
+011|i can't even help myself i don't know what to do that's when you know shaitaan|i can't even help myself i don't know what to do that's the reason i'm here|0.72
+012|guitar the kick drum was very very punchy|are they get in trouble when it's very very pushy|0.62
+013|may not be very good and the video actually may turn out to be totally|going to be very gradual about starting out to being totally|0.62
+014|efforts to restore u s cuban ties obama will become the first sitting president to visit cuba since calvin coolidge in 1928 it's a move that is not popular with republican|efforts to restore us cuba ties obama will make up the first sitting president to visit cuba since calvin coolidge in 1928 it's a move that is not popular with republican president|0.76
+015|backwards yay thank you i'm good thank you jackie okay good so i can't see it so i'm going to turn the light on hold on|power shake thank you i'm good lady shake ok good so i can't see it so we'll do the light on you|0.65
+016|by percentage or the raw score you put in the|i have one last thing that i want to share with you|0.50
+017|leader in that business as well as many other areas of her career|leader in that business as well as many other areas of our career|0.81
+018|welcome to conscious discipline and our time together today we're going to talk about the fifth power in the conscious discipline program and it's the|welcome to kyushu discipline and ikebana together today we're going to talk about the fifth power in the goshin discipline program and it's the|0.72
+019|then we have the costal cartilages costal always refers to ribs so these are right here|that we have they cause our hormones to go haywire so these are right here these|0.53
+020|that we were we were reactive|i don't know if you know this|0.37
+021|you may know me from the|i'm going to tell you a story|0.46
+022|everybody and welcome to day 5 of my 14 day water fast|good and welcome to day five of my 14 day workout fast|0.70
+023|down their face in order to get their lab test done|other friends in their lab tests and|0.42
+024|and bring out whenever you need to achieve a specific goal let's get right into it|and bring out whatever you need to achieve a specific goal does it get right into it|0.73
+025|i'd say that it would become a threat of anybody that i work with that's successful financial athletes people in politics it's hunger you know you and i both know intelligence is a pretty damn valuable tool but there are a lot of very smart people that can't fight their|i said it would harm the reputation of anybody that worked with successful financial athletes people in politics it's hunky doo number two intelligence is pretty damn valuable tool but there are a lot of very smart people that can't find their way|0.66
+026|just sit tight i will start you soon now remember and those of you who you're all ddm members|i will start you as two now remember for those of you who are all the income members too|0.64
+027|while busiest woman in show business and so we're just going to be talking about all kinds of stuff we're going to talk about selling dots|in the business world and show business and so we're just going to be talking about all of this because that's what it is|0.65
+028|and they don't touch any vessel any box around them and that's the way to investigate these alloys|and they don't touch any of the effects around them but they still want to investigate this area|0.62
+029|close parentheses to type it in and then once i've finished typing that in you'll see the word hello displayed in our preview window pretty cool right pretty simple all that stuff is great now what|person to do it they'd be like i don't want to feel like i'm eating a sandwich that was made in a perfect room with perfect air conditioning perfect humidity now|0.45
+030|and it's important to say kassaaa you have only two|is important to take action you have only two|0.64
+031|it looks like science has indeed discovered god and how would that be well if you take the trouble of going to the web and|incarcerated so high as it is over the last decade and now with that being what's the term of going to the rehabilitation|0.55
+032|i can't wait to read a whole book about them only to discover that|books i can't wait to read the whole book about them only to discover that|0.77
+033|basically the reason we all got so motivated|basically the reason we are not so motivated|0.75
+034|set it apart not just from other network marketing companies but from anything i've ever looked at in my life feature number one is|i'm better not just from a health care perspective but in every aspect of my life adventure number one is|0.59
+035|so it's not necessarily an improvement in this case|there's a lot of necessary improvements to be done|0.44
+036|the result of this situation is that most designers are making much less money while a very small group of designers that you can call|of this situation is that most designers are making much less money while a very small group of designers get all|0.85
+037|we can gather observations on as far away as a distant galaxy or as zoomed in as the hydrogen wave function there are certain questions that we cannot answer what lies outside of the natural world well we have to think about that and i think that's why|contraction syndrome is very rare it's a dissecting aortic aneurysm that's an arterial infection there's still a lot of questions we don't answer what causes outside of the natural|0.54
+038|one of nancy's first tips is to make sure that you have a carbohydrate rich breakfast|one of kacy's first steps is to make sure that you have a carbohydrate rich breakfast|0.82
+039|the giant a giant flown aboard an ac 130 that was discovered in iraq or afghanistan|the giant a giant flood deposited 181 that was discovered in herat afghanistan|0.59
+040|one out or if you divide by a negative one you're left with a positive x squared|house or if you're divided by kind of one you love with a positive and square|0.64
+041|not because he suddenly stops being agnostic and starts believing in god at least not that we know of|because he suddenly stops being agnostic and starts believing in god and it does nothing we know of|0.78
+042|out how he's going to get to school is he going to ride a car is he going to ride a bike what is he going to do|out how did he get to school did he take a red car did he ride a bike what did he|0.63
+043|if you are seriously considering like you know working with models|if you are seriously considering quitting your way with math|0.64
+044|take a look at the example from the series by the way today we analysed the idioms from scrubs tv series|you can get the sample from the series by the way see we analyzed the keywords from the traps in the series different|0.59
+045|computer not a city not even a building an entire computer|could face the death of the building|0.51
+046|every time you find a new page a new node|time you find a new place and a new|0.81
+047|code that way i know there was a lot of hype of that back in the 90s|that when lucille clifton came back at the time|0.59
+048|always sort of alluring to me heath he was always somebody who i admired in a way he was way beyond his|always sort of glorious to me he was always somebody who i admired in a way and he was way beyond his|0.73
+049|i'm not very likely to have cancer we don't have cancer in my family as far as i'm aware and we tend to live fairly long most of my|i've never had the chance to address this before now i'm going to give it a try for the first time and i wish i could have this conversation with you|0.57
+050|we have earned this moment so no matter how exhausted|heard this moment so no matter how exhausted|0.78
+051|reason it shouldn't be your first ocarina this is an excellent ocarina that will grow with you as a player|say it shouldn't be your first concrete this is the day that concreting will grow with you as a player|0.67
+052|and introductions will serve you well on many levels so here's the bottom line having a referral marketing program is the only market|and introduction will serve the well on many levels so here's the bottom line having a referral marketing program is the only|0.80
+053|and she said i'm not going to see it but you will see it she says to the one there tears streaming down their eyes|and she said i'm not going to see it because you would see it as an insult to you so one day her eyes|0.67
+054|actually a very intelligent man who cares deeply|the key very consistently and no one cares at all|0.54
+055|i'm just using one program to start it off for today so i can kind of learn and get the gist of what i'm doing with sdr so i'm using a program called|notes i'm just using one program to start it off with today so i can kind of learn in the gist of what i am doing with this year so i am using a program called|0.75
+056|i didn't have any delays or drops when i was using these in bluetooth mode|didn't have any land or drops where i was used to seeing blue skies and|0.65
+057|so in theory that makes facebook's job a lot easier you build a single solid|so in theory that makes vice president's job a lot easier you're merely a stealer solid for|0.73
+058|i have a special nickname i call hampshire college|have a special daytime i call amsterdam college|0.70
+059|obsolete instead of just throwing it away you can resell these as gaming cards or use them as gaming cards yourself as they're still very capable|obsolete instead of just throwing it away you know what i'm saying it can be hard to do something that's against yourself and still very capable|0.64
+060|i'm here to talk about go obviously|that we're going to make so let's|0.42
+061|you really have to educate yourself okay but if you don't want to|food and other hygiene items in plastic soda|0.44
+062|this lets the astrocyte monitor the neuron's signaling and help keep things functioning by releasing different proteins that can influence receptors at the synapse|lets the astrocyte monitor the neuron's health and help keep things functioning by releasing different proteins that can influence receptors in the synapses|0.71
+063|also it's very flexible and unbreakable|also makes us vulnerable and unbeatable|0.60
+064|it could crash to the floor other loud sounds boom go fireworks|crash into the floor other clouds sounds boom go fireworks|0.70
+065|the front foot the heel is supposed to line up with the inner arch of the foot|turn your head from the front line and bring your arms over the freedom|0.57
+066|what we're going to look at now is what happens if we start bringing the concept of woody beds or hula culture into this and a little bit of excavation and how we can kind of turbocharge this|what we're going to look at now is what happens if we start playing the concept of warheads or nuclear deterrence and a little bit of escalation and how we got into the cuban missile crisis so|0.72
+067|florida or wherever you are|you can do whatever you want and if you see|0.54
+068|try to get pokemon to catch and i'm really into i don't know i never followed the franchise i'm a little outside of the age range of people who would have played pokemon but i have siblings who did|to keep polly barton in check and i'm willing to do i don't know i never would have followed the franchise like i am a little outside of the age range of people who will play polybart but i have double citizenship|0.66
+069|google has just announced the newest way to save your precious photographs with photoscan|has just announced the newest way of your precious photographs with photoshop|0.66
+070|is about having your marketing do all the selling for you so you|about having your marketing do all the selling for you so you|0.81
+071|i thought it was pretty fun and a great experience|i learned to speak english and look at the world|0.59
+072|new clients and people who want to|it was really interesting to talk to these guys because once you|0.45
+073|this is an interesting thing to do so gene has|this is an interesting thing to know so shin has an|0.78
+074|on the front of the torso i mounted on so the whole thing just lifts off|first of the stories came out so the whole thing just lifted off|0.68
+075|to the band aid after a few days but there's actually one interface on the surface of the body that can literally provide us with a window of what happens inside and that's the surface of the eye|bandage after a few days but it's actually working in the face on the surface of the body that it can literally provide the wound of what happened to this guy and that's the service of the dog at the very|0.65
+076|but as you were saying before we were offline on air there's a lot going on yeah that's a big thing|listen to us say before we throw off a lot of data there's a lot going on in crazy|0.58
+077|depending on the language the beginning ones known as|to any other language the beginning was a storied|0.66
+078|areas where steve jobs beat bill gates|not always with steve jobs bill gates|0.60
+079|you screwed up you made a mistake|pointed up you made a mistake thank you|0.70
+080|doesn't always work because as i mentioned in the elasticity video cigarettes are very in the last|start was wrong because i didn't start at the end of the video sequence so i felt like i had to|0.58
+081|made to seem less important|make it seem less important|0.78
+082|popular with republican presidential candidates|unpopular with republican presidential candidates|0.89
+083|go ahead and get these bad boys out of the box and see how they stack up to the competition|get these bad boys out of the box and take it to the competition|0.67
+084|they've actually succeeded to do is make a whole bunch of people that were living and breathing in|with a french accent to someone who doesn't speak french|0.41
+085|to right hitch section four raw back recover full turn to right traveling forward|to our destination thank you for joining us tonight and we hope to see you all very soon|0.53
+086|routines and channels give you a way to sort of structure the program and|kids a chance to decide if they want to go into structuring programming that|0.55
+087|be that vegans feminists environmentalists or anyone else who is fighting against the tide|that vegan feminist environmentalist or anyone else who is fighting against the sky and|0.79
+088|by a combination of temporarily low adjustable rate mortgage payments by a|i've come to the conclusion that i'm going to run for president of the united states|0.55
+089|personal belongings from me and put me in jail|who agree with me and probably the|0.52
+090|disorder over the next several weeks i'm going to go into each of those|work over the next several weeks i'm working on each of those|0.69
+091|love you guys hello austin it's great to be here|please you guys can trust me here|0.46
+092|and that's okay but it can also still lead to problems having uniforms will not erase those problems is what i'm trying to say the next comment's coming in from deborah paul and she|ok but it can also still see the problems and we have uniformity we can erase those problems so what i'm trying to say the next topic is coming in from nepal nepal|0.64
+093|because i was gonna be i was gonna be the next joe morgan|because i was going to be a lawyer someday|0.56
+094|i don't know europe or something like that if you have a full backpack out of spare batteries but i have no idea how to charge them but i|you know i mean i'm not really sad if i can't film many ways but i have no idea how to change the medium|0.60
+095|inherently shake so when you try and move those devices manually you inherently introduce|inherent shyness so when you try and move those devices magically you inherently introduce|0.69
+096|mute the call that you're on it mutes and then you hear a little tone in your ear every few seconds to let you know that you're muted and if you also tap the front or back or maybe it's like sliding your finger back and forth i forget exactly how it works but|mute the call that you're on and then you hear a little tone in your ear every few seconds to let you know that you are muted and if you also tap the forward or backward maybe it's like sliding your finger back and forth i forget exactly how it works but in|0.78
+097|who wants to do something in life such as writing a book|want to do something nice decide why not|0.67
+098|uniq all makes four|30 or by its floor the|0.43
+099|last year was that there were some issues with the calibration especially on the darker end of an image|i'm just going to read you one of the captions so you can see what it's like|0.49
+100|they are fairly big and especially if you look in a mirror|they are fairly male especially if you think about bigger|0.56
+101|understand and unfortunately people don't have or they're not taught financial trading at any point in their school careers or|in the state and unfortunately people don't have a pool in their schools financial training at any point in the day two degrees or|0.62

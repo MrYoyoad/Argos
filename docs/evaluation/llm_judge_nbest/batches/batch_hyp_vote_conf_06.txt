@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 06/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|you've got the rain outside i don't|when i was 18 years old i|0.64
+002|pretty expensive for headphones so like i said earlier in this video or like i would continue to say please do try them out before you buy them so you can you know you're really sure that this is what you really want|pretty expensive for hand phones so like after and david go i would continue to say please do check them out before you buy them so you know you are really sure and this is what you really want|0.70
+003|and we have a bit of fun as well along the way but driving energy and determination to succeed is how i describe jason|have a bit of fun as well along the way but drive an energy and determination are key is how i describe jason|0.69
+004|now i really want to talk about how power is the measure of degree of control one has over circumstances in their life and over the actions of people around them|i really want to talk about how power can take the measure of degree of control one has over circumstances in their life and over the actions of people around them|0.71
+005|so that's the similarity with our philosophy|like to summarize it in a few words|0.52
+006|the beauty of using an auto top off system for this is that it's easy to use|in the beauty of using non toxic system releases|0.63
+007|and to make important decisions at geographic scales as professor amy lobin of the university of oregon describes it neurogeographers are constantly scanning|and to make important decisions at geographic scales as professor amy loeb of the university of oregon describes it geographers are constantly standing|0.72
+008|experiencing the emotions of the other people around you|is the emotions of the other people around you|0.67
+009|efforts to restore u s cuban ties obama will become the first sitting president to visit cuba since calvin coolidge in 1928 it's a move that is not popular with republican|efforts to restore s cuba ties obama will make up the first sitting president to visit cuba since calvin coolidge in 1928 it's a move that is not popular with republican president|0.72
+010|mda8 5600k and it's got a base clock of 3 6 so that's in this class of a system is gonna suit you just fine|the end of the fiscal year and it's time to out the 3 6 so let's let this class of students just fine|0.71
+011|expresses in concrete and symbolic and beautifully real deep|suppresses the concrete and the symbolic and beautiful the real|0.57
+012|this g stick i mean this g stick becomes a renderer|is six and we have a system of cards|0.69
+013|himself can now become the very aspect of himself to become the instrument to create beauty in the world|himself he now becomes the very aspect of himself to become the instrument to create beauty in the world|0.71
+014|time to transfer to my computer and do all this other stuff|to let it transfer onto my computer and do all this other stuff so i did|0.64
+015|that are going to allow you to work with the team in a more|are going to allow you to work with a team and more|0.67
+016|national safety month i'm not entirely sure why it's not 12 months of the year maybe there's some thoughts about you doing it|cartoons every month not exactly sure when it started long the ago maybe there's some thoughts about|0.62
+017|lowered immune system and also being able to control your growing medium for your own food all of these things most of the people that i know that home|to i was to years old|0.51
+018|in various different compositions i'm not gonna talk about any other math for learning this kind of stuff from real world data but rest assured|in fair and different compositions i'm not going to talk about any of the math involved in this kind of stuff from assured|0.69
+019|now if you were ever in years ago that was completely not okay if you joined a c org the only organization in scientology you could work for again|you now if you were ever in kid years ago that was completely not okay if you joined the sect the only organization you to work for it was the|0.68
+020|but why is stress a function|why because it's effective|0.59
+021|there was little they could do|to look sexy they could do|0.54
+022|in trying to make this business work or that business work and i've learned more in doterra|trying to make this business work or that business work and i feel more and so scared|0.67
+023|and that's really how we become unique and one of my friends chris ewen explained to me that a friendship is built based on two people|and that's really how we become a community and one of my friends instagram explained to me that a friendship is based not just on people|0.70
+024|and just scrolling down they have an option right here for fighting flights and more you can just turn|just google it down they have an app for that for flights and more you can just do|0.62
+025|for that he was successful because i found it entertaining and i well i would like my own microscope to someday but it really got me thinking if|for that it was successful because i found it entertaining and i outlined my own microscope so someday but i really got be thinking and|0.73
+026|i never felt comfortable with that name because it was so white|i never felt comfortable with that name because it felt it was so white|0.64
+027|have to back that stuff up because it's automatically backed up by its very nature|to back that stuff up because it's automatically backed up and its very engaging|0.63
+028|i didn't have any delays or drops when i was using these in bluetooth mode|didn't have any land or drops where i was used to seeing blue skies and|0.65
+029|must look at the people's eyes don't look at the people's eyes don't look at the people's|yes people's eyes just|0.63
+030|you will get a choice of create a profile or calibrate your printer|of for for profit called animal advocates|0.52
+031|and i had a degree of bitterness about that and resentment|i don't know but|0.66
+032|let's get started crime and punishment written by fyodorovsh|punishment written by fuels|0.64
+033|god designed the whole universe to be in symphony and harmony|take the whole story and turn it into a video because it's|0.59
+034|and growing in student loan debt you could hire all of the us marshals in the entire country and give them nothing to do but to|and growing in south korea to allow all of the us monks in the entire country and give them nothing to do but|0.71
+035|last section on part a cross side recover cross side recover jazz box cross back side forward|evening ladies and gentlemen you so much for attending this the end we'll have a jazz band towards the back the corner towards the|0.53
+036|i'm hearing him sing this through the door if it wasn't such a professional|here he comes saying this through the door if you want to touch the perfection that|0.69
+037|i had been an engineer and i enjoyed what i was doing but i really wanted to have a company that i could do|p h d and i enjoyed what i was doing but i really wanted to have time to think|0.64
+038|center of a picture to give you an even pattern of light|official to give you an even better power for it|0.57
+039|controller showchatcontroller like that wouldn't that be nice well we can't do that right now because we don't have a reference|all the things i should have done or not done that would have led to this outcome we never have any reference|0.57
+040|i put an apology like sorry this was dictated not text|i'm going to go on a limb and say that's calling this business sense|0.66
+041|is a bad day alright i don't know about share this with you before but it's|the past or right i don't know if i've this with you before but|0.64
+042|the main risk factors|those are the main risk factors|0.53
+043|but on a completely raw diet once i had left my produce manager's job the amount of time that i spent trying to find|on a completely wrong once i had left my manager's job the amount of time that i spent trying to find|0.74
+044|i believe that everybody that's listening|i believe that everybody a leader|0.67
+045|one of nancy's first tips is to make sure that you have a carbohydrate rich breakfast|one of kacy's first steps is to make sure that you have a carbohydrate rich breakfast|0.68
+046|i'm gonna put it right here right here this stuff i love|going to put it right here right here this stuff i love|0.62
+047|bravo bravo it is a great and beautiful day and i'm so glad to be with you a lot of people have|own it's a great and beautiful day and i'm so glad to be with you you know a lot of people have|0.73
+048|and urological association in creating this guideline the panel aimed to provide directions|to i was 18 years old i was|0.53
+049|if you don't build your business correctly some of the cons can be you'll get burned out you get stressed out and you'll work 24 seven and have no boundaries in life and feel like you always have to be on and you're|build your business correctly some things can't be you don't get burned out you get stressed out and you work 24 7 and have your own boundaries in life and feel like you always have to be on and you're carrying|0.72
+050|month of the year now i have made|month of the year now i have my role|0.69
+051|there's a lot to learn from those experiences and you might not think about it until it comes up as a learning example so let's take a walk on the smile side i want you to think about a group or an experience that comes with a smile|these experiences and in my day to day thinking i continue to come back to this little the example so let's take a walk in this man's head i want you to think about your own experiences your own|0.70
+052|hi everyone it's mr sinti and today i'd like to invite you to a conversation|i'm like to thank you|0.61
+053|to put around it and kind of we're all getting a lot more knowledge about kind of where we came from|like to poke around and all of know more about where we came from|0.68
+054|who wants to do something in life such as writing a book|want to do something nice decide why not|0.64
+055|let the suit fool you i'm the founder and cto currently of a company called aerospike i founded this company to bring fast|true founder and ceo of a company called bike i founded this company to bring fast|0.70
+056|leader in that business as well as many other areas of her career|leader in that business as well as many other areas of our career|0.66
+057|to learn at the same time because you just arrived here so you need to learn the language|it's going to take a bit of time because you try to learn three languages the language|0.56
+058|on the linux battlefield there are many many many|my own field there may be many|0.58
+059|i think any industry can benefit but obviously we're focused on document intensive workflows and we've had most traction in those|i like to study it but obviously we've focused on the neanderthal kin of modern humans and we had most challenging leaders|0.66
+060|vi we said was zero so that goes away so vf is f delta t|i would say we're zero so that goes away so v i have the lead staff to tell the the|0.65
+061|what was the reason why you went into that direction|what was the reason why you went in that direction|0.70
+062|you can get electrocuted working on them that's one damn thing that's a big danger|of the year under wetsuit that's where shape gets a bit dangerous|0.57
+063|has now carried you home|i dare you to hear the new home|0.60
+064|i'm willing to bet that i have failed more times than anyone in this room because i have a|the process that i have go through order to get to where i am today i'm going to with you have thing|0.52
+065|but sometimes i send girls a hotline bling and they ignore it|sometimes i get calls like me and they acknowledge|0.68
+066|cartoon characters the blue and the red those things change all the time on influenza which is why we have to re evaluate|are constantly changing in some unique way those things change all the time influencing which is why we have to reach|0.68
+067|we evolve from and you know i think we were talking a little bit earlier kind of i've done 23 and me and that will now kind of break down your neanderthal dna for you so it's wonderful that i got now i'm getting a bit more context to put around it and kind of we're all|we had evolved from and it was certainly when i had turned 23 me and now we kind of break down into the x and y dna for you so it's wonderful that now we get a bit more context to pull around and we're all|0.72
+068|welcome to conscious discipline and our time together today we're going to talk about the fifth power in the conscious discipline program and it's the|welcome to darn discipline and ikebana together today we're going to talk about the fifth power in the damn discipline program and it's the|0.69
+069|ooh that's rather like a drinking yoghurt|that's why like lie trick you|0.52
+070|by the judge below the sentencing guidelines range|i like to thank you|0.51
+071|because i wanted to be sheetaro because to me sheetaro represented power she represented just strength that i was attracted to|because i wanted to be just hara because to me she represented power she represented the strength that i was attracted to and|0.72
+072|a lot of improvements have been made to it over the eons but the respiratory system that you're using right now is your inheritance from that ancient amphibious fish leader of one of the most important anatomical revolutions of the past half billion years|of improvements have been made to it over the years but the rosetta mission using right now certain characters from that ancient amphibian fish letter of one of the most important economic revolutions in the past half billion years|0.72
+073|get the idea|i and i|0.50
+074|my aunt at that time was 8th grade pass and what she did which at that time was|at that time was like 30 baht and what she did was she took that time to|0.65
+075|so how you say things are more important than what you're actually saying as most of us have heard growing up communication is 90 body language and that is more important|how you say things are more important than what you're actually saying as most of us have heard growing up communication is 90 percent body language and that's more|0.71
+076|as we apply this to leadership development i believe it means that it's possible for us to apply a common one size fits all approach|apply this to leadership development i believe it means that it is possible for us to apply common one size fits all approach to|0.71
+077|is good in terms of we're trying to|when i was 11 years old i was diagnosed with 1 diabetes|0.67
+078|has its own density and will fall in the liquid|has its own destiny and will fall and in the liquid|0.66
+079|i'm creating i will have to like clean my area|i will have legalist in my area|0.64
+080|huge diamonds or something of that sort but you really can't accurately collect data like that for a large group of people|timed into something of that sort but you really can't accurately collect data like that for a group of people|0.72
+081|weekly or monthly in your clean or aseptic|quickly organize it and uranium or be|0.58
+082|we use i won't get into brands but different stuccoes have different suctions and so ghosting effects if you know how to get the suction right|know if to not to|0.50
+083|side four and that's part a let's go over the counts|i enjoyed it so much that i decided to|0.59
+084|saying specific things about these items and i have denied and always will deny those sort of|specific things about these items that i have denied and always will deny those sort of|0.66
+085|link down there|down there go over there and watch the videos yourself|0.64
+086|so that's something to consider but if you have a platinum card i called the date of|so that's the misconception but if you have a and white i call the day|0.68
+087|further than any processing than any equipment that you'll purchase that's where it all begins after that|further they can process it than any other woman in the world because they have to|0.60
+088|oxygen to breathe and the other one is what happens|to breathe and the other one is what happens|0.63
+089|if police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address|police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address|0.71
+090|but he helped me build life on fire and get out what was in my heart and how i want to serve and how i want to help rehas started with helping in designing and branding large fortune 500 companies so he's been doing|how i would rebuild that for firefighting and get out what was in my heart and how i wanted to serve and help we actually started with helping and designing and a large fortune 500 companies so he's been doing|0.73
+091|just like everybody else now because everyone's afraid of|everybody else what do you want to forget and if you|0.62
+092|it becomes sick this is why our bodies get sick heavy metals will do it trans fats will do it chemicals will do it but wireless is the number one cause of inflammation of these cells|become sick and this is why our bodies get sick heavy metals will do it trans fats would do it chemicals would but wi fi is the number one cause of information of these cells and|0.71
+093|i can't tell you how many times i heard someone in my baptist church or an outside conversation tell me what a particular bible passage meant to them|can't tell you how many times i the one in my math class or in an outside conversation tell me what a particular biblical passage meant to them|0.68
+094|and received a generous paycheck so|received a certificate of appreciation so|0.60
+095|mastectomy chemo and no chemo living or dying|sent me me email no email living or dying|0.54
+096|shipping addresses some billing addresses private messages|gps some building addresses private messages and|0.63
+097|way to the left to make the shadows really dark all the way to the right|when i was a little girl i always wanted to be a princess|0.63
+098|client pair client so you either go to an agency get the work|it's to be a client so you are the who who need to see getting what you want|0.55
+099|also it's very flexible and unbreakable|also makes us vulnerable and unbeatable|0.64
+100|probably 90 chance of that happening and then there is the camera probably the biggest question mark ever|probably 90 percent chance of that happening then there is the camera probably the biggest question mark ever|0.68
+101|because the range of global unicast which are the equivalent to publicly rottable addresses|there's a range of global screencasts which are the equivalent to publicly readable addresses|0.69
+102|we've been married 21 years and we've had to de horn one another several times i guarantee|it's what my used to wear and we've actually worn one another several times standing here|0.65

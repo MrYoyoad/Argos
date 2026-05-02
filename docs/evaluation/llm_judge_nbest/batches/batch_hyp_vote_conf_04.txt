@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 04/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|we have a special offer buy one get one free|we have a special offer buy one get one free|0.61
+002|service is only distributed for mobile|1 2 3 4 5 6 7 8 9 10 11 12|0.70
+003|to have at least 10 of the active ingredient protodiocin which is one of the steroidal glycosides that is in tribulus|at least 10 percent of the active ingredient prototypes which in this world is the to be a|0.59
+004|it was nothing like that but when i got there and john paul courtier i seen all his clothes that he wanted me to wear i was like oh this ain't gonna be nothing like i have done before|it was nothing like that but i didn't when i got there and turned up on oj i said oh he's closed they won't be around i was like oh just tell me later like i haven't done before|0.70
+005|their oar was the same you know each was the same and he was in the middle and he didn't know whether to suicide left or right|was with i iron fist to school that glove my name is kim and and in the words of to giovanni|0.55
+006|sitting down standing up come here|sitting down standing up coming on|0.62
+007|to keep protein high and calories low and i said no|grows nine a day and i said no|0.64
+008|by the social conventions in other cultures like the hopi|by the social innovators in our culture at the open|0.67
+009|popular with republican presidential candidates|unpopular with republican presidential candidates|0.72
+010|when life itself doesn't have essential worth our opinions about reason and logic and all these other concepts don't have any more value than we give them|life of these have to existed in our world our opinion is about reasoning and logic and all these other concepts you don't have any more faith than you to give up|0.65
+011|whereas for example where i live right now we don't have a metro system so we use buses or taxis to get everywhere and it can be a little bit slower sometimes|here's for example where i live right now we don't have a major system so we use multiple taxis to get everywhere and it can be a little bit slower sometimes|0.72
+012|india china afghanistan all these different places that are so foreign to us so both sides would benefit|east and afghanistan there are all these different warring places and there's no fertile soil so both sides will benefit|0.68
+013|and i should thank you thank you thank you tom|and i share it with you thank you|0.64
+014|so even if india takes myanmar away from china in an economic|nights so even if he needs eight hours of sleep away from email and coming back|0.66
+015|so we're going to get on into some maybe more important things so in 1 5 we're going to start with some design of experiments type things and then i'm going to show you because we talked about it|you can get on and do some maybe more important things so like one point five we're going to show students this kind of experiment same things and then i'm gonna show you things that we talked about maybe that|0.73
+016|you can just go right down the list all of the vines|you just go right down the list all of the|0.69
+017|that he had allergies on top of it so that's another component|out of stop so that's a dollar per book|0.62
+018|to share inwardly his likeness that he might become the firstborn among many|to share equally his likes that he might become the first porn among me|0.69
+019|sort of behavior but then again this is an unusual sort of system|sort of behavior but this is an unusual sort of system so|0.68
+020|we also have remote boom and bucket position|was miles across the united states|0.51
+021|to supplying your body with these essentials your bug out bag is there to provide for contingencies that may occur along the way repairing your body if it is injured hygiene|supply your body with these essentials your up bag is there to provide for contingencies that may occur along the way we bear your body if it's injured i j|0.70
+022|one really nice thing about this is|what a brilliant idea this is|0.54
+023|add all the numbers from 1 to 200 in your head|the the world to describe own|0.51
+024|what's going on guys this is vince with vshred com and today i'm going to be showing you guys three ways to fix your muscular imbalance|what's going on guys this is rachel to freetrader com and today i'm going to show you guys three ways to fix your muscular imbalances|0.66
+025|about how what we're learning about the neurobiology of social emotions that is emotions that we feel about other people and the emotions|about how we're learning about the biology of social emotions and emotions that we feel about other people and the emotions|0.70
+026|supposed to be you know like that telephone game if you whisper something to|supposed to be like that the telephone game if you whisper something|0.68
+027|anymore even though i'm standing here and jumping|more in the world of technology than|0.59
+028|basically says that no senator can speak more than twice on a pending question|says that no senator gets to be more than twice on pending question|0.64
+029|and a lot of the things that we see going on right now with isis and with iran|understand a lot of the things we see going on right now with isis and with iran|0.72
+030|this look and feel like a high end|this long and feel like i ended|0.66
+031|6 7 and 8 1|in the and technology sector what|0.54
+032|to right hitch section four raw back recover full turn to right traveling forward|to our destination thank you for joining us tonight and we hope to see you all next soon|0.58
+033|when you know in your heart that you really can walk away your whole demeanor becomes more confident and more clear you avoid any of the desperation that the other person can feel and take advantage of|you know in your heart that you really can't walk away your whole and makeup is more confident and more clear to avoid any of the desperation that the other person can feel and take advantage of|0.73
+034|these out of course club members you get the club discount regular price is only 12 88 and our club members only pay 10 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a club member thanks so much|down of course club members do get the club discount regular prices are only 12 88 airline club members can save up to 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a member thanks so much|0.72
+035|in the creation of these children or in the making|in the creation of these children's orders then in the making of|0.61
+036|i think i should say welcome to the whiskey party alright you do it now it's too much pressure|i think could take what else was bit the menu so now i'm just to|0.57
+037|will not have enough food for a healthy life|we learned to have enough food for a healthy life|0.70
+038|the truth how facebook is a media company or is not what's about twitter|news how facebook is a media company about twitter|0.68
+039|you really have to educate yourself okay but if you don't want to|food and other healthy items in smoothies|0.61
+040|he also treats the detection cautiously noting at the end of his paper that there is some positive evidence for a planetary body in this system|he also treated his nation consciously using the active voice paper that there is some positive evidence for body in this system|0.68
+041|don't know it it's really that simple|don't notice it's really that simple|0.66
+042|he goes how can you point out the speck of dust in your brother's eye when you have a plank in your own eye|how can you point out the speck of dust in your brother's eye when you have a plank in your own eye|0.73
+043|you never have been anything but that|you never have there until you've been there|0.51
+044|readers out there because they're everywhere and remember you want to network|when i was a little girl i always wanted to be a princess|0.63
+045|plan for things that are going to happen or on the other hand|plan for things that are going to happen or on the other hand|0.67
+046|pursue my hobbies i've participated in several school plays and even taken on main roles|to my comics i've participated in several school competitions and got my awards|0.69
+047|it's also almost stock android but there is slight amount of customization i would say that it's a great feature|also almost got aggravated i think that's like the height of i would say|0.64
+048|for recreational use do you think that's a good idea|standing by and turning a blind eye to what we can and should do to that this life happening|0.59
+049|so repeat make yourself at home|so repeat make yourself at home|0.66
+050|that we're going to work on for next week i'll probably put something up|to it's bit about putting yourself in shoes position to|0.51
+051|you can see that siri wants you to enter your passcode so if you're not already logged in or you don't know the passcode you're not going to be able to open the front door with a lost or stolen phone|and you can see ciera wants to enter your passcode so if you're not already logged in or you don't know the passcode you are not going to be able to open the front door with a lost or stolen phone|0.72
+052|the folders notification center multitasking and that's pretty much it some little updates of the stock apps but not really much at all so finally we are getting what|the faults and notifications are mostly texting and that's pretty much the and downs of the stock market but not really much and also finding we are getting what|0.69
+053|all those other things and it's also setting the base of the three dimensional chain with|little things that to understand the basics of a three dimensional chain which|0.65
+054|was showing at the bahia sao paulo bahia|story about the power of healing through|0.60
+055|looking to the front so we were in the shoulder stand again from this position a little distance between you and the pole|looking into the front so we were eating jokes and learned from the audience the system which you name both|0.65
+056|will show you how to exercise the w sound|show you how to exercise words down|0.70
+057|it's a good point and most of my rhythmic growth is evolutionary he's a canadian american musician and author|it's a good point and most of my gonzalez's growth is invested in canadian american mutual funds and author|0.61
+058|yeah observations is like what it sounds like you just sit there and you observe|observation is like what it sounds like you sit there and you observe|0.59
+059|yeah so he's of mixed mind in the sense that you can see the practicality of being undistracted|and so it's part of me's mind that says see the practicality of being unstructured|0.68
+060|to mr benjamin delpy in the front row|that's what i want to talk about today i'm going to most of my time talking about|0.53
+061|of every person is|of every person is|0.56
+062|you are using that mental chess game to figure out what it is your interviewer needs to hear|are using that mental chess game to figure out what an initial interview needs to hear what|0.67
+063|but they couldn't identify the quantum|i think it's a very valid question|0.54
+064|elements can i build a visit as a new patient or can i use the time element|me to say can i move this desk or can i|0.69
+065|go ahead and get these bad boys out of the box and see how they stack up to the competition|get these bad boys out of the box and take it to the competition|0.66
+066|so let's go and let's reduce that action by multiplying top and bottom by a common factor|so let's go with this do that actually my most song spot now by calm and fat|0.62
+067|i don't know europe or something like that if you have a full backpack out of spare batteries but i have no idea how to charge them but i|you know i mean i'm not really sad if i a film many ways but i have no idea how to change the medium|0.70
+068|now let's take a look at how to write n in c|now let's take a look at how to create energy|0.66
+069|so it's not necessarily an improvement in this case|a lot of necessary need to be done|0.51
+070|those arrays that we have not declared|those are realities that we have to the with|0.62
+071|and saying hey tell me what to play i need a hot stock pick you are letting them shove their hands you get the point and you are becoming a puppet|today tell me what do you play at high stakes poker do you raise your hands do you do your hands in a pocket|0.65
+072|china to take off to cross the pacific ocean can you tell us|i don't know if a with idea|0.56
+073|anna olson and i'm host of bake with anna olson on the asian food channel|costa rica and i'm the owner of backyard organics on the edge of|0.70
+074|12 95 free shipping i could have sold them for a little bit higher there was somebody there was one other seller that was selling them|i've failed for example i love to experience being but but i was to of the what times comfort my|0.51
+075|pupil dilating eye drops could someday be a thing of the past thanks to a new camera that is not only smaller and more portable than other similar devices but also less expensive|pupil dilation eye drops are some day being a thing of the past thanks to a new camera that is not only smaller and more portable than other similar devices but also less expensive to|0.70
+076|you can learn the skills and the abilities|you can learn the skills and the abilities|0.70
+077|i understand why you would go down south|i don't know why we go down the stairs|0.62
+078|as co creators of this reality|as the creators of this reality|0.54
+079|16mp camera overall is a pretty good shooter but not so much that instant mode|a picture camera overall it's a pretty good sugar but not so much that it has them both|0.67
+080|and instead of using a sampling bottle or metabolism chamber we're just going to use some plastic bags that zip close and this is convenient because|and next time a bottle or a metabolism chimera which is going to some plastic bags and some clothes and this is random because|0.69
+081|about the 13th amendment the 13th amendment is going to come soon on the heels of the actual end of the civil war this basically formally by constitutional amendment ends slavery so that's a pretty important|13th may mean something to you because it can help you shoot all the killers of the actual civil war that speaks to in formal him i also show my meaning in slavery so that's a pretty boring|0.71
+082|in this series we will learn new words by the pms method personal meaning system|in this series we will learn new words by the m accelerated person meaning system|0.67
+083|the problem is that faith has multiple definitions and we've all seen thea swap between them when it's convenient|the problem is that fitness has multiple definitions and we've all done this swapped between them when it's convenient|0.66
+084|to go and of course attitudes to work have really changed as well|to go and of course jules city we're looking for engineers as well one of the|0.65
+085|6 4 watts up to 20 watts now those limits are your limits|6 4 whys up to 20 whys now those limits are your limits|0.64
+086|use all those controls for any one system you use them|i was just looking for relief was looking i get some relief me this better|0.58
+087|a tremendous opportunity it's just very exciting|tremendous opportunity interesting and it exciting|0.63
+088|you know trying to get up and work out and i would get tired very very quick|trying to get up and work out and i would get tired very very quickly|0.65
+089|and you start over again now let me go to dance with the counts|i look good hospitals and doctors|0.49
+090|on the front of the torso i mounted on so the whole thing just lifts off|first of the stories i out so the whole thing just lifted off|0.68
+091|but not all bees make honey insects like bumblebees stingless bees and even honey wasps can produce small amounts of honey but the stuff you're familiar with is the product of one of the seven|not is made honey it sounds like bumblebees a single bee can even honey wasps can produce small amounts of honey but the stuff you're familiar with is the product of one of the 70|0.69
+092|but that can be useful if you want to have some if else check in your loop checking if you're near the end|the gap between some of the fastest growing economies in the world like china and india and the the united states|0.53
+093|these videos take really long to make i don't know if you want to hear about this but you have to set up the camera and make sure that it looks okay and just like think about all these|when you're saying it was really hard to make i don't even want to hear about this but you have to set up the camera and make sure that it looks ok and just like think about all the|0.71
+094|very carefully install all the|very caring for his soul and|0.69
+095|generally speaking is to achieve our result of restoring density with a single procedure occasionally there will be a patient who needs so many hair roots transplanted that will need to divide|simply speaking is to achieve our result of the student listening with a single procedure occasionally there will be a patient who needs so many aids because they really need to divide|0.71
+096|or 3mm roughly and for 32 teeth per inch the minimum thickness is 3 32 or roughly 2 5mm so if you're cutting thin sheet stock then you need to try and make sure|or 3 millimeters roughly and if for 32 cps the minimum is 3 30 seconds or roughly 2 5 millimetres so if you're cutting thin sheets of steel there is try to make sure|0.71
+097|the stop tongue technique is pretty difficult to learn so it's important that you isolate it and then as you play this faster and faster the stop tongue technique starts to become more of a bounce tongue technique|stop song technique is pretty difficult to learn so it's no surprise that you isolate and then as you play it faster and faster the stop song techniques starts to become more of a circular technique|0.73
+098|we go to the hotel elevator|we are a hot desert valley|0.59
+099|by that time weren't you already married and had kids yes yes|by that time we were marijuana in the sclerosis|0.65
+100|wisconsin deter me because i examined the book i say they could have|consciousness could be beings adaptable they could have|0.58
+101|something that worries a bit of stress the stress is okay too but after this fight brings in separation|isn't want to be depressed it's depression that you can't use what we have to is want based separation|0.65
+102|it enabled me to find my voice in the courtroom and that was|it enabled me to find my voice in the courtroom and that|0.67

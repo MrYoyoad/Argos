@@ -1,0 +1,104 @@
+HYP_VOTE_SCORE | BATCH 02/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|on the front of the torso i mounted on so the whole thing just lifts off|first of the stories came out and so the whole thing just lifted off|0.66
+002|revolutions of the past half billion years|used in the past half billion years|0.72
+003|full frame width so just crop to 16 by 9|full frame what's your position right now|0.58
+004|the more influence you start having on the world and the happier you become because the greatest desire of every human being of every person|the more influence you still have on the world and the happier you may become because the greatest of every human being of every person|0.71
+005|that song for you saying that you own that song if it is not in the itunes database then it will take your song the version you have on your computer and upload it to an itunes matched server|song for you is that let you own that song if it's not in the isrc database then it will take your song the version you have on your computer and upload it to an isrc master server|0.73
+006|photoplasmic projections of the collective|he asked me to judge his case|0.62
+007|understand and unfortunately people don't have or they're not taught financial trading at any point in their school careers or|in the state and unfortunately people don't have a pool in their schools financial training at any point in their two degrees or|0.70
+008|is going to make two different sized versions of the iphone 6 either remember to resolution|i had two different surgeries off the aortic valve i had open heart surgery|0.62
+009|it has great grip rings it's really soft so i probably should have got that one|my school is a religious institution|0.52
+010|it looks like science has indeed discovered god and how would that be well if you take the trouble of going to the web and|incarcerated so high as it is over the last decade and now with that being what's the term of going to the rehabilitation|0.71
+011|background are cutting into the photo they're dividing up your subject|own artwork into the photo of the dividing up her subject in|0.62
+012|i'm the cyberroofguru welcome to my channel thanks for watching i appreciate it|sam richards welcome my son thank you for watching i'm|0.62
+013|rotates all the way around once the dial that looks like a clock it means that you've used 7 48|process all the way around once you get to the end of the clock it means that you viewed 7 or 7 a|0.61
+014|yeah i don't know how long i'm gonna stay but i probably will go back to canada|yeah i don't know how i would come to say but i probably will go back to canada|0.67
+015|if you think you're pretty handy building a snowman you might want to get yourself to northeast china|as if it were an antibiotic snowman you might want to get stuffed the truth is shining|0.58
+016|may not be very good and the video actually may turn out to be totally|going to be very gradual about starting out to being totally|0.61
+017|i have a tablet a smart phone i can take my pictures and videos directly off my tablet|if i stop playing football all together anytime i make a shift or anything like that it stops playing|0.60
+018|and i will give this file the name of the component the name my component shall have that's just a naming convention which is kind of used in the vue js world|david irving is a holocaust denier a neo nazi a member of the british national front which is a fascist organization in the united kingdom|0.67
+019|but i just really got into it lately and this game is such a time killer like you cannot believe it you will just i don't know|there but as you can see from the audience we are here and this time we are such a time killer like you cannot have been living in new york i don't know|0.59
+020|terminal window if we type that again and the shortcut for doing that by the way is up arrow will repeat the last command|i'm going to quote david attenborough the naturalist and broadcaster from the british television channel|0.64
+021|nuts right well i tried it and to my surprise and|connect to it well i tried it and is surprised and it|0.60
+022|the course so the school has sheep farm|so this whole house is just a room|0.59
+023|baseball of course i wrote about baseball and she said there's one caveat to this assignment and that is that you need a source|part of course i wrote my bestseller just like this one caviar to this assignment and that is that you need a source|0.69
+024|of hidden sectors and since a floppy disk can't be formatted there aren't going to be any sectors that come before the boot sector|of india and the states that constitute it is described as the tenth largest economy in the world and the third largest in asia behind china in the|0.55
+025|is singularly important in the history of american architecture if not the|is singularly important in the history of american architecture if not the|0.68
+026|i need to have realness around me to kind of break through all the i don't know smoking mirrors if you will|need to have a real realness environment to kind of break through all the i don't know smoking bears if you will and|0.69
+027|one of the complications of this disruption of breathing is that you get lower oxygen levels in your healthy tissues this is known as hypoxia|complications of this disruption one is that you get lower arterial levels in your healthy tissues this is always high pressure and|0.70
+028|we just add a prefix and it makes it|which has had a pretty significant impact like the best|0.53
+029|thank you for coming by torimagu44 today is the 18th of november 2011|year by the norman armstrong 4 4 today is the 18th of november 2000|0.56
+030|and when you're aware and you're sensitive you can tell when you're about to go over that edge and you can stop you can slow down you can breathe|your record is sensitive you can tell when you're about to go over that edge and you can stop you can slow down you can breathe|0.73
+031|and we have permission to share this video to the world right now thursdays and wednesdays|we're one of the few places in the world where you can find two world class museums|0.65
+032|we have an epidemic of vitamin d deficiency|we have an empathy deficiency|0.61
+033|work on stretching everything out with yoga there's gonna be some great yoga coming up in the fall i also have a video i can link that has some great hip flex|we're concentrating on the cloud with yoga there's so much yoga coming up on the fall i also have a video i can link that has more information|0.71
+034|i would like to repeat the list and then we'll play a little game together here we go|would like to remind you that we play playing a game here together here we go|0.65
+035|an inquiry into how to improve children's education in france and he was intrigued by what the british were doing|ignoring his admonitions to improve his diction and pronunciation he was intrigued by what the british doing|0.68
+036|to the word spelling yeah you have to learn spelling i know that english spelling is very difficult i have a resource about that too on our engvid website about 50 comm|so worried about smelling belly you have to know the smell and i know that the genie belly is very difficult and i have a video about that too on our website about 15 carbon|0.67
+037|educational neuroscience if you want to learn more about it one way is|international and if you learn more about it in one way|0.69
+038|us anything it's that exploring for energy has safety risks|right now i'd like to take a moment to reflect and as david foster wallace|0.62
+039|all right i'm gonna read you|great i'm going to do this|0.58
+040|i want to hear you play billy's bounce and or little|how to play billie's blues or how to|0.53
+041|i had my trainer was filipino my follow up trainer was filipino i didn't have an american as a companion until|i had my trainer was philippe petit my floor trader was phillippe pettit i didn't have an american as a competitor until|0.64
+042|on today's the doctor is in the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we're going to see where ours specifically mine falls and whether or not you need to make some life decisions|today as the doctor saying the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we'll see where our specifically mine falls and whether or not you're going to make some life changes|0.73
+043|i got dropped off when i came to cobleskill when i was a freshman right here|i dropped out when i had the name almost did when i was a freshman before i got into|0.65
+044|one really nice thing about this is|what a brilliant idea this is|0.54
+045|but maybe you only have one of those|but maybe you only have one of those you know|0.67
+046|text take for example a paragraph here this is a paragraph from the middle of a scientific toefl text|action take for example a pair of eyeglasses it takes a pair ever from the middle of a scientific novel|0.68
+047|huge huge rise in popularity for something called the headless cms so the headless cms essentially takes this monolithic system and gets rid of the view layer instead it replaces it with generally|who creates a popularity for something called antisemite so antisemitism is an idea that demonizes the system and gets rid of the jews like a society that replaces it with generally|0.68
+048|it's a good point and most of my rhythmic growth is evolutionary he's a canadian american musician and author|it's a good point and most of my retirement growth is invested in canadian american mutual funds and author|0.61
+049|and she was from the kind of village where if a little of her hair showed through her scarf or her eye caught the eye of a man not in her family|she was from the kind of villages where he felt it good for her hair to grow to her star for her height on a man and not in her family's|0.71
+050|hi everyone it's mr sinti and today i'd like to invite you to a conversation|i'm going to tell you|0.61
+051|that means the fear of allah is completely gone the only fear you have is that of the seen there's no more fear of the unseen what a horrible spiritual|is the fear of the loss complete the only fear you have outside of death is no more fear of death what a horrible spiritual|0.69
+052|still sent me home i went home and i felt like i was on my deathbed i was going to die i don't know why they sent me home|sending me home i went home and i felt like i was on my deathbed i was going to die i don't know why they sent me home|0.71
+053|text on her arm which happens to be simplified chinese|cancer's arm which happens to be the deep in the bushveld|0.59
+054|really highlighted the enormous problems facing that army now we've looked at|really highlighted that's an enormous problem we're fixing the economy now we've got|0.66
+055|by percentage or the raw score you put in the|i have one last thing that i like to share with you|0.62
+056|this lets the astrocyte monitor the neuron's signaling and help keep things functioning by releasing different proteins that can influence receptors at the synapse|lets the astrocyte monitor the neuron's health and help keep things functioning by releasing different proteins that can influence receptors in the synapses|0.68
+057|there are two types of teeth the first type is the anus|those two times i've seen the first time is in kenya|0.69
+058|according to the manual that comes with the device the roku uses such a small amount of power that there's really no reason to turn it off|the manual that comes with the device the rotozoa uses such a small amount of power that there's really no reason to turn it on|0.73
+059|i realized that he was saying everything that i wanted to say that i wanted to say to my mother that i wanted to say to the people in all of my classes in high school about how hard it was to be a certain way|i realized that he was saying everything that i wanted to say to my mother and to the people who took all of my classes in high school about how hard it was to be in a certain way and i|0.73
+060|it's based on an article from the journal of abnormal and social psychology and you may remember a version of it from my|it's based on an article from the journal of abnormal and social psychology and you may remember our first quote from memoir|0.70
+061|yes they can perform very complex computations very fast|2000 miles across the united states|0.53
+062|of the possibility of a choking episode in an older child|kind of the possibility of showing an episode in an older|0.60
+063|a group channel track was a bit different than|chernobyl was a biggest disaster in their|0.49
+064|were saying and then certain examples in the support of that theory and if they have certain criticism|today and that certain examples in the support of that day if they have certain certainty|0.65
+065|this is my second time repeating the course obviously|is my second time in new york obviously and|0.68
+066|this must plug into this and not into the base at all|this was written in 1999 so it's a little dated but|0.60
+067|examples so that you can practice along with me|couples sitting and practice yoga with me|0.58
+068|i bought a custom well not a custom this is off the shelf but it's much more expensive router bit meant to do this exact operation|putting on a costume well our costumes of the show but it's much more expansive around being meant to do this exact operation|0.69
+069|but despite his status and his achievements okonkwo|despite his status and his achievements arrogance will|0.66
+070|and hopefully that doesn't happen but i wanted to talk about in this video the fact that it's not just diet ladies and gentlemen|never seen this example but i wanted to tell you about it in this video the fact that it doesn't exist is just as significant as|0.68
+071|these are just a few examples that show the value of sap product lifecycle management solutions we have many many|these are just a few examples that show the value of sbp brought to lifestyle medicine solutions we have many many|0.70
+072|and here's one of the key points it doesn't matter what the tradu|here's one of the key points it doesn't matter what the tradition|0.65
+073|and where is jeff|he wore his jeans|0.53
+074|the banker and say hey i need that money now i've been given you extra payments can i get that and you lost your job he's going to say no way because it's too much risk on him|panic and say hey i need that money now i've been given an eviction notice i'm going to get that and you lost your job it's going to say no way because there's too much stress on him and|0.72
+075|it will catalog what i'm doing here for delayed pressure urticaria today's appointment|will catalog what i'm doing for delaying breast cancer here's today's appointment|0.68
+076|calcium is made up of galactomyloids a substance similar to the carbohydrate starch or to cellulose|is made up of collected waste substances that are similar to the carbohydrates starch and cellulose the chemical|0.70
+077|absolutely 100 yes i am happy if you've been watching my videos for a while you've seen some transformations maybe get my editor here|100 but then yes i am happy and you know guys if you have been watching my videos for while you've seen some transformations maybe you wouldn't get my head under|0.73
+078|the less you move the knee the less|the less you move the less|0.58
+079|we have earned this moment so no matter how exhausted|heard this moment so no matter how exhausted|0.61
+080|but that can be useful if you want to have some if else check in your loop checking if you're near the end|the gap between some of the fastest growing economies in the world like china and india and the world's united countries|0.54
+081|how much better they feel when they make these lifestyle changes it's very easy to keep|is how much better they feel when they make these lifestyle changes it's very easy to keep|0.73
+082|this video we're teaching you some vocabulary some common phrases|of this video i want to introduce you to tom vocabulary i also call my friend|0.66
+083|of a method so if you have this unprecedented hack which 1 2 billion is certainly unprecedented you expect them to be using unprecedented methods|for methods so if you have this unprecedented hacker which is 1 2 million certainly unpresidented you expect him to be using dented methods|0.70
+084|8gb of ram previous from 6gb of ram which we were saying looks like it will have 8gb of ram and also have ufs 2 1 storage|eight kickbacks to the rhyme previously from six kickerbacks a rhyme which we are saying looks like it will have eight kick backs to rhyme and also will have s 2 1 storage now|0.72
+085|delighted to have him starting his faculty position in april and then i'm delighted to announce|delighted to have him joining the faculty at penn state and then i'm delighted today to|0.66
+086|i wonder what his face looks like|and wonder what it feels like to be|0.51
+087|hello world i'm shannon morse and this is threatwire for october 2nd 2015 your summary of the threats to our security privacy and internet freedom our apologies for not having an episode to you earlier this week|world i'm shannon boyle and this is why we're here for october 2nd 2015 truth summer gives a threat to our security privacy and internet freedom our apologies for not having an episode to you earlier this week i|0.72
+088|and her everything we were in a teepee out in the|our everything we realize how important it is to|0.59
+089|simpler and practical enough for anyone to do and if not how could that be changed in the future i think the future is in the hands of the future|i'm so happy to be here|0.56
+090|the constitution after the constitution has been written|i think it's important to remember that|0.51
+091|over five we're doing all of these|over five we were shooting all of the|0.59
+092|depending on the language the beginning ones known as|to any other language the beginning was called|0.64
+093|through i'm at about 144 degrees i really want to get up closer to the|there was about 144 forests that i really wanted to get up close to|0.65
+094|i had been an engineer and i enjoyed what i was doing but i really wanted to have a company that i could do|p h d and i enjoyed what i was doing but i really wanted to have time to think|0.64
+095|when was the last time you used a vga cable|when was the last time you used a vga cable|0.65
+096|you never have been anything but that|you never have begun until you've been there|0.51
+097|at the end of the story is the same across all cultures so i hope you guys enjoy it and i can't wait to read your comments so a long time ago there was this indian king he somehow came across a group of blind men|end of the story is the same across all cultures so i hope you guys enjoy it and i can't wait to hear your comments so a long time ago there was an indian king somehow came across a group of blind men|0.72
+098|and i have a tablespoon of jalapeno fresh jalapeno|and i have a dietary smoothie i've got the banana called fresh banana|0.59
+099|we need those rural farmers and we need to make those urban rural connections you know|we did coastal rainforest so we did mangrove restoration in 1960s|0.69
+100|but if you're here for the parent teacher conferences why don't you come up to our art hallway and check out the art show|if you're giving presents to your officemates where else are you going to come up to a co worker and say|0.74
+101|the lord as to why and the lord shows him that saul|orchestra and the orchestra shows them this song|0.59
+102|growth going before you put them in a sunnier location to push vegetative|what i've been doing for the last 10 years and i'm going to show you|0.55

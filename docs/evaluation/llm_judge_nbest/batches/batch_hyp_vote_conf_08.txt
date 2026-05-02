@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 08/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|and our videos will be much better so that's awesome the other thing is|and our videos will be managed by but the authors the the|0.58
+002|this is the fc hf34|6d 8f 94 i|0.52
+003|personally i think it's a safe bet to say that we will see the device between september and october it'll feature an a5|personally i think it's a safe bet to say that we will see the iphone 5 sometime in november october elephant fall|0.67
+004|hard drive 8 gigs of ram|a driving kick of red|0.54
+005|i will receive the multi material unit i should receive it either in end of august beginning of september somewhere around there i believe|i will receive the multimaterial suit and i'll just receive it either in the end of august beginning of september somewhere around there i believe|0.67
+006|difficult it requires strength that i thought i had|difficult it requires strength that i thought i had|0.65
+007|one year leases on the ground they hated to build the soil up when they knew they might lose it at some point so you know there's got to be this working relationship that we're|one year lease on the ground they build the soil up underneath they knew they might lose it at some point so there's got to be this working relationship|0.69
+008|here's a requirement you can look at this and say you know|it's a requirement in the say of|0.51
+009|a friend of mine was recently diagnosed with and died of stage 4 breast cancer and she described|friend of mine was recently diagnosed and died of stage four breast cancer and as she described|0.72
+010|so um|so i kind of|0.53
+011|i can't even help myself i don't know what to do that's when you know shaitaan|i can't even help myself i don't know what to do that's aspect i'm here|0.71
+012|i'm always open to new ideas and new things to try|always open to new ideas and new things to try|0.72
+013|he's not going to be president of the united states|going to be president of the united states|0.73
+014|physical tour of the ds 216 which isn't the easiest name to say neither is disc station ds 216 as i'm trying to rush it let's call it bus disc or nope|tour i think he has too many sticks which isn't his easiest name to say either it's disconcerting he has two but since i'm trying to rush it let's call it by statistics which|0.74
+015|put on your humanity and has really constrained you|her to the body and has really strength to|0.58
+016|louder or quieter that doesn't get synchronized because every|out in the wilderness and i like you guys just leave me|0.59
+017|1240 as i said so everyone's sleeping everybody worse in spanish i like to say no so throws|so everyone is sleeping except everybody who speaks spanish like to say hola|0.59
+018|quite a bit down to the production process itself|quite a bit down the production process|0.59
+019|it's ever going to capture any of the market when all you have is a single high speed transistor that is not something you can build|never going to capture any of the money all you have is as i said at the high speed transition year it's not something you can build|0.73
+020|you're smart enough to realize that you need a plan and i don't think that you know how to get a plan together and what you need to achieve has to have a plan|smart enough to realize that you need a plan and i don't think that you know how to with a plan together and what you need to achieve has to have a plan|0.71
+021|new clients and people who want to|be really interesting to talk to you guys because once to|0.55
+022|it was to be a certain way and not be able to talk with people about it|wants to be in a certain way and i'll be able to talk with people about it|0.67
+023|of afro latinos so from colombia|a single so from to|0.53
+024|and if it works for you i hope it can be very useful|what to do i hope it will be soon so let's|0.57
+025|in this regard it always helps me to think of stephen covey's notion of|this card always helps me to think of steve jobs's no shift|0.66
+026|eight ounces of philadelphia cream cheese and all i'm gonna do i've let this sit out on the|every other object and all i'm going to do is have get this down on the|0.61
+027|as if holding water or perhaps bile|fluoride in the water or perhaps banana|0.65
+028|supplier it would be i think very difficult for that individual|it would be i think very difficult for that individual|0.60
+029|second thing is a circular polarizer great for obviously exterior shooting but also good for getting rid of reflections sometimes in windows and things like that|second is i the and cried for obviously a hate shooting but also for getting rid of reflections sometimes in windows and things like glass|0.65
+030|the projects that this is not nothing special|this is a project i've been working on for last part of thank you very much|0.63
+031|acres and hills and a pond and you know a variety of vegetation so it was with a lot of excitement and anticipation that the staff brought mahini to her new home|layers in the earth's body and a variety of vegetation so it was with a lot of grease and excitement that i have brought me into a new home|0.67
+032|you're gonna pay 700 over ringgit no i'm like what straight away you have to pay before you port over to another telco|because to overthink and you'll about it with a wrong way you have to play it out for you buy over to the zero|0.59
+033|the research suggests that the bacteria in our gut influence everything from you know whether you're energetic or sluggish|research suggests that the bacteria in your gut influence everything from whether you're an risk or not|0.67
+034|so we set off on this process|so we set off on this process how could i for|0.65
+035|the store bought salad dressing are really really high in sodium|sodium and potassium are really really high in turkey so|0.67
+036|bodies and radical feminists hate that and yet|bodies and radical feminist hate that a|0.60
+037|going to wonder whether or not that sort of nudged or propelled you into|i was a teenager in the 90s and 2000s|0.53
+038|which is the t5i line the 700d line so i think we're going to see a 700d line|cnn i think that's know good year to cnn so i think we to see|0.56
+039|with my iq and my background following all these scientists that's a terrible setup|my to who might be listening following all the science then there's the human us|0.60
+040|another useful expression i'm afraid there's been a mistake or i'm afraid there's been a mistake|another useful expression i'm afraid there's been a mishap or i a afraid there s|0.63
+041|and did he stoop to quibble could tell why the little buried mole continues blind why flesh that mirrors him must someday die|he didn't assume that rebecca was white through marie beauvoir he knew she was black why he fucked her must have die|0.53
+042|absorption include a source of fat|scripture includes a source of fat|0.60
+043|i can't tell the difference but something here in this female is telling her to either mate with him or not or pass them up and try to choose a different mate so the females actually have a different mate|i can't tell the difference but sometimes i can hear that this female is telling him that either beat him or not or punch him up and try to do stuff for paying so it's the females actually have a choice|0.72
+044|there forever and i want it to be a five star review|forever and i wanted to be around for you|0.65
+045|my little practice pieces and i always start off black and white|be god and i always love black and|0.64
+046|point turn your upper body to the right|so i went to the book store and|0.66
+047|things become resistant to antibiotics|things become less serious to the artistic|0.57
+048|or you're reading something you know don't spend all the time piling with your friends like oh we're gonna fight oh fight after skate you guys are like a whole|you're reading something you know don't smell the same body lotion with your friends they all want your fragrance|0.68
+049|to see if it's actually going to go away or not but um|to see if it's actually going to well or not but|0.65
+050|in this case i think it was a mother|in this case it was a method or|0.58
+051|that's because there's more genetic variation within a race than outside of it|that's because you personify the foundation when it raises then outside of it|0.62
+052|so for example let's go back and look at how we build syllables you may remember from our episode about syllable structure that the beginning and ending consonants of syllables work differently depending on the language the beginning|for example let's go back and look at how we build ceilings you may remember from our episode about ceiling structure that the beginning and ending consonants of sentences work differently depending on the language the beginning|0.71
+053|it's more of a level of i mean it's more of a consistent demand|to lot of what i want to talk about morning is going to be about|0.54
+054|this is just a hobby of mine that it's turned into something a lot bigger than i thought it would|a job of mine that it's so hard it me to with else|0.59
+055|on here and say it's you know x number of inches or centimeters long|in the states you know how many provisions are in the constitution|0.63
+056|of the video the lego minifig uh we have|have a little bit of fun we have|0.67
+057|is agents being transactional if you will be a transactional agent the customer has the ability to treat us like a commodity if we're just going to be transactional|that's just being a transactor if you would be a transactional agent in the hitchhiker's guide to the galaxy us like a commodity if we're going to start being the|0.72
+058|still sent me home i went home and i felt like i was on my deathbed i was going to die i don't know why they sent me home|sending me home i went home and i felt like i was on my deathbed i was going to die i don't know why they sent me home|0.71
+059|so instead of being 150 155 i was almost approaching 160 and i could have|instead of being fifty five i was almost one six and i|0.64
+060|so every sunday i actually started off with this book|so every single day i actually start off with this morning|0.68
+061|500 companies so he's been doing this for years|hundred companies so he's been doing this for years and|0.66
+062|to this wave of artificial intelligence that is slowly taking place|to this wave of artificial intelligence that is slowly taking place|0.67
+063|if you're judging someone you're not loving them|if you're not just doing it wrong you are not either|0.66
+064|you screwed up you made a mistake|pointed up you made a mistake|0.72
+065|i'm not a do gooder if you're a bum if you can't break off with a booze or whatever it is that makes you a bad risk then get out|i'm not a sucker if you're going to bomb if you can't break off with a boom or whatever it is it makes you a bad ranger then hang out|0.72
+066|as this new home video market matured in the 1980s a number of film companies decided they could bypass the theatrical distribution system altogether and market their|in the 1980s when film companies decided they could bypass the theatrical distribution system altogether among other|0.72
+067|which is why we always trade steady state markets|which is why we always trade in the same markets|0.67
+068|lowered immune system and also being able to control your growing medium for your own food all of these things most of the people that i know that home|to i was to years old|0.51
+069|of the 12 tribes of the children of israel|12 times on the tusk of the shirt|0.59
+070|comes with a usb cable which basically turns your monitor into a usb hub giving it a few a couple extra ports|was the only usb cable which basically turned your computer into a usb hub i gave it a couple extra ports to|0.67
+071|see what i mean now today i want to|this is what i mean today i want to|0.63
+072|if they pass other discretionary measures that become a part of the fixed expenditures for the future|those destructive measures and becoming part of the solution to see the|0.70
+073|service that allows you to sync files to your computer and|surface that allows you to stick files to your computer and|0.68
+074|make yourself at home make yourself at home si ntase como en casa so repeat|make yourself i still home make yourself at home take in your own hands so repeat make your|0.61
+075|dollars of damages americans want football they love football they want to go protest on their own time no one cares|years of taekwondo is american kids want football they love football they want to go protest on the corner|0.69
+076|goes on coral grab by maria mag is a 32 count 2 way|have no choice to do what our people have been doing since the|0.60
+077|of publishing a bad paper is not yet perceived as being such a big problem|of publishing a paper is not yet perceived as being such a big problem but|0.68
+078|is singularly important in the history of american architecture if not the|is singularly important in the history of american architecture if not the|0.68
+079|issue of inference it's never clear cut and they're always room for alternative arguments which is actually one of the best things about the field|is true of their they it's never going to die they are always true for their ultimate arguments which is actually one of the best things about internet|0.66
+080|you're unable to learn languages and despite this over|up to your house and despite this all|0.62
+081|menu buttons being right here they're at the top which by the way i think the window thing blends in real nicely seamlessly almost with|have of dollars of the time but by the way i think what you think of being a civil taxpayer is that we're just one thing|0.63
+082|don't just open the door knock first|years ago when i was|0.55
+083|this is the g0514x2b|the cheese to five one four eight two|0.53
+084|is here some object where i go you know|staying in some abandoned warehouse in the south side of chicago|0.53
+085|as you thought but you will not be breaking down muscle and again there's a test to confirm|the heart but you will not be breaking down muscle again there is no need to come from|0.64
+086|that we're going to work with and we're going to re moisturize this section and really just put some moisture and seal it in okay|i'm going to work with i want to free your triceps and deltoids and pecs and moisturize it|0.63
+087|connection within the cable to check that you've got continuity between both ends now of course on this length of|connection within the cable to chat that you've got continuously between both hands now of course on this length of|0.66
+088|an important property of sets of solutions to homogeneous equations is the concept of superposition|important property of text of solutions to our machine learning algorithms is the concept of superposition|0.71
+089|and these amazing gadgets we now all hold in our hand and we|these amazing gadgets we now carry in our|0.69
+090|on youtube that you don't have to be all the things that he just listed much less you don't have to be good enough that's what i don't like about this end of the video|on youtube that you don't have to be all of the things that he doesn't see much less you don t have to good enough that's what i don t like about this of the video|0.55
+091|that tastes good and my desire for something that feels helpful in my body|tender and my desire for something that feels helpful in my body|0.72
+092|hey it's cheyenne and today i am playing yo world and i don't usually do this|18 and i went to one of those all degree private schools and|0.52
+093|i have a gift from one of my viewers a vostok koran komand|a gift from one of my viewers the first shot ok you're mine|0.62
+094|we can gather observations on as far away as a distant galaxy or as zoomed in as the hydrogen wave function there are certain questions that we cannot answer what lies outside of the natural world well we have to think about that and i think that's why|contraction syndrome is very rare it's a dissecting aortic aneurysm is an arterial infection there's still a lot of questions we don't answer what causes outside of the natural|0.69
+095|well known conductors at the turn of the 20th century such as dikowski and toscanini encouraged this kind of restraint in their audiences|down connections at the turn of the 20th century such as scouting and to see and encourage this kind of restraint in their audiences|0.69
+096|but let's be honest here for a moment i started a photography shooting film the workflow|let's be honest for a moment alice in wonderland is a children's film the word of|0.63
+097|is flashing for you|it is lasting for you|0.67
+098|because i cared a great deal about the company and about|second largest is around the corner around about|0.57
+099|amateur radio call sign is k5acl|right a c avenue e and|0.51
+100|over five we're doing all of these|over five we were shooting all of the|0.60
+101|and i'll tell you in just a second if they are|then i'll take you just a second of the year|0.68
+102|and believe it or not that was the first time i've been|and believe it or not it was the first time i'd been|0.69

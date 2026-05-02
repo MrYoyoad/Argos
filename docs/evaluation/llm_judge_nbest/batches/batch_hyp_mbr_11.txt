@@ -1,0 +1,105 @@
+HYP_MBR | BATCH 11/15 | 103 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|these are just a few examples that show the value of sap product lifecycle management solutions we have many many|these are just a few examples that show the value of sbp brought to lifestyle medicine solutions we have many many|0.75
+002|well my research has to do with the oxidation rates of these carbohydrates|well my research cases through the art and science of this alphabetic|0.57
+003|i think the main thing we're trying to train people is to have empathy to listen to not try to fix it but just to be there to realize that god is everywhere|i think the main thing we try to trick people is to have empathies and listen and not to try to fix it but just to be there to realize that god is everywhere|0.76
+004|growth going before you put them in a sunnier location to push vegetative|that's what i've been doing for the last 10 years and i'm going to show you|0.50
+005|and that she had told me about this product and about doc|have told me about this product and i'd like to talk to|0.67
+006|china to take off to cross the pacific ocean can you tell us|i don't know if you've seen this|0.34
+007|welcome back as you may know this sunday marks the 100 year anniversary of the titanic disaster and it's been 27 years since the remains of the luxury liner were discovered at the bottom of the atlantic|welcome back as you may already suspect mars the 100 year anniversary of the titanic disaster has been 27 years since the remains of the luxury liner were discovered at the bottom of the atlantic|0.76
+008|enoch the first one elijah the second jesus the lord himself okay and the old testament saints who were resurrected according to matthew 27 when jesus rose again|it was the first one in egypt giza and the old testament tells us that we resurrected and grew about the 27 when jesus rose again they|0.60
+009|if that worked out well for me that's 10 000 in house|come on i'm going to play that again if that's okay|0.48
+010|it'll work|but|0.27
+011|alrighty guys you guys start our 3d video at the field today and now we're back at your studio|guys so that's the 30 second video of the first kick they were back in the studio|0.57
+012|stage illusion this is a magic trick so don't be stupid and try it at home this is just a magic illusion|the story of how i got to where i am today it all started when i was|0.50
+013|my yi fu action|my effervescent|0.45
+014|reasons why you should be a club member thanks so much and i'll see you again soon bye bye|is why you should be a cheerleader thanks to my sisters but wait|0.61
+015|a dog actually usually a male dog|dark actually usually male dark|0.70
+016|i had been an engineer and i enjoyed what i was doing but i really wanted to have a company that i could do|p h d and i enjoyed what i was doing but i really wanted to have time to think|0.65
+017|i can redirect the power from the zones that are turned off|and recreate the power of those that are turned off|0.63
+018|praise to god in the first few verses|when i was 18 years old i|0.47
+019|god designed the whole universe to be in symphony and harmony|take the whole story and turn it into a movie because it's|0.49
+020|of the city's 62 police officers are gonna be gone|the 16th president of the united|0.56
+021|of laws have we just been talking about recently in physics|the cause that we've just been talking about recently climate|0.69
+022|what the how much is my doctor making bastard|there raising my hand master right|0.48
+023|this thing lies as far as collectability here we have a 1985 teddy ruxpin in the box this one|this still lies as far as accountability we have an 1855 state constitution in the|0.55
+024|and body parts|20 years ago when i was|0.40
+025|psychologist and they're a private psychologist then it may be that they're not going to be|psychologist there are private psychologists that are|0.62
+026|unfair advantage to a lot of artists that have talent but don't necessarily have the money|a fair advantage to a lot of artists that have talent but don't necessarily have the money|0.75
+027|you know earlier you mentioned that maybe i was opposed to medical marijuana and i said no i was just|no i don't think there's any reason to think that maybe it was moore's law we all know that it was|0.46
+028|neptune gives us a long time to learn and experience the energies and wisdom it has to bring you will find over the next few weeks|you give it a little long time to learn and experience the energies and wisdom that it brings you will find over the|0.73
+029|it's really easy for me to play this up to speed and at a certain tempo because i mean i've been doing this for a while so my right foot likes to play it at a certain tempo so when i get really slow|that's why i can't even really play this song to be honest because i mean i've been doing this for a while so my right wrist likes to play at a certain tempo so when i get really slow|0.64
+030|you can just stitch that into place and that way it won't slide out|the tradition is that men play and that way it won't slide out|0.56
+031|our script select the bar|20 years ago when i was|0.40
+032|just for reference it took facebook|search engines for references and on facebook|0.58
+033|there are two ways in which a fuller can be added to a sword one is through stock removal|are two ways in richard feynman can be added to a storm one is through a circular proof|0.65
+034|rotates all the way around once the dial that looks like a clock it means that you've used 7 48|process all the way around once you get to the end of the log it means that you viewed 7 or 7 48|0.63
+035|made an ironic icar canned beef monument|an ironic high art gag beef monument|0.57
+036|but it's mostly cardiac muscle and as i said before that's the pump component of the heart|is mostly not yet muscle and as i said before that's the pump but part of the heat|0.74
+037|use water or orange juice fresh squeezed orange juice you can also use|why go into the venture capital world when you could do all this|0.47
+038|but when we first started this series i wondered if we'd actually get through it you know all great ideas|when we first started this series i wondered if we'd actually get through it you know all great ideas|0.72
+039|photographs we know that there's a psychological benefit to doing that|photographs and we know that there's just a lot of benefit to doing that|0.58
+040|let's try these bread crisps cheers|all these blood crimes right trunks now|0.49
+041|if they pass other discretionary measures that become a part of the fixed expenditures for the future|those destructive measures and becoming part of the solution but to see the future and|0.61
+042|como estas a few times you kind of have an idea of what it means|corporate side of food i have a degree in that as well because|0.54
+043|you never have been anything but that|you never have begun until you've been there|0.45
+044|it's more interesting if you get more people involved and um|want to see more people involved and|0.49
+045|of a boy who is going to bat|the boy who was going to beat|0.71
+046|of sea vegetables and that|of sea vegetables and that|0.78
+047|it has great grip rings it's really soft so i probably should have got that one|my school is a religious institution|0.40
+048|to mr benjamin delpy in the front row|so that's what i want to talk about today i'm going to spend most of my time talking about|0.54
+049|relaxed your arms and your hands and your fingers you've relaxed your arms and your hands and your fingers and now your chest|you relax your arms and your hands and your fingers you've relaxed your arms hands and fingers and now your chest|0.77
+050|trio of flavors strawberry vanilla and chocolate the company eventually decided to cut the three flavored schtick and stick with one|in flavor strawberry vanilla hazelnut the company eventually decided to cut the three flavor shit in and stick with one you know chocolate|0.70
+051|and if it works for you i hope it can be very useful|what to do i hope it will be very soon so let's|0.58
+052|phone where it actually works i think it's a problem with this phone i honestly don't know|where it actually works i think it's appropriate to throw caution to the wind|0.68
+053|do is either sit or stand the baby up on a chair|was either standing or sitting the baby up on a chair|0.65
+054|and for catalase guanylate cyclase it is stored in the form of ferritin you can find it within the body|that ferguson is a legend it is stored in the form of folklore and you can find it within the body|0.74
+055|but there are a lot of very smart people who can't fight their way out of a paper bag and then when you find somebody who has that|are a lot of very smart people who can't find their way out of a paper bag and when you find someone else out|0.75
+056|our world more than they ever have before but at the same time remember justin bieber justin bieber of all things was discovered on|in our world more than they ever have before but at the same time remembering that jean and jean martin of all things were discovered|0.73
+057|this look and feel like a high end|this long and feel like i ended|0.68
+058|i release the muscles so they stay in just a little bit|i know i was pooped i had to reach the muscles so they stayed|0.47
+059|even in the west when people have not had that sometimes they've had a name ready|everything went down well people have not had that sometimes maria had the same rating|0.65
+060|although the internal recording is at a maximum of 24 megabits per second|30 second recording is a maximum of 24 megabits per second|0.71
+061|so mr zhang mr is xian shen xian shen mr zhang is zhang xian|some mister chop mister is intention intention mister shiva is cosmic|0.59
+062|in all over the last 10 years we have had 8 616 students|and over the last 10 years we have had 8666 students|0.66
+063|later when they began the final t minus nine countdown and we were expecting|when they began the final team on his side down and we were expecting|0.72
+064|pop up and do the beginning of this video|little pop up at the beginning of this video|0.73
+065|put up a wall and hide behind it there's a hidden epidemic|up a wall and hide behind it there is an epidemic that|0.77
+066|and how we should be and how we have to|i'm so happy to be here with you|0.43
+067|so how do we do that|so who do you|0.53
+068|it's easy to get people to sign up for the idea of accountability i mean everybody knows no man's an island|i'd like to give a shout out to the carnegie mellon program i taught there for 16 years|0.52
+069|it's an interesting topic though that needs to be discussed because|it's an interesting topic though it needs to be discussed because what|0.72
+070|told me that was how you learned what was going on and my sister|exposure to toxins in the air that makes it|0.45
+071|pascal like william james disagreed with this line of reasoning because he saw great personal benefit in being a believer|like william james disagreed with this line of reasoning because he saw a great personal benefit in being a believer|0.78
+072|more fabulous queens from around the globe first the lebanese comedian|more fabulous tweets from around the globe first lebanese media|0.74
+073|for the sweetest and most all encompassing celebration of this great holiday of purim|here for the swedish and most norwegian campus in celebration of this great holiday of jul|0.66
+074|that process has continued but there's something i think lost in that initial burst of excitement that we both felt|that process has continued but there was something i think lost in that initial burst of excitement that we both felt|0.77
+075|selling these again this is attack of the puppet people village of the giants midnight movie double feature disc only from 2005 sold us for 12 24|the attack of the poppy people village of the giants my name is victor fernandez it was released in 2005 so this is 12 hours and 24 seconds|0.60
+076|i think the most important question that anybody will|the most important question that anyone will ever|0.67
+077|tk object which is the main object for tkinter i'm going to go ahead and extend that and so i need to create my initializer|cake object which is the main object for dissection i'm going to cut it in half into two equal halves|0.68
+078|things that are going on in the company right now are there big changes or big challenges|the things that are going on in the company right now in your pj's in your beach chairs|0.72
+079|national safety month i'm not entirely sure why it's not 12 months of the year maybe there's some thoughts about you doing it|cartoons every month not exactly sure when it started long time ago maybe there's some thoughts about|0.59
+080|and most do not cause symptoms at all|most do not go to symptoms at all|0.77
+081|as we apply this to leadership development i believe it means that it's possible for us to apply a common one size fits all approach|apply this to leadership development i believe it means that it is possible for us to apply common one size fits all approach to|0.82
+082|that's because there's more genetic variation within a race than outside of it|that's because you personify the foundation when it raises then outside of it|0.62
+083|sort of behavior but then again this is an unusual sort of system|sort of behavior but this is an unusual sort of system so|0.68
+084|the old and new testament together the 66 books are like a symphony with melody and with harmonies that just match up wonderfully there are also|the only two chromosomes that i use is the y chromosome and the mitochondrial dna because it's this magic wonder thing there are also|0.55
+085|smoothies to 435 06 or whatever and that autoresponder message can have anything in it that i like so makes it really easy|movies through four three five zero six or whatever and that auto responder message can have anything in it that i like so it makes it really easy|0.74
+086|i will let you guys know i am a very lazy natural which i'm trying|will thank you guys know i am a very lazy astronaut which i'm trying|0.66
+087|mixolydium mode is related to the dominant 7 chord and like i said|maintaining a monogamous relationship is difficult and i had to|0.62
+088|offering attractive prices online payments and shipping to customers|reconstructive prices holding payments and shipping to customers|0.81
+089|on their butt and kids of course|to be really creative for one minute|0.51
+090|watching the way words develop and change does suggest that wittgenstein was on to something|the way words develop and change doesn't suggest that philistine was on to something|0.68
+091|anyways make sure you have a white rag handy because this grease is greasy|so when you have a white bread sandwich|0.48
+092|it's going to pick up a component exactly in the sensor|going to be a bit brown on the outside but inside it's|0.49
+093|he wanted to unite the roman empire in the early 300s ad|wanted to conquer the roman empire in the year 388 a|0.64
+094|these areas likely from mid to late afternoon through the evening hours and maybe even into the overnight hours these storms probably going to be spotty here and there supercell rotating thunderstorms with big hail|terrorists lately from the midday afternoon through the evening hours or maybe even into the overnight hours these rumors are probably going to be spot on here and there chimpanzees are rotating there so i'm sure they'll|0.62
+095|in directx if you are doing programming in that it is left handed if you are doing ah programming in opengl a lot of other systems it is right handed|reaction if you're doing programming at that age if you are doing programming in open source i want to introduce you to|0.56
+096|this g stick i mean this g stick becomes a renderer|is six and we have a system of 10 cards|0.52
+097|and all of those things that have existed for 20 years and in fact i've been out there either as an attendee|all of those cases have events over 20 years in fact some are out there 100 years etc|0.64
+098|the thing is i just acquired this ammo last week so i don't really know the conditions under which it's been stored but|the highest score on the quiz last week so i don't really know the conditions under which this was measured but|0.63
+099|so let's go and let's reduce that action by multiplying top and bottom by a common factor|so let's go with this we'll do that actually my most played song mode by calm and fat|0.53
+100|by mcclelland premium imports mississauga ontario|mind my likes probably a bit more than my dislikes i'll tell you|0.56
+101|platforms do this i don't know why if you believe in your coins so much why wouldn't you|do this i don't know why their beliefs are going so much why would we just|0.68
+102|theater production who have not acted they just attended okay|production you have that asset that exists nowhere else on the|0.55
+103|non event and so it's important for the operators to know that|of it and so it's important that you not because you know you|0.64

@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 12/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|is a very very common side effect so do not worry if muscle tension is a part of your|very common state of effect so don't worry if muscle tension is a part of your|0.65
+002|so you can hear what you need to do after the previous video lesson so it needs to sound like this now|so you can hear what you need to do after the previous video lesson so we're looking into to sound like this now|0.70
+003|and i make the decision to abort my second child|and i made the decision to abort my second child|0.67
+004|each bottle contains 1 billion cfus of probiotics and 2 tablespoons of apple cider vinegar only 80 calories per|each monitor has 1 million cfus of permafrost and two tablespoons per square vinegar only 80 gallons per|0.65
+005|you know cause your gums and your mouth is affected by like everything in your body whether it's medication or your diet or your general health|either a certain hums in your mouth is factor by like everything in your body whether it's medication or your diet or your general health|0.67
+006|so my second worst memory happened to me when i was probably about 23 or 24|so my second mistake happened to me when i was probably about 23 or 24|0.69
+007|something to make it easier to bring native code to the web|can make a difference what we you|0.54
+008|me and he does that in whatever way and whatever realm|that didn't exactly in one effortless way and wouldn't ever wear my|0.54
+009|anger and fear place you in a position of being intoxicated by your emotions when you're angry or when you're fearful you are drunk with feelings|and fear bring you to a position of being isolated by your emotions when you are angry or when you're fearful you are struck with venom|0.69
+010|probably not going to get hurt at all and the padding|this was to get called get called and the here|0.58
+011|personal belongings from me and put me in jail|who agree with me and probably the|0.53
+012|as a time of this recording html imports have landed in chrome and opera firefox supports it in nightly but it is not supported in the nightly|as the time of this recording it's very important that this is from an opera where we was supposed to say 99 behind|0.65
+013|and innocent people as they sat eating in cafes and waited to catch trains on their way home from work|some people as they sat in indian cafes and waited to get streets no way home from work but i|0.70
+014|of hidden sectors and since a floppy disk can't be formatted there aren't going to be any sectors that come before the boot sector|of india and the states that constitute it is described as the tenth largest economy in the world and the is largest in largest to largest in the|0.55
+015|it's an interesting topic though that needs to be discussed because|it's an interesting topic though the needs to be discussed because what|0.63
+016|their moon phase parts of their books pretty fast i just haven't really had the|their move fast parts of the number are pretty fast they just haven't really had the key|0.69
+017|the banker and say hey i need that money now i've been given you extra payments can i get that and you lost your job he's going to say no way because it's too much risk on him|panic and say hey i need that money now i've been given an eviction notice i'm going to get that and you lost your job it's going to say no way because there's too much stress on him|0.73
+018|how long will he work for in his working life there's a boy by the way a boy|me so thank you very much for me|0.69
+019|it's more than one thing|is more than one thing|0.70
+020|return books taken from the main library to the king's manor library and vice versa unless they have been requested in that case you need to return the book to the library that you issued it from|term booked down from the main library to his local library and vice versa or least they've been requested in that case you need to return the book to the library you taken it from|0.70
+021|the only problem was people already had a car|the only problem was people already had a card|0.68
+022|blue collar and white collar will always be a part clean dirty will always be a part|blue and white color will always be part clean and dirty water so|0.64
+023|i think we've got to look beyond this and say okay what's in the best interest of the patient and can we make this a curable or a controllable disease where it isn't right now|and they would then look the me and say ok what's in the best interest of the patient can we make this oral curable or consumable resin where it is right now|0.70
+024|so that's two draw three draw whole step bend|was easy to do so we did the whole step|0.66
+025|i already got an rsp it's nice when you don't have to worry about finances and those of you thinking scott i'm paying you on patreon man you're rich no no no no no no no that's not what i'm|this says i can't get a girl to talk to me it's nice when you don't have to worry about finances those of you thinking just got a paycheck or a pay raise no that's not what i'm talking|0.56
+026|you're rich no no no no no no that's not what i'm talking about i still like getting|your right that's not what i'm talking about|0.68
+027|blood extraction first before going to x ray because i wish i did that|her first before going to her because i wish i did that|0.68
+028|i mean i think one of the intersections between my|think about the word associations between my|0.57
+029|area have been showing zygites addendum and even zygites to their class and discussing it|i've been sharing at stage at the meetings for decades with alexandria and|0.59
+030|for example the bitcoin virtual currency situation and also oftentimes there are financial schemes that should be regulated but they are not regulated because they don't|for example the minority currency situation and also often times there are financial teams that should be regulated but are not regulated because no one comes|0.70
+031|you could be using that way in here so that's basically my recipe i'm going to show you what we're going to do now|about owning that way here so that's basically what i'm trying to you with what i do have|0.70
+032|is going to make two different sized versions of the iphone 6 either remember to resolution|i had two different surgeries off the valve i through open heart surgery|0.63
+033|for the american people do we have more freedom or less|i think we have to wait more for freedom than that|0.62
+034|we have earned this moment so no matter how exhausted|heard this moment so no matter how exhausted|0.64
+035|and there you have just played every single song that can be played on|there you have just played every single song that can be played on|0.70
+036|but they're not regulated because they don't come the laws are out|of friends because i don't want to|0.54
+037|some points here such that the intersection is not empty|right that's exactly the direction i'm in|0.69
+038|i consider myself very lucky to meet the 500 students who come for breakfast and lunch each day at the dining hall i have a special nickname i call|i consider myself very lucky to meet the 500 students who come for breakfast and lunch each day having done nothing i have a special nickname i call|0.72
+039|it includes almost everything we saw in the dslr kit but adds a couple of items for run and gun style booming|lose almost everything we saw in the stage of learning but as a couple of items for running and style boomerang|0.67
+040|we have a cpu gpu high definition video accelerator|well i was a sophomore in high school i had the first official salary there|0.61
+041|and straightforward and to them that's a good thing so they come to you and they're so honest they're brutally honest and they point their finger at you and they tell you what they're doing wrong and to you that's a really bad behavior so you shut down|straight forward it's just a matter of out the to do it and the more they finger you they tell you what they're doing wrong it's you that's a really bad behavior so you check that out|0.59
+042|you never have been anything but that|you never have there until you've been there|0.51
+043|routines and channels give you a way to sort of structure the program and|kids a chance to decide if they want to into structuring programming and|0.59
+044|in my opinion one of the most difficult things about dealing with an arc|might be one of the most difficult things about raising is|0.71
+045|so as you can see although the notes completion questions and table completion time are the same you can also see the notes completion questions and table completion time are the same|so as you can see although there are no simple questions and tough complexities answers|0.63
+046|tetra on the other hand is designed for higher volumes of radio traffic but over much smaller coverage areas|central atlantic as a sign of our environment right now you have any money for much smaller areas|0.71
+047|on a charge|and he can get charge without having to|0.62
+048|when einstein came to america he worked at princeton university there he was somewhat of a celebrity now he did win the nobel peace prize back in 1921 but because of his|i came to america he worked at princeton university there he was win the nobel peace prize back in 1921 but because|0.69
+049|with your partner|yeah i'm with the opera and|0.51
+050|love you guys hello austin it's great to be here|please you guys to trust me here|0.51
+051|month to run the aircon if i was to be living there and working in the condo full time so on average you're probably looking at about 120 per month in the philippines|month to run the yacht if i was to live there and working in the country full time so on average you're probably looking at about 120 us dollars per month in the philippines|0.69
+052|that all the world leaders are expecting something to happen|they all for expecting something to happen|0.61
+053|see a little mix in on the backside you can see on the backside of our system we're going to see a little wintery weather so tuesday is an all day downpour cold rain actually maybe enough to even cause flood|a little mixed on the back side it's like the bad side versus the good side one zero one two zero three zero four zero five zero six zero seven zero eight zero nine zero ten zero eleven zero twelve|0.56
+054|the 25 most important people to the growth of your business|the this that me tell proud of is point one|0.51
+055|wrong you're not really losing a big amount of money but it's good to learn all the things which you can't|wrong you don't need to lose something about money but it's usually know know that's what just happened|0.67
+056|they are fairly big and especially if you look in a mirror|they are fairly male especially if you think about|0.66
+057|with the same technician so all of a sudden|with the same technique so all of a sudden|0.71
+058|to see advanced jesus and talk to them about it|i'm going to you a story|0.60
+059|being used to murder palestinians every day so we in the west|used to mock palestinians every day to wave the west|0.57
+060|there was a picture of a young girl on it sitting all alone in the photo she seemed so sad and helpless|was a picture of a young girl like she didn't look at the photo she seemed so sad and helpless|0.69
+061|i know you're studying with john parakos and core energetics and probably many of our viewers have not heard of core energetics what is the basis of|what you see is not parallelograms and quadrilaterals and cubes and pyramids of various sizes of cubes what the of device|0.64
+062|all in all quick reminder that calcium is an alkalinizing mineral so what that means is that it helps to|you that calcium is in our dairy milk so what that means is that it helps|0.71
+063|this is why i am so excited to share with you all today that we will begin the 2016 ted talks|is why i am so excited to share with you all today that we will begin the 2016 tedbreaks|0.72
+064|the course so the school has sheep farm|so this whole house just a room|0.60
+065|they're still using manure now one of the nice byproducts of this is that if you have more food coming out and more food being produced you can use more of that food not for your own fam|still used to be one of the last byproducts of this is that if you have more food coming out more food being produced you can use more of that food not for your own family|0.73
+066|wellness is 100 in our control simply by thinking positive|is 100 in our control simply by thinking positive|0.72
+067|101 harper street|one o one arm twist|0.64
+068|hello from germany good to see you we are getting a solar storm|from germany to see you we are to so|0.70
+069|and hopefully that's not a subconscious indication of its pyrotechnical potential|hopefully this some us to the edge of spinal technical potential like|0.64
+070|tab and you're gonna hit show develop in minibar just click that|like i want to know what's on with the world i just love that|0.56
+071|is that really the only thing stopping you how fucking sociopathic do you have to be if a god you can't even prove is real is the only inhibition keeping you from wantonly destroying the li|really the only thing stopping you how fucking sociopathic you have to be if a god you can't even prove this real alone hold it only be keeping you from wanting to destroy the life|0.66
+072|that they're worried about i don't know if you guys have any requests for them on like advice or whatever just let me know and i'll try to get them|worried i don't know if you guys have any requests for them any advice or whatever just let me know what i'll try to get them in|0.71
+073|so we've got what looks like a walking dead or zombies button so that's pretty cool it can go with the other ones on my backpack|so we've got a walking stick or a zombie spike so that's pretty cool hanging here with the ones on my backpack|0.73
+074|i surrendered good quite i surrendered to the low security|years ago when i was|0.59
+075|control the light on the flash okay so first things first why is it bad that this flash pops up and ruins most people's photos|control the light on the flash so first of all why is it bad that this flash pops up and ruins most people's photos so|0.69
+076|you need to start this out extremely slowly|on each shot the sound extremely slowly|0.61
+077|from but i really loved the grainy quality of the ribbon mic|is from but i really love in a way that doesn't require me to|0.63
+078|charge it every night just to keep it going through the day but i think that's a pretty good battery for a nice slim phone like this|it every night just to keep it going through the day but i think that's pretty good about it for her and i see some feel like this|0.71
+079|to the band aid after a few days but there's actually one interface on the surface of the body that can literally provide us with a window of what happens inside and that's the surface of the eye|bandage after a few days but it's actually working in the face on the surface of the body that can literally provide the wound of what happened to this guy and that's the service of the dog at the very|0.71
+080|i knew it all looked real good on the outside|what all us were looking on the outside but|0.66
+081|you know oh this is the good stuff and people od|don't always the stuff that people write|0.51
+082|but as you were saying before we were offline on air there's a lot going on yeah that's a big thing|listen to us say before we throw off a lot of data there's a lot going on in the|0.61
+083|of the mixed multitude there and he only tells them two things and this entire portion there's only two things|for 30 years or so and he told us two things that this told us to|0.64
+084|today we will focus on you alright in the future lesson we will talk about hishi|day we will all it at each other right in the future lesson we will talk about|0.64
+085|and so what are the arguments that the individual mandate|and so what are the arguments that the individual take|0.62
+086|well and step four is what many people do it's study|you an the of what many people do is they|0.58
+087|also a very interesting common intellectual experience we've added in the last few years is the common reading program called wire wingate reading experience|a very interesting comment that's one of the experiments we've had in the last few years it's a common reading program called wild wednesdays we invite speakers in the|0.70
+088|congratulations that said though|a education it's not that|0.51
+089|be that vegans feminists environmentalists or anyone else who is fighting against the tide|that vegan feminist environmentalist or anyone else who is fighting against the sky and|0.65
+090|and there you go i just wanted to let you all know the other thing that scientology does when anybody pitches something that they want they have a chance to win|i just want to say all go the other thing that scientologists do is when anybody pitches something that they want they have|0.73
+091|let's try these bread crisps cheers|all these blood crimes right trunks now|0.58
+092|from an early age up through even college and there's not a whole lot for adults in here but it does give some good general guidelines|of computer geek jumped through leave the netherlands and to stay in kong for another year but this is if some good shenanigans|0.68
+093|that you have a of course i mean to an audience like the one here i can't even begin to get into the fact that the|to have of course i'm an indian so like the weather i kind of blend into the fact that|0.67
+094|alrighty guys you guys start our 3d video at the field today and now we're back at your studio|guys so that's the video of the first kick they were back in the studio|0.67
+095|the donning process is a step by step process that ensures good infection control and safety|processing is a step by step process that ensures good infection control and safety|0.68
+096|so we started working on get around in year 2009 it's been about 18 months so far working really hard but basically the reason we all|we started working on that ground in 2009 it's been about 18 months so far working really hard but basically the reason we it|0.75
+097|and 10 megabits per second is so today so slow that we would never have a new card in fact i don't think you could buy a brand new card that didn't support 100 megabits per second|the next time i get people saying it's so easy so so that we don't even have to go to court in fact i think you can buy a new car that the work for you|0.67
+098|of a method so if you have this unprecedented hack which 1 2 billion is certainly unprecedented you expect them to be using unprecedented methods|for methods so if you have this unprecedented hacker which is 1 2 million certainly dented you expect him to be using unpremeditated methods|0.71
+099|and he says we're interrupting a defense mechanism|so to to the the|0.49
+100|my name is brandon noel i'm an assistant professor in the department of public administration|quite news time and as a professor at the department of public administration i|0.64
+101|drop my gun out of my mouth like bleh|come out of my mouth that|0.67
+102|and they're nice to their employees because that's the kind of thing that i want to be supporting|no that's good important to me because that is not the thing that i want to be supporting|0.64

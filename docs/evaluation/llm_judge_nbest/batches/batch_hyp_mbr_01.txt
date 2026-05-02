@@ -1,0 +1,104 @@
+HYP_MBR | BATCH 01/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|can i use that and she said yeah of course so yeah excuses are for amateurs|i use that and she said yeah of course so yeah and she uses it for amateurs|0.69
+002|61 of americans admit to peeing in the shower i don't pee in the shower oh that's a lot|he wriggled out of my grip and made a beeline for the shower i couldn't be in the|0.62
+003|at the end of the story is the same across all cultures so i hope you guys enjoy it and i can't wait to read your comments so a long time ago there was this indian king he somehow came across a group of blind men|end of the story is the same across all cultures so i hope you guys enjoy it and i can't wait to hear your comments so a long time ago there was an indian king somehow came across a group of blind men|0.77
+004|fluent communication fluent conversations native speakers and communication we're reading recipes this is another example|communication fluency conversations native speakers and communication we're reading recipes this is another example|0.76
+005|to my true nature so i'm gonna just first invite all of you to take a breath|mind into nature so i'm here to provide all of us with a little breathing|0.64
+006|and i make the decision to abort my second child|and i made the decision to abort my second child|0.84
+007|hooping is a little bit more complicated because for most of its history the most common use for hoops was bowling|it's a little bit more complicated because for most of its history the most common form of birth control was bowling|0.72
+008|they were putting a lot of their gear|they would put in a lot of their year|0.66
+009|the problem is that faith has multiple definitions and we've all seen thea swap between them when it's convenient|the problem is that fitness has multiple definitions and we've all done this swapped between them when it's convenient|0.72
+010|so like a pair of jeans|so what do you see in the|0.44
+011|across the campus with schenck shortly after he had come to|at the camps through his child and shortly after the couple|0.56
+012|i have to be advised to read religion this is everybody you'll|to be able to fulfill my dreams and have a|0.48
+013|i think that's maybe why i liked it so much it was just very it very much held onto the story|think it's funny i like to tell people that we're just very very very yellow|0.48
+014|so i got clumsy but anyway the|i got it all but the question is|0.53
+015|yeah so he's of mixed mind in the sense that you can see the practicality of being undistracted|and so it's part of me's mind that says that's the practicality of being unstructured|0.61
+016|i need to have realness around me to kind of break through all the i don't know smoking mirrors if you will|need to have a real realness environment to kind of break through all the i don't know smoking bears if you will and|0.72
+017|they do however on again they do however hold the festival|they don't know how awful it is to tell you how awful our schools are|0.52
+018|as you thought but you will not be breaking down muscle and again there's a test to confirm|or the heart but you will not be breaking down muscle again there is no need to come from|0.62
+019|client pair client so you either go to an agency get the work|it's like being a client so you are the who you need to see getting what you want|0.58
+020|out and i have to say i am absolutely loving this headset now i have the mono version the mono ear version they also make one that has you know i guess dual|out and i have to say i am absolutely loving this set now i have the modern version the modern ear version the ultimate one that has you know i guess dual|0.77
+021|seven eight and one|because i wanted to|0.43
+022|so we set off on this process|so we set off on this process how could i get|0.69
+023|and import fees before shipping a whole lot of sets|taking more fish but there's still a whole lot of sense|0.64
+024|the comments or not all the links will be in the description for the channels and then you could check for the songs if they publish it this|column called on the list or being in an exhibition for your channels and then you can check for controls if they're published or|0.52
+025|and this was at a time when you didn't get divorced i mean even now it's difficult in india to get divorced now here she was a 16 year old woman and my aunt at that time was eighth grade pass|and the news at that time knew she didn't get a divorce but even now as a divorced woman she was a 16 year old woman and i mean in my case at the time was like the reagan administration|0.61
+026|it was nothing like that but when i got there and john paul courtier i seen all his clothes that he wanted me to wear i was like oh this ain't gonna be nothing like i have done before|it was nothing like that but i didn't when i got there and turned up on oj i said oh he's closed they won't be around i was like oh just tell me later like i haven't done before|0.62
+027|okay so we've got a cool little drum fill what i'm gonna do is we're gonna stick it just on the snare drum to start off with i'll play it at 16th notes and i'll start doubling up what the hands are doing and turn those into 32nd notes so we|through all we'll drop through and what i'm going to do is when i get close to the stage i'll start off with a paced 60 beats per minute and then as i start to come up with that adrenaline it'll go to 130 so|0.58
+028|or emmy awards and say and i want to thank you|i'm going to tell you a story|0.48
+029|i found the balance between reusing sounds in the game creating original sounds was i thought about what the most iconic things were the things that this would really evoke half life to and i|found the balance between reusing sounds of the gamelan and creating original sounds was i thought about what the most iconic things were the things that just would really evoke havana and the|0.70
+030|to mr benjamin delpy in the front row|so that's what i want to talk about today i'm going to spend most of my time talking about|0.54
+031|it has to be done within 24 hours a mini stroke and so i didn't go in time for that|be able to do a 24 hour broadcast so yeah i did it always time for that|0.53
+032|nuts right well i tried it and to my surprise and|connect to it well i tried it and no man is surprised and it|0.55
+033|but because of the nazi party it was very suppressed|killers want to hunt but because of the gatsby party it was very surprising|0.64
+034|but i just really got into it lately and this game is such a time killer like you cannot believe it you will just i don't know|there but as you can see from the audience we are here and this time we are such a time killer like you cannot have been living in new york i don't know|0.61
+035|lights up and it was just great like it was it worked really well|top and it was just great it worked really well|0.72
+036|all in all quick reminder that calcium is an alkalinizing mineral so what that means is that it helps to|reminder that calcium is in our dairy milk so what that means is that it helps|0.66
+037|and they're nice to their employees because that's the kind of thing that i want to be supporting|no that's really important to me because that is not the thing that i want to be supporting|0.67
+038|it doesn't have a carry strap but you can put it on your shoulder pretty easily or just carry it with your hand|this is david irving he's a holocaust denier and a computer hacker who broke into the nuremberg trials|0.49
+039|let's say if your mother was the narcissist she might dig in on your spouse or significant other in order to make you trust them less so that you'll be more connected to her|stephanie's grandmother was a seamstress and she made teddy bears and stuffed animals so in order to make teddy seem like a sexy woman she would|0.54
+040|experience|is the common|0.56
+041|and i had a degree of bitterness about that and resentment|i don't know about that but|0.42
+042|also noise reduction software used minimally again if you're in a loud space the best noise reduction software can only do so much|so after you've gone through the process of discovering what you use minimally and if you're creating your own cloud space the best which we'll discuss in a while you can use your best|0.58
+043|pretty hard to believe we're talking some snow this morning getting into the later half of april|hard to believe we were talking because it was so disappointing and it didn't get any better when|0.59
+044|provide the housing so let's imagine the private sector has moved out no private investors and it was up to the government to provide this housing historically they haven't been great at doing that|the housing so it's matching the private sector to move that no profit investors and it was up to the government to provide this housing historically they haven't been great at doing it but even|0.74
+045|this name is alfred wenneger from joe's|your name is caffery wingard from zombie|0.58
+046|well and step four is what many people do it's study|one of the things that many people do is they|0.55
+047|how would you unite your empire well i can tell you what constantine wanted he wanted to unite the roman empire|how did you unite your empire well i can tell you we lost and wanted he wanted to unite the roman empire|0.74
+048|joking is that it oh my gosh i thought i had so many more books on here i do have a lot more books on here i just have ones i haven't even started reading yet so anyways that's all for here|so like saying oh my gosh i think i'm in love with someone personally i don't get to be in love like i used to have once again when i was a teenager and so anyone can say it all over again|0.58
+049|a lot more success than if you were shooting your son's high school game just because there's more light|lot more success if you wish you could succeed at high school games just because there's more like|0.68
+050|so you can't just be an idiot and just start|so you can't just be the needle in the haystack|0.52
+051|running a marathon knocked her out|when a marathon not a sprint|0.60
+052|good general guidelines|just say this|0.48
+053|we're going to do a little bit of background to start so why aging is important the need for slps to really get into this field because we're getting in kind of late|going to do a little bit of background to this start so why aging is important the need for vitamin e is really needed in this figure because we're eating kind of late and|0.74
+054|but i knew that it was possible that there was somewhere better than where i had been and there was somewhere better than where i had been|but i knew that it was possible that there was someone better than where i had been and there was somewhere better than|0.79
+055|so now since we're done with the unboxing i just wanted to look inside this pen because it said the charger was|now she was found guilty on both charges in the united states and sentenced to 20 years|0.54
+056|link down there|down there go over there and watch the videos yourself|0.75
+057|no let's say i ask you to think about what you had for breakfast yesterday and if i were to say to you where do you sense it you'd probably sense it here to your left somewhere not everyone|now let's say i ask you to think about what you had for breakfast yesterday and if i were to say you ate a sandwich you'd probably say it you left it somewhere not everyone|0.73
+058|the i02xpress usb audio interface|is the iq test express you ask me on the real face|0.56
+059|also a very interesting common intellectual experience we've added in the last few years is the common reading program called wire wingate reading experience|a very interesting comment that's one of the experiments we've had in the last few years it's a common reading program called wild wednesdays we invite speakers in the|0.66
+060|have them all right there all for when you're ready to go|all right there all for when you're ready to go|0.86
+061|buying things for quality because certain|buying things for quality because certain|0.78
+062|16mp camera overall is a pretty good shooter but not so much that instant mode|a picture camera overall it's a pretty good sugar but not so much that it has them both|0.67
+063|her brother and they're kinda half brothers and sisters and his dad didn't do anything about it and so absalom wants to avenge tamar's rape and maybe among other things|her brother and then her half brother and sisters and they get attacked and do anything about it and so hops are brought to a rage tamer's rape maybe among other|0.64
+064|cabin fever has hit some of the members of the rainbow aero modeler society rc club check out this clip shot during the new year's freeze fly in franklin wisconsin|if you guessed it's some of the members of the rabo air balloon club check out this clip shattering the current free flight record it was cast|0.63
+065|india china afghanistan all these different places that are so foreign to us so both sides would benefit|mediterranean and afghanistan there are all these different warring places and there's no fertile soil so both sides will benefit|0.61
+066|today i'm talking with admiral mcrae|today i'm talking with animal migratory|0.64
+067|a line through your subject essentially just creating confusion when you're looking at the photo you're looking at it and it's harder to identify where the subject is because these lines in the background are cutting into the photo they're divided|aligned through your subject essentially just creating confusion when you're looking at the photo you are looking at and it's harder to identify where the subject is because these lines in the background are cutting into the photo and dividing it|0.78
+068|like maybe a knife or something and on your forehead you wrote|maybe a knife or something and you cut your forehead in the road|0.66
+069|and then basically ever since then i wanted to work for disney because i connect that with making people happy and wanting to|and basically ever since then i wanted to work for sixteen because i connected that with making people happy and wanting to|0.76
+070|when was the last time you used a vga cable|when was the last time you used a vga cable|0.85
+071|i haven't tried co2 oil i know it's available but i haven't tried it|to try to steal your story or to develop their own|0.48
+072|huge huge rise in popularity for something called the headless cms so the headless cms essentially takes this monolithic system and gets rid of the view layer instead it replaces it with generally|who creates a popularity for something called antisemite so antisemitism is an idea that demonizes the system and gets rid of the jews like a society that replaces it with generally|0.63
+073|you can learn the skills and the abilities|you can learn the skills and the abilities to|0.79
+074|i was born with the ultimate competitive disadvantage|or when the ultimate competitive daily advantage|0.70
+075|he's not going to be president of the united states|not going to be president of the united states he|0.75
+076|pursue my hobbies i've participated in several school plays and even taken on main roles|to my comics i've participated in several school competitions and got my awards|0.65
+077|by the judge below the sentencing guidelines range|i'd like to thank you|0.46
+078|greater there right there was no good|there the local|0.42
+079|thus was born the idea of positive ticketing each year police in richmond issue a|that's what's born the idea of positive thinking each year buddies enrichment eco|0.69
+080|tool for studying the concept behind absolute zero you can|studied at singapore polytechnic during my|0.43
+081|of different management positions and for the last four years she's been a senior manager|different management positions and for the last four years she's been a senior manager|0.76
+082|again i'm using rising intonation but it's not at a very high pitch i use rising intonation like a question i expect to see the difference|again the music rises in insulation but it's not at a very high pitch i hear the rising insulation like a question my expected|0.66
+083|doesn't lift up oh there we go okay so cat lifts up oh this is actually|whatever it is but ok so the cam lifts up this is actually pretty|0.52
+084|i thought i was gonna die i remember my sister saying i thought you were going to die i was coughing and i don't sweat|i thought i was dying i remember my sisters saying i thought you were going to die i was in a coma i don't know what|0.72
+085|very important|policies that keep us out of the|0.48
+086|i got dropped off when i came to cobleskill when i was a freshman right here|i dropped out when i had the name almost did when i was a freshman before i got into|0.62
+087|was given is to go to those schools and meet with the people you have no idea if you're going to really mesh with the type of people at the different schools obviously like|you have no idea if you're going to really mess with a couple of people that you just met|0.60
+088|that social media off your phone i don't know about immersion and all japanese all the time that program but you can|that social media off your phone i don't know about march and all japanese all the time that program but you|0.79
+089|i got called back to my former university in texas to do a master class on belting|got called back to my former university in texas to do a master class on belting|0.82
+090|it's not bad you know what because it's our culture it's our culture you have to|not a bad word because it's our culture our culture is our|0.62
+091|first and foremost is i don't know if i hate to do this or not anymore but i'm definitely still gonna be going ahead and talk some more about the karma as i predicted when it first came out i was like i don't trust it because it's the first generation|most is i don't know if i hate you or you hate me more but i'm definitely still in the middle and talk to more about the harm but as i persisted when it first came out i was like i don t trust anyone because this is the first generation to|0.70
+092|five six a hinge half turn to the left|that's why i'm here because|0.33
+093|eight ounces of philadelphia cream cheese and all i'm gonna do i've let this sit out on the|here's stephanie kavovit and all i'm going to do is have her sit down on the|0.59
+094|i felt like we could do this i felt like this is something we can overcome|like we could do this i felt like this is something we had to overcome|0.79
+095|to feel the same way how do you explain werewolves and magic in a world like that|feel the same way how do you explain wherewolves can imagine a world like that|0.75
+096|the wednesday conference call how many confirmations do we have|words that come out of my mouth when i'm talking to myself|0.46
+097|people to guide them and that's where the health coaches come in and this is why doctors need people to help them implement these things but once a person experiences how much better they feel when they|books inside them and that's where now nurses come in this is why doctors need people to help them implement these skills but once a person experiences how much better they feel when they|0.72
+098|you can use the isoflo memory control to correct or accommodate a pelvic deformity|use the israeli flow memory control to correct or accommodate above its default|0.71
+099|i don't want to say mistakes but i will say like experiments and|i don't want to seem disrespectful|0.56
+100|these out of course club members you get the club discount regular price is only 12 88 and our club members only pay 10 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a club member thanks so much|down of course club members do get the club discount regular prices are only 12 88 airline club members can save up to 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a clubmember thanks so much|0.76
+101|and building out the future of the site and laying out the future of the site you really need to know what your structure is going to look like|building out you know your future of a site like out the future of site you really need to know what your structure is going to|0.71
+102|up front pricing or was this before when you asked him when you compared|time for enrique iglesias who was it before when you asked him what do you mean by that|0.63

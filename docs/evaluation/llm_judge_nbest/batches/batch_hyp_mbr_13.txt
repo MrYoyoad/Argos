@@ -1,0 +1,103 @@
+HYP_MBR | BATCH 13/15 | 101 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|to right to six behind side cross side and you start over again now let me go the dance with the counts|around the city behind the skyscrapers behind the lights behind the houses behind the|0.49
+002|and he says we're interrupting a defense mechanism|so it's not just the|0.30
+003|apple app store i'm pretty sure it's on android 2 so what you do is you download the app and then when you click get started it'll say what is your name and you type in your name and it's going to start auto populating|on the app store or pretty sure it's on the android too so what you could do is you download the app and then when you click that get started it'll say enter your name and you'll type in your name as the star auto populating|0.65
+004|and that is just something that i have|and that is just something that i have|0.85
+005|from people's stem cells that they would not reject over time and we were very near to a cure for things like aids|from people's stem cells that they would not reject over time and we were very eager to cure for things like aids why is it|0.79
+006|investing into things is to make sure that you have money set aside in case something happens|into this is to make sure that you have money set aside and yes something happens|0.70
+007|anger and fear place you in a position of being intoxicated by your emotions when you're angry or when you're fearful you are drunk with feelings|and fear bring you to a position of being isolated by your emotions when you are angry or when you're fearful you are struck with venom|0.78
+008|and furthermore all the nisam the wondrous remarkable nisam the klaali sral had that was bestowed upon them from the time they left mithra|and furthermore who said this system wasn't just a remarkable system it was a dangerous system as i was misused and abused from the top down from the|0.54
+009|therefore it is important to make sure you check with your insurance company to find out if this is covered or if it will require some out of pocket expense|therefore it is important to make sure you check with your insurance company to find out if this is covered or if it will require some out of pocket expense|0.86
+010|discussion we will look into how stress|discussion we were going to allow stress|0.75
+011|but relatively new to firearm ownership in general right|a relatively new five year partnership in general right|0.64
+012|how much strain there is in this direction and how much strain there is that way on|so i'm sure you're sitting there wondering|0.45
+013|so enzymes are just like whatever ingenious machinery they use the factory to make this okay let's|ask them to design whatever machinery they use in the factory to make ted's|0.65
+014|well that's why the fact that i had meningitis it was so severe that should not have allowed for any experience|well the fact that i had many chains and there was no savannah and that should not have allowed for any experience|0.74
+015|certain men to fight against the whole|so when i found out|0.41
+016|and a leadership speaker and he's delivered more than 400 professional programs to corporate and private clients he is president of results based seminar|speaker and a leadership speaker and it's given more than 400 professional programs in corporate and private clients and presidents of resorts and symposiums|0.69
+017|which means it's only visible from within the package that it was defined in|who he is because it's already familiar from the manga that we saw earlier|0.48
+018|i'm just curious because nathan we talked before about another very specific topic to va claims and that was the compensation and pension exams does this in any way relate to that|i'm just curious to say that we talked before about another very specific topic of gay clubs and that was the competition in pension exams does this in any way relate to that or|0.73
+019|we have a cpu gpu high definition video accelerator|well i was a sophomore in high school i had the first official salary there|0.52
+020|and we have a bit of fun as well along the way but driving energy and determination to succeed is how i describe jason|have a bit of fun as well along the way but drive an engine and determination are key which is how i describe jason|0.69
+021|yes if you inscribe coach shane i'm guessing what you did was you took something something metal like maybe a knife or something|in his defense he described ghosting i'm guessing what you did was you learned something something better like maybe a knife or something and you|0.66
+022|that supported the idea that the|that support the idea that the earth|0.81
+023|mean balance the front end should be a little higher or as high as the rear end|balancing the free issue but as high as we are on|0.61
+024|is that they try to use the carrier systems to take consumer data|that's trying to use security systems that are trying to be|0.58
+025|bravo bravo it is a great and beautiful day and i'm so glad to be with you a lot of people have|own pravo it's a great and beautiful day and i'm so glad to be with you you know a lot of people have|0.82
+026|see how they work they both came with level 4 software licensing and i don't know if i've talked about it but i'm not a huge fan of software licensing|i don't know if it's a coincidence or not but|0.39
+027|let's see a half a cup of|i have to say that|0.47
+028|work on stretching everything out with yoga there's gonna be some great yoga coming up in the fall i also have a video i can link that has some great hip flex|we're concentrating on the cloud with yoga there's so much yoga coming up on the fall i also have a video i can link that has more information|0.67
+029|paint scheme on it most of them are like a 3d paint scheme they kind of modified|stay out most of the day when it's raining outside|0.49
+030|and now in 1916 he showed his worth by analyzing the problems likely to face the 6th corps his planning began with both infantry and air protection|now in 10 seconds time he's done his work by analyzing the problems likely to face the six core his planning began with both left and right brain|0.60
+031|but that asylum was denied in 2010|that science and religion can coexist|0.43
+032|oxygen to breathe and the other one is what happens|to breathe and the other one is what happens|0.77
+033|blue collar and white collar will always be a part clean dirty will always be a part|blue color and white color will always be apart clean and dirty water so|0.70
+034|often when we talk about white privilege a common rebuttal is i can't be privileged i grew up poor or|when we talk about white privilege a common retort is i can't be privileged i grew up poor or|0.84
+035|see what i mean now today i want to|because this is what i mean today i want to|0.66
+036|as co creators of this reality|as the co creators of this reality|0.64
+037|including some standard colors patches and ramps from black to white and you have seen me do this before|some standard colors patterns and wrapped it from black to white you have seen me do this before|0.69
+038|way to the left to make the shadows really dark all the way to the right|when i was a little girl i always wanted to be a princess|0.47
+039|they work together we enjoy the conversations together we complete the conversations and we are consistent with the working together so those kinds of people|together we enjoy the conversations together we are pleased the conversation and we are consistently working together to those kinds of people i|0.72
+040|where is the car wo ist das auto|where is the car full is dusty outdoors|0.68
+041|it's kind of like the germ idea so you've got these particles in the air|i felt the tumor shrinking so you get these particles in the air|0.67
+042|payload and only releases it when it's at the right moment|malolo and only religions that were such great movements|0.52
+043|mode or single player mode by the way this is also a|a mode single player mode by any way this is also|0.67
+044|that tastes good and my desire for something that feels helpful in my body|tender and my desire for something that feels helpful in my body of|0.78
+045|i realized that he was saying everything that i wanted to say that i wanted to say to my mother that i wanted to say to the people in all of my classes in high school about how hard it was to be a certain way|i realized that he was saying everything that i wanted to say to my mother and to the people who took all of my classes in high school about how hard it was to be in a certain way and i|0.76
+046|this thing and what none of his family|that's fine but no|0.38
+047|in windows and things like that|in a window instead of having to|0.55
+048|take back your personal space hygiene with our orb antimicrobial|take back your personal space agency wear your arm antimicrobial|0.63
+049|this is 1109 remember it's only a single digit in that column and the zero becomes n0 1109 either one works now|this is 11 09 remember it's only a single digit in that column and the zero becomes a 01109 either one works now one|0.70
+050|plus that were just announced today i want to give you the four key|because it was just announced today i want to leave you with the 40|0.70
+051|us and couples us to light cycles in our environment tells us when to sleep tells us when to make cortisol tells us when to make testosterone basically switches on|the job prescription takes into account our environment tells us what to eat tells us where to make turns tells us when to make decisions basically switches on|0.66
+052|it's also almost stock android but there is slight amount of customization i would say that it's a great feature|also almost got aggravated i think that's like the height of absurdity i would say|0.50
+053|you're rich no no no no no no that's not what i'm talking about i still like getting|your right that's not what i'm talking about it's|0.63
+054|connection within the cable to check that you've got continuity between both ends now of course on this length of|connection within the cable to chat that you've got continuously between both hands now of course on this length of|0.70
+055|get our hands dirty we had to be separate and when you separate from the culture when the godly people get out|our hands we had to be separate and when you separate from the culture when the godly people get out|0.67
+056|the folders notification center multitasking and that's pretty much it some little updates of the stock apps but not really much at all so finally we are getting what|the faults and notifications there are mostly tasking and that's pretty much the little ups and downs of the stock market but not really much and also finding we are getting what|0.66
+057|if you ever forget how to pronounce this letter just remember psi is for poseidon and his trident|you ever forget how to pronounce a letter just remember please it's from sight and not sound|0.69
+058|about the 13th amendment the 13th amendment is going to come soon on the heels of the actual end of the civil war this basically formally by constitutional amendment ends slavery so that's a pretty important|13th may mean something to you because it can help you shoot all the killers of the actual civil war that speaks to you in formal him i also show my meaning in slavery so that's a pretty boring|0.62
+059|but they're not regulated because they don't come the laws are out|of friends because i don't want to|0.46
+060|as a time of this recording html imports have landed in chrome and opera firefox supports it in nightly but it is not supported in the nightly|at the time of this recording it's very important to note that this is from an opera where it was supposed to say 99 behind|0.64
+061|wisconsin deter me because i examined the book i say they could have|consciousness could be made adaptable they could have|0.44
+062|we're doing a lot with cash as a test for the year and so far it's failing but i want to talk about how you can get to be in the ballpark of about 20 minutes per month|all your doubles cash has to last for the year and so far it's failed but what type of cash can you get to be in the mall partying for about 20 minutes per month|0.63
+063|to stay quiet for a whole week maybe a whole year|she cried for a whole week maybe a whole year|0.84
+064|so there's different sizes of different boards and we wanna make sure that we have the standoffs in the right place because not every board's the same|i'm going to tell you|0.47
+065|tetra on the other hand is designed for higher volumes of radio traffic but over much smaller coverage areas|central atlantic as a sign of our environment right now you have any money for much smaller areas|0.60
+066|or even death now what are the symptoms how do you know a baby may be suffering from shaken baby syndrome well the signs are they're very|i think it's important for us to understand that|0.38
+067|i like salt in my chocolate so i use my seaweed salt the cheney cabot seaweed salt so there are your basic ingredients|i'd like to talk to you about chocolate so what i'm going to do is see if we can change that perception with the basic theory is|0.56
+068|actually i find all purple crystals to be very useful for the grief release process just because the purple crystals are very high elevation energy|i find all people crystals to be very useful for the grief release process it's because the people crystal has very high individual characters|0.70
+069|but let's be honest here for a moment i started a photography shooting film the workflow|let's be honest for a moment alice in wonderland is a children's film the word of|0.61
+070|had polygamy and concubines does that mean god approved it the bible records a lot of things|i blurred the line between documentary and scripted movie but i was recalling a lot of things|0.62
+071|so what i'm going to do right now is i'm going to crunch 1400 years of islamic history in 5 minutes and make it as exciting as i can possibly make it|so what i'm going to do right now is i am going to crush 1400 years of islamic history in five minutes and recognisances i can because i can possibly make it because i get|0.76
+072|women who won't consider us today because we are not co educational and every person who wants to attend usj because|women and queer youth of color because we're not going to go to college every person who wants to take the test can because|0.59
+073|even to the extent of one's personal survival|just gives you a sense of what it's like to push your survival to the|0.61
+074|we want college to become an everyday part of their lives and it's something that they're always thinking about|want colleges to be an everyday part of their lives and that's something that they're always thinking about|0.75
+075|like where the extra income was gonna come from but i told myself i was gonna quit my job|where the internet was going to come from i told myself i'm going to quit my job and|0.75
+076|i'm the cyberroofguru welcome to my channel thanks for watching i appreciate it|sam richards welcome my son thank you for watching i'm|0.59
+077|i understand why you would go down south|i don't know why we go down the stairs|0.52
+078|now this is another favorite actually of mine|this is another favorite actually of mine|0.79
+079|well my friend this is actually a really easy answer money samsung went all out with the marketing of their galaxy line of phones so when the|my friend and this is actually a really easy answer money as amanda said went all out with the marketing of their talent like phones with the|0.73
+080|level and the extent of the force and control that they apply to other people|had the sense of force and control that they employed to other people|0.76
+081|malahim they are servants of our father and they are also the bible says they are our brethren|team they also serve as their fathers and they are also the babysitters on long plane trips|0.50
+082|you can name it how you want so generally a bedroom in korean is just|when i was a little girl i always wanted to be a princess or a ballerina or a mermaid or a unicorn or a dragon or a|0.45
+083|you know in the tropics where i live they wear out and they're 600 bucks a fucking piece|you know when the drops are where i live and they wear athleisure they don't remind me of fucking bees|0.56
+084|sitting down standing up come here|sitting down standing up coming on|0.70
+085|for a presentation so trick number one is|presentation so trick number one is be|0.72
+086|and believe it or not that was the first time i've been|and believe it or not it was the first time i'd been|0.79
+087|issue of inference it's never clear cut and they're always room for alternative arguments which is actually one of the best things about the field|is true of their fists they are never going to die and they are always true for the ultimate arguments which is actually one of the best things about sf|0.66
+088|gives us the clue i mean we can't raise children|it's different from what we're used to but that's just the|0.45
+089|goes on coral grab by maria mag is a 32 count 2 way|have no choice to do what our people have been doing since the|0.45
+090|this is my second time repeating the course obviously|this is my second time being in new york obviously and|0.69
+091|how's it going guys eric here from tech a sode tv and in today's tech a sode we're going to be taking a look at the top four issues with the galaxy note 5 and how to fix them|as john lennon once said may the force be with you|0.60
+092|because i wanted to be sheetaro because to me sheetaro represented power she represented just strength that i was attracted to|because i wanted to be just hara because to me she saw hara represented power she represented the strength that i was attracted to and|0.80
+093|a chance that it might not be fantastic samsung sort of has a reputation of just taking a million ideas throwing them at you|it might take us 10 years to sort out these patents you just take a million ideas and throw them into the|0.56
+094|up the order and just a little bit over the edge|to the neurosurgeon she's sitting up in the operating|0.50
+095|most of it's about relationships i think you know it depends where you're at|most of it's built relationships and i think it depends where you're at in|0.62
+096|the stop tongue technique is pretty difficult to learn so it's important that you isolate it and then as you play this faster and faster the stop tongue technique starts to become more of a bounce tongue technique|stop song technique is pretty difficult to learn so it's no surprise that you isolate and then as you play it faster and faster the stop song techniques starts to become more of a pound song technique|0.74
+097|you might have seen this japanese method of multiplying circulating the web where everyone's like wow math is so much better in japan|you might have seen the japanese method of multiplying circles like the web where everyone was like wow math is so much better in japan|0.73
+098|we evolve from and you know i think we were talking a little bit earlier kind of i've done 23 and me and that will now kind of break down your neanderthal dna for you so it's wonderful that i got now i'm getting a bit more context to put around it and kind of we're all|we had evolved from and it was certainly when i had turned 23 me and now we kind of break down into the x and y dna for you so it's wonderful that now we get a bit more context to pull around and we're all|0.65
+099|is perfect for you it has all the features you need and it has|perfect for you it has all the features you need and|0.87
+100|what does this chord sound like to you|what does this court sound like to you|0.80
+101|this is the fc hf34|6d 8f 94 i|0.53

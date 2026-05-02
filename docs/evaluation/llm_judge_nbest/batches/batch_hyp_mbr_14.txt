@@ -1,0 +1,104 @@
+HYP_MBR | BATCH 14/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|to put around it and kind of we're all getting a lot more knowledge about kind of where we came from|like to poke around and kind of learn more about where we came from|0.63
+002|one of the complications of this disruption of breathing is that you get lower oxygen levels in your healthy tissues this is known as hypoxia|complications of this disruption one is that you get lower arterial levels in your healthy tissues this is always high blood pressure and|0.69
+003|on each one of these layers|is one of these leaders to|0.65
+004|the chapter starts with a doxology and it ends with a doxology what's a doxology in greek it means a glory saying so he's giving praise to god in|so i'm going to tell you a little story about how i got to where i am today it's kind of a long story but i'll try to condense it as much as i can so i was born and raised in new york city i grew up on the upper east side in manhattan|0.53
+005|she's doing away with it we are finding out that everything is that's up is down left is right in and out|just do it away with it we are finding out that everything is that upside down left to right and out|0.74
+006|let's start by asking who's doing well well unfortunately there's no international ranking tables for teacher feedback systems|let's start by asking who's doing well unfortunately there's no international ranking tables for teacher feedback systems|0.81
+007|will not have enough food for a healthy life|we learned to have enough food for a healthy life|0.83
+008|25 times smaller moreover jacob had to contend with the influence of the most|five times more murders per capita than with the influence of the most|0.69
+009|like people just come up to me and be like literally it feels so good if you guys wanna like|people just come up to me and be like hey little girl if you guys want to like come|0.65
+010|but not all bees make honey insects like bumblebees stingless bees and even honey wasps can produce small amounts of honey but the stuff you're familiar with is the product of one of the seven|not honey is made honey it sounds like bumblebees a single bee can even honey wasps can produce small amounts of honey but the stuff you're familiar with is the product of one of the 70|0.74
+011|lovely simone and francesca my lovely assistant|of legal support and financial support|0.50
+012|but also i don't like about contention|when i was a little girl i always wanted to be a princess|0.47
+013|and increase awareness among my audience members i needed to go deeper|increase awareness in my mind i need to go deeper on|0.63
+014|a tremendous opportunity it's just very exciting|tremendous opportunity interesting and very exciting|0.68
+015|to the same name so first off is the quick flip case this goes on your iphone 5 or 5s or your ipod 2|into this camera so for yourself it's kind of like flipping a hatch and you go start your ignition 5 4 3 2 1 go ahead|0.52
+016|but we never give the words back so i'm just going to be honest and call it stealing we usually take words for things that we like like delicious food we took kumquat from chinese|but we never give the words back so i'm just going to be honest and call it stealing we usually take words for things that we like like delicious food we took hummus from chinese|0.82
+017|add all the numbers from 1 to 200 in your head|all the words in the world to describe them|0.43
+018|get the idea|life and i|0.34
+019|if it's my brother's|can say about it with one big breath|0.54
+020|what happened to them disaster here's an instance of it|you is disaster and it goes like this|0.50
+021|the main risk factors|those are the two main risk factors|0.58
+022|i believe that everybody that's listening|i believe that everybody that's clean|0.60
+023|here's another item i hear bug off not really that important you know but for a lot of people depending on what they're doing it may be more important for them in the short term|i'm going to come back off not really that poor but for a lot of people depending on what they're doing it can make them more or less for them in the short term so|0.71
+024|first things first when you buy a new gpu you need to say to yourself what job do i want the gpu to do i'm going to go through a few|first things first when you're putting on a uniform you need to say to yourself what job do i do and what should i be doing i'm going to go through a few|0.67
+025|this is my new tree frog|is this my new dream work|0.55
+026|something to make it easier to bring native code to the web|can make a difference and that's what we're|0.42
+027|his own shoe made i was all about it plus you guys know how i am with mids with straps and all that so i got the shoe in both colorways|to shoot my character you know i was all about it because that's all i wanted to do was shoot guns and do stunts all day so i got to shoot a computer generated one|0.53
+028|personally i think it's a safe bet to say that we will see the device between september and october it'll feature an a5|personally i think it's a safe bet to say that we will see the iphone 5 sometime in november or early fall|0.59
+029|put on your humanity and has really constrained you|her to the melody and has really strengthened her|0.56
+030|but maybe you only have one of those|but maybe you only have one of those you know|0.81
+031|output 3 7 volts|uncomfortable to keep myself in focus and|0.54
+032|and hopefully that doesn't happen but i wanted to talk about in this video the fact that it's not just diet ladies and gentlemen|never seen this example but i wanted to tell you about it in this video the fact that it doesn't exist is just as significant as the|0.61
+033|the basic idea is to make a cage or a basket that protects a fragile or toxic or precious payload and only releases a few drops of oxygen|basic idea is to make a case that the persecution of fragile toxic was preceded by and only related to|0.58
+034|and we have permission to share this video to the world right now thursdays and wednesdays|we're one of the few places in the world where you can find two world class museums|0.50
+035|auto mode nonetheless i have received a handful of questions regarding the various scenes that are in|lido moore has done this i have received a handful of questions regarding the various stages now in the|0.66
+036|you never have been anything but that|you never have begun until you've been there|0.45
+037|and innocent people as they sat eating in cafes and waited to catch trains on their way home from work|some people as they sat in indian cafes and waited to get streets no way home from work but i|0.73
+038|what is the difference between the da and|what is the difference between the and|0.79
+039|does this in any way relate to that and maybe it doesn't|doesn't anyway relate to that or maybe it does|0.71
+040|now let's fill in the punnet square|to feel like the monkey square for the|0.61
+041|to learn at the same time because you just arrived here so you need to learn the language|it's going to take a bit of time because you need to learn three languages the language|0.52
+042|so you can update the spreadsheet from autocad|you're going to get dated especially from other guys|0.61
+043|and speak to and interact with both the|2000 years ago when|0.34
+044|to know all about the election season hacks malvertising exploits millions the nsa can track in flight cell phone use and openvpn gets an audit coming up now on threatwire|know all about the collateral damage it has maimed for decades experts millions in the nsa tracking phone calls and gopofemale candidates coming up now on the red carpet|0.60
+045|i'm assuming he has not i might do a different ad on that one but definitely a third party advocate|through me the next guy i might do a different angle on that one but definitely a third party having|0.64
+046|difficult it requires strength that i thought i had|difficult it requires strength that i thought i had|0.84
+047|that you should know is really diazepam for your medication but flurazepam is used|you should know is will it take a pill up for your medication but few has become a serious|0.56
+048|of orlando in the united states state of florida now the orlando flag committee met on may 17th|of orlando in the united states in the state of florida now the orlando flamingo committee met on may 17th|0.70
+049|ideas i have two words for you predator drones|if she was for it or against it|0.54
+050|but they couldn't identify the quantum|i think it's a very valid question|0.38
+051|and the relationship between you and that family member is characterized by discord and tension|relationship between you and that family member is characterized by this orientation|0.78
+052|from but i really loved the grainy quality of the ribbon mic|is from but i really love writing in a way that doesn't require me to|0.62
+053|center of a picture to give you an even pattern of light|official to give you an even better for it|0.56
+054|or you can move back over to it now i'm just going to type in my information so i have negative 1 positive 1|i don't know what i'm going to be when i grow up i just know that i want to change the world|0.54
+055|you say well i can do all these yes you can but what will it do|can do all this yes she can but what will it do|0.76
+056|that all the world leaders are expecting something to happen|they all coalesced expecting something to happen|0.65
+057|and give them nothing to do but to go after people|and give them nothing to do but to go after people|0.85
+058|contracting and getting smaller on the exhale|this traditional indigenous clothing as a kid|0.37
+059|that determines the shape and form of the vessel we live in|this is all just the shape form of the vessel we live in|0.70
+060|a part of hashem and to learn more about hashem's character through torah|a part of a chim and to learn more about a chim's character through dora|0.75
+061|cartoon characters the blue and the red those things change all the time on influenza which is why we have to re evaluate|are constantly changing in some unique way those things change all the time influencing which is why we have to reach|0.69
+062|and i'll tell you in just a second if they are|and then i'll take you just a second of the year so|0.60
+063|the projects that this is not nothing special|this is a project i've been working on for a long time thank you very much|0.56
+064|prophet's house alayhi salatu was salam at night time they were addicted to listening to quran when he would make qiyam al layl but they wouldn't tell anyone in the morning|the town that he said he was going to come at any time they were anxiously waiting for him to come again but he wouldn't sound like he was when he was|0.57
+065|and like the guys that help us out you know with|like the guys i can help this guy|0.49
+066|so you can hear what you need to do after the previous video lesson so it needs to sound like this now|so you can hear what you need to do after the previous video lesson so we're looking into sound like this now|0.75
+067|it's probably going to be an s corporation it depends and this is we're going to talk about your options to set up this new company here a little bit later but typically it's going to again be|probably going to be a nice corporation it depends this is we're going to talk about carbohydrates and starch and sucrose and glucose but typically it's going to|0.63
+068|all you have to do is unscrew|all you have to do is not to|0.79
+069|i have done like all the combo cards like 800 1240 1480|it like on your mobile phone like 123456|0.44
+070|just like everybody else now because everyone's afraid of|everybody else what do you want to forget and if you|0.62
+071|of the 12 tribes of the children of israel|12 times on the tutu of the shirt|0.66
+072|there's something i haven't bought in too much recently but refried pinto beans|something i don't laugh about too much recently but we define places openings|0.67
+073|market research firm bernreuter research is forecasting pv installations could reach|market research firm rogers research is forecasting pv installations will reach|0.59
+074|and it's already in there you don't have to make up something you know|and it's all in there you have to make up something you have|0.72
+075|something that ken talks about specifically something i wanted to bring up when we were talking about vipassana and something that i wanted to you know|that he talked about that he talks about specifically something that i wanted to bring up i want to talk about from his talk it's something that|0.67
+076|as a spy she's helping the greasers because there's a what right the big rumble is going to come down between the socias and the greasers|in spanish he told me that you need to speak english because this is america and when the big rebels come down between the soldiers and|0.55
+077|and to make important decisions at geographic scales as professor amy lobin of the university of oregon describes it neurogeographers are constantly scanning|and to make important decisions at geographic scales as professor amy loeb of the university of oregon describes it geographers are constantly standing|0.80
+078|and in my last jar is peppermint i love peppermint tea that's my favorite i also sometimes combine the peppermint and the chamomile together which is nice|and in my last jar is paper mill i love paper mill that's my favorite i also sometimes combine the paper mill and the camouflage together when i'm|0.68
+079|frequency they vary in intensity sometimes it's 30 seconds sometimes it's seven minutes we brought him in the bed with us because we could call him|of run frequency they're very intense and sometimes that's 30 seconds sometimes it's seven minutes we call them in the bed with us because we can call them|0.72
+080|what's called the rst driver or the option rom that's part of the searle t and the pch so all the way around you've got pretty much all the connections that you could ask for|what's called the airline seat traveler's nightmare where you get stuck in the middle seat so all the rows of aisle seats are taken so you're|0.56
+081|but why is stress a function|why because it's effective|0.61
+082|let's get started crime and punishment written by fyodorovsh|harsh punishment written by fuels|0.59
+083|from what he was thinking i'm not sure|from where he was sitting i'm not sure but|0.71
+084|probably seized kate and said because of the message that|because of the message that|0.51
+085|and to be honest after that abortion i actually experienced some relief fast forward two years later and i am a freshman in college and i get pregnant again and i make the decision to abort my son|to be honest after that abortion actually experienced some relief fast forward two years later and i am a freshman in college and i get pregnant again and i make the decision to abort my son|0.82
+086|they have something like this for the viola|some english for you and|0.50
+087|what's up everybody and welcome to biowess 3 raw tv|some familiar words to back it up with raw tv|0.54
+088|have these phones they can also use your website in order to select a phone number so they can receive calls as well on their ip phone or adapter these phone numbers are very useful|these phones it can also use a website in order to select a phone number so they can receive calls as well on their ipod phone for example these phone numbers|0.80
+089|but sometimes i send girls a hotline bling and they ignore it|sometimes i get calls like me and they acknowledge it|0.59
+090|i love my experience i thought it was really fun and it's a nice job|funny words i thought it was really fun and it's charming|0.61
+091|you that's the first one that i'm going to show you this is the the gothic vaping cardo tank|you that's the first one i'm going to show you lcd and the cathode ray tube and|0.72
+092|gadget mouse making company and they have this app on the app store you can pick up for free|excited to watch me come and then after that i'm going to|0.56
+093|technology in there to really feel all surround sound it's a very nice headset it fits on your head well it is adjustable|ecology there to really feel our surround sounds it's very nice it has side effects on your heart rate it is adjustable|0.65
+094|i wonder what his face looks like|and wonder what it feels like to be|0.51
+095|so that loosens and these memories start to rise|that those things and this made people question their highest|0.47
+096|i only use this laptop for school so when i need to get on wikipedia or to upload my work to the system this little|use the name of the institution regularly to get the right meaning or to talk about my work so this is|0.57
+097|there is some slight background noise or slight hiss that can be heard when you're not listening to anything or during quieter sections of music but the signal itself is strong i didn't have any delays or drops|some slate background there needs to be slate hands that can be heard we're not listening to any of the older acoustic sections of music but the single instrument of each strong i didn't have any delay or drop or|0.69
+098|my phone and there's nothing i can do so let's get back to maybe it's not your|forest to cut timber and to mine for|0.47
+099|let me give you an example one of the areas where we have a tremendous strength is in location based services|give you an example one of the areas where we have a tremendous growth is in location based services|0.83
+100|we found that for glucose and the glucose in maltose the same maximum rate of oxidation was found with|we found that for neurodegenerative diseases such as alzheimer's and multiple sclerosis the same maximum brain fraction was found with|0.68
+101|you ask but do not receive because you ask wrongly|has some blue eye stuff pepto bismuth|0.49
+102|i met some years back now like 2010 five six years ago|aim of some years back now like 2009 five years ago|0.66

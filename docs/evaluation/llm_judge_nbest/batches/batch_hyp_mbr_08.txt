@@ -1,0 +1,103 @@
+HYP_MBR | BATCH 08/15 | 101 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|is agents being transactional if you will be a transactional agent the customer has the ability to treat us like a commodity if we're just going to be transactional|that's just being a transactor if you would be a transactional agent in the hitchhiker's guide to the galaxy it's like a commodity if we're going to start being the transactor|0.63
+002|and i'm just like this is me you know i'm real|i am just like this is me you know i am real|0.71
+003|and our videos will be much better so that's awesome the other thing is|and our videos will be managed by us the authors the|0.56
+004|in 30 minutes before sunrise|30 minutes before sunrise|0.67
+005|obviously didn't start as a business it just started as a youtube channel just this thing we were doing for fun to hopefully reach people|me as a business to join us as a full partner and then we were on the track and hopefully we should be more|0.56
+006|hard drive 8 gigs of ram|a driving kick of red|0.48
+007|when life itself doesn't have essential worth our opinions about reason and logic and all these other concepts don't have any more value than we give them|life doesn't necessarily have to exist in a world of our making it's about reasoning and logic and all these other concepts you don't have any more faith than you want to give up|0.61
+008|but despite his status and his achievements okonkwo|despite his status and his achievements arrogance will|0.65
+009|each one of those is 1400 which is a chunk of change but if you know anything about casket prices it's actually very reasonable|of those is 1400 which is a chunk of change but if you know anything about gas prices it's actually very reasonable|0.73
+010|from whom they're trying to help and this is documented in kelly kearney and ray's ghost symptoms break the spell and be well|from being trained to help this is documented in ethical ways in local symptoms and ways to spot them so well|0.57
+011|a friend of mine was recently diagnosed with and died of stage 4 breast cancer and she described|friend of mine was recently diagnosed and died of stage four breast cancer and as she described|0.79
+012|so um|so i kind of|0.58
+013|donald trump is not going to be president of the united states i would respect for the fact that the people have not voted he's not going to be president of the united states|donald trump is not going to be president of the united states woeful disrespectful of the fact that people have gone forward and he's not gonna be|0.75
+014|i'm always open to new ideas and new things to try|i'm always open to new ideas and new things to try|0.86
+015|and then at least i know where we're starting and you get it|least i know where we're starting and you've got to|0.72
+016|is flashing for you|that it is lasting for you|0.63
+017|well if you subscribe to our newsletter i'm in charge of|if you subscribe to our understanding i'm just|0.65
+018|louder or quieter that doesn't get synchronized because every|out in the wilderness and i said you guys just leave me|0.47
+019|on here and say it's you know x number of inches or centimeters long|in the states you know how many provisions are in the constitution|0.48
+020|physical tour of the ds 216 which isn't the easiest name to say neither is disc station ds 216 as i'm trying to rush it let's call it bus disc or nope|tour i think he has too many sticks which isn't his easiest name to say either it's disconcerting he has two but since i'm trying to rush it let's call it by statistics which is|0.61
+021|it's ever going to capture any of the market when all you have is a single high speed transistor that is not something you can build|is never going to capture any of the money all you have is as i said at the high speed transition year it's not something you can build|0.71
+022|you're smart enough to realize that you need a plan and i don't think that you know how to get a plan together and what you need to achieve has to have a plan|smart enough to realize that you need a plan and i don't think that you know how to get a plan together and what you need to achieve has to have a plan|0.82
+023|now those predictions i think|of first impressions by the|0.43
+024|and her everything we were in a teepee out in the|our everything we realize how important it is to|0.61
+025|clearly when i first started going through the first stage where things really started happening that were different than what had come prior|clearly when i first started going through the first stage where things really started happening that were different than what had come before|0.78
+026|to engineer out of our habitat one of our basic human needs routine physical activity|the salary in the outskirts of rio de janeiro is around 200 reais a month which is equivalent to|0.51
+027|sts 120 discovery up there right now so far|2017 i feel right now so far so|0.65
+028|control the light on the flash okay so first things first why is it bad that this flash pops up and ruins most people's photos|control the light on the flash so first of all why is it bad that this flash pops up and ruins most people's photos so|0.78
+029|and now we're on to beat two so this is half of a half of a|when i was a little girl my grandmother taught me to|0.41
+030|bitchy means bitchy means arrrr don't talk to me don't look at me what are you looking at arrrr|to me punch me in the nose go talk to me go look at me what are you looking at|0.69
+031|until the 1970s because of the bank of canada canada's national debt was held at a constant manageable rate|until the 1970s because of the might of kenia kenya's national debt was held at a constant manageable level|0.82
+032|help them or to maybe|i'm so happy to be here with you all|0.43
+033|really for anybody out there who's using older imacs or mac|if anybody out there is doing the whole time as a matter|0.58
+034|you're gonna pay 700 over ringgit no i'm like what straight away you have to pay before you port over to another telco|because it's very hard to overthink and talk about it in a rational way you have to play it out for you to buy over to the zero|0.54
+035|now the reason this isn't so obvious is because there's some things that just seem like they're correct|the reason this is so obvious is because there are some things that just seem like they're correct|0.80
+036|general theory of relativity and curved space time in this painting in the very back you see a convex mirror and on that mirror the painter drew light rays on a curved surface so he knew that the shortest paths on curved surface|our nervous activity our nerve space time and this painting in the very back you see a concave mirror and on that mirror the paint turns to light rays on a curved surface so when you look at the doors pass a curve surface|0.63
+037|the store bought salad dressing are really really high in sodium|sodium and potassium are really really high in turkey so|0.71
+038|bodies and radical feminists hate that and yet|bodies and radical feminist hate that a|0.62
+039|and there's been a lot of research showing that 85 of what we worry about will never actually happen|there's been a lot of research showing that 85 percent of what we worry about will never actually happen|0.88
+040|point being is if we had like if my k 52s started doing that i there's something's wrong it's going back to|beings if we had like my kfv2 i started doing that and something's wrong it's holding me back into|0.60
+041|i was like can i just shake my booty because i guess that's what i'm here for you know just take some booty and have some fun like i don't know|i was like can i just stay at my boyfriend's because i guess that's why i'm here for work and i used to have some fun like i don't|0.61
+042|with how to reverse it okay what are the handful of things i'm gonna show you some things that might help you here in just a minute|just reverse it like what is the handful of things i'm going to show you some things like my belt loop or something like that but|0.63
+043|it was to be a certain way and not be able to talk with people about it|wants to be in a certain way and i'll be able to talk with people about it|0.79
+044|thank you for coming by torimagu44 today is the 18th of november 2011|year by the norman armstrong 4 4 today is the 18th of november 2000|0.60
+045|so then he says that everything that gatsby represented is something for which he had unaffected scorn gatsby is the only character in the book|is that everything that has been represented to me from shakespeare onwards or dracula is the only character in the world|0.70
+046|there forever and i want it to be a five star review|forever and i wanted to be around for you|0.57
+047|when you put everything in the pot you need to cook until everything is dissolved|when you put everything in pause looking sure you know everything is solved and|0.66
+048|so therefore it's attractive and then of course the large manufacturers of soft rings they can apply their distribution networks|is a default tracker and then of course the hardware manufacturers of softwares they can apply their distribution networks|0.66
+049|and if we don't listen then it will start yelling and if we don't listen then then we'll start wrecking the house so treat this sensation treat this pain like a little kid trying to get your attention|although recently we started an alliance even though recently that didn't work out at the house so during this tedxweekend again trying to get our attention|0.55
+050|and see that it is not happening you will not lose muscle weight now you'll lose yucky water and fat weight and maybe underneath all that water and fat weight you didn't have as much muscle as you thought but you will not be|see that it's not happening you will not lose muscle weight neither lose a lot of weight or fat weight you didn't have as much muscle as you thought but you will be|0.70
+051|it's more than one thing|is more than one thing|0.76
+052|i'll have you download this|so thank you very much for having me|0.51
+053|everything i just use a little bit of that to shear it down or use it full strength|to get everything and you put it on and you shorten it or you lengthen it so if you're taller maybe|0.59
+054|trail make it a little bit wider|writer i am a writer|0.50
+055|i see myself very much as a designer although the work|limited very much so i|0.55
+056|so let me give you a stunning example of how nasa lies and why it is important why it's more than an academic exercise this is the current mission patch for sts 120 discovery|so let me give you a second example of how this ties in and why it's important why is it more than an academic exercise this is our vision path for a city which we can never|0.64
+057|piece of software for anybody who's just getting started is a student a small business person on a budget or is a new youtuber that this software is perfect for you it has all the features|piece of software for anybody who's just getting started is a student a small business person on a budget or a digital youtuber that this software is perfect for you it has all the features|0.84
+058|of the video the lego minifig uh we have|video a little bit of fun we have|0.71
+059|medicaid so that indicates that there's some level of inability to provide extra|and also that at a certain level of inability to provide extra|0.61
+060|waiver also allows for a lot of flexibility in the family determining what might be helpful to them families that are eligible have to be on medicaid so that indicates that they're|waver also allows for a lot of flexibility in the family determining what might be helpful to them families that are eligible are half my age so they're in the next generation|0.70
+061|but he helped me build life on fire and get out what was in my heart and how i want to serve and how i want to help rehas started with helping in designing and branding large fortune 500 companies so he's been doing|how i would rebuild that for firefighting and get out what was in my heart and how i wanted to serve and help we actually started with helping and designing and branding a large fortune 500 companies so he's been doing|0.69
+062|so every sunday i actually started off with this book|so every single day i actually start off with this morning|0.69
+063|my name is brandon noel i'm an assistant professor in the department of public administration|breaking news time and as a professor at the department of public administration i|0.63
+064|today we will focus on you alright in the future lesson we will talk about hishi|cake we will throw it at each other right in the future lesson we will talk about eating|0.60
+065|me and he does that in whatever way and whatever realm|that didn't exactly in one effortless way and wouldn't ever wear my|0.57
+066|anymore even though i'm standing here and jumping|more in the world of technology than|0.46
+067|lowered immune system and also being able to control your growing medium for your own food all of these things most of the people that i know that home|when i was 11 years old|0.41
+068|the same matter like i said imagine going around the figure and how long a distance do you run|us and yet imagine going around in fear that our closest friends|0.54
+069|we've been married 21 years and we've had to de horn one another several times i guarantee|it's what my grandmother used to wear and we've actually worn one another several times standing here|0.58
+070|i should have it at the patriot nurses website the patriot nurses supply stash the bragg's liquid aminos is organic soy sauce basically|and i should have another petition on our website that petition to ban the pesticide atrazine because it's an organic toxin and|0.55
+071|and that's really how we become unique and one of my friends chris ewen explained to me that a friendship is built based on two people|and that's really how we become a community and one of my friends on instagram explained to me that a friendship is based not just on people|0.68
+072|my macbook i've used it on my netbook|my backpack and my notebook and|0.58
+073|look at this here's two dollars and a self addressed stamped envelope first things first the bender|look at this there are two arrows instead of intersecting at the same time they're parallel to each other|0.62
+074|seconds earlier and once i'm cutting out the parts i don't want|second year and one day i was taking the subway home|0.46
+075|things become resistant to antibiotics|things become less serious and more artistic|0.47
+076|on youtube that you don't have to be all the things that he just listed much less you don't have to be good enough that's what i don't like about this end of the video|on youtube that you don't have to be all of the things that he doesn't see much less you don t have to good enough that's what i don t like about this and the video|0.76
+077|dollars of damages americans want football they love football they want to go protest on their own time no one cares|years of taekwondo is american kids want football they love football they want to go protest on the street|0.65
+078|6 4 watts up to 20 watts now those limits are your limits|6 4 whys up to 20 whys now those limits are your limits|0.81
+079|of publishing a bad paper is not yet perceived as being such a big problem|cost of publishing a manuscript is not yet perceived as being such a big problem but|0.78
+080|is singularly important in the history of american architecture if not the|is singularly important in the history of american architecture if not the|0.82
+081|because the range of global unicast which are the equivalent to publicly rottable addresses|there's a range of global screencasts which are the equivalent to publicly readable addresses|0.71
+082|background are cutting into the photo they're dividing up your subject|own artwork into the photo of the dividing up her subject in|0.59
+083|scale this is the cheapest best one i'll show you guys after|cell so that intership experience will ensure that everything|0.45
+084|i could not believe i'm like i didn't have some of those conversations as in a|i could not believe i mean i did have some of those conversations as|0.74
+085|this is the g0514x2b|the cheese to five one four eight two|0.56
+086|i did not have to major in acting there were some|did not have to major in hacking that was|0.71
+087|people so the correct one is|so the correct one is nuts|0.62
+088|and while it's good to have practice in school another great thing about adulthood is that it's not high school and you don't have to be interested in only the things you were interested in when you were young|while it does at practice in school another great thing about taekwondo is that it's not high school and you don't have to be interested in only the things you're interested in what you are not|0.74
+089|i've been very fortunate during my lifetime where i've had somebody that|i'm very fortunate throughout my life time i've had somebody that was|0.67
+090|and i felt very strong like i started to believe in my own decisions like my own thoughts became so|i felt very strong and i started to believe in my own decisions and my own thoughts became so|0.79
+091|and instead of using a sampling bottle or metabolism chamber we're just going to use some plastic bags that zip close and this is convenient because|sink and next time a bottle or a metabolism chimera which is going to some plastic bags and some clothes and this is random because|0.64
+092|whereas for example where i live right now we don't have a metro system so we use buses or taxis to get everywhere and it can be a little bit slower sometimes|here for example where i live right now we don't have a major system so we use multiple taxis to get everywhere and it can be a little bit slower sometimes|0.76
+093|recover and cross rock recover and cross rock recover shove|self esteem to walk through a lot of doors that i didn't walk through before so thank you|0.47
+094|if you don't build your business correctly some of the cons can be you'll get burned out you get stressed out and you'll work 24 seven and have no boundaries in life and feel like you always have to be on and you're|build your business correctly some things can't be you don't get burned out you get stressed out and you work 24 7 and have your own boundaries in life and feel like you always have to be on and you're carrying|0.75
+095|is a bad day alright i don't know about share this with you before but it's|the past day or right i don't know if i've shared this with you before but|0.69
+096|i would like to repeat the list and then we'll play a little game together here we go|would like to remind you that we are playing a game here together here we go|0.65
+097|well known conductors at the turn of the 20th century such as dikowski and toscanini encouraged this kind of restraint in their audiences|down connections at the turn of the 20th century such as scouting and to see and encourage this kind of restraint in their audiences|0.72
+098|both people are atheists they're just different kinds|people are at the edge of their|0.62
+099|discovered a passion for sitting in a bathtub full of 20 bills while pouring gold coins and gemstones on your head|even a passion or a hobby like needlepoint or something like that girls going to the gym i was like no|0.49
+100|so for example let's go back and look at how we build syllables you may remember from our episode about syllable structure that the beginning and ending consonants of syllables work differently depending on the language the beginning|for example let's go back and look at how we build ceilings you may remember from our episode about ceiling structure that the beginning and ending corners of ceiling work differently depending on the language the beginning|0.82
+101|amateur radio call sign is k5acl|right across 10th avenue a c e l|0.46

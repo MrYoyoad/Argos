@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 07/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|jason asks her what is that she says oh i was pouring wine i poured it for you|and asked what is that she says oh i was pouring why i poured it for you|0.68
+002|teacher and i don't think people have gotten beyond the fact that this is a job where it goes far beyond|additional and i don't think people have gotten me out of heads so i'm going to be honest|0.71
+003|actually hear what the recorder sounds like this category has a lot of similarities guys but there are subtle differences between each product|in the real world record soundtrack and this category has a lot of similarity sites but there are single differences between each product|0.68
+004|even in the west when people have not had that sometimes they've had a name ready|everything went down well people have not had that sometimes maria had the same rating|0.66
+005|think tanks so what are they doing in the world of places where they're|like that so what are you do in the world of places which|0.65
+006|rotating thunderstorms with big hail|ted turner's arms sold by hal|0.53
+007|and now in 1916 he showed his worth by analyzing the problems likely to face the 6th corps his planning began with both infantry and air protection|now in sense seconds time he's shown his work by analyzing the problems likely to face the six core his planning began with both left and right brain|0.70
+008|it's a panasonic camera really awesome camera|just pan down on camera a really awesome camera i|0.65
+009|let me give you an example one of the areas where we have a tremendous strength is in location based services|give you an example one of the areas where we have a tremendous growth is in location based services|0.73
+010|and received a generous paycheck so|received a certificate of appreciation so|0.60
+011|so we started looking at the structure of coping and the structure of emotion and started really looking at|we started looking at structure of hope and the structure of emotion and started really looking|0.71
+012|i am thankful for all the guys that have broken my heart so i can write amazing songs|thank you for all the guys i in my heart so i can write amazing songs like this|0.69
+013|i think the main thing we're trying to train people is to have empathy to listen to not try to fix it but just to be there to realize that god is everywhere|i think the main thing we trying to trick people is to have empathies and listen and not try to fix it but just to be there to realize that god is everywhere|0.72
+014|with a strong r and here's chlopa so when an r starts a word in portuguese how does it sound|strong heart and an mind mind when really coach and also person of to|0.56
+015|wouldn't let their daughters and they had six daughters no sons wouldn't let them read|like their son is the last son or no sons we're going to married|0.54
+016|you guys send in some really good stories so we are about to read them|when i was 18 years old i i|0.54
+017|minus 12 is a negative 4|12 is 94|0.63
+018|a dog actually usually a male dog|dark actually usually male dark|0.64
+019|more insulin equals more fat storage|eat equals more fat storage|0.61
+020|but that smiling is actually a universally correct expression of pleasure|if you think about it it's actually two different things the|0.53
+021|this real time i mean it's in a computer so now you can drag and drop you can delete|school time i'm going to see a computer so now you can track a job you can see a|0.67
+022|clearly when i first started going through the first stage where things really started happening that were different than what had come prior|clearly when i first started going through the first stage where things really started happening that were different than what had come before|0.73
+023|true blood series can be|through blood series limb|0.53
+024|i haven't tried co2 oil i know it's available but i haven't tried it|try to steal your story or to develop their own|0.60
+025|and the relationship between you and that family member is characterized by discord and tension|relationship between you and that family member is characterized by this orientation|0.67
+026|really for anybody out there who's using older imacs or mac|find anybody out there doing the whole time of|0.68
+027|level and the extent of the force and control that they apply to other people|had the sense of force and control that they employed to other people|0.63
+028|underpinnings to her|her meetings to her|0.58
+029|and he basically nothing fancy missed his point|was really missing the point|0.56
+030|to get help along the way for instance if you're not a graphic designer|when i was a little school i was|0.60
+031|something that ken talks about specifically something i wanted to bring up when we were talking about vipassana and something that i wanted to you know|that he talked about that he talks about specifically something that i to bring up i want to talk about from his talk it's something|0.69
+032|these are just a few examples that show the value of sap product lifecycle management solutions we have many many|these are just a few examples that show the value of sbp brought to lifestyle solutions we have many many|0.71
+033|that determines the shape and form of the vessel we live in|this is all the shape form of the vessel we live in|0.67
+034|forth i forget exactly how it works but it also controls the volume|i forget exactly how it works but it also controls the volume|0.71
+035|when jesus rose again|in one sense it's canada that|0.54
+036|available so you can edit your documents in the mobile web browser that includes android 2 2 froyo or later|vimeo or youtube and talk about these things people want money for that too so there's a whole bunch of photo or video|0.69
+037|although the internal recording is at a maximum of 24 megabits per second|30 is recording is a maximum of 24 megabits per second|0.62
+038|people are in my face all the time if i want to know something all i have to do is google it|people are on my face all the time if i want to know something all i have to do is google it|0.73
+039|it has to be done within 24 hours a mini stroke and so i didn't go in time for that|be able to do hours 24 hour studio so yeah i did it always time for that|0.61
+040|people to guide them and that's where the health coaches come in and this is why doctors need people to help them implement these things but once a person experiences how much better they feel when they|books inside them and that's where nurses come in this is why doctors need people to help them implement these skills but once a person experiences how much better they feel when they|0.73
+041|actually a very intelligent man who cares deeply|the key very quiet and no one cares at all|0.61
+042|get told that quite a lot especially by my mother|so much especially by my mother she like|0.60
+043|ho where to begin with this|to begin with this|0.60
+044|can i use that and she said yeah of course so yeah excuses are for amateurs|i use that and she said yeah of course so yeah and she uses it for amateurs|0.68
+045|my employees with some money that they can go out to the exchanges to get their own insurance|by employees with some money that they can go out to youth exchanges to get their own insurance|0.73
+046|use water or orange juice fresh squeezed orange juice you can also use|who goes into the venture capital world when you could get all this|0.55
+047|what we call business development training in other words they taught me how to sell they taught me a little bit about the product|what are business development training in other words they taught me how to sell they taught me a little bit about about the product|0.71
+048|i'm here to talk about go obviously|the we're going to make so let's|0.52
+049|apple app store i'm pretty sure it's on android 2 so what you do is you download the app and then when you click get started it'll say what is your name and you type in your name and it's going to start auto populating|on the app store or pretty sure it's on the play too so what you could do is you download the app and then when you click that get started it'll say enter your name and you'll type in your name as the star auto populating|0.55
+050|it's easy to get people to sign up for the idea of accountability i mean everybody knows no man's an island|i'd like to give a out to the carnegie mellon program i it's best the years years|0.57
+051|and she said i'm not going to see it but you will see it she says to the one there tears streaming down their eyes|and she said i'm not going to see it because you would see it so one day her eyes|0.68
+052|and it'll tell you why you shouldn't buy it for your laptop|you i was driven by a few lap times|0.63
+053|video in a series of video about the arduino robot|video and this is a video about our robot so he|0.69
+054|when i write i kind of drag my pinky right here and i always get like a black mark because i'm dragging my pen but these do not transfer onto your skin|when i write i kind of drag my pen across the paper and i always say please i'm trying my best please do not judge first skin|0.70
+055|and increase awareness among my audience members i needed to go deeper|increase awareness in my mind i need to go deeper on|0.69
+056|in directx if you are doing programming in that it is left handed if you are doing ah programming in opengl a lot of other systems it is right handed|reaction if you're doing programming in that age if you are doing programming in open source i want to introduce you to|0.57
+057|general theory of relativity and curved space time in this painting in the very back you see a convex mirror and on that mirror the painter drew light rays on a curved surface so he knew that the shortest paths on curved surface|nervous activity nerve space time this painting the very back you see a mirror and on that mirror the paint turns to light rays on a curved surface so when you look at the pass a surface|0.52
+058|there are two types of teeth the first type is the anus|those two times i've seen the first time is in kenya|0.69
+059|so in theory that makes facebook's job a lot easier you build a single solid|so in theory that makes vice president's job a lot easier you're merely a she solid for|0.67
+060|now let's say it all together with me|now i need to take it all together at once|0.62
+061|on the subject as well you never know what you'll catch and at the same time|on the ship where you never know what your cash and at the same time|0.62
+062|the giant a giant flown aboard an ac 130 that was discovered in iraq or afghanistan|giant a giant flood board 181 that was discovered in herat afghanistan|0.66
+063|like far away from what i was sanding like in my camera i was holding my camera with my hand it got a little bit tough so i only swatched one palette and then i almost dropped a couple of their lipsticks so i got clumsy but anyway|far away from what i really said it has become a clich it's used also by amateurs when they don't really know what to say so i lost my balance and then i almost dropped a couple of times and i didn't so i got on but the question|0.68
+064|always pads were the pads that|always pants were the pants that|0.64
+065|how you can use your customer database to earn more there are four powerful processes to save money and increase sales|use utah as a renewable energy source there are four powerful presences that save money and increase yields|0.68
+066|well wait a minute i followed you up until that point and now you're telling me i don't want the process of change of myself to go on forever well you're dead wrong about that i want my process of change to go on forever|well wait a minute i finally showed up until that point and now you're saying to me i don't want the process of changing myself to go on forever which is like boat come on man i want my process of change to forever|0.72
+067|non event and so it's important for the operators to know that|of it and so it's important that you not because you know you|0.63
+068|they were putting a lot of their gear|they would put in a lot of their year|0.60
+069|been out there the ocean occupies about 80 of the earth's surface there is almost a limitless supply of sea vegetables|been out there the ocean occupies about 80 percent of the earth's surface and there is almost a limitless supply of sea vegetables and|0.70
+070|auto mode nonetheless i have received a handful of questions regarding the various scenes that are in|moore load done this i have received a handful of questions regarding the various stages now in the|0.68
+071|what you mean this the lapel mic i don't understand what's distracting about it|what do you mean this is the libelous i don't understand what she's ranting about it|0.65
+072|now is you have your vpn software here and it's encrypted|was like you have three months of way here and it's get colder|0.64
+073|and bring out whenever you need to achieve a specific goal let's get right into it|and bring out whatever you need to achieve a specific goal it get right into it|0.66
+074|you but listening to some of your audio clips and some of you wanted to|some of you know what i'm talking about some of|0.64
+075|investing into things is to make sure that you have money set aside in case something happens|into this is to make sure that you have money set aside and yes something happens|0.68
+076|make this quilt what you're going to need is two yards of a light a medium and a dark we've used cotton couture by|this quill wants you to need is two yards of light a medium and a dark what if you saw the door by my|0.68
+077|we're seeing that in our energy prices and in the energy boom that's happening in the united states|is in indication our states are surprised that this is happening in the states|0.58
+078|ad where they tried to suggest that the iphone was your mom's phone|where they tried to suggest that the iphone was your phone|0.70
+079|i think it was about four or five days ago they said they're going to get rid of their dly|i think it was about four or five days ago they said they're going to get rid of their yearly now|0.68
+080|the same matter like i said imagine going around the figure and how long a distance do you run|us and kids imagine going around in fear that our closest friends|0.64
+081|odd there are many strange places named hell on earth but no heaven|author but it's rich names like hell under earth but no it|0.65
+082|what they are is 3d goggles they have two independent screens they're like 850 by|3 years old like old|0.56
+083|you know earlier you mentioned that maybe i was opposed to medical marijuana and i said no i was just|no i don't think there's any reason to think that maybe it was beethoven law of of know that it was|0.65
+084|costs and you have to show that there isn't any cheaper more humane way to obtain these benefits three in practice predicting the consequences of war is extremely difficult extremely difficult|and the show that just getting cheaper and more ubiquitous way to obtain these benefits in three in practice predicting the consequences of war is extremely difficult extremely difficult|0.70
+085|fill it out all the paperwork that we've ever had|all the people we've ever had|0.69
+086|made to seem less important|make it seem less important|0.64
+087|and in france my favorite drink was orangina|favorite song was oregon trail|0.61
+088|so i kind of want to address what you and i were talking about first|it's like i don't know what to do with myself|0.65
+089|so he talks about books and in this particular one he talks about russian literature with reference to other world literature and so forth|is that so when a lesbian marries another lesbian that lesbian relationship becomes more interesting and so forth|0.70
+090|recover and cross rock recover and cross rock recover shove|self esteem to walk through a lot of doors that i didn't walk through so i you|0.55
+091|great question so a lot of people out there will go out and say well you need to enunciate your words and say it|great way to do it so a lot of people out there that go around and say we have to really go out and grow this|0.67
+092|so one solution is to empty the box of matches and nail this box on the wall|one solution is to update the parts of that lie on these parts of the wall|0.64
+093|from wantonly destroying the lives of others|from one to then destroying the lives of others|0.63
+094|to the right train station or putting it onto the right street|you know do the right training session at the right time|0.67
+095|you've got to get back up again because we all fall we all fail|you've got to get back up again because we all fall we all fail|0.70
+096|and i will give this file the name of the component the name my component shall have that's just a naming convention which is kind of used in the vue js world|david irving is a holocaust denier a neo nazi a member of the british national front which is a fascist organization in the kingdom|0.68
+097|center of a picture to give you an even pattern of light|official to give you an even better power for it|0.57
+098|everybody who's joining in on that event and you want to have a place for only those emails you can swipe them across and put them in that one organization tab so that way you can have them all right there all for when you're ready|everybody who's joining on that event and you want to have a place for only those emails you can just sweep them across and put them in that one organization's inbox so that way you can have them all ready there all for when you're ready to|0.73
+099|hey this is scott today we're going to take a first look at the build and design the tamron 70 200mm f2 8 g2 lens|and secretary kerry took a first look at the building instead of the same routine 72 hours after the bombing she toured it|0.67
+100|what happens on the sat is that there's actually two different segments of math questions you have|happens on the sat standardized two different sections of math questions you have|0.70
+101|and speak to and interact with both the|years ago the|0.51
+102|in the case of exercise it's not just a matter of working or not working|days of exercise is not just a matter of working or not working|0.66

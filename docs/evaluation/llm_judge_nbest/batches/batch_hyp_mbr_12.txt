@@ -1,0 +1,104 @@
+HYP_MBR | BATCH 12/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|so that's all i have that's all i got for christmas and i really enjoy my presents and if you like christmas and if you like this video give it a thumbs up comment down below and subscribe see you guys next time|that's all i got for christmas and i really enjoyed my present and if you like christmas then if you'd like to give your thumbs up comment down below and subscribe to the guys next time|0.70
+002|it includes almost everything we saw in the dslr kit but adds a couple of items for run and gun style booming|lose almost everything we saw in the next stage of learning but as a couple of items were run and style boomerang|0.64
+003|immigration law immigration act 2014 has brought down the number of appeals against home office|migration to london immigration act 2014 has brought down the number of appeals against decisions|0.61
+004|of us but anyways so this is actually nothing to get excited about because if you look at the long term then you see|facebook anyway so this is actually nothing to get excited about because if you look at the long term that you see|0.76
+005|trying to start my business i didn't have control i really would take|trying to start my business i didn't have control i really wanted to take|0.73
+006|experiencing the emotions of the other people around you|is the emotions of the other people around you|0.75
+007|that's a major or that's a major seventh or that's a you know diminished chord or that's augmented or you know that chord there happens to be a dominant seventh so that's where|a major seventh or a minor seventh that's a consonant chord or that dissonant message so that chord later happens to be a dominant seventh so that is where this|0.58
+008|himself can now become the very aspect of himself to become the instrument to create beauty in the world|himself he now becomes the very aspect of himself to become the instrument to create beauty in the world and|0.85
+009|each bottle contains 1 billion cfus of probiotics and 2 tablespoons of apple cider vinegar only 80 calories per|each monitor has 1 million cfus of permafrost and two tablespoons of apple juice only 80 gallons per|0.61
+010|so that's the similarity with our philosophy|try to summarize it in a few words|0.53
+011|so my second worst memory happened to me when i was probably about 23 or 24|so my second mistake happened to me when i was probably about 23 or 24|0.63
+012|that he had allergies on top of it so that's another component|get out of college so that's a dollar per day|0.50
+013|and whatnot but first let's talk about the practical difference what i felt while using these phones and in a nutshell in terms of speed difference if you are expecting that moving from|and what not but first let's talk about the practical difference what i felt while using these phones and in a nutshell in terms of speed difference if you were expecting that movie from|0.76
+014|acres and hills and a pond and you know a variety of vegetation so it was with a lot of excitement and anticipation that the staff brought mahini to her new home|layers in the earth's body and a variety of vegetation so it was with a lot of elation and excitement that i have brought me into a new home|0.64
+015|even though he's very much spoken out against cults|even though he very much wanted eric to|0.67
+016|implication of this feature|implications of this vision and|0.62
+017|back at people that's sort of to me and a lot of our cases have been those intrusion cases sort of the basic cases here in our area|and people that sort of to me a lot of our cases have been the social cases the basic cases in our area|0.72
+018|not surprising given they are manufactured by the same company and the app is also where we get to download the media for free|surprising even they're all manufactured by the same company and the episode you're about to download the media|0.71
+019|so we have all of our purple cabbage sliced|kind of all of our moods happen in just a second|0.55
+020|especially when i see it changing people's lives|see we're actually changing people's lives the|0.62
+021|system creates antibodies to fight back crash course explains here|see some gray hair about it and fight back and you'll gradually see my time|0.55
+022|delighted to have him starting his faculty position in april and then i'm delighted to announce|delighted to have him joining the faculty at penn and then i'm delighted today to|0.63
+023|jason asks her what is that she says oh i was pouring wine i poured it for you|and asked what is that she says oh i was pouring why i poured it for you|0.71
+024|you do have this in your bag and you|have in your back and|0.63
+025|return books taken from the main library to the king's manor library and vice versa unless they have been requested in that case you need to return the book to the library that you issued it from|term booked down from the main library to his local library and vice versa or less they've been requested in that case you need to return the book to the library that you borrowed it from|0.67
+026|it's a panasonic camera really awesome camera|to pan down on camera a really awesome camera i|0.71
+027|real human application that we can pull from that|what are the human implications of that but because|0.52
+028|i have dreams of collaborating with some of the greatest people|have dreams of collaborating with some of the greatest people|0.88
+029|for mark numbers between 0 3 and 0 8|of all numbers between 0 and 1|0.48
+030|an inquiry into how to improve children's education in france and he was intrigued by what the british were doing|ignoring his admonitions to improve his diction and pronunciation he was intrigued by what the british were doing|0.63
+031|i already got an rsp it's nice when you don't have to worry about finances and those of you thinking scott i'm paying you on patreon man you're rich no no no no no no no that's not what i'm|this says i can't get a girl to talk to me it's nice when you don't have to worry about finances those of you thinking just got a paycheck or a pay raise no that's not what i'm talking|0.65
+032|out this morning it's our commercial product and i've got a few slides i'll try to go through the slides pretty quickly|this morning i saw a sign on the motorway that said if you see a snake on the road do not|0.55
+033|i was under a great deal of pain and stress in my right foot on the bottom of my foot and i had no idea what the|i was under great deal of pain and distress and my right foot and the bottom of my foot and i had no idea what|0.72
+034|you might be familiar with some of our products so as you can see on the left hand side here|you might be familiar with some of our products that are eyes on the left hand side|0.74
+035|we store water in the summer season when it's very cold|one of the seminars i went|0.40
+036|the pacific the new flagship model won't be a high powered beast if you're looking for 20 nanometer manufacturing and high bandwidth memory then the tonga isn't for you|civic the new flash chip might won't be a high power piece if you're looking for 20 nanometer manufacturing and a high bandwidth with memory then the target isn't for you|0.74
+037|force yourself to make that next move|force itself to make that next move to|0.68
+038|so further action what is further action|further action what's further action|0.82
+039|today we're going to give you a behind the scenes look at what we've been doing in the stage 3 colts lesson|ted i'm really glad you're here thank you so much for being here it's an honor to have you|0.56
+040|the beauty of using an auto top off system for this is that it's easy to use|in the beauty of using non toxic system releases|0.63
+041|and there you have just played every single song that can be played on|there you have just played every single song that can be played on the|0.87
+042|for example the bitcoin virtual currency situation and also oftentimes there are financial schemes that should be regulated but they are not regulated because they don't|for example the minority currency situation and also often times there are financial teams that should be regulated but are not regulated because no one comes|0.71
+043|how we treat each other is really that internal piece you can't measure very well but you can feel it|trick together is to treat each other as equals you can't boss each other around|0.55
+044|i consider myself very lucky to meet the 500 students who come for breakfast and lunch each day at the dining hall i have a special nickname i call|i consider myself very lucky to meet the 500 students who come for breakfast and lunch each day having done nothing i have a special nickname i call|0.85
+045|the more influence you start having on the world and the happier you become because the greatest desire of every human being of every person|the more influence you still have on the world and the happier you become because the greatest of every human being of every person|0.73
+046|you guys are already suggesting a bunch of different|so i wanted to share a personal shift|0.49
+047|now let's say it all together with me|now i need to take it all together at once|0.75
+048|that song for you saying that you own that song if it is not in the itunes database then it will take your song the version you have on your computer and upload it to an itunes matched server|song for you is that let you own that song if it's not in the isrc database then it will take your song the version you have on your computer and upload it to an isrc master server|0.77
+049|will show you how to exercise the w sound|show you how to exercise words down|0.81
+050|love you guys hello austin it's great to be here|please you guys can trust me here|0.46
+051|and you do it like in i mean you think about it long enough but you let everything go|what i like a lot i mean you think about it carefully enough mistreated woman you let everything go|0.64
+052|i always get the bullseye i'm all|i always get the person that i'm always|0.66
+053|i'm sure somebody can explain how and why that happens i don't really care at the moment|i'm sure somebody can explain how what happened and why at the moment or how we are|0.64
+054|i'm right now plans every single one of them has said and you know what now that i'm here i've realized what the hell was i waiting for and there's a massive misconception with|we're running up against every single one of them at the same time so you walk out there and meet them and realize what they're looking for and there was some massive misconception with|0.61
+055|well no right that's a big problem and it's something our society has not addressed at all|yeah no right that's a big problem it's not because society is not addressing it at all|0.72
+056|want to point out is it doesn't matter if it's somebody just off the street if he's doing their makeup or if it's selena gomez cindy crockett it doesn't matter|want to point out is that it doesn't matter if somebody shovels the street if it's going to make it or if it isn't it can go back to the ground|0.66
+057|i am a father raising two teenage children i want to keep my kid's life as normal as i possibly can so a big part of that is having power|am a father raising two young children i want to give my kids a life as normal as i possibly can so a big part of that is having a porn one|0.77
+058|now we're talking about the packaging itself is really starting to change in this digital environment and when we need to go to the store|kind of back into itself so it's not just changing the individual but what we need to do is change the whole|0.50
+059|the 25 most important people to the growth of your business|the one that i'm most proud of is this one|0.47
+060|would make me weep and i'd have to pull over to the side of the room|make me weak but i have to pull it over to the side of the|0.77
+061|second thing is a circular polarizer great for obviously exterior shooting but also good for getting rid of reflections sometimes in windows and things like that|second is i stood on the porch and cried for obviously a hate shooting but also to get rid of reflections sometimes in windows and things like glass|0.67
+062|with the same technician so all of a sudden|with the same technique so all of a sudden it's|0.80
+063|has its own density and will fall in the liquid|has its own destiny and will fall and in the liquid|0.79
+064|good to help people mission accomplished|her to help people but she got impatient|0.73
+065|true blood series can be|through blood series limb|0.48
+066|unfortunately strict enforcement of the laws weren't seen until the 1980s|fortunately strict enforcement of a class quota is not yet in|0.55
+067|fill it out all the paperwork that we've ever had|all the people that we've ever had|0.67
+068|hey how's it going youtube i'm 5'6 and i'm here to|and it's clear that viruses can be transmitted|0.40
+069|yeah observations is like what it sounds like you just sit there and you observe|observation is like what it sounds like you sit there and you observe|0.67
+070|i never felt comfortable with that name because it was so white|i never felt comfortable with that name because it felt it was so white|0.73
+071|wellness is 100 in our control simply by thinking positive|is 100 in our control simply by thinking positive|0.82
+072|we're angry we're happy we're sad we're mad we're delightful we're joyous|angry we are happy we are sad we are mad we are in love and we are joyous|0.72
+073|hello from germany good to see you we are getting a solar storm|from germany to see you we are we are getting so|0.60
+074|assalamu alaikum wa alaikum assalam says somebody from sorbonne in paris|i understand why i do what i do it's because somebody from s o paulo in paris|0.55
+075|this course is all about transitions this video is all about transitions|this course is all about transition in this video i'm going to talk about transition by|0.64
+076|digital mailbox into your mailbox that you would typically have in your home|of mailbox into your mailbox that you would typically have in your home basically|0.76
+077|to give me the insurance policy at all because i had very high cholesterol high triglycerides and hypertension and meanwhile at the same time i had horrible irritable bowel syndrome i mean like|me an interest in psychology because i have a very high iq i trained as a clinical psychologist and meanwhile at the same time i got horrible grades from my math teachers maybe like|0.61
+078|of the mixed multitude there and he only tells them two things and this entire portion there's only two things|for 30 minutes or so and he told us two things that this arabic sheikh told us to|0.51
+079|as this eternal light of creative intelligence awareness and power|self as an internal guide through native intelligence awareness and power|0.62
+080|it contains permitted natural coloring added color flavors natural nature identical artificial flavoring substances contains no fruit|it contains permanent natural colorant edible color flavor natural scent edible artificial flavor and substances i can't pronounce|0.57
+081|next week i will be making my debut|next week i will be making my debut|0.74
+082|huge diamonds or something of that sort but you really can't accurately collect data like that for a large group of people|timed into something of that sort but you really can't accurately collect data like that for a group of people|0.80
+083|some limonene hash oil some d limonene hash oil|being an actress being an actor|0.62
+084|but that can be useful if you want to have some if else check in your loop checking if you're near the end|the gap between some of the fastest growing economies in the world like china and india and the world's largest economy|0.49
+085|that visit ended quite quickly and with awkwardness all around there's not much to do we went to the second school|that wasn't exactly what i had in mind with no work so i decided to do|0.49
+086|you know oh this is the good stuff and people od|i don't always stuff my emotions|0.47
+087|most healthful members are 7 inches long|i'm so happy to be here today|0.39
+088|history and her name was mrs moses i've told this story before but it's a|this video i was smoking cigarettes and i've told this to performers|0.47
+089|than tenths and children need to learn this principle|to say this genistein is a plant estrogen|0.44
+090|so that's basically the three things that they cover that g fuel should give you a benefit to|that's basically the free things that they cover in the gmv should give you a benefit too|0.64
+091|the less you move the knee the less|the less you move the less|0.76
+092|you but listening to some of your audio clips and some of you wanted to|some of you know what i'm talking about some of|0.57
+093|because i have tried to use it that is more on that in another video soon|because i have tried to do so and that is more on that in another video so|0.64
+094|between 30 and 66 on mine and there's|the movement authority and a citizen's arrest permit already and there's still|0.55
+095|people tied they worked they had sound doctrine|people's eyes that weren't shielded to 100|0.44
+096|is also very heavy and is seven and a half pounds over 11 and a half inches|also very heavy at 7 5 pounds and over 11 5 inches|0.72
+097|you could say the table that is in the room or the table which is in the room|would take the time who's that in this room or the time you wished this room|0.65
+098|right or|2000 miles across the united states|0.43
+099|before jumping into my scheme let me just tell you that for jeevan anand|before the pyramids came let me just tell you that for seven hundred|0.74
+100|they treated her like she was that ain't shit|three years old and i said what what did you say look at that|0.48
+101|and produce it there we feel it's a safer bet to produce it here|and producing there were villages seven miles apart producing|0.48
+102|but let's take a narrow definition and just say we're literally only talking about the act of paying the money|but let's take a narrower definition here today we're literally only talking about the act of paying the money|0.78

@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 10/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|the i02xpress usb audio interface|is the test express me on the rear face|0.58
+002|now what has happened is|what has happened is|0.71
+003|so that's basically the three things that they cover that g fuel should give you a benefit to|that's basically the free things that they cover the gmv should give you a benefit too|0.70
+004|discovered a passion for sitting in a bathtub full of 20 bills while pouring gold coins and gemstones on your head|even a passion or a hobby like needlepoint or something like that girls going to the gym i was like no|0.71
+005|taking themselves to the point of muscle failure but these are also the same people that have been known to herniate their anuses|taking themselves to the point of mental failure but these are also the same people that have been known to eradicate their ants|0.72
+006|something you should do to help yourself i highly recommend that you go see your own treating physician before the insurance examination and then again after the insurance examination|thing you should do to help yourself i highly recommend that you go see your own treating physician before the insurance contamination and then again after|0.75
+007|possibly make it because i hated history when i was a little girl|i'm a manic depressive with bipolar disorder|0.59
+008|goes on to say frank sachs lead author on the report said he has no idea why people think coconut oil is healthy it's almost 100 fat he says|goes on to say france as the lead author on the report said he has no idea why people think going north is south it's almost 100 percent fat kills us|0.64
+009|are you saying that there are parts of our bodies or certain organs or cells within our|what you say is that all parts of our bodies are certain organs or cells within our|0.65
+010|because i love the sweeps i don't know why i enjoy them so much and i think that one of the main reasons why i like the sweeps is because it's|i have these sweeps i don't know why i enjoy them so much and i think one of the main reasons why i get the sweeps is because|0.71
+011|but there's not so we'll have to enjoy this one together|but try to do this doing in as we can|0.52
+012|for personal attacks i'm pretty good at shrugging them off they don't know me personally so their comments don't really hurt the real me if they don't like the way i sound or look they'll be like|personal style i'm pretty good at turning them off and they don't know me personally so your comments don t really hurt the real me if they don t like the way i sound or look|0.72
+013|now this is another favorite actually of mine|this is another favorite actually of mine|0.65
+014|website and you set up a trigger which you would use as a voice command and then when you use that command it does a specific thing|it and you set up a trigger which you use as a voice command and then when you use that command it does a specific thing|0.73
+015|she's doing away with it we are finding out that everything is that's up is down left is right in and out|just do it away with it we are finding out that everything is that upside down left right and out|0.70
+016|then we have the costal cartilages costal always refers to ribs so these are right here|that we have they cause our hormones to go haywire so these are here are|0.66
+017|and i have a tablespoon of jalapeno fresh jalapeno|and i have a with smoothie i've got the banana called fresh hot|0.60
+018|document that requires a change request once it's been|documents and requirements to change requests it wasn't about|0.56
+019|and i felt very strong like i started to believe in my own decisions like my own thoughts became so|i felt very strong and started to believe in my own decisions and my own thoughts became so|0.70
+020|and that all sits at the heart of our 2020 goals|years is hardest if you're 23 years old|0.53
+021|of laws have we just been talking about recently in physics|the cause that we've just been talking about recently climate|0.73
+022|but before we tell you more about the redmi 5 if you do love the fact that we bring to you guys the hottest leaks out there as soon as we can then toss a like and subscribe to our channel we will see you in the next video|if we can tell you more about mfi if you don't love the fact that we bring to you guys the honest leaks out there as soon as we can then it costs|0.70
+023|there's just some security in belonging to a group even if that group gets picked on by another group|just to securely belong to a group even if that group gets beaten down by another group|0.69
+024|unfortunately strict enforcement of the laws weren't seen until the 1980s|fortunately strict enforcement of a class quota is not in in|0.58
+025|a 10 minute delivery for a 30 second audio there are several reasons one is that we created another service eight years ago|10 minutes of data for a third second out there and there are several reasons one is that we didn't discovered it eight years ago|0.67
+026|we found that for glucose and the glucose in maltose the same maximum rate of oxidation was found with|we found that for as alzheimer's and sclerosis the same maximum brain thickness was found with|0.61
+027|and it's important to say kassaaa you have only two|is important to of why you have only two|0.61
+028|terminal window if we type that again and the shortcut for doing that by the way is up arrow will repeat the last command|i'm going to quote david attenborough the naturalist and broadcaster from the british television channel|0.64
+029|the constitution after the constitution has been written|i to to important to story that|0.50
+030|gadget mouse making company and they have this app on the app store you can pick up for free|excited to watch me come and then after that i'm going to|0.68
+031|in how we conceptualize cyberspace|how we conceptualize cyberspace|0.66
+032|but relatively new to firearm ownership in general right|a relatively new five year partnership in general right|0.61
+033|you wonder how do things get to be like this and why|course how think think gets to be like this and why|0.61
+034|psychologist and they're a private psychologist then it may be that they're not going to be|there are private psychologists that are made|0.66
+035|everything i just use a little bit of that to shear it down or use it full strength|to get everything and you put it on and you shorten it or you lengthen it so if you're taller maybe|0.71
+036|i love my experience i thought it was really fun and it's a nice job|funny words i thought it was really fun and it's charming|0.66
+037|one out or if you divide by a negative one you're left with a positive x squared|house or if you're divided by kind of one you love with a positive and square|0.69
+038|and i'm just like this is me you know i'm real|i am just like this is me you know i am real|0.61
+039|lovely simone and francesca my lovely assistant|of this support and financial support|0.63
+040|growth going before you put them in a sunnier location to push vegetative|what i've been on for the last 10 years and i'm to show you|0.54
+041|so i have two and a half of these size cups which is probably like the equivalent of|i have two and a half of these nice cups which is probably like the equivalent of|0.66
+042|computer not a city not even a building an entire computer|could face the death of the building|0.63
+043|as a spy she's helping the greasers because there's a what right the big rumble is going to come down between the socias and the greasers|in spanish he told me that you need to speak english because this is america and when the big rebels come down between soldiers and|0.60
+044|they should consider putting some here in the front because even though we have the no flight at night time we still have the twilight which means you can fly 30 minutes before sunset and you can uh in 30 minutes before|this is the appearance time here on the flight because even though we have the low flight and night sight we still have this twilight which means you can fly 30 minutes before sunset and you can do it 15 minutes before sunrise|0.59
+045|good general guidelines|just say this|0.53
+046|not because he suddenly stops being agnostic and starts believing in god at least not that we know of|because he suddenly stops being agnostic and starts believing in god and does nothing we know of|0.70
+047|is neither i actually use the overhead lights which are mostly fluorescent which i know is a big no no but this camera|together i actually used the overheard ghost whisperer music for which i know is about to go on but the team runs|0.69
+048|the american chestnut tree at one time approximately 100|about justice for the one time and the|0.64
+049|red is spelled r e d great job we did it|way to spell the r great job we did|0.57
+050|benzodiazepines are often converted to active metabolites in the liver examples include diazepam and flurazepam the important medications that you should know is really diazepam|benzodiazepines are often converted to active metabolites at lower inhaled sedatives like ativan and valium the important medications that you should know is really ativan|0.68
+051|immigration law immigration act 2014 has brought down the number of appeals against home office|migration to london immigration act 2014 has brought down the number of appeals against obviously|0.69
+052|or dimensions to the concept of law|or dimensions to the concept of law|0.64
+053|politically correct way of saying i did whatever my parents told me to do so i went to university i wore a lot of turtlenecks and i|correct way of saying i did whatever my parents told me to do so i went to university i wore a lot of turtlenecks and after|0.72
+054|i got this 08 mazda 3 with 130 miles on it|i don't know hundred miles is miles|0.62
+055|i have a special nickname i call hampshire college|have a special daytime i call amsterdam college|0.70
+056|i only use this laptop for school so when i need to get on wikipedia or to upload my work to the system this little|use the name of the institution regularly to get the right meaning or to talk about my work so this is|0.68
+057|additionally topical steroids are dangerous this can worsen conditions such as herpes simplex keratitis fungal keratitis and acanthamoeba keratitis|zona in addition to these hypothalamic secrets are dangerous these endorphins and serotonin and dopamine and caretaking hormones hang out in the pituitary gland|0.63
+058|the flu sorry about that and as i'm the last speaker before your lunch sorry about that i'll try to|who's going to be right last time less than a minute before the crash sorry about that|0.65
+059|hi and i'd like to talk to you about|i'd like to talk to you about|0.67
+060|of course the lens on the x100f isn't interchangeable and that's one of the things that people love about the camera it makes it really compact but it's also one of the weaknesses of the system without an interchangeable lens it's difficult to get different|course digitally as we hear today is interchangeable and that's one of the things that people love about the camera it makes it really come back but it's also one of its weaknesses to the system without any inter lens lenses difficult and difficult|0.56
+061|this is your change or i can just keep this and i can give you a pin|surge engines or i just can't it i can never remember|0.61
+062|you can also use our json web token decoder|because i was it's really cool|0.54
+063|what we're going to look at now is what happens if we start bringing the concept of woody beds or hula culture into this and a little bit of excavation and how we can kind of turbocharge this|we're going to look at now is what happens if we start playing the concept of warheads or nuclear missiles and a little bit of escalation and how we got into the missile crisis so|0.71
+064|especially when i see it changing people's lives|when actually changing people's lives|0.66
+065|and sherry whereas before it was bourbon|is what it was before was a monument of|0.58
+066|google has just announced the newest way to save your precious photographs with photoscan|has just announced the newest way of your precious photographs with scanning|0.61
+067|but we never give the words back so i'm just going to be honest and call it stealing we usually take words for things that we like like delicious food we took kumquat from chinese|but we never give the words back so i'm just going to be honest and call it stealing we usually take words for things that we like like delicious food we took hummus from chinese|0.73
+068|i thought it was pretty fun and a great experience|i tried to speak english and look at the world|0.59
+069|plus that were just announced today i want to give you the four key|because i was just announced today i want to leave you with the 40|0.62
+070|basically the reason we all got so motivated|basically the reason we are not so motivated|0.64
+071|may not be very good and the video actually may turn out to be totally|to be very gradual about starting out to being totally|0.63
+072|often when we talk about white privilege a common rebuttal is i can't be privileged i grew up poor or|when we talk about white privilege a common retort is i can't be privileged i grew up poor or|0.70
+073|all right i'm gonna read you|great i'm going to do this|0.60
+074|inherently shake so when you try and move those devices manually you inherently introduce|inherent shyness so when you try and move those devices magically you inherently introduce|0.67
+075|indoor professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if you were shooting|in your professional sports arenas are lit pretty well in fact if you were to go on the sideline of a professional basketball game you would have a lot more success than if|0.72
+076|this means that australia has promised not to send refugees back|this means that australia's promise not to send refugees back|0.65
+077|cabin fever has hit some of the members of the rainbow aero modeler society rc club check out this clip shot during the new year's freeze fly in franklin wisconsin|you guessed it's some of the members of the rabo air balloon club check out this clip shattering the current free flight record it was cast|0.64
+078|for a presentation so trick number one is|presentation so trick number one is|0.71
+079|want to let them know like hey you don't have to do this just kind of make them think like oh wait why am i doing this again so|to let them know hey you don't have to do this just kind of make him think like oh why am i doing this again so|0.72
+080|had a floodplain the size of france it was truly massive and i was working with a group|a flight plan the size of france it was massive and i was working with a group|0.68
+081|hello world i'm shannon morse and this is threatwire for october 2nd 2015 your summary of the threats to our security privacy and internet freedom our apologies for not having an episode to you earlier this week|world i'm shannon boyle and this is why we're here for october 2nd 2015 truth summer gives a threat to our security privacy and internet freedom our apologies for not having an episode to you earlier this week|0.73
+082|doesn't always work because as i mentioned in the elasticity video cigarettes are very in the last|start was wrong because i didn't start at the end of the video sequence i had to the|0.61
+083|he wanted to unite the roman empire in the early 300s ad|wanted to conquer the roman empire in the year 388 a|0.62
+084|clatter of mud and dirt everywhere on you even your face|of turns everywhere on you even your face|0.67
+085|pop up and do the beginning of this video|little pop up at the beginning of this video|0.70
+086|trying to start my business i didn't have control i really would take|trying to start my business i didn't have control i really wanted to take|0.67
+087|the ultimate owners so let's say for example you have someone coming over to your house to visit your family so it could be a grandparent it could be an aunt it could be a good family friend and they say to your child|there to be owners so let's say for example that you have someone coming over to your house to visit your family to read who could be a grandparent could be an aunt could be your family friend and they send your daughter|0.70
+088|61 of americans admit to peeing in the shower i don't pee in the shower oh that's a lot|he wriggled out of my grip and made a beeline for the shower i couldn't be in the|0.68
+089|sometime between 6 and 8 p m eastern and we'll get that out|september 26th came and went and i didn't work there|0.54
+090|you know i guess dual stereo headset whatever you can|i guess dual steroid hd whatever|0.69
+091|program covering everybody admittedly with fewer drugs covered but every person in the province of ontario not just those 24 and under and you know suspicious people are going to wonder whether or not that|was was to old you|0.50
+092|starting a business is very similar to creating a painting or writing a song it's something that didn't exist before but your vision and your will brought it to life if you're a person who wants to do something in life such as writing a book or writing a book you can get involved in a group of people who are willing to care about you you can make it bigger you can build your own life you can do it better you can do it better you can build your own life you can do it better you can do it better you can do it better you can do it better|business is very similar you end up painting or running a law it's something that didn't exist before but your vision your will brought it into life if you're a person who wants to do something like this guy's running|0.73
+093|uniq all makes four|30 or by its floor|0.53
+094|more than 28 percent probably 30 percent of what a bitcoin is right and we see this|more than 28 percent probably 30 percent of what coin is right now is|0.66
+095|i don't think there's a better time to share the good news with somebody|there's a better time to show you something|0.65
+096|i'm assuming he has not i might do a different ad on that one but definitely a third party advocate|me being the nice guy i might do a different angle on that one but definitely a third party having|0.67
+097|mode or single player mode by the way this is also a|mode single player mode by any way this is also|0.69
+098|my hand and the injected some fentanyl just to relax me|out the chick that's infected with the gas pestis|0.54
+099|where is the car wo ist das auto|where is the car full is dusty outdoors|0.60
+100|areas where steve jobs beat bill gates|i always with steve jobs bill gates|0.62
+101|likely don't have it there are situations where you can still have it|don't have it you're control trouble you something|0.60
+102|so it might be something you want to invest in but there's that book|so it may be something you want to invest in but there's that book|0.66

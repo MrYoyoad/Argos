@@ -1,0 +1,105 @@
+HYP_VOTE_CONF | BATCH 01/15 | 103 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|signing some deals where wherein|i guess is where wearing a|0.57
+002|nuts right well i tried it and to my surprise and|connect to it well i tried it and is surprised surprise it|0.61
+003|and then at least i know where we're starting and you get it|least i know where we're starting and you've got to|0.69
+004|real human application that we can pull from that|what are the human implications of that because|0.55
+005|it doesn't have a carry strap but you can put it on your shoulder pretty easily or just carry it with your hand|this is david irving he's a holocaust denier a computer hacker who into the for trials|0.64
+006|okay so we've got a cool little drum fill what i'm gonna do is we're gonna stick it just on the snare drum to start off with i'll play it at 16th notes and i'll start doubling up what the hands are doing and turn those into 32nd notes so we|through all we'll drop through and what i'm going to do is when i get close to the stage i'll start off with a paced 60 beats per minute and then as i start to come up with that adrenaline it'll go to 130 so|0.73
+007|according to the manual that comes with the device the roku uses such a small amount of power that there's really no reason to turn it off|the manual that comes with the device the rotozoa uses such a small amount of power that there's really no reason to turn it|0.75
+008|i don't trust it because it's the first generation of drone and we all|trust is the first generation to grow like we all|0.69
+009|code that way i know there was a lot of hype of that back in the 90s|that when lucille clifton came back the time|0.62
+010|and there's been a lot of research showing that 85 of what we worry about will never actually happen|there's been a lot of research showing that 85 percent of what we worry about will never actually happen|0.71
+011|them from the time they left mid shrine the great wondrous nisan|from the times i left the trees to create water system|0.52
+012|to right to six behind side cross side and you start over again now let me go the dance with the counts|around the city behind the skyscrapers behind the lights behind the houses behind the|0.65
+013|i think that's maybe why i liked it so much it was just very it very much held onto the story|think it's funny i like to tell people that we're just very very very|0.67
+014|before jumping into my scheme let me just tell you that for jeevan anand|before the pyramids came let me just tell you that for years|0.72
+015|if you are seriously considering like you know working with models|if you are seriously considering killing your with a math|0.61
+016|this doesn't this is not a corpse this just looks like a statue|this is not corpses this is just it's not just food|0.60
+017|my name is ozgur yapar in short oz|is also a part inside us|0.51
+018|to know all about the election season hacks malvertising exploits millions the nsa can track in flight cell phone use and openvpn gets an audit coming up now on threatwire|know all about the collateral damage it has maimed for decades experts millions in the nsa tracking phone calls and gopofemale candidates coming up now on the red carpet|0.71
+019|what we're now going to do this is a three dimensional object and we're going to break that object into|how want to be to the top of that know how to wind that|0.58
+020|here's another item i hear bug off not really that important you know but for a lot of people depending on what they're doing it may be more important for them in the short term|going to come back off not really that poor but for a lot of people depending on what they're doing it make be more or less for them in the short term so|0.70
+021|so why debrief at all|so why should we her it's|0.59
+022|i found the balance between reusing sounds in the game creating original sounds was i thought about what the most iconic things were the things that this would really evoke half life to and i|found the balance between reusing sounds of the gamelan and original sounds was i thought about what the most iconic things were the things that just would really evoke havana and havoc|0.70
+023|if that sounds like you don't worry you're in the right place that is exactly what doing english exists for|that sounds like you don't worry you're in the right place that is exactly what doing english exists for|0.69
+024|so how do we do that|so you that|0.53
+025|simpler and practical enough for anyone to do and if not how could that be changed in the future i think the future is in the hands of the future|i'm to happy to be here|0.56
+026|seven eight and one|i wanted to|0.55
+027|this lets the astrocyte monitor the neuron's signaling and help keep things functioning by releasing different proteins that can influence receptors at the synapse|lets the astrocyte monitor the neuron's health and help keep things functioning by releasing different proteins that can influence receptors in the synapses|0.68
+028|mylinux services where your time is spent|my client's services where your time is spent|0.65
+029|when i rest my face it's clean without feeling tight or stripped you know like when your face so dry you smile and it starts bleeding|onto my face it's clean without feeling dirt or sweat when your face don't cry you smile and it starts bleeding|0.69
+030|very important|policies that keep us out of the|0.55
+031|bitchy means bitchy means arrrr don't talk to me don't look at me what are you looking at arrrr|to me me in the ha go talk to me go look at me what are you looking at|0.68
+032|how many people love this what is this tea|people have seen the say|0.62
+033|scale this is the cheapest best one i'll show you guys after|cell so that intership experience will ensure that everything|0.51
+034|today i'm talking with admiral mcrae|today i'm talking with animal migratory|0.61
+035|forum suggests a part of a very very big human sustainability movement i really appreciated the opportunity to a person like me with my iq and my background following|freeform form is part of a very very big human sustainability improvement i really appreciate you taking the opportunity to talk to a person like me with my hat on and my i'm following|0.70
+036|this is an interesting thing to do so gene has|this is an interesting thing to know so shin has|0.70
+037|and they don't touch any vessel any box around them and that's the way to investigate these alloys|and they don't touch any of the parts around them but they still way to investigate this area|0.66
+038|i felt like we could do this i felt like this is something we can overcome|like we could do this i felt like this is something we had to overcome|0.69
+039|now inside here you have to go and search for the section file now this section|there is second that you have no energy for this that you can find there is discussion|0.64
+040|provide the housing so let's imagine the private sector has moved out no private investors and it was up to the government to provide this housing historically they haven't been great at doing that|the housing so it's matching the private sector to move that no profit investors and it was up to the government to provide this housing historically they haven't been great at doing it but even|0.70
+041|so you can't just be an idiot and just start|so can't just be the needle unlocks the haystack|0.57
+042|greater there right there was no good|there the local|0.51
+043|how's it going guys eric here from tech a sode tv and in today's tech a sode we're going to be taking a look at the top four issues with the galaxy note 5 and how to fix them|as john lennon once said may the force be with you|0.68
+044|but information from things that i have learnt throughout my school year|information from things i have learned throughout my school years|0.67
+045|all in all quick reminder that calcium is an alkalinizing mineral so what that means is that it helps to|you that calcium is in our dairy milk so what that means is that it helps|0.71
+046|and body parts|was was ago old i was|0.50
+047|school is a jungle so many things to navigate|the digital channel many things to navigate and|0.58
+048|have them all right there all for when you're ready to go|all right there all for when you're ready to go|0.67
+049|hi i'm paul barr and i went|in prague was|0.55
+050|but there are a lot of very smart people who can't fight their way out of a paper bag and then when you find somebody who has that|are a lot of very smart people who can't find their way out of a paper bag and when you find someone else out|0.71
+051|obviously didn't start as a business it just started as a youtube channel just this thing we were doing for fun to hopefully reach people|me as a business to join us as a full partner and then we were on the track and hopefully we should be to|0.71
+052|that social media off your phone i don't know about immersion and all japanese all the time that program but you can|that social media off your phone i don't know about march and all japanese all the time that program but you|0.72
+053|no let's say i ask you to think about what you had for breakfast yesterday and if i were to say to you where do you sense it you'd probably sense it here to your left somewhere not everyone|now let's say i ask you to think about what you had for breakfast yesterday and if i were to say you ate a sandwich you probably say it you left it somewhere not everyone|0.71
+054|love you guys hello austin it's great to be here|please you guys to trust me here|0.51
+055|you can find the perfect counterweight and you never have to worry about your camera ending up in the dirt|you can find the perfect outerwear and you never have to worry about your camera up in the snow|0.68
+056|of different management positions and for the last four years she's been a senior manager|different management positions and for the last four years she's been a suite manager|0.70
+057|so what i'm going to do right now is i'm going to crunch 1400 years of islamic history in 5 minutes and make it as exciting as i can possibly make it|so what i'm going to do right now is i am going to crush 1400 years of islamic history in five minutes and recognisances i can because i can possibly make it because i get|0.70
+058|pretty hard to believe we're talking some snow this morning getting into the later half of april|hard to believe we were talking because it was so disappointing and it didn't get any better|0.67
+059|that does two things it allows people to survive economically so that they're not living|truth is it allows people to survive economically so they can|0.70
+060|back in the day i'm saying nowadays there's beautiful colors flyers lights you|but it doesn't there now now take this beautiful knowledge and apply it to find|0.55
+061|so like a pair of jeans|so you you to see the|0.51
+062|buying things for quality because certain|buying things for quality because certain|0.69
+063|experience|is the common|0.59
+064|running a marathon knocked her out|when a marathon not a around|0.52
+065|reasons why you should be a club member thanks so much and i'll see you again soon bye bye|is why you should be a cheerleader thanks to my sisters much wait|0.62
+066|so let me give you a stunning example of how nasa lies and why it is important why it's more than an academic exercise this is the current mission patch for sts 120 discovery|so let me give you a second example of how this ties in and why it's important why is it more than an academic exercise this is our vision patch for a city which we can never|0.70
+067|like maybe a knife or something and on your forehead you wrote|maybe a knife or something and you cut your forehead and you're|0.65
+068|or national agencies charged with determining asylum claims|all national agencies charged with terminating asylum claims|0.67
+069|it's probably going to be an s corporation it depends and this is we're going to talk about your options to set up this new company here a little bit later but typically it's going to again be|probably going to be a nice corporation it depends this is we're going to talk about carbohydrates and starch and sugar and but it's going to end up|0.66
+070|note that the modified system is|so our of flight system can|0.56
+071|have a negative reaction than if you were just to say i love you very calm good facial expressions|a negative reaction then if you were just to say i love you very calm you could face your expressions|0.68
+072|background are cutting into the photo they're dividing up your subject|own artwork into the photo of the dividing up her subject in|0.63
+073|if that worked out well for me that's 10 000 in house|on i'm going to play that again if that's okay|0.64
+074|and if we don't listen then it will start yelling and if we don't listen then then we'll start wrecking the house so treat this sensation treat this pain like a little kid trying to get your attention|although recently we started an alliance even though recently that didn't work out at the house so during this tedxweekend again trying to get attention|0.73
+075|but we're talking about things that will really|because what we're talking about that life was really fun|0.64
+076|that's why they say hicksfix and not cpt|to do it i had to figure it out|0.51
+077|your password they're going to now try to log into all these sites to see what you've got|their passwords they are now trying to log to all these sites to deal with what you've got|0.67
+078|if it's my brother's|can say about it was one big breath|0.62
+079|your account where you will have to pay long term fee assessment|to account where you have to pay long term fees that's|0.69
+080|some will not even pay any attention to meditation that too is changing|some will not even pay any attention to meditation with changing weird|0.68
+081|now we are engaged in a great civil war testing whether that nation or any nation so conceived and so dedicated can long endure|now we are gaining a great civil war testing whether tyranny or anarchy should prevail in syria and donald trump|0.60
+082|so inflammatory or irritable bowel syndrome those are other candidates what we find a lot is that copper|vibrations on the and the the system are other categories where we find content that they operate|0.62
+083|germany in germany it's legal to have an abortion but in|german law is illegal to have an emotional|0.65
+084|what's in my dock version 1 so here|to come once he made the of he him so he|0.60
+085|let's say if your mother was the narcissist she might dig in on your spouse or significant other in order to make you trust them less so that you'll be more connected to her|stephanie's grandmother was a seamstress and she made teddy bears and stuffed animals so in order to make teddy seem like a woman she would|0.71
+086|real merged reality so then there's a lathe that's spinning and so you can like put your finger in the lathe and it looks like your fingers being chopped up or you can put your phone in the lathe but so yeah it's you know it was obvious|immersed in reality so that there's a lane that's spinning and so you can like put your finger in the lane and then it looks like your finger is being chopped up or put on your phone and they had a on on so yeah it was obviously|0.71
+087|i just learned something recently because i'm a lover of|i just learned something recently because i'm not a lover of|0.62
+088|a noise with without even having to move your other hand so if you watch when i'm playing|you know because we didn't even have a movie theater in town so we rink|0.70
+089|trail make it a little bit wider|writer i am a writer|0.62
+090|up front pricing or was this before when you asked him when you compared|enrique iglesias who was it before when you asked him what do you mean by that|0.67
+091|people tied they worked they had sound doctrine|people's eyes that weren't tears to it|0.61
+092|that supported the idea that the|that support the idea that the earth|0.67
+093|hey what's up it's donna today we're gonna be talking about gruselcoin and i'm gonna break the video down into parts and timestamps can be found down below|we're going to be talking about crucial coin and i'm going to break the video down into parts and time stamp can be found down below|0.71
+094|i got called back to my former university in texas to do a master class on belting|got called back to my former university in texas to do a master class on belting|0.70
+095|or even death now what are the symptoms how do you know a baby may be suffering from shaken baby syndrome well the signs are they're very|i think it's important to understand that|0.51
+096|well if you subscribe to our newsletter i'm in charge of|if you subscribe to our understanding i'm kidding|0.67
+097|like people just come up to me and be like literally it feels so good if you guys wanna like|just come up to me and be like hey little girl if you guys want to like come|0.70
+098|i don't want to say mistakes but i will say like experiments and|i don't want to seem disrespectful|0.68
+099|week isn't going to be ready for a while but don't worry it's going to be a good one|going to been right for a while but somewhere else is going to be so|0.61
+100|and building out the future of the site and laying out the future of the site you really need to know what your structure is going to look like|building out you know your future of the site like out the future site you really need to know what your structure is going to|0.71
+101|for that you will use preter because that's what happened what people did|for that you will lose what what happened or people that will|0.66
+102|and as you did those gestures it would convert your body into an avatar it would send it through the network and friends teammates groups of people would have to guess what gesture you were making|and add to interjection to an existing body into an adjoining sentence through the other and find sleep like groups of people who would have the task of judging your making|0.64
+103|to feel the same way how do you explain werewolves and magic in a world like that|feel the same way how do you explain and can imagine a world like that|0.66

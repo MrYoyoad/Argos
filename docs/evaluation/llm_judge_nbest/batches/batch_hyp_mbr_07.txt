@@ -1,0 +1,104 @@
+HYP_MBR | BATCH 07/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|and put all my body weight on it and my heel snaps off my boot completely and i go|and put all my body weight on it and my knees snap off my boot completely and i go|0.79
+002|creative unruly energized campaign|creative unruly energized campy new york|0.52
+003|achieve so have a clear goal whenever you make a pizza or whenever you learn a foreign language|achieve so have a clear goal whenever you make a piece of art whenever you learn a foreign language|0.72
+004|find an empty space you relax your eyes and you're ready to see the next shoe this helps you to understand what kind of shoes you want to focus on|find an empty space to relax your eyes and to reconnect to this helps you to understand what kind of issues you want to focus on|0.78
+005|what was the reason why you went into that direction|what was the reason why you went in that direction|0.88
+006|think tanks so what are they doing in the world of places where they're|like that so what can you do in the world of places which|0.67
+007|rotating thunderstorms with big hail|ted turner's arms sold by hal|0.47
+008|but so yeah it's you know it was obviously just a demo but|but so yeah it was obviously just a demo but you|0.62
+009|and he pledged 10 and he will be getting a letter in the post very soon|i planted sunshine seeds and we'll be getting electricity very soon|0.57
+010|and received a generous paycheck so|received a certificate of appreciation so|0.56
+011|let's go look at this population we know that they are being underserved by local|is to look at this population and we know that they are being underserved by local health|0.74
+012|you were given a paragraph and you had to fill in the blanks based on the context so let's see what you got|underwater diving for your parachute and you are asked to fill in the blanks based on the context so let's see what you got|0.69
+013|i think the main thing we're trying to train people is to have empathy to listen to not try to fix it but just to be there to realize that god is everywhere|i think the main thing we try to trick people is to have empathies and listen and not to try to fix it but just to be there to realize that god is everywhere|0.76
+014|i think one of the things that's really interesting about this is that it gives us a new window into the water story on mars the whole mars program has been following the water|so i think one of the things that's really interesting about this is that it gives us a new window into the waters or the lagoons so the whole mars program has been following the water and|0.74
+015|hi this here houston chiropractor dr gregory johnson i'm sure you all remember jesse from|i think it's very important for us to understand that the people of syria have suffered|0.45
+016|the lord as to why and the lord shows him that saul|orchestra and the orchestra shows them this song|0.63
+017|iusb port camera 2 the only difference is that the camera is not a single camera the only difference is that the camera is a single camera|so let's start with the very|0.35
+018|minus 12 is a negative 4|12 is 94|0.52
+019|so we started working on get around in year 2009 it's been about 18 months so far working really hard but basically the reason we all|we started working on that ground in 2009 it's been about 18 months so far working really hard but basically the reason we called|0.77
+020|to take the insurance you'll place half of your current bet|take these shirts you'll pay half of the shirt's price|0.54
+021|but that smiling is actually a universally correct expression of pleasure|but if you think about it it's actually two different things the|0.48
+022|like far away from what i was sanding like in my camera i was holding my camera with my hand it got a little bit tough so i only swatched one palette and then i almost dropped a couple of their lipsticks so i got clumsy but anyway|far away from what i really said it has become a clich it's used also by amateurs when they don't really know what to say so i lost my balance and then i almost dropped a couple of times and i didn't so i held on but the question|0.63
+023|i'm willing to bet that i have failed more times than anyone in this room because i have a|the process that i have to go through in order to get to where i am today but i'm going to tell you one thing|0.55
+024|there was a picture of a young girl on it sitting all alone in the photo she seemed so sad and helpless|there was a picture of a young girl like she didn't look at the photo she seemed so sad and helpless|0.71
+025|of afro latinos so from colombia|african single so from uganda|0.40
+026|coming off of a nasa website particularly when some of the agencies that are involved|because of the next weapon site particularly weapons of mass destruction that are involved|0.63
+027|now but for the better for the better always because pluto only destroys so to speak what is no longer suiting us anymore|pre pay or post pay always which would go all the way to disgruntled customers so to speak we didn't no longer shoot kids anymore|0.57
+028|now i really want to talk about how power is the measure of degree of control one has over circumstances in their life and over the actions of people around them|i really want to talk about how power can take the measure of degree of control one has over circumstances in their life and over the actions of people around them|0.85
+029|home is what you will become and home is what you will|home is when you will become and home is where you will|0.73
+030|the flu sorry about that and as i'm the last speaker before your lunch sorry about that i'll try to|who's going to be right last time less than a minute before the crash sorry about that|0.59
+031|countries as india russia vietnam|illness and then i reached victory and|0.47
+032|because i can't tell i look at my children they're growing|that i had done i looked at my soul and the souls of|0.62
+033|the banker and say hey i need that money now i've been given you extra payments can i get that and you lost your job he's going to say no way because it's too much risk on him|panic and say hey i need that money now i've been given an eviction notice i'm going to get that and you lost your job it's going to say no way because there's too much stress on him and|0.68
+034|additionally topical steroids are dangerous this can worsen conditions such as herpes simplex keratitis fungal keratitis and acanthamoeba keratitis|zona in addition to these hypothalamic secrets are dangerous these endorphins and serotonin and dopamine and peptide hormones hang out in the pituitary gland|0.63
+035|as this new home video market matured in the 1980s a number of film companies decided they could bypass the theatrical distribution system altogether and market their|in the 1980s when film companies decided they could bypass the theatrical distribution system altogether among other|0.69
+036|by that time weren't you already married and had kids yes yes|by that time we were growing marijuana in the suburbs|0.56
+037|are you saying that there are parts of our bodies or certain organs or cells within our|what you say is that all parts of our bodies or certain organs or cells within our|0.69
+038|that the material we're using has the right rate and level of absorption|material you were using has the right weight and everything|0.55
+039|in england and everything was just black with soot|everything was just black with soot|0.62
+040|how long will he work for in his working life there's a boy by the way a boy|me so thank you very much for your attention|0.51
+041|very carefully install all the|very caring for his soul and his|0.51
+042|they insist that the positivist legal philosophy doesn't exhaust our understanding of law there's something more to it and that something more introduces some important moral characteristics or dimensions to the concept of law|sense that the positivist legal philosophy doesn't exhaust our understanding of law there's something more towards and then something more introducing some important moral characteristics which i mentioned to the concept of law|0.74
+043|one is as you're moving conceptual surface data over to engineering solutions and tools you want to make sure that you have good clean|has actually moved the conceptual rules over to engineering tools so what i want you to have good at is|0.58
+044|for best for highest probability of success in the future okay how well do you know yourself how well do you know the programs okay in|for peace for i have probably left such things in the future i want to know this stuff i want you to start programs in|0.61
+045|an area that market came very close to testing just recently in price action and is a great area|the man who came very close to assassinating president george w|0.52
+046|it will catalog what i'm doing here for delayed pressure urticaria today's appointment|will catalog what i'm doing for delaying breast cancer here's today's appointment|0.63
+047|so it's a really nice compact setup it's basically the same size as the|so it's a really nice compact game it is based on the same size as|0.68
+048|when you know how to grow instagram when you know how to get millions of impressions when you can consistently generate a million impressions a week on your profile when you can|where you go out and grow a strawberry where you grow out and get peaches from branches where you can see the|0.56
+049|and so what are the arguments that the individual mandate|and so what are the arguments that the individual may take|0.75
+050|hey everybody it's jon stabley i'm here with brian mayo everybody's favorite tech guru today we're gonna|money is just an idea that has no|0.43
+051|and i have a tablespoon of jalapeno fresh jalapeno|and i have a dietary smoothie i've got the banana called fresh banana|0.58
+052|browser right now this is blank|also right here in this|0.48
+053|my employees with some money that they can go out to the exchanges to get their own insurance|by employees with some money that they can go out to youth exchanges to get their own insurance|0.84
+054|video in a series of video about the arduino robot|video and this is a video about our robot so he|0.59
+055|when i write i kind of drag my pinky right here and i always get like a black mark because i'm dragging my pen but these do not transfer onto your skin|when i write i kind of drag my pen across the paper and i always say please i'm trying my best please do not judge first skin|0.69
+056|all of us to have abundance in our life to have prosperity in our life very very important|all of us to have a purpose and i have a very very important|0.65
+057|here|i am an engineer|0.45
+058|and we're going to type in home page excerpt|years ago when i was a little girl my grandmother had taught me this|0.47
+059|their moon phase parts of their books pretty fast i just haven't really had the|their move fast parts of the number are pretty fast they just haven't really had the key|0.63
+060|back to school supply list before meet the teacher night i have a couple of tips|to school as a black kid before meeting this teacher i have a couple of tips|0.71
+061|politically correct way of saying i did whatever my parents told me to do so i went to university i wore a lot of turtlenecks and i|correct way of saying i did whatever my parents told me to do so i went to university i wore a lot of turtlenecks and after|0.81
+062|on the subject as well you never know what you'll catch and at the same time|on the shipping containers where you never know what your cash and at the same time|0.65
+063|with a strong r and here's chlopa so when an r starts a word in portuguese how does it sound|strong heart and an open mind to really coach and also work with the person inside herself|0.55
+064|so it's taken me a couple of attempts i've managed to get it on however|which has taken me a couple of attempts i've managed to get all the way up to|0.64
+065|always pads were the pads that|always pants were the pants that|0.75
+066|will not have enough food for a healthy life|we learned to have enough food for a healthy life|0.83
+067|you guys send in some really good stories so we are about to read them|when i was 18 years old i had|0.45
+068|that man from the intellectual point of view logos but then pathos you trust that man because you're feeling that the intention|be the intellectual product of your own but then by those you are sitting back because you are feeling that the teacher|0.60
+069|a timeframe to react to that okay but|it's hard for him to react there but|0.65
+070|and i will give this file the name of the component the name my component shall have that's just a naming convention which is kind of used in the vue js world|david irving is a holocaust denier a neo nazi a member of the british national front which is a fascist organization in the united kingdom|0.54
+071|benzodiazepines are often converted to active metabolites in the liver examples include diazepam and flurazepam the important medications that you should know is really diazepam|benzodiazepines are often converted to active metabolites at lower inhaled sedatives like ativan and valium the important medications that you should know is really ativan|0.69
+072|for example where we have two parents the parents are both heterozygous remember that that means they have two different alleles|group where we have two parents the parents are both androgynous the member of the family is they have two different little|0.72
+073|hello world i'm shannon morse and this is threatwire for october 2nd 2015 your summary of the threats to our security privacy and internet freedom our apologies for not having an episode to you earlier this week|world i'm shannon boyle and this is why we're here for october 2nd 2015 truth summer gives a threat to our security privacy and internet freedom our apologies for not having an episode to you earlier this week i|0.72
+074|now is you have your vpn software here and it's encrypted|was like you have three months of way here and it's going to get colder|0.61
+075|which brings me to my next point this will not only be extended for iphone users but also for android users|praise me to my next point this will not only be seen for iphone users but also for android users|0.78
+076|side four and that's part a let's go over the counts|and i enjoyed it so much that i decided to|0.51
+077|101 harper street|one o one arm twist|0.63
+078|inside and that's the surface of the eye it's a very interesting chemical interface|and that's the service of the defendant to keep it all confidential and|0.54
+079|weekly or monthly in your clean or aseptic|quickly oil mustard and uranium or something|0.47
+080|so we started looking at the structure of coping and the structure of emotion and started really looking at|we started looking at structure of hope and the structure of emotion and started really looking|0.74
+081|i think it was about four or five days ago they said they're going to get rid of their dly|i think it was about four or five days ago they said they're going to get rid of their yearly now|0.80
+082|great interest for a long time now|you know in the industry for a long time now and|0.69
+083|odd there are many strange places named hell on earth but no heaven|author but it's rich places like hell under earth but no one ever|0.54
+084|what they are is 3d goggles they have two independent screens they're like 850 by|3 years old like that|0.41
+085|so the females actually have a choice kind of who they want to|so in this film i actually have a choice and i do not want to make|0.63
+086|it will be interesting it will be exciting it will be|would be literature it wouldn't be maths or science it would be|0.58
+087|beneficial regardless of whether you are performing or you're doing administration|we're going to be able to|0.47
+088|so as you can see although the notes completion questions and table completion time are the same you can also see the notes completion questions and table completion time are the same|so as you can see although there are no simple questions and daunting complexities arise|0.66
+089|and in france my favorite drink was orangina|favorite song was oregon trail|0.50
+090|community so there's a lot of people that need|when i was 18 years old i was|0.43
+091|so he talks about books and in this particular one he talks about russian literature with reference to other world literature and so forth|is not so when a lesbian marries another lesbian that lesbian relationship becomes more interesting and so forth|0.54
+092|said that they realize now that consumers want a bigger smartphone when in the past they said that apple's not going to do a bigger smartphone well now it looks like they are so if those rumors are correct and apple actually is going to make two different sized versions of the iphone|that they realize now that consumers will not upgrade their smartphone but in the past they've said that apple's not going to upgrade your smartphone well now it looks like they are so if those assumptions are incorrect apple actually is going to make two different versions of the iphone|0.72
+093|great question so a lot of people out there will go out and say well you need to enunciate your words and say it|great way to do it so a lot of people out there that go around and say we have to really go out today and grow this|0.59
+094|don't know it it's really that simple|don't notice it's really that simple|0.82
+095|from wantonly destroying the lives of others|from one to then destroying the lives of others|0.74
+096|to the right train station or putting it onto the right street|you know do the right training session at the right time|0.66
+097|to see if it's actually going to go away or not but um|to see if it's actually going so well or not but|0.72
+098|you need to start this out extremely slowly|on each shot the sound extremely slowly|0.64
+099|oxygen to breathe and the other one is what happens|to breathe and the other one is what happens|0.77
+100|everybody who's joining in on that event and you want to have a place for only those emails you can swipe them across and put them in that one organization tab so that way you can have them all right there all for when you're ready|everybody who's joining on that event and you want to have a place for only those emails you can just sweep them across and put them in that one organization's inbox so that way you can have them all ready there all for when you're ready to|0.78
+101|hey this is scott today we're going to take a first look at the build and design the tamron 70 200mm f2 8 g2 lens|and secretary kerry took a first look at the building instead of the same routine 72 hours after the bombing she toured it|0.58
+102|you can do the same thing with food too putting food in certain containers you can put food in tupperware that you know that they can't open quite yet|you do the same thing with food so you put it in food containers you can put food in doubleware that you know that they can't open quite yet|0.72

@@ -1,0 +1,104 @@
+HYP_MBR | BATCH 09/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|and i was at a convention and people would hand me a 20 bill and i'd hand them a book and then i'd go get 5 for change and i'd hold the pin in the other hand and i'd say okay this is your change or i could|was at a convention and people would hand me a 20 bill and i'd hand them a book and then i look at the 10 to change and i hold it in the other hand and i say ok this is your change or i should|0.70
+002|and scientists with team immediate action is needed to improve|1950 and we can actually see two|0.49
+003|what's in my dock version 1 so here|to come once he made the contact he wanted so he|0.53
+004|and it'll tell you why you shouldn't buy it for your laptop|just like you i was driven by a few laps around|0.56
+005|the art of adding multiple poles of articulation alongside and parallel to the main conductors of the cable we then started to ask ourselves well we've got this ability to do this|art of adding multiple poles of articulation along side in parallel to the main conductor of the cable we then started to ask ourselves well we've got this ability to do|0.78
+006|of the possibility of a choking episode in an older child|kind of the possibility of showing an episode in an older|0.70
+007|a group channel track was a bit different than|chernobyl once the biggest disaster in their|0.46
+008|basically says that no senator can speak more than twice on a pending question|says that no senator gets to be more than twice on pending question|0.65
+009|or 3mm roughly and for 32 teeth per inch the minimum thickness is 3 32 or roughly 2 5mm so if you're cutting thin sheet stock then you need to try and make sure|or 3 millimeters roughly and if for 32 cps the minimum is 3 30 seconds or roughly 2 5 millimetres so if you're cutting thin sheets of steel there is try to make sure|0.66
+010|so instead of being 150 155 i was almost approaching 160 and i could have|instead of being 50 55 i was almost approaching 60 and i hated|0.58
+011|to have at least 10 of the active ingredient protodiocin which is one of the steroidal glycosides that is in tribulus|at least 10 percent of the active ingredient prototypes which in this world is considered to be a|0.63
+012|who runs around my house destroys everything he touches i love him to death and she works as a registered nurse now there was an issue when i was going into high school|out stories around my house the stories of the ancients and she wanted to hear my stories too there was a year when i was going to high school|0.61
+013|for most project managers is giving a presentation but that's where we can influence our team influence our stakeholders|most project managers is given a presentation but that's where we can influence our team and influence our stakeholders|0.74
+014|that does two things it allows people to survive economically so that they're not living|truth is it allows people to survive economically so that they can|0.75
+015|further than any processing than any equipment that you'll purchase that's where it all begins after that|further than they can process it than any other woman in the world because they have to|0.57
+016|the concepts will be explained from two perspectives using real life experiences reflecting my living in mexico as well as visits to other spanish and french speaking countries|to explain from two perspectives using great life experiences reflecting my living in mexico as well as visits to other spanish and french speaking countries|0.79
+017|1240 as i said so everyone's sleeping everybody worse in spanish i like to say no so throws|so everyone is sleeping except everybody who speaks spanish like to say hola|0.49
+018|and hopefully it will throw everybody off|and hopefully it will throw everybody off so it's|0.76
+019|ho where to begin with this|to begin with this|0.48
+020|well we've got this ability to do this now|we've got this ability to do this now|0.81
+021|these videos take really long to make i don't know if you want to hear about this but you have to set up the camera and make sure that it looks okay and just like think about all these|when you're saying it was really hard to make i don't even want to hear about this but you have to set up the camera and make sure that it looks ok and just like think about all the|0.71
+022|things like a little wire splitter here that allows me to send one signal into two different pieces of led tape and some extension cables as well so i can run the tape down the length of my truss|things like a little wire splitter that allows me to send one signal into two different pieces of editing tape and some extension tables as well so i can run the tape down the length of my trust|0.77
+023|if i have him in my arms and i just want him to go to sleep but he's not but i know lullabies help him i can say hey google turn on lullaby music for baby|if i have him in my arms then i just want him to go to sleep peacefully on my own on the back couch i take kids a turn on the lap of a baby|0.65
+024|so lately derek has been bugging me about going|school lunches continue to be bringing me about|0.61
+025|so there's this magic castle right you guys have no problem with that magic castle no problem|so magic has to do with imagining something that doesn't exist and then making it|0.49
+026|anna olson and i'm host of bake with anna olson on the asian food channel|costa rica and i'm the owner of backyard organics on the edge of|0.57
+027|maximizing quantity i'll step one up|it's based on equality all the way up and|0.52
+028|personal belongings from me and put me in jail|who agree with me and probably the|0.52
+029|tension new developments every|physical and emotional|0.38
+030|toward you what you want okay so become crystal clear and focus|do what you want so become a critical thinker and focus|0.67
+031|available so you can edit your documents in the mobile web browser that includes android 2 2 froyo or later|vimeo or youtube and talk about these things people want money for that too so there's a whole bunch of photo or video|0.56
+032|while now through various means including telling whether|three very important things|0.47
+033|signing some deals where wherein|i guess this is where wearing a|0.51
+034|you could be using that way in here so that's basically my recipe i'm going to show you what we're going to do now|all about owning that right here so that's basically what i'm trying to show with what i do have|0.56
+035|absorption include a source of fat|scripture includes a source of fat|0.71
+036|bring to you these quick little five minute training videos to help all of you as you grow your business|because you know 5 minutes is a lot of years when you're 11 years old|0.49
+037|or selling never ending wars you can probably find them hyping potential pandemic outbreaks of the newest disease|see if you get any rewards you can probably find them by googling textual academic outbreaks of the word|0.54
+038|sometime between 6 and 8 p m eastern and we'll get that out|september 26th came and went and i didn't work there|0.44
+039|on the road also with having kids a lot of times they want to snack or they drop their toys|also with heaviness a lot of times when i'm designing a drummer's costume|0.56
+040|so all we need now is zero latency input devices and processors|all we need now is serial links to input devices and processors|0.73
+041|for example wellness programs are very popular among employers|example wellness programs are very popular among employers|0.80
+042|as if holding water or perhaps bile|fluoride in the water or perhaps a banana|0.58
+043|as were as they were supposed to be a let's say an answer to so|was it supposed to be a let's say an answer to sonia|0.72
+044|i knew it all looked real good on the outside|what all of us were looking on the outside but|0.68
+045|and how we can kind of turbocharge this whole thing|and how he got into the urban church so you|0.57
+046|if you're not even anxious about your own death and demise and it gets into some philosophical and religious concepts it becomes very difficult to talk about because some people say well i'm going to heaven i don't care what happens now|very anxious about her own death and i think this is a philosophical religious concept that became very difficult to talk about because some people didn't want me going down that road what happened to that|0.65
+047|six and breathe out to a count of six or seven or eight|seeds and breathe out 300 seeds every day|0.68
+048|flash but it would be completely unrealistic to be|house but it would be completely unrealistic to build|0.78
+049|but i have to understand in my head what that looks like in 3d as i'm drawing it|but i feel like this side of my head what that looks like in the real world as i'm drawing|0.66
+050|and so the when and the why kind of combine and based on genetics and kind of extenuating circumstances but certainly the less you move the knee the less|and so the when and the why kind of combines genetics and kind of exacerbated circumstances but certainly the less you move the less|0.75
+051|auto suggest box we're not implementing search i just want you to be able to successfully use the visual state manager to show and hide|i'm going to suggest please with the prime minister's association one you would have been able to succeed in the story of the shortest prime minister in history|0.59
+052|i think that's maybe why i liked it so much it was just very it very much held onto the story|think it's funny i like to tell people that we're just very very very yellow|0.48
+053|that is something special and unique to summertech|that is something special and unique to summer|0.81
+054|so why debrief at all|so why should we work for her it's|0.53
+055|that 50 to 100 emails so i told each of those new sales guys afnan and cam that we should be closing 10 a month each right their effort has increased between 30 and 66 percent|that of 52 other amendments to the us constitution including the one i love the 10th amendment so right there after not too many years between 130 and 1776|0.53
+056|in how we conceptualize cyberspace|how we conceptualize cyberspace|0.76
+057|by your spirit to say you know what is right and wrong and should you do this should you do that there are many many temptations|my own spirit to say what is right and wrong and to do that there are many temptations i'm sure|0.70
+058|and then we usually keep an eye on things and observe|that we used to keep it out of sight out of|0.59
+059|the key is to acknowledge that you're stressed and to find out how stress affects you|is to acknowledge that you're stressed and to find out how stress affects you so|0.81
+060|that means the fear of allah is completely gone the only fear you have is that of the seen there's no more fear of the unseen what a horrible spiritual|is the fear of the loss complete the only fear you have outside of death is no more fear of death what a horrible spiritual|0.65
+061|500 companies so he's been doing this for years|hundred companies so he's been doing this for years and|0.79
+062|is a very very common side effect so do not worry if muscle tension is a part of your|very common state of mind so don't worry if muscle tension is a part of your|0.69
+063|time to transfer to my computer and do all this other stuff|to let it transfer onto my computer and do all this other stuff so i did|0.78
+064|and she was from the kind of village where if a little of her hair showed through her scarf or her eye caught the eye of a man not in her family|she was from the kind of villages where he felt it good for her hair to grow to her star for her height on high of a man and not in her family's|0.66
+065|the only problem was people already had a car|the only problem was people already had a card|0.84
+066|look at the purpose of anecdotes we are going to connect|at the purpose of adding donors we are going to connect|0.81
+067|of every person is|of every person is|0.64
+068|the donning process is a step by step process that ensures good infection control and safety|processing is a step by step process that ensures good infection control and safety|0.83
+069|again before i get into that i just want to check in with people i know that a couple people well a few people will probably hear live so feel free to go and check them out and if you're interested in learning more about the|the day before i get there i just want to check in with people i know that a couple of people are probably alive so i feel free to|0.64
+070|grammar and syntax math rules and procedures social and behavioral rules and facts that are learned by rote|cooperative systems that make the rules and procedures and social norms and enforce them through peer pressure|0.57
+071|i've made lots of videos about weight loss however some people don't want to lose any more weight than they you know compared to what they've lost already they're actually looking to gain weight so they're really concerned about|when i was a little girl i always wanted to be a princess|0.47
+072|see overweight or obese animals that's because when you're eating the right food for your species you don't put on weight even if you're in a place where there's abundant food to be had animals don't do that|the overweight humans and animals that's because when you are eating the right food for your species you don't put on weight even if you are in a place where there's abundant food to be had animals do that|0.73
+073|the research suggests that the bacteria in our gut influence everything from you know whether you're energetic or sluggish|research suggests that the bacteria in your gut influence everything from whether you're an introvert or extrovert|0.68
+074|nice pyramids|that is ostracized and|0.49
+075|it was a kind of a unique thing because my university doesn't have anything similar to that|when i first heard it i had no idea what it was|0.48
+076|from an early age up through even college and there's not a whole lot for adults in here but it does give some good general guidelines|of computer geek jumped through leave the netherlands and to stay in hong kong for another year but this is if some good shenanigans|0.56
+077|hi everyone it's mr sinti and today i'd like to invite you to a conversation|i'm going to tell you|0.48
+078|the course so the school has sheep farm|and so this whole house is just a room|0.64
+079|ad where they tried to suggest that the iphone was your mom's phone|where they tried to suggest that the iphone was your bombed phone|0.76
+080|especially with trial students that may not want to interact with me|especially when children are concerned but i want to interact with|0.60
+081|it's a picture of marilyn monroe if you have a suggestion for wallpaper leave it as a comment below and i may use it in next week's show so we're going to get started right with the news i'm sorry i don't have any comments to feature|picture of marilyn monroe if you have a suggestion for wallpaper leave it in the comments below and i'll make you 16 next week so we're going to start right with the news i'm sorry i don't have any comics to finish today|0.67
+082|pouches they come with too so these are my speed lights these are the yn562s that i use here|pounds and i'm with you so these are my speaking cases on the why in 562 a little bit|0.51
+083|congratulations that said though|of education is not that|0.36
+084|more than 28 percent probably 30 percent of what a bitcoin is right and we see this|more than 28 percent probably 30 percent of what bitcoin is right now is|0.58
+085|without such adjustments the normal metabolism would not exist and nor would the normal psyche|team without such adjustments the normal metabolism would not exist a normal nor mal|0.68
+086|g'day i'm all3nz welcome back to my youtube channel|and i'm probably going to say why spend some money on a tube now|0.52
+087|in the case of exercise it's not just a matter of working or not working|days of exercise is not just a matter of working or not working|0.78
+088|calcium is made up of galactomyloids a substance similar to the carbohydrate starch or to cellulose|is made up of collected waste substances that are similar to the carbohydrates starch cellulose the chemical|0.58
+089|a 10 minute delivery for a 30 second audio there are several reasons one is that we created another service eight years ago|10 megabytes of data for a third second out there and there are several reasons one is that we didn't discover it eight years ago i'll|0.59
+090|people are in my face all the time if i want to know something all i have to do is google it|people are on my face all the time if i want to know something all i have to do is google it|0.85
+091|output 3 7 volts|uncomfortable to keep myself in focus and|0.54
+092|but whereas bessel had been looking at astrometric deviations of order of a few arc seconds jacob was looking at something much much smaller just 80 milli arc seconds that's 25 times smaller moreover|where it's best to look at astronomical detections of gamma rays and x rays because something much much smaller just 80 millionths of a second that's 25 times smaller than even a chicken|0.61
+093|and i should thank you thank you thank you tom|and i share it with you thank you|0.74
+094|egg hunts we're going to find them all we're really excited|is we are going to find them all we are ready to|0.71
+095|when i rest my face it's clean without feeling tight or stripped you know like when your face so dry you smile and it starts bleeding|onto my face it's clean without feeling dirt or sweat when your face don't cry you smile and it starts bleeding|0.66
+096|polyammonium lead halide perovskite efficiencies up to 9 were achieved|i'm glad you're here thank you for coming if i just said the top 10 percent will achieve|0.53
+097|yeah i don't know how long i'm gonna stay but i probably will go back to canada|yeah i don't know how to come here say but i probably will go back to canada|0.73
+098|have a negative reaction than if you were just to say i love you very calm good facial expressions|a negative reaction then if you were just to say i love you very calm you could face your expressions|0.75
+099|james and will talk about street photography and other|i'm here to talk about street photography and all|0.58
+100|and on top of my lungs saying that i wanted to see my lawyers saying that i wanted to see the ambassador|and on top of my notes he said that i want to see my notes that i wanted to see them matter|0.68
+101|you've got to get back up again because we all fall we all fail|you've got to get back up again because we all fall we all fail|0.88
+102|teacher and i don't think people have gotten beyond the fact that this is a job where it goes far beyond|additional and i don't think people have gotten me out of their heads so i'm going to try to be honest|0.59

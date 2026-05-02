@@ -1,0 +1,103 @@
+HYP_MBR | BATCH 04/15 | 101 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|he looked at me like i was a village idiot|the same injury last year and so|0.46
+002|menu buttons being right here they're at the top which by the way i think the window thing blends in real nicely seamlessly almost with|billions of dollars of the time but by the way i think what you think of being a civil taxpayer is that we're just one thing|0.55
+003|second point how long will it take|start point how long will it take well|0.70
+004|normally paid when it comes to wordpress themes and plugins|be paid when it comes to the 1 1 steps in place|0.64
+005|i want you to remember all these i want you to memorize them|i want you to remember all the things that i want to memorize in|0.72
+006|i just learned something recently because i'm a lover of|i just learned something recently because i'm not a lover of|0.71
+007|their oar was the same you know each was the same and he was in the middle and he didn't know whether to suicide left or right|ruled with an iron fist in a velvet glove my name is kim bowie and in the words of nirvana|0.53
+008|something if you're down soft you definitely want to check out|instead of focusing on the negative focus on the|0.52
+009|some will not even pay any attention to meditation that too is changing|some will not even pay any attention to meditation that's too weird changing|0.73
+010|you can just go right down the list all of the vines|you just go right down the list all of the facts|0.68
+011|a little bit of a shift or a nudge in the interpretation or communication that climate scientists have engaged in vis a vis|there will be a shift to greenhouse gases such as methane nitrous oxide and co2 if these aerosols are|0.50
+012|school is a jungle so many things to navigate|the digital channel determining things to navigate and|0.56
+013|costs and you have to show that there isn't any cheaper more humane way to obtain these benefits three in practice predicting the consequences of war is extremely difficult extremely difficult|and given the show that they're just getting cheaper and more ubiquitous way to obtain these benefits in three in practice predicting the consequences of war is extremely difficult extremely difficult|0.72
+014|if police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address|police reasonably believe that you have information that could assist them with the investigation of a serious offence then you have to give them your name and address|0.85
+015|absolutely 100 yes i am happy if you've been watching my videos for a while you've seen some transformations maybe get my editor here|100 but then yes i am happy and you know guys if you have been watching my videos for a while you've seen some transformations maybe you wouldn't get my head under|0.69
+016|so even if india takes myanmar away from china in an economic|nights so even if he needs eight hours of sleep away from checking email and coming back|0.60
+017|you can find me at one of my shows in some dark corner you're in the green room or something doing you know stretching my arms out|me at one of my shows in some dark corner you know in the green room or something you know i need to stretch my arms|0.62
+018|this is why i am so excited to share with you all today that we will begin the 2016 ted talks|is why i am so excited to share with you all today that we will begin the 2016 ted breath|0.87
+019|and then you divide through by a in order to make it monic so the leading coefficient is 1 and then you complete|use a lab puppy and you can make money selling off the first one and then you can breed|0.49
+020|6 7 and 8 1|in the science and technology sector what|0.46
+021|this is just a hobby of mine that it's turned into something a lot bigger than i thought it would|this job of mine that it's so hard for me to be honest with you|0.47
+022|we also have remote boom and bucket position|2000 miles across the united states|0.45
+023|readers out there because they're everywhere and remember you want to network|when i was a little girl i always wanted to be a princess|0.46
+024|so that's two draw three draw whole step bend|it was easy to do so we did the whole setup and|0.56
+025|the nsa spies on its own citizens does data mining|specialty shows that just doesn't add up|0.46
+026|we are part of the national initiative for building community trust and justice|what are some of the things that you can do to build trust suggest|0.46
+027|website about 50 common spelling errors make sure go through|about 15 armed guards by the airlines to make sure that no one|0.64
+028|yes they can perform very complex computations very fast|2000 miles across the united states|0.43
+029|cooper show didn't tell you that the women of india have signed giant petitions to get firearms|show don't tell you that the women of italy have said no to petitions to get firearms|0.69
+030|still sent me home i went home and i felt like i was on my deathbed i was going to die i don't know why they sent me home|sending me home i went home and i felt like i was on my deathbed i was going to die i don't know why they sent me home|0.85
+031|wrong you're not really losing a big amount of money but it's good to learn all the things which you can't|wrong you don't need to lose something about money but it's usually other goals that's what just happened|0.63
+032|encourage a little bit of a deeper thought process about the calories and the weight loss|encourage a little bit of a deeper thought process about the calories in the weight loss|0.78
+033|and here's one of the key points it doesn't matter what the tradu|here's one of the key points it doesn't matter what the tradition|0.77
+034|these out of course club members you get the club discount regular price is only 12 88 and our club members only pay 10 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a club member thanks so much|down of course club members do get the club discount regular prices are only 12 88 airline club members can save up to 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a clubmember thanks so much|0.76
+035|in this regard it always helps me to think of stephen covey's notion of|this card always helps me to think of steve jobs's no shift|0.66
+036|when you know in your heart that you really can walk away your whole demeanor becomes more confident and more clear you avoid any of the desperation that the other person can feel and take advantage of|you know in your heart that you really can't walk away your whole and mirror makeup is more confident and more clear to avoid any of the desperation that the other person can feel and take advantage of|0.83
+037|in the creation of these children or in the making|in the creation of these children's orders and then in the making of|0.67
+038|i think i should say welcome to the whiskey party alright you do it now it's too much pressure|i think i'll take what else was on the menu so now it's your turn|0.52
+039|it was fomented by evil spirits that possessed or were tormenting your wife that she inherited generationally|the basic pain of his parents and with his cousins who were torn away from their wives that is a generational injury|0.59
+040|one year leases on the ground they hated to build the soil up when they knew they might lose it at some point so you know there's got to be this working relationship that we're|one year lease on the ground they built the soil up underneath they knew they might lose it at some point so there's got to be this working relationship|0.70
+041|he also treats the detection cautiously noting at the end of his paper that there is some positive evidence for a planetary body in this system|he also treated his nation consciously using the active voice paper that there is some positive evidence for pneumonia in this system|0.66
+042|but we're talking about things that will really|because what we're talking about that life was really fun|0.61
+043|he goes how can you point out the speck of dust in your brother's eye when you have a plank in your own eye|how can you point out the speck of dust in your brother's eye when you have a plank in your own eye|0.86
+044|a function can have multiple definitions associated with the value that's given to it|any function can have multiple definitions such as when the key value that's given to us|0.74
+045|and ask us what plane to put this sketch on so we'll click|it doesn't take a genius to see that i don't want to|0.47
+046|plan for things that are going to happen or on the other hand|plan for things that are going to happen or on the other hand|0.86
+047|confidence that these amounts will be a little bit higher here's a look at the timing of things so here's the european model starting at 1 a m on mondays|so i'm going to tell you a little bit about myself i was born and raised in new york city i grew up in the bronx i went to high school in brooklyn and i graduated from brown university with a bachelor's degree in sociology|0.52
+048|i have a tablet a smart phone i can take my pictures and videos directly off my tablet|if i stop playing football all together anytime i make a shift or anything like that it stops me|0.49
+049|what that meant is that we need a radically different approach we basically need to find a way how we can take existing routers existing switches existing links and enable them for research|their masses and we need a radically different approach we must indeed find a way we can design existing roads to exist as cities and enable them for reuse so|0.63
+050|to the next level|to the next level and they tried|0.66
+051|that we're going to work on for next week i'll probably put something up|but it's also about putting yourself in the shoes of|0.45
+052|and today we're going to talk about a few news we have|we're going to start up because i don't know if you know this but|0.49
+053|blood extraction first before going to x ray because i wish i did that|not touch her first before going to hug her because i wish i did that|0.62
+054|all those other things and it's also setting the base of the three dimensional chain with|little things need to understand the basics of a three dimensional chain which|0.58
+055|the ultimate owners so let's say for example you have someone coming over to your house to visit your family so it could be a grandparent it could be an aunt it could be a good family friend and they say to your child|there to be owners so let's say for example that you have someone coming over to your house to visit your family to read who could be a great grandparent could be an aunt could be your family friend and they send your daughter|0.75
+056|looking to the front so we were in the shoulder stand again from this position a little distance between you and the pole|looking into the front so we were eating jokes and laughter from the audience in the system which you name both|0.54
+057|you know i guess dual stereo headset whatever you can|know i guess dual steroid hd whatever|0.54
+058|that's why they say hicksfix and not cpt|how to do it i had to figure it out|0.46
+059|so we're going to get on into some maybe more important things so in 1 5 we're going to start with some design of experiments type things and then i'm going to show you because we talked about it|you can get on and do some maybe more important things so like one point five we're going to show students this kind of experiment same things and then i'm gonna show you things that we talked about maybe that we|0.66
+060|about the being the living in space part that|we're basically about the business of sending kids to live in space|0.69
+061|that doesn't that's lost or doesn't understand it or is trying to figure something out|that gets lost or dismissed or trying to figure something out|0.66
+062|for generations that come after me|generations that come after me|0.61
+063|yeah well with amlid we have individual pixels being lit versus one big black light which|i'm like i don't even know if it's appropriate for me to be wearing this but i think i|0.45
+064|this real time i mean it's in a computer so now you can drag and drop you can delete|school time i'm going to see a computer so now you can track a job you can see a|0.72
+065|to get into the regular modes we simply just hold it down that will cycle you into your regular|get into the rhythm most when somebody's holding down that will cycle into your rhythm|0.61
+066|to get help along the way for instance if you're not a graphic designer|when i was a little boy i was|0.43
+067|quite a bit down to the production process itself|quite a bit down the production process|0.62
+068|if that sounds like you don't worry you're in the right place that is exactly what doing english exists for|that sounds like you don't worry you're in the right place that is exactly what doing english exists for|0.84
+069|so inflammatory or irritable bowel syndrome those are other candidates what we find a lot is that copper|vibrations on the organs and the musculoskeletal system those are other categories where we find content that they operate|0.55
+070|i'm sorry i've forgotten your name|i'm sorry i've forgotten your name|0.73
+071|vi we said was zero so that goes away so vf is f delta t|v i would say we're zero so that goes away so v i have the lead staff to tell the teen|0.61
+072|those arrays that we have not declared|those are realities that we have to deal with|0.66
+073|here's a small fact you're all gonna die|this is what my mother taught me along with the data|0.49
+074|what you mean this the lapel mic i don't understand what's distracting about it|what do you mean this is the libelous i don't understand what she's ranting about it|0.69
+075|are here they're out there somewhere sasha and malia are huge fans but boys don't get any ideas|now i don't want you to think that i'm some kind of saint john the baptist or anything but i have|0.45
+076|get told that quite a lot especially by my mother|so yeah i love my mother she's like|0.52
+077|pupil dilating eye drops could someday be a thing of the past thanks to a new camera that is not only smaller and more portable than other similar devices but also less expensive|pupil dilation eye drops are some day being a thing of the past thanks to a new camera that is not only smaller and more portable than other similar devices but also less expensive to|0.78
+078|now inside here you have to go and search for the section file now this section|there is second that you have no energy for this fight that you can find there is discussion|0.58
+079|i looked and i saw i was wrong i was lied to just as everyone else|learned and i just thought i was wrong i was lied to just like everyone else but|0.73
+080|through i'm at about 144 degrees i really want to get up closer to the|there was about 144 forests that i really wanted to get up close to|0.63
+081|i know you're studying with john parakos and core energetics and probably many of our viewers have not heard of core energetics what is the basis of|what you see is not parallelograms and quadrilaterals and cubes and pyramids of various sizes of cubes what the basis of this|0.49
+082|is here some object where i go you know|staying in some abandoned warehouse in the south side of chicago|0.48
+083|so that's a pretty important place to start obviously|so that's a pretty important point to start off with|0.75
+084|i'm competitive really with myself|competitive really with myself and|0.80
+085|for personal attacks i'm pretty good at shrugging them off they don't know me personally so their comments don't really hurt the real me if they don't like the way i sound or look they'll be like|personal style i'm pretty good at turning them off and they don't know me personally so your comments don t really hurt the real me if they don t like the way i sound or look|0.76
+086|ooh that's rather like a drinking yoghurt|that's why they lie it's trickery|0.41
+087|it becomes sick this is why our bodies get sick heavy metals will do it trans fats will do it chemicals will do it but wireless is the number one cause of inflammation of these cells|become sick and this is why our bodies get sick heavy metals will do it trans fats would do it chemicals would but wi fi is the number one cause of information of these cells and|0.73
+088|the amplitude is different depending on whether your eyes are open or closed|to considerably better when you open your eyes and|0.56
+089|important to replace the expression for dx|into what plastic expression for choreography|0.57
+090|you know trying to get up and work out and i would get tired very very quick|trying to get up and work out and i would get tired very very quickly|0.72
+091|but before we tell you more about the redmi 5 if you do love the fact that we bring to you guys the hottest leaks out there as soon as we can then toss a like and subscribe to our channel we will see you in the next video|if we can tell you more about dorothy mfi if you don't love the fact that we bring to you guys the honest needs out there as soon as we can then it costs|0.73
+092|i had my trainer was filipino my follow up trainer was filipino i didn't have an american as a companion until|i had my trainer was philippe petit my floor trader was phillippe pettit i didn't have an american as a competitor until|0.69
+093|if you think you're pretty handy building a snowman you might want to get yourself to northeast china|as if it were an antibiotic snowman you might want to get stuffed the truth is shiny|0.56
+094|or you can actually bring the pro controller with you on the go|to actually bring the broken dollar with you on the go|0.70
+095|including thousands of chemical weapons large volumes of chemical and biological stock|including thousands of chemical weapons large volumes of chemical and biological stocks|0.71
+096|god that's so genius i don't care what anyone|and this is called the sushi rolling technique|0.49
+097|generally speaking is to achieve our result of restoring density with a single procedure occasionally there will be a patient who needs so many hair roots transplanted that will need to divide|simply speaking is to achieve our result of the student listening with a single procedure occasionally there will be a patient who needs so many error choices because they really need to divide|0.71
+098|back in the day i'm saying nowadays there's beautiful colors flyers lights you|but it doesn't end there now let's take this beautiful knowledge and apply it to the|0.48
+099|that we're going to work with and we're going to re moisturize this section and really just put some moisture and seal it in okay|i'm going to work with i want to free your triceps and deltoids and pecs and moisturize it|0.60
+100|mainly digital database systems and about the projects which you have done in college and you should be very thorough with whatever you have done|about the project which you have done in college and you should be very low with whatever you|0.69
+101|concentrating not on this show which may come back but we're definitely not going to be here next week as far as a live show but we have another idea that we're going to work on for next week|concentrate on the good news which is many people but we're definitely not going to be there next week as far as a live show we were supposed to be in 2019 that would have been|0.61

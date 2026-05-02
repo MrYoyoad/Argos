@@ -1,0 +1,103 @@
+HYP_VOTE_CONF | BATCH 13/15 | 101 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|later when they began the final t minus nine countdown and we were expecting|when they began the final team on his side down and we were expecting|0.71
+002|and subscribe see you guys next time bye|and subscribe to tedx by|0.65
+003|and furthermore all the nisam the wondrous remarkable nisam the klaali sral had that was bestowed upon them from the time they left mithra|and furthermore who said this system wasn't just a remarkable system it was a dangerous system as i was abused from the top down from the|0.69
+004|there is some slight background noise or slight hiss that can be heard when you're not listening to anything or during quieter sections of music but the signal itself is strong i didn't have any delays or drops|some the background there needs to be slate hands that can be heard we're not listening to any of the older quiet sections of music but the single instrument of each strong i didn't have any delay or drop or|0.70
+005|about disruptive innovation a real paradigm shift in solo mo we are zenuber io and we're here to change the world|i'm from san francisco california are one of the most diverse cities in the united states|0.58
+006|at that moment the dental surgeon enters the room he seems so serious|at that moment the dancer turns and enters the room she seems to|0.64
+007|vote they never thought that the community could organize its ranks|vote the the community to organize these strike|0.61
+008|revolutions of the past half billion years|used in the past half billion years|0.73
+009|well that's why the fact that i had meningitis it was so severe that should not have allowed for any experience|well the fact that i had many chains and there was no savannah and that should not have allowed for any experience|0.70
+010|i'm not very likely to have cancer we don't have cancer in my family as far as i'm aware and we tend to live fairly long most of my|i've never had the chance to address this before now i'm like to give it a try for the first time and i wish i could have this conversation with you|0.69
+011|and a leadership speaker and he's delivered more than 400 professional programs to corporate and private clients he is president of results based seminar|speaker and leadership speaker and it's given more than 400 professional programs in corporate and private clients and presidents of resorts and we|0.69
+012|an inquiry into how to improve children's education in france and he was intrigued by what the british were doing|ignoring his admonitions to improve his diction and pronunciation he was intrigued by what the british doing|0.68
+013|and we're going to type in home page excerpt|years ago when i was a little girl my grandmother to me me|0.60
+014|you form your leadership at home|so from your relationship at home|0.57
+015|or you can move back over to it now i'm just going to type in my information so i have negative 1 positive 1|i don't know what i'm going to be when i grow up i just know that i want to the world|0.71
+016|yes if you inscribe coach shane i'm guessing what you did was you took something something metal like maybe a knife or something|in give you he described gochujang i'm guessing what you did was you do something something better like maybe a knife or something and you|0.65
+017|exactly the presidential yeah exactly so the reasons why those programs came about was because of the epidemiological evidence that supported the idea that|texas then in texas so the reason why those programs came about was because of the epidemiological evidence that supported the idea that|0.72
+018|it contains permitted natural coloring added color flavors natural nature identical artificial flavoring substances contains no fruit|it contains permanent natural colorant edible color flavor natural scent edible artificial flavor and substances i can't pronounce|0.70
+019|so like tuberculosis which is another infection that can develop resistance quickly|so peroxidase was another invention that is available to us quickly|0.65
+020|electronics internals to make this just a little bit faster than before|electronic tunes to make these just a little bit faster than before so they look|0.69
+021|this also came in like many different colors like teal cream i think this came in like|also coming in many different colors like green i think still coming|0.62
+022|let's see a half a cup of|i have to say you|0.71
+023|well my research has to do with the oxidation rates of these carbohydrates|well my research cases through the art and science of this alberta|0.59
+024|again i'm using rising intonation but it's not at a very high pitch i use rising intonation like a question i expect to see the difference|again the music rises in insulation but it's not at a very high pitch i hear the rising insulation like a question my expected|0.69
+025|god that's so genius i don't care what anyone|this is called the sushi technique|0.70
+026|history and her name was mrs moses i've told this story before but it's a|this video i was smoking cigarettes and i've told this to performers|0.65
+027|time to transfer to my computer and do all this other stuff|to let it transfer onto my computer and do all this other stuff so i did|0.64
+028|achieve so have a clear goal whenever you make a pizza or whenever you learn a foreign language|achieve so have a clear goal whenever you make a piece of art whenever you learn a foreign language|0.68
+029|an area that market came very close to testing just recently in price action and is a great area|the man who came very close to assassinating george w|0.69
+030|out and i have to say i am absolutely loving this headset now i have the mono version the mono ear version they also make one that has you know i guess dual|and i have to say i am absolutely loving this set now i have the modern version the modern ear version the thin one that has you know i guess dual|0.73
+031|we'll also learn something new about indian country and hear from our elders on this native report|we'll also learn something new about india and trek and hear from our elders on this day of remembrance|0.67
+032|oxygen to breathe and the other one is what happens|to breathe and the other one is what happens|0.63
+033|i'll have you download this|so thank you very much for having me|0.60
+034|who runs around my house destroys everything he touches i love him to death and she works as a registered nurse now there was an issue when i was going into high school|out stories around my house the stories of the queens and she wanted to hear my stories too was a year when i was going to high school|0.70
+035|absolutely 100 yes i am happy if you've been watching my videos for a while you've seen some transformations maybe get my editor here|100 but then yes i am happy and you know guys if you have been watching my videos for while you've seen some transformations maybe you only get my head under|0.73
+036|are constantly scanning people's brains while they look at maps|are constantly scanning people's brains while they're learning maps|0.69
+037|but maybe you only have one of those|but maybe you only have one of those you know|0.67
+038|you will come to some defining moment where it will seem as though|comes to some defining moment where you receive this call|0.70
+039|both people are atheists they're just different kinds|people are at the edge of their|0.69
+040|about it in this book|it's also a metaphor in love|0.55
+041|hey how's it going youtube i'm 5'6 and i'm here to|and it's neurosurgeon that seen on the brain|0.49
+042|what's called the rst driver or the option rom that's part of the searle t and the pch so all the way around you've got pretty much all the connections that you could ask for|what's called the airline seat traveler's nightmare where you get stuck in the middle seat so all the rows of aisle seats are taken stuck|0.74
+043|one twitch is all you do|one to reach is all the|0.62
+044|now but for the better for the better always because pluto only destroys so to speak what is no longer suiting us anymore|pay or post pay always which would go all the way to disgruntled customers so to speak we didn't no longer shoot dark anymore|0.63
+045|encourage a little bit of a deeper thought process about the calories and the weight loss|encourage a little bit of a deeper thought process about the calories in the weight loss|0.64
+046|that the material we're using has the right rate and level of absorption|material you were using has the right weight and everything|0.62
+047|market research firm bernreuter research is forecasting pv installations could reach|market research firm rogers research is forecasting pv installations grow reach|0.62
+048|of laws have we just been talking about recently in physics|the cause that we've just been talking about recently climate|0.73
+049|see it as not just a toxic chemical in the environment like something like a heavy metal a plastic we all hear about bisphenol a but it could be any|i think it's really cool that you're|0.57
+050|theater production who have not acted they just attended okay|production you have that asset that the nowhere else on the|0.58
+051|i've made lots of videos about weight loss however some people don't want to lose any more weight than they you know compared to what they've lost already they're actually looking to gain weight so they're really concerned about|when i was a little girl i always wanted to be a princess|0.76
+052|hey everybody it's jon stabley i'm here with brian mayo everybody's favorite tech guru today we're gonna|money is just where idea that has no|0.54
+053|you guys are already suggesting a bunch of different|so i wanted to share a personal of|0.58
+054|fluent communication fluent conversations native speakers and communication we're reading recipes this is another example|communication fluency conversations native speakers and communication we're reading recipes this is another example|0.68
+055|it's a game that i am already regretting thinking of it's time for tattoo roulette with one direction|the kennedy center for the performing arts and washington d|0.68
+056|do is either sit or stand the baby up on a chair|either sitting or sitting the baby up on a chair|0.58
+057|own rail system for a few bucks|system for a few years|0.72
+058|so there's different sizes of different boards and we wanna make sure that we have the standoffs in the right place because not every board's the same|i'm going to be you|0.57
+059|apple also stated that the iphone 5s fingerprint sensor will be able to detect multiple fingerprints|also said that the iphone 5's fingerprint sensor will be able to detect multiple fingerprints|0.71
+060|canon usa look for it|the the or for|0.51
+061|iusb port camera 2 the only difference is that the camera is not a single camera the only difference is that the camera is a single camera|so to start with the very|0.56
+062|actually i find all purple crystals to be very useful for the grief release process just because the purple crystals are very high elevation energy|i find all people crystals to be very useful for the grief release process it's because the people crystal has very high individual characters|0.69
+063|said that they realize now that consumers want a bigger smartphone when in the past they said that apple's not going to do a bigger smartphone well now it looks like they are so if those rumors are correct and apple actually is going to make two different sized versions of the iphone|that they realize now that consumers not upgrade their smartphone but in the past they've said that apple's not going to upgrade your smartphone well now it looks like they are so if those assumptions are incorrect apple actually is going to make two different versions of the iphone|0.72
+064|this must plug into this and not into the base at all|this was written in 1999 it's little dated but|0.63
+065|como estas a few times you kind of have an idea of what it means|corporate side of food i have a degree in idea as well because|0.59
+066|by your spirit to say you know what is right and wrong and should you do this should you do that there are many many temptations|my own spirit to say know what is right and wrong and to do that there are many temptations i'm sure|0.68
+067|and mind you he's deaf and i was doing all the nice things you do with the hearing|doing stuff like i was doing all the ted things you would think of|0.66
+068|if you ever forget how to pronounce this letter just remember psi is for poseidon and his trident|you ever forget how to pronounce a letter just remember it's from sight and not sound|0.67
+069|so i worked at liz for two years and i promised myself like going into that second year that i would quit my job i didn't know how i didn't know how i didn't know why i didn't know where the extra income was going to come from|so i worked at things for two years and i promised myself like going into that second year i'm going to quit my job i didn't know how i didn no idea where the extra income was going to come from|0.70
+070|home is what you will become and home is what you will|home is when you will become a home is where you will|0.64
+071|and whatnot but first let's talk about the practical difference what i felt while using these phones and in a nutshell in terms of speed difference if you are expecting that moving from|and what not but first let's talk about the practical difference what i felt while using these phones and in a nutshell in terms of speed difference if you were expecting that movie from|0.70
+072|offering attractive prices online payments and shipping to customers|reconstructive prices holding payments and shipping to customers|0.66
+073|a price that was beyond what the limit was they gave in the commercial for this commercial they gave a limit that will actually like you can get a mac with everything that she's saying so|going to tell you what i'm|0.53
+074|but when we first started this series i wondered if we'd actually get through it you know all great ideas|when we first started this series i wondered if we'd actually get through it you know all great ideas|0.66
+075|from another game that is doing that oh intentionally|a long time that is doing that so let's|0.64
+076|first things first when you buy a new gpu you need to say to yourself what job do i want the gpu to do i'm going to go through a few|first first when you're putting on a uniform you need to say to yourself what job do i do and what do i be to i'm going to go through a few|0.62
+077|you know in the tropics where i live they wear out and they're 600 bucks a fucking piece|you know when the drops are where i live and they wear athleisure they don't remind me of fucking bees|0.64
+078|she was bleeding and the nurses were standing on the side and everybody was just looking|be big and all to do that i people even it|0.52
+079|really pulling all that content in from the most recently used document list or mru|book here titled from the most recently issued document because they're amnesty they've been working|0.63
+080|so it's a really nice compact setup it's basically the same size as the|so it's a really nice compact game it is based on the same size as|0.68
+081|okay let's start out by playing a long tone on middle c and then we're going to go down chromatically from there if you haven't done so already i highly recommend you watch my saxophone|can start out by playing a long note on middle c and then we're going to go down dramatically from there if you haven't done so already i highly recommend to watch my on|0.74
+082|gives us the clue i mean we can't raise children|was different from what we're used to have of to|0.50
+083|prophet's house alayhi salatu was salam at night time they were addicted to listening to quran when he would make qiyam al layl but they wouldn't tell anyone in the morning|the town that he said he was going to come at any time they were anxiously waiting for him to come again but he wouldn't sound like he was when he was|0.74
+084|it's called lord forgive me when i whine|all god forgive me where i was|0.70
+085|had polygamy and concubines does that mean god approved it the bible records a lot of things|i the line between documentary and of movie but i was recalling a lot of things|0.63
+086|on their butt and kids of course|to be really creative for one minute|0.59
+087|a chance that it might not be fantastic samsung sort of has a reputation of just taking a million ideas throwing them at you|it might take us 10 years to sort out these patents just take a million ideas and throw them into|0.71
+088|i'm sure somebody can explain how and why that happens i don't really care at the moment|i'm sure somebody can explain how what happened and are at the moment or how are|0.67
+089|tension new developments every|physics and emotional|0.58
+090|crop loss because it would burn up the crops it would cause eye disease because your pupils would open up and it would allow the uv rays to get in|cause these remarkable gaps it will cause gas to leak into the supernovae will open up and we can then serve the amazing|0.62
+091|last year was that there were some issues with the calibration especially on the darker end of an image|i'm just going to read you one of the captions so you can see what it's like|0.54
+092|you the list of windows that you have available to resume your screen session you type screen r and to exit|list of wind turbines available so with global transition keep take 20 years and take|0.66
+093|the concepts will be explained from two perspectives using real life experiences reflecting my living in mexico as well as visits to other spanish and french speaking countries|played from two perspectives using great life experiences reflecting my living in mexico as well as visits to other spanish and french speaking countries|0.74
+094|enoch the first one elijah the second jesus the lord himself okay and the old testament saints who were resurrected according to matthew 27 when jesus rose again|it was the first one in alexandria giza and the old testament us that we resurrected and grew about the 27 when jesus rose again they|0.65
+095|paint scheme on it most of them are like a 3d paint scheme they kind of modified|stay out most of the time when it's dad dad|0.61
+096|i like salt in my chocolate so i use my seaweed salt the cheney cabot seaweed salt so there are your basic ingredients|i'd like to talk to you about chocolate so what i'm going to do is see if we can change that can with the basic theory is|0.59
+097|what is the difference between the da and|what is the difference between the the|0.69
+098|and julia totes over well thank god|julia child over real the|0.53
+099|too much because our arv for a property like it once it was fixed up to the standards we were planning to do was only gonna be 200 000|much because our head off property like it once it was fixed up and the standards we replaced it to was going to be 2000|0.72
+100|at the end of the story is the same across all cultures so i hope you guys enjoy it and i can't wait to read your comments so a long time ago there was this indian king he somehow came across a group of blind men|end of the story is the same across all cultures so i hope you guys enjoy it and i can't wait to hear your comments so a long time ago there was a indian king somehow came across a group of blind men|0.72
+101|find an empty space you relax your eyes and you're ready to see the next shoe this helps you to understand what kind of shoes you want to focus on|find an empty space to relax your eyes and to reconnect to this helps you to understand what kind of issues you want to focus on|0.71

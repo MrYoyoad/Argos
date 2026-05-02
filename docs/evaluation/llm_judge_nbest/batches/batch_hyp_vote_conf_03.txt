@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 03/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|lures all with punch out hooks that go along with it this is no bigger than a credit card guys|is one of the largest oil rigs in the gulf of mexico it's no bigger than grand canyon|0.62
+002|like where the extra income was gonna come from but i told myself i was gonna quit my job|where the was going to come from i told myself i'm going to quit my job and|0.69
+003|smoothies to 435 06 or whatever and that autoresponder message can have anything in it that i like so makes it really easy|movies through four three five zero six or whatever and that auto responder message can have anything in it that i like so it makes it really easy|0.69
+004|how much better they feel when they make these lifestyle changes it's very easy to keep|is how much better they feel when they make these lifestyle changes it's very easy to|0.74
+005|i see myself very much as a designer although the work|limited very much so you|0.58
+006|text take for example a paragraph here this is a paragraph from the middle of a scientific toefl text|action take for example a pair of eyeglasses it takes a pair ever from the middle of a scientific novel|0.68
+007|sometimes my wife is busy doing recipes or doing whatever else and i'll i want to play with my son i want to be around my son but you know really cuts into my work schedule|my wife and kids do whatever it is right now i'm going to play with my son and my grandson but really i see my work work so i don't|0.68
+008|let's try sketchy edges this one's pretty fun so if we click on|trying to catch as we agents which was really fun so if get like to|0.63
+009|we're excited about several innovations that will deliver increased nutritional benefits of the food that we eat as well and also that will help ensure|time and money for several innovations that will yield increased nutritional benefit of the future being of israel also they will help us secure|0.68
+010|and ask us what plane to put this sketch on so we'll click|it just take a genius to see that i don't want to|0.62
+011|well no right that's a big problem and it's something our society has not addressed at all|no right that's a big problem it's not because society is not address it at all|0.64
+012|or emmy awards and say and i want to thank you|going to you story|0.53
+013|this course is all about transitions this video is all about transitions|this course is all about transition in this video going to talk about transition|0.68
+014|teaspoon of baking soda and salt you may say|beethoven's concerto and it's going to take you about 15|0.68
+015|polyammonium lead halide perovskite efficiencies up to 9 were achieved|i'm glad you're here thank you for coming if just is the top 10 percent will achieve|0.54
+016|weight so they're really concerned about being very|i'm going to tell you|0.57
+017|how we treat each other is really that internal piece you can't measure very well but you can feel it|trick together is to trick each other as equals you can't boss each other around|0.59
+018|now let's fill in the punnet square|to feel like the monkey square for the|0.59
+019|browser right now this is blank|the train here in this|0.51
+020|hello everybody welcome back to daily easy english expression ah boy today we have something very good fomo|everybody welcome back to tehran today we have something very good vemo is|0.70
+021|coming off of a nasa website particularly when some of the agencies that are involved|because of the of weapons site particularly weapons of mass destruction that are involved|0.59
+022|next week i will be making my debut|next week i will be making my debut|0.71
+023|from people's stem cells that they would not reject over time and we were very near to a cure for things like aids|from people's stem cells that they would not reject over time and we were very eager to cure for things like aids why is it|0.70
+024|second point how long will it take|at point how long will it take well|0.67
+025|so then he says that everything that gatsby represented is something for which he had unaffected scorn gatsby is the only character in the book|is that everything that has been represented to me from shakespeare onwards or is the only character in the world|0.69
+026|so we listen but we hide see we're only children but that's never an excuse you can never really run from the 8 o'clock news politics tension new developments|when i was 11 years old i was diagnosed with anorexia nervosa an eating disorder characterized by fear fear of gaining weight|0.70
+027|and to be honest after that abortion i actually experienced some relief fast forward two years later and i am a freshman in college and i get pregnant again and i make the decision to abort my son|to be honest after that abortion actually experienced some relief fast forward two years later and i am a freshman in college and i get pregnant again and i make the decision to abort my son|0.71
+028|you ask but do not receive because you ask wrongly|has some blue stuff pepto bismuth|0.57
+029|program covering everybody admittedly with fewer drugs covered but every person in the province of ontario not just those 24 and under and you know suspicious people are going to wonder whether or not that|was was to old you|0.50
+030|i was born with congenital rubella syndrome|i was born with congenital syndrome|0.71
+031|even after the insurance examination|after the initial contamination|0.66
+032|devices idle connected to a un muted network or charger the job scheduler is one of my favourite features and i love it i'm happy with it and i will share it with you soon the job scheduler is one of my favourite features and i love it|to iron connected to the qaeda network to charged the job changer is one of my|0.67
+033|also noise reduction software used minimally again if you're in a loud space the best noise reduction software can only do so much|so after you've gone through the process of discovering what you use minimally and if you're your own cloud space best which discuss in a while you can use your best|0.68
+034|they work together we enjoy the conversations together we complete the conversations and we are consistent with the working together so those kinds of people|together we enjoy the conversations together we pleased the conversations and we are are working together to those kinds of people i|0.69
+035|toward you what you want okay so become crystal clear and focus|do what you want so become a critical thinker and focused|0.65
+036|a function can have multiple definitions associated with the value that's given to it|any function can have multiple definitions such as when the key value that's given to us|0.64
+037|i've been very fortunate during my lifetime where i've had somebody that|i'm very fortunate throughout my life time i've had somebody that was|0.62
+038|a lot more success than if you were shooting your son's high school game just because there's more light|lot more success if you wish you could succeed at school games just because there's more like|0.71
+039|back to school supply list before meet the teacher night i have a couple of tips|to school as a black kid before meeting this teacher i have a couple of tips|0.67
+040|to get into the regular modes we simply just hold it down that will cycle you into your regular|get into the rhythm most when is holding down that will cycle into your rhythm|0.65
+041|we're doing everything we can to make our wood as environmentally|doing everything we can to make our world a better|0.69
+042|tool for studying the concept behind absolute zero you can|studied at singapore meditation during my|0.51
+043|and that she had told me about this product and about doc|have told me about this product and i to talk to|0.61
+044|it has great grip rings it's really soft so i probably should have got that one|is is a religious institution|0.53
+045|and the security was sort of hovering around the side and i watched a nurse just gently go up and put a hand on this gentleman's arm|and she knew it was shark around the side and i wanted to gently go up and put a hand on the shark's team|0.72
+046|set it apart not just from other network marketing companies but from anything i've ever looked at in my life feature number one is|i'm better not just from a health care perspective but in every aspect of my life adventure number one|0.62
+047|christ the messiah throughout the world|to say that david foster wallace|0.56
+048|that's a major or that's a major seventh or that's a you know diminished chord or that's augmented or you know that chord there happens to be a dominant seventh so that's where|a major seventh or a minor seventh that's a consonant fifth or that dissonant message so that chord later happens to be a dominant seventh so that is where this|0.70
+049|that we're going to work on for next week i'll probably put something up|to it's bit about putting yourself in shoes position to|0.51
+050|a very brief history of the airplane but the history is going to start a little bit before|of are now becoming engineers a little bit before|0.53
+051|when you put everything in the pot you need to cook until everything is dissolved|when you put everything in pause a sure you know everything is solved and|0.67
+052|these out of course club members you get the club discount regular price is only 12 88 and our club members only pay 10 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a club member thanks so much|down of course club members do get the club discount regular prices are only 12 88 airline club members can save up to 95 if you're not a club member make sure you check out our website because we have tons of reasons why you should be a member thanks so much|0.72
+053|and you do it like in i mean you think about it long enough but you let everything go|what i like a lot i mean you think about it carefully enough a woman you let everything go|0.69
+054|so many stories have been spreading around the internet about the 1 5 million dollar powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people|many stories have been spreading around the internet about the 1 5 million powerball winners and what they've been doing with their earnings there was obviously only one winning ticket but it was divided between three people|0.72
+055|joking is that it oh my gosh i thought i had so many more books on here i do have a lot more books on here i just have ones i haven't even started reading yet so anyways that's all for here|so like saying oh my gosh i think i'm in love with someone personally i don't get to be in love way i used to have once again when i was a teenager and so anyone can sing it all a again|0.72
+056|five six a hinge half turn to the left|story why i'm here you|0.52
+057|on every receipt of any local businesses|are never recipients of financial contributions that|0.54
+058|beneficial regardless of whether you are performing or you're doing administration|was going to you to|0.51
+059|to my true nature so i'm gonna just first invite all of you to take a breath|mind into nature so i'm here to provide all of us with a little breathing|0.63
+060|they insist that the positivist legal philosophy doesn't exhaust our understanding of law there's something more to it and that something more introduces some important moral characteristics or dimensions to the concept of law|sense that the positivist legal philosophy doesn't to now understanding of law there's something more towards and then something more introducing some important moral characteristics which i mentioned to the concept of law|0.69
+061|you do have this in your bag and you|have in the|0.67
+062|and scientists with team immediate action is needed to improve|1950 we can actually to in|0.51
+063|and import fees before shipping a whole lot of sets|more fish but there's still a whole lot of sense|0.64
+064|to give me the insurance policy at all because i had very high cholesterol high triglycerides and hypertension and meanwhile at the same time i had horrible irritable bowel syndrome i mean like|me interest in ligament because i have a very high iq i trained as a and psychologist and meanwhile at the same time i horrible grades from my math teachers maybe like|0.63
+065|and then you divide through by a in order to make it monic so the leading coefficient is 1 and then you complete|a lab puppy and order to make money get off the streets one they should be|0.54
+066|even though he's very much spoken out against cults|even though he very much on himself|0.65
+067|so we have here six apples because we find|we have in our six children because we feel|0.66
+068|i'll do this it's okay|you|0.51
+069|let's start by asking who's doing well well unfortunately there's no international ranking tables for teacher feedback systems|let's start by asking who's doing well unfortunately there's no international ranking tables for teacher feedback systems|0.70
+070|most of it's about relationships i think you know it depends where you're at|most of it's built relationships and i think it depends where you're at in|0.67
+071|it's not bad you know what because it's our culture it's our culture you have to|not bad bad word because it's our culture our culture is our|0.62
+072|if a chinese businessman hands you a business card|a chinese businessman into a business card|0.70
+073|finally we beg for traveling mercies as we return home to|we pay for traveling merchants as we to their homes|0.70
+074|that you tell them what is the way it is and what they should do the way it should be|to tell them what the next step is what they should do or what they|0.62
+075|i now have 50 stitches on my needle and so now we're ready to begin the decreases if you look at our sample|now have 50 stitches on my neck and so now we're ready to begin the look grafting on sample|0.69
+076|but i have siblings who did|but i have double citizenship|0.67
+077|guitar the kick drum was very very punchy|are they get trouble with it's very very pushy|0.62
+078|waiver also allows for a lot of flexibility in the family determining what might be helpful to them families that are eligible have to be on medicaid so that indicates that they're|waver also allows for a lot of flexibility in the family determining what might be helpful to them families that are eligible are half my age so they're indigenous|0.73
+079|anyways make sure you have a white rag handy because this grease is greasy|so when you have a white bread sandwich|0.73
+080|important to replace the expression for dx|into what plastic expression for could|0.68
+081|flash but it would be completely unrealistic to be|house but it would be completely unrealistic to|0.71
+082|the thing is i just acquired this ammo last week so i don't really know the conditions under which it's been stored but|the highest quire on the quiz last week so i don't really know the conditions under which this the measured but|0.63
+083|mute the call that you're on it mutes and then you hear a little tone in your ear every few seconds to let you know that you're muted and if you also tap the front or back or maybe it's like sliding your finger back and forth i forget exactly how it works but|mute the call that you're on and then you hear a little tone in your ear every few seconds to let you know that you are muted and if you also tap the or back maybe it's like sliding your finger back and forth i forget exactly how it works but in|0.74
+084|for most project managers is giving a presentation but that's where we can influence our team influence our stakeholders|most project managers is given a presentation but that's where we can influence our team influence our stakeholders|0.71
+085|or you can actually bring the pro controller with you on the go|actually bring the broken dollar with you on the go|0.69
+086|usually after lunch i'll get kind of sleepy so i'll have some iced coffee|you just have to relax sit back and enjoy life have some coffee|0.69
+087|we're going to be eternally connected we're going to be eternally alive god has given eternal life to the whole human race|to be internally connected we're going to be externally alive god has given an internal life to the whole human race|0.72
+088|everybody and welcome to day 5 of my 14 day water fast|good and welcome to day five of my 14 day of fast|0.64
+089|look at this here's two dollars and a self addressed stamped envelope first things first the bender|look at this are two see instead of intersecting at the same time first parallel first each other|0.65
+090|let's talk about the two most accurate tests|about to do most accurate test|0.61
+091|yeah i don't know how long i'm gonna stay but i probably will go back to canada|yeah i don't know how come come to say but i probably will go back to canada|0.68
+092|so that's all i have that's all i got for christmas and i really enjoy my presents and if you like christmas and if you like this video give it a thumbs up comment down below and subscribe see you guys next time|that's all i got for christmas and i really enjoyed my present and if you like christmas then if you'd like to give your thumbs up me down below and subscribe to the guys next time|0.70
+093|so i just try to search in other ways like the text like his portrait in my qp i write|i was years old i with 1 diabetes|0.51
+094|malahim they are servants of our father and they are also the bible says they are our brethren|team they also serve as their fathers and they are also the babysitters on long plane trips|0.70
+095|countries as india russia vietnam|and then i reach victory and|0.51
+096|and leo once in this room really bad if you could hear that meow can you hear that|what sentence were really bad if you could hear that piano can you hear that|0.65
+097|i had my trainer was filipino my follow up trainer was filipino i didn't have an american as a companion until|i had my trainer was philippe petit my floor trader was phillippe pettit i didn't have an american as a competitor until|0.65
+098|that wanted to install deities in their sankhya tan vehicle|wanted to show and and understand|0.59
+099|you might have seen this japanese method of multiplying circulating the web where everyone's like wow math is so much better in japan|you might have seen the japanese method of multiplying circles like the web where everyone was like wow math is so much better in japan|0.69
+100|pouches they come with too so these are my speed lights these are the yn562s that i use here|pounds and i'm with you so these are my speaking cases on the why in 562 little little|0.61
+101|so the females actually have a choice kind of who they want to|so film a filmmaker i actually have a choice and i do not want to make|0.62
+102|you can do the same thing with food too putting food in certain containers you can put food in tupperware that you know that they can't open quite yet|you do the same thing with food so you put it in food containers you can put food in doubleware that you know that they can't open quite yet|0.73

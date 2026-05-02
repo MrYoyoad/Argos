@@ -1,0 +1,28 @@
+HYP_VOTE_CONF | BATCH 15/15 | 26 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|just sit tight i will start you soon now remember and those of you who you're all ddm members|i will start you as two now remember for those of you who are all the income members too|0.73
+002|across the campus with schenck shortly after he had come to|at the camps through his child and shortly after the couple|0.58
+003|i think the main thing we're trying to train people is to have empathy to listen to not try to fix it but just to be there to realize that god is everywhere|i think the main thing we trying to trick people is to have empathies and listen and not try to fix it but just to be there to realize that god is everywhere|0.72
+004|and body parts|was was ago old i was|0.50
+005|implication of this feature|implications of this vision|0.64
+006|another girl asked what happens when you're|another grade what happened was|0.68
+007|reason it shouldn't be your first ocarina this is an excellent ocarina that will grow with you as a player|say it shouldn't be your first is the day that concreting will grow with you as a player|0.65
+008|well my friend this is actually a really easy answer money samsung went all out with the marketing of their galaxy line of phones so when the|my friend and this is actually a really easy answer money as turns out went all out with the marketing of their talent like phones with|0.70
+009|and see that it is not happening you will not lose muscle weight now you'll lose yucky water and fat weight and maybe underneath all that water and fat weight you didn't have as much muscle as you thought but you will not be|see that it's not happening you will not lose muscle weight neither lose a lot of weight or fat weight you didn't have as much muscle as you thought but you will be|0.71
+010|so you can update the spreadsheet from autocad|are going to get dated especially from other guys|0.62
+011|and produce it there we feel it's a safer bet to produce it here|and producing there villagers villages men who miles producing|0.57
+012|this is the camera and this is it the adapter it's supposed to go on like this|like a hammer and that's the only way to fix the world|0.51
+013|of results based seminars here in tampa|citizens of states called america because the area is|0.54
+014|you could say the table that is in the room or the table which is in the room|would take the time to that is in this room or the time you wished this room|0.67
+015|through i'm at about 144 degrees i really want to get up closer to the|was about 144 forests that i really want to get up close to|0.67
+016|auto suggest box we're not implementing search i just want you to be able to successfully use the visual state manager to show and hide|going to suggest please with the prime minister's association one you would have been able to in the story of short term management the show|0.65
+017|allowing the humans to focus on design and compositional choices|group is to focus on designing opposition choices|0.70
+018|and like the guys that help us out you know with|like the guys help can help this guy|0.57
+019|i could not believe i'm like i didn't have some of those conversations as in a|i could not believe i mean i did have some of those conversations as|0.67
+020|some limonene hash oil some d limonene hash oil|be an actress being an actress|0.55
+021|i was born with the ultimate competitive disadvantage|or when the ultimate competitive daily advantage|0.66
+022|type of a container is going to last you probably your lifetime maybe two lifetimes|feet taller it's going to last two probably three lifetimes maybe two life times|0.63
+023|that process has continued but there's something i think lost in that initial burst of excitement that we both felt|that process has continued but there was something i think lost in that initial burst of excitement that we both felt|0.70
+024|written to me all the consultations and all of that i think that is a really important thing to do as well and i think it suits you know the first month of the year|the reason too many hold consultations in airports i think that's really important thing they do as well and you know the first month of the year|0.68
+025|without such adjustments the normal metabolism would not exist and nor would the normal psyche|team without such adjustments the normal metabolism would not exist a normal nor mal|0.69
+026|is about having your marketing do all the selling for you so you|about having your marketing do all the selling for you so you|0.69

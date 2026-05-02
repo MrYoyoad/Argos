@@ -1,0 +1,107 @@
+HYP_MBR | BATCH 02/15 | 105 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|and so that is where we get our ionic product of water|i don't need a brochure of words i|0.42
+002|a noise with without even having to move your other hand so if you watch when i'm playing|you know because we didn't even have a movie theater in town so we rented|0.58
+003|we need those rural farmers and we need to make those urban rural connections you know|we did coastal rainforest so we did mangrove restoration in 1960s|0.60
+004|the constitution after the constitution has been written|i think it's important to remember that|0.37
+005|full frame width so just crop to 16 by 9|full frame what's your position right now|0.56
+006|it was really hard to come out to them i understand that my mother was very religious when i came out to her|really hard to come out as gay but i understand that my mother was very religious when i came out to her|0.76
+007|you will come to some defining moment where it will seem as though|comes to some defining moment where you receive this call|0.77
+008|you can find the perfect counterweight and you never have to worry about your camera ending up in the dirt|you can find the perfect outerwear and you never have to worry about your camera acting up in the snow|0.80
+009|here is a random video for your viewing enjoyment|a random video of your viewing history|0.73
+010|i want to hear you play billy's bounce and or little|how to play beethoven's piano or how to|0.53
+011|i see twitter feeds all over the place right i see them in news stories i see them in|see green fins all over the place so i can see them close to shore i see them in the|0.67
+012|when jesus rose again|in one sense it's roseanne that|0.49
+013|to go and of course attitudes to work have really changed as well|to go and of course tesla jules we're looking for engineers as well one of the|0.60
+014|i think any industry can benefit but obviously we're focused on document intensive workflows and we've had most traction in those|i like to study it by the fact but obviously we've focused on the neanderthal kin of woolly mammoths and we have had most challenging leaders|0.56
+015|95 capacity might mean that there's two spots left at west madison in the third|95 percent capacity might mean that there's no spots left in western medicine in the third|0.68
+016|which is the t5i line the 700d line so i think we're going to see a 700d line|1995 i think that's a good year to start so i think we can see|0.51
+017|and urological association in creating this guideline the panel aimed to provide directions|when i was 19 years old i was|0.45
+018|we're doing everything we can to make our wood as environmentally|doing everything we can to make our world a better|0.80
+019|let the suit fool you i'm the founder and cto currently of a company called aerospike i founded this company to bring fast|true founder and ceo of a company called aereo i founded this company to bring fast|0.65
+020|3 million users about 12 million people who speak about us for our community|three million users about 12 million people who speak about it through their communities|0.82
+021|the truth how facebook is a media company or is not what's about twitter|news how facebook is a media company or what's about switzerland|0.65
+022|to the word spelling yeah you have to learn spelling i know that english spelling is very difficult i have a resource about that too on our engvid website about 50 comm|so worried about smelling that you have to know the smell and i know that the genie smell is very difficult and i have a video about that too on our website about 15 carbon|0.61
+023|what we call business development training in other words they taught me how to sell they taught me a little bit about the product|what are business development training in other words that taught me how to sell they taught me a little bit about about the product|0.76
+024|or dimensions to the concept of law|or dimensions to the concept of law but|0.67
+025|don't just open the door knock first|years ago when i was|0.43
+026|and leo once in this room really bad if you could hear that meow can you hear that|one sentence was really bad if you could hear that piano can you hear that|0.72
+027|certainly it needs this as well you start with developers this is actually a great environment for developers because|certainly idk needs this as well it's not with the developers this is actually a great environment for developers because|0.74
+028|too much because our arv for a property like it once it was fixed up to the standards we were planning to do was only gonna be 200 000|much because our head off property like it once it was fixed up and the standards we replaced it to was only going to be 2000|0.66
+029|your password they're going to now try to log into all these sites to see what you've got|their passwords they are now trying to log into all these sites to deal with what you've got|0.72
+030|watch my saxophone embouchure tutorial|watch my text messages so|0.54
+031|we just add a prefix and it makes it|which has had a pretty significant impact like the best|0.53
+032|text take for example a paragraph here this is a paragraph from the middle of a scientific toefl text|action take for example a pair of eyeglasses it takes a pair ever from the middle of a scientific novel sale|0.66
+033|we have an epidemic of vitamin d deficiency|we have an empathy deficiency|0.46
+034|there's just some security in belonging to a group even if that group gets picked on by another group|just to securely belong to a group even if that group gets beaten down by another group|0.76
+035|an inquiry into how to improve children's education in france and he was intrigued by what the british were doing|ignoring his admonitions to improve his diction and pronunciation he was intrigued by what the british were doing|0.63
+036|mistakes and i think if you don't get out of that rut you just end up|not anything you can get out of that run in your chimp|0.65
+037|week isn't going to be ready for a while but don't worry it's going to be a good one|it hasn't been right for a while but somewhere else is going to be hero|0.68
+038|educational neuroscience if you want to learn more about it one way is|international and if you want to learn more about it in one way|0.66
+039|what happens on the sat is that there's actually two different segments of math questions you have|happens on the sat standardized two different sections of math questions you have|0.70
+040|but if you're here for the parent teacher conferences why don't you come up to our art hallway and check out the art show|if you're giving presents to your officemates where else are you going to come up to a co worker and say|0.58
+041|exactly the presidential yeah exactly so the reasons why those programs came about was because of the epidemiological evidence that supported the idea that|texas then in texas so the reason why those programs came about was because of the epidemiological evidence that supported the idea that|0.79
+042|i'll do this it's okay|but|0.15
+043|on today's the doctor is in the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we're going to see where ours specifically mine falls and whether or not you need to make some life decisions|today as the doctor is saying the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we'll see where our specifically mine falls and whether or not you're going to make some life changes|0.76
+044|aj my little boy aj and he loves danimal yogurt|about herb alpert and tijuana|0.48
+045|all in all quick reminder that calcium is an alkalinizing mineral so what that means is that it helps to|reminder that calcium is in our dairy milk so what that means is that it helps|0.66
+046|one really nice thing about this is|what a brilliant idea about this is|0.62
+047|when i was first diagnosed i wanted to learn as much as i possibly could about my condition so i joined a lot of support groups|i was first diagnosed i wanted to learn as much as i could about my condition so i joined a lot of support groups|0.82
+048|had a floodplain the size of france it was truly massive and i was working with a group|a flight plan the size of france it was truly massive and i was working with a group|0.77
+049|replaces it with generally a really consumer|linked with generally a release to|0.54
+050|a lot of improvements have been made to it over the eons but the respiratory system that you're using right now is your inheritance from that ancient amphibious fish leader of one of the most important anatomical revolutions of the past half billion years|of improvements have been made to it over the years but the rosetta mission using right now certain characters from that ancient amphibian fish letter of one of the most important economic revolutions in the past half billion years|0.74
+051|so we have to ask ourselves well why would he do it well on the one hand he felt that he knew best how to choreograph for carlotta|so we have to ask ourselves well why would we do it well on one hand he felt the clinical mess the chaos of the emergency room|0.71
+052|or maybe headspace it would be most common that the young person wouldn't pay anything at all many care would cover that but if the young person comes to the psychologist and they're a private|maybe headspace it would be most common that the young person wouldn't make anything to medicate with that but if a young person came to a psychologist and they're a private psychologist|0.69
+053|or sub q so if it's ordered any other way we know it has to be a mistake|skip you so if we're doing it any other way we don't ask the way we say it|0.69
+054|mda8 5600k and it's got a base clock of 3 6 so that's in this class of a system is gonna suit you just fine|the end of the fiscal year and it's time to close out 3 6 so let's let this class of students just find|0.51
+055|in this case i think it was a mother|in this case it was a method or|0.54
+056|i'm creating i will have to like clean my area|i will have lesbians in my area|0.66
+057|with your partner|yeah i'm with the opera and|0.42
+058|i think we've got to look beyond this and say okay what's in the best interest of the patient and can we make this a curable or a controllable disease where it isn't right now|and they would then look me in the eyes and say okay what's in the best interest of the patient can we make this an oral curable or consumable resin where it is right now|0.66
+059|hey what's up it's donna today we're gonna be talking about gruselcoin and i'm gonna break the video down into parts and timestamps can be found down below|we're going to be talking about crucial coin and i'm going to break the video down into parts and a time stamp can be found down below|0.74
+060|i can't tell you how many times i heard someone in my baptist church or an outside conversation tell me what a particular bible passage meant to them|can't tell you how many times i was the one in my math class or in an outside conversation tell me what a particular biblical passage meant to them|0.73
+061|or national agencies charged with determining asylum claims|all national agencies charged with terminating asylum claims|0.73
+062|it's based on an article from the journal of abnormal and social psychology and you may remember a version of it from my|it's based on an article from the journal of abnormal and social psychology and you may remember a first quote from memoir|0.77
+063|well wait a minute i followed you up until that point and now you're telling me i don't want the process of change of myself to go on forever well you're dead wrong about that i want my process of change to go on forever|well wait a minute i finally showed up until that point and now you're saying to me i don't want the process of changing myself to go on forever which is like wow come on man i want my process of change to continue forever|0.71
+064|i am thankful for all the guys that have broken my heart so i can write amazing songs|thank you for all the guys i poked in my heart so i can write amazing songs like this|0.69
+065|but i have siblings who did|but i have a double citizenship|0.63
+066|were saying and then certain examples in the support of that theory and if they have certain criticism|today and that certain examples in the support of that day if they have certain certainty|0.65
+067|there's that i know that looks really bad but if you do take time it'll look a lot better|and there's nothing i can do about that i know that it's going to be a painful experience but it will look a lot better|0.62
+068|what that meant is that we need a radically different approach we basically need to find a way how we can take existing routers existing switches existing links and enable them for research|their masses and we need a radically different approach we must indeed find a way we can design existing roads to exist as cities and enable them for reuse so|0.63
+069|this must plug into this and not into the base at all|this was written in 1999 so it's a little dated but|0.45
+070|examples so that you can practice along with me|couples sitting and practicing yoga with me|0.59
+071|clatter of mud and dirt everywhere on you even your face|millions turns everywhere on you even your face|0.59
+072|you the list of windows that you have available to resume your screen session you type screen r and to exit|list of wind turbines available so this global transition could take 20 years and take|0.55
+073|to the funeral though i would dress in b minor which would be turquoise|fuel even though i was dressed in pink which means turning right|0.57
+074|all right i'm gonna read you|great i'm going to do this|0.75
+075|then you can contact that user and sell your services now|you cannot take that user and still your service now|0.72
+076|i should have it at the patriot nurses website the patriot nurses supply stash the bragg's liquid aminos is organic soy sauce basically|and i should have another petition on our website that petition to ban the pesticide atrazine because it's an organic toxin and|0.55
+077|to supplying your body with these essentials your bug out bag is there to provide for contingencies that may occur along the way repairing your body if it is injured hygiene|supply your body with these essentials your buckup bag is there to provide for contingencies that may occur along the way we bear your body if it's injured i j|0.76
+078|absolutely 100 yes i am happy if you've been watching my videos for a while you've seen some transformations maybe get my editor here|100 but then yes i am happy and you know guys if you have been watching my videos for a while you've seen some transformations maybe you wouldn't get my head under|0.69
+079|so we listen but we hide see we're only children but that's never an excuse you can never really run from the 8 o'clock news politics tension new developments|when i was 11 years old i was diagnosed with anorexia nervosa an eating disorder characterized by an irrational fear of gaining weight|0.52
+080|so repeat make yourself at home|so repeat make yourself at home|0.72
+081|i will receive the multi material unit i should receive it either in end of august beginning of september somewhere around there i believe|i will receive the multimaterial suit and i'll just receive it either in an end of august beginning of september somewhere around there i believe|0.69
+082|want to let them know like hey you don't have to do this just kind of make them think like oh wait why am i doing this again so|to let them know like hey you don't have to do this just kind of make him think like oh why am i doing this again so|0.77
+083|what is a tearoom a tearoom is a public restroom|i actually grew up in a public housing|0.54
+084|is the revealed secret world this is where the supernatural used to keep itself hidden but revealed itself at some point in the recent past so some great examples are charlayne harris's true blood series kim|is the revealed secret world this is where the supernatural used to keep itself hidden but revealed itself at some point in the recent past two great examples are charlaine harris's true blood series and|0.81
+085|there are two types of teeth the first type is the anus|those two times i've seen the first time is in kenya|0.65
+086|this video we're teaching you some vocabulary some common phrases|of this video i want to introduce you to tom vocabulary i also call my friend|0.66
+087|them from the time they left mid shrine the great wondrous nisan|them from the tops of the trees to create a water system|0.54
+088|8gb of ram previous from 6gb of ram which we were saying looks like it will have 8gb of ram and also have ufs 2 1 storage|eight kickbacks to the rhyme previously from six kickerbacks a rhyme which we are saying looks like it will have eight kick backs to rhyme and also will have ufos 2 1 storage now|0.68
+089|you are using that mental chess game to figure out what it is your interviewer needs to hear|are using that mental chess game to figure out what an initial interview needs to hear what|0.78
+090|of laws have we just been talking about recently in physics|the cause that we've just been talking about recently climate|0.69
+091|least watched videos on my channel q a videos oh yeah|least watch videos in my channel youtube videos oh yeah|0.76
+092|if a chinese businessman hands you a business card|a chinese businessman into a business card|0.82
+093|naturalistic is the newest intelligence|my nationality is the usa|0.47
+094|and there you go i just wanted to let you all know the other thing that scientology does when anybody pitches something that they want they have a chance to win|go i just want to say to you all no the other thing that scientologists do is when anybody pitches something that they want they have|0.71
+095|the air in the bottle between trials|and the middle school grades with|0.51
+096|there's a lot to learn from those experiences and you might not think about it until it comes up as a learning example so let's take a walk on the smile side i want you to think about a group or an experience that comes with a smile|these experiences and in my day to day thinking i continue to come back to this little cartoon example so let's take a walk in this man's head i want you to think about your own experiences while i|0.64
+097|we go to the hotel elevator|we are a hot desert valley|0.43
+098|12 95 free shipping i could have sold them for a little bit higher there was somebody there was one other seller that was selling them|i feel like i've failed for example i love to experience new things but i also want to stick with what i know|0.49
+099|the answer is no i cannot just leave it there because hydrogen only wants to have one bond and now it has two if i make that bond i'm going to have to break it|like it's just no idea i just didn't even know there was such a word and now i do so if i play that part i'm becoming familiar with|0.59
+100|canon usa look for it|eating chicken or for|0.48
+101|document that requires a change request once it's been|documents and requests to change requests it wasn't about|0.52
+102|i'm not a do gooder if you're a bum if you can't break off with a booze or whatever it is that makes you a bad risk then get out|i'm not a sucker if you're going to bomb if you can't break off with a boom or whatever it is it makes you a bad ranger then hang out|0.73
+103|premise which i will then draw out to be untrue the thing that i'm going to pick out which is wrong is well let's just say it's not|which i will get to actually in a few minutes the thing that i want to be out with all of you is|0.56
+104|how many people love this what is this tea|people have seen these words and|0.53
+105|in various different compositions i'm not gonna talk about any other math for learning this kind of stuff from real world data but rest assured|topics in fair and different compositions i'm not going to talk about any of the math involved in this kind of stuff from real world data to be rest assured|0.67

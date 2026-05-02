@@ -1,0 +1,106 @@
+HYP_VOTE_CONF | BATCH 02/15 | 104 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|i normally do keep this thing in my pocket just for such a situation|me to keep it in my mind just for such a situation|0.67
+002|point being is if we had like if my k 52s started doing that i there's something's wrong it's going back to|beings if we had like my kfv2 i started doing that and something's wrong it's holding me back into|0.71
+003|full frame width so just crop to 16 by 9|full frame what's your position right now|0.58
+004|the more influence you start having on the world and the happier you become because the greatest desire of every human being of every person|the more influence you still have on the world and the happier you become because the greatest of every human being of every person|0.72
+005|of fat source when eating turmeric the beneficial compounds in turmeric like curcumin are more fat soluble than water soluble so to aid absorption include a source of|fact source we need to absorb the beneficial compounds in turmeric like curcumin are more absorbable in water soluble so dandelion absorption includes a source of|0.72
+006|photoplasmic projections of the collective|he asked me to the his to|0.62
+007|could also go buzz or your alarm in the morning|also going it or you alarm in the morning or|0.67
+008|force yourself to make that next move|forced itself to make that next move|0.66
+009|right or|important miles across the united states|0.52
+010|to the word spelling yeah you have to learn spelling i know that english spelling is very difficult i have a resource about that too on our engvid website about 50 comm|worried about smelling you have to know the smell and i know that the genie belly is very difficult and i have a you about that too on our website about 15 carpets|0.68
+011|my macbook i've used it on my netbook|my backpack and my notebook and|0.60
+012|i'm the cyberroofguru welcome to my channel thanks for watching i appreciate it|sam richards welcome my son thank you for watching i'm|0.62
+013|this name is alfred wenneger from joe's|his name is caffery wagon from zombie|0.61
+014|of the pelvis as well as trunk flexion and rotation|of the middle east as well as drug inflection and rotation|0.70
+015|if you think you're pretty handy building a snowman you might want to get yourself to northeast china|you're if to were an antibiotic snowman you might want to get the truth is shining|0.58
+016|and that's okay but it can also still lead to problems having uniforms will not erase those problems is what i'm trying to say the next comment's coming in from deborah paul and she|ok but it can also still see the problems and we have uniformity we can erase those problems so what i'm trying to say the next time is coming in from you nepal|0.70
+017|i have a tablet a smart phone i can take my pictures and videos directly off my tablet|if i stop playing football all together anytime i make a shift or anything like that to stop playing|0.59
+018|out this morning it's our commercial product and i've got a few slides i'll try to go through the slides pretty quickly|this morning i saw a up on the motorway that said if you see a snake or the road will not|0.55
+019|but i just really got into it lately and this game is such a time killer like you cannot believe it you will just i don't know|there but you can see from the audience we are here and this time we are such a time killer like you cannot have been living in new york i don't know|0.59
+020|it looks like science has indeed discovered god and how would that be well if you take the trouble of going to the web and|incarcerated so high as it is over the last decade and now with that being what's the term of going to the rehabilitation|0.71
+021|and for catalase guanylate cyclase it is stored in the form of ferritin you can find it within the body|that ferguson is a syntax it is stored in the form of folklore and you can find it within the body|0.69
+022|how much strain there is in this direction and how much strain there is that way on|so i'm to you're you there wondering|0.55
+023|baseball of course i wrote about baseball and she said there's one caveat to this assignment and that is that you need a source|part of course i wrote my bestseller just like this one caviar to this assignment and that is you need a source|0.70
+024|one series of experiments that we did was to demonstrate that the nanorobots|series of experiments that we did was to demonstrate that that now|0.65
+025|today here the three in one heated jacket and i will walk you through the jacket|i was happy to be here today|0.51
+026|i need to have realness around me to kind of break through all the i don't know smoking mirrors if you will|need to have real realness environment to kind of break through all the i don't know smoking bears if you will and|0.70
+027|the comments or not all the links will be in the description for the channels and then you could check for the songs if they publish it this|called on the internet or be in an exhibition for your channels and then you can check for controls they're published or|0.64
+028|animals were running the friendly gray squirrels out of town by chasing down the males and castrating them now as you can imagine i was pretty shocked to hear this and when my grandpa explained to me what the words male and castration meant i was|mice were running the friendly hills dive down by chasing down the males and castrating them as you can imagine i was pretty shocked to hear this and when my grandparents explained to me what the worst male in castrate meant i was|0.73
+029|that song for you saying that you own that song if it is not in the itunes database then it will take your song the version you have on your computer and upload it to an itunes matched server|song for you is that let you own that song if it's not in the isrc database then it will take your song the version you have on your computer and upload it to an isrc master server|0.73
+030|certainly it needs this as well you start with developers this is actually a great environment for developers because|certainly idk needs this as well it's not with the developers this is actually a great environment for developers because|0.68
+031|and we have permission to share this video to the world right now thursdays and wednesdays|we're one of the few places in the world where you can find two two class museums|0.65
+032|we have an epidemic of vitamin d deficiency|we have an is deficiency|0.61
+033|close parentheses to type it in and then once i've finished typing that in you'll see the word hello displayed in our preview window pretty cool right pretty simple all that stuff is great now what|person to do it they'd be like i don't want to feel like i'm eating a sandwich that was made in a perfect room with perfect air conditioning perfect humidity now|0.75
+034|peace and blessings family|a blessing to be in this|0.53
+035|an inquiry into how to improve children's education in france and he was intrigued by what the british were doing|ignoring his admonitions to improve his diction and pronunciation he was intrigued by what the british doing|0.68
+036|website about 50 common spelling errors make sure go through|about 15 armed guards by the airlines to make sure that no one|0.65
+037|educational neuroscience if you want to learn more about it one way is|international and if you learn more about it in one way|0.69
+038|us anything it's that exploring for energy has safety risks|right now i'd like to take a moment to reflect and and david foster wallace|0.62
+039|a line through your subject essentially just creating confusion when you're looking at the photo you're looking at it and it's harder to identify where the subject is because these lines in the background are cutting into the photo they're divided|aligned through your subject essentially just creating confusion when you're looking at the photo you are looking at and it's harder to identify where the subject is because these lines in the background are cutting into the photo dividing|0.74
+040|look at the purpose of anecdotes we are going to connect|at the purpose of adding donors we are going to connect|0.69
+041|grammar and syntax math rules and procedures social and behavioral rules and facts that are learned by rote|cooperatively to make the rules and procedures and social norms and enforce them own and pressure|0.66
+042|on today's the doctor is in the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we're going to see where ours specifically mine falls and whether or not you need to make some life decisions|today as the doctor saying the topic is hypertension there is no ideal blood pressure reading but there is an accepted range of normal readings and today we'll see where our specifically mine falls and whether or not you're going to make some life changes|0.73
+043|i got dropped off when i came to cobleskill when i was a freshman right here|i dropped out when i had the name almost did when i was a freshman before i got into|0.64
+044|very honored to be here and i have been in many biennials i met bose and shweta for the first time in sao paulo when i was showing at the sao paulo biennial|our economy and they helped in many many years i met paul rusesabagina for the first time in 2004 when he was telling his story at the nations|0.55
+045|of us but anyways so this is actually nothing to get excited about because if you look at the long term then you see|facebook anyway so this is actually nothing to get excited about because if you look at the long term that you see|0.71
+046|of the city's 62 police officers are gonna be gone|the 16th president of the united|0.55
+047|replaces it with generally a really consumer|it with generally a release to|0.64
+048|frequency they vary in intensity sometimes it's 30 seconds sometimes it's seven minutes we brought him in the bed with us because we could call him|of run frequency they're very intense and sometimes that's 30 seconds sometimes it's seven minutes we call them in the bed with us because we can call them|0.71
+049|and she was from the kind of village where if a little of her hair showed through her scarf or her eye caught the eye of a man not in her family|she was from the kind of villages where he felt it good for her hair to grow to her star for her height on a man and not in her family's|0.71
+050|i got dumped by my girlfriend of like four years|in order to have a better life therefore|0.52
+051|and so that is where we get our ionic product of water|i don't need bring to i i|0.61
+052|and that is just something that i have|and that is just something that i have|0.70
+053|text on her arm which happens to be simplified chinese|cancer's arm which happens to be the chain in thrombosis arm|0.60
+054|what does this chord sound like to you|what does this court sound like to you|0.67
+055|by percentage or the raw score you put in the|i have one last thing i like to share with you|0.63
+056|every time you find a new page a new node|time you find a new place a new|0.71
+057|it's just bad it's real bad it's gross there's pictures more let's move on|bad about bad it's gross there's pictures we need to move on|0.67
+058|it will be interesting it will be exciting it will be|would be literacy it wouldn't be maths or science|0.61
+059|i realized that he was saying everything that i wanted to say that i wanted to say to my mother that i wanted to say to the people in all of my classes in high school about how hard it was to be a certain way|i realized that he was saying everything that i wanted to say to my mother and to the people who took all of my classes in high school about how hard it was to be in a certain way and i|0.73
+060|it's based on an article from the journal of abnormal and social psychology and you may remember a version of it from my|it's based on an article from the journal of abnormal and social psychology and you may remember our first quote from from|0.70
+061|we're angry we're happy we're sad we're mad we're delightful we're joyous|angry we we're happy we are sad we are mad we are in love and we are joyous|0.61
+062|of the possibility of a choking episode in an older child|of the possibility of showing an episode in an older|0.61
+063|to engineer out of our habitat one of our basic human needs routine physical activity|the salary in the outskirts of rio de janeiro is around 200 reais a month which is equivalent to|0.56
+064|were saying and then certain examples in the support of that theory and if they have certain criticism|today and that certain examples in the support of that day if they have certain certainty|0.66
+065|this is my second time repeating the course obviously|is my second time in york obviously and|0.70
+066|or selling never ending wars you can probably find them hyping potential pandemic outbreaks of the newest disease|see if they get any rewards you can probably find them by googling textual academic outbreaks of the word|0.67
+067|what that meant is that we need a radically different approach we basically need to find a way how we can take existing routers existing switches existing links and enable them for research|their masses and we need a radically different approach we must find a way we can design existing roads to exist existing cities and enable them for reuse so|0.70
+068|examples so that you can practice along with me|couples sitting and practice yoga with me|0.57
+069|i bought a custom well not a custom this is off the shelf but it's much more expensive router bit meant to do this exact operation|putting on a costume well our costumes of the show but it's much more expansive are being meant to do this exact operation|0.69
+070|but despite his status and his achievements okonkwo|despite his status and his achievements what will|0.66
+071|and hopefully that doesn't happen but i wanted to talk about in this video the fact that it's not just diet ladies and gentlemen|never seen this example but i want to tell you about it in this video the fact that it doesn't exist is just as significant as|0.67
+072|the house that we built is called a remote wall|house that would be in the hollywood of fame|0.58
+073|and here's one of the key points it doesn't matter what the tradu|here's one of the key points it doesn't matter what the tradition|0.65
+074|now the reason this isn't so obvious is because there's some things that just seem like they're correct|the reason this is so obvious is because there are some things that just seem like they're correct|0.70
+075|i should have it at the patriot nurses website the patriot nurses supply stash the bragg's liquid aminos is organic soy sauce basically|and i should have another petition start our website that petition to ban plastic be because it's an organic toxin based|0.62
+076|or sub q so if it's ordered any other way we know it has to be a mistake|skip you so if we're doing it any other way we don't ask the way we say it|0.70
+077|absolutely 100 yes i am happy if you've been watching my videos for a while you've seen some transformations maybe get my editor here|100 but then yes i am happy and you know guys if you have been watching my videos for while you've seen some transformations maybe you only get my head under|0.73
+078|it will catalog what i'm doing here for delayed pressure urticaria today's appointment|will catalog what i'm doing for delaying breast cancer here's today's appointment|0.68
+079|calcium is made up of galactomyloids a substance similar to the carbohydrate starch or to cellulose|is made up of collected overstock substances that are similar to the carbohydrates starch cellulose the chemical|0.71
+080|the front foot the heel is supposed to line up with the inner arch of the foot|turning your head from the front line and bring your arms over the freedom|0.60
+081|a little bit of a shift or a nudge in the interpretation or communication that climate scientists have engaged in vis a vis|there will be a shift to greenhouse gases such as methane nitrous oxide and co2 if are happens|0.73
+082|just asking if anybody is taking your class and would like to share a book|asking if anybody is taking our class we'd like to share input or|0.65
+083|and now we're on to beat two so this is half of a half of a|when i was a little girl my grandmother take me to|0.58
+084|this video we're teaching you some vocabulary some common phrases|of this video i want to introduce you to tom vocabulary i also call him friends|0.66
+085|you can use the isoflo memory control to correct or accommodate a pelvic deformity|use the flow memory control to correct or accommodate above its default|0.72
+086|8gb of ram previous from 6gb of ram which we were saying looks like it will have 8gb of ram and also have ufs 2 1 storage|eight kickbacks to the rhyme previously from six kickerbacks a rhyme which we are saying looks like it will have eight kick backs to rhyme and also will have s 2 1 storage now|0.72
+087|delighted to have him starting his faculty position in april and then i'm delighted to announce|delighted to have them joining the faculty at and then i'm delighted today to|0.68
+088|i wonder what his face looks like|and wonder what feels like to|0.52
+089|least watched videos on my channel q a videos oh yeah|least watch videos in my channel youtube videos oh yeah|0.65
+090|and her everything we were in a teepee out in the|on everything we realize how important it is to|0.59
+091|i think my fondest memory is actually how i started in the music department five years ago mr borna asked me to go to the st patrick's day parade and i told him no and while i was on the bus|and think my fondest memory is actually how i started in the music department five years ago mr martinez asked me to go to the samurai temple and i told him no and while i was on the bus|0.72
+092|i can't wait to read a whole book about them only to discover that|books i can't wait to read the whole book about them only to discover that|0.69
+093|i will let you guys know i am a very lazy natural which i'm trying|will thank you guys know i am a very lazy astronaut with i'm trying|0.65
+094|he looked at me like i was a village idiot|same injury last year and so|0.53
+095|one of the complications of this disruption of breathing is that you get lower oxygen levels in your healthy tissues this is known as hypoxia|complications of this disruption one is that you get lower arterial levels in your healthy tissues this is always high pressure and|0.71
+096|certain men to fight against the whole|so when to be out|0.51
+097|when was the last time you used a vga cable|when was the last time you used a vga cable|0.67
+098|you can find me at one of my shows in some dark corner you're in the green room or something doing you know stretching my arms out|me at one of my shows in some dark corner you know in the green room or something you know i need to my arms|0.69
+099|of a boy who is going to bat|the boy who was going to beat|0.68
+100|premise which i will then draw out to be untrue the thing that i'm going to pick out which is wrong is well let's just say it's not|which i will get to actually in a few two the thing that i want to be out with all of you is|0.72
+101|we need those rural farmers and we need to make those urban rural connections you know|we did coastal rainforest so we did mangrove restoration in 1960s|0.69
+102|but if you're here for the parent teacher conferences why don't you come up to our art hallway and check out the art show|if you're giving presents to your officemates where else are you going to come up to a co worker and say|0.74
+103|the lord as to why and the lord shows him that saul|orchestra and the orchestra shows them this song|0.59
+104|they do however on again they do however hold the festival|they don't know how awful it is to tell you how awful schools are|0.64

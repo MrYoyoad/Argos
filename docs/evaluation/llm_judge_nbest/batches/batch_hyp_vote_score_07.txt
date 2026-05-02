@@ -1,0 +1,104 @@
+HYP_VOTE_SCORE | BATCH 07/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|premise which i will then draw out to be untrue the thing that i'm going to pick out which is wrong is well let's just say it's not|which i will get to actually in a or two the thing that i want to be out with all of you is|0.72
+002|the same matter like i said imagine going around the figure and how long a distance do you run|us and yet imagine going around in fear that our closest friends|0.63
+003|actually hear what the recorder sounds like this category has a lot of similarities guys but there are subtle differences between each product|in the real world record soundtrack and this category has a lot of similarity sites but there are single differences between each product|0.68
+004|the result of this situation is that most designers are making much less money while a very small group of designers that you can call|of this situation is that most designers are making much less money while a very small group of designers get to|0.71
+005|in england and everything was just black with soot|everything was just black with certain|0.67
+006|rotating thunderstorms with big hail|ted turner's arms sold by hal|0.53
+007|i was born with the ultimate competitive disadvantage|or when the ultimate competitive daily advantage|0.65
+008|type of a container is going to last you probably your lifetime maybe two lifetimes|feet taller it's going to last two probably three lifetimes maybe two life times|0.63
+009|let's go look at this population we know that they are being underserved by local|is to look at this population and we know that they are being underserved by local health|0.67
+010|and received a generous paycheck so|received a certificate of appreciation so|0.60
+011|so we started looking at the structure of coping and the structure of emotion and started really looking at|we started looking at structure of hope and the structure of emotion and started really looking|0.70
+012|but relatively new to firearm ownership in general right|a relatively new five year partnership in general right|0.60
+013|i think the main thing we're trying to train people is to have empathy to listen to not try to fix it but just to be there to realize that god is everywhere|i think the main thing we try to trick people is to have empathies and listen and not to try to fix it but just to be there to realize that god is everywhere|0.71
+014|probably seized kate and said because of the message that|because of the message that|0.72
+015|wouldn't let their daughters and they had six daughters no sons wouldn't let them read|like their son is the last son or no sons we're going to get married|0.54
+016|iusb port camera 2 the only difference is that the camera is not a single camera the only difference is that the camera is a single camera|so let's start with the very|0.57
+017|minus 12 is a negative 4|my age 12 is 94|0.57
+018|a dog actually usually a male dog|dark actually usually male dark|0.62
+019|flash but it would be completely unrealistic to be|house but it would be completely unrealistic to build a|0.66
+020|but that smiling is actually a universally correct expression of pleasure|but if you think about it it's actually two different things the|0.53
+021|this real time i mean it's in a computer so now you can drag and drop you can delete|school time i'm going to see a computer so now you can track a job you can see a|0.67
+022|but also i don't like about contention|when i was a little girl i always wanted to be a princess|0.58
+023|is the revealed secret world this is where the supernatural used to keep itself hidden but revealed itself at some point in the recent past so some great examples are charlayne harris's true blood series kim|is the revealed secret world this is where the supernatural used to keep itself hidden but revealed itself at some point in the recent past two great examples are charlaine harris's true blood series and|0.72
+024|some limonene hash oil some d limonene hash oil|being an actress being an actress|0.55
+025|will not have enough food for a healthy life|we learned to have enough food for a healthy life|0.69
+026|really for anybody out there who's using older imacs or mac|if anybody out there doing the whole time matter of|0.65
+027|95 capacity might mean that there's two spots left at west madison in the third|95 percent capacity might mean that there's no spots left in western medicine in the third|0.65
+028|underpinnings to her|her meetings to her|0.58
+029|the flu sorry about that and as i'm the last speaker before your lunch sorry about that i'll try to|who's going to be right last time less than a minute before the crash sorry about that|0.65
+030|to get help along the way for instance if you're not a graphic designer|when i was a little boy i was|0.61
+031|because it's so much kind of simpler to get started and hosted and everything and then i played with a few frameworks like codeigniter and eventually wrote laravel|maybe it's because i'm a little bit that i have some hairs and wrinkles and everything and then i play with a full five piece orchestra and if you see the whole interview|0.55
+032|something if you're down soft you definitely want to check out|instead of focusing on the negative focus on the|0.63
+033|additionally topical steroids are dangerous this can worsen conditions such as herpes simplex keratitis fungal keratitis and acanthamoeba keratitis|zona in addition to these hypothalamic secrets are dangerous these endorphins and serotonin and dopamine and peptide hormones hang out in the pituitary gland|0.63
+034|mute the call that you're on it mutes and then you hear a little tone in your ear every few seconds to let you know that you're muted and if you also tap the front or back or maybe it's like sliding your finger back and forth i forget exactly how it works but|mute the call that you're on and then you hear a little tone in your ear every few seconds to let you know that you are muted and if you also tap the or pedal maybe it's like sliding your finger back and forth i forget exactly how it works but in|0.74
+035|enoch the first one elijah the second jesus the lord himself okay and the old testament saints who were resurrected according to matthew 27 when jesus rose again|it was the first one in egypt giza and the old testament tells us that we resurrected and grew about the 27 when jesus rose again they|0.65
+036|i got dumped by my girlfriend of like four years|in order to have a better life therefore you|0.52
+037|although the internal recording is at a maximum of 24 megabits per second|30 second recording is a maximum of 24 megabits per second|0.62
+038|you can use the isoflo memory control to correct or accommodate a pelvic deformity|use the flow memory control to correct or accommodate above its default|0.71
+039|it has to be done within 24 hours a mini stroke and so i didn't go in time for that|be able to do a 24 hour broadcast so yeah i did it always time for that|0.61
+040|god that's so genius i don't care what anyone|this is called the sushi rolling technique|0.67
+041|apple also stated that the iphone 5s fingerprint sensor will be able to detect multiple fingerprints|also said that the iphone 5's fingerprint sensor will be able to detect multiple fingerprints in|0.70
+042|get told that quite a lot especially by my mother|so yeah i by my mother she's like|0.60
+043|ho where to begin with this|going to begin with this|0.57
+044|can i use that and she said yeah of course so yeah excuses are for amateurs|i use that and she said yeah of course so yeah and she uses it for amateurs|0.68
+045|my employees with some money that they can go out to the exchanges to get their own insurance|by employees with some money that they can go out to youth exchanges to get their own insurance|0.73
+046|i'm not very likely to have cancer we don't have cancer in my family as far as i'm aware and we tend to live fairly long most of my|i've never had the chance to address this before now i'm going to give it a try for the first time and i wish i could have this conversation with you|0.68
+047|you really have to educate yourself okay but if you don't want to|food and other hygiene items in beverages|0.61
+048|teacher and i don't think people have gotten beyond the fact that this is a job where it goes far beyond|additional and i don't think people have gotten me out of their heads so i'm going to be honest|0.70
+049|for most project managers is giving a presentation but that's where we can influence our team influence our stakeholders|most project managers is given a presentation but that's where we can influence our team influence our stakeholders|0.71
+050|it's easy to get people to sign up for the idea of accountability i mean everybody knows no man's an island|i'd like to give a out to the carnegie mellon program i think it's there the years and|0.56
+051|and she said i'm not going to see it but you will see it she says to the one there tears streaming down their eyes|and she said i'm not going to see it because you would see it so one day her eyes|0.68
+052|and it'll tell you why you shouldn't buy it for your laptop|just like you i was driven by a few lap times|0.60
+053|video in a series of video about the arduino robot|video and this is a video about our robot so he|0.69
+054|today here the three in one heated jacket and i will walk you through the jacket|i so happy to be here today|0.50
+055|all of us to have abundance in our life to have prosperity in our life very very important|all of us have a past and i have a very very important|0.68
+056|in directx if you are doing programming in that it is left handed if you are doing ah programming in opengl a lot of other systems it is right handed|reaction if you're doing programming at that age if you are doing programming in open source i want to introduce you to|0.58
+057|is that they try to use the carrier systems to take consumer data|that's trying to use security systems that are trying to be|0.63
+058|and hopefully it will throw everybody off|and hopefully it will throw everybody off so it's|0.66
+059|by the judge below the sentencing guidelines range|i like to thank you|0.50
+060|to right hitch section four raw back recover full turn to right traveling forward|to our destination thank you for joining us tonight and we hope to see you all very soon|0.58
+061|on the subject as well you never know what you'll catch and at the same time|on the ship where you never know what your cash and at the same time|0.62
+062|the giant a giant flown aboard an ac 130 that was discovered in iraq or afghanistan|the giant a giant flood deposited 181 that was discovered in herat afghanistan|0.64
+063|like far away from what i was sanding like in my camera i was holding my camera with my hand it got a little bit tough so i only swatched one palette and then i almost dropped a couple of their lipsticks so i got clumsy but anyway|far away from what i really said it has become a clich it's used also by amateurs when they don't really know what to say so i lost my balance and then i almost dropped a couple of times and i didn't so i got on but the question|0.67
+064|always pads were the pads that|always pants were the pants that|0.63
+065|and the relationship between you and that family member is characterized by discord and tension|relationship between you and that family member is characterized by this orientation|0.66
+066|if you are seriously considering like you know working with models|if you are seriously considering killing your with a math|0.60
+067|we can gather observations on as far away as a distant galaxy or as zoomed in as the hydrogen wave function there are certain questions that we cannot answer what lies outside of the natural world well we have to think about that and i think that's why|contraction syndrome is very rare it's a dissecting aortic aneurysm that's an arterial infection there's still a lot of questions we don't answer what causes outside of the natural|0.68
+068|out this morning it's our commercial product and i've got a few slides i'll try to go through the slides pretty quickly|this morning i saw a sign on the motorway that said if you see a snake on the road do not|0.55
+069|he looked at me like i was a village idiot|the same injury last year and so|0.53
+070|it's not bad you know what because it's our culture it's our culture you have to|not a bad word because it's our culture our culture is our|0.62
+071|least watched videos on my channel q a videos oh yeah|least watch videos in my channel youtube videos oh yeah|0.64
+072|now is you have your vpn software here and it's encrypted|was like you have three months of way here and it's get colder|0.63
+073|if that sounds like you don't worry you're in the right place that is exactly what doing english exists for|that sounds like you don't worry you're in the right place that is exactly what doing english exists for|0.68
+074|you but listening to some of your audio clips and some of you wanted to|some of you know what i'm talking about some of|0.64
+075|101 harper street|one o one arm twist|0.62
+076|make this quilt what you're going to need is two yards of a light a medium and a dark we've used cotton couture by|this quill wants you to need is two yards of a light a medium and a dark what if you saw the door by my|0.67
+077|allowing the humans to focus on design and compositional choices|group is to focus on designing opposition choices|0.69
+078|ad where they tried to suggest that the iphone was your mom's phone|where they tried to suggest that the iphone was your phone|0.69
+079|i think it was about four or five days ago they said they're going to get rid of their dly|i think it was about four or five days ago they said they're going to get rid of their yearly now|0.68
+080|and leo once in this room really bad if you could hear that meow can you hear that|one sentence was really bad if you could hear that piano can you hear that|0.64
+081|odd there are many strange places named hell on earth but no heaven|author but it's rich places like hell under earth but no one it|0.63
+082|i release the muscles so they stay in just a little bit|i know i was pooped i had to reach the muscles so that stage|0.63
+083|like another layer of activity|another layer of|0.76
+084|the wednesday conference call how many confirmations do we have|words that come out of my mouth when i'm talking to yourself|0.56
+085|you will get a choice of create a profile or calibrate your printer|institute for non profit called animal advocates|0.51
+086|to buy it from the bank as an individual because they do turn it over to their|when i was years old i was|0.63
+087|and in france my favorite drink was orangina|favorite song was oregon trail|0.62
+088|so i kind of want to address what you and i were talking about first|it's like i don't know what to do with myself|0.65
+089|so he talks about books and in this particular one he talks about russian literature with reference to other world literature and so forth|is not so when a lesbian marries another lesbian that lesbian relationship becomes more interesting and so forth|0.70
+090|that tastes good and my desire for something that feels helpful in my body|tender and my desire for something that feels helpful in my body of|0.70
+091|great question so a lot of people out there will go out and say well you need to enunciate your words and say it|great way to do it so a lot of people out there that go around and say we have to really go out today and grow this|0.66
+092|don't know it it's really that simple|don't notice it's really that simple|0.65
+093|is that really the only thing stopping you how fucking sociopathic do you have to be if a god you can't even prove is real is the only inhibition keeping you from wantonly destroying the li|really the only thing stopping you how fucking sociopathic you have to be if a god you can't even prove it's real is hold it only just keeping you from wanting to destroy the life|0.65
+094|one twitch is all you do|one to reach is all the|0.61
+095|you've got to get back up again because we all fall we all fail|you've got to get back up again because we all fall we all fail|0.69
+096|doesn't lift up oh there we go okay so cat lifts up oh this is actually|whatever it is but care ok so the cam lifts up this is actually pretty|0.65
+097|center of a picture to give you an even pattern of light|official to give you an even better power for it|0.57
+098|digital mailbox into your mailbox that you would typically have in your home|of mailbox into your mailbox that you would typically have in your home basically|0.67
+099|look at the purpose of anecdotes we are going to connect|at the purpose of adding donors we are going to connect|0.69
+100|what happens on the sat is that there's actually two different segments of math questions you have|happens on the sat standardized test in two different sections of math questions you have|0.68
+101|and speak to and interact with both the|2000 years ago the|0.51
+102|it's more of a level of i mean it's more of a consistent demand|a lot of what i want to talk about this morning is going to be about|0.54

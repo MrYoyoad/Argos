@@ -1,0 +1,104 @@
+HYP_VOTE_CONF | BATCH 11/15 | 102 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|i'm just using one program to start it off for today so i can kind of learn and get the gist of what i'm doing with sdr so i'm using a program called|i'm just using one program to start it off with today so i can kind of learn in the gist of what i am doing with this year so i am using a program called|0.71
+002|mistakes and i think if you don't get out of that rut you just end up|not anything you can get out of that run in your ship|0.68
+003|discussion we will look into how stress|discussion we were going to allow stress|0.71
+004|it'll work|but|0.76
+005|in england and everything was just black with soot|everything was just black with certain|0.68
+006|cooper show didn't tell you that the women of india have signed giant petitions to get firearms|show don't tell you that the women of italy have said to petitions to get firearms|0.69
+007|in windows and things like that|window instead of glass to|0.53
+008|that god is everywhere and god will have a witness in every situation|god is everywhere and god will have a witness in every situation|0.63
+009|again before i get into that i just want to check in with people i know that a couple people well a few people will probably hear live so feel free to go and check them out and if you're interested in learning more about the|the day before i get there i just want to check in with people i know that a couple of people are probably life so i feel free to|0.70
+010|with how to reverse it okay what are the handful of things i'm gonna show you some things that might help you here in just a minute|just reverse it like what is the handful of things i'm going to show you some things like my button or something like that but|0.70
+011|i can redirect the power from the zones that are turned off|and recreate the power of those that turned off|0.69
+012|the chapter starts with a doxology and it ends with a doxology what's a doxology in greek it means a glory saying so he's giving praise to god in|so i'm going to tell you a little story about how i got to where i am today it's kind of a long story but i'll try to condense it as much as i can so i was born and raised in new york city grew up on the upper east side in manhattan|0.70
+013|aj my little boy aj and he loves danimal yogurt|about herb alpert and tijuana|0.61
+014|huge huge rise in popularity for something called the headless cms so the headless cms essentially takes this monolithic system and gets rid of the view layer instead it replaces it with generally|who creates a popularity for something called antisemite so antisemitism is an idea that demonizes the system and gets rid of the jews like a society that replaces it with generally|0.68
+015|to the same name so first off is the quick flip case this goes on your iphone 5 or 5s or your ipod 2|into this camera so for yourself it's kind of like flipping a hatch and you go start your ignition five 4 three two one go|0.54
+016|but it's mostly cardiac muscle and as i said before that's the pump component of the heart|is mostly not yet muscle and as i said before that's the pump but part of the heat|0.69
+017|because as far as i know i haven't seen it|as far as i know i haven't seen it|0.64
+018|seconds earlier and once i'm cutting out the parts i don't want|second year and one day i to take a walk|0.63
+019|and this was at a time when you didn't get divorced i mean even now it's difficult in india to get divorced now here she was a 16 year old woman and my aunt at that time was eighth grade pass|and the news at that time that she didn't get divorce but even now as a divorced woman she was a 16 year old woman and i mean in my case at time was like the administration|0.55
+020|that visit ended quite quickly and with awkwardness all around there's not much to do we went to the second school|that exactly what i had in mind with no work so i decided to do|0.54
+021|of any statement of multiple dimensions|love and excitement of multiple dimensions|0.68
+022|each one of those is 1400 which is a chunk of change but if you know anything about casket prices it's actually very reasonable|of those is 1400 which is a chunk of change but if you know anything about gas prices it's actually very reasonable|0.69
+023|to stay quiet for a whole week maybe a whole year|she cried for a whole week maybe a whole year|0.66
+024|got that choreographed by paul james and yanni toft anderson|that to promote and a crime of learning|0.59
+025|you can just stitch that into place and that way it won't slide out|the tradition is that the place and that way it won't slide out|0.62
+026|it was a kind of a unique thing because my university doesn't have anything similar to that|when i first heard it i no idea what it|0.64
+027|than tenths and children need to learn this principle|to say this genistein is a plant a|0.54
+028|a timeframe to react to that okay but|it's hard for him to react there but|0.68
+029|and in my last jar is peppermint i love peppermint tea that's my favorite i also sometimes combine the peppermint and the chamomile together which is nice|and in my last jar is paper mill i love paper mill that's my favorite i also sometimes combine the paper mill and the camouflage together of i'm|0.69
+030|and today we're going to talk about a few news we have|we're going to start up because i don't know if you know this but|0.68
+031|on the road also with having kids a lot of times they want to snack or they drop their toys|also with heaviness a lot of times when drummers to drummer's their are|0.64
+032|pascal like william james disagreed with this line of reasoning because he saw great personal benefit in being a believer|like william james disagreed with this line of reasoning because he saw a great personal benefit in being a believer|0.70
+033|i'm not sure if you're aware of it but yes there has been a class action suit filed against apple for that very thing and yes technically speaking it wasn't a wine it was a beer|i'm not sure if you're aware of it but yes there has been a class action student filed a lawsuit for that very thing and yes now technically speaking it wasn't a wine it was a beer|0.69
+034|photographs we know that there's a psychological benefit to doing that|photographs and we know that there's a of benefit to doing that|0.65
+035|and it's almost every word in a sentence fuck the fucking fuckers|should never be in a sentence fighting fires as soon|0.65
+036|95 capacity might mean that there's two spots left at west madison in the third|95 percent capacity might mean that there's no spots left in western medicine in the third|0.66
+037|of orlando in the united states state of florida now the orlando flag committee met on may 17th|of olando in the united states the state of florida now the orlando flamingo committee met on may 17th|0.63
+038|so further action what is further action|further action what's further action|0.69
+039|mainly digital database systems and about the projects which you have done in college and you should be very thorough with whatever you have done|about the project which you have done in college and you should be very confident with whatever you|0.71
+040|my phone and there's nothing i can do so let's get back to maybe it's not your|forest timber and to mine of|0.52
+041|of sea vegetables and that|of sea vegetables and that|0.61
+042|contracting and getting smaller on the exhale|this watch watch of kid day|0.49
+043|it's going to pick up a component exactly in the sensor|going to be a up brown that the outside a inside it's|0.52
+044|relaxed your arms and your hands and your fingers you've relaxed your arms and your hands and your fingers and now your chest|you relax your arms and your hands and your fingers you've relaxed your arms hands and fingers and now your chest|0.67
+045|the basic idea is to make a cage or a basket that protects a fragile or toxic or precious payload and only releases a few drops of oxygen|basic idea is to make a case that the persecution of fragile toxic was prejudiced by and only to|0.66
+046|you that's the first one that i'm going to show you this is the the gothic vaping cardo tank|you that's the first one i'm going to show you lcd and the cathode ray tube and|0.73
+047|phone where it actually works i think it's a problem with this phone i honestly don't know|where it actually works i think it's appropriate to throw caution to the wind|0.67
+048|been up a hundred bucks on the day could have had a hundred hour day easily here|like what are you going to see that on that hot day in going to|0.60
+049|egg hunts we're going to find them all we're really excited|we are going to find them all we are ready to|0.68
+050|our world more than they ever have before but at the same time remember justin bieber justin bieber of all things was discovered on|in our world more than they ever have before but at the same time remembering that jean and jeanette of all things were discovered|0.72
+051|including thousands of chemical weapons large volumes of chemical and biological stock|including thousands of chemical weapons large groups of chemical and biological stocks|0.68
+052|3 million users about 12 million people who speak about us for our community|three million users about 12 million people who speak about it through their communities|0.70
+053|and for catalase guanylate cyclase it is stored in the form of ferritin you can find it within the body|that ferguson is a syntax it is stored in the form of folklore and you can find it within the body|0.69
+054|in all over the last 10 years we have had 8 616 students|and over the last 10 years we have had 8666 students|0.65
+055|hi this here houston chiropractor dr gregory johnson i'm sure you all remember jesse from|i think it's very important for us to understand that are not the of the|0.67
+056|so mr zhang mr is xian shen xian shen mr zhang is zhang xian|some mister chop mister is intention intention mister shiva is cosmic|0.71
+057|take a look at the example from the series by the way today we analysed the idioms from scrubs tv series|you can get the sample from the series by the way see we analyzed the keywords from the in the series different|0.67
+058|mean balance the front end should be a little higher or as high as the rear end|balance the free issue be as high as we are it|0.60
+059|great interest for a long time now|know in the industry for a long time now and|0.62
+060|yes they can perform very complex computations very fast|important miles across the united states|0.52
+061|about the being the living in space part that|we're basically about the business of sending kids to live in space|0.67
+062|digital mailbox into your mailbox that you would typically have in your home|mailbox into your mailbox that you typically have in your home basically|0.70
+063|it's kind of like the germ idea so you've got these particles in the air|i felt the tumor accent so you get these particles in the air|0.68
+064|you can name it how you want so generally a bedroom in korean is just|when i was a little girl i always wanted to be a princess work a ballerina or a dream or a unicorn or a hard or a|0.63
+065|to her new home but it was too late|grow but it was too late|0.68
+066|obsolete instead of just throwing it away you can resell these as gaming cards or use them as gaming cards yourself as they're still very capable|obsolete instead of just throwing it away you know what i'm saying it can be hard to do something that's comfort yourself and still very capable|0.70
+067|more fabulous queens from around the globe first the lebanese comedian|more fabulous tweets from around the globe first lebanese media|0.69
+068|for the sweetest and most all encompassing celebration of this great holiday of purim|for the swedish and most norwegian campus in celebration of this great holiday of jul|0.67
+069|has been following the water and this|has been flowing the water and these things|0.64
+070|selling these again this is attack of the puppet people village of the giants midnight movie double feature disc only from 2005 sold us for 12 24|the attack of the poppy people village of the giants my name is victor fernandez it's in 2005 so is 12 hours and 24 seconds|0.72
+071|i can see he's angry we don't want him getting|just is it that we don't worry about|0.56
+072|tk object which is the main object for tkinter i'm going to go ahead and extend that and so i need to create my initializer|cake object which is the main object for dissection i'm going to cut it in half quickly two equal halves|0.65
+073|try to get pokemon to catch and i'm really into i don't know i never followed the franchise i'm a little outside of the age range of people who would have played pokemon but i have siblings who did|to keep polly barton in check and i'm willing to do i don't know i never would have followed the franchise and i am a little outside of the age range of people who will play polybart but i have double citizenship|0.72
+074|by a combination of temporarily low adjustable rate mortgage payments by a|i've come to the conclusion that i'm going to run for president of the united states|0.59
+075|you might be familiar with some of our products so as you can see on the left hand side here|might be familiar with some of our products that are eyes on the left hand side|0.71
+076|i am a father raising two teenage children i want to keep my kid's life as normal as i possibly can so a big part of that is having power|am a father raising two young children i want to give my kids a life as normal as i possibly can so a big part of that is having a porn|0.72
+077|so we have all of our purple cabbage sliced|kind of all of our moods and in just same time|0.62
+078|here|i am an engineer|0.53
+079|payload and only releases it when it's at the right moment|malolo and only religions were such great movements|0.59
+080|here is a random video for your viewing enjoyment|a random video of your viewing history|0.72
+081|but i knew that it was possible that there was somewhere better than where i had been and there was somewhere better than where i had been|but i knew that it was possible that there was somewhere better than where i had been and there was somewhere better than|0.69
+082|backwards yay thank you i'm good thank you jackie okay good so i can't see it so i'm going to turn the light on hold on|power shake thank you i'm good lady shake ok good so i can't see it so we'll do the light on you|0.70
+083|just for reference it took facebook|search engines for references and on facebook|0.62
+084|naturalistic is the newest intelligence|national geographic is the explorer|0.52
+085|one is as you're moving conceptual surface data over to engineering solutions and tools you want to make sure that you have good clean|has actually moved the conceptual rules over to engineering tools so i want you to have good is|0.66
+086|we all live in our yellow submarine|we want to live in our protected|0.63
+087|very important|policies that keep us out of the|0.55
+088|normally paid when it comes to wordpress themes and plugins|be paid when it comes to the 1 plus in place|0.67
+089|these areas likely from mid to late afternoon through the evening hours and maybe even into the overnight hours these storms probably going to be spotty here and there supercell rotating thunderstorms with big hail|terrorists lately from the the afternoon through the evening hours or maybe even into the overnight hours these rumors are probably going to be spot on here and there chimpanzees are rotating there so i'm sure they'll|0.72
+090|things that are going on in the company right now are there big changes or big challenges|the things that are going on in the company right now in your pj's in your beach chairs|0.68
+091|i see twitter feeds all over the place right i see them in news stories i see them in|see green fins all over the place i can see them close to shore i see them in the|0.71
+092|and all of those things that have existed for 20 years and in fact i've been out there either as an attendee|all of those cases have events over 20 years in fact some are out there 100 years etc|0.68
+093|help them or to maybe|i'm so happy to be here to you all|0.51
+094|or in measurements across parts per the same drawing|michelangelo's sparked by the same story|0.58
+095|you really have to educate yourself okay but if you don't want to|food and other healthy items in smoothies|0.61
+096|and he pledged 10 and he will be getting a letter in the post very soon|i planted seeds and we'll be getting electricity very soon|0.69
+097|and introductions will serve you well on many levels so here's the bottom line having a referral marketing program is the only market|and introduction will serve the well on many levels so here's the bottom line having a referral marketing program is the only|0.70
+098|i was able to put this cabinet and that one over there show them that|for this time and i have to figure out how to|0.58
+099|it looks very pretty i must say that|in school books maybe not yet but|0.54
+100|anything about the new administration but i'm pretty sure they're working behind|anything about new administration but i'm pretty sure you me mind|0.67
+101|because it's so much kind of simpler to get started and hosted and everything and then i played with a few frameworks like codeigniter and eventually wrote laravel|maybe it's because i'm a little bit that i have some hair and wrinkles and everything and then i play with a five piece orchestra and if you see the whole interview|0.55
+102|therefore it is important to make sure you check with your insurance company to find out if this is covered or if it will require some out of pocket expense|therefore it is important to make sure you check with your insurance company to find out if this is covered or if it will require some out of pocket expense|0.70

@@ -1,0 +1,103 @@
+HYP_VOTE_SCORE | BATCH 05/15 | 101 pairs | format: NNN|ref|hyp|conf | Y=meaning conveyed, P=partial (annotate: P:preserved/-lost), N=meaning lost | `conf` is the method's own sentence-level confidence in [0,1] (n/a if missing) — use as a soft cue, NOT as a verdict shortcut
+---
+001|this name is alfred wenneger from joe's|your name is caffery wingard from zombie|0.61
+002|so we have to ask ourselves well why would he do it well on the one hand he felt that he knew best how to choreograph for carlotta|so we have to ask ourselves well why would we do it well on one hand he felt the clinical mess the chaos of the emergency room|0.71
+003|i always get the bullseye i'm all|i always get the person that i'm always|0.59
+004|benzodiazepines are often converted to active metabolites in the liver examples include diazepam and flurazepam the important medications that you should know is really diazepam|benzodiazepines are often converted to active metabolites at lower inhaled sedatives like ativan and valium the important medications that you should know is really ativan|0.67
+005|animals were running the friendly gray squirrels out of town by chasing down the males and castrating them now as you can imagine i was pretty shocked to hear this and when my grandpa explained to me what the words male and castration meant i was|mice were running the friendly racecourse dive down by chasing down the males and castrating them as you can imagine i was pretty shocked to hear this and when my grandparents explained to me what the word male in castrate meant i was|0.73
+006|i can't even help myself i don't know what to do that's when you know shaitaan|i can't even help myself i don't know what to do that's why i'm here|0.71
+007|i looked and i saw i was wrong i was lied to just as everyone else|learned and i just thought i was wrong i was lied to just like everyone else but|0.65
+008|and that was for three years so i was full time with them for three years more than full time|and that was for three years so i was full time with them for 3 years more than full time|0.66
+009|we're going to do a little bit of background to start so why aging is important the need for slps to really get into this field because we're getting in kind of late|going to do a little bit of background to this start so why aging is important the need for vitamin e is really needed in this figure because we're eating kind of late and|0.72
+010|i was able to put this cabinet and that one over there show them that|for this time and i have to figure out how to|0.59
+011|i do not know i don't know where your pencil is she said|what i'm talking about when i talk about being a man being a black man being an african american|0.57
+012|tab and you're gonna hit show develop in minibar just click that|like i want to know what's going on with the world i just love that|0.55
+013|and then basically ever since then i wanted to work for disney because i connect that with making people happy and wanting to|and basically ever since then i wanted to work for sixteen because i connected that with making people happy and wanting to|0.70
+014|i think the most important question that anybody will|the most important question that anyone will ever|0.60
+015|often when we talk about white privilege a common rebuttal is i can't be privileged i grew up poor or|when we talk about white privilege a common retort is i can't be privileged i grew up poor or|0.70
+016|and growing in student loan debt you could hire all of the us marshals in the entire country and give them nothing to do but to|and growing in south korea to allow all of the us monks in the entire country and give them nothing to do but|0.71
+017|i think my fondest memory is actually how i started in the music department five years ago mr borna asked me to go to the st patrick's day parade and i told him no and while i was on the bus|and then my fondest memory is actually how i started in the music department five years ago mr martinez asked me to go to the samurai sandwich and i told him no and while i was on the bus|0.72
+018|how we treat each other is really that internal piece you can't measure very well but you can feel it|trick together is to treat each other as equals you can't boss each other around|0.58
+019|and whatnot but first let's talk about the practical difference what i felt while using these phones and in a nutshell in terms of speed difference if you are expecting that moving from|and what not but first let's talk about the practical difference what i felt while using these phones and in a nutshell in terms of speed difference if you were expecting that movie from|0.70
+020|i met some years back now like 2010 five six years ago|aim of some years back now like 2009 five years ago|0.68
+021|praise to god in the first few verses|when i was years i old i|0.49
+022|but i knew that it was possible that there was somewhere better than where i had been and there was somewhere better than where i had been|but i knew that it was possible that there was somewhere better than where i had been and there was somewhere better than|0.68
+023|i don't have any belt whatsoever and i'm assuming someone else has|i don't have that email whatsoever and i'm assuming you want|0.67
+024|there's that i know that looks really bad but if you do take time it'll look a lot better|and there's nothing i can do about that i know that it's going to be a painful experience but it will look a lot better|0.70
+025|okay let's start out by playing a long tone on middle c and then we're going to go down chromatically from there if you haven't done so already i highly recommend you watch my saxophone|can start out by playing a long note on middle c and then we're going to go down dramatically from there if you haven't done so already i highly recommend to watch my talk on|0.73
+026|sensor is in range of the magnet so it would be closed|that sort of range of the magnitude so it would be closed i|0.62
+027|the american chestnut tree at one time approximately 100|about justice for the one time and possibility is|0.62
+028|for the american people do we have more freedom or less|i think we have to wait more for freedom than that|0.62
+029|what i don't understand for the life of me about the people who complain about people they don't like on youtube is all you have to do|what i told you to search for on government about people who are missing about something they don't like on youtube is all you have to do|0.66
+030|will show you how to exercise the w sound|show you how to exercise words out|0.69
+031|and 10 megabits per second is so today so slow that we would never have a new card in fact i don't think you could buy a brand new card that didn't support 100 megabits per second|the next time i get people saying it's so easy so so that we don't even have to go to court in fact i think you can buy a new car that does the work for you|0.66
+032|i'm assuming he has not i might do a different ad on that one but definitely a third party advocate|from being the nice guy i might do a different angle on that one but definitely a third party having|0.66
+033|we are part of the national initiative for building community trust and justice|what are some of the things that you do to build trust suggest|0.54
+034|which means it's only visible from within the package that it was defined in|who he is because it's already familiar from the manga that we saw earlier|0.56
+035|one series of experiments that we did was to demonstrate that the nanorobots|one series of experiments that we did was to demonstrate that that automatic|0.64
+036|so enzymes are just like whatever ingenious machinery they use the factory to make this okay let's|ask them to design whatever machinery they use in the factory to make ted's|0.63
+037|most healthful members are 7 inches long|i'm so happy to be here today|0.52
+038|including some standard colors patches and ramps from black to white and you have seen me do this before|some standard colors patterns and wrapped it from black to white you have seen me do this before|0.67
+039|what was the reason why you went into that direction|what was the reason why you went in that direction|0.70
+040|website and you set up a trigger which you would use as a voice command and then when you use that command it does a specific thing|it and you set up a trigger which you use as a voice command and then when you use that command it does a specific thing|0.73
+041|for generations that come after me|generations that come after me|0.62
+042|and give them nothing to do but to go after people|and give them nothing to do but to go after people|0.70
+043|area have been showing zygites addendum and even zygites to their class and discussing it|i've been sharing the stage at the meetings for decades with alexandria and|0.59
+044|flat against your breastbone how do i know what size bra to buy that's our next step we're going to do some measurements that will help us figure out how to make the best bra|landing next to your bone how do i know what size boot to buy that's our next step we're going to use a 3d scanner to figure|0.69
+045|i'm not a do gooder if you're a bum if you can't break off with a booze or whatever it is that makes you a bad risk then get out|i'm not a sucker if you're going to bomb if you can't break off with a boom or whatever it is it makes you a bad ranger then hang out|0.72
+046|there are two ways in which a fuller can be added to a sword one is through stock removal|are two ways in richard feynman can be added to a storm one is through a circular proof|0.68
+047|in 30 minutes before sunrise|30 minutes before sunrise|0.55
+048|so it's not necessarily an improvement in this case|there's a lot of necessary improvement to be done|0.51
+049|chronic ocular oncocerciasis is also associated with oncocorioretinitis chronic inflammation of the retina and choroid as well as op|red octahedron under your eyes is also associated with uncoordinated right eye nystagmus red information of the right ocular cortex as well as optic atrophy|0.66
+050|you need to start this out extremely slowly|on each shot the sound extremely slowly|0.60
+051|but we're talking about things that will really|because what we're talking about that life was really fun|0.64
+052|interchangeable lens it's difficult to get different looks from this camera|judicial landscape is difficult to difficult from this vantage start|0.53
+053|take a look at the example from the series by the way today we analysed the idioms from scrubs tv series|you can get the sample from the series by the way see we analyzed the keywords from the traps in the series different|0.66
+054|peace and blessings family|it's a blessing to be in this|0.52
+055|or you're reading something you know don't spend all the time piling with your friends like oh we're gonna fight oh fight after skate you guys are like a whole|you're reading something you know don't smell the same body lotion with your friends they all want your fragrance|0.68
+056|when he talks about it is vital that independent critical thinking be developed in the young human being i'm not sure how young he was talking about maybe that's where we would differ from what he was thinking i'm not sure|he talks about this fight or that incident or little thing that we develop as young human beings i'm not sure how young he was talking about maybe that's what made it different from what he was saying i am not sure|0.72
+057|lights up and it was just great like it was it worked really well|top and it was just great it worked really well|0.62
+058|now those predictions i think|of first impressions same the|0.51
+059|and introductions will serve you well on many levels so here's the bottom line having a referral marketing program is the only market|and introduction will serve the well on many levels so here's the bottom line having a referral marketing program is the only|0.69
+060|so i got clumsy but anyway the|i heard it all but the question is|0.59
+061|disorder over the next several weeks i'm going to go into each of those|work over the next several weeks i'm working on each of those|0.68
+062|his own shoe made i was all about it plus you guys know how i am with mids with straps and all that so i got the shoe in both colorways|to shoot my character you know i was all about it because that's all i wanted to do was and do stunts all day so i got to shoot the computer game one|0.69
+063|of the mixed multitude there and he only tells them two things and this entire portion there's only two things|for 30 minutes or so and he told us two things that this arabic sheikh told us to|0.62
+064|confidence that these amounts will be a little bit higher here's a look at the timing of things so here's the european model starting at 1 a m on mondays|so i'm going to tell you a little bit about myself i was born and raised in new york city i grew up in the bronx i went to high school in brooklyn and i graduated from brown university with a bachelor's degree in sociology|0.73
+065|you know trying to get up and work out and i would get tired very very quick|trying to get up and work out and i would get tired very very quickly|0.65
+066|so now since we're done with the unboxing i just wanted to look inside this pen because it said the charger was|now she was found guilty on both charges in the united states and to been years in|0.62
+067|take back your personal space hygiene with our orb antimicrobial|take back your personal space agency wear your arm antimicrobial|0.64
+068|mastectomy chemo and no chemo living or dying|sent me an email no email living or dying|0.53
+069|we're excited about several innovations that will deliver increased nutritional benefits of the food that we eat as well and also that will help ensure|time and money for several innovations that will yield increased nutritional benefit for the future well being of israel also they will help us secure|0.67
+070|it will be interesting it will be exciting it will be|would be literacy it wouldn't be maths or science|0.61
+071|and they're nice to their employees because that's the kind of thing that i want to be supporting|no that's really important to me because that is not the thing that i want to be supporting|0.64
+072|but the soviet union seemed to have done just fine without|the torah seem to have done just fine without|0.60
+073|about the 13th amendment the 13th amendment is going to come soon on the heels of the actual end of the civil war this basically formally by constitutional amendment ends slavery so that's a pretty important|13th may mean something to you because it can help you shoot all the killers of the actual civil war that speaks to in formal him i also show my meaning in slavery so that's a pretty boring|0.70
+074|i worked at beatniks in chicago it's uh they've got one in miami too but it's|wasn't me that young girl who said if that were me two weeks ago|0.62
+075|between 50 and 70 freight trains ship out of the powder river basin every day|50 and discovering that you've lost your grip on the power over your bed sheets for the day|0.55
+076|my name is brandon noel i'm an assistant professor in the department of public administration|breaking news time and as a professor at the department of public administration i|0.64
+077|it's one of the secrets that i've discovered|when i was in high school i|0.50
+078|see overweight or obese animals that's because when you're eating the right food for your species you don't put on weight even if you're in a place where there's abundant food to be had animals don't do that|the overweight humans and animals that's because when you are eating the right food for your species you don't put on weight even if you are in a place where there's abundant food to be had animals do that|0.67
+079|of any statement of multiple dimensions|love and excitement of multiple dimensions|0.67
+080|that you have a of course i mean to an audience like the one here i can't even begin to get into the fact that the|to have of course i'm an indian so it's like the weather i kind of blend into the fact that|0.66
+081|tension new developments every|physical and emotional|0.59
+082|como estas a few times you kind of have an idea of what it means|corporate side of food i have a degree in that as well because|0.59
+083|we store water in the summer season when it's very cold|of the space odyssey was|0.49
+084|see a little mix in on the backside you can see on the backside of our system we're going to see a little wintery weather so tuesday is an all day downpour cold rain actually maybe enough to even cause flood|a little mixed on the back side it's like the bad side versus the good side one zero one two zero three zero four zero five zero six zero seven zero eight zero nine zero ten zero eleven zero twelve|0.57
+085|and whether or not you need to make some lifestyle changes dr axel|and whether or not you're going to make some lifestyle changes not your hair|0.69
+086|and instead of using a sampling bottle or metabolism chamber we're just going to use some plastic bags that zip close and this is convenient because|sink and next time a bottle or a metabolism chimera which is going to some plastic bags and some clothes and this is random because|0.69
+087|and our videos will be much better so that's awesome the other thing is|and our videos will be managed by us the authors the the|0.57
+088|the research suggests that the bacteria in our gut influence everything from you know whether you're energetic or sluggish|research suggests that the bacteria in your gut influence everything from whether you're an introvert or not|0.67
+089|of the video the lego minifig uh we have|video a little bit of fun we have|0.67
+090|economic downturns you've got to focus on what you spend your money on|economic downturn you've got to focus on where you spend your money on|0.65
+091|drop my gun out of my mouth like bleh|come out of my mouth like that|0.65
+092|watch my saxophone embouchure tutorial|watch my text messages so|0.61
+093|made to seem less important|make it seem less important|0.63
+094|so the females actually have a choice kind of who they want to|so as a filmmaker i actually have a choice and i do not want to make|0.62
+095|i'm on site overnight|i'm outside overnight|0.53
+096|we use i won't get into brands but different stuccoes have different suctions and so ghosting effects if you know how to get the suction right|i don't know if i'm going to be able but|0.51
+097|so we set off on this process|so we set off on this process how could i ever|0.64
+098|and increase awareness among my audience members i needed to go deeper|increase awareness in my mind i need to go deeper on|0.69
+099|you've got to be aware of this math and it can get you in trouble in a hurry especially if you start averaging down and averaging down|this path any trouble occurred especially if you start averaging down he had averaged down and|0.68
+100|he is now 7 years old my third one will also be a male he is 1 years old right now his name is michael|is now seven years old my third one will also be a boy a kid is one year old right now his name is|0.68
+101|so how do we do that|so do you do that|0.51
