@@ -31,7 +31,7 @@ Reverse-chronological: newest entry on top.
 - **WHAT**: Slide 26 NIV-Y card 23% → 24%; slide 31 three-tier shares 22.7/35.7/36.9 → 23.8/37.5/38.7. Speaker notes + audit canonical list updated. No structural change.
 - **WHY**: Latest `english_full_nbest_eval/report/report.csv` (1,497 segs) shows IS≥3.80 hit 24.1% (was 23.1%); per_segment_safety.csv (1,427 segs) tier distribution shifted under joint band rule.
 - **FILES**: `slides_client.py` (headline_numbers, three_tier_policy), `tests/unit/test_number_audit.py` (CANONICAL + approved updates).
-- **COMMIT**: TBD.
+- **COMMIT**: 32599e7.
 
 ---
 
