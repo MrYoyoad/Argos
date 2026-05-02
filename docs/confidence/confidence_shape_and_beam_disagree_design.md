@@ -192,3 +192,17 @@ If any test fails on a new run, the threshold values must be re-fitted before sh
 1. **Coverage vs precision tradeoff.** New rule drops green coverage from ~60% to ~40%. Is 85%+ uniform reliability worth losing 20pp of "green" UI surface? (My read: yes — current greens include a known-unreliable subset that misleads users. But this is your call.)
 2. **Numeric handling.** Should the "uncertain styled" rendering for numbers be visually distinct (e.g. italic + grey) or just yellow-tier? Affects the design system.
 3. **Backward compatibility.** Old reports were generated with the conf-only rule. Do we need to regenerate them, or is the new rule applied only to new runs?
+
+---
+
+## 8. Post-shipment results (May 2 2026)
+
+### Per-word safety
+
+Green words now correct **89.8%** of the time (up from 80.6%); yellow now 59.0% (up from 38.3%); numbers fully capped at yellow (0 painted green vs 75 under the old rule). Biggest gain in the Salvage tier (seg_mean 0.65–0.82): green reliability jumped 79.8% → 89.1%. Full per-band stratification: [SAFETY_ANALYSIS.md](../../english_full_nbest_eval/safety_analysis/SAFETY_ANALYSIS.md). The numeric cap is empirically justified — even at the strictest joint cell (conf ≥ 0.95 AND agree ≥ 0.95) numbers hit only P(correct)=0.742, well below the 0.85 promise.
+
+### Client trust calibration
+
+If the client uses "fraction of words green ≥ T" as the trust rule, the operational tradeoff is in [client_trust_calibration.md](client_trust_calibration.md). Headline: at the **30% threshold** (recommended default), 65% of useful content is captured with a 5.6% false-positive rate — about 1 misleading transcript per 22 trusted ones. Strict (70%) cuts false positives to 0.2% but recall drops to 7.6%.
+
+A structural ceiling: ~35% of useful (NIV-Y+P) segments have green-fraction below 30% even under the new rule. They need a different signal (LLM rerank, topic-conditional prior, semantic-coherence check) — that's the next iteration.

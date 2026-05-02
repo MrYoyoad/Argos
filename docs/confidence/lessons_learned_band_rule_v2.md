@@ -445,3 +445,22 @@ Stratifying segments by fraction of words painted green under the new rule:
 The 0.70–0.90 band climbs from 0.76 → 0.88 P(NIV-Y) vs the old rule. The 0.00–0.10 band drops its hallucination rate from 0.59 → 0.44 — old rule's bottom band was a thinner slice of cleanly-bad segments; new rule's bottom is broader and less catastrophic on average. Both directions are improvements.
 
 The "≥90% green" cohort is now tiny (5 segments out of 1,427) but unanimously NIV-Y with 10.3% mean WER. A user who only reads mostly-green sentences will see fewer transcripts but the ones they see are reliable.
+
+---
+
+## 13. Client trust calibration — what fraction of useful content does the client actually pick up?
+
+The natural client rule is "trust segments where most words are green." Formalised as "fraction-green ≥ T", this is the operational tradeoff:
+
+| T (green-frac ≥) | Trusted | Useful caught | False positives | Recall | FPR | NIV-Y in trust |
+|---|---|---|---|---|---|---|
+| **30%** | 630 | 602 | 28 | **65.2%** | 5.6% | 52.5% |
+| 50% | 321 | 312 | 9 | 33.8% | 1.8% | 72.0% |
+| 70% | 71 | 70 | 1 | 7.6% | 0.2% | 88.7% |
+| 90% | 5 | 5 | 0 | 0.5% | 0.0% | 100% |
+
+**Recommended default: ≥ 30% green.** Surfaces 65% of useful content (602 of 924 NIV-Y+P segments) with 5.6% false-positive rate — about 1 misleading transcript per 22 trusted ones.
+
+**Structural ceiling.** 322 useful segments (35% of NIV-Y+P) have green-fraction below 30% even under the new rule — segments where the model produced something useful via thin-agreement / mid-conf words. The band system fundamentally cannot reach them. Recovering them requires a different signal (LLM rerank, topic-conditional prior, semantic-coherence check) — that's the next iteration after this one.
+
+Full analysis: [client_trust_calibration.md](client_trust_calibration.md). Generator: [analyze_client_trust_calibration.py](../_research-tools/generators/analyze_client_trust_calibration.py).
