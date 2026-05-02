@@ -45,7 +45,9 @@ run_client_outputs() {
     return 1
   fi
 
-  # Use video directory for burning (dynamic based on segmentation mode)
+  # Burns are always rendered on the post-split full-face video in $flat_vid_dir.
+  # The mouth-crop dir below is only used downstream (lip_crops/ copy) — never
+  # as a burn source (see make_burn.py: refusing to burn on mouth crops).
   local segment_vid_dir="${prep_root}/${data_name}/${data_name}_video_${dir_suffix}"
   local segment_metadata="${prep_root}/segment_metadata.json"
 
@@ -243,7 +245,6 @@ run_client_outputs() {
   python3 "$vsp_dir/scripts/make_burn.py" \
     --jsonl "$decode_json" \
     --video_dir "$flat_vid_dir" \
-    --segment_dir "$segment_vid_dir" \
     --segment_metadata "$segment_metadata" \
     --out_dir "$burn_dir" \
     $burn_conf_arg || {

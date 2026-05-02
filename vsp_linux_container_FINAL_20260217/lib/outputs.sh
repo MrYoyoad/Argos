@@ -45,7 +45,9 @@ run_client_outputs() {
     return 1
   fi
 
-  # Use video directory for burning (dynamic based on segmentation mode)
+  # Burns are always rendered on the post-split full-face video in $flat_vid_dir.
+  # The mouth-crop dir below is only used downstream (lip_crops/ copy) — never
+  # as a burn source (see make_burn.py: refusing to burn on mouth crops).
   local segment_vid_dir="${prep_root}/${data_name}/${data_name}_video_${dir_suffix}"
   local segment_metadata="${prep_root}/segment_metadata.json"
 
@@ -177,9 +179,11 @@ run_client_outputs() {
   local agg_arg=""
   [ -n "$agg_json" ] && [ -f "$agg_json" ] && agg_arg="--aggregated $agg_json"
   # Display method (Mission 6 production switch, May 2026):
-  # When aggregated.json is available, default to using hyp_mbr as the displayed
-  # output. Judge-validated: +40 net Y+P verdicts vs top1 (paired McNemar
-  # p=0.0002, n=1,497). Override with VSP_DISPLAY_METHOD=top1 if needed.
+  # When the n-best aggregator has produced an aggregated.json, default to using
+  # `hyp_mbr` as the displayed/primary output. This is judge-validated: +40 net
+  # Y+P verdicts vs top1 (paired McNemar p=0.0002, n=1,497, May 2 2026).
+  # Override with VSP_DISPLAY_METHOD=top1 (or any other method name) if needed
+  # for A/B testing or backwards-compatibility runs.
   local display_arg=""
   if [ -n "$agg_json" ] && [ -f "$agg_json" ]; then
     local method="${VSP_DISPLAY_METHOD:-hyp_mbr}"
@@ -241,7 +245,6 @@ run_client_outputs() {
   python3 "$vsp_dir/scripts/make_burn.py" \
     --jsonl "$decode_json" \
     --video_dir "$flat_vid_dir" \
-    --segment_dir "$segment_vid_dir" \
     --segment_metadata "$segment_metadata" \
     --out_dir "$burn_dir" \
     $burn_conf_arg || {

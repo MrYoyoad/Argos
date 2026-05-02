@@ -468,8 +468,7 @@ def extract_segment_from_original(
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--jsonl", required=True, help="decode outputs (.jsonl OR hypo-*.json)")
-    ap.add_argument("--video_dir", required=True, help="folder of original mp4")
-    ap.add_argument("--segment_dir", default=None, help="folder of segmented videos (fallback if original not found)")
+    ap.add_argument("--video_dir", required=True, help="folder of original mp4 (post-split full-face videos)")
     ap.add_argument("--segment_metadata", default=None, help="path to segment_metadata.json")
     ap.add_argument("--out_dir", required=True)
 
@@ -496,7 +495,6 @@ def main() -> None:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     vdir = Path(args.video_dir)
-    segment_dir = Path(args.segment_dir) if args.segment_dir else None
 
     # Load segment metadata if provided
     segment_metadata = {}
@@ -609,32 +607,14 @@ def main() -> None:
                     src = hits[0]
                     print(f"[OK] Using pre-segmented full-frame video for {uid}: {src.name}")
 
-        # Strategy 2: Fall back to preprocessed segment video (mouth-cropped)
-        if src is None and segment_dir:
-            seg = segment_dir / f"{uid}.mp4"
-            if seg.exists():
-                src = seg
-                print(f"[FALLBACK] Using preprocessed segment for {uid}: {seg.name}")
-            else:
-                hits = sorted(segment_dir.glob(f"{uid}*.mp4"))
-                src = hits[0] if hits else None
-                if src:
-                    print(f"[FALLBACK] Using preprocessed segment for {uid}: {src.name}")
-
-        # Strategy 3: Last resort - use full original video (non-segment ID)
-        if src is None:
-            orig = vdir / f"{base_video_id}.mp4"
-            if orig.exists():
-                src = orig
-                print(f"[FALLBACK] Using full original video for {uid}: {orig.name}")
-            else:
-                hits = sorted(vdir.glob(f"{base_video_id}*.mp4"))
-                if hits:
-                    src = hits[0]
-                    print(f"[FALLBACK] Using full original video for {uid}: {src.name}")
-
+        # NOTE: We deliberately do NOT fall back to the mouth-cropped (88x88
+        # grayscale) preprocessed segment dir. Burned videos are a client-facing
+        # artifact and must always show the speaker's full face. If neither the
+        # original-extracted segment (Strategy 1) nor the post-split full-frame
+        # segment (Strategy 1.5) is available, skip the segment rather than
+        # silently degrade to a mouth crop.
         if src is None or not src.exists():
-            print(f"[SKIP] no video for {uid}")
+            print(f"[SKIP] no full-frame source for {uid} (refusing to burn on mouth crop)")
             continue
 
         w, h = ffprobe_wh(src)

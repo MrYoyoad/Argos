@@ -1805,3 +1805,25 @@ The joint rule is **not** an experimental opt-in. It is the production default a
 **Verification**: smoke test passes on a single-segment input — `aggregated.json` is produced and stage 8 picks `hyp_mbr` as the displayed output without any explicit env-var override.
 
 **Path translation note**: No hardcoded paths. EC2 and `/workspace/` paths translate identically.
+
+---
+
+### Burned Videos: Always Use Post-Split Full-Face Source (May 2 2026)
+
+**Problem**: `make_burn.py` had a Strategy 2 fallback that burned hypotheses onto the 88×88 grayscale mouth crop in `${PREP_ROOT}/${data_name}/${data_name}_video_${dir_suffix}/` whenever the original-extract (Strategy 1) and the post-split full-frame match (Strategy 1.5) both missed. This is the wrong artifact for client-facing output — burns must always show the speaker's face, never the mouth ROI.
+
+**Fix**:
+
+- `VSP-LLM/scripts/make_burn.py` — removed `--segment_dir` argparse entry, removed the `segment_dir` variable, removed Strategy 2 (mouth-crop fallback) and Strategy 3 (full-original-by-base-id fallback, which never matched in the segmented pipeline anyway). When neither Strategy 1 nor 1.5 can produce a full-frame source, the segment is now **skipped** with `[SKIP] no full-frame source for {uid} (refusing to burn on mouth crop)` rather than silently degrading.
+- `lib/outputs.sh` — dropped `--segment_dir "$segment_vid_dir"` from the `make_burn.py` invocation. `$segment_vid_dir` is still computed (used by the `lip_crops/` copy further down) but no longer reaches the burn script.
+
+**Files mirrored from EC2**:
+
+- `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_burn.py` (verbatim copy from `/home/ubuntu/VSP-LLM/scripts/make_burn.py`)
+- `vsp_linux_container_FINAL_20260217/lib/outputs.sh` (verbatim copy from `/home/ubuntu/lib/outputs.sh`)
+
+**Container action**: Drop in the two patched files. No other changes required — both files have no path edits between EC2 and `/workspace/`.
+
+**Backward compatibility**: None broken. Calling `make_burn.py --segment_dir ...` from any old wrapper now errors with "unrecognized arguments"; only `lib/outputs.sh` invokes this script in our pipelines, and it has been updated.
+
+**Path translation note**: No hardcoded paths. EC2 and `/workspace/` paths translate identically.
