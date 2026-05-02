@@ -87,12 +87,14 @@ run_vsp_decode() {
     log_info "VSP_OUTPUT_SCORES=1 — confidence sidecar will be written alongside hypo-{fid}.json"
   fi
 
-  # VSP_NBEST (default 0): when set to 1, vsp_llm_decode also returns all 20
+  # VSP_NBEST (default 1 since Round 5.16): vsp_llm_decode dumps all 20
   # surviving beams to disk in nbest-{fid}.json (with per-token probs/entropy
-  # for each beam). Required for n-best aggregation and beam-variance analysis.
+  # for each beam). Required for n-best aggregation and the MBR-as-default-
+  # displayed-output policy + confidence-dependent tier filtering.
   # Wall-clock cost is ~zero (beam search already explores 20 internally);
   # disk cost is ~20× the confidence sidecar (~300 MB / 1,497 segments).
-  if [ "${VSP_NBEST:-0}" = "1" ]; then
+  # Set VSP_NBEST=0 only on memory- or disk-constrained runs.
+  if [ "${VSP_NBEST:-1}" = "1" ]; then
     log_info "VSP_NBEST=1 — n-best sidecar (20 beams × per-token probs) will be written"
     # n-best aggregation needs per-token probs to compute confidence-weighted vote.
     # Force VSP_OUTPUT_SCORES=1 to match the coupling in vsp_llm_decode.py.
@@ -105,7 +107,7 @@ run_vsp_decode() {
   LAB_DIR="$lab_dir" \
   WRD_ROOT="$wrd_root" \
   VSP_OUTPUT_SCORES="${VSP_OUTPUT_SCORES:-1}" \
-  VSP_NBEST="${VSP_NBEST:-0}" \
+  VSP_NBEST="${VSP_NBEST:-1}" \
   bash "$vsp_dir/scripts/run_flat_decode.sh" || {
     log_error "VSP-LLM decode failed"
     return 1

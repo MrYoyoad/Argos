@@ -26,6 +26,18 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.16b — n-best v3 judge truth + VSP_NBEST default flipped (LANDED)
+
+- **WHAT**:
+  - `slide_client_aggregation_safety`: card 3 swapped "WORD ERROR RATE DOWN (~1.6 pp)" → "CALIBRATED CONFIDENCE" (vote_conf wins WER, but we ship MBR — don't misattribute). Footer: "becoming default after one more validation pass" → "MBR aggregation now ships as the default displayed output (env-gated; override available)."
+  - Speaker notes (aggregation_safety + engineering_journey): retracted v1 framing ("ship vote_conf or MBR — probably both"), replaced with v3 dual-conf truth (MBR +2.7 pp Y+P p=0.0002, vote_conf +2.1 pp p=0.0026, vote_score n.s.); MBR-over-vote_conf rationale (intra-rater 86.7%, calibrated per-word posterior); v1 27% drift retraction note.
+  - `lib/decode.sh`: VSP_NBEST default 0 → 1 — MBR confidence + tier filtering now run on every video. Container overlay synced.
+- **WHY**: User directive — "the MBR confidence and confidence-dependent filtering should apply to all videos." Plus the v3 judge writeup landed and supersedes the v1-contaminated framing in earlier slides.
+- **FILES**: `slides_client.py` (aggregation_safety, engineering_journey notes), `lib/decode.sh`, `vsp_linux_container_FINAL_20260217/lib/decode.sh`, `docs/container-sync-changelog.md` (entry #31), `docs/paper/presentation-remarks-log.md` (Batch 21, items 267–269).
+- **COMMIT**: TBD.
+
+---
+
 ## 2026-05-02 — Round 5.16 — Refresh numbers from latest 1,497-segment eval (LANDED)
 
 - **WHAT**: Slide 26 NIV-Y card 23% → 24%; slide 31 three-tier shares 22.7/35.7/36.9 → 23.8/37.5/38.7. Speaker notes + audit canonical list updated. No structural change.

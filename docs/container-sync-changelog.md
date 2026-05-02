@@ -1783,3 +1783,25 @@ The joint rule is **not** an experimental opt-in. It is the production default a
 - `vsp_docker/galaxy_export/` Docker build context: **deferred** per CLAUDE.md sync rules. Will sync at next planned image rebuild (see [docs/guides/deploy-targets.md](guides/deploy-targets.md)).
 
 **Path translation note**: No hardcoded paths in either change. EC2 paths and `/workspace/` paths translate identically.
+
+---
+
+### 31. VSP_NBEST default flipped 0 → 1 (May 2, 2026)
+
+**Summary**: `lib/decode.sh` now defaults `VSP_NBEST=1`, so n-best aggregation runs on every video by default. Combined with entry #30 (MBR as default displayed output) and the existing tier classification in `make_report.py`, this means MBR confidence + the three-tier UI policy (Trust ≥0.82 / Salvage 0.65–0.82 / Strip <0.65) now apply to all videos, not only opt-in runs.
+
+**Why**: Per user directive — "the MBR confidence and confidence-dependent filtering should apply to all videos." The judge-validated production switch (entry #30) is only useful when the n-best sidecar exists. Flipping the default closes that gap.
+
+**Cost**: ~200 KB extra disk per segment (n-best sidecar). ~120 MB per hour of video. Wall-clock cost ~zero (beam search already explores 20 internally). No GPU memory impact. Set `VSP_NBEST=0` to opt out on disk-constrained runs.
+
+**Files mirrored from EC2**:
+
+- `lib/decode.sh` — `${VSP_NBEST:-0}` → `${VSP_NBEST:-1}` (two locations: the gate `if [ "${VSP_NBEST:-1}" = "1" ]` and the env-var pass to `run_flat_decode.sh`). Comment block updated to reflect the new default and the production rationale.
+
+**Container action**: Drop in the patched `lib/decode.sh`. No other changes required — the rest of the n-best chain (`run_flat_decode.sh`, `vsp_llm_decode.py`, `nbest_aggregate.py`) was already env-driven and works as-is.
+
+**Backward compatibility**: To preserve top-1 behavior for any deployment that depends on it, set `VSP_NBEST=0` and `VSP_DISPLAY_METHOD=top1` at the pipeline invocation. The aggregator-related CSV columns are absent in this mode, mirroring pre-Round-5.16 behavior.
+
+**Verification**: smoke test passes on a single-segment input — `aggregated.json` is produced and stage 8 picks `hyp_mbr` as the displayed output without any explicit env-var override.
+
+**Path translation note**: No hardcoded paths. EC2 and `/workspace/` paths translate identically.
