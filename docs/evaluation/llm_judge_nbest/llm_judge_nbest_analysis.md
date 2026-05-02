@@ -196,6 +196,33 @@ This is itself a finding about prompt design for in-conversation LLM-as-judge wi
 
 **The judge sees something IS doesn't.** IS at the segment level says all four methods are equivalent. The judge says MBR and vote_conf are meaningfully better at the broader Y+P operating point. The mechanism — cleanest explanation — is that aggregation rescues marginal segments (baseline-N → method-P transitions), and the IS rubric thresholds (P ≈ tier 3 ≈ IS ≥ 2.0) are slightly above where these rescues land, so IS misses them.
 
+## Production recommendation — hybrid gating by `sentence_confidence`
+
+The conditional plot showed aggregation helps low-IS segments and slightly hurts high-IS ones. The natural follow-up: **only run aggregation on uncertain segments**. Since IS isn't available at decode time (it needs the reference), we gate on `sentence_confidence` — already in `report.csv`.
+
+Rule: `sc ≥ T → keep baseline; sc < T → use hyp_mbr`.
+
+![Hybrid trade-off + sentence_conf distribution](figures/hybrid_threshold_sweep.png)
+
+| T_sc | % use baseline | % run MBR | net Y+P rescues | p (paired) |
+|---|---|---|---|---|
+| 0.65 | 61 % | 39 % | +22 | 0.016 |
+| 0.70 | 51 % | 49 % | +29 | 0.003 |
+| **0.75** | **39 %** | **61 %** | **+34 (92 % of pure MBR)** | **0.0008** |
+| 0.80 | 28 % | 72 % | +35 | 0.0006 |
+| 0.85 | 17 % | 83 % | +36 (97 % of pure MBR) | 0.0005 |
+| 0.90 | 8 % | 92 % | +36 | 0.0006 |
+| pure MBR | 0 % | 100 % | +37 | 0.0004 |
+
+**Recommendation**: gate at **T_sc = 0.75**. Captures 92 % of pure-MBR's quality gain while skipping aggregation on 39 % of segments (~600 of 1,497 in this dataset). Plateau at T=0.85 — past that, you're paying compute for one extra rescue. `min_word_conf` gating works comparably (T_mwc=0.50 → +36 net) but isn't more efficient per percentile.
+
+What you actually gain by going hybrid vs pure MBR:
+1. **Strict safety on confident segments**. Pure MBR slightly degrades 12 tier-5 segments; the hybrid avoids that by construction.
+2. **Compute saving**. Aggregation runs only on the bottom 60–70 % of segments by confidence.
+3. **Equal quality**. Statistically indistinguishable from pure MBR on Y+P (+34 vs +37, both p < 0.001).
+
+To wire this into `lib/decode.sh`: keep `VSP_NBEST=1` and the existing aggregator, but add a gate in `lib/outputs.sh` that picks `report.csv` `hyp` (top-1) when `sentence_confidence ≥ 0.75`, else `hyp_mbr`. Single column rewrite per row, no decode-time changes.
+
 ## Files
 
 - `results_long.csv` — one row per (utt_id × method), n=5,988
