@@ -60,6 +60,10 @@ The yellow band specifically deserves to keep its current UI treatment of "ambig
 - REF: `we need a radically different approach we basically need to find a way how we can take existing routers existing switches existing links and enable them for research`
 - HYP starts with three reds ("their", "masses", "and") — all hallucinations. Green words "different approach we... find a way... can ... and enable them" carry the meaning. Reds correctly flag 7/9 wrong words.
 
+## User-facing guide
+
+For an end-user reading-strategy guide derived from these numbers (when to trust, when to verify, when to skip — keyed on tier badge + word colour), see [docs/features/per-word-confidence-user-guide.md](../features/per-word-confidence-user-guide.md).
+
 ## Caveats
 
 - Bands are derived from current LLaMA-2-7B + current LoRA adapter. As noted in [band_reliability_rollout_plan.md](band_reliability_rollout_plan.md), better calibration (Llama-3.1-8B), more training data (20K+ AVSpeech segments), and beam-disagreement gating will all shift the within-band reliabilities upward and let the thresholds tighten.
