@@ -188,17 +188,19 @@ def main():
         # § Hello
         slide_client_title,
         slide_client_about_argos,
-        # § Background (deepened in Round 5.1)
+        # § Background — opens with WHAT and HOW so the audience has a
+        # mental model before we go into use cases / comparison /
+        # difficulty (Round 5.12: pipeline_components moved up from old
+        # slide 9 to slide 4 per user "general overview at start" ask).
         slide_client_what_is_vsr,
-        slide_client_what_is_lipreading_not,    # NEW Round 5.1
-        slide_client_canonical_scenario,        # NEW Round 5.1 (coffee shop)
+        slide_client_pipeline_components,       # MOVED UP Round 5.12 — system-overview-first
+        slide_client_what_is_lipreading_not,
+        slide_client_canonical_scenario,
         # § Compared to today — Round-5 anchor
         slide_client_compared_to_today,
         slide_client_human_ceiling,             # NEW Round 5.1 (why 45-52%)
         # § Why hard
         slide_client_visemes,
-        # § Basic idea
-        slide_client_pipeline_components,
         # § What we built — multi-speaker moved here in Round 5.1.
         # engineering_journey moved from here to §Engineering (Round 5.2) so
         # the engineering section carries the substantive depth instead of
@@ -304,18 +306,34 @@ def main():
         except Exception as e:
             print(f"ERROR: {e}")
 
+    # Round 5.12 — Apply slide-level fade transitions to every slide so
+    # navigating to a slide gives the perception of motion. Native
+    # PowerPoint transition; no per-shape entrance animation work needed.
+    from presentation.helpers import add_fade_transition
+    for s in prs.slides:
+        add_fade_transition(s, speed='med')
+    print(f"  FADE TRANSITIONS applied to all {len(prs.slides)} slides")
+
     # Round 5.11 — Mark redundant / now-redundant slides as hidden so they
     # stay in the .pptx file as backup but PowerPoint skips them during
     # presentation. python-pptx has no direct hide-slide API; set the
     # show="0" attribute on <p:sldId> directly. 1-based indices.
     HIDDEN_SLIDES = [
+        14,  # demo_recap "What you just saw" — Round 5.12: thin transition; demo speaks for itself
         21,  # Output Example 2 — Truncated but Core Preserved (judge_ex2 — overlaps with example_partial)
         23,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4 — overlaps with judge_ex3 Technical Drift)
-        24,  # Output Example 5 — Cooking Domain (judge_ex5 — domain too specific for surveillance audience)
+        24,  # Output Example 5 — Cooking Domain (judge_ex5 — domain too specific)
         41,  # trust_dashboard "62% useful — on real-world video" — duplicates slide 26 headline
         45,  # slide_25d (LLM Salvage 3 cases) — overlaps with new Round 5.10 case-study slides 34/35
         46,  # hallucination_flag "1 in 5" — duplicates slide 26 headline + slides 34/35 demonstrate flagging
+        49,  # what_this_means "What this means for your workflow" — Round 5.12: thin transition,
+             # the trust section already conveys the workflow implication
+        55,  # slide_client_pipeline_detailed (8-stage diagram) — Round 5.12 user feedback
+             # "unclear and not in animation"; the simpler 3-component overview at slide 4
+             # (slide_client_pipeline_components, moved up) covers this beat better.
         59,  # _section_whats_next transition — Act 3's What's Next pivot is implicit; trim transition
+        65,  # recap "Three things to take with you" — Round 5.12: trim close section
+             # (close: integration_commitment + next_steps + thank_you is enough)
     ]
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn

@@ -120,13 +120,13 @@ def slide_client_about_argos(prs):
               Inches(1.75),
               peacock_w, peacock_h)
 
-    # Big tagline
+    # Big tagline — neutral, not pitchy
     add_text(slide,
-             "We build production-grade visual speech recognition.",
+             "Visual speech recognition with built-in confidence.",
              MX, Inches(1.7), CW, Inches(0.8),
              size=Pt(28), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
     add_text(slide,
-             "Lip-reading at scale, with built-in confidence.",
+             "Lip-reading from video. Per-word trust signal on every output.",
              MX, Inches(2.55), CW, Inches(0.5),
              size=Pt(18), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
@@ -141,13 +141,13 @@ def slide_client_about_argos(prs):
          "End-to-end pipeline: face detection, mouth cropping, visual feature "
          "extraction, language decoding — and confidence scoring on every word."),
         ("WHO USES IT", GOLD,
-         "Teams recovering speech from footage where audio is missing, can't "
-         "be obtained, or can't be trusted: surveillance, intelligence-"
-         "adjacent, security, accessibility-of-historical-record."),
+         "Teams recovering speech from footage where audio is missing, "
+         "unreliable, or never recorded — investigations, archive review, "
+         "accessibility work, footage from cameras without microphones."),
         ("WHY IT MATTERS", GREEN,
-         "Most speech-to-text systems hand you a transcript and a hope. We "
-         "hand you a transcript with a per-word trust signal so you know "
-         "what to review."),
+         "Most speech-to-text systems give a transcript without telling "
+         "you when to trust it. The per-word trust signal is the "
+         "difference."),
     ]
     for i, (label, color, body) in enumerate(items):
         x = MX + i * (col_w + gap)
@@ -269,7 +269,7 @@ def slide_client_what_is_vsr(prs):
     # Round-5 reframe: cases anchored to the surveillance use case
     # (per docs/CLIENT_MEETING_FRAMING_v2.md § "Use case reframe").
     cases = [
-        ("MUTED",       "Surveillance footage, archive video,\nindoor or outdoor."),
+        ("MUTED",       "Camera without a microphone,\narchive video, indoor or outdoor."),
         ("NOISY",       "Crowd noise, machinery, traffic,\ndistance from speaker."),
         ("UNRELIABLE",  "Suspected dub, voice-over,\nmismatched lip sync, edited audio."),
         ("AUDIO-LESS",  "Distant CCTV, drones,\nsilent stream captures."),
@@ -618,7 +618,7 @@ def slide_client_demo_recap(prs):
     add_bullets(slide, [
         "Drag-drop upload — no command line, no scripting",
         "Nine automatic stages — face detection, mouth cropping, recognition, decoding",
-        "Per-word color coding — green confident, yellow review, red likely error",
+        "Per-word color coding — green = confident AND beams agreed, yellow = review, red = avoid (numbers capped at yellow)",
         "Per-segment Intelligibility Score — calibrated against expert judgment",
         "Output is a downloadable HTML report you can hand a reviewer",
     ], MX, Inches(1.8), CW, Inches(4.5), size=Pt(18))
@@ -834,19 +834,20 @@ def slide_client_word_color_coding(prs):
                  box_x, box_y + Inches(1.9), box_w, Inches(0.6),
                  size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER, italic=True)
 
-    # Legend strip
+    # Legend strip — agreement-aware bands (May 2 2026; see
+    # docs/confidence/lessons_learned_band_rule_v2.md)
     legend_top = Inches(6.7)
     add_text(slide, "Per-word confidence  —  ",
              MX, legend_top, Inches(2.6), Inches(0.3),
              size=Pt(11), color=LGRAY)
-    add_text(slide, "GREEN: confident",
-             MX + Inches(2.5), legend_top, Inches(2.0), Inches(0.3),
+    add_text(slide, "GREEN: confident AND beams agreed",
+             MX + Inches(2.5), legend_top, Inches(3.0), Inches(0.3),
              size=Pt(11), color=GREEN, bold=True)
-    add_text(slide, "YELLOW: review",
-             MX + Inches(4.6), legend_top, Inches(2.0), Inches(0.3),
+    add_text(slide, "YELLOW: some signal — review",
+             MX + Inches(5.6), legend_top, Inches(3.0), Inches(0.3),
              size=Pt(11), color=YELLOW, bold=True)
-    add_text(slide, "RED: likely error",
-             MX + Inches(6.7), legend_top, Inches(2.0), Inches(0.3),
+    add_text(slide, "RED: avoid · numbers stay yellow",
+             MX + Inches(8.7), legend_top, Inches(3.0), Inches(0.3),
              size=Pt(11), color=CORAL, bold=True)
 
     add_logo(slide)
@@ -857,11 +858,30 @@ def slide_client_word_color_coding(prs):
         "red mismatch. The recognizable content lets clients track what's "
         "right and what's not even though the audio isn't being played. "
         "\n\n"
+        "Color meaning (agreement-aware band rule, May 2 2026):"
+        "\n"
+        "  GREEN  = the model was confident AND its 19 alternative beams "
+        "agreed on the same word. P(correct) ~85-94%."
+        "\n"
+        "  YELLOW = some signal but not enough for full trust — beams "
+        "disagreed, or confidence is mid-range. Treat as \"could be right, "
+        "verify if it matters.\""
+        "\n"
+        "  RED    = avoid; the model is essentially picking among rivals."
+        "\n"
+        "  Numbers (digits and digit-words like \"million\", \"2011\") are "
+        "capped at yellow regardless of confidence — lip-reading cannot "
+        "disambiguate digits, so the confidence number is never trustworthy "
+        "there."
+        "\n\n"
         "Round 5.6: the per-word confidence on this screenshot is REAL — "
         "from the B3 sidecar that landed May 2026. The same coloring policy "
         "now lives in make_report.py and ships with every pipeline run. "
         "The next slide (slide 32) names the three-tier UI policy that "
-        "governs WHEN the colors are shown vs when they're stripped. "
+        "governs WHEN the colors are shown vs when they're stripped — "
+        "that gate is segment-level (sentence_confidence < 0.65 strips "
+        "coloring entirely); the legend on this slide is the per-word "
+        "rule that runs INSIDE a colored segment. "
         "The Obama speech is the demo input recommended for your live UI "
         "walkthrough recording (vsp_input/050111_OsamaBinLadenStatement_HD.mp4)."
     ))
@@ -1712,17 +1732,18 @@ def slide_client_recap(prs):
 
 
 def slide_client_integration_commitment(prs):
-    """We deploy this on your infrastructure end-to-end."""
+    """Round 5.12 reframe: less selling, more neutral. The deck still
+    needs to communicate that the system is locally deployable + comes
+    with handoff steps, but as a fact rather than a pitch."""
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "We deploy this on your infrastructure")
+    add_title(slide, "Locally deployable, end-to-end")
     add_accent_line(slide)
 
     add_text(slide,
-             "You're not buying an API call. You're buying a working pipeline "
-             "that runs in your environment.",
-             MX, Inches(1.9), CW, Inches(1.2),
-             size=Pt(22), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
+             "Runs on local hardware or in a private cloud — not an API call.",
+             MX, Inches(1.9), CW, Inches(0.7),
+             size=Pt(20), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
 
     # Four steps as a row
     step_w = Inches(2.85)
@@ -1731,10 +1752,10 @@ def slide_client_integration_commitment(prs):
     h = Inches(2.4)
 
     steps = [
-        ("1. INSTALL", "On-premise or your cloud. Your hardware, your rules.", TEAL),
-        ("2. INTEGRATE", "Wire into your existing systems and workflow.", GOLD),
-        ("3. TRAIN", "Onboard your team end-to-end — ops, review, troubleshoot.", GREEN),
-        ("4. HANDOFF", "Documented, supported, owned by you.", CORAL),
+        ("1. INSTALL",   "On-prem or private cloud.",                 TEAL),
+        ("2. INTEGRATE", "Wires into existing systems.",               GOLD),
+        ("3. TRAIN",     "Team onboarding — ops, review, support.",    GREEN),
+        ("4. HANDOFF",   "Documented and supported.",                  CORAL),
     ]
     total_w = 4 * step_w + 3 * gap
     start_x = MX + (CW - total_w) / 2
@@ -1749,7 +1770,7 @@ def slide_client_integration_commitment(prs):
                  size=Pt(12), color=WHITE)
 
     add_text(slide,
-             "Typical handoff: 4-8 weeks from contract to first end-to-end run on your data.",
+             "Typical: 4–8 weeks from contract to first end-to-end run.",
              MX, Inches(6.55), CW, Inches(0.4),
              size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -2381,17 +2402,16 @@ def slide_client_partnership_ask(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "The next milestone is a partnership")
+    add_title(slide, "Going to production — the partnership")
     add_accent_line(slide)
 
     # Headline
     add_text(slide,
-             "Today's model is trained on a small slice of public data — "
-             "not your domain.",
+             "Today's model is trained on public data, not your domain.",
              MX, Inches(1.7), CW, Inches(0.7),
              size=Pt(20), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
     add_text(slide,
-             "It works, but it's a prototype, not a production model on your content.",
+             "Prototype today; production needs a training run on your content.",
              MX, Inches(2.4), CW, Inches(0.5),
              size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -2403,13 +2423,12 @@ def slide_client_partnership_ask(prs):
 
     beats = [
         ("YOUR DATA",   TEAL,
-         "Two-person conversational footage, observer-distance, your domain. "
-         "We curate and label what you can share."),
+         "Footage from your domain, your speakers, your conditions."),
         ("OUR PIPELINE", GOLD,
-         "Same architecture, retrained on your corpus. "
-         "Same confidence layer. Same UI."),
+         "Same architecture, retrained on your corpus. Same UI, "
+         "same confidence layer."),
         ("ONE TRAINING RUN", GREEN,
-         "Prototype to production in a single coordinated push. "
+         "Coordinated push from prototype to production. "
          "Specifics in follow-up."),
     ]
     for i, (label, color, body) in enumerate(beats):
@@ -3020,14 +3039,14 @@ def slide_client_human_ceiling(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Why even expert humans cap at 45-52%")
+    add_title(slide, "Why even expert humans cap at 45–52%")
     add_accent_line(slide)
 
     add_text(slide,
-             "Lip-reading is hard for biological reasons, not because experts "
-             "are bad at it.",
+             "Even with the video paused and reviewed frame-by-frame, "
+             "the visual signal itself is information-limited.",
              MX, Inches(1.5), CW, Inches(0.5),
-             size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     card_w = Inches(3.85)
     gap = Inches(0.25)
@@ -3035,18 +3054,21 @@ def slide_client_human_ceiling(prs):
     h = Inches(3.8)
 
     cards = [
-        ("VISIBLE-SOUND OVERLAP", TEAL,
-         "Many sounds look identical on the lips — pat / bat / mat / map all "
-         "share one mouth shape. Roughly half of English phonemes have no "
-         "distinct visual signature. The model and the human face the same wall."),
-        ("SPEED OF SPEECH", GOLD,
-         "Natural speech runs ~150 words per minute. Each mouth shape lasts "
-         "~80 ms. The eye doesn't have time to disambiguate by context — "
-         "the next word arrives before the last one is resolved."),
-        ("FATIGUE", CORAL,
-         "An expert lip-reader watching an hour of footage performs better in "
-         "minute 5 than minute 50. Sustained attention degrades the rate. "
-         "A model doesn't get tired — that's the structural advantage."),
+        ("VISEMIC AMBIGUITY", TEAL,
+         "About half of English phonemes share a mouth shape. "
+         "pat / bat / mat are visually identical. The lips alone "
+         "can't tell them apart — the reader has to guess from "
+         "context."),
+        ("CAMERA ANGLE & DISTANCE", GOLD,
+         "Off-axis or distant cameras shrink the mouth region. "
+         "Pausing doesn't add pixels. Beyond ~30° from frontal, "
+         "viseme accuracy degrades sharply even for trained "
+         "lip-readers."),
+        ("SPEAKER IDIOSYNCRASY", CORAL,
+         "Each speaker's mouth shapes differ. Accent, dental "
+         "anatomy, beard, lipstick all change the visual signal. "
+         "Without per-speaker calibration, the reader averages "
+         "across very different templates."),
     ]
     for i, (label, color, body) in enumerate(cards):
         x = MX + i * (card_w + gap)
@@ -3060,9 +3082,15 @@ def slide_client_human_ceiling(prs):
                  size=Pt(13), color=WHITE)
 
     add_text(slide,
-             "Argos doesn't beat the biology — it adds language context, "
-             "doesn't fatigue, and tells you when it's not sure.",
-             MX, Inches(6.5), CW, Inches(0.4),
+             "45–52% range: Bear & Harvey 2017 (Phoneme-to-Viseme "
+             "Mappings); Assael et al. 2016 (LipNet); reviewed across "
+             "trained-human lip-reading studies.",
+             MX, Inches(6.4), CW, Inches(0.4),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "The model adds language priors and domain training. The "
+             "biology is what it is.",
+             MX, Inches(6.85), CW, Inches(0.3),
              size=Pt(11), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
@@ -3079,22 +3107,21 @@ def slide_client_human_ceiling(prs):
 
 
 def slide_client_canonical_scenario(prs):
-    """Round 5.1 substantive: the client's canonical use case.
+    """Round 5.1 substantive: technical conditions the system is built for.
 
-    User comments emphasized this is surveillance lip-reading — two
-    friends in a coffee shop, observer 30 ft away. We don't have the
-    actual footage decoded yet (the pre-meeting checklist asks for it).
-    This slide shows we know the canonical case + sets up the meeting
-    expectation.
+    Round 5.12 reframe: dry, neutral detail of the conditions the system
+    handles. No surveillance framing. Just what the technical envelope
+    looks like, so the audience can map it to whatever footage they
+    actually have.
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Your canonical scenario — and ours")
+    add_title(slide, "What the system is built for")
     add_accent_line(slide)
 
     add_text(slide,
-             "Two-person conversational footage. Observer 30 ft away. "
-             "No usable audio.",
+             "Two or more people in frame. Observer-distance camera. "
+             "Audio missing or unreliable.",
              MX, Inches(1.6), CW, Inches(0.6),
              size=Pt(20), bold=True, color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
@@ -3106,14 +3133,14 @@ def slide_client_canonical_scenario(prs):
 
     items = [
         ("DISTANCE", TEAL,
-         "Observer 20-50 feet from speakers. Mouth region shrinks — "
-         "fewer pixels per frame to work with."),
+         "Camera typically 6–15 m from the speaker. Mouth region "
+         "shrinks — fewer pixels per frame to work with."),
         ("MULTI-SPEAKER", GOLD,
-         "Two or more people in frame. Today's model assumes one centered "
-         "face. Entity-split preprocessing is the next step (slide later)."),
+         "Two or more people in frame. Today's model handles one centered "
+         "speaker; multi-speaker is engineering work in flight (slide later)."),
         ("ENVIRONMENT", CORAL,
-         "Indoor lighting, outdoor lighting, profile angles, occlusion. "
-         "Real footage is messy — that's why the trust signals matter."),
+         "Indoor or outdoor lighting, profile angles, occlusion. Real "
+         "footage is messy — that's why the trust signals matter."),
     ]
     for i, (label, color, body) in enumerate(items):
         x = MX + i * (card_w + gap)
@@ -3866,10 +3893,11 @@ def slide_client_reader_example(prs):
              CW - Inches(0.6), Inches(0.85),
              size=Pt(12), color=WHITE)
 
-    # Closing line
+    # Closing line — why the save matters
     add_text(slide,
-             "This is what \"review-useful\" means in practice. "
-             "The colors give the reviewer the spine of the meaning.",
+             "Without colors, this segment looks garbled — a reviewer "
+             "writes it off. With colors, it becomes a usable summary. "
+             "That's the difference.",
              MX, Inches(6.55), CW, Inches(0.4),
              size=Pt(12), color=GREEN, italic=True, align=PP_ALIGN.CENTER)
 
@@ -4042,9 +4070,10 @@ def slide_client_case_topic_shift(prs):
              CW - Inches(0.6), Inches(0.8),
              size=Pt(12), color=WHITE)
 
-    # Closing line
+    # Closing line — why the save matters
     add_text(slide,
-             "This is the failure mode the colors are built to catch.",
+             "Without colors, the wrong topic enters the reviewer's "
+             "summary as fact. With colors, it stops at the flag.",
              MX, Inches(6.85), CW, Inches(0.3),
              size=Pt(11), color=CORAL, italic=True, bold=True,
              align=PP_ALIGN.CENTER)
@@ -4182,9 +4211,11 @@ def slide_client_case_strip_save(prs):
              CW - Inches(0.6), Inches(1.15),
              size=Pt(12), color=WHITE)
 
-    # Closing line
+    # Closing line — why the save matters
     add_text(slide,
-             "Strip tier is the system refusing to mislead you.",
+             "Without this signal, a fabricated quote enters the "
+             "transcript and downstream reports. With it, the segment "
+             "is labelled \"no signal.\"",
              MX, Inches(6.85), CW, Inches(0.3),
              size=Pt(11), color=TEAL, italic=True, bold=True,
              align=PP_ALIGN.CENTER)
@@ -4359,8 +4390,8 @@ def slide_client_halluc_problem(prs):
     add_rect(slide, MX, Inches(5.4), CW, Inches(0.95),
              fill_color=NAVY2, border_color=CORAL)
     add_text(slide,
-             "This is the dangerous-failure mode for surveillance — fluent "
-             "transcripts that look right but aren't.",
+             "The dangerous-failure mode — fluent transcripts that look "
+             "right but aren't.",
              MX + Inches(0.3), Inches(5.55), CW - Inches(0.6), Inches(0.7),
              size=Pt(15), color=WHITE, italic=True, bold=True,
              align=PP_ALIGN.CENTER)
@@ -4869,12 +4900,12 @@ def slide_client_multi_speaker_today_vs_path(prs):
     from pptx.enum.shapes import MSO_SHAPE
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Multi-speaker: today vs. the path forward")
+    add_title(slide, "Multi-speaker — engineering work, in flight")
     add_accent_line(slide)
 
     add_text(slide,
-             "Two-person conversational footage is your canonical use case. "
-             "Here's where we are honestly today, and where we go next.",
+             "One centered speaker today. Two-speaker support is a "
+             "preprocessing layer we're already building.",
              MX, Inches(1.55), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -4897,10 +4928,8 @@ def slide_client_multi_speaker_today_vs_path(prs):
              col_w - Inches(0.6), Inches(0.6),
              size=Pt(22), bold=True, color=WHITE)
     add_text(slide,
-             "The current model assumes one centered face per frame. "
-             "Two-person conversational footage degrades the visual signal — "
-             "the model can lose track of which speaker is currently "
-             "talking.",
+             "The model takes one centered face per frame. Two people "
+             "in frame degrades the signal.",
              left_x + Inches(0.3), top + Inches(1.55),
              col_w - Inches(0.6), Inches(1.6),
              size=Pt(14), color=LGRAY)
@@ -4933,9 +4962,9 @@ def slide_client_multi_speaker_today_vs_path(prs):
              col_w - Inches(0.6), Inches(0.6),
              size=Pt(22), bold=True, color=WHITE)
     add_text(slide,
-             "Local face detection + tracker emits per-speaker centered "
-             "crops. Each speaker gets its own clean lip-reading pass. "
-             "Three weeks of engineering, not research.",
+             "Local face detection + tracker emits per-speaker crops. "
+             "Each speaker gets its own lip-reading pass. Engineering "
+             "work, in flight — not research.",
              right_x + Inches(0.3), top + Inches(1.55),
              col_w - Inches(0.6), Inches(1.6),
              size=Pt(14), color=LGRAY)
@@ -4976,8 +5005,7 @@ def slide_client_multi_speaker_today_vs_path(prs):
 
     # Footer
     add_text(slide,
-             "This is the gap we're flagging honestly because it's your "
-             "canonical use case.",
+             "Engineering work, not a research bet. Path is concrete.",
              MX, Inches(6.55), CW, Inches(0.4),
              size=Pt(11), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 

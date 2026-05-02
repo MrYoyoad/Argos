@@ -91,9 +91,13 @@ VID = {
     # tight mouth-region crops (~165KB) and the user flagged them as
     # wrong. Switched all three to fast_segments/ which carry the full
     # frame (Obama at the podium, etc., ~9MB each).
-    "obama_perfect":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"),
-    "obama_partial":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"),
-    "obama_flagged":  Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4"),
+    # Round 5.12: Obama videos repointed from auto_avsr/preprocessed_flat_seg12/
+    # (which was cleaned out) to the deck-local 06_demo_videos/ copy. Stable
+    # asset path; the videos travel with the deck rather than depending on a
+    # working pipeline directory.
+    "obama_perfect":  VIDEOS / "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4",
+    "obama_partial":  VIDEOS / "050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4",
+    "obama_flagged":  VIDEOS / "050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4",
     # Clean-output gallery (Round 5.4) — six IS=5.0 / WER=0% segments,
     # one per card. Sources are burned-video MP4s (HYP overlay matches
     # the quote shown on the card) so the picture and text agree.
@@ -102,7 +106,7 @@ VID = {
     "clean_public":         VIDEOS / "FLRU5qzb6hc_9__b6ede2d3_with_hyp.mp4",
     "clean_tech":           VIDEOS / "K0h33Ps7vz4_11__e66d3063_with_hyp.mp4",
     "clean_motivational":   VIDEOS / "5RJU2GoOvoM_0__d181c4ad_with_hyp.mp4",
-    "clean_obama19":        Path("/home/ubuntu/auto_avsr/preprocessed_flat_seg12/fast_segments/050111_OsamaBinLadenStatement_HD_19_005694_006053.mp4"),
+    "clean_obama19":        VIDEOS / "050111_OsamaBinLadenStatement_HD_19_005694_006053.mp4",
     # Round 5.10 case studies — backed by docs/features/aggregation-and-confidence-case-studies.md.
     # Mode 2.2 — gardening segment hallucinated as nuclear-weapons content.
     "case_topic_shift":     VIDEOS / "o6Zwa1rEWpM_1__2e8fce13.mp4",

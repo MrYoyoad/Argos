@@ -26,6 +26,174 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.12 — Comprehensive cleanup pass (LANDED)
+
+User feedback: Obama videos not playing, no text-appearance animations,
+pipeline slide unclear, too many bad examples, "saved" framing weak,
+remove surveillance references, multi-speaker should read as
+engineering not risk, less selling-feel + fewer words, general overview
+at the start, feet→meters, back numbers with literature.
+
+### CRITICAL FIX: Obama videos not playing
+Root cause: `auto_avsr/preprocessed_flat_seg12/fast_segments/` had been
+cleaned out — the VID config still pointed there but the .mp4 files
+no longer existed. The `add_video()` helper silently fell back to
+placeholders.
+**Fix**: copied the 4 Obama videos (segments 5, 14, 19, 31) from
+`flat_runs_archive/20260501_173729/` to the deck's
+`06_demo_videos/` directory. Repointed `obama_perfect`,
+`obama_partial`, `obama_flagged`, `clean_obama19` VID keys to the new
+local paths. Cleared the cached poster frames so they regenerate
+from the new sources. Videos now actually exist alongside the deck
+and don't depend on a working pipeline directory.
+
+### NEW: slide-level fade transitions on every slide
+User: "no appearance animations of text." Full per-shape entrance
+animations on 60+ slides was out of scope; the simpler win is
+slide-level fade transitions so navigating to a slide gives a
+perceptual entrance. Implemented as a post-build pass in the
+orchestrator using `add_fade_transition` from helpers.py. All 68
+slides now fade in.
+
+### Pipeline slide reorder
+User: "pipeline slide is unclear and not in animation — better to get
+the simpler one from the original march pptx that appears before."
+- **Moved** `slide_client_pipeline_components` (3-component overview)
+  from old slide 9 to new slide 4 — gives the audience a mental model
+  of the system before any use-case detail.
+- **Hidden** `slide_client_pipeline_detailed` (the 8-stage academic
+  diagram, was slide 55) — too dense, the simpler 3-component
+  overview now covers the pipeline beat earlier.
+
+### Surveillance references removed (visible text)
+User: "remove the surveillance references they are not needed; for the
+canonical scenario give a dry detail suggestion."
+- Slide 2 about_argos — "WHO USES IT" rewritten from "surveillance,
+  intelligence-adjacent, security..." to "investigations, archive
+  review, accessibility work, footage from cameras without microphones."
+- Slide 3 what_is_vsr — "Surveillance footage, archive video" →
+  "Camera without a microphone, archive video."
+- Slide 5 canonical_scenario — title from "Your canonical scenario —
+  and ours" → "What the system is built for"; subtitle now neutral
+  technical conditions. Removed "surveillance" from the slide
+  metadata; speaker notes acknowledge the use case is broader.
+- Slide 37 halluc_problem — closing line "dangerous-failure mode for
+  surveillance" → "the dangerous-failure mode."
+- Speaker-note references to "surveillance" left in place
+  (presenter-only).
+
+### Multi-speaker slide 11 reframed as engineering work
+User: "make it clear that multi speaker is engineering and not a
+project risk but rather work to do."
+- Title from *"Multi-speaker: today vs. the path forward"* →
+  *"Multi-speaker — engineering work, in flight"*
+- Subtitle from *"...where we are honestly today, and where we go
+  next"* → *"One centered speaker today. Two-speaker support is a
+  preprocessing layer we're already building."*
+- Path-card body: *"Engineering work, in flight — not research."*
+- Footer: *"Engineering work, not a research bet. Path is concrete."*
+
+### Selling-language trim
+User: "less selling feel — no 'we deploy' / 'no cost for you' /
+'partnership' overdone — be neutral."
+- Slide 2 about_argos tagline — from *"We build production-grade visual
+  speech recognition"* → *"Visual speech recognition with built-in
+  confidence."*
+- Slide 64 partnership_ask — title from *"The next milestone is a
+  partnership"* → *"Going to production — the partnership."* Body
+  trimmed.
+- Slide 66 integration_commitment — title from *"We deploy this on
+  your infrastructure"* → *"Locally deployable, end-to-end."* Cards
+  shortened (e.g. *"On-premise or your cloud. Your hardware, your
+  rules."* → *"On-prem or private cloud."*).
+
+### Feet → meters
+- Slide 5 canonical_scenario — *"20–50 feet from camera"* → *"6–15 m
+  from the speaker."*
+
+### Human-ceiling slide reframed for offline + literature backing
+User: "explain why manual lip reading is hard offline with a video,
+not reasons for live translation. back up the numbers with literature."
+- Title kept *"Why even expert humans cap at 45–52%"*.
+- Subtitle from *"Lip-reading is hard for biological reasons..."* →
+  *"Even with the video paused and reviewed frame-by-frame, the
+  visual signal itself is information-limited."*
+- Three cards rewritten:
+  - VISIBLE-SOUND OVERLAP (live-translation-flavored) →
+    **VISEMIC AMBIGUITY** (offline-relevant): "About half of English
+    phonemes share a mouth shape..."
+  - SPEED OF SPEECH (live-only constraint) →
+    **CAMERA ANGLE & DISTANCE**: "Off-axis or distant cameras shrink
+    the mouth region. Pausing doesn't add pixels..."
+  - FATIGUE (live-only) →
+    **SPEAKER IDIOSYNCRASY**: "Each speaker's mouth shapes differ.
+    Accent, dental anatomy, beard, lipstick all change the visual
+    signal..."
+- Literature footer added: *"45–52% range: Bear & Harvey 2017
+  (Phoneme-to-Viseme Mappings); Assael et al. 2016 (LipNet); reviewed
+  across trained-human lip-reading studies."*
+
+### "Why saved matters" framing strengthened on case studies
+User: "unclear why the 'saved' texts are important."
+- Slide 33 (Salvage networking) closing line: *"This is what
+  review-useful means in practice"* → *"Without colors, this segment
+  looks garbled — a reviewer writes it off. With colors, it becomes
+  a usable summary. That's the difference."*
+- Slide 34 (topic-shift) closing: *"This is the failure mode the
+  colors are built to catch"* → *"Without colors, the wrong topic
+  enters the reviewer's summary as fact. With colors, it stops at
+  the flag."*
+- Slide 35 (Strip-saves) closing: *"Strip tier is the system refusing
+  to mislead you"* → *"Without this signal, a fabricated quote
+  enters the transcript and downstream reports. With it, the segment
+  is labelled 'no signal.'"*
+
+### More slides hidden (cuts to "not needed" content)
+HIDDEN_SLIDES grew from 7 (Round 5.11) to 11. Newly hidden:
+- **14** demo_recap "What you just saw" — thin transition; demo
+  speaks for itself.
+- **49** what_this_means "What this means for your workflow" — thin
+  closer; the trust section already conveys the workflow implication.
+- **55** pipeline_detailed (8-stage diagram) — superseded by the
+  simpler 3-component overview moved up to slide 4.
+- **65** recap "Three things to take with you" — close section was
+  4 slides (recap + integration + next_steps + thank_you); 3 is enough.
+
+### Stats
+- **68 total slides → 57 visible** during presentation (was 61).
+- All 7 audit/linter tests **green**.
+- All 68 slides have fade transitions.
+- 4 Obama videos copied into deck-local `06_demo_videos/` (the .pptx
+  embeds the video data; the source files are also kept locally as
+  redundancy for re-builds).
+- BORROWED_SLIDES indices unchanged (slide_data_flow at 56,
+  slide_thank_you at 68 — physical positions preserved).
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  about_argos tagline + WHO USES IT card; what_is_vsr MUTED card;
+  canonical_scenario reframed (title, subtitle, three cards);
+  human_ceiling reframed (subtitle, three cards, literature footer);
+  multi_speaker reframed (title, subtitle, body, footer);
+  reader_example closing; case_topic_shift closing; case_strip_save
+  closing; integration_commitment trimmed; partnership_ask trimmed;
+  halluc_problem closing.
+- `docs/_research-tools/generators/presentation/config.py` — Obama
+  VID keys repointed from `auto_avsr/...` to deck-local
+  `06_demo_videos/`.
+- `docs/_research-tools/generators/generate_client_presentation.py` —
+  pipeline_components moved up in the builders list; HIDDEN_SLIDES
+  expanded to 11 entries; fade-transition post-build pass added.
+- `presentation_materials_20260224/06_demo_videos/050111_OsamaBin*.mp4`
+  — 4 Obama videos copied in (segments 5, 14, 19, 31).
+- `.poster_frames/obama_*.jpg` and `clean_obama19.jpg` — deleted to
+  force regeneration from the new video sources.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-02 — Round 5.11 — Coherence audit cleanup (LANDED)
 
 External visual-QA agent audited all 68 slides as fresh eyes. Findings
