@@ -416,7 +416,7 @@ def render_html(records: Sequence[dict], badge: Optional[float],
 
   <div class="legend">
     Per-word confidence:
-    <span class="swatch conf-high">trust</span> = confident AND beams agreed
+    <span class="swatch conf-high">trust</span> = confident, alternatives agreed
     &nbsp;·&nbsp;
     <span class="swatch conf-med">review</span> = some signal, verify
     &nbsp;·&nbsp;

@@ -488,10 +488,14 @@ def slide_client_headline_numbers(prs):
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "Numbers from latest 1,497-segment evaluation (May 2026). "
-        "62% = 924/1497 NIV Y+P (rounded from 61.7%). "
-        "24% = 361/1497 NIV Y (rounded from 24.1%). "
-        "1 in 5 = 20.5% hallucination/auto-flag rate. "
+        "Numbers from latest 1,497-segment evaluation (May 2026), "
+        "computed on the MBR-displayed hypothesis (production default "
+        "since Round 5.16). "
+        "62% = 927/1497 NIV Y+P (61.9%; top1 baseline 924/61.7% — "
+        "rounding stable). "
+        "24% = 358/1497 NIV Y (23.9%; top1 baseline 361/24.1% — "
+        "rounding stable). "
+        "1 in 5 = 20.7% MBR hallucination rate (top1 baseline 20.5%). "
         "Validation κ=0.818 vs blind Opus-as-judge calibration — phrased as '8 of 10' on slide. "
         "Don't read out NIV / κ on the slide; they're for your reference here. "
         "Lean into the difficulty caveat — these numbers are on real-world hard "
@@ -502,7 +506,12 @@ def slide_client_headline_numbers(prs):
         "the three-tier UI policy on slide 32 — Strip 38.7% (coloring "
         "removed), Salvage 37.5% (full coloring + amber banner), Trust "
         "23.8% (full coloring, green ≥85% reliable). Don't anchor on "
-        "those secondary numbers here; they live on slide 32."
+        "those secondary numbers here; they live on slide 32. Note: "
+        "those tier shares were measured under top1 sentence_confidence "
+        "(the calibration study). Under MBR-default the calibrated "
+        "mean_word_prob is more conservative (median ~0.63 vs top1 "
+        "~0.70); tier thresholds will be re-tuned for MBR in a "
+        "follow-up so the per-word reliability promise holds."
     ))
     return slide
 
@@ -842,8 +851,8 @@ def slide_client_word_color_coding(prs):
     add_text(slide, "Per-word confidence  —  ",
              MX, legend_top, Inches(2.6), Inches(0.3),
              size=Pt(11), color=LGRAY)
-    add_text(slide, "GREEN: confident AND beams agreed",
-             MX + Inches(2.5), legend_top, Inches(3.0), Inches(0.3),
+    add_text(slide, "GREEN: confident, multiple alternatives agreed",
+             MX + Inches(2.5), legend_top, Inches(3.4), Inches(0.3),
              size=Pt(11), color=GREEN, bold=True)
     add_text(slide, "YELLOW: some signal — review",
              MX + Inches(5.6), legend_top, Inches(3.0), Inches(0.3),
@@ -1440,11 +1449,11 @@ def slide_client_aggregation_safety(prs):
              size=Pt(13), bold=True, color=WHITE, italic=True,
              align=PP_ALIGN.CENTER)
 
-    # Footer — Round 5.16: MBR is now the shipped default displayed output
-    # when n-best aggregation runs (env-gated; override via VSP_DISPLAY_METHOD).
+    # Footer — Round 5.16: aggregation is now on by default for every video.
+    # Plain-English; the technical name (MBR) lives in speaker notes.
     add_text(slide,
-             "MBR aggregation now ships as the default displayed output "
-             "(env-gated; override available).",
+             "Aggregation now runs by default on every video — "
+             "the safer hypothesis is the one shown.",
              MX, Inches(7.0), CW, Inches(0.3),
              size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -3947,30 +3956,30 @@ def slide_client_three_tier_policy(prs):
     tiers = [
         {
             "name": "TRUST",
-            "thresh": "segment confidence  ≥  0.82",
+            "thresh": "high overall confidence",
             "color": GREEN,
             "share": "23.8%",
             "ui": "Full per-word coloring.",
-            "promise": "Green ≥ 85% reliable",
-            "promise_sub": "(stays in deck's original confidence promise)",
+            "promise": "Green words right ~9 out of 10",
+            "promise_sub": "Original colored-transcript promise.",
         },
         {
             "name": "SALVAGE",
-            "thresh": "0.65  to  0.82",
+            "thresh": "medium overall confidence",
             "color": GOLD,
             "share": "37.5%",
-            "ui": "Full coloring + amber banner.",
+            "ui": "Full coloring + review banner.",
             "promise": "\"Verify names, numbers,",
             "promise_sub": "critical details\"",
         },
         {
             "name": "STRIP",
-            "thresh": "segment confidence  <  0.65",
+            "thresh": "low overall confidence",
             "color": LGRAY,
             "share": "38.7%",
             "ui": "Coloring removed. Plain grey text.",
-            "promise": "Green < 50% reliable here —",
-            "promise_sub": "coloring would mislead",
+            "promise": "Green would mislead here.",
+            "promise_sub": "Show the words; hide the colors.",
         },
     ]
     for i, t in enumerate(tiers):
@@ -4024,8 +4033,8 @@ def slide_client_three_tier_policy(prs):
     add_rect(slide, MX, bottom_y, CW, Inches(0.6),
              fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
     add_text(slide,
-             "P(correct | green) ranges from 18% to 93% across segment "
-             "quality. The UI removes coloring where it would lie.",
+             "Whether a green word is right depends on the segment it sits in. "
+             "Below low overall confidence, the colors would mislead — so we hide them.",
              MX + Inches(0.3), bottom_y + Inches(0.15),
              CW - Inches(0.6), Inches(0.35),
              size=Pt(13), bold=True, color=WHITE, italic=True,
@@ -4067,6 +4076,17 @@ def slide_client_three_tier_policy(prs):
         "PRODUCTION STATUS: live in make_report.py since 2026-05-01. "
         "Every report.html and report.csv from the pipeline carries the "
         "tier column and applies the three-tier coloring policy. "
+        "\n\n"
+        "MBR RECALIBRATION NOTE (Round 5.16): the visible 23.8 / 37.5 "
+        "/ 38.7 distribution was measured under top1 sentence_confidence. "
+        "Round 5.16 flipped MBR to be the default displayed output, and "
+        "MBR's calibrated mean_word_prob is more conservative (median "
+        "~0.63 vs top1 ~0.70). Production tier thresholds will be "
+        "re-tuned on MBR-calibrated confidence to preserve the SAME "
+        "per-word reliability contract (Trust ≥85% green-correct, "
+        "Salvage 50–85%, Strip <50%). Re-tuning is a Round-5.17 "
+        "follow-up; the reliability claim above is the contract, not "
+        "the threshold value. "
         "\n\n"
         "Source: docs/confidence/confidence_full_analysis.md §2.2 "
         "(stratification); threshold_design.md (operating points); "
@@ -4378,7 +4398,7 @@ def slide_client_case_topic_shift(prs):
              size=Pt(13), bold=True, color=GOLD,
              align=PP_ALIGN.CENTER)
     add_text(slide,
-             "segment confidence 0.79 — banner shown to the reviewer: "
+             "Medium overall confidence — banner shown to the reviewer: "
              "\"Reading carefully — verify names, numbers, critical details.\"",
              MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
              CW - badge_w - Inches(0.2), Inches(0.3),
@@ -4546,7 +4566,7 @@ def slide_client_case_strip_save(prs):
              size=Pt(13), bold=True, color=LGRAY,
              align=PP_ALIGN.CENTER)
     add_text(slide,
-             "segment confidence 0.21 — banner shown: \"Model is "
+             "Low overall confidence — banner shown: \"Model is "
              "unsure — text may not be reliable, even where it looks confident.\"",
              MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
              CW - badge_w - Inches(0.2), Inches(0.3),

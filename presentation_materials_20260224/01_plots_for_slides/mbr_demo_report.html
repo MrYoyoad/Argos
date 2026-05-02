@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Argos VSP — Client Demo Report</title>
+  <style>
+:root {
+  --bg: #0d1b2a;
+  --bg-card: #152a40;
+  --bg-card-2: #1a3550;
+  --teal: #00b4d8;
+  --green: #4caf50;
+  --yellow: #ffc107;
+  --red: #e06c75;
+  --red-bg: #5a2027;
+  --green-bg: #1f3a26;
+  --yellow-bg: #4a3a08;
+  --gray: #aaaaaa;
+  --gray-mid: #666666;
+  --white: #ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Segoe UI', Calibri, system-ui, sans-serif;
+  margin: 0;
+  padding: 28px 36px;
+  line-height: 1.45;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--white);
+}
+h1 .subtitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--gray);
+  margin-top: 4px;
+}
+.summary {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  margin: 22px 0 28px 0;
+}
+.summary-card {
+  background: var(--bg-card);
+  padding: 14px 18px;
+  border-radius: 8px;
+  flex: 1;
+}
+.summary-card .label {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--gray);
+}
+.summary-card .value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  margin-top: 4px;
+}
+.badge {
+  font-size: 38px;
+  font-weight: 800;
+  padding: 14px 22px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 140px;
+}
+.badge-high   { background: var(--green-bg);  color: var(--green); }
+.badge-med    { background: var(--yellow-bg); color: var(--yellow); }
+.badge-low    { background: var(--red-bg);    color: var(--red); }
+.badge-unknown{ background: var(--bg-card-2); color: var(--gray); }
+.legend {
+  background: var(--bg-card);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 22px;
+  font-size: 13px;
+  color: var(--gray);
+}
+.legend .swatch {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin: 0 6px;
+  font-weight: 600;
+}
+.swatch.conf-high { background: var(--green-bg);  color: var(--green); }
+.swatch.conf-med  { background: var(--yellow-bg); color: var(--yellow); }
+.swatch.conf-low  { background: var(--red-bg);    color: var(--red); }
+.segment {
+  background: var(--bg-card);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 16px;
+}
+.segment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.segment-title {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.segment-tag {
+  font-size: 10px;
+  color: var(--gray-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.row {
+  display: flex;
+  gap: 18px;
+  margin-top: 8px;
+}
+.row .label {
+  flex: 0 0 60px;
+  font-size: 11px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-top: 4px;
+}
+.row .text {
+  flex: 1;
+  font-size: 17px;
+  line-height: 1.55;
+}
+.row.ref .text {
+  color: var(--gray);
+  font-style: italic;
+}
+.word {
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin: 0 1px;
+  font-weight: 500;
+  cursor: help;
+  position: relative;
+}
+.word.conf-high { color: var(--green); }
+.word.conf-med  { color: var(--yellow); }
+.word.conf-low  { color: var(--red); text-decoration: underline wavy var(--red); }
+/* CSS-driven hover tooltip — renders instantly, no browser delay,
+   works in IDE-embedded HTML previews where title= often does not. */
+.word::after {
+  content: "p = " attr(data-prob);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0a0f17;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--gray-mid);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 10;
+}
+.word:hover::after { opacity: 1; }
+.footer-note {
+  margin-top: 30px;
+  font-size: 11px;
+  color: var(--gray-mid);
+  font-style: italic;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+  <h1>
+    Argos VSP — Lip-Reading Demo Report
+    <span class="subtitle">Four segments · per-word confidence colored from the live model</span>
+  </h1>
+
+  <div class="summary">
+    <div class="badge badge-high">97%<div style="font-size:10px;font-weight:600;letter-spacing:0.1em;margin-top:4px">OVERALL CONFIDENCE</div></div>
+    <div class="summary-card">
+      <div class="label">Segments</div>
+      <div class="value">4</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Source</div>
+      <div class="value" style="font-size:18px">Real-world video · 1,497-segment baseline</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Audio</div>
+      <div class="value" style="font-size:18px">Not used — vision only</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    Per-word confidence:
+    <span class="swatch conf-high">trust</span> = confident, alternatives agreed
+    &nbsp;·&nbsp;
+    <span class="swatch conf-med">review</span> = some signal, verify
+    &nbsp;·&nbsp;
+    <span class="swatch conf-low">avoid</span>
+    &nbsp;·&nbsp; Numbers stay yellow at most.
+    &nbsp; · &nbsp;Hover any word to see its confidence value.
+  </div>
+
+  
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">-29kYQQ3Kos_11__652a02f9  ·  segment #0  ·  0.0s–0.7s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">that are going to allow you to work with the team in a more</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.54">are</span> <span class="word conf-high" data-prob="0.92">going</span> <span class="word conf-high" data-prob="0.98">to</span> <span class="word conf-high" data-prob="0.91">allow</span> <span class="word conf-high" data-prob="0.92">you</span> <span class="word conf-high" data-prob="0.93">to</span> <span class="word conf-high" data-prob="0.95">work</span> <span class="word conf-high" data-prob="0.90">with</span> <span class="word conf-med" data-prob="0.72">a</span> <span class="word conf-high" data-prob="0.96">team</span> <span class="word conf-med" data-prob="0.77">and</span> <span class="word conf-med" data-prob="0.51">more</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">-xA5xgAqj1I_1__ef5633d6  ·  segment #0  ·  0.0s–1.6s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">wellness is 100 in our control simply by thinking positive</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.40">is</span> <span class="word conf-med" data-prob="0.70">100</span> <span class="word conf-med" data-prob="0.59">in</span> <span class="word conf-high" data-prob="0.93">our</span> <span class="word conf-high" data-prob="0.98">control</span> <span class="word conf-high" data-prob="0.96">simply</span> <span class="word conf-high" data-prob="0.96">by</span> <span class="word conf-high" data-prob="0.94">thinking</span> <span class="word conf-high" data-prob="0.89">positive</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">1Mv8z6DPycU_0__18461b8b  ·  segment #0  ·  0.0s–1.2s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">i&#x27;m always open to new ideas and new things to try</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.50">i&#x27;m</span> <span class="word conf-high" data-prob="0.96">always</span> <span class="word conf-med" data-prob="0.51">open</span> <span class="word conf-high" data-prob="0.94">to</span> <span class="word conf-high" data-prob="0.96">new</span> <span class="word conf-high" data-prob="0.96">ideas</span> <span class="word conf-high" data-prob="0.90">and</span> <span class="word conf-high" data-prob="0.92">new</span> <span class="word conf-high" data-prob="0.94">things</span> <span class="word conf-high" data-prob="0.93">to</span> <span class="word conf-high" data-prob="0.93">try</span></span>
+          </div>
+        </div>
+        
+
+        <div class="segment">
+          <div class="segment-header">
+            <span class="segment-title">35rE85ENlHQ_10__ef943fd2  ·  segment #0  ·  0.0s–2.5s</span>
+            <span class="segment-tag">live model confidence</span>
+          </div>
+          <div class="row ref">
+            <span class="label">REF</span>
+            <span class="text">and there you have just played every single song that can be played on</span>
+          </div>
+          <div class="row hyp">
+            <span class="label">HYP</span>
+            <span class="text"><span class="word conf-med" data-prob="0.68">there</span> <span class="word conf-high" data-prob="0.88">you</span> <span class="word conf-med" data-prob="0.80">have</span> <span class="word conf-high" data-prob="0.96">just</span> <span class="word conf-high" data-prob="0.95">played</span> <span class="word conf-high" data-prob="0.95">every</span> <span class="word conf-high" data-prob="0.97">single</span> <span class="word conf-high" data-prob="0.91">song</span> <span class="word conf-high" data-prob="0.92">that</span> <span class="word conf-high" data-prob="0.91">can</span> <span class="word conf-high" data-prob="0.94">be</span> <span class="word conf-high" data-prob="0.94">played</span> <span class="word conf-med" data-prob="0.85">on</span> <span class="word conf-med" data-prob="0.46">the</span></span>
+          </div>
+        </div>
+        
+
+  <div class="footer-note">
+    Argos / The Orchard — confidential client demo. Do not redistribute.
+  </div>
+</body>
+</html>

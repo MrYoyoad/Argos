@@ -26,6 +26,21 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.16c — MBR screenshot + jargon scrub + deep number audit (LANDED)
+
+- **WHAT**:
+  - Regenerated `ui_word_confidence_screenshot.png` from the actual production MBR-aggregated output (4 segments from the 1,497-segment baseline, real calibrated per-word confidence). Same Argos dark theme, plain-English subtitle.
+  - Slide 26 speaker note: counts refreshed to MBR-displayed (NIV-Y+P 924→927/61.7%→61.9%, NIV-Y 361→358/24.1%→23.9%, hallucination 20.5%→20.7%); top1 baseline numbers retained as a parenthetical so both are auditable.
+  - Slide 31 (three-tier UI): replaced jargon thresholds ("segment confidence ≥ 0.82", "0.65 to 0.82", "P(correct | green)") with plain-English equivalents ("high / medium / low overall confidence", "Whether a green word is right depends on the segment it sits in"). Trust promise rephrased to "Green words right ~9 out of 10". Speaker notes carry the technical thresholds and the MBR-recalibration follow-up note.
+  - Salvage-tier and Strip-tier case-study slides: "segment confidence 0.79"/"0.21" → "Medium/Low overall confidence".
+  - Demo word-color-coding legend: "GREEN: confident AND beams agreed" → "GREEN: confident, multiple alternatives agreed".
+  - HTML demo report legend (`generate_client_demo_report.py`): "trust = confident AND beams agreed" → "trust = confident, alternatives agreed".
+- **WHY**: User: "screen shot for MBR? baseline numbers with it? confidence and ALL! AUDIT WELL AND DEEP. dont say MBR usue simple english in pptx! generally audit for unnecessary jargon that is hard to follow for them and fix it." Verified MBR-default numbers: WER 64.05→63.84%, IS 2.532→2.547, NIV-Y 24.1→23.9%, NIV-Y+P 61.7→61.9%, hallucination 20.5→20.7% — visible rounded headlines (62% / 24% / 1 in 5 / 2.5) hold under both.
+- **FILES**: `slides_client.py` (slide 26 + 31 visible + speaker, 32-aggregation footer, salvage + strip case studies, word-color-coding legend), `generate_client_demo_report.py` (HTML legend), `01_plots_for_slides/ui_word_confidence_screenshot.png` (regenerated).
+- **COMMIT**: TBD.
+
+---
+
 ## 2026-05-02 — Round 5.16b — n-best v3 judge truth + VSP_NBEST default flipped (LANDED)
 
 - **WHAT**:
