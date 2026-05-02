@@ -145,12 +145,12 @@ Tracking completed missions and the prioritized backlog of future work for the A
 - **Expected Impact**: 5-15% relative WER reduction (conservative). MBR/ROVER well-established in ASR literature (Fiscus 1997). Cross-segment merge is novel for this pipeline — exploits physical redundancy in the data, not in the search space.
 - **Dependencies**: Mission 4 (confidence scores needed for weighted voting) — **SATISFIED** as of April 30, 2026.
 - **Research**: [Report 5 - Beam Search Aggregation](../beam-search/report_5_beam_search_aggregation.md)
-- **Multi-metric ranking (full set, 1,497 segments)** — see [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](../evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md):
+- **Multi-metric ranking — final (full set, 1,497 segments)** — see [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](../evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md):
   - **WER**: hyp_vote_conf wins (62.49% vs baseline 64.05%, −1.56 pp).
-  - **IS (mean / median / NIV-Y / NIV-Y+P)**: all four methods within 0.015 IS, **paired McNemar p ≈ 1.0 across the board**. The project's deterministic semantic metric says they're tied.
-  - **v1 judge run (2026-05-02, Opus 4.7, conf-in-prompt)**: produced a "rank inversion" result (vote_conf NIV-Y p=0.0005). On audit, **contaminated**: 27 % of byte-identical-text segments got different verdicts purely because the conf numbers in the prompt differed. v1 archived under `batches_v1/judgments_v1/` and is **not used for ranking decisions**.
-  - **v2 judge run (blind, no conf in prompt)**: in progress, same protocol as the prior `llm_judge/` gold standard.
-  - **Working recommendation**: 3 of 4 deterministic metrics say "tied", WER says vote_conf wins modestly → ship as default unless v2 shows clear regression. Past "do not ship vote_conf" claim retracted.
+  - **IS (mean / NIV-Y / NIV-Y+P)**: all four methods tied (paired McNemar p ≈ 1.0).
+  - **Judge v3 (2026-05-02, dual-conf prompt, 5,988 verdicts)**: at the **broader Y+P operating point**, hyp_mbr **+40 wins, p=0.0002** (+2.7pp) and hyp_vote_conf **+31 wins, p=0.0026** (+2.1pp). On strict Y, all tied. Wins hold after restricting to text-differing segments (mbr p=0.004, vote_conf p=0.011). Mechanism: aggregation rescues baseline-N → method-P marginal segments below the IS rubric's tier-3 threshold, which is why the judge sees what IS doesn't.
+  - **v1 judge run (May 2, conf-in-prompt with method-conf only)**: was contaminated — single conf signal biased against variants whose conf lives in a different range than baseline's. Archived. v3's dual-conf design fixed this.
+  - **Recommendation**: ship hyp_mbr or hyp_vote_conf. MBR is the strongest judge-Y+P win; vote_conf is comparable on Y+P and additionally wins on WER. Both are defensible upgrades.
 - **Pending (Phase 7)**: ~~Run full 1,497-segment decode with `VSP_NBEST=1`, evaluate per-method WER deltas~~ (DONE); write up correlation findings (beam variance × confidence) and word-level confusion findings (do confused words have low confidence?).
 
 ---

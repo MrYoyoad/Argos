@@ -408,18 +408,29 @@ Paired McNemar on the IS-derived NIV-Y verdict (per-segment, IS ≥ 3.80):
 
 ### v1 judge run (contaminated — archived)
 
-A first judge run on 2026-05-02 injected per-word and sentence confidence numbers into the prompt. It produced a result that contradicted the deterministic metrics: `hyp_vote_conf` 13.6 % NIV-Y vs baseline 16.6 % (paired McNemar p=0.0005). On audit, **27 % of segments where all four methods produced byte-identical hypothesis text got different verdicts** — the only thing differing in the prompt was the conf numbers. The judge let conf drive the verdict despite explicit instruction not to.
+A first judge run on 2026-05-02 injected per-word and sentence confidence numbers into the prompt (method conf only — no baseline anchor). It produced a result that contradicted the deterministic metrics: `hyp_vote_conf` 13.6 % NIV-Y vs baseline 16.6 % (paired McNemar p=0.0005). On audit, **27 % of segments where all four methods produced byte-identical hypothesis text got different verdicts** — the only thing differing in the prompt was the conf numbers. The judge let conf drive the verdict despite explicit instruction not to.
 
-The v1 results are archived under `docs/evaluation/llm_judge_nbest/batches_v1/` and `judgments_v1/`. They should not be used for ranking decisions — see [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](../evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md) for the contamination analysis.
+Archived under `docs/evaluation/llm_judge_nbest/batches_v1/` and `judgments_v1/`. **Do not use for ranking decisions.**
 
-### v2 judge run (in progress)
+### v3 judge run (dual-conf prompt — current truth)
 
-Re-running blind on text only — format `NNN|ref|hyp`, no confidence injected — same protocol as the prior `llm_judge/` gold standard. New batch files are in `batches/`, judgment files written to `judgments/`. Run `analyze_nbest_judge.py` after they land.
+Re-ran with format `NNN|ref|word1[.NN] ...|baseline_conf|method_conf` — the trailing `baseline_conf` is identical across all 4 methods on a given segment, anchoring the judge against the method-conf-only bias from v1. Identical-text drift dropped from 27 % to 23 % and became balanced (no longer asymmetric).
 
-### Working recommendation pending v2
+| comparison (Y+P) | v1 (method_conf only) | **v3 (dual-conf)** |
+|---|---|---|
+| hyp_mbr | n.s. (p=0.07, slight loss) | **+40 wins, p=0.0002** |
+| hyp_vote_score | loss (p=0.022) | n.s. (p=0.15) |
+| hyp_vote_conf | **loss (p=0.0024)** | **+31 wins, p=0.0026** |
 
-Multi-metric evidence (3 of 4 deterministic signals tied; 1 favors `hyp_vote_conf` modestly on WER) supports `hyp_vote_conf` as the default. The contaminated v1 judge result is **not** evidence to the contrary. Wait for v2 to confirm or refute.
+v3 says n-best aggregation **modestly improves the broader Y+P operating point** with no Y-level cost. `hyp_mbr` is the strongest gainer (+2.7 pp Y+P, p=0.0002); `hyp_vote_conf` is comparable on Y+P (+2.1 pp, p=0.0026) and additionally wins on WER. Even after restricting to text-differing segments, both wins remain significant (mbr p=0.004, vote_conf p=0.011).
+
+**The judge sees something IS doesn't.** IS at the segment level says all four methods are tied. The judge says MBR and vote_conf rescue marginal segments (baseline-N → method-P transitions), apparently below the IS rubric's tier-3 threshold so IS misses them.
+
+### Working recommendation
+
+Ship `hyp_mbr` or `hyp_vote_conf` as the default. MBR is the stronger judge-Y+P win; vote_conf is comparable on Y+P and wins on WER. Both are defensible upgrades over baseline.
+
+**Methodology note (logged)**: showing only the model's own confidence to the judge biases against the variant under test (its conf is in a different range than baseline's). Showing baseline + method conf together removes the bias. Future judge runs that inject confidence into the prompt should use the dual-conf design or skip conf entirely.
 
 **Followups logged**:
 - Save per-word `word_confs` to `report.csv` (or a sidecar) at decode time, so future runs don't need to re-derive them.
-- Never inject the model's own confidence into a judge prompt that's also being used to rank methods by that same confidence's downstream effects — bias is too strong even with explicit instruction.
