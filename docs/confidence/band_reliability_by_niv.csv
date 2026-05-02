@@ -1,0 +1,10 @@
+niv,band,n_words,n_correct,p_correct_pct
+Y,green,5135,4830,94.06
+Y,yellow,1591,1038,65.24
+Y,red,507,196,38.66
+P,green,4680,3732,79.74
+P,yellow,3403,1402,41.2
+P,red,1619,329,20.32
+N,green,1494,555,37.15
+N,yellow,2476,419,16.92
+N,red,2356,163,6.92
