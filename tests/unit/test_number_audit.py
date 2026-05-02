@@ -59,15 +59,15 @@ BORROWED_SLIDES = {
 # Canonical numbers from MEMORY.md > Key Project Numbers, plus their
 # client-friendly translations (with rounded forms).
 CANONICAL = {
-    "61.6%", "62%",                 # NIV Y+P → useful output
-    "23.1%", "23%",                 # NIV Y → clearly conveyed
+    "61.6%", "61.7%", "62%",        # NIV Y+P → useful output (May 2026 reval: 61.7%)
+    "23.1%", "23%", "24.1%", "24%", # NIV Y → clearly conveyed (May 2026 reval: 24.1%)
     "20.5%", "1 in 5",              # hallucination / auto-flag rate
     "0.818", "82%",                 # κ vs Opus Y+P → 82% agreement
     "0.690",                        # κ vs Opus Y (notes only)
-    "2.52", "2.5",                  # IS mean
+    "2.52", "2.53", "2.5",          # IS mean (May 2026 reval: 2.53)
     "1,497", "1497",                # baseline dataset size
-    "346",                          # NIV Y count
-    "922",                          # NIV Y+P count
+    "346", "361",                   # NIV Y count (May 2026 reval: 361)
+    "922", "924",                   # NIV Y+P count (May 2026 reval: 924)
     "39%", "38%",                   # derived trust-dashboard breakdown
     "0.925",                        # cross-config Pearson r (notes only)
     "8 of 10", "6 of 10",           # client-friendly translations
@@ -249,9 +249,9 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
     # tier distribution + reliability bounds. Source: docs/confidence/
     # threshold_design.md and confidence_full_analysis.md §2.2.
     approved.update({
-        "22.7%",              # Trust tier share
-        "35.7%",              # Salvage tier share
-        "36.9%",              # Strip tier share
+        "22.7%", "23.8%",     # Trust tier share (Round 5.6 → 5.16: 22.7→23.8 on 1,427 segs)
+        "35.7%", "37.5%",     # Salvage tier share (Round 5.6 → 5.16)
+        "36.9%", "38.7%",     # Strip tier share (Round 5.6 → 5.16)
         "85%",                # P(correct|green) at Trust threshold
         "50%",                # P(correct|green) at Strip threshold (the "would mislead" boundary)
         "18%",                # P(correct|green) lower bound across stratification

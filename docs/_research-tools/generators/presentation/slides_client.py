@@ -453,7 +453,7 @@ def slide_client_headline_numbers(prs):
          "Six of every ten segments contain enough recoverable meaning "
          "to be useful for human review.",
          GREEN),
-        ("23%", "clearly conveyed",
+        ("24%", "clearly conveyed",
          "About one in four segments is clean enough for light "
          "verification — fast pass.",
          TEAL),
@@ -488,9 +488,9 @@ def slide_client_headline_numbers(prs):
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, (
-        "Numbers from MEMORY.md > Key Project Numbers. "
-        "62% = 922/1497 NIV Y+P (rounded from 61.6%). "
-        "23% = 346/1497 NIV Y (rounded from 23.1%). "
+        "Numbers from latest 1,497-segment evaluation (May 2026). "
+        "62% = 924/1497 NIV Y+P (rounded from 61.7%). "
+        "24% = 361/1497 NIV Y (rounded from 24.1%). "
         "1 in 5 = 20.5% hallucination/auto-flag rate. "
         "Validation κ=0.818 vs blind Opus-as-judge calibration — phrased as '8 of 10' on slide. "
         "Don't read out NIV / κ on the slide; they're for your reference here. "
@@ -499,9 +499,9 @@ def slide_client_headline_numbers(prs):
         "explicitly. Anything cleaner-than-YouTube will perform better. "
         "\n\n"
         "Round 5.6: the 1-in-5 auto-flag rate breaks down further into "
-        "the three-tier UI policy on slide 32 — Strip 36.9% (coloring "
-        "removed), Salvage 35.7% (full coloring + amber banner), Trust "
-        "22.7% (full coloring, green ≥85% reliable). Don't anchor on "
+        "the three-tier UI policy on slide 32 — Strip 38.7% (coloring "
+        "removed), Salvage 37.5% (full coloring + amber banner), Trust "
+        "23.8% (full coloring, green ≥85% reliable). Don't anchor on "
         "those secondary numbers here; they live on slide 32."
     ))
     return slide
@@ -3898,7 +3898,7 @@ def slide_client_three_tier_policy(prs):
       - docs/confidence/confidence_full_analysis.md §2.2 (stratification)
       - docs/confidence/threshold_design.md (T_safe=0.82, T_salvage=0.65)
       - docs/confidence/band_reliability_rollout_plan.md Phase 2 DONE
-      - 1,497-segment baseline tier distribution: 22.7 / 35.7 / 36.9
+      - 1,427-segment baseline tier distribution: 23.8 / 37.5 / 38.7
       - Production: VSP-LLM/scripts/make_report.py classify_tier()
     """
     slide = new_slide(prs)
@@ -3923,7 +3923,7 @@ def slide_client_three_tier_policy(prs):
             "name": "TRUST",
             "thresh": "segment confidence  ≥  0.82",
             "color": GREEN,
-            "share": "22.7%",
+            "share": "23.8%",
             "ui": "Full per-word coloring.",
             "promise": "Green ≥ 85% reliable",
             "promise_sub": "(stays in deck's original confidence promise)",
@@ -3932,7 +3932,7 @@ def slide_client_three_tier_policy(prs):
             "name": "SALVAGE",
             "thresh": "0.65  to  0.82",
             "color": GOLD,
-            "share": "35.7%",
+            "share": "37.5%",
             "ui": "Full coloring + amber banner.",
             "promise": "\"Verify names, numbers,",
             "promise_sub": "critical details\"",
@@ -3941,7 +3941,7 @@ def slide_client_three_tier_policy(prs):
             "name": "STRIP",
             "thresh": "segment confidence  <  0.65",
             "color": LGRAY,
-            "share": "36.9%",
+            "share": "38.7%",
             "ui": "Coloring removed. Plain grey text.",
             "promise": "Green < 50% reliable here —",
             "promise_sub": "coloring would mislead",
