@@ -125,6 +125,7 @@ from presentation.slides_client import (
     slide_client_validation_intro,
     slide_client_agreement_chart,
     slide_client_cross_config_stability,
+    slide_client_aggregation_safety,        # NEW Round 5.14 — n-best aggregation evidence
     # slide_client_validation_summary DROPPED (Round 5.1 — restates 82% point)
 
     # Section 12 — Engineering (Round 5.2: bulked up)
@@ -270,6 +271,7 @@ def main():
         slide_client_validation_intro,
         slide_client_agreement_chart,
         slide_client_cross_config_stability,
+        slide_client_aggregation_safety,        # NEW Round 5.14 — n-best aggregation rescues failed segments
 
         # ═══════ ACT 3 — PATH FORWARD (1:25 – 2:00) ═══════
         # § Engineering (Round 5.2: bulked up per user feedback — pipeline
@@ -330,14 +332,15 @@ def main():
         46,  # hallucination_flag "1 in 5" — duplicates slide 26 headline + slides 34/35 demonstrate flagging
         49,  # what_this_means "What this means for your workflow" — Round 5.12: thin transition,
              # the trust section already conveys the workflow implication
-        55,  # slide_client_pipeline_detailed (8-stage diagram) — Round 5.12 user feedback
+        56,  # slide_client_pipeline_detailed (8-stage diagram) — Round 5.12 user feedback
              # "unclear and not in animation"; the simpler 3-component overview at slide 4
              # (slide_client_pipeline_components, moved up) covers this beat better.
-        59,  # _section_whats_next transition — Act 3's What's Next pivot is implicit; trim transition
-        66,  # recap "Three things to take with you" — Round 5.12: trim close section
+             # Index shifted 55 → 56 in Round 5.14 after aggregation_safety added to validation.
+        60,  # _section_whats_next transition — Act 3's What's Next pivot is implicit; trim transition.
+             # Index shifted 59 → 60 in Round 5.14.
+        67,  # recap "Three things to take with you" — Round 5.12: trim close section
              # (close: integration_commitment + next_steps + thank_you is enough).
-             # Index shifted from 65 to 66 in Round 5.13 after feedback_loop_ask
-             # inserted before partnership_ask.
+             # Index shifted 66 → 67 in Round 5.14.
     ]
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn

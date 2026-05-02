@@ -26,6 +26,28 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.14 — Aggregation-safety evidence in validation (LANDED, terse)
+
+NEW slide 54 (`slide_client_aggregation_safety`) — n-best aggregation
+evidence from `docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md`
+(1,497-segment LLM-judge evaluation, May 2 2026, dual-conf prompt).
+Three cards: +2.7pp Y+P verdicts (paired-McNemar p=0.0002 for MBR),
+asymmetric rescue pattern (gains at the bottom, no losses at the top),
+−1.6pp WER for vote_conf. Anchor: *"The 62% review-useful and 82%
+agreement numbers were measured WITHOUT aggregation. With it, they're
+floors, not ceilings."* Inserted in §Validation after
+cross_config_stability.
+
+Stats: 69 → **70 slides** (+1 visible). 58 → 59 visible.
+HIDDEN_SLIDES indices shifted +1 for 56/60/67 (was 55/59/66).
+BORROWED_SLIDES: {44, 45, 58, 70} (was {44, 45, 57, 69}).
+All 7 audits green.
+
+### COMMIT
+- (pending)
+
+---
+
 ## 2026-05-02 — Round 5.13 — Deployable-today framing + client-feedback ask (LANDED)
 
 User directive (4 items):

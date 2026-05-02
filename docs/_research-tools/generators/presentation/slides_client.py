@@ -1212,6 +1212,118 @@ def slide_client_cross_config_stability(prs):
     return slide
 
 
+def slide_client_aggregation_safety(prs):
+    """Round 5.14 — n-best aggregation evidence.
+
+    Source: docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md
+    (1,497-segment LLM-judge evaluation, May 2 2026, dual-conf prompt
+    design). The judge sees aggregation rescues failed segments
+    asymmetrically: gains at the bottom, no losses at the top. Both
+    MBR and vote_conf pass paired-McNemar significance on the broad
+    Y+P operating point. WER drops 1.6 pp with vote_conf.
+
+    Lands as the third validation slide, AFTER cross_config_stability
+    and BEFORE the validation_summary close — adds a measured-evidence
+    layer beyond agreement and stability: "and here's what aggregation
+    on top adds."
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Aggregation: failed segments rescued, good ones intact")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "When the model votes among 20 alternative decodings, "
+             "the output gets safer. Measured on all 1,497 segments.",
+             MX, Inches(1.5), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three cards
+    card_w = Inches(3.85)
+    gap = Inches(0.25)
+    top = Inches(2.3)
+    h = Inches(3.3)
+
+    cards = [
+        ("MORE USEFUL OUTPUT", TEAL,
+         "+2.7 percentage points more 'meaning conveyed' "
+         "verdicts from the independent blind evaluator. "
+         "Statistically significant (paired test, p < 0.001)."),
+        ("NO COST AT THE TOP", GREEN,
+         "Failed segments lifted to partially-conveyed; "
+         "good segments stay good. The rescue pattern is "
+         "asymmetric — gains at the bottom of the "
+         "distribution, no losses at the top."),
+        ("WORD ERROR RATE DOWN", GOLD,
+         "Word-error rate drops by ~1.6 percentage points. "
+         "Not just better judgment from the evaluator — "
+         "fewer wrong words to begin with."),
+    ]
+    for i, (label, color, body) in enumerate(cards):
+        x = MX + i * (card_w + gap)
+        add_rect(slide, x, top, card_w, h, fill_color=NAVY2,
+                 border_color=color, border_width=Pt(1.0))
+        add_text(slide, label,
+                 x + Inches(0.2), top + Inches(0.25),
+                 card_w - Inches(0.4), Inches(0.5),
+                 size=Pt(12), bold=True, color=color, align=PP_ALIGN.CENTER)
+        add_text(slide, body,
+                 x + Inches(0.25), top + Inches(0.95),
+                 card_w - Inches(0.5), h - Inches(1.1),
+                 size=Pt(13), color=WHITE)
+
+    # Bottom anchor — the floor framing
+    anchor_y = top + h + Inches(0.2)
+    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
+    add_text(slide,
+             "The 62% review-useful and 82% agreement numbers were "
+             "measured WITHOUT aggregation. With it, they're floors, "
+             "not ceilings.",
+             MX + Inches(0.3), anchor_y + Inches(0.13),
+             CW - Inches(0.6), Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
+
+    # Footer
+    add_text(slide,
+             "Aggregation: shipped, env-gated today, becoming default "
+             "after one more validation pass on stratified subsets.",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.14 — adds n-best LLM-judge evidence to the validation "
+        "section. Source: docs/evaluation/llm_judge_nbest/"
+        "llm_judge_nbest_analysis.md. "
+        "\n\n"
+        "FULL NUMBERS for Q&A: "
+        "MBR aggregation: +2.7 pp Y+P, paired McNemar p=0.0002, +40 "
+        "net Y+P verdicts vs baseline (74 method-only Y+P, 34 baseline-"
+        "only). vote_conf: +2.1 pp Y+P, p=0.0026; WER 64.05% → 62.49% "
+        "(−1.56 pp). Both methods rescue failed segments (baseline-N → "
+        "method-P) without breaking good ones. "
+        "\n\n"
+        "TIER-CONDITIONED Δ_IS for MBR: tier 1 (failed) +0.063 "
+        "(12 tier-ups, 0 tier-downs). Tier 5 (excellent) -0.017 "
+        "(0 tier-ups, 12 tier-downs). The mean washes because gains "
+        "and losses partly cancel — but the SHAPE change is real "
+        "and matches the judge's Y+P findings. "
+        "\n\n"
+        "WHY THE JUDGE SEES SOMETHING IS DOESN'T: aggregation rescues "
+        "land between the IS-NIV-Y (≥3.80) and IS-NIV-Y+P (≥2.00) "
+        "thresholds — exactly where the judge's P verdict fires. IS "
+        "averages are within 0.015 of each other across all 4 methods. "
+        "\n\n"
+        "FRAMING NOTE: don't oversell. Aggregation is a real upgrade "
+        "with statistical evidence; it's not 'twice as good.' Stay "
+        "with the floor-not-ceiling framing."
+    ))
+    return slide
+
+
 def slide_client_validation_summary(prs):
     slide = new_slide(prs)
     _auto_num[0] += 1

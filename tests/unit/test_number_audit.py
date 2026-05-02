@@ -47,12 +47,12 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round5_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Round 5.13: feedback_loop_ask slide added before partnership_ask;
-    # slides at and after position 64 shifted +1.
+    # Round 5.14: aggregation_safety slide added after cross_config_stability;
+    # slides at and after position 54 shifted +1.
     44,  # slide_failure_deep_2  — 3 worked ref/hyp examples
     45,  # slide_25d             — salvage recoveries (WER stripped from headers)
-    57,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    69,  # slide_thank_you       — close
+    58,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
+    70,  # slide_thank_you       — close
 }
 
 
