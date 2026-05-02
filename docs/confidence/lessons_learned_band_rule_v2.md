@@ -384,3 +384,55 @@ production code was written.
 
 The single most important habit this exercise reinforced: **run the
 diagnostic before you write the implementation.**
+
+---
+
+## 12. Post-shipment safety analysis (May 2 2026, full set)
+
+After landing, we measured each band's empirical reliability under
+both rules across all 23,261 words and 1,497 segments. Source data
+in [SAFETY_ANALYSIS.md](../../english_full_nbest_eval/safety_analysis/SAFETY_ANALYSIS.md); generator at [analyze_band_safety.py](../_research-tools/generators/analyze_band_safety.py).
+
+### Per-word
+
+| Band | Old n / P(correct) | New n / P(correct) | ΔP |
+|---|---|---|---|
+| Green | 11,309 / **0.806** | 7,591 / **0.898** | **+9.2pp** |
+| Yellow | 7,470 / 0.383 | 6,571 / 0.590 | **+20.7pp** |
+| Red | 4,482 / 0.154 | 9,099 / 0.217 | +6.3pp |
+
+The green improvement (+9.2pp) was the design target. The yellow improvement (+20.7pp) was a free win — under the old rule yellow was a wide 0.40–0.85 band that mixed signal and noise; the new yellow requires both `conf ≥ 0.65` *and* `agree ≥ 0.50`, which filters out the lowest-quality middle without re-tuning thresholds.
+
+### Tier-stratified
+
+| Tier | Old green P | New green P |
+|---|---|---|
+| Trust (seg_mean ≥ 0.82) | 0.924 | 0.953 |
+| Salvage (0.65–0.82) | 0.798 | **0.891** |
+
+The biggest reliability boost happens in Salvage segments — exactly where users were most exposed under the old single-threshold rule. Trust segments were already in good shape; the new rule mostly maintains them.
+
+### POS reversal
+
+Old rule: function green P=0.806, content green P=0.809 (tied). New rule: function P=0.894, content P=**0.904**. Content green is now slightly *more* reliable than function — the agreement gate removed the confident-hallucination content cell that was the whole motivation for the work.
+
+### Numeric tokens
+
+Under the new rule **0 numbers are ever painted green** (vs 75 under the old rule, P=0.693). Lip-reading can't disambiguate digits; the hard cap to yellow is binding and correctly applied.
+
+### Sentence promise
+
+Stratifying segments by fraction of words painted green under the new rule:
+
+| Green fraction | n segs | P(NIV-Y) | P(hallu) | mean WER |
+|---|---|---|---|---|
+| 0.00–0.10 | 386 | 0.01 | 0.44 | 96.4% |
+| 0.10–0.30 | 411 | 0.06 | 0.14 | 71.3% |
+| 0.30–0.50 | 309 | 0.32 | 0.02 | 45.5% |
+| 0.50–0.70 | 250 | 0.67 | 0.01 | 28.6% |
+| 0.70–0.90 | 66 | 0.88 | 0.00 | 16.8% |
+| 0.90–1.00 | 5 | **1.00** | 0.00 | 10.3% |
+
+The 0.70–0.90 band climbs from 0.76 → 0.88 P(NIV-Y) vs the old rule. The 0.00–0.10 band drops its hallucination rate from 0.59 → 0.44 — old rule's bottom band was a thinner slice of cleanly-bad segments; new rule's bottom is broader and less catastrophic on average. Both directions are improvements.
+
+The "≥90% green" cohort is now tiny (5 segments out of 1,427) but unanimously NIV-Y with 10.3% mean WER. A user who only reads mostly-green sentences will see fewer transcripts but the ones they see are reliable.
