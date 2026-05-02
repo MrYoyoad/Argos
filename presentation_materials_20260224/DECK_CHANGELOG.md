@@ -190,7 +190,7 @@ HIDDEN_SLIDES grew from 7 (Round 5.11) to 11. Newly hidden:
   force regeneration from the new video sources.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- 75d40bc — Round 5.12.
 
 ---
 
