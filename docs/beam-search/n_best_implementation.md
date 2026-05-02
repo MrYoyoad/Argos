@@ -382,3 +382,28 @@ python3 docs/_research-tools/generators/calibrate_temperature.py \
 python3 lib/nbest_aggregate.py --nbest path/nbest-{fid}.json \
     --out final_agg.json --calibration new_calibration.json
 ```
+
+## Judge validation (2026-05-02, full set, blind, Opus 4.7)
+
+After Mission 6 shipped, we put all four candidate hypotheses (baseline + 3 aggregation methods) through a paired LLM-as-Judge run on the full 1,497-segment set. **5,988 in-conversation Y/P/N verdicts** with sentence + per-word confidence injected as soft cues. Full writeup: [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](../evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md).
+
+| method | NIV-Y rate | Δ vs baseline | p (paired) | NIV-Y+P rate | Δ vs baseline | p (paired) | WER (full set) |
+|---|---|---|---|---|---|---|---|
+| **baseline (1-best)** | **16.6 %** | — | — | **69.8 %** | — | — | 64.05 % |
+| `hyp_mbr` | 16.4 % | −0.2 pp | 0.82 | 68.5 % | −1.3 pp | 0.07 | 63.83 % |
+| `hyp_vote_score` | 17.3 % | +0.7 pp | 0.51 | 68.3 % | −1.5 pp | 0.022 | — |
+| `hyp_vote_conf` | **13.6 %** | **−3.0 pp** | **0.0005** | **67.6 %** | **−2.2 pp** | **0.0024** | **62.49 %** |
+
+McNemar tests are continuity-corrected, two-sided, paired by `utt_id`.
+
+**Headline**: `hyp_vote_conf` wins WER but **loses NIV-Y significantly** — the metric we use to decide what ships disagrees with the metric we ranked candidates by.
+
+**Mechanism**: vote_conf trims surface edits (e.g., dropping a connective like "and", swapping a function word) that lower WER by one substitution while pushing the judge from "meaning conveyed" (Y) to "partial" (P). It downgrades **101 baseline-Y → P** and only recovers **57 baseline-P → Y**. Consistent with the existing literature note that voting "agreement score" is not a Bayesian posterior — high agreement among wrong-but-similar beams produces fluent-but-meaning-shifted output.
+
+**Recommendation**: do not ship `hyp_vote_conf` as the default. `hyp_mbr` is closest to neutral and remains the safer choice if n-best machinery is wanted (e.g., for the per-word agreement score as an *uncertainty* signal — distinct from using it to *pick* the output). The decision rule for "ship a method" should be paired McNemar on NIV-Y, not WER.
+
+**Confidence calibration finding (Mission 4.1 unblocker)**: baseline `sentence_confidence` shows a strong monotonic relationship with the judge verdict — at conf ≥ 0.7, P(Y+P) ≥ 96.9 %; at conf < 0.4, P(N) ≥ 91 %. The agreement-based "confidence" emitted by `hyp_vote_score`/`hyp_vote_conf` lives in a much narrower [0.4, 0.8) range with shallower discrimination, confirming it should be treated as a consensus signal rather than a posterior probability.
+
+**Followups logged**:
+- Save per-word `word_confs` to `report.csv` (or a sidecar) at decode time, so future judge runs don't have to re-run the aggregator. The May 2 run wasted ~12 min of CPU before we found the existing `aggregated.json`.
+- Consider a context-aware re-judge (analogous to existing `llm_judge/context_eval/`) to test whether the rank inversion holds when the judge can use topic context.

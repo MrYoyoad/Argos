@@ -1,0 +1,108 @@
+{
+  "n_segments": 1497,
+  "methods": {
+    "baseline": {
+      "n_total": 1497,
+      "n_completed": 1497,
+      "n_missing": 0,
+      "Y": 249,
+      "P": 796,
+      "N": 452,
+      "Y_rate": 0.16633266533066132,
+      "Y_plus_P_rate": 0.698062792251169,
+      "completion_pct": 1.0
+    },
+    "hyp_mbr": {
+      "n_total": 1497,
+      "n_completed": 1497,
+      "n_missing": 0,
+      "Y": 245,
+      "P": 781,
+      "N": 471,
+      "Y_rate": 0.16366065464261856,
+      "Y_plus_P_rate": 0.685370741482966,
+      "completion_pct": 1.0
+    },
+    "hyp_vote_score": {
+      "n_total": 1497,
+      "n_completed": 1497,
+      "n_missing": 0,
+      "Y": 259,
+      "P": 763,
+      "N": 475,
+      "Y_rate": 0.1730126920507682,
+      "Y_plus_P_rate": 0.6826987307949232,
+      "completion_pct": 1.0
+    },
+    "hyp_vote_conf": {
+      "n_total": 1497,
+      "n_completed": 1497,
+      "n_missing": 0,
+      "Y": 204,
+      "P": 808,
+      "N": 485,
+      "Y_rate": 0.13627254509018036,
+      "Y_plus_P_rate": 0.6760187040748163,
+      "completion_pct": 1.0
+    }
+  },
+  "missing_batches": [],
+  "partial_batches": [],
+  "intra_rater": {
+    "baseline": {
+      "n": 30,
+      "exact_agreement": 0.8666666666666667,
+      "lenient_agreement": 1.0
+    },
+    "hyp_mbr": {
+      "n": 30,
+      "exact_agreement": 0.8666666666666667,
+      "lenient_agreement": 0.9333333333333333
+    },
+    "hyp_vote_score": {
+      "n": 30,
+      "exact_agreement": 0.8333333333333334,
+      "lenient_agreement": 0.8666666666666667
+    },
+    "hyp_vote_conf": {
+      "n": 30,
+      "exact_agreement": 0.7666666666666667,
+      "lenient_agreement": 0.8666666666666667
+    }
+  },
+  "mcnemar_vs_baseline": {
+    "hyp_mbr": {
+      "n_paired": 1497,
+      "Y_method_only": 84,
+      "Y_baseline_only": 88,
+      "Y_chi2": 0.05232558139534884,
+      "Y_p": 0.8190648974453345,
+      "YP_method_only": 41,
+      "YP_baseline_only": 60,
+      "YP_chi2": 3.207920792079208,
+      "YP_p": 0.073282553224887
+    },
+    "hyp_vote_score": {
+      "n_paired": 1497,
+      "Y_method_only": 99,
+      "Y_baseline_only": 89,
+      "Y_chi2": 0.4308510638297872,
+      "Y_p": 0.51157163944384,
+      "YP_method_only": 35,
+      "YP_baseline_only": 58,
+      "YP_chi2": 5.204301075268817,
+      "YP_p": 0.02253107159485841
+    },
+    "hyp_vote_conf": {
+      "n_paired": 1497,
+      "Y_method_only": 57,
+      "Y_baseline_only": 102,
+      "Y_chi2": 12.176100628930818,
+      "Y_p": 0.00048405729033518426,
+      "YP_method_only": 39,
+      "YP_baseline_only": 72,
+      "YP_chi2": 9.225225225225225,
+      "YP_p": 0.0023870332864212892
+    }
+  }
+}
