@@ -37,7 +37,7 @@ Reverse-chronological: newest entry on top.
   - HTML demo report legend (`generate_client_demo_report.py`): "trust = confident AND beams agreed" → "trust = confident, alternatives agreed".
 - **WHY**: User: "screen shot for MBR? baseline numbers with it? confidence and ALL! AUDIT WELL AND DEEP. dont say MBR usue simple english in pptx! generally audit for unnecessary jargon that is hard to follow for them and fix it." Verified MBR-default numbers: WER 64.05→63.84%, IS 2.532→2.547, NIV-Y 24.1→23.9%, NIV-Y+P 61.7→61.9%, hallucination 20.5→20.7% — visible rounded headlines (62% / 24% / 1 in 5 / 2.5) hold under both.
 - **FILES**: `slides_client.py` (slide 26 + 31 visible + speaker, 32-aggregation footer, salvage + strip case studies, word-color-coding legend), `generate_client_demo_report.py` (HTML legend), `01_plots_for_slides/ui_word_confidence_screenshot.png` (regenerated).
-- **COMMIT**: TBD.
+- **COMMIT**: 325bca5.
 
 ---
 
