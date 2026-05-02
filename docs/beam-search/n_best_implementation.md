@@ -36,6 +36,17 @@ Pearson r between per-word (1 − recall) and per-word posterior confidence, by 
 
 **On the full set, MBR's r at sent_conf≥0.85 is −0.285** — directionally consistent with the tuning-set finding (MBR ≥ top-1 in calibration) but the gap is much smaller than the −0.458 / −0.708 we saw on 107 segments. The tuning-set calibration win was overstated by sample size: on 1,497 segs the calibration ranking still favors MBR, just less dramatically. Voting methods still collapse the dynamic range (r→0 at high sent_conf) — same fluent-hallucination effect, same conclusion: don't reuse the 0.85/0.40 thresholds for voted output.
 
+### Function vs content calibration is the load-bearing finding
+
+Restating the table above with the function/content split as the headline:
+
+- **Function-word calibration is consistently strong** across every method and every stratum: r ranges −0.43 to −0.57. The model knows when its function-word predictions are wrong.
+- **Content-word calibration is roughly half as strong overall** (r ≈ −0.13 to −0.23 at ALL) and **collapses at high sent_conf**:
+  - `hyp_top1`: r_content goes ALL −0.232 → sent_conf≥0.70 −0.180 → sent_conf≥0.85 **−0.020** (no signal).
+  - `hyp_vote_conf` at sent_conf≥0.85: r_content = **+0.059** (wrong direction — fluent-hallucination region).
+
+**Operational consequence.** In segments the model is most confident about, its per-word confidence has essentially zero signal for content-word correctness. This is the regime where the dangerous numeric/entity errors live (`billion → million` at 0.965, `1024 → 24` at 0.958 — see [band_reliability_lesson.md](../../.claude/projects/-home-ubuntu/memory/band_reliability_lesson.md)). The three-tier UI policy (Trust ≥0.82 / Salvage 0.65–0.82 / Strip <0.65) is reliable for function words but cannot catch content-word hallucination at high `mean_prob`. A POS-aware confidence threshold (stricter for content words) is the natural next iteration.
+
 ### Beam variance
 
 Per-segment beam metrics ([beam_analysis/beam_variance_analysis.md](../../english_full_nbest_eval/beam_analysis/beam_variance_analysis.md)) over 1,497 segments:
@@ -277,7 +288,9 @@ ls tuning_results/exp_nbest_validation/{aggregated.json,report/aggregator_method
 
 - **Optimize the per-step entropy gather**: currently a Python loop over 20 sequences × 200+ steps × top-3 vocab gather, ≈2× slower per segment than the buggy old single-beam version. Vectorizing this is the next perf win — should restore ~28 s/seg (the prior baseline timing).
 - **Recalibrate CONF_HIGH / CONF_MED for voted output**: the voting methods compress >50% of words to posterior=1.0. Need new thresholds (proposal: CONF_HIGH=0.95, CONF_MED=0.70 for voted text) so per-word coloring still discriminates.
-- **Cross-segment merge on overlap-configured datasets**: tuning set has no overlap (no-op confirmed). Full 1,497 baseline check: TBD when the run completes.
+- **POS-aware confidence threshold**: function-word calibration is r ≈ −0.45; content-word calibration collapses to ~0 at sent_conf ≥ 0.85. A stricter band for content words (e.g. green only at p ≥ 0.95 for content, p ≥ 0.82 for function) should reduce green-but-wrong leakage on entities/numbers.
+- **Cross-segment merge on overlap-configured datasets**: tuning set has no overlap (no-op confirmed). Full 1,497 also has no overlap configured (`hyp_xseg_merge` = `hyp_top1` exactly).
+- **Conditional script (pending, in flight as of 2026-05-02 13:00Z)**: [word_confusion_conditional.py](../_research-tools/generators/word_confusion_conditional.py) is still computing top-15 most-confused content/function words and additional mask cuts (sent_conf≥0.50; WER≤30/50). Once it lands, append top-15 lists to this file as a follow-up commit.
 
 ## Calibration shipped (Option A — 2026-05-01)
 
