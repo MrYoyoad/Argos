@@ -128,7 +128,7 @@ re-enable) but PowerPoint skips them during presentation.
   added HIDDEN_SLIDES list + post-build XML hide mechanism.
 
 ### COMMIT
-- (pending — replace with SHA after `git commit` lands)
+- 9fecf40 — Round 5.11.
 
 ---
 
