@@ -225,3 +225,56 @@ mean WER 64% — the model is correctly less confident on it.** The
 threshold is the same; what changes is the difficulty of the input.
 That is exactly the behavior we want from a calibrated confidence
 signal.
+
+---
+
+## May 2 2026 update — joint conf+agreement rule supersedes single-threshold
+
+The 0.85 single-threshold green band documented above has been
+**superseded** by a two-axis rule that joins top-1 softmax with
+**beam agreement** (the fraction of the 19 alternative beams that
+voted for the same word). The single-threshold rule was the right
+design given only top-1 conf; once we stop discarding the other 19
+beams, agreement turns out to be the dominant signal, not a tie-breaker.
+
+The two signals are **correlated but not co-linear** (Pearson r = 0.58
+within content words). Fitted on the 1,497-segment full set
+(16,367 words above the segment-mean gate of 0.65):
+
+| Move | P(correct) change |
+|---|---|
+| Raise top-1 conf 0.65 → 0.95 at agree ≥ 0.95 | 0.57 → 0.94 (+37pp) |
+| Raise agreement 0+ → 0.95 at top-1 conf ≥ 0.95 | 0.40 → 0.94 (**+54pp**) |
+
+Within the high-confidence regime — where users currently see green —
+**agreement is roughly twice as informative as confidence**.
+A word at conf ≥ 0.95 with agreement < 0.50 is only **40% reliable**
+(this is the `gonna→going`, `billion→million`, `1024→24` cell);
+the same conf row at agreement ≥ 0.95 is **94% reliable**.
+
+The new band rule (operative going forward):
+
+```
+green   = top1_conf ≥ 0.95 AND agreement ≥ 0.80   (P ≈ 0.85–0.94)
+yellow  = top1_conf ≥ 0.65 AND agreement ≥ 0.50   (P ≈ 0.40–0.80)
+red     = otherwise
+numeric = clamped at yellow regardless of conf/agree
+strip   = applied at segment level when sentence_confidence < 0.65 (unchanged)
+```
+
+The 0.85 / 0.40 cuts above remain the right single-threshold answer
+when only top-1 conf is available — they are now the **fallback**
+when the agreement sidecar is missing, not the primary policy.
+
+Source-of-truth files:
+
+- [confidence_shape_and_beam_disagree_design.md](confidence_shape_and_beam_disagree_design.md) — design doc, fitted thresholds and rule
+- [TRUST_DIAGNOSTIC.md](../../english_full_nbest_eval/trust_diagnostic/TRUST_DIAGNOSTIC.md) — empirical pass tests on the full set
+- [lessons_learned_band_rule_v2.md](lessons_learned_band_rule_v2.md) — narrative of how the rule was arrived at, what was tried, and what was dropped
+
+The numbers (0.95 / 0.80 / 0.65 / 0.50) are specific to **Llama-2-7b
+at the current beam config**. Any LLM swap (Llama-3.1-8b, Llama-3.3-70b)
+forces a re-fit by re-running
+[`diagnose_confidence_signals.py`](../_research-tools/generators/diagnose_confidence_signals.py).
+The rule structure (joint conf + agreement gate, with numeric clamp
+and segment-level strip) is permanent; the cut-points will move.

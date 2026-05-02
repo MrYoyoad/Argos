@@ -1,5 +1,17 @@
 # Band Reliability Stratified by NIV Outcome
 
+> **2026-05-02 update.** The per-word band definitions referenced here
+> are being **joined with beam agreement** as a second axis going
+> forward. The conditional reliability table below was computed against
+> the conf-only band rule (`conf-high` ≥ 0.85). The new rule (joint
+> conf+agreement; see [confidence_shape_and_beam_disagree_design.md](confidence_shape_and_beam_disagree_design.md)
+> and [lessons_learned_band_rule_v2.md](lessons_learned_band_rule_v2.md))
+> tightens green to `top1_conf ≥ 0.95 AND agreement ≥ 0.80` and
+> caps numeric tokens at yellow. Re-running this NIV-stratification
+> against the new bands is a follow-up; the qualitative picture
+> (green is genuine signal inside Salvage, NIV-N strips coloring) is
+> expected to hold and tighten.
+
 **Date:** 2026-05-02
 **Question:** Within useful content (NIV Y or P), does the per-word confidence flag (green/yellow/red) actually help a user separate trustworthy words from unreliable ones?
 **Answer:** Yes — strongly. The reliability gradient from green to red is **62.5pp** within useful content, and the gradient is steepest exactly where it is most needed (NIV-P).

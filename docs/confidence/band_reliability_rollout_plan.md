@@ -126,3 +126,45 @@ If P(correct | green, very-low-bucket) ever rises above 50% after a model upgrad
 ## Summary
 
 A five-line change to [`make_report.py`](../../VSP-LLM/scripts/make_report.py) and a CSS class in the UI implement the most important part. The doc updates are book-keeping. **The numerical thresholds will move with the model**; the policy structure is permanent.
+
+## Phase 6 — Agreement-aware bands (2026-05-02)
+
+The flat top-1-confidence band (≥ 0.85 → green) is being **joined with
+beam-agreement** as a second axis. Top-1 conf alone is no longer the
+primary green-or-not signal once the all-20-beams sidecar is wired
+through the report generator. Status: design doc finalized, trust
+diagnostic passed on the full 1,497-segment set, implementation in
+progress (parallel agent).
+
+**The new rule (operative once the sidecar lands).**
+
+```
+green   = top1_conf ≥ 0.95 AND beam_agreement ≥ 0.80   (P ≈ 0.85–0.94)
+yellow  = top1_conf ≥ 0.65 AND beam_agreement ≥ 0.50   (P ≈ 0.40–0.80)
+red     = otherwise
+numeric = clamped at yellow regardless of conf/agree
+strip   = unchanged — applied at segment level when sentence_confidence < 0.65
+```
+
+**Why this is additive to the three-tier policy, not a replacement.**
+The three-tier (Trust / Salvage / Strip) policy keys on **segment**
+mean_prob and decides whether per-word coloring is rendered at all.
+The agreement-aware bands redefine *what each color means* once a
+segment is allowed to render. Both layers stay. Concretely:
+
+| Layer | Keys on | Decides |
+|---|---|---|
+| Outer (3-tier) | `sentence_confidence` | Whether the segment is colored, banner-flagged, or stripped |
+| Inner (band rule) | `top1_conf` × `beam_agreement` × `is_numeric` | Which color each rendered word gets |
+
+**Source-of-truth files.**
+
+- [confidence_shape_and_beam_disagree_design.md](confidence_shape_and_beam_disagree_design.md) — design doc with the rule and §4 implementation plan
+- [TRUST_DIAGNOSTIC.md](../../english_full_nbest_eval/trust_diagnostic/TRUST_DIAGNOSTIC.md) — empirical pass tests
+- [lessons_learned_band_rule_v2.md](lessons_learned_band_rule_v2.md) — narrative
+
+**Threshold drift caveat (unchanged).** Any LLM swap forces a re-fit by
+running [`diagnose_confidence_signals.py`](../_research-tools/generators/diagnose_confidence_signals.py).
+This is now an explicit maintenance burden the team owns: the diagnostic
+is fast (~1 minute on full set), but it must run before any model
+upgrade ships.
