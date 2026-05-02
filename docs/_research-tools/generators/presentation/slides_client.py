@@ -3638,6 +3638,379 @@ def slide_client_three_tier_policy(prs):
     return slide
 
 
+def slide_client_how_to_read(prs):
+    """Round 5.9 — operational instruction on reading the output.
+
+    Lands between three_tier_policy (slide 32) and the hallucination
+    trio (now 36-38). Source: docs/features/per-word-confidence-user-
+    guide.md §"TL;DR — The 30-second rule" + §"Decision flow on one
+    segment". Plain English; no parameter counts; no jargon.
+
+    Three numbered horizontal cards (the 30-second decision flow) +
+    bottom anchor. Plays as the practical follow-up to slide 32's UI
+    policy: the system shows you tiers, here's what you DO with them.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "How a reviewer actually reads the output")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Three steps. Thirty seconds per segment.",
+             MX, Inches(1.5), CW, Inches(0.5),
+             size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three horizontal cards
+    card_gap = Inches(0.2)
+    card_w = (CW - 2 * card_gap) / 3
+    card_top = Inches(2.2)
+    card_h = Inches(3.6)
+
+    steps = [
+        {
+            "num": "1",
+            "color": TEAL,
+            "head": "CHECK THE TIER",
+            "body": "The colored pill at the top of each segment: "
+                    "Trust, Salvage, or Strip. That tells you HOW "
+                    "to read what's below.",
+        },
+        {
+            "num": "2",
+            "color": GREEN,
+            "head": "READ THE COLORS",
+            "body": "Blue means confident. Orange means best guess. "
+                    "Purple means uncertain. The colors mean "
+                    "different things in different tiers.",
+        },
+        {
+            "num": "3",
+            "color": CORAL,
+            "head": "OVERRIDE FOR NUMBERS AND NAMES",
+            "body": "Whenever a segment has a number, name, date, or "
+                    "amount, verify against the video — even when "
+                    "blue. The model's confidence on these isn't "
+                    "well-calibrated.",
+        },
+    ]
+    for i, s in enumerate(steps):
+        x = MX + i * (card_w + card_gap)
+        add_rect(slide, x, card_top, card_w, card_h,
+                 fill_color=NAVY2, border_color=s["color"],
+                 border_width=Pt(1.5))
+        # Big number badge
+        add_text(slide, s["num"],
+                 x + Inches(0.2), card_top + Inches(0.2),
+                 card_w - Inches(0.4), Inches(0.7),
+                 size=Pt(40), bold=True, color=s["color"],
+                 align=PP_ALIGN.CENTER)
+        # Step head
+        add_text(slide, s["head"],
+                 x + Inches(0.2), card_top + Inches(1.0),
+                 card_w - Inches(0.4), Inches(0.6),
+                 size=Pt(14), bold=True, color=WHITE,
+                 align=PP_ALIGN.CENTER)
+        # Body
+        add_text(slide, s["body"],
+                 x + Inches(0.25), card_top + Inches(1.75),
+                 card_w - Inches(0.5), card_h - Inches(1.85),
+                 size=Pt(13), color=LGRAY,
+                 align=PP_ALIGN.CENTER)
+
+    # Bottom anchor pill
+    anchor_y = card_top + card_h + Inches(0.2)
+    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
+    add_text(slide,
+             "The system tells you how confident it is. Reading it "
+             "well is using both signals — tier first, colors second.",
+             MX + Inches(0.3), anchor_y + Inches(0.13),
+             CW - Inches(0.6), Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
+
+    # Footer
+    add_text(slide,
+             "A detailed reviewer guide ships with every pilot.",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.9 — operational instruction. Lands as the practical "
+        "follow-up to slide 32 (three-tier UI). For the cold prospect, "
+        "this slide answers 'what do my reviewers actually do with this?' "
+        "For the co-partner, it shows the workflow is real, not "
+        "confidence theater. "
+        "\n\n"
+        "VOICE FRAMING: 'Open a segment. Look at the tier badge first. "
+        "If Trust, read normally. If Salvage, read around the blue "
+        "anchors. If Strip, don't read word-by-word — use the segment "
+        "as a topic hint and watch the video. And whenever there's a "
+        "number, name, or date, verify against the video. That's the "
+        "30-second rule.' "
+        "\n\n"
+        "EMPIRICAL CALIBRATION (if a co-partner asks): blue ~94% "
+        "correct in Trust, ~80% in Salvage, ~37% in Strip. Orange ~65% "
+        "in Trust, ~41% in Salvage. Purple ~39% in Trust, ~20% in "
+        "Salvage. The next slide has the worked example. "
+        "\n\n"
+        "Source: docs/features/per-word-confidence-user-guide.md."
+    ))
+    return slide
+
+
+def slide_client_reader_example(prs):
+    """Round 5.9 — Salvage worked example showing how a reviewer reads.
+
+    Source: docs/features/per-word-confidence-user-guide.md §Worked
+    examples Example 2 (Salvage tier, mixed bands). The example shows
+    the eye following the colors: blue spine carries meaning, purples
+    discounted, segment becomes useful summary even at 50% WER.
+
+    Layout: tier badge + amber banner up top → REF + colored HYP →
+    'reader's view' pill that walks through the reasoning.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Worked example — how Salvage works in practice")
+    add_accent_line(slide)
+
+    # Tier badge + banner
+    badge_y = Inches(1.5)
+    badge_w = Inches(2.8)
+    add_rect(slide, MX, badge_y, badge_w, Inches(0.4),
+             fill_color=NAVY3, border_color=GOLD, border_width=Pt(1.0))
+    add_text(slide, "SALVAGE TIER",
+             MX, badge_y + Inches(0.05),
+             badge_w, Inches(0.3),
+             size=Pt(13), bold=True, color=GOLD,
+             align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Banner shown to the reviewer: \"Reading carefully — "
+             "verify names, numbers, critical details.\"",
+             MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
+             CW - badge_w - Inches(0.2), Inches(0.3),
+             size=Pt(11), color=LGRAY, italic=True)
+
+    # REF row
+    ref_y = Inches(2.15)
+    add_text(slide, "REFERENCE",
+             MX, ref_y, Inches(1.4), Inches(0.4),
+             size=Pt(11), bold=True, color=LGRAY)
+    add_text(slide,
+             "we need a radically different approach we must find a "
+             "way we can take routers and switches and links and "
+             "make existing structures work for research",
+             MX + Inches(1.5), ref_y, CW - Inches(1.5), Inches(1.0),
+             size=Pt(15), color=LGRAY, italic=True)
+
+    # HYP row — color-coded per the user-guide example
+    hyp_y = Inches(3.4)
+    add_text(slide, "HYPOTHESIS",
+             MX, hyp_y, Inches(1.4), Inches(0.4),
+             size=Pt(11), bold=True, color=WHITE)
+    # Word coloring follows the user-guide example 2 exactly.
+    # blue = GREEN, orange = YELLOW, purple = RED in client palette
+    runs = [
+        ("we ",       {"size": Pt(15), "color": YELLOW}),
+        ("need ",     {"size": Pt(15), "color": GREEN}),
+        ("a ",        {"size": Pt(15), "color": GREEN}),
+        ("radically ",{"size": Pt(15), "color": YELLOW}),
+        ("different ",{"size": Pt(15), "color": GREEN}),
+        ("approach ", {"size": Pt(15), "color": GREEN}),
+        ("we ",       {"size": Pt(15), "color": GREEN}),
+        ("must ",     {"size": Pt(15), "color": CORAL}),
+        ("find ",     {"size": Pt(15), "color": GREEN}),
+        ("a ",        {"size": Pt(15), "color": GREEN}),
+        ("way ",      {"size": Pt(15), "color": GREEN}),
+        ("we ",       {"size": Pt(15), "color": GREEN}),
+        ("can ",      {"size": Pt(15), "color": GREEN}),
+        ("design ",   {"size": Pt(15), "color": CORAL}),
+        ("existing ", {"size": Pt(15), "color": GREEN}),
+        ("roads ",    {"size": Pt(15), "color": CORAL}),
+        ("to ",       {"size": Pt(15), "color": GREEN}),
+        ("exist ",    {"size": Pt(15), "color": YELLOW}),
+        ("with ",     {"size": Pt(15), "color": GREEN}),
+        ("existing ", {"size": Pt(15), "color": GREEN}),
+        ("structures ",{"size": Pt(15), "color": GREEN}),
+        ("and ",      {"size": Pt(15), "color": GREEN}),
+        ("enable ",   {"size": Pt(15), "color": GREEN}),
+        ("them ",     {"size": Pt(15), "color": GREEN}),
+        ("for ",      {"size": Pt(15), "color": GREEN}),
+        ("research",  {"size": Pt(15), "color": GREEN}),
+    ]
+    add_rich_text(slide, [runs], MX + Inches(1.5), hyp_y,
+                  CW - Inches(1.5), Inches(1.4))
+
+    # Reader's view pill
+    rv_y = Inches(5.0)
+    add_rect(slide, MX, rv_y, CW, Inches(1.4),
+             fill_color=NAVY2, border_color=GOLD, border_width=Pt(1.0))
+    add_text(slide, "READER'S VIEW",
+             MX + Inches(0.3), rv_y + Inches(0.15),
+             Inches(2.5), Inches(0.3),
+             size=Pt(11), bold=True, color=GOLD)
+    add_text(slide,
+             "Blue spine: \"different approach… find a way… existing… "
+             "and enable them for research.\" That's the meaning. Two "
+             "of the red words (\"design\", \"roads\") are wrong, but "
+             "a reviewer who discounts them recovers a faithful gist: "
+             "they need a new approach that uses existing components "
+             "for research. The colors converted a 50%-WER segment "
+             "into a usable summary.",
+             MX + Inches(0.3), rv_y + Inches(0.45),
+             CW - Inches(0.6), Inches(0.85),
+             size=Pt(12), color=WHITE)
+
+    # Closing line
+    add_text(slide,
+             "This is what \"review-useful\" means in practice. "
+             "The colors give the reviewer the spine of the meaning.",
+             MX, Inches(6.55), CW, Inches(0.4),
+             size=Pt(12), color=GREEN, italic=True, align=PP_ALIGN.CENTER)
+
+    # Tiny legend
+    add_text(slide, "GREEN: confident   YELLOW: review   RED: likely error",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.9 — Salvage worked example from the user guide. The "
+        "example is from network-infrastructure content but the topic "
+        "is incidental — the audience is watching the colors do work, "
+        "not the topic. "
+        "\n\n"
+        "WALK-THROUGH: 'Look at the segment. Tier badge says Salvage — "
+        "the banner is asking the reviewer to read carefully. Now "
+        "look at the colors. Most of the words are green. The greens "
+        "carry the meaning: different approach, find a way, existing, "
+        "enable them. That's the spine. The two red words — design, "
+        "roads — are wrong (the original was routers, switches, links, "
+        "structures). But a reviewer who treats red as discount "
+        "recovers the meaning instantly: they need a new approach "
+        "that adapts existing components for research.' "
+        "\n\n"
+        "If asked WHY THIS LOOKS GOOD: the per-word WER on this "
+        "segment is around 50%, but the per-word coloring lets the "
+        "reviewer extract a faithful gist anyway. That's the value "
+        "of the trust signal — converting a numeric failure into a "
+        "usable output. "
+        "\n\n"
+        "Source: docs/features/per-word-confidence-user-guide.md "
+        "§Worked examples → Example 2."
+    ))
+    return slide
+
+
+def slide_client_pitfalls(prs):
+    """Round 5.9 — three operational rules every reviewer learns.
+
+    Source: docs/features/per-word-confidence-user-guide.md §Common
+    mistakes. Three card row showing the warnings that come up in
+    every reviewer's first hour with the system.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "Three rules every reviewer learns")
+    add_accent_line(slide)
+
+    add_text(slide,
+             "Standard part of reviewer onboarding. The user guide "
+             "ships with every pilot.",
+             MX, Inches(1.5), CW, Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three horizontal cards
+    card_gap = Inches(0.2)
+    card_w = (CW - 2 * card_gap) / 3
+    card_top = Inches(2.2)
+    card_h = Inches(3.5)
+
+    rules = [
+        {
+            "color": GOLD,
+            "head": "NUMBERS AND NAMES",
+            "head_sub": "need the video",
+            "body": "Even when blue. Numbers, dates, dollar amounts, "
+                    "proper names — verify against the video before "
+                    "using them. The model's confidence on these "
+                    "isn't well-calibrated.",
+        },
+        {
+            "color": CORAL,
+            "head": "STRIP TIER",
+            "head_sub": "is not for word-by-word reading",
+            "body": "Strip-tier segments lose their per-word coloring "
+                    "on purpose. The signal misleads at this "
+                    "confidence level. Use the segment as a topic "
+                    "hint, not a transcript.",
+        },
+        {
+            "color": TEAL,
+            "head": "THE TIER COMES FIRST",
+            "head_sub": "before the colors",
+            "body": "A blue word in a Strip segment isn't the same as "
+                    "a blue word in a Trust segment. Its reliability "
+                    "is roughly half. Always check the tier before "
+                    "trusting any color.",
+        },
+    ]
+    for i, r in enumerate(rules):
+        x = MX + i * (card_w + card_gap)
+        add_rect(slide, x, card_top, card_w, card_h,
+                 fill_color=NAVY2, border_color=r["color"],
+                 border_width=Pt(1.5))
+        # Head
+        add_text(slide, r["head"],
+                 x + Inches(0.2), card_top + Inches(0.3),
+                 card_w - Inches(0.4), Inches(0.45),
+                 size=Pt(17), bold=True, color=r["color"],
+                 align=PP_ALIGN.CENTER)
+        add_text(slide, r["head_sub"],
+                 x + Inches(0.2), card_top + Inches(0.85),
+                 card_w - Inches(0.4), Inches(0.35),
+                 size=Pt(12), color=LGRAY, italic=True,
+                 align=PP_ALIGN.CENTER)
+        # Body
+        add_text(slide, r["body"],
+                 x + Inches(0.25), card_top + Inches(1.5),
+                 card_w - Inches(0.5), card_h - Inches(1.6),
+                 size=Pt(13), color=WHITE,
+                 align=PP_ALIGN.CENTER)
+
+    # Footer
+    add_text(slide,
+             "These rules ship with every pilot. Reviewers learn "
+             "them in the first hour.",
+             MX, Inches(6.4), CW, Inches(0.4),
+             size=Pt(12), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.9 — three pitfalls from the user guide §Common "
+        "mistakes. These come up in every reviewer's first hour with "
+        "the system. Showing them on a slide signals to the audience "
+        "that we've thought about how the output gets used, not just "
+        "how it gets produced. "
+        "\n\n"
+        "MORE PITFALLS IF ASKED: "
+        "(4) Treating purple as 'definitely wrong' in a Trust segment. "
+        "Inside Trust, even purple is ~39% right — use it as a 'look "
+        "at this' flag, not an 'ignore' flag. "
+        "(5) Treating a single segment in isolation. Cross-context "
+        "from neighboring segments often disambiguates. "
+        "\n\n"
+        "Source: docs/features/per-word-confidence-user-guide.md "
+        "§Common mistakes."
+    ))
+    return slide
+
+
 def slide_client_halluc_problem(prs):
     """Section 9 trio — first slide.
 

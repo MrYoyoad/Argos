@@ -26,6 +26,94 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.9 — "How to read a transcript" operational slides (LANDED)
+
+User wrote `docs/features/per-word-confidence-user-guide.md` (May 1)
+— a clean reader-facing guide that distills the operational workflow
+(30-second rule, decision flow, common pitfalls). The deck had the
+WHAT of the trust signals (slides 30, 31, 32) but no HOW-TO-USE.
+Round 5.9 fills that gap.
+
+### Three new slides between three-tier UI (32) and hallucination trio
+- **Slide 33** — `slide_client_how_to_read` — *"How a reviewer
+  actually reads the output"*: three numbered horizontal cards
+  (1 CHECK THE TIER / 2 READ THE COLORS / 3 OVERRIDE FOR NUMBERS AND
+  NAMES) with bottom anchor *"Reading well is using both signals —
+  tier first, colors second."*
+- **Slide 34** — `slide_client_reader_example` — Salvage worked
+  example from the user guide. Tier badge + amber banner up top, REF
+  + color-coded HYP, READER'S VIEW pill walking through how a
+  reviewer extracts meaning from the blue spine while discounting
+  the red words. Closing line: *"This is what 'review-useful' means
+  in practice."*
+- **Slide 35** — `slide_client_pitfalls` — *"Three rules every
+  reviewer learns"*: NUMBERS AND NAMES need the video / STRIP TIER
+  isn't for word-by-word reading / THE TIER COMES FIRST. Three
+  warning-style cards (gold/coral/teal borders).
+
+### Plain English throughout
+Per the latest "no super technical details, no stupid numbers"
+directive: no parameter counts, no calibration percentages on the
+visible slides, no jargon. Empirical numbers (94% / 80% / 65% / 41%
+etc.) live in speaker notes only. Slide voice reads like a human:
+*"Open a segment. Look at the tier badge first. If Trust, read
+normally. If Salvage, read around the blue anchors. If Strip, don't
+read word-by-word."*
+
+### Why these slides matter for the audience
+- **Cold prospect**: answers *"what do my reviewers actually do with
+  this?"* — the operational discipline is reassuring.
+- **Co-partners**: signals the system has a real reviewer workflow,
+  not just confidence theater. Pitfalls slide is particularly strong
+  here.
+- **Existing client team**: gives the user-guide a visible touchpoint
+  in the deck so they know the deliverable exists.
+- **Stealth buyer (existing client team lead)**: sees that the
+  reviewer-side UX is thought through end-to-end.
+
+### Renumbering impact (+3 shift)
+All slides after slide 32 shifted by +3:
+- Hallucination trio: 33-35 → 36-38
+- Validation section: 46-49 → 49-52
+- Engineering section: 50-53 → 53-56
+- What's-next section: 54-58 → 57-61
+- Next milestone (Round 5.8): 59 → 62
+- Partnership ask: 60 → 63
+- Thank you: 64 → 67
+
+### Stats
+- **64 → 67 slides** (+3 for the operational instruction set).
+- All 7 audit/linter tests **green**.
+- BORROWED_SLIDES updated for +3 shift: indices now `{43, 44, 55,
+  67}` (was `{40, 41, 52, 64}`).
+- No new percentages on visible slides (kept off intentionally —
+  empirical numbers in speaker notes only).
+- No FORBIDDEN_PATTERNS triggered.
+
+### Companion deliverable updates
+- `PRE_MEETING_CHECKLIST.md` — slide indices refreshed to 67-slide
+  layout; three new dry-run check items for slides 33-35.
+- `QA_CHEAT_SHEET.md` + `.pdf` — three new per-slide LAND lines for
+  slides 33-35; all downstream slide-cue indices shifted by +3.
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  three new builders: `slide_client_how_to_read`,
+  `slide_client_reader_example`, `slide_client_pitfalls`.
+- `docs/_research-tools/generators/generate_client_presentation.py` —
+  imported and inserted between `slide_client_three_tier_policy` and
+  `slide_client_halluc_problem`.
+- `tests/unit/test_number_audit.py` — BORROWED_SLIDES indices +3.
+- `presentation_materials_20260224/PRE_MEETING_CHECKLIST.md` —
+  refreshed.
+- `presentation_materials_20260224/QA_CHEAT_SHEET.md` + `.pdf` —
+  refreshed.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-02 — Round 5.8 — "What the next milestone changes" (LANDED)
 
 User feedback: the deck is too gentle on the technical direction

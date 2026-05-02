@@ -100,6 +100,9 @@ from presentation.slides_client import (
     slide_client_two_layer_confidence,
     slide_client_word_color_coding,
     slide_client_three_tier_policy,        # NEW Round 5.6 — band-reliability + UI policy
+    slide_client_how_to_read,              # NEW Round 5.9 — operational instruction (decision flow)
+    slide_client_reader_example,           # NEW Round 5.9 — Salvage worked example
+    slide_client_pitfalls,                 # NEW Round 5.9 — three rules every reviewer learns
     slide_client_halluc_problem,
     slide_client_halluc_real_example,
     slide_client_halluc_caught,
@@ -223,6 +226,10 @@ def main():
         slide_client_two_layer_confidence,
         slide_client_word_color_coding,
         slide_client_three_tier_policy,         # NEW Round 5.6 — band-reliability + three-tier UI
+        # How a reviewer reads the output (operational instruction)
+        slide_client_how_to_read,               # NEW Round 5.9 — decision flow (tier → colors → numbers/names)
+        slide_client_reader_example,            # NEW Round 5.9 — Salvage worked example
+        slide_client_pitfalls,                  # NEW Round 5.9 — three rules
         # Hallucination case-study trio
         slide_client_halluc_problem,
         slide_client_halluc_real_example,
