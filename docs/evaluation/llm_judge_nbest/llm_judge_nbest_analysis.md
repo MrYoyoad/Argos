@@ -53,7 +53,76 @@ hyp_mbr vs baseline                hyp_vote_conf vs baseline
 
 `hyp_mbr` recovers **73 baseline-N → P** (rescues nearly-failed segments) at the cost of **47 baseline-Y → P** (downgrades). Net Y+P: +40.
 
-`hyp_vote_conf` recovers **65 baseline-N → P** at the cost of **69 baseline-Y → P**. Net Y+P: +31. (Note that vote_conf has a noticeably larger Y → P leak — the function-word edits we documented earlier — but it's offset by gains at the bottom of the distribution.)
+`hyp_vote_conf` recovers **65 baseline-N → P** at the cost of **69 baseline-Y → P**. Net Y+P: +31. (vote_conf has a noticeably larger Y → P leak — the function-word edits — but it's offset by gains at the bottom of the distribution.)
+
+## IS distribution shape — where aggregation actually moves things
+
+Mean IS is nearly identical across the four methods (within 0.015), but conditional analysis on the **baseline IS tier** shows the rescue pattern explicitly:
+
+| baseline tier | n | mean Δ_IS (mbr) | tier_up | tier_down |
+|---|---|---|---|---|
+| **tier 1 (failed, IS < 1.0)** | 237 | **+0.063** | **12** | **0** |
+| tier 2 (poor, 1.0–2.0) | 337 | +0.010 | 16 | 16 |
+| tier 3 (fair, 2.0–3.0) | 322 | +0.027 | 26 | 15 |
+| tier 4 (good, 3.0–4.0) | 313 | −0.001 | 14 | 12 |
+| tier 5 (excellent, ≥4.0) | 288 | **−0.017** | 0 | **12** |
+
+Same shape, flatter, for `hyp_vote_conf`: +0.029 at tier 1 (18 tier-ups, 0 tier-downs), −0.023 at tier 5 (0 tier-ups, 14 tier-downs).
+
+**Aggregation rescues failed segments asymmetrically** (no downgrades at the bottom) at the cost of slight degradation at the very top. The mean wash because gains and losses partly cancel — but the shape change is real and matches the judge's Y+P findings.
+
+## Qualitative evidence — v3 rescues and Y-leaks
+
+The earlier draft of this section cited examples like "team in a more" / "kid is one" as evidence of vote_conf regression. **Those were drawn from v1 and are mostly intra-rater noise** (vote_conf's verdict didn't change between v1 and v3 in 4/5 of those cases — what changed was the baseline). The relevant v3 examples are:
+
+### Rescues (baseline = N, method = P, text differs)
+
+37 segments for MBR, 49 for vote_conf. Selected examples:
+
+```
+ref       : "you do have this in your bag and you"
+baseline  : "have in the"                             (N — content collapsed)
+hyp_mbr   : "have in your back and"                   (P — "your" and "and" recovered)
+```
+
+```
+ref       : "...this is no bigger than a credit card guys"
+baseline  : "...is no bigger than grand canyon"        (N — wrong noun, no determiner)
+hyp_mbr   : "...is no bigger than the grand canyon"    (P — same wrong noun, but the
+                                                          "no bigger than X" simile
+                                                          structure was preserved)
+```
+
+```
+ref       : "minus 12 is a negative 4"
+baseline  : "my age 12 is 94 and"                      (N — wrong arithmetic frame)
+vote_conf : "12 is 94"                                 (P — voting dropped "my age",
+                                                         "12 is" matches the reference
+                                                         "12 is" structure)
+```
+
+```
+ref       : "...you can get electrocuted working on them that's one damn thing
+              that's a big danger"
+baseline  : "...the year under water that's where shape gets a bit dangerous"  (N)
+vote_conf : "...the year under wetsuit that's where shape gets a bit dangerous" (P —
+            "wetsuit" is closer to the electrical-safety / water context than
+            "water"; the judge accepted partial domain match)
+```
+
+### Y-leaks (baseline = Y, method = P, text differs)
+
+47 segments for MBR (`hyp_mbr Y → P` cell of confusion), 41 for vote_conf:
+
+```
+ref       : "for example wellness programs are very popular among employers"
+baseline  : "example wellness programs are very popular among employers"   (Y)
+vote_conf : "example these programs are very popular among employers"      (P —
+            voting dropped "wellness", a content word; judge correctly
+            downgraded)
+```
+
+This is the leak the user flagged earlier: vote_conf does drop content words sometimes. **The judge's net verdict (+31 Y+P for vote_conf, +40 for MBR) is the rescues outweighing the leaks**, not the absence of leaks.
 
 ## Restricted to text-differing segments (cleaner test)
 
