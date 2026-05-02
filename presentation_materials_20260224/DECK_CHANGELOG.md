@@ -26,6 +26,66 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-02 — Round 5.13 — Deployable-today framing + client-feedback ask (LANDED)
+
+User directive (4 items):
+1. Make clear the product is ~98% deployable today; upgrades cost money.
+2. Make clear Arabic + LLM-upgrade aren't "mere updates" — real engineering investment.
+3. Add a soft client-feedback ask: we built confidence, we need real users to validate it on real video.
+4. Keep the fade-transition rule across the deck.
+
+### Slide-content changes
+- **Slide 10 (`what_we_built`)** — subtitle changed: *"Six things actually exist today, end-to-end, on real data"* → *"Six things shipped end-to-end. Deployable today on what you have."* Footer changed: *"Everything you'll see today is in production today — not a 'with more research it could…' projection"* → *"Deployable today. Domain-specific upgrades — Arabic, stronger LLM, multi-speaker — are real engineering work, scoped separately."*
+- **Slide 62 (`arabic_high_level`)** — added a gold "scope honesty" pill: *"This is real engineering work — not a configuration flip. Arabic is a separately-scoped, separately-funded effort."* Body line below: *"Realistic timeline: 2–3 months from go. Costs scale with dataset size and dialect coverage."* Replaces the implicit "easy update" framing.
+- **Slide 63 (`next_milestone`)** — subtitle expanded: *"Today works. Two things make it noticeably better"* → *"Today works and is deployable. Two upgrades, both real engineering investment, take it further."* SMARTER MODEL card body: now says *"Real training run, not a config flip."* TRAINED ON YOUR CONTENT card body: *"Coordinated training run; data + compute + engineering time, scoped together."* Footer: *"Today's 62% review-useful is real and deployable. Each upgrade is its own scoped, funded effort — not bundled."*
+
+### NEW slide 64 — `slide_client_feedback_loop_ask`
+Lands AFTER `next_milestone` (technical upgrade ask) and BEFORE `partnership_ask` (budget conversation). The beat: "we did the engineering on the confidence layer; the next signal — what does this look like in actual reviewer workflows — is something only your team can give us."
+
+- Title: *"What we'd ask of your team"*
+- Headline: *"We've built the confidence layer. The signal we can't generate alone is real reviewer feedback on real video."*
+- Three soft-ask cards: RUN IT ON YOUR VIDEO / HAVE YOUR ANALYSTS READ / TELL US WHERE COLORS HELP
+- Anchor: *"We did the engineering. The end-user signal closes the loop — and the calibration tightens around your actual content."*
+- Footer: *"A pilot's worth of analyst-hours, end-to-end. Specifics in the partnership conversation."*
+
+Tone: gentle, partnership-flavored, not a sales close. Specifically calls out "Not the managers — the reviewers" so it's clear the ask is for real end-user time, not stakeholder approval.
+
+### Fade transitions still apply
+The Round 5.12 post-build pass continues to apply fade transitions to all slides. Build output confirms: *"FADE TRANSITIONS applied to all 69 slides."*
+
+### Renumbering
+Adding 1 visible slide before partnership_ask shifted later slides by +1:
+- partnership_ask: 64 → 65
+- recap (hidden): 65 → 66
+- integration_commitment: 66 → 67
+- next_steps: 67 → 68
+- thank_you: 68 → 69
+
+### Stats
+- 68 → **69 slides** (+1 for feedback_loop_ask).
+- **57 → 58 visible** during presentation (the new slide is visible; recap stays hidden at its new position 66).
+- All 7 audit/linter tests **green**.
+- HIDDEN_SLIDES: 14, 21, 23, 24, 41, 45, 46, 49, 55, 59, **66** (was 65).
+- BORROWED_SLIDES: {44, 45, **57**, **69**} (was {44, 45, 56, 68}).
+
+### Files
+- `docs/_research-tools/generators/presentation/slides_client.py` —
+  what_we_built subtitle/footer; arabic_high_level scope pill;
+  next_milestone subtitle/cards/footer; NEW
+  `slide_client_feedback_loop_ask` builder.
+- `docs/_research-tools/generators/generate_client_presentation.py` —
+  imported and inserted feedback_loop_ask between next_milestone and
+  partnership_ask; HIDDEN_SLIDES recap index 65 → 66.
+- `tests/unit/test_number_audit.py` — BORROWED_SLIDES indices +1 for
+  the slot shift.
+- `presentation_materials_20260224/PRE_MEETING_CHECKLIST.md` —
+  slide count refreshed.
+
+### COMMIT
+- (pending — replace with SHA after `git commit` lands)
+
+---
+
 ## 2026-05-02 — Round 5.12 — Comprehensive cleanup pass (LANDED)
 
 User feedback: Obama videos not playing, no text-appearance animations,

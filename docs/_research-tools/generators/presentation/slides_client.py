@@ -183,7 +183,7 @@ def slide_client_what_we_built(prs):
     add_accent_line(slide)
 
     add_text(slide,
-             "Six things actually exist today, end-to-end, on real data.",
+             "Six things shipped end-to-end. Deployable today on what you have.",
              MX, Inches(1.65), CW, Inches(0.5),
              size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -224,7 +224,9 @@ def slide_client_what_we_built(prs):
                  size=Pt(12), color=WHITE)
 
     add_text(slide,
-             "Everything you'll see today is in production today — not a 'with more research it could…' projection.",
+             "Deployable today. Domain-specific upgrades — Arabic, "
+             "stronger LLM, multi-speaker — are real engineering work, "
+             "scoped separately.",
              MX, Inches(6.55), CW, Inches(0.4),
              size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -2186,24 +2188,34 @@ def slide_client_arabic_high_level(prs):
     # Single-paragraph framing
     add_text(slide,
              "The same approach extends to Arabic.",
-             MX, Inches(2.0), CW, Inches(0.6),
+             MX, Inches(1.9), CW, Inches(0.6),
              size=Pt(28), bold=True, color=TEAL, align=PP_ALIGN.CENTER)
     add_text(slide,
-             "We've mapped the path — encoder adaptation, language model "
-             "swap, evaluation dataset.",
-             MX, Inches(2.8), CW, Inches(0.6),
+             "Path is mapped — encoder retraining, Arabic language "
+             "model, evaluation dataset, calibration.",
+             MX, Inches(2.7), CW, Inches(0.6),
              size=Pt(17), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
+    # Honest scope marker — not a config flip
+    add_rect(slide, MX + Inches(1.0), Inches(3.5), CW - Inches(2.0), Inches(0.85),
+             fill_color=NAVY3, border_color=GOLD, border_width=Pt(1.0))
     add_text(slide,
-             "Realistic timeline: 2-3 months from green-light. "
-             "Specifics on request.",
-             MX, Inches(3.7), CW, Inches(0.6),
-             size=Pt(17), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "This is real engineering work — not a configuration flip. "
+             "Arabic is a separately-scoped, separately-funded effort.",
+             MX + Inches(1.2), Inches(3.6),
+             CW - Inches(2.4), Inches(0.65),
+             size=Pt(14), bold=True, color=GOLD, italic=True,
+             align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "Realistic timeline: 2–3 months from go. Costs scale with "
+             "dataset size and dialect coverage.",
+             MX, Inches(4.55), CW, Inches(0.6),
+             size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # 3 small reminders — what we'd ASK them
-    ask_y = Inches(5.0)
-    add_text(slide, "ASK IN THE MEETING (DO NOT PROMISE):",
+    ask_y = Inches(5.45)
+    add_text(slide, "QUESTIONS WORTH ASKING:",
              MX, ask_y, CW, Inches(0.4),
-             size=Pt(11), bold=True, color=GOLD, align=PP_ALIGN.CENTER)
+             size=Pt(11), bold=True, color=TEAL, align=PP_ALIGN.CENTER)
     add_text(slide,
              "Which Arabic — MSA, Levantine, Egyptian, Gulf? "
              "What does the canonical video look like? "
@@ -2250,9 +2262,10 @@ def slide_client_next_milestone(prs):
     add_accent_line(slide)
 
     add_text(slide,
-             "Today works. Two things make it noticeably better.",
+             "Today works and is deployable. Two upgrades, both real "
+             "engineering investment, take it further.",
              MX, Inches(1.5), CW, Inches(0.5),
-             size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Two cards — plain-English, no jargon, no parameter counts.
     card_gap = Inches(0.3)
@@ -2284,10 +2297,9 @@ def slide_client_next_milestone(prs):
              Inches(1.0), Inches(0.3),
              size=Pt(10), bold=True, color=GREEN)
     add_text(slide,
-             "Swap in a newer, smarter one. Same plumbing — "
-             "better text out the other end. Especially "
-             "stronger on names, uncommon words, and "
-             "industry vocabulary.",
+             "Retrain on a newer, larger LLM. Same architecture — "
+             "much stronger on names, uncommon words, industry "
+             "vocabulary. Real training run, not a config flip.",
              x1 + Inches(0.25), card_top + Inches(2.15),
              card_w - Inches(0.5), Inches(1.05),
              size=Pt(14), color=WHITE)
@@ -2316,10 +2328,10 @@ def slide_client_next_milestone(prs):
              Inches(1.0), Inches(0.3),
              size=Pt(10), bold=True, color=GREEN)
     add_text(slide,
-             "Train it on your footage — your speakers, "
-             "your settings, your vocabulary. It gets "
-             "meaningfully better at the work you "
-             "actually do.",
+             "Train on your footage — your speakers, "
+             "your settings, your vocabulary. Coordinated "
+             "training run; data + compute + engineering "
+             "time, scoped together.",
              x2 + Inches(0.25), card_top + Inches(2.15),
              card_w - Inches(0.5), Inches(1.05),
              size=Pt(14), color=WHITE)
@@ -2340,8 +2352,8 @@ def slide_client_next_milestone(prs):
 
     # Footer — ties back to "very usable today" in plain English.
     add_text(slide,
-             "Today's 62% review-useful is real. Tomorrow's number is "
-             "bigger. The gap is the partnership.",
+             "Today's 62% review-useful is real and deployable. Each "
+             "upgrade is its own scoped, funded effort — not bundled.",
              MX, Inches(7.0), CW, Inches(0.3),
              size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -2387,6 +2399,110 @@ def slide_client_next_milestone(prs):
         "TRANSITION TO NEXT SLIDE: this slide says WHAT we invest in; "
         "the next slide (partnership_ask) says HOW the partnership "
         "runs. Together they are the close."
+    ))
+    return slide
+
+
+def slide_client_feedback_loop_ask(prs):
+    """Round 5.13 — the soft ask we couldn't make until the trust + ship
+    story was credible.
+
+    Lands AFTER next_milestone (the technical upgrade ask) and BEFORE
+    partnership_ask (the budget conversation). The beat: "we did the
+    engineering on the confidence layer; the next signal — what does
+    this look like in actual reviewer workflows — is something only
+    your team can give us."
+
+    Tone: gentle, partnership-flavored, not a sales close. This is the
+    "we need real users to use it on real video" beat per the user's
+    Round 5.13 directive.
+    """
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "What we'd ask of your team")
+    add_accent_line(slide)
+
+    # Headline
+    add_text(slide,
+             "We've built the confidence layer. The signal we can't "
+             "generate alone is real reviewer feedback on real video.",
+             MX, Inches(1.55), CW, Inches(0.85),
+             size=Pt(18), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
+
+    # Three cards — gentle ask
+    card_w = Inches(3.85)
+    gap = Inches(0.25)
+    top = Inches(2.95)
+    h = Inches(2.85)
+
+    items = [
+        ("RUN IT ON YOUR VIDEO", TEAL,
+         "Real footage, real conditions. Even a small set of clips "
+         "tells us what the system actually does on your data."),
+        ("HAVE YOUR ANALYSTS READ", GOLD,
+         "The people who'll actually use the output. Not the "
+         "managers — the reviewers. Their judgment is the ground "
+         "truth we're calibrated against."),
+        ("TELL US WHERE COLORS HELP", GREEN,
+         "Where does green align with their judgment? Where does "
+         "it mislead? Which segments do they re-watch? That's "
+         "the next round of calibration."),
+    ]
+    for i, (label, color, body) in enumerate(items):
+        x = MX + i * (card_w + gap)
+        add_rect(slide, x, top, card_w, h, fill_color=NAVY2, border_color=None)
+        add_text(slide, label, x + Inches(0.2), top + Inches(0.25),
+                 card_w - Inches(0.4), Inches(0.4),
+                 size=Pt(13), bold=True, color=color)
+        add_text(slide, body, x + Inches(0.2), top + Inches(0.85),
+                 card_w - Inches(0.4), h - Inches(1.0),
+                 size=Pt(13), color=WHITE)
+
+    # Bottom anchor — why this is the right ask
+    anchor_y = Inches(6.05)
+    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
+             fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
+    add_text(slide,
+             "We did the engineering. The end-user signal closes "
+             "the loop — and the calibration tightens around your "
+             "actual content.",
+             MX + Inches(0.3), anchor_y + Inches(0.13),
+             CW - Inches(0.6), Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
+
+    # Footer
+    add_text(slide,
+             "A pilot's worth of analyst-hours, end-to-end. "
+             "Specifics in the partnership conversation.",
+             MX, Inches(6.75), CW, Inches(0.35),
+             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide, (
+        "Round 5.13 — the soft client-feedback ask. The user wrote: "
+        "'we invested so much into making confidence work; we need "
+        "you to take it to the end people who use it to analyze "
+        "actual videos and get their feedback.' This is that ask, "
+        "delivered gently before the partnership/budget conversation. "
+        "\n\n"
+        "VOICE FRAMING (out loud, NOT on slide): 'Confidence calibration "
+        "is the centerpiece of what we built. Today it's anchored to "
+        "our blind LLM evaluator. The next calibration step needs real "
+        "analysts on real footage — your analysts on your footage. "
+        "That's the signal we can't generate alone, and it's what "
+        "makes the trust signal tighten around your domain over time.' "
+        "\n\n"
+        "If asked HOW MUCH FEEDBACK: 'Pilot's worth — handful of "
+        "analyst-hours per week for the first weeks of deployment, "
+        "scaling down as the calibration converges. Specifics in "
+        "follow-up.' Don't promise specific durations on the slide. "
+        "\n\n"
+        "Ties to slide 48 (trust_without_ground_truth) MEANINGFUL "
+        "TODAY / GROWS IN YOUR HANDS pills — that slide promised "
+        "calibration tightens with use; THIS slide names what 'with "
+        "use' actually requires from the client."
     ))
     return slide
 

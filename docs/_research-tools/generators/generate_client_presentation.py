@@ -137,6 +137,7 @@ from presentation.slides_client import (
     slide_client_preprocessing_summary,
     slide_client_arabic_high_level,         # NEW Round 5.1 (replaces slide_arabic_roadmap)
     slide_client_next_milestone,            # NEW Round 5.8 (technical direction behind the ask)
+    slide_client_feedback_loop_ask,         # NEW Round 5.13 — soft ask: end-user feedback
     slide_client_partnership_ask,           # NEW Round 5.1 (merged data_ask + investment_ask)
 
     # Section 14 — Close
@@ -287,6 +288,7 @@ def main():
         slide_client_preprocessing_summary,
         slide_client_arabic_high_level,         # NEW Round 5.1 (replaces academic arabic_roadmap)
         slide_client_next_milestone,            # NEW Round 5.8 — what investment buys (stronger LLM + more data)
+        slide_client_feedback_loop_ask,         # NEW Round 5.13 — soft client-feedback ask
         slide_client_partnership_ask,           # NEW Round 5.1 (merged ask) — partnership logistics
 
         # § Close (no transition — flows directly from partnership ask)
@@ -332,8 +334,10 @@ def main():
              # "unclear and not in animation"; the simpler 3-component overview at slide 4
              # (slide_client_pipeline_components, moved up) covers this beat better.
         59,  # _section_whats_next transition — Act 3's What's Next pivot is implicit; trim transition
-        65,  # recap "Three things to take with you" — Round 5.12: trim close section
-             # (close: integration_commitment + next_steps + thank_you is enough)
+        66,  # recap "Three things to take with you" — Round 5.12: trim close section
+             # (close: integration_commitment + next_steps + thank_you is enough).
+             # Index shifted from 65 to 66 in Round 5.13 after feedback_loop_ask
+             # inserted before partnership_ask.
     ]
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn
