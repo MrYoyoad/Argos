@@ -8,6 +8,10 @@
 
 n-best aggregation **modestly improves the broader Y+P operating point** over the 1-best baseline, with no Y-level cost. Best method on the judge metric is `hyp_mbr`; `hyp_vote_conf` is comparable and additionally wins on WER.
 
+![Judge verdict distribution + paired McNemar](figures/judge_distribution.png)
+
+*Left: Y/P/N composition per method. Y rates are within 1.5 pp; the differences live in the P↔N boundary. Right: paired-McNemar Y+P comparison vs baseline — green bars are method-only Y+P wins (rescues), red bars are baseline-only Y+P wins (leaks). MBR and vote_conf both significantly beat baseline on Y+P.*
+
 | metric | baseline | hyp_mbr | hyp_vote_score | hyp_vote_conf | who wins |
 |---|---|---|---|---|---|
 | **WER** | 64.05 % | 63.84 % | 63.67 % | **62.49 %** | hyp_vote_conf (−1.56 pp) |
@@ -57,6 +61,10 @@ hyp_mbr vs baseline                hyp_vote_conf vs baseline
 
 ## IS distribution shape — where aggregation actually moves things
 
+![IS distribution per method + per-bin Δ vs baseline](figures/is_distribution.png)
+
+*Top: IS distributions overlap heavily at the mean level. Bottom: per-bin density change (method − baseline). Below IS=2.0 (NIV-Y+P boundary), bars trend positive — methods are accumulating density. Around IS=4.0 (NIV-Y boundary) and above, bars trend negative — methods are losing density at the top. The shifts are small per bin but consistent in direction.*
+
 Mean IS is nearly identical across the four methods (within 0.015), but conditional analysis on the **baseline IS tier** shows the rescue pattern explicitly:
 
 | baseline tier | n | mean Δ_IS (mbr) | tier_up | tier_down |
@@ -69,7 +77,11 @@ Mean IS is nearly identical across the four methods (within 0.015), but conditio
 
 Same shape, flatter, for `hyp_vote_conf`: +0.029 at tier 1 (18 tier-ups, 0 tier-downs), −0.023 at tier 5 (0 tier-ups, 14 tier-downs).
 
-**Aggregation rescues failed segments asymmetrically** (no downgrades at the bottom) at the cost of slight degradation at the very top. The mean wash because gains and losses partly cancel — but the shape change is real and matches the judge's Y+P findings.
+![Conditional Δ_IS by baseline tier](figures/is_conditional_delta.png)
+
+*Mean IS shift vs baseline, conditioned on baseline IS tier. Both MBR and vote_conf show the same asymmetric pattern: positive at tier 1 (failed segments rescued), near-zero in the middle, negative at tier 5 (excellent segments slightly degraded). MBR is steeper at both ends; vote_conf is flatter but consistent.*
+
+**Aggregation rescues failed segments asymmetrically** (no downgrades at the bottom) at the cost of slight degradation at the very top. The mean washes because gains and losses partly cancel — but the shape change is real and matches the judge's Y+P findings.
 
 ## Qualitative evidence — v3 rescues and Y-leaks
 
