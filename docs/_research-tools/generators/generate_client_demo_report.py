@@ -154,13 +154,28 @@ def overall_badge(records: Sequence[dict]) -> Optional[float]:
 
 
 def _badge_class(badge: Optional[float]) -> str:
+    """Map mean per-word probability to the reliability tier badge.
+
+    Thresholds match make_report.classify_tier and make_burn._classify_tier:
+    >= 0.82 → trust, >= 0.65 → inspect, below → don't believe.
+    """
     if badge is None:
         return "badge-unknown"
-    if badge >= 0.75:
+    if badge >= 0.82:
         return "badge-high"
-    if badge >= 0.55:
+    if badge >= 0.65:
         return "badge-med"
     return "badge-low"
+
+
+def _badge_label(badge: Optional[float]) -> str:
+    if badge is None:
+        return "—"
+    if badge >= 0.82:
+        return "TRUST"
+    if badge >= 0.65:
+        return "INSPECT"
+    return "DON'T BELIEVE"
 
 
 CSS = """
@@ -169,12 +184,13 @@ CSS = """
   --bg-card: #152a40;
   --bg-card-2: #1a3550;
   --teal: #00b4d8;
-  --green: #4caf50;
-  --yellow: #ffc107;
-  --red: #e06c75;
-  --red-bg: #5a2027;
-  --green-bg: #1f3a26;
-  --yellow-bg: #4a3a08;
+  /* Confidence palette — matches make_report.py and make_burn.py */
+  --conf-high: #4fc3f7;     /* trust   — bright blue   */
+  --conf-med:  #ffb300;     /* inspect — warm amber    */
+  --conf-low:  #ba68c8;     /* don't believe — purple  */
+  --conf-high-bg: #16324a;
+  --conf-med-bg:  #4a3a08;
+  --conf-low-bg:  #3a1d4a;
   --gray: #aaaaaa;
   --gray-mid: #666666;
   --white: #ffffff;
@@ -233,10 +249,10 @@ h1 .subtitle {
   text-align: center;
   min-width: 140px;
 }
-.badge-high   { background: var(--green-bg);  color: var(--green); }
-.badge-med    { background: var(--yellow-bg); color: var(--yellow); }
-.badge-low    { background: var(--red-bg);    color: var(--red); }
-.badge-unknown{ background: var(--bg-card-2); color: var(--gray); }
+.badge-high   { background: var(--conf-high-bg); color: var(--conf-high); }
+.badge-med    { background: var(--conf-med-bg);  color: var(--conf-med); }
+.badge-low    { background: var(--conf-low-bg);  color: var(--conf-low); }
+.badge-unknown{ background: var(--bg-card-2);    color: var(--gray); }
 .legend {
   background: var(--bg-card);
   padding: 12px 16px;
@@ -252,9 +268,9 @@ h1 .subtitle {
   margin: 0 6px;
   font-weight: 600;
 }
-.swatch.conf-high { background: var(--green-bg);  color: var(--green); }
-.swatch.conf-med  { background: var(--yellow-bg); color: var(--yellow); }
-.swatch.conf-low  { background: var(--red-bg);    color: var(--red); }
+.swatch.conf-high { background: var(--conf-high-bg); color: var(--conf-high); }
+.swatch.conf-med  { background: var(--conf-med-bg);  color: var(--conf-med); }
+.swatch.conf-low  { background: var(--conf-low-bg);  color: var(--conf-low); }
 .segment {
   background: var(--bg-card);
   border-radius: 10px;
@@ -309,9 +325,9 @@ h1 .subtitle {
   cursor: help;
   position: relative;
 }
-.word.conf-high { color: var(--green); }
-.word.conf-med  { color: var(--yellow); }
-.word.conf-low  { color: var(--red); text-decoration: underline wavy var(--red); }
+.word.conf-high { color: var(--conf-high); }
+.word.conf-med  { color: var(--conf-med); }
+.word.conf-low  { color: var(--conf-low); text-decoration: underline wavy var(--conf-low); }
 /* CSS-driven hover tooltip — renders instantly, no browser delay,
    works in IDE-embedded HTML previews where title= often does not. */
 .word::after {
@@ -346,12 +362,12 @@ h1 .subtitle {
 
 def render_html(records: Sequence[dict], badge: Optional[float],
                 synthetic_confidence: bool,
-                title: str = "Argos VSP — Visual Speech Recognition",
+                title: str = "Confidence Breakdown",
                 subtitle: Optional[str] = None,
                 source: str = "Pipeline output",
                 prefix_alias: Optional[Mapping[str, str]] = None) -> str:
     """Build the full HTML page."""
-    badge_text = f"{badge*100:.0f}%" if badge is not None else "—"
+    badge_text = _badge_label(badge)
     badge_class = _badge_class(badge)
     n = len(records)
     if subtitle is None:
@@ -389,7 +405,7 @@ def render_html(records: Sequence[dict], badge: Optional[float],
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Argos VSP — Client Demo Report</title>
+  <title>Confidence Breakdown</title>
   <style>{CSS}</style>
 </head>
 <body>
@@ -399,7 +415,7 @@ def render_html(records: Sequence[dict], badge: Optional[float],
   </h1>
 
   <div class="summary">
-    <div class="badge {badge_class}">{badge_text}<div style="font-size:10px;font-weight:600;letter-spacing:0.1em;margin-top:4px">OVERALL CONFIDENCE</div></div>
+    <div class="badge {badge_class}">{badge_text}<div style="font-size:10px;font-weight:600;letter-spacing:0.1em;margin-top:4px">OVERALL TIER</div></div>
     <div class="summary-card">
       <div class="label">Segments</div>
       <div class="value">{n}</div>
@@ -416,20 +432,13 @@ def render_html(records: Sequence[dict], badge: Optional[float],
 
   <div class="legend">
     Per-word confidence:
-    <span class="swatch conf-high">trust</span> = confident, alternatives agreed
-    &nbsp;·&nbsp;
-    <span class="swatch conf-med">review</span> = some signal, verify
-    &nbsp;·&nbsp;
-    <span class="swatch conf-low">avoid</span>
-    &nbsp;·&nbsp; Numbers stay yellow at most.
+    <span class="swatch conf-high">trust</span>
+    <span class="swatch conf-med">inspect</span>
+    <span class="swatch conf-low">don't believe</span>
     &nbsp; · &nbsp;Hover any word to see its confidence value.
   </div>
 
   {segments_html}
-
-  <div class="footer-note">
-    Argos / The Orchard — confidential client demo. Do not redistribute.
-  </div>
 </body>
 </html>
 """
@@ -491,7 +500,7 @@ def main():
                         help="utt_id substring filter — only segments containing this "
                              "substring are rendered. Default: '' (all segments).")
     parser.add_argument("--title", type=str,
-                        default="Argos VSP — Visual Speech Recognition",
+                        default="Confidence Breakdown",
                         help="page H1 title")
     parser.add_argument("--subtitle", type=str, default=None,
                         help="page subtitle under H1 (default: 'N segments')")

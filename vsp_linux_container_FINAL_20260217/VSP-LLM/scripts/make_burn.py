@@ -12,12 +12,30 @@ import textwrap
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-# Per-word confidence colors (BGR for libass; matches the HTML report palette).
-# CSS green #4caf50 → BGR 50AF4C; amber #ffc107 → BGR 07C1FF; red #e06c75 → BGR 756CE0.
-ASS_COLOR_HIGH = "&H50AF4C&"   # green  (conf >= 0.85)
-ASS_COLOR_MED  = "&H07C1FF&"   # amber  (0.40 <= conf < 0.85)
-ASS_COLOR_LOW  = "&H756CE0&"   # red    (conf < 0.40)
-ASS_COLOR_NONE = "&HFFFFFF&"   # white  (no confidence data — fallback)
+# Two palettes, mirroring the HTML report.
+#
+# Confidence palette (blue / orange / purple) — used when a real
+# word_confidence sidecar is available. The thresholds and joint
+# conf+agreement rule live in compute_word_confidence.classify_joint;
+# we just paint the precomputed conf-high/med/low classes here.
+ASS_CONF_HIGH = "&HF7C34F&"   # bright blue   (BGR for #4FC3F7)
+ASS_CONF_MED  = "&H00B3FF&"   # warm amber    (BGR for #FFB300)
+ASS_CONF_LOW  = "&HC868BA&"   # bright purple (BGR for #BA68C8)
+
+# Accuracy palette (green / amber / red) — used for the synthetic
+# REF↔HYP alignment fallback when no confidence sidecar is present.
+ASS_ACC_HIGH  = "&H50AF4C&"   # green  (#4CAF50)
+ASS_ACC_MED   = "&H07C1FF&"   # amber  (#FFC107)
+ASS_ACC_LOW   = "&H756CE0&"   # red    (#E06C75)
+
+ASS_COLOR_NONE = "&HFFFFFF&"  # white — used when no class is set
+
+# Segment-level reliability tier (matches make_report.classify_tier).
+# Mean word probability >= 0.82 → Trust, >= 0.65 → Salvage (Inspect),
+# below 0.65 → Strip (Don't believe). When Strip, per-word coloring is
+# removed (mirrors the HTML report) — the badge alone carries the signal.
+TIER_TRUST_MIN   = 0.82
+TIER_SALVAGE_MIN = 0.65
 
 # Matches the thresholds in compute_word_confidence.py and the HTML report.
 SYNTH_PROBS = {"match": 0.85, "sub": 0.50, "ins": 0.20}
@@ -41,12 +59,50 @@ def _conf_class(prob: Optional[float]) -> str:
     return "conf-low"
 
 
-def _ass_color_for(conf_class: str) -> str:
+def _ass_color_for(conf_class: str, palette: str = "confidence") -> str:
+    """Map a conf-high/med/low class to an ASS BGR color.
+
+    `palette` selects between the confidence (blue/orange/purple) palette
+    used for real word_confidence sidecars, and the accuracy
+    (green/amber/red) palette used for the synthetic REF↔HYP fallback.
+    """
+    if palette == "accuracy":
+        return {
+            "conf-high": ASS_ACC_HIGH,
+            "conf-med":  ASS_ACC_MED,
+            "conf-low":  ASS_ACC_LOW,
+        }.get(conf_class, ASS_COLOR_NONE)
     return {
-        "conf-high": ASS_COLOR_HIGH,
-        "conf-med":  ASS_COLOR_MED,
-        "conf-low":  ASS_COLOR_LOW,
+        "conf-high": ASS_CONF_HIGH,
+        "conf-med":  ASS_CONF_MED,
+        "conf-low":  ASS_CONF_LOW,
     }.get(conf_class, ASS_COLOR_NONE)
+
+
+def _classify_tier(words: List[Dict[str, Any]]) -> Tuple[Optional[str], Optional[str]]:
+    """Return (tier_name, badge_text) for a segment's mean word probability.
+
+    Mirrors make_report.classify_tier. Returns (None, None) when no real
+    probabilities are available (e.g. synthetic-only fallback).
+    """
+    probs = [w.get("prob") for w in (words or []) if isinstance(w.get("prob"), (int, float))]
+    if not probs:
+        return None, None
+    mean_prob = sum(probs) / len(probs)
+    if mean_prob >= TIER_TRUST_MIN:
+        return "Trust", "TRUST"
+    if mean_prob >= TIER_SALVAGE_MIN:
+        return "Salvage", "INSPECT"
+    return "Strip", "DON'T BELIEVE"
+
+
+def _tier_color(tier: Optional[str]) -> str:
+    """ASS color override for the tier badge — same palette as confidence."""
+    return {
+        "Trust":   ASS_CONF_HIGH,
+        "Salvage": ASS_CONF_MED,
+        "Strip":   ASS_CONF_LOW,
+    }.get(tier or "", ASS_COLOR_NONE)
 
 
 def synthetic_words_from_alignment(ref: str, hyp: str) -> List[Dict[str, Any]]:
@@ -111,25 +167,62 @@ def _ass_escape(text: str) -> str:
 def build_ass_file(words: List[Dict[str, Any]],
                    plain_text: str,
                    video_w: int, video_h: int,
-                   fontsize: int, margin_v: int) -> Optional[str]:
+                   fontsize: int, margin_v: int,
+                   palette: str = "confidence",
+                   tier: Optional[str] = None,
+                   badge_text: Optional[str] = None,
+                   badge_fs: Optional[int] = None) -> Optional[str]:
     """Write a temporary ASS subtitle file with per-word color overrides.
 
     Returns the file path, or None if `words` is empty (caller should fall
     back to the plain drawtext path).
+
+    When `tier` is "Strip", per-word coloring is dropped (mirrors the HTML
+    report); the tier badge alone signals unreliability. Otherwise words are
+    colored using `palette` ("confidence" → blue/orange/purple,
+    "accuracy" → green/amber/red).
+
+    When `badge_text` is provided, a second Dialogue line renders a small
+    bold pill at the top-right (alignment=9) using the matching tier color.
     """
     if not words:
         return None
 
-    parts = []
-    for i, w in enumerate(words):
-        color = _ass_color_for(w.get("conf_class") or _conf_class(w.get("prob")))
-        word = _ass_escape(str(w.get("word", "")))
-        sep = " " if i < len(words) - 1 else ""
-        parts.append(f"{{\\1c{color}}}{word}{sep}")
-    dialogue_text = "".join(parts)
+    if tier == "Strip":
+        # Mirror the HTML report: strip per-word color, render plain hyp.
+        plain = _ass_escape(plain_text or " ".join(str(w.get("word", "")) for w in words))
+        dialogue_text = plain
+    else:
+        parts = []
+        for i, w in enumerate(words):
+            cc = w.get("conf_class") or _conf_class(w.get("prob"))
+            color = _ass_color_for(cc, palette=palette)
+            word = _ass_escape(str(w.get("word", "")))
+            sep = " " if i < len(words) - 1 else ""
+            parts.append(f"{{\\1c{color}}}{word}{sep}")
+        dialogue_text = "".join(parts)
+
+    # Tier badge (top-right). Empty when no badge_text — keeps headers simple.
+    badge_style_line = ""
+    badge_dialogue_line = ""
+    if badge_text:
+        bfs = badge_fs or max(14, int(fontsize * 0.78))
+        # ASS style fields use &HAABBGGRR (no trailing &); strip the &…& of
+        # our overrides and prepend an opaque alpha byte.
+        tcolor_no_amp = _tier_color(tier).strip("&").lstrip("H")
+        badge_color = f"&H00{tcolor_no_amp}"
+        # alignment=9 → top-right. BorderStyle=1 + Outline=3 gives a thick
+        # black outline for legibility on bright video.
+        badge_style_line = (
+            f"Style: Tier,Arial,{bfs},{badge_color},&H00FFFFFF,&H00000000,&H00000000,"
+            f"1,0,0,0,100,100,0,0,1,3,0,9,18,18,18,1\n"
+        )
+        badge_dialogue_line = (
+            f"Dialogue: 0,0:00:00.00,9:59:59.00,Tier,,0,0,0,, {_ass_escape(badge_text)} \n"
+        )
 
     # ASS Dialogue spans the whole clip — burned video is one segment.
-    # Style: Arial, given fontsize, alignment=2 (bottom-center), MarginV in pixels.
+    # Default style: Arial, alignment=2 (bottom-center), MarginV in pixels.
     ass = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {video_w}
@@ -140,11 +233,11 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Default,Arial,{fontsize},&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,20,20,{margin_v},1
-
+{badge_style_line}
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 Dialogue: 0,0:00:00.00,9:59:59.00,Default,,0,0,0,,{dialogue_text}
-"""
+{badge_dialogue_line}"""
 
     tf = tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".ass", delete=False)
     try:
@@ -621,32 +714,47 @@ def main() -> None:
         if w <= 0 or h <= 0:
             w, h = 1280, 720
 
-        # scale font: allow larger on big videos, smaller on tiny
+        # Font scales as a fraction of the frame height so the subtitle stays
+        # proportional on small videos. Boost on very high-res frames where
+        # 24px would look tiny. Floor at 14px for legibility.
+        target_fs = int(h * 0.045)
         max_fs = args.fontsize if h < 1200 else int(args.fontsize * 1.6)
-        fs = max(12, min(max_fs, int(h / 18)))
+        fs = max(14, min(max_fs, target_fs))
 
-        # margins scale down on small videos
-        margin = min(args.margin, max(6, w // 20))
-        pad_y = min(args.pad_y, max(6, h // 20))
+        # Margins/padding shrink on small videos.
+        margin = min(args.margin, max(6, w // 30))
+        pad_y = min(args.pad_y, max(4, h // 30))
 
         usable_w = max(40, w - 2 * margin)
         char_px = max(6.0, 0.55 * fs)
         wrap = max(10, min(args.wrap_width * 3, int(usable_w / char_px)))
 
-        txt = wrap_text(hyp, width=wrap, max_lines=args.max_lines)
+        # Cap lines on small frames so the subtitle box doesn't dominate.
+        eff_max_lines = args.max_lines if h >= 480 else 2
+        txt = wrap_text(hyp, width=wrap, max_lines=eff_max_lines)
 
         line_h = fs + args.line_spacing
-        needed = pad_y * 2 + (args.max_lines * line_h)
-        box_h = max(int(needed), min(args.box_h, int(h * 0.45)))
+        needed = pad_y * 2 + (eff_max_lines * line_h)
+        # Cap box_h at 25% of the frame so the speaker stays visible.
+        box_h = max(int(needed), min(args.box_h, int(h * 0.25)))
         box_h = min(box_h, h - 2)
 
         dst = out_dir / _file_names.get(uid, f"{uid}_with_hyp.mp4")
 
         # Resolve per-word coloring source for this segment.
         # Priority: real word_confidence sidecar > synthetic from REF↔HYP > none.
+        # `palette` selects which color set to use:
+        #   confidence (blue/orange/purple) — real conf data
+        #   accuracy   (green/amber/red)    — synthetic REF↔HYP fallback
         seg_words: List[Dict[str, Any]] = word_conf.get(uid, [])
+        is_synthetic = False
         if not seg_words and uid in refs:
             seg_words = synthetic_words_from_alignment(refs[uid], hyp)
+            is_synthetic = True
+        palette = "accuracy" if is_synthetic else "confidence"
+
+        # Tier badge from segment mean prob — only meaningful for real conf.
+        tier_name, badge_text = (None, None) if is_synthetic else _classify_tier(seg_words)
 
         tf = tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".txt", delete=False)
         try:
@@ -666,13 +774,15 @@ def main() -> None:
         #   (b) original drawtext path (white text) — used as backward-compatible fallback
         ass_file: Optional[str] = None
         if seg_words:
-            # libass measures fontsize differently than ffmpeg drawtext — scale up
-            # ~30% so the colored text reads at roughly the same visual size as
-            # the white drawtext fallback.
-            ass_fs = max(14, int(round(fs * 1.30)))
-            margin_v = max(8, box_h - pad_y - ass_fs)
+            # libass renders close to ffmpeg drawtext at the same fontsize;
+            # the previous +30% boost made low-res videos unreadably chunky.
+            ass_fs = max(14, fs)
+            margin_v = max(pad_y, 8)
+            badge_fs = max(12, int(fs * 0.7))
             ass_file = build_ass_file(seg_words, txt, w, h,
-                                      fontsize=ass_fs, margin_v=margin_v)
+                                      fontsize=ass_fs, margin_v=margin_v,
+                                      palette=palette, tier=tier_name,
+                                      badge_text=badge_text, badge_fs=badge_fs)
 
         textfile_for_filter = textfile.replace("'", r"\'")
 

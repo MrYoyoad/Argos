@@ -34,7 +34,11 @@ run_client_outputs() {
   local report_dir="${post_root}/report"
   local burn_dir="${post_root}/burned_videos"
 
-  mkdir -p "$report_dir" "$burn_dir"
+  mkdir -p "$report_dir"
+  # Burned videos / lip-crops / beam-analysis are opt-in. Default output is
+  # just the two HTML reports. Set VSP_FULL_OUTPUTS=1 to restore the rest.
+  local full_outputs="${VSP_FULL_OUTPUTS:-0}"
+  [ "$full_outputs" = "1" ] && mkdir -p "$burn_dir"
 
   # Find decode output (check both nested and flat paths)
   local decode_json
@@ -198,90 +202,71 @@ run_client_outputs() {
     return 1
   }
 
-  # Generate full Intelligibility analysis (augmented CSV + summary JSON)
-  local is_script="$vsp_dir/scripts/generate_intelligibility_scores.py"
-  # Fallback: check docs path (EC2 development layout)
-  if [ ! -f "$is_script" ]; then
-    is_script="${HOME}/docs/_research-tools/generators/generate_intelligibility_scores.py"
-  fi
-  if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
-    echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
-    python3 "$is_script" \
-      --csv "$report_dir/report.csv" \
-      --out_dir "$report_dir" \
-      --device cpu || {
-      log_warn "Full Intelligibility analysis failed (non-critical) — basic report still available"
-    }
-  fi
-
-  # ---- Beam variance & word-level confusion analysis ----
-  # Runs when the n-best sidecar is present. Light-weight (CPU-only, ~minutes
-  # for 1,500 segments). Outputs go to $report_dir/beam_analysis/.
-  if [ -f "$nbest_json" ] && [ "${VSP_BEAM_ANALYSIS:-1}" = "1" ]; then
-    echo ">>> [8] Running beam variance & word-level confusion analysis"
-    local bva_script="$vsp_dir/scripts/analyze_beam_variance.py"
-    if [ ! -f "$bva_script" ]; then
-      bva_script="${HOME}/docs/_research-tools/generators/analyze_beam_variance.py"
+  if [ "$full_outputs" = "1" ]; then
+    # Optional: full augmented Intelligibility analysis (CSV + summary JSON).
+    local is_script="$vsp_dir/scripts/generate_intelligibility_scores.py"
+    if [ ! -f "$is_script" ]; then
+      is_script="${HOME}/docs/_research-tools/generators/generate_intelligibility_scores.py"
     fi
-    if [ -f "$bva_script" ]; then
-      local bva_dir="$report_dir/beam_analysis"
-      mkdir -p "$bva_dir"
-      local bva_args=("--nbest" "$nbest_json" "--out-dir" "$bva_dir")
-      [ -n "$agg_json" ] && [ -f "$agg_json" ] && bva_args+=("--aggregated" "$agg_json")
-      [ -f "$report_dir/report.csv" ] && bva_args+=("--baseline-csv" "$report_dir/report.csv")
-      [ -f "$decode_json" ] && bva_args+=("--hypo-json" "$decode_json")
-      [ -f "$confidence_json" ] && bva_args+=("--confidence" "$confidence_json")
-      python3 "$bva_script" "${bva_args[@]}" \
-        || log_warn "analyze_beam_variance.py failed (non-critical)"
+    if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
+      echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
+      python3 "$is_script" \
+        --csv "$report_dir/report.csv" \
+        --out_dir "$report_dir" \
+        --device cpu \
+        || log_warn "Full Intelligibility analysis failed (non-critical) — basic report still available"
     fi
-  fi
 
-  # Generate burned videos. When word_confidence.json was produced above,
-  # pass it so make_burn.py can render per-word green/yellow/red coloring
-  # via libass. When absent, make_burn.py falls back to the synthetic
-  # WER-alignment colors (REF↔HYP), and finally to plain white drawtext.
-  local burn_conf_arg=""
-  [ -n "$word_conf_json" ] && [ -f "$word_conf_json" ] && burn_conf_arg="--word_confidence $word_conf_json"
-  python3 "$vsp_dir/scripts/make_burn.py" \
-    --jsonl "$decode_json" \
-    --video_dir "$flat_vid_dir" \
-    --segment_metadata "$segment_metadata" \
-    --out_dir "$burn_dir" \
-    $burn_conf_arg || {
-    log_error "make_burn.py failed"
-    return 1
-  }
+    # Optional: beam variance & word-level confusion analysis.
+    if [ -f "$nbest_json" ] && [ "${VSP_BEAM_ANALYSIS:-1}" = "1" ]; then
+      echo ">>> [8] Running beam variance & word-level confusion analysis"
+      local bva_script="$vsp_dir/scripts/analyze_beam_variance.py"
+      if [ ! -f "$bva_script" ]; then
+        bva_script="${HOME}/docs/_research-tools/generators/analyze_beam_variance.py"
+      fi
+      if [ -f "$bva_script" ]; then
+        local bva_dir="$report_dir/beam_analysis"
+        mkdir -p "$bva_dir"
+        local bva_args=("--nbest" "$nbest_json" "--out-dir" "$bva_dir")
+        [ -n "$agg_json" ] && [ -f "$agg_json" ] && bva_args+=("--aggregated" "$agg_json")
+        [ -f "$report_dir/report.csv" ] && bva_args+=("--baseline-csv" "$report_dir/report.csv")
+        [ -f "$decode_json" ] && bva_args+=("--hypo-json" "$decode_json")
+        [ -f "$confidence_json" ] && bva_args+=("--confidence" "$confidence_json")
+        python3 "$bva_script" "${bva_args[@]}" \
+          || log_warn "analyze_beam_variance.py failed (non-critical)"
+      fi
+    fi
 
-  # Generate Argos client-styled demo report (dark, segment-card layout)
-  # Non-critical: pretty client-facing artifact, not a metric. Warn on failure.
-  run_argos_demo_report "$vsp_dir" "$decode_json" "$report_dir" \
-    || log_warn "Argos demo report generation failed (non-critical) — main report still available"
+    # Optional: burned videos with per-word coloring + tier badge.
+    local burn_conf_arg=""
+    [ -n "$word_conf_json" ] && [ -f "$word_conf_json" ] && burn_conf_arg="--word_confidence $word_conf_json"
+    python3 "$vsp_dir/scripts/make_burn.py" \
+      --jsonl "$decode_json" \
+      --video_dir "$flat_vid_dir" \
+      --segment_metadata "$segment_metadata" \
+      --out_dir "$burn_dir" \
+      $burn_conf_arg \
+      || log_warn "make_burn.py failed (non-critical)"
 
-  # Copy lip crops to client output (non-critical — warn on failure, don't abort)
-  local lip_dir="${post_root}/lip_crops"
-  mkdir -p "$lip_dir"
-  echo ">>> [8] Copying lip crop videos to client outputs"
-  python3 -c "
+    # Optional: copy lip crops to client output.
+    local lip_dir="${post_root}/lip_crops"
+    mkdir -p "$lip_dir"
+    echo ">>> [8] Copying lip crop videos to client outputs"
+    python3 -c "
 import json, sys
 from pathlib import Path
 
 decode_json = Path('$decode_json')
 segment_vid_dir = Path('$segment_vid_dir')
 lip_dir = Path('$lip_dir')
-
-# Load decode output to get processed segment IDs
 try:
     data = json.loads(decode_json.read_text())
 except Exception as e:
     print(f'[WARN] Cannot read decode JSON for lip crops: {e}')
     sys.exit(0)
-
 utt_ids = data.get('utt_id', [])
 if not utt_ids:
-    print('[WARN] No utt_ids in decode JSON for lip crops')
     sys.exit(0)
-
-# Parse segment IDs and build display names (same logic as make_report.py)
 def parse_segment_id(sid):
     parts = sid.split('_')
     if len(parts) < 4:
@@ -291,12 +276,11 @@ def parse_segment_id(sid):
         return '_'.join(parts[:-3]), int(parts[-3])
     except (ValueError, IndexError):
         return sid, -1
-
 groups = {}
 for uid in utt_ids:
     base, idx = parse_segment_id(uid)
     groups.setdefault(base, []).append((idx, uid))
-
+import shutil
 copied = 0
 for base, entries in groups.items():
     entries.sort()
@@ -305,37 +289,48 @@ for base, entries in groups.items():
         src = segment_vid_dir / f'{uid}.mp4'
         if not src.exists():
             continue
-        if is_multi:
-            dst_name = f'{base}_Part{part_num}_lip_crop.mp4'
-        else:
-            dst_name = f'{base}_lip_crop.mp4'
-        import shutil
+        dst_name = f'{base}_Part{part_num}_lip_crop.mp4' if is_multi else f'{base}_lip_crop.mp4'
         shutil.copy2(str(src), str(lip_dir / dst_name))
         copied += 1
-
 print(f'[INFO] Copied {copied} lip crop(s) to {lip_dir}')
 " 2>&1 || log_warn "Lip crop copy failed (non-critical)"
+  fi
+
+  # Generate Argos confidence-breakdown HTML alongside the main report.
+  run_argos_demo_report "$vsp_dir" "$decode_json" "$report_dir" \
+    || log_warn "Confidence breakdown report failed (non-critical) — main report still available"
+
+  # Default output is the two HTML files. Prune intermediates unless caller
+  # asked for the full output set (VSP_FULL_OUTPUTS=1).
+  if [ "$full_outputs" != "1" ]; then
+    echo ">>> [8] Pruning intermediates — keeping only HTML reports"
+    find "$report_dir" -mindepth 1 -maxdepth 1 \
+      ! -name 'report.html' \
+      ! -name 'confidence_breakdown.html' \
+      -exec rm -rf {} + 2>/dev/null || true
+  fi
 
   log_info "Client outputs complete"
   log_info "Outputs saved to: $post_root"
   return 0
 }
 
-# Generate the dark "Argos VSP" client-styled HTML report (one card per segment,
-# per-word green/yellow/red confidence coloring). Standalone of make_report.py
-# and non-critical: failure is logged but does not break the pipeline run.
+# Generate the dark per-segment "Confidence Breakdown" HTML alongside the
+# main report. Per-word coloring uses the confidence palette
+# (blue / orange / purple) when a real word_confidence sidecar is available,
+# falling back to the synthetic REF↔HYP alignment otherwise.
 #
 # Parameters:
 #   $1 - VSP directory (used to locate the script)
 #   $2 - decode JSON path (hypo-NNNN.json)
-#   $3 - report output directory (where argos_demo.html is written)
+#   $3 - report output directory (where confidence_breakdown.html is written)
 run_argos_demo_report() {
   local vsp_dir="$1"
   local decode_json="$2"
   local report_dir="$3"
 
   if [ ! -f "$decode_json" ]; then
-    log_warn "Argos demo: decode JSON not found at $decode_json"
+    log_warn "Confidence breakdown: decode JSON not found at $decode_json"
     return 1
   fi
 
@@ -346,18 +341,18 @@ run_argos_demo_report() {
     gen_script="${HOME}/docs/_research-tools/generators/generate_client_demo_report.py"
   fi
   if [ ! -f "$gen_script" ]; then
-    log_warn "Argos demo: generator script not found (tried scripts/ and docs/)"
+    log_warn "Confidence breakdown: generator script not found (tried scripts/ and docs/)"
     return 1
   fi
 
-  local out_html="${report_dir}/argos_demo.html"
-  echo ">>> [8] Generating Argos client-styled HTML report"
+  local out_html="${report_dir}/confidence_breakdown.html"
+  echo ">>> [8] Generating Confidence Breakdown HTML report"
   python3 "$gen_script" \
     --decode "$decode_json" \
     --out "$out_html" \
-    || { log_warn "Argos demo report generator failed"; return 1; }
+    || { log_warn "Confidence breakdown report generator failed"; return 1; }
 
-  log_info "Argos demo report: $out_html"
+  log_info "Confidence breakdown report: $out_html"
   return 0
 }
 
