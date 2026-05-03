@@ -31,6 +31,53 @@ from .services.transcription_manager import TranscriptionManager
 transcription_mgr = TranscriptionManager()
 
 
+def _ensure_browser_safe(src: Path) -> Path:
+    """Return a path to a browser-playable copy of `src`.
+
+    fast_segments are produced via `ffmpeg -c copy` and inherit the source
+    codec. HEVC/H.265, 10-bit (yuv420p10le / main10), or HDR sources play
+    audio in Chrome but the video stream stays blank. If the source isn't
+    plain h264 + 8-bit yuv420p, transcode once to a sibling preview file and
+    serve that on subsequent requests.
+    """
+    try:
+        probe = subprocess.run(
+            ['ffprobe', '-v', 'error', '-select_streams', 'v:0',
+             '-show_entries', 'stream=codec_name,pix_fmt',
+             '-of', 'default=nw=1:nk=1', str(src)],
+            capture_output=True, text=True, timeout=10,
+        )
+        codec, pix_fmt = (probe.stdout.strip().splitlines() + ['', ''])[:2]
+    except Exception as e:
+        print(f"[browser-safe] ffprobe failed for {src.name}: {e}; serving original")
+        return src
+
+    if codec == 'h264' and pix_fmt == 'yuv420p':
+        return src
+
+    cache_dir = src.parent / '_browser_preview'
+    cache_dir.mkdir(exist_ok=True)
+    cached = cache_dir / src.name
+    if cached.exists() and cached.stat().st_size > 0 and cached.stat().st_mtime >= src.stat().st_mtime:
+        return cached
+
+    try:
+        subprocess.run(
+            ['ffmpeg', '-y', '-loglevel', 'error',
+             '-i', str(src),
+             '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'veryfast', '-crf', '23',
+             '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',
+             '-c:a', 'aac', '-b:a', '128k',
+             '-movflags', '+faststart',
+             str(cached)],
+            check=True, timeout=180,
+        )
+        return cached
+    except Exception as e:
+        print(f"[browser-safe] transcode failed for {src.name}: {e}; serving original")
+        return src
+
+
 class VSPRequestHandler(SimpleHTTPRequestHandler):
     """Custom request handler for VSP Pipeline UI."""
 
@@ -672,7 +719,13 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         })
 
     def handle_get_segment_video(self, segment_id: str):
-        """GET /api/segment-video/<segment_id> - Serve segment video file."""
+        """GET /api/segment-video/<segment_id> - Serve segment video file.
+
+        fast_segments are produced via `ffmpeg -c copy`, so they inherit the
+        source codec. HEVC/10-bit/HDR sources play their audio in Chrome but
+        the video stream stays blank. We probe each served segment and, if it
+        isn't browser-safe (h264 + yuv420p), transcode to a cached preview.
+        """
         from .config import AUTO_AVSR_DIR, SEGMENT_DURATION
 
         # Security: prevent path traversal
@@ -681,26 +734,21 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             return
 
         try:
-            # Check fast_segments first (from SEGMENT_ONLY mode)
             fast_seg_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "fast_segments"
             fast_seg_file = fast_seg_dir / f"{segment_id}.mp4"
-
-            if fast_seg_file.exists():
-                # Serve the fast segment directly (already a complete video)
-                self.send_file(fast_seg_file, 'video/mp4')
-                return
-
-            # Fallback: check preprocessed segments
             full_seg_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_video_seg{SEGMENT_DURATION}s"
             full_seg_file = full_seg_dir / f"{segment_id}.mp4"
 
-            if full_seg_file.exists():
-                # Serve the preprocessed segment
-                self.send_file(full_seg_file, 'video/mp4')
+            src = fast_seg_file if fast_seg_file.exists() else (
+                full_seg_file if full_seg_file.exists() else None
+            )
+            if src is None:
+                self.send_error_json("Segment video not found", 404)
                 return
 
-            # Not found in either location
-            self.send_error_json("Segment video not found", 404)
+            served = _ensure_browser_safe(src)
+            self.send_file(served, 'video/mp4')
+            return
 
         except Exception as e:
             print(f"Error serving segment video: {e}")

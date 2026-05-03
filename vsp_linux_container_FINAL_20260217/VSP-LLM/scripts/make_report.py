@@ -207,11 +207,7 @@ details.legend[open] > p{margin:6px 0}
 &nbsp;&nbsp;<b>Confidence:</b> <span class="conf-high">high</span> · <span class="conf-med">some</span> · <span class="conf-low">avoid</span>
 &nbsp;&nbsp;<b>Tier:</b> <span class="tier-pill trust">Trust</span> <span class="tier-pill salvage">Salvage</span> <span class="tier-pill strip">Strip</span>
 </p>
-<details class="legend"><summary>What the colors mean</summary>
-<p><b>Accuracy</b> — green: exact match; yellow: word is in the reference but in the wrong position; red: not in the reference.</p>
-<p><b>Confidence</b> — blue: top-1 prob ≥0.95 <i>and</i> ≥80% beam agreement; orange: ≥0.65 <i>and</i> ≥50% beams; purple: below either. Digits and number-words ("billion", "1024") are capped at orange — lip-reading can't disambiguate them. Shown only when n-best decode is captured.</p>
-<p><b>Tier</b> (segment mean per-word prob) — Trust ≥0.82 (coloring is reliable); Salvage 0.65–0.82 (verify names, numbers, critical details); Strip &lt;0.65 (per-word coloring removed; treat hypothesis as unreliable).</p>
-</details>
+<p class="legend">Green/blue = <b>trust</b>. Yellow/orange = <b>inspect</b>. Red/purple = <b>don't believe</b>. Numbers and named entities cap at <b>inspect</b>.</p>
 """
 
 HTML_TAIL = "</table></body></html>"
@@ -1116,21 +1112,11 @@ def main() -> None:
 
         # Confidence-colored hyp goes in its own column when do_conf is on.
         # The reliability tier (Trust / Salvage / Strip) governs whether per-word
-        # coloring is applied and whether a banner is prepended:
-        #   - Trust   → full coloring, no banner
-        #   - Salvage → full coloring + advisory banner ("verify names/numbers")
-        #   - Strip   → coloring stripped; whole hyp rendered plain grey-italic
-        # If no per-segment confidence data, render plain (uncolored) hyp.
+        # Tier (Trust/Salvage/Strip) drives coloring; the per-segment pill in the
+        # metrics column carries the tier signal — no per-row banner.
         if do_conf:
             if seg_words:
-                if seg_tier == "Strip":
-                    banner = (
-                        '<span class="tier-banner">Coloring removed — '
-                        'low segment confidence; treat hypothesis as unreliable.</span>'
-                    )
-                    conf_cell = f'<td>{banner}<pre>{conf_html(seg_words, tier=seg_tier)}</pre></td>'
-                else:  # Trust, Salvage, or empty tier — pill in metrics column carries the signal
-                    conf_cell = f'<td><pre>{conf_html(seg_words, tier=seg_tier or "Trust")}</pre></td>'
+                conf_cell = f'<td><pre>{conf_html(seg_words, tier=seg_tier or "Trust")}</pre></td>'
             else:
                 conf_cell = f'<td><pre>{escape(hyp)}</pre></td>'
         else:

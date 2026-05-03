@@ -19,68 +19,8 @@
         <!-- Welcome Screen -->
         <section id="welcome-screen" class="screen active">
             <div class="card">
-                <div class="welcome-header">
-                    <h2>VSP Pipeline</h2>
-                    <span class="build-tag" title="Production build — N-best MBR default + joint conf+agreement bands">build May 2026</span>
-                </div>
-                <p>Visual speech recognition from silent video. Drag files into this window or drop them in the input folder — the pipeline segments, lip-crops, decodes with VSP-LLM, and emits per-segment reports with per-word confidence coloring.</p>
-
-                <details class="welcome-about" open>
-                    <summary>What's in this build &amp; what we know</summary>
-
-                    <div class="welcome-section">
-                        <h3>What's new</h3>
-                        <ul class="welcome-list">
-                            <li><strong>N-best MBR default</strong> — every segment is decoded with 20 alternative readings; the safest consensus is shown. Lower WER and higher reviewer-judged usefulness than top-1.</li>
-                            <li><strong>Three-tier per-word coloring</strong> — Trust (overall conf ≥ 82%), Salvage (65–82%), Strip (&lt; 65%). Below 65% the colors are hidden rather than mislead.</li>
-                            <li><strong>Joint confidence + beam-agreement bands</strong> — green requires both high confidence and high agreement across the 20 hypotheses. Numbers and named entities cap at yellow.</li>
-                            <li><strong>Modular pipeline</strong> — 11 stages under <code>lib/</code> with environment-aware paths (EC2 / container) and a 37-test suite.</li>
-                        </ul>
-                    </div>
-
-                    <div class="welcome-section">
-                        <h3>Accumulated data</h3>
-                        <div class="welcome-stats">
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-value">1,497</span>
-                                <span class="welcome-stat-label">segments evaluated</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-value">64.1%</span>
-                                <span class="welcome-stat-label">mean WER</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-value">2.52 / 5</span>
-                                <span class="welcome-stat-label">Intelligibility Score</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-value">61.6%</span>
-                                <span class="welcome-stat-label">any useful (NIV Y+P)</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-value">23.1%</span>
-                                <span class="welcome-stat-label">clearly conveyed (NIV Y)</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-value">1,497</span>
-                                <span class="welcome-stat-label">LLM-judge gold pairs</span>
-                            </div>
-                        </div>
-                        <p class="welcome-footnote">Calibrated against Claude Opus 4.6 as gold standard (κ = 0.69 for Y, 0.82 for Y+P). 13 hyperparameter experiments and two LoRA fine-tunes catalogued in <code>docs/tuning/</code> and <code>docs/finetuning/</code>.</p>
-                    </div>
-
-                    <div class="welcome-section">
-                        <h3>Folder layout</h3>
-                        <ul class="welcome-folders">
-                            <li><code>~/vsp_input/</code> &mdash; drop videos here (or drag into this window)</li>
-                            <li><code>~/vsp_input/.transcriptions/</code> &mdash; optional reference transcriptions (auto-matched by filename)</li>
-                            <li><code>~/outputs/</code> &mdash; current run: per-segment <code>report.html</code>, <code>report.csv</code>, burned videos</li>
-                            <li><code>~/flat_runs_archive/</code> &mdash; previous runs (auto-archived on each new run)</li>
-                            <li><code>~/lib/</code> &mdash; 11 modular pipeline stages (ASR, lip-crop, k-means, decode, outputs)</li>
-                            <li><code>~/docs/</code> &mdash; research notes by topic (evaluation, tuning, confidence, beam-search, finetuning)</li>
-                        </ul>
-                    </div>
-                </details>
+                <h2>VSP Pipeline</h2>
+                <p>Drag video files directly into this window, or add them to the input folder. The pipeline will segment videos, then let you review and transcribe each segment.</p>
 
                 <div class="input-folder-display">
                     <code id="input-path">~/vsp_input/</code>
