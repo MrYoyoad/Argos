@@ -786,9 +786,9 @@ def slide_client_two_layer_confidence(prs):
              size=Pt(12), bold=True, color=TEAL))
     anchor_group.append(add_text(slide,
              "The thresholds aren't arbitrary — they're calibrated against an "
-             "independent blind evaluator (82% agreement, next slide). Each "
-             "segment your reviewer verifies on your footage extends that "
-             "calibration to your domain. Trust grows with use.",
+             "independent blind evaluator. Each segment your reviewer verifies "
+             "on your footage extends that calibration to your domain when we "
+             "run a domain training pass. Trust grows with the partnership.",
              MX + Inches(0.3), pill_y + Inches(0.42),
              CW - Inches(0.6), Inches(0.5),
              size=Pt(12), color=WHITE, italic=True))
@@ -3699,7 +3699,7 @@ def slide_client_trust_without_ground_truth(prs):
              size=Pt(11), bold=True, color=TEAL))
     pill1_group.append(add_text(slide,
              "The runtime signal is anchored to an independent blind "
-             "evaluator that agreed in 82% of cases (next slide).",
+             "evaluator — see the validation section.",
              MX + Inches(0.3), pill_y + Inches(0.34),
              CW - Inches(0.6), Inches(0.32),
              size=Pt(12), color=WHITE, italic=True))
