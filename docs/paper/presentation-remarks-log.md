@@ -427,3 +427,16 @@ Post-Niv revision. Applied 23 changes to the ground-truth PPTX via `scripts/upda
 | 267 | `slide_client_aggregation_safety` + `slide_client_engineering_journey` (notes) | Headline shift: Mission 6 status moves from "shipped, env-gated" to "shipped + judge-validated production switch — `hyp_mbr` is the default displayed output." Footer updated. Card 3 swapped from "WORD ERROR RATE DOWN (~1.6 pp)" — that win belongs to `hyp_vote_conf`, not the shipped method — to "CALIBRATED CONFIDENCE" framing the per-word posterior MBR emits (the actual production reason we picked MBR over vote_conf). Speaker notes rewritten: full v3 dual-conf judge numbers (MBR +2.7 pp Y+P p=0.0002, vote_conf +2.1 pp p=0.0026, vote_score n.s.); MBR-over-vote_conf rationale (intra-rater 86.7% vs 80%, calibrated posterior vs narrow [0.4,0.8] agreement score); v1 retraction note (27% drift on byte-identical text, archived under `judgments_v1/`). Source: [docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md](../evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md), [docs/beam-search/n_best_implementation.md](../beam-search/n_best_implementation.md) §"Final recommendation — ship pure MBR." | done |
 | 268 | Headline numbers refresh — slide 26 + slide 31 | Latest 1,497-segment evaluation numbers landed: NIV-Y rose 23.1% → 24.1% (361 segs), three-tier UI distribution shifted to Trust 23.8% / Salvage 37.5% / Strip 38.7% (1,427 segs under joint band rule). Slide 26 NIV-Y card 23% → 24%; slide 31 three shares updated. Audit canonical list extended for both. | done |
 | 269 | `lib/decode.sh` (production change, not a slide) | User direction: "the MBR confidence and confidence-dependent filtering should apply to all videos." Flipped `VSP_NBEST` default 0 → 1 so n-best aggregation runs on every pipeline invocation by default. Combined with entry #30 (MBR as default displayed output) and the existing tier classification in `make_report.py`, this means MBR confidence + the three-tier UI policy (Trust/Salvage/Strip) now apply to all videos, not only opt-in runs. Container overlay synced (`vsp_linux_container_FINAL_20260217/lib/decode.sh`); container-sync-changelog entry #31 logged. Disk cost ~120 MB per hour of video; wall-clock ~zero. Set `VSP_NBEST=0` to opt out. | done |
+
+## 2026-05-03 — RealTalk demo dataset ingest
+
+User asked me to assess `/data/conversation_datasets/` (RealTalk + AMI + EgoCom + Seamless) and produce demo clips for the deck. Decisions made:
+- Demo clips for the deck only (not bulk eval / not fine-tuning).
+- Multi-speaker handling: per-speaker pre-split using dataset bboxes, one source → two derivative streams.
+- AMI skipped (resolution too marginal).
+- Mode-B side-by-side with original two-shot audio confirmed as the chosen presentation format.
+- Audio re-attached from the source two-shot, not mixed from per-speaker stems.
+- Whisper concern: pipeline re-Whispers per segment as ground-truth ref; I confirmed alignment of dataset-Whisper vs pipeline-Whisper is not the cause of WER numbers (per-segment Whisper IS the ref).
+- Deferred: EgoCom + Seamless downloads (to be scheduled later).
+
+Deliverables: `presentation_materials_20260224/06_demo_videos/realtalk/` (30 burned face clips, 5 Mode-B composites, 75 frame snapshots, analysis md+json), curated picks at `realtalk_demo_picks.md`.

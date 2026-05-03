@@ -1,0 +1,16 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 462
+PlayResY: 416
+ScaledBorderAndShadow: yes
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
+Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}[no output]
+Dialogue: 0,0:00:00.00,0:00:12.00,Ref,,0,0,0,,It kind of changes too often. There's just too many good artists out there. I can give you who I've been listening to lately. Which is like I've been listening to a lot of like Internet James, Jack Harlow. No way. Wait, wait, wait.

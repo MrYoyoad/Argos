@@ -1,0 +1,29 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 356
+PlayResY: 370
+ScaledBorderAndShadow: yes
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
+Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.25,0:00:01.07,Hyp,,0,0,0,,{\c&H000000C0&}should
+Dialogue: 0,0:00:01.07,0:00:01.89,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i
+Dialogue: 0,0:00:01.89,0:00:02.71,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be
+Dialogue: 0,0:00:02.71,0:00:03.54,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting
+Dialogue: 0,0:00:03.54,0:00:04.36,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little
+Dialogue: 0,0:00:04.36,0:00:05.18,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things
+Dialogue: 0,0:00:05.18,0:00:06.00,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going
+Dialogue: 0,0:00:06.00,0:00:06.82,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going {\c&H0050B000&}on
+Dialogue: 0,0:00:06.82,0:00:07.64,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going {\c&H0050B000&}on {\c&H0000C0FF&}that
+Dialogue: 0,0:00:07.64,0:00:08.46,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going {\c&H0050B000&}on {\c&H0000C0FF&}that {\c&H000000C0&}gemini
+Dialogue: 0,0:00:08.46,0:00:09.29,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going {\c&H0050B000&}on {\c&H0000C0FF&}that {\c&H000000C0&}gemini {\c&H0000C0FF&}should
+Dialogue: 0,0:00:09.29,0:00:10.11,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going {\c&H0050B000&}on {\c&H0000C0FF&}that {\c&H000000C0&}gemini {\c&H0000C0FF&}should {\c&H0000C0FF&}say
+Dialogue: 0,0:00:10.11,0:00:10.93,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going {\c&H0050B000&}on {\c&H0000C0FF&}that {\c&H000000C0&}gemini {\c&H0000C0FF&}should {\c&H0000C0FF&}say {\c&H0000C0FF&}perhaps
+Dialogue: 0,0:00:10.93,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}should {\c&H0000C0FF&}i {\c&H000000C0&}be {\c&H000000C0&}submitting {\c&H000000C0&}little {\c&H0000C0FF&}things {\c&H0000C0FF&}going {\c&H0050B000&}on {\c&H0000C0FF&}that {\c&H000000C0&}gemini {\c&H0000C0FF&}should {\c&H0000C0FF&}say {\c&H0000C0FF&}perhaps {\c&H0000C0FF&}the
+Dialogue: 0,0:00:00.00,0:00:12.00,Ref,,0,0,0,,I think the hardest thing for you has been knowing that you still have some pending legal things going on that can jeopardize your stay perhaps here in the United States.

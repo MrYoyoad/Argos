@@ -1,0 +1,34 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 374
+PlayResY: 320
+ScaledBorderAndShadow: yes
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
+Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.25,0:00:00.86,Hyp,,0,0,0,,{\c&H000000C0&}when
+Dialogue: 0,0:00:00.86,0:00:01.46,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i
+Dialogue: 0,0:00:01.46,0:00:02.07,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was
+Dialogue: 0,0:00:02.07,0:00:02.67,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at
+Dialogue: 0,0:00:02.67,0:00:03.28,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the
+Dialogue: 0,0:00:03.28,0:00:03.88,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym
+Dialogue: 0,0:00:03.88,0:00:04.49,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying
+Dialogue: 0,0:00:04.49,0:00:05.09,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in
+Dialogue: 0,0:00:05.09,0:00:05.70,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape
+Dialogue: 0,0:00:05.70,0:00:06.30,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so
+Dialogue: 0,0:00:06.30,0:00:06.91,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my
+Dialogue: 0,0:00:06.91,0:00:07.51,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name
+Dialogue: 0,0:00:07.51,0:00:08.12,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name {\c&H0000C0FF&}is
+Dialogue: 0,0:00:08.12,0:00:08.72,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name {\c&H0000C0FF&}is {\c&H000000C0&}mikayla
+Dialogue: 0,0:00:08.72,0:00:09.33,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name {\c&H0000C0FF&}is {\c&H000000C0&}mikayla {\c&H000000C0&}and
+Dialogue: 0,0:00:09.33,0:00:09.93,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name {\c&H0000C0FF&}is {\c&H000000C0&}mikayla {\c&H000000C0&}and {\c&H000000C0&}i'm
+Dialogue: 0,0:00:09.93,0:00:10.54,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name {\c&H0000C0FF&}is {\c&H000000C0&}mikayla {\c&H000000C0&}and {\c&H000000C0&}i'm {\c&H000000C0&}here
+Dialogue: 0,0:00:10.54,0:00:11.14,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name {\c&H0000C0FF&}is {\c&H000000C0&}mikayla {\c&H000000C0&}and {\c&H000000C0&}i'm {\c&H000000C0&}here {\c&H000000C0&}but
+Dialogue: 0,0:00:11.14,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H0000C0FF&}i {\c&H000000C0&}was {\c&H000000C0&}at {\c&H0050B000&}the {\c&H0000C0FF&}gym {\c&H000000C0&}staying {\c&H000000C0&}in {\c&H0000C0FF&}shape {\c&H000000C0&}so {\c&H0000C0FF&}my {\c&H0000C0FF&}name {\c&H0000C0FF&}is {\c&H000000C0&}mikayla {\c&H000000C0&}and {\c&H000000C0&}i'm {\c&H000000C0&}here {\c&H000000C0&}but {\c&H000000C0&}i'll
+Dialogue: 0,0:00:00.00,0:00:12.00,Ref,,0,0,0,,So then, because when the problem with my Jeep happened, or I could have had a better car. Yo. But when I first got the Jeep instead of the Jeep. That situation had me off. My baby midnight. I miss her. That's the name of my car. But I mean, I had to copy that.

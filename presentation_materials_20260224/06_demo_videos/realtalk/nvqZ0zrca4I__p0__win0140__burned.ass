@@ -1,0 +1,36 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 366
+PlayResY: 384
+ScaledBorderAndShadow: yes
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
+Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.25,0:00:00.80,Hyp,,0,0,0,,{\c&H0000C0FF&}getting
+Dialogue: 0,0:00:00.80,0:00:01.35,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older
+Dialogue: 0,0:00:01.35,0:00:01.89,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is
+Dialogue: 0,0:00:01.89,0:00:02.44,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy
+Dialogue: 0,0:00:02.44,0:00:02.99,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's
+Dialogue: 0,0:00:02.99,0:00:03.54,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like
+Dialogue: 0,0:00:03.54,0:00:04.08,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time
+Dialogue: 0,0:00:04.08,0:00:04.63,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes
+Dialogue: 0,0:00:04.63,0:00:05.18,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and
+Dialogue: 0,0:00:05.18,0:00:05.73,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we
+Dialogue: 0,0:00:05.73,0:00:06.27,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just
+Dialogue: 0,0:00:06.27,0:00:06.82,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get
+Dialogue: 0,0:00:06.82,0:00:07.37,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really
+Dialogue: 0,0:00:07.37,0:00:07.92,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close
+Dialogue: 0,0:00:07.92,0:00:08.46,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close {\c&H0000C0FF&}to
+Dialogue: 0,0:00:08.46,0:00:09.01,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close {\c&H0000C0FF&}to {\c&H0000C0FF&}one
+Dialogue: 0,0:00:09.01,0:00:09.56,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close {\c&H0000C0FF&}to {\c&H0000C0FF&}one {\c&H0050B000&}another
+Dialogue: 0,0:00:09.56,0:00:10.11,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close {\c&H0000C0FF&}to {\c&H0000C0FF&}one {\c&H0050B000&}another {\c&H0000C0FF&}and
+Dialogue: 0,0:00:10.11,0:00:10.65,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close {\c&H0000C0FF&}to {\c&H0000C0FF&}one {\c&H0050B000&}another {\c&H0000C0FF&}and {\c&H000000C0&}then
+Dialogue: 0,0:00:10.65,0:00:11.20,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close {\c&H0000C0FF&}to {\c&H0000C0FF&}one {\c&H0050B000&}another {\c&H0000C0FF&}and {\c&H000000C0&}then {\c&H000000C0&}get
+Dialogue: 0,0:00:11.20,0:00:12.00,Hyp,,0,0,0,,{\c&H0000C0FF&}getting {\c&H0050B000&}older {\c&H000000C0&}is {\c&H000000C0&}crazy {\c&H000000C0&}it's {\c&H000000C0&}like {\c&H000000C0&}time {\c&H000000C0&}passes {\c&H0000C0FF&}and {\c&H0050B000&}we {\c&H0000C0FF&}just {\c&H0000C0FF&}get {\c&H0050B000&}really {\c&H000000C0&}close {\c&H0000C0FF&}to {\c&H0000C0FF&}one {\c&H0050B000&}another {\c&H0000C0FF&}and {\c&H000000C0&}then {\c&H000000C0&}get {\c&H0050B000&}scared
+Dialogue: 0,0:00:00.00,0:00:12.00,Ref,,0,0,0,,It's crazy as time passes. We just like really can't see one another. Yeah, and I get scared like You know, we're 22 now and it's hard to see each other. What happens when you're 22? And like in relationships or have kids or something maybe this is a relationship
