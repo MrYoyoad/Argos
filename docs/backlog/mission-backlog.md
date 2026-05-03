@@ -78,6 +78,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
 | **4 - Deployment** | 10, 11 | Horizon container, Arabic support | — |
 | **5 - Advanced** | 12, 13, 14 | Multi-speaker, streaming, auto-tuning | — |
 | **1.5 - Quality** | 15 | Pre-decode video quality heuristics | Saves compute, informs M4/M9 |
+| **UI Quality-of-Life** | 16 | Save trained k-means weights to golden list | UX — eliminates manual SCP step |
 
 ---
 
@@ -342,6 +343,28 @@ Tracking completed missions and the prioritized backlog of future work for the A
 - **Expected Impact**: At minimum, logging quality metadata enables post-hoc analysis of why segments fail (currently impossible — failures are silent). With gating, could skip 15-25% of segments predicted to fail, saving proportional decode time. Quality scores also inform Mission 9 (fine-tuning data curation: filter face confidence > 0.9, remove head pose > 30°)
 - **Effort**: Phase 1 (store existing scores): 4-6 hours. Phase 2 (new signals): 1-2 days. Phase 3-4 (composite score + validation): 1-2 days
 - **Dependencies**: None (can start immediately; improves Missions 4, 9, and 14)
+
+---
+
+### Mission 16: Save Trained K-Means Weights to Golden Models List
+- **Priority**: MEDIUM
+- **Goal**: Allow the user to promote a freshly-trained k-means model from the current pipeline run into the persistent golden-models list (`~/VSP-LLM/golden_kmeans/`) directly from the UI, so it becomes selectable as a "constant" for future runs.
+- **Motivation**: Today every run with `train_kmeans=true` produces a k-means model that is discarded at archive time. The UI exposes a `golden_model` selector populated from `~/VSP-LLM/golden_kmeans/*.bin` (server.py:311–334), but there is no in-UI path to add a new entry — users must SCP/copy files manually and hand-write the companion metadata JSON. This is a frequent friction point when a particular run produces a clustering that works well on a domain.
+- **Items**:
+  - **Backend** (`vsp-ui/app/server.py`):
+    - Add `handle_save_golden_model(data)` route — input: source `.bin` path inside the current outputs dir, user-supplied display name, optional notes/domain tag.
+    - Validate filename (no path traversal, must end `.bin`, must not collide with an existing entry unless `overwrite=true`).
+    - Copy the `.bin` into `~/VSP-LLM/golden_kmeans/` and write a companion `<name>.json` with: created_at, source_run_id, n_clusters, training_segment_count, source video set, user notes.
+  - **Frontend** (`vsp-ui/app/static/index.html` + `style.css`):
+    - After a run completes, surface a "Save k-means as golden model" button when `train_kmeans=true` was used.
+    - Modal with name + notes fields; on success, refresh the golden-models dropdown.
+  - **Container sync**: Mirror handler + UI into `vsp_linux_container_FINAL_<date>/vsp-ui/`. Document in [docs/container-sync-changelog.md](../container-sync-changelog.md).
+  - **Delete / rename**: Companion endpoints to remove or rename a saved golden model (with confirmation), since the directory is otherwise opaque to UI users.
+- **Integration Points**:
+  - Existing: `handle_list_golden_models` (server.py:311), `golden_model` arg passed into `runner.start` (server.py:350–357), `lib/clustering.sh` `train_kmeans` flag.
+  - The actual `.bin` produced by a run lives under the run's `kmeans/` output dir — locate the canonical path before wiring the save handler.
+- **Effort**: 0.5–1 day (backend + UI + container sync + docs).
+- **Dependencies**: None.
 
 ---
 
