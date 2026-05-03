@@ -516,3 +516,8 @@ User pasted competitive landscape research (Symphonic Labs / "Read Their Lips", 
 - The 4 competitive rows the user added to `.md` (Whisper / Google STT, AV-HuBERT / VSP-LLM open source, Read Their Lips / LipReadPro, 121 Captions forensic stance) are now in the PDF too.
 - Dropped "What's different vs other lip-reading work?" row from both `.md` and PDF — the 4 competitive rows answer that more concretely, and trimming this kept the page from overflowing.
 - PDF tightened (cell font 7.3→6.7, padding 2→1.5px) to fit 16-row Q&A on a single page. Verified.
+
+### Follow-up #2 — competition rows curated
+- User feedback: drop Whisper/Google STT and AV-HuBERT/VSP-LLM rows (not needed); expand Read Their Lips / LipReadPro with more concrete detail; keep 121 Captions row.
+- Split combined Read Their Lips/LipReadPro row into two detailed rows. Pulled details from `competitive_landscape.md`: Symphonic Labs 2-person 2024 origin, MAMO Mac app pivot, HN test failures (token loops on HAL 9000 / two-person YouTube), founder's "telepathic interface" framing. LipReadPro: no Crunchbase/PitchBook, refused dang.ai verification, 95% claim vs LRS3 SOTA 27% WER, web upload (not on-prem).
+- PDF still single page after expansion.
