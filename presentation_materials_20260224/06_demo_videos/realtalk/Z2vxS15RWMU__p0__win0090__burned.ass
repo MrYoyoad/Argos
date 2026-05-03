@@ -7,10 +7,9 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
-Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+Style: Hyp,Arial,16,&H00FFFFFF&,&H000000FF&,&H00000000&,&HC0000000&,1,0,0,0,100,100,0,0,3,2,0,2,8,8,14,1
+Style: Ref,Arial,11,&H00EEEEEE&,&H000000FF&,&H00000000&,&HC0000000&,0,1,0,0,100,100,0,0,3,1,0,2,8,8,65,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 Dialogue: 0,0:00:00.00,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}[no output]
-Dialogue: 0,0:00:00.00,0:00:12.00,Ref,,0,0,0,,who am I? You understand? You like you tied my hands with the the fuckery and lies. You know what I'm saying? And only you can untie them because I'm back out here. I'm like yo Trevor let's go come over here. Whatever. Your car is in the garage. I'm like Trevor I got a car for you.

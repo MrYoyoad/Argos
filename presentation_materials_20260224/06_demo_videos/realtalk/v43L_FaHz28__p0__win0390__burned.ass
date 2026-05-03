@@ -7,22 +7,9 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
-Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+Style: Hyp,Arial,18,&H00FFFFFF&,&H000000FF&,&H00000000&,&HC0000000&,1,0,0,0,100,100,0,0,3,2,0,2,8,8,15,1
+Style: Ref,Arial,13,&H00EEEEEE&,&H000000FF&,&H00000000&,&HC0000000&,0,1,0,0,100,100,0,0,3,1,0,2,8,8,69,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.25,0:00:01.13,Hyp,,0,0,0,,{\c&H000000C0&}when
-Dialogue: 0,0:00:01.13,0:00:02.02,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i
-Dialogue: 0,0:00:02.02,0:00:02.90,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was
-Dialogue: 0,0:00:02.90,0:00:03.79,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a
-Dialogue: 0,0:00:03.79,0:00:04.67,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little
-Dialogue: 0,0:00:04.67,0:00:05.56,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl
-Dialogue: 0,0:00:05.56,0:00:06.44,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i
-Dialogue: 0,0:00:06.44,0:00:07.33,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i {\c&H000000C0&}always
-Dialogue: 0,0:00:07.33,0:00:08.21,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i {\c&H000000C0&}always {\c&H000000C0&}wanted
-Dialogue: 0,0:00:08.21,0:00:09.10,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i {\c&H000000C0&}always {\c&H000000C0&}wanted {\c&H0050B000&}to
-Dialogue: 0,0:00:09.10,0:00:09.98,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i {\c&H000000C0&}always {\c&H000000C0&}wanted {\c&H0050B000&}to {\c&H000000C0&}be
-Dialogue: 0,0:00:09.98,0:00:10.87,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i {\c&H000000C0&}always {\c&H000000C0&}wanted {\c&H0050B000&}to {\c&H000000C0&}be {\c&H000000C0&}a
-Dialogue: 0,0:00:10.87,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i {\c&H000000C0&}always {\c&H000000C0&}wanted {\c&H0050B000&}to {\c&H000000C0&}be {\c&H000000C0&}a {\c&H000000C0&}princess
-Dialogue: 0,0:00:00.00,0:00:12.00,Ref,,0,0,0,,I mean, I feel like you have kind of acknowledged it, but I think like moving back to Connecticut is such a huge thing. You know, like my whole life, I thought I will live in New York City. I will never live anywhere else. I will never move back to Connecticut.
+Dialogue: 0,0:00:00.00,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}when {\c&H000000C0&}i {\c&H000000C0&}was {\c&H000000C0&}a {\c&H000000C0&}little {\c&H000000C0&}girl {\c&H000000C0&}i {\c&H000000C0&}always\N{\c&H000000C0&}wanted {\c&H0050B000&}to {\c&H000000C0&}be {\c&H000000C0&}a {\c&H000000C0&}princess

@@ -7,22 +7,9 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
-Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+Style: Hyp,Arial,17,&H00FFFFFF&,&H000000FF&,&H00000000&,&HC0000000&,1,0,0,0,100,100,0,0,3,2,0,2,8,8,15,1
+Style: Ref,Arial,12,&H00EEEEEE&,&H000000FF&,&H00000000&,&HC0000000&,0,1,0,0,100,100,0,0,3,1,0,2,8,8,67,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.25,0:00:01.13,Hyp,,0,0,0,,{\c&H000000C0&}i
-Dialogue: 0,0:00:01.13,0:00:02.02,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't
-Dialogue: 0,0:00:02.02,0:00:02.90,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know
-Dialogue: 0,0:00:02.90,0:00:03.79,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two
-Dialogue: 0,0:00:03.79,0:00:04.67,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years
-Dialogue: 0,0:00:04.67,0:00:05.56,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better
-Dialogue: 0,0:00:05.56,0:00:06.44,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i
-Dialogue: 0,0:00:06.44,0:00:07.33,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i {\c&H0000C0FF&}think
-Dialogue: 0,0:00:07.33,0:00:08.21,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i {\c&H0000C0FF&}think {\c&H000000C0&}the
-Dialogue: 0,0:00:08.21,0:00:09.10,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i {\c&H0000C0FF&}think {\c&H000000C0&}the {\c&H0000C0FF&}next
-Dialogue: 0,0:00:09.10,0:00:09.98,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i {\c&H0000C0FF&}think {\c&H000000C0&}the {\c&H0000C0FF&}next {\c&H0000C0FF&}time
-Dialogue: 0,0:00:09.98,0:00:10.87,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i {\c&H0000C0FF&}think {\c&H000000C0&}the {\c&H0000C0FF&}next {\c&H0000C0FF&}time {\c&H0000C0FF&}i
-Dialogue: 0,0:00:10.87,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i {\c&H0000C0FF&}think {\c&H000000C0&}the {\c&H0000C0FF&}next {\c&H0000C0FF&}time {\c&H0000C0FF&}i {\c&H000000C0&}take
-Dialogue: 0,0:00:00.00,0:00:12.00,Ref,,0,0,0,,What's one experience you wish I never had? Your New York experience. I think anytime I think about that, especially if we're out and we've had a conversation you say I'm like overprotective kind of, but I think because of your New York experience, especially now that you're my fiance, like in my head it's drilled in like I need to protect you by any means necessary.
+Dialogue: 0,0:00:00.00,0:00:12.00,Hyp,,0,0,0,,{\c&H000000C0&}i {\c&H000000C0&}don't {\c&H000000C0&}know {\c&H000000C0&}two {\c&H0000C0FF&}years {\c&H000000C0&}better {\c&H000000C0&}i {\c&H0000C0FF&}think {\c&H000000C0&}the\N{\c&H0000C0FF&}next {\c&H0000C0FF&}time {\c&H0000C0FF&}i {\c&H000000C0&}take

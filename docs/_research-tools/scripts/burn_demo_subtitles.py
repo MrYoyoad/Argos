@@ -201,6 +201,26 @@ def fmt_ass_time(t: float) -> str:
     return f"{h}:{m:02d}:{s:05.2f}"
 
 
+def _wrap_to_lines(words_with_color: list[str], plain_words: list[str],
+                   chars_per_line: int) -> str:
+    """Pack tagged-words into lines of about chars_per_line characters using ASS
+    `\\N` linebreaks. Counts plain text width (no ASS tags) for wrapping decisions.
+    """
+    lines: list[list[str]] = [[]]
+    line_len = 0
+    for tagged, plain in zip(words_with_color, plain_words):
+        wlen = len(plain)
+        # +1 for the space separator inside an existing line
+        prospective = line_len + (1 if lines[-1] else 0) + wlen
+        if lines[-1] and prospective > chars_per_line:
+            lines.append([tagged])
+            line_len = wlen
+        else:
+            lines[-1].append(tagged)
+            line_len = prospective
+    return r"\N".join(" ".join(line) for line in lines)
+
+
 def build_ass(
     words: list[dict],
     play_w: int,
@@ -209,11 +229,27 @@ def build_ass(
     show_reference: bool,
     duration: float,
 ) -> str:
-    """Generate an ASS file body. One Dialogue per word for the hypothesis (so each
-    word fades in at its own time), a single Dialogue spanning the whole clip for
-    the reference. Inline {\\c&H...&} sets per-word color; we keep style colors
-    neutral and let inline overrides carry the band signal.
+    """Generate an ASS file body. ONE static Dialogue event for the hypothesis,
+    spanning the whole clip, with every word pre-colored by its trust band and
+    wrapped across multiple lines so it fits the (often narrow) face crop.
+    A separate single Ref event is rendered above the hypothesis when requested.
+
+    Static (non-animated) layout was chosen after the time-sync reveal style
+    was found to stack illegibly across a 386x372 face crop.
     """
+
+    # Auto-scale font size to fit small face crops. Tuned for 386x372 → ~17pt;
+    # 720p → ~33pt. Capped at min 11 for tiny crops.
+    hyp_size = max(11, int(round(play_h / 22)))
+    ref_size = max(9, int(round(hyp_size * 0.7)))
+
+    # Approx chars-per-line based on play_w and font. Arial average char ~0.55em.
+    chars_per_line = max(20, int(play_w / (hyp_size * 0.55)))
+
+    # Vertical margins: keep hypothesis tight against the bottom; ref above it.
+    margin_v_hyp = max(8, int(round(play_h * 0.04)))
+    margin_v_ref = max(margin_v_hyp + ref_size * 3, int(round(play_h * 0.18)))
+
     header = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {play_w}
@@ -223,8 +259,8 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Hyp,Arial,32,&H00FFFFFF&,&H000000FF&,&H00000000&,&H80000000&,1,0,0,0,100,100,0,0,1,2,1,2,20,20,20,1
-Style: Ref,Arial,22,&H00EEEEEE&,&H000000FF&,&H00000000&,&H80000000&,0,1,0,0,100,100,0,0,1,2,1,2,20,20,70,1
+Style: Hyp,Arial,{hyp_size},&H00FFFFFF&,&H000000FF&,&H00000000&,&HC0000000&,1,0,0,0,100,100,0,0,3,2,0,2,8,8,{margin_v_hyp},1
+Style: Ref,Arial,{ref_size},&H00EEEEEE&,&H000000FF&,&H00000000&,&HC0000000&,0,1,0,0,100,100,0,0,3,1,0,2,8,8,{margin_v_ref},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -232,26 +268,19 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
     events: list[str] = []
 
-    # Build a single hypothesis line per word using cumulative reveal: at each
-    # word's t_start, the line so far is rendered with that word newly added in
-    # its band color. Earlier words keep their bands. A simpler approach — one
-    # event per word displayed in isolation — looks jumpy; cumulative reveal
-    # reads naturally during a 12-second clip.
-    cumulative_segments: list[str] = []
-    for i, w in enumerate(words):
-        band = band_for_word(w["word"], w["conf"], w["agreement"])
-        ass_color = rgb_to_ass_bgr(color_for_band(band))
-        cumulative_segments.append(f"{{{chr(92)}c{ass_color}}}{w['word']}")
-
-        text = " ".join(cumulative_segments)
-        # Each word's reveal event runs from its t_start to either the next
-        # word's t_start or the end of the clip.
-        next_t = words[i + 1]["t_start"] if i + 1 < len(words) else duration
+    if words:
+        tagged: list[str] = []
+        plain: list[str] = []
+        for w in words:
+            band = band_for_word(w["word"], w["conf"], w["agreement"])
+            ass_color = rgb_to_ass_bgr(color_for_band(band))
+            tagged.append(f"{{{chr(92)}c{ass_color}}}{w['word']}")
+            plain.append(w["word"])
+        text = _wrap_to_lines(tagged, plain, chars_per_line)
         events.append(
-            f"Dialogue: 0,{fmt_ass_time(w['t_start'])},{fmt_ass_time(next_t)},Hyp,,0,0,0,,{text}"
+            f"Dialogue: 0,{fmt_ass_time(0)},{fmt_ass_time(duration)},Hyp,,0,0,0,,{text}"
         )
-
-    if not words:
+    else:
         red = rgb_to_ass_bgr(COLOR_RED_RGB)
         events.append(
             f"Dialogue: 0,{fmt_ass_time(0)},{fmt_ass_time(duration)},Hyp,,0,0,0,,"
@@ -259,12 +288,13 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         )
 
     if show_reference and reference_text:
-        # ASS comma is a field separator; escape any literal commas with \, and
-        # backslashes by doubling — but reference text from Whisper rarely has
-        # those; keep it simple.
         ref_clean = reference_text.replace("\n", " ").strip()
+        # Wrap the reference too (plain words, no color tags).
+        ref_words = ref_clean.split()
+        ref_text = _wrap_to_lines(ref_words, ref_words,
+                                  max(20, int(play_w / (ref_size * 0.55))))
         events.append(
-            f"Dialogue: 0,{fmt_ass_time(0)},{fmt_ass_time(duration)},Ref,,0,0,0,,{ref_clean}"
+            f"Dialogue: 0,{fmt_ass_time(0)},{fmt_ass_time(duration)},Ref,,0,0,0,,{ref_text}"
         )
 
     return header + "\n".join(events) + "\n"
@@ -303,15 +333,18 @@ def build_drawtext_badge(is_score: float | None, play_w: int) -> str:
     # ffmpeg drawtext text quoting: single-quote and escape inner single quotes
     # as '\''. We keep the text simple here so no further escaping needed.
     box_color_rgba = f"0x{color_rgb}@0.75"
+    # Auto-scale badge fontsize to ~5% of frame height (was a fixed 18 — too big
+    # for 386px-tall face crops).
+    badge_size = max(10, int(round(play_w * 0.045)))
     args = (
         f"text='{text}'"
         f":fontcolor=white"
-        f":fontsize=18"
+        f":fontsize={badge_size}"
         f":box=1"
         f":boxcolor={box_color_rgba}"
-        f":boxborderw=8"
-        f":x=w-tw-16"
-        f":y=16"
+        f":boxborderw=4"
+        f":x=w-tw-8"
+        f":y=8"
     )
     return args
 
