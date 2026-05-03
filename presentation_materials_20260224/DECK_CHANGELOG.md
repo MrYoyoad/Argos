@@ -66,7 +66,7 @@ User reviewed Round 7 + posted 27 specific feedback items + Opus 4.7 review (6 f
 
 **Final state**: 70 slides total / 14 hidden / 56 visible. Audits 7/7 green.
 
-- **COMMIT**: TBD.
+- **COMMIT**: 02e9852.
 
 ---
 
