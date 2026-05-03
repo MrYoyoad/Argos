@@ -128,7 +128,7 @@ from presentation.slides_client import (
     slide_client_validation_intro,
     slide_client_agreement_chart,
     slide_client_cross_config_stability,
-    slide_client_aggregation_safety,        # NEW Round 5.14 — n-best aggregation evidence
+    # slide_client_aggregation_safety DROPPED Round 8.3 — user "not needed"
     # slide_client_validation_summary DROPPED (Round 5.1 — restates 82% point)
 
     # Section 12 — Engineering (Round 5.2: bulked up)
@@ -306,7 +306,7 @@ def main():
         slide_client_validation_intro,
         slide_client_agreement_chart,
         slide_client_cross_config_stability,
-        slide_client_aggregation_safety,        # NEW Round 5.14 — n-best aggregation rescues failed segments
+        # slide_client_aggregation_safety dropped Round 8.3 (user "not needed")
 
         # ═══════ ACT 3 — PATH FORWARD (1:25 – 2:00) ═══════
         # § Engineering (Round 5.2: bulked up per user feedback — pipeline
@@ -376,16 +376,17 @@ def main():
         20,  # Output Example 2 — Truncated but Core Preserved (judge_ex2)
         22,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4)
         23,  # Output Example 5 — Cooking Domain (judge_ex5)
+        36,  # hallucination_problem — Round 8.3: dial-back, collapse trio
+        37,  # hallucination_real_example — Round 8.3: dial-back, collapse trio
         40,  # trust_dashboard "62% useful" — duplicates headline
         41,  # failure_taxonomy_full — hide; speaker can recall via worked-example beat
         42,  # hallucination_flag "1 in 5" — duplicates headline
         46,  # what_this_means — thin transition
-        51,  # aggregation_safety before/after bars — hide
-        53,  # pipeline_detailed (8-stage diagram) — too unclear here
-        57,  # _section_whats_next transition — implicit pivot
-        65,  # recap "Three things to take with you" — trim close section
-        69,  # video_gallery — appendix-only
-        70,  # slide_pipeline_appendix — appendix-only
+        52,  # pipeline_detailed (8-stage diagram) — too unclear here (was 53 pre-drop)
+        56,  # _section_whats_next transition — implicit pivot (was 57)
+        64,  # recap "Three things to take with you" — trim close section (was 65)
+        68,  # video_gallery — appendix-only (was 69)
+        69,  # slide_pipeline_appendix — appendix-only (was 70)
     ]
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn

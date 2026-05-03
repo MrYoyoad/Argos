@@ -291,6 +291,12 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
     approved.update({
         "95%",                # Slide 17 clean-everyday segment overall confidence
     })
+    # Round 8.3 — slide 45 trust-threshold operating numbers, derived from
+    # docs/confidence/client_trust_calibration.md.
+    approved.update({
+        "42%",                # 630 trusted / 1,497 baseline segments
+        "35%",                # 322 useful below threshold / 924 useful baseline
+    })
     # Strip whitespace inside percent tokens
     def norm(s):
         return s.replace(" ", "")

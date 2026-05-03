@@ -844,14 +844,22 @@ def slide_client_word_color_coding(prs):
         "presentation_materials_20260224/01_plots_for_slides/"
         "ui_word_confidence_screenshot.png"
     )
+    # Round 8.3 — tier-first caption moved to subtitle slot (was overlapping
+    # slide-number footer at y=7.10).
+    add_text(slide,
+             "Each segment shows a TIER pill (Trust / Salvage / Strip) above "
+             "the colored words — that's how the reviewer reads the colors.",
+             MX, Inches(1.5), CW, Inches(0.4),
+             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
     if screenshot.exists():
         # Round 7: enlarged from 5.0" tall to ~5.5" tall × 10" wide,
         # centered horizontally — fills the content band more fully so
         # the per-word colors read across a room.
         img_w = Inches(10.0)
-        img_h = Inches(4.95)
+        img_h = Inches(4.6)
         img_x = (SL_W - img_w) / 2
-        img_y = Inches(1.6)
+        img_y = Inches(1.95)
         slide.shapes.add_picture(str(screenshot), img_x, img_y,
                                  width=img_w, height=img_h)
     else:
@@ -884,13 +892,8 @@ def slide_client_word_color_coding(prs):
              MX + Inches(8.7), legend_top, Inches(3.0), Inches(0.3),
              size=Pt(11), color=CORAL, bold=True)
 
-    # Round 8 — tier-first caption below screenshot
-    add_text(slide,
-             "Each segment in the report shows a TIER pill "
-             "(Trust / Salvage / Strip) above the colored words — "
-             "that tells the reviewer how to read the colors.",
-             MX, Inches(7.1), CW, Inches(0.3),
-             size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    # Round 8.3 — tier-first caption was moved up to the subtitle slot
+    # (was here at y=7.10, overlapping slide-number).
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -970,11 +973,11 @@ def slide_client_seq_confidence_correlation(prs):
                  MX, Inches(2.0), CW, Inches(0.6),
                  size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    # Anchor the killer line below the chart
+    # Anchor the killer line below the chart (Round 8.3 — moved up off footer)
     add_text(slide,
              "When the system rates a segment \"clearly conveyed,\" it really is — "
              "useful output rate climbs sharply with confidence tier.",
-             MX, Inches(7.05), CW, Inches(0.4),
+             MX, Inches(6.85), CW, Inches(0.4),
              size=Pt(13), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
@@ -1162,8 +1165,8 @@ def slide_client_trust_operating_points(prs):
     num_h = Inches(1.55)
 
     num_cols = [
-        ("630", "segments trusted", "out of 1,497 baseline", GREEN),
-        ("602", "captured useful", "the meaning came through", GREEN),
+        ("42%", "of segments trusted by default", "630 of 1,497 baseline", GREEN),
+        ("65%", "of useful content captured", "the meaning came through", GREEN),
         ("1 in 22", "misled", "trusted output that wasn't useful", CORAL),
     ]
     num_groups = [[] for _ in num_cols]
@@ -1196,7 +1199,7 @@ def slide_client_trust_operating_points(prs):
                  fill_color=NAVY3, border_color=GOLD,
                  border_width=Pt(0.75)))
     lost_group.append(add_text(slide,
-                 "322 useful segments below the 30% threshold — "
+                 "35% of useful segments fall below the 30% threshold — "
                  "recoverable but not trusted by default. Strict "
                  "workflows leave them; permissive workflows can "
                  "lower the threshold.",
@@ -1405,17 +1408,19 @@ def slide_client_cross_config_stability(prs):
     add_title(slide, "The trust signal stays stable")
     add_accent_line(slide)
 
+    # Round 8.3 — restacked: bullets at y=2.0 (height 1.4) and body line
+    # below at y=3.5 (height 1.5") so they don't overlap.
     add_bullets(slide, [
         "We changed decode settings 16 different ways",
         "The trust signal moved less than a percentage point",
         "Translation: it isn't a fluke of one specific run",
-    ], MX, Inches(1.9), CW, Inches(3.5), size=Pt(22))
+    ], MX, Inches(2.0), CW, Inches(1.4), size=Pt(20))
 
     add_text(slide,
              "What this means: the confidence numbers you see in the demo are "
              "the same confidence numbers you'd see on your data, on your "
              "infrastructure, on your settings.",
-             MX, Inches(5.0), CW, Inches(1.4),
+             MX, Inches(3.5), CW, Inches(1.5),
              size=Pt(15), color=TEAL, italic=True, align=PP_ALIGN.LEFT)
 
     add_text(slide,
@@ -2301,12 +2306,22 @@ def _example_slide(prs, *, title, subtitle, utt_id, takeaway,
              CW - Inches(0.6), Inches(0.4),
              size=Pt(14), color=WHITE, italic=True)
 
-    # Round 7: optional confidence label above the legend
+    # Round 8.3: optional confidence label placed in the gap between
+    # subtitle (ends y=1.85) and REFERENCE (starts y=2.0). Right-aligned
+    # so it doesn't compete with the centered subtitle.
     if confidence_label:
-        add_text(slide, confidence_label,
-                 MX, Inches(6.25), CW, Inches(0.3),
-                 size=Pt(11), color=confidence_color or GREEN,
-                 italic=True, align=PP_ALIGN.CENTER)
+        # Short form: "Confidence: high/mixed/low" depending on tier color.
+        if confidence_color == CORAL:
+            short = "Confidence: low"
+        elif confidence_color == GOLD:
+            short = "Confidence: mixed"
+        else:
+            short = "Confidence: high"
+        conf_w = Inches(2.0)
+        add_text(slide, short,
+                 MX + CW - conf_w, Inches(1.85), conf_w, Inches(0.13),
+                 size=Pt(10), color=confidence_color or GREEN,
+                 italic=True, bold=True, align=PP_ALIGN.RIGHT)
 
     # Tiny legend
     add_text(slide, "GREEN: confident   YELLOW: review   RED: likely error",
@@ -2357,23 +2372,23 @@ def slide_client_example_simple_positive(prs):
     add_title(slide, "Example — clean output on everyday content")
     add_accent_line(slide)
 
-    # Subtitle
+    # Subtitle (Round 8.3 — moved up, height shrunk to clear TRUST TIER pill)
     add_text(slide,
              "When the speaker is centered and visual signal is good — "
              "the system delivers.",
-             MX, Inches(1.5), CW, Inches(0.45),
+             MX, Inches(1.5), CW, Inches(0.3),
              size=Pt(14), color=LGRAY, italic=True,
              align=PP_ALIGN.CENTER)
 
-    # Round 8 — bigger TRUST TIER pill (top-left, prominent)
-    badge_w = Inches(2.2)
+    # Round 8.3 — TRUST TIER pill moved below subtitle, smaller
+    badge_w = Inches(1.8)
     badge_x = MX
-    add_rect(slide, badge_x, Inches(1.45), badge_w, Inches(0.45),
+    add_rect(slide, badge_x, Inches(1.85), badge_w, Inches(0.4),
              fill_color=GREEN, border_color=GREEN, border_width=Pt(1.0))
     add_text(slide, "TRUST TIER",
-             badge_x, Inches(1.45) + Inches(0.07),
-             badge_w, Inches(0.32),
-             size=Pt(14), bold=True, color=WHITE,
+             badge_x, Inches(1.85) + Inches(0.05),
+             badge_w, Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE,
              align=PP_ALIGN.CENTER)
 
     # Two-column body — LEFT (REF/HYP) shrunk, RIGHT (READER'S VIEW + video)
@@ -2439,22 +2454,24 @@ def slide_client_example_simple_positive(prs):
              vid_x, vid_y + vid_h + Inches(0.02), vid_w, Inches(0.22),
              size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    # Round 8 — overall confidence note
+    # Round 8 — overall confidence note (Round 8.3 — left of closing line, on
+    # the LEFT column so the right column's "Click to play" caption clears).
     add_text(slide, "Overall confidence: ~95%.",
-             MX, Inches(6.5), col_w, Inches(0.3),
+             MX, Inches(6.2), col_w, Inches(0.3),
              size=Pt(12), color=GREEN, italic=True, bold=True)
 
-    # Closing line
+    # Closing line (Round 8.3 — bumped down so it sits below the right-side
+    # "Click to play" caption that ends at y=6.69).
     add_text(slide,
              "The system gets out of the way when conditions are good.",
-             MX, Inches(6.85), CW, Inches(0.3),
+             MX, Inches(6.72), CW, Inches(0.25),
              size=Pt(11), color=GREEN, italic=True,
              align=PP_ALIGN.CENTER)
 
-    # Tiny legend
+    # Tiny legend (Round 8.3 — pulled up off the slide-number footer)
     add_text(slide,
              "GREEN: confident   YELLOW: review   RED: likely error",
-             MX, Inches(7.15), CW, Inches(0.25),
+             MX, Inches(6.98), CW, Inches(0.2),
              size=Pt(9), color=LGRAY, italic=True,
              align=PP_ALIGN.CENTER)
 
@@ -2671,12 +2688,21 @@ def _client_judge_ex_slide(prs, *, title, subtitle, ref_text, hyp_runs,
              size=Pt(12), color=closing_color, italic=True,
              align=PP_ALIGN.CENTER))
 
-    # Round 7: optional confidence label above the legend
+    # Round 8.3: optional confidence label placed in the gap between
+    # subtitle (ends y=1.95) and REFERENCE (starts y=2.15). Right-aligned,
+    # short, doesn't compete with the centered subtitle.
     if confidence_label:
-        add_text(slide, confidence_label,
-                 MX, Inches(6.85), CW, Inches(0.3),
-                 size=Pt(11), color=confidence_color or GREEN,
-                 italic=True, align=PP_ALIGN.CENTER)
+        if confidence_color == CORAL:
+            short = "Confidence: low"
+        elif confidence_color == GOLD:
+            short = "Confidence: mixed"
+        else:
+            short = "Confidence: high"
+        conf_w = Inches(2.0)
+        add_text(slide, short,
+                 MX + CW - conf_w, Inches(1.96), conf_w, Inches(0.18),
+                 size=Pt(10), color=confidence_color or GREEN,
+                 italic=True, bold=True, align=PP_ALIGN.RIGHT)
 
     # Tiny legend (static)
     add_text(slide,
@@ -3620,11 +3646,13 @@ def slide_client_trust_without_ground_truth(prs):
              align=PP_ALIGN.CENTER)
 
     # Four-card grid: the runtime signals
-    card_w = Inches(2.95)
-    gap = Inches(0.15)
+    # Round 8.3: dropped HALLUCINATION FLAG card to dial back the
+    # hallucination story (lives elsewhere in the deck). 4 -> 3 cards.
+    card_w = Inches(3.85)
+    gap = Inches(0.25)
     top = Inches(2.6)
     h = Inches(2.7)
-    total_w = 4 * card_w + 3 * gap
+    total_w = 3 * card_w + 2 * gap
     start_x = MX + (CW - total_w) / 2
 
     signals = [
@@ -3636,10 +3664,6 @@ def slide_client_trust_without_ground_truth(prs):
          "Word probabilities aggregate to one confidence number per "
          "segment, plus a length-anomaly check.",
          TEAL),
-        ("HALLUCINATION FLAG",
-         "Length anomalies + per-token collapse together flag fluent "
-         "fabrication before a reviewer sees it.",
-         GOLD),
         ("WILD VIDEOS",
          "Validated on 1,497 real-world clips — varied quality, "
          "lighting, head angles, multi-speaker scenes. Not curated "
@@ -3659,45 +3683,27 @@ def slide_client_trust_without_ground_truth(prs):
                  card_w - Inches(0.4), h - Inches(1.0),
                  size=Pt(12), color=WHITE))
 
-    # Bottom: two stacked beats
-    pill_h = Inches(0.65)
-    pill_gap = Inches(0.1)
-    pill1_y = Inches(5.45)
-    pill2_y = pill1_y + pill_h + pill_gap
+    # Round 8.3: dropped GROWS IN YOUR HANDS pill (the partnership-beat
+    # belongs on slide 64). Single pill: MEANINGFUL TODAY anchor with
+    # the 82% agreement number.
+    pill_h = Inches(0.7)
+    pill_y = Inches(5.6)
 
-    # Pill 1: meaningful today
     pill1_group = []
-    pill1_group.append(add_rect(slide, MX, pill1_y, CW, pill_h,
+    pill1_group.append(add_rect(slide, MX, pill_y, CW, pill_h,
              fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75)))
     pill1_group.append(add_text(slide,
              "MEANINGFUL TODAY",
-             MX + Inches(0.3), pill1_y + Inches(0.06),
+             MX + Inches(0.3), pill_y + Inches(0.08),
              Inches(3.5), Inches(0.28),
              size=Pt(11), bold=True, color=TEAL))
     pill1_group.append(add_text(slide,
-             "The runtime signal isn't an arbitrary threshold — it's anchored "
-             "to an independent blind evaluator that agreed in 82% of cases "
-             "(next slide).",
-             MX + Inches(0.3), pill1_y + Inches(0.32),
+             "The runtime signal is anchored to an independent blind "
+             "evaluator that agreed in 82% of cases (next slide).",
+             MX + Inches(0.3), pill_y + Inches(0.34),
              CW - Inches(0.6), Inches(0.32),
              size=Pt(12), color=WHITE, italic=True))
-
-    # Pill 2: trust grows with the client's own use
-    pill2_group = []
-    pill2_group.append(add_rect(slide, MX, pill2_y, CW, pill_h,
-             fill_color=NAVY3, border_color=GOLD, border_width=Pt(0.75)))
-    pill2_group.append(add_text(slide,
-             "GROWS IN YOUR HANDS",
-             MX + Inches(0.3), pill2_y + Inches(0.06),
-             Inches(3.5), Inches(0.28),
-             size=Pt(11), bold=True, color=GOLD))
-    pill2_group.append(add_text(slide,
-             "Each segment your reviewer verifies adds calibration data. "
-             "When we run a domain training pass on those verdicts, the "
-             "signal tightens around your content.",
-             MX + Inches(0.3), pill2_y + Inches(0.32),
-             CW - Inches(0.6), Inches(0.32),
-             size=Pt(12), color=WHITE, italic=True))
+    pill2_group = []  # empty — keeps add_animations call signature stable
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -4599,15 +4605,16 @@ def slide_client_three_tier_policy(prs):
                  card_w - Inches(0.4), Inches(0.35),
                  size=Pt(11), color=t["color"], italic=True,
                  align=PP_ALIGN.CENTER))
-        # Segment share — large number at the bottom
+        # Segment share — large number at top of cell, "of segments" stacked
+        # below with proper gap (Round 8.3 — was overlapping by ~0.05" before).
         cg.append(add_text(slide, t["share"],
-                 x + Inches(0.2), card_top + Inches(2.95),
-                 card_w - Inches(0.4), Inches(0.45),
+                 x + Inches(0.2), card_top + Inches(2.8),
+                 card_w - Inches(0.4), Inches(0.4),
                  size=Pt(28), bold=True, color=WHITE,
                  align=PP_ALIGN.CENTER))
         cg.append(add_text(slide, "of segments",
-                 x + Inches(0.2), card_top + Inches(3.35),
-                 card_w - Inches(0.4), Inches(0.2),
+                 x + Inches(0.2), card_top + Inches(3.3),
+                 card_w - Inches(0.4), Inches(0.25),
                  size=Pt(9), color=LGRAY, align=PP_ALIGN.CENTER))
 
     # Round 7: bottom anchor moved into speaker notes (slide is now just
@@ -5080,12 +5087,12 @@ def slide_client_case_topic_shift(prs):
     add_rich_text(slide, [runs], MX, hyp_y + Inches(0.32),
                   text_right - MX, Inches(1.4))
 
-    # READER'S VIEW pill — bottom
-    rv_y = Inches(5.4)
-    add_rect(slide, MX, rv_y, CW, Inches(1.3),
+    # READER'S VIEW pill — bottom (Round 8.3 — height shrunk to clear closing line)
+    rv_y = Inches(5.2)
+    add_rect(slide, MX, rv_y, CW, Inches(1.15),
              fill_color=NAVY2, border_color=CORAL, border_width=Pt(1.0))
     add_text(slide, "READER'S VIEW",
-             MX + Inches(0.3), rv_y + Inches(0.15),
+             MX + Inches(0.3), rv_y + Inches(0.1),
              Inches(2.5), Inches(0.3),
              size=Pt(11), bold=True, color=CORAL)
     add_text(slide,
@@ -5093,23 +5100,21 @@ def slide_client_case_topic_shift(prs):
              "as a discussion of nuclear weapons. Wrong tags, wrong "
              "summaries, wrong searches. With colors, every topic-"
              "defining wrong word is flagged. The reader knows the "
-             "topic isn't nuclear weapons — and goes to the video. "
-             "The cost of getting this wrong silently is much higher "
-             "than the cost of admitting uncertainty out loud.",
-             MX + Inches(0.3), rv_y + Inches(0.45),
-             CW - Inches(0.6), Inches(0.8),
-             size=Pt(12), color=WHITE)
+             "topic isn't nuclear weapons — and goes to the video.",
+             MX + Inches(0.3), rv_y + Inches(0.4),
+             CW - Inches(0.6), Inches(0.7),
+             size=Pt(11), color=WHITE)
 
-    # Closing line — why the save matters
+    # Closing line — why the save matters (Round 8.3 — moved up to clear footer)
     add_text(slide,
              "Without colors, the wrong topic enters the reviewer's "
              "summary as fact. With colors, it stops at the flag.",
-             MX, Inches(6.85), CW, Inches(0.3),
+             MX, Inches(6.5), CW, Inches(0.3),
              size=Pt(11), color=CORAL, italic=True, bold=True,
              align=PP_ALIGN.CENTER)
     add_text(slide,
              "GREEN: confident   YELLOW: review   RED: likely error",
-             MX, Inches(7.15), CW, Inches(0.25),
+             MX, Inches(6.85), CW, Inches(0.25),
              size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
@@ -5480,13 +5485,13 @@ def slide_client_halluc_caught(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "...and the system caught it.")
+    add_title(slide, "When the model is wrong, the system catches it")
     add_accent_line(slide)
 
     add_text(slide,
-             "Same segment as the previous slide — now with the trust "
-             "signals layered on.",
-             MX, Inches(1.45), CW, Inches(0.4),
+             "One example. The model produced fluent text on the wrong topic. "
+             "The trust signals flagged it before review.",
+             MX, Inches(1.45), CW, Inches(0.5),
              size=Pt(13), color=LGRAY, italic=True)
 
     # Left column — colored hypothesis (re-rendered from sidecar)
@@ -5560,18 +5565,18 @@ def slide_client_halluc_caught(prs):
                  right_w - Inches(0.5), sig_h - Inches(0.32),
                  size=Pt(13), color=WHITE)
 
-    # Legend strip
-    add_text(slide,
-             "GREEN: confident   YELLOW: review   RED: likely error",
-             MX, Inches(6.55), CW, Inches(0.3),
-             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
-
-    # Round 7: de-alarm closing line
+    # Round 7: de-alarm closing line (Round 8.3 — moved up to clear legend)
     add_text(slide,
              "These are cases the model already routes away from your team. "
              "You see the safe outputs.",
-             MX, Inches(6.4), CW, Inches(0.3),
+             MX, Inches(6.25), CW, Inches(0.3),
              size=Pt(12), color=GREEN, italic=True, align=PP_ALIGN.CENTER)
+
+    # Legend strip
+    add_text(slide,
+             "GREEN: confident   YELLOW: review   RED: likely error",
+             MX, Inches(6.6), CW, Inches(0.3),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -5720,7 +5725,7 @@ def slide_client_pipeline_detailed(prs):
     add_text(slide,
              "Whisper ASR runs as a side-branch for evaluation only — it does "
              "not feed the visual decoder. The visual model never hears audio.",
-             MX, Inches(7.05), CW, Inches(0.3),
+             MX, Inches(6.85), CW, Inches(0.3),
              size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
