@@ -950,7 +950,7 @@ def slide_client_seq_confidence_correlation(prs):
     from pathlib import Path
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Higher confidence → more useful output.")
+    add_title(slide, "Higher confidence → more useful output")
     add_accent_line(slide)
 
     add_text(slide,
@@ -2734,7 +2734,7 @@ def slide_client_judge_ex1(prs):
         ("reach",         {"size": Pt(13), "color": GREEN}),
     ]
     return _client_judge_ex_slide(prs,
-        title="Output Example 1 — Named Entity Swap",
+        title="Named Entity Swap",
         subtitle="When the model swaps a company name for a similar-sounding one — "
                  "the message survives, only the proper noun moves.",
         ref_text="market research firm bernreuter research is forecasting "
@@ -2784,7 +2784,7 @@ def slide_client_judge_ex2(prs):
         ("other",        {"size": Pt(13), "color": CORAL}),
     ]
     return _client_judge_ex_slide(prs,
-        title="Output Example 2 — Truncated but Core Preserved",
+        title="Truncated but Core Preserved",
         subtitle="When the opening and the trailing clause are lost — "
                  "the core argument still lands.",
         ref_text="as this new home video market matured in the 1980s a "
@@ -2841,7 +2841,7 @@ def slide_client_judge_ex3(prs):
         ("reuse",       {"size": Pt(13), "color": YELLOW}),
     ]
     return _client_judge_ex_slide(prs,
-        title="Output Example 3 — Technical Vocabulary Drift",
+        title="Technical Vocabulary Drift",
         subtitle="When the argument shape is right but networking terms "
                  "drift to civil-engineering terms.",
         ref_text="we need a radically different approach we basically need "
@@ -2897,7 +2897,7 @@ def slide_client_judge_ex4(prs):
         ("on",          {"size": Pt(13), "color": GREEN}),
     ]
     return _client_judge_ex_slide(prs,
-        title="Output Example 4 — Scientific Vocabulary Lost",
+        title="Scientific Vocabulary Lost",
         subtitle="When the repetitive structure is captured but every "
                  "scientific term is wrong.",
         ref_text="couples us to light cycles in our environment tells us "
@@ -2940,7 +2940,7 @@ def slide_client_judge_ex5(prs):
         ("banana",    {"size": Pt(13), "color": CORAL, "bold": True}),
     ]
     return _client_judge_ex_slide(prs,
-        title="Output Example 5 — Cooking Domain, Ingredient Confusion",
+        title="Cooking Domain — Ingredient Confusion",
         subtitle="When the domain is right (it's a cooking video) but the "
                  "specific ingredient is wrong.",
         ref_text="and i have a tablespoon of jalapeno fresh jalapeno",
@@ -2988,7 +2988,7 @@ def slide_client_judge_ex6(prs):
         ("runs",       {"size": Pt(13), "color": CORAL}),
     ]
     return _client_judge_ex_slide(prs,
-        title="Output Example 6 — Topic Hijack (the dangerous mode)",
+        title="Topic Hijack — the dangerous mode",
         subtitle="When the sentence is grammatically perfect — but on a "
                  "completely wrong topic. This is what the colors save you from.",
         ref_text="i actually use the overhead lights which are mostly "
@@ -3025,7 +3025,7 @@ def slide_client_arabic_high_level(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Available — Arabic, on request.")
+    add_title(slide, "Available — Arabic, on request")
     add_accent_line(slide)
 
     # Single-paragraph framing
@@ -3090,7 +3090,7 @@ def slide_client_next_milestone(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Optional — domain-specific training run on your data.")
+    add_title(slide, "Optional — domain-specific training run on your data")
     add_accent_line(slide)
 
     add_text(slide,
@@ -6105,7 +6105,7 @@ def slide_client_try_it_out(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Step one — pilot on your videos.")
+    add_title(slide, "Step one — pilot on your videos")
     add_accent_line(slide)
 
     add_text(slide,
