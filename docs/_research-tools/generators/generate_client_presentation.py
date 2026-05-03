@@ -178,7 +178,7 @@ _section_whats_next = make_section_transition(
 )
 
 
-OUTPUT = MATERIALS / "Argos_VSP_Client_Round7_May2026.pptx"
+OUTPUT = MATERIALS / "Argos_VSP_Client_Round8_May2026.pptx"
 
 
 def slide_pipeline_appendix(prs):

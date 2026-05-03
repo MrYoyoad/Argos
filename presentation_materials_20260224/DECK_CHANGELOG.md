@@ -1,6 +1,6 @@
 # Argos VSP Client Deck — Changelog
 
-**File:** `Argos_VSP_Client_*.pptx` (currently `Argos_VSP_Client_Round7_May2026.pptx`)
+**File:** `Argos_VSP_Client_*.pptx` (currently `Argos_VSP_Client_Round8_May2026.pptx`)
 **Generator:** `docs/_research-tools/generators/generate_client_presentation.py`
 **Builders:** `docs/_research-tools/generators/presentation/slides_client.py`
 

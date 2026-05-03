@@ -1,6 +1,6 @@
 # Client Deck — Pre-Meeting Checklist
 
-**Deck:** `Argos_VSP_Client_Round7_May2026.pptx` (71 slides total, 58 visible during presentation; ~32 slides with bullet-by-bullet click-reveal animations)
+**Deck:** `Argos_VSP_Client_Round8_May2026.pptx` (70 slides total, 56 visible during presentation; ~32 slides with bullet-by-bullet click-reveal animations)
 **Q&A cheat sheet:** [QA_CHEAT_SHEET.md](QA_CHEAT_SHEET.md)
 **Detailed instructions:** [docs/guides/client-deck-powerpoint-checklist.md](../docs/guides/client-deck-powerpoint-checklist.md)
 **OOXML compat scan:** [PP_COMPAT_REPORT.txt](PP_COMPAT_REPORT.txt) in this folder

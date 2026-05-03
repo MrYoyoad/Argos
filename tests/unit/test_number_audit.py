@@ -36,7 +36,7 @@ import pytest
 from pptx import Presentation
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round7_May2026.pptx"
+DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round8_May2026.pptx"
 
 # Slide indices (1-based) for BORROWED builders. Recomputed for Round 5
 # after the framing-v2 reorder + 12 academic borrows landed (six judge
