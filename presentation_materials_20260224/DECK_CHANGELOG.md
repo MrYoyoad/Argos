@@ -60,7 +60,7 @@ User reviewed Round 6 deck and posted 26 specific feedback items. Most are simpl
 
 71 slides total / 58 visible / 13 hidden. Audits 7/7 green. Old Round-5/6 files retained on disk as frozen references.
 
-- **COMMIT**: TBD.
+- **COMMIT**: fa7e3e0.
 
 ---
 
