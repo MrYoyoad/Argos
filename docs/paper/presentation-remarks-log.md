@@ -487,6 +487,20 @@ User reviewed Round 8.8 deck. Posted 17 specific fix items + 4 deliverables. The
 
 ---
 
+## 2026-05-03 — Competitive landscape research → cheat sheet + reference doc
+
+User pasted competitive landscape research (Symphonic Labs / "Read Their Lips", LipReadPro, big-tech speech APIs, accessibility tools, research demos, manual forensic experts) and asked whether it belongs in the cheat sheet.
+
+**Verdict: yes — competitor questions were a gap.** Cheat sheet had no entry covering "why not Whisper", "isn't this just AV-HuBERT / VSP-LLM", "what about Read Their Lips / LipReadPro", or the forensic-industry stance.
+
+### Changes
+- Added 4 Q&A rows to [QA_CHEAT_SHEET.md](../../presentation_materials_20260224/QA_CHEAT_SHEET.md): Whisper/audio-only, AV-HuBERT/VSP-LLM open source, Read Their Lips + LipReadPro, 121 Captions forensic stance.
+- Saved full landscape research as [competitive_landscape.md](../../presentation_materials_20260224/competitive_landscape.md) — pull-only companion to the cheat sheet, do not volunteer.
+- Note: source paste was truncated mid-word at "fluent-hallucinati" in section "Argos's actual differentiation #2". Marked in the saved doc; recover original if more was intended.
+- `QA_CHEAT_SHEET.pdf` is now stale vs `.md` (cheat sheet PDF needs regeneration before next print).
+
+---
+
 ## 2026-05-03 — Cheat sheet redo (one page)
 
 | # | Request | Status |
