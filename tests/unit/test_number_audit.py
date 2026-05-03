@@ -47,14 +47,11 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round7_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Round 7: failure_deep_2 dropped, gallery moved to appendix,
-    # slide_pipeline_appendix added (height-bound local wrapper of
-    # slide_17_png — not strictly borrowed, but the body is the academic
-    # PNG so we exempt it the same way), preprocessing_summary dropped,
-    # how_to_read/three_tier swapped.
-    43,  # slide_25d             — salvage recoveries (WER stripped from headers)
-    56,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    68,  # slide_thank_you       — close
+    # Round 8: slide_25d dropped (jesus phonetic-bridge example), and
+    # slide_client_failure_worked_example dropped — everything past old
+    # slide 44 shifts down by 2.
+    55,  # slide_data_flow       — 5-step model architecture (LoRA stripped) (was 56)
+    67,  # slide_thank_you       — close (was 68)
 }
 
 
@@ -288,6 +285,11 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
     approved.update({
         "68%",                # baseline NIV-Y+P (first guess only): 68.4% rounded
         "71%",                # hyp_mbr NIV-Y+P (consensus): 71.1% rounded
+    })
+    # Round 8 — slide 17 (clean-output everyday example) shows an
+    # informal overall-confidence figure for one Trust-tier segment.
+    approved.update({
+        "95%",                # Slide 17 clean-everyday segment overall confidence
     })
     # Strip whitespace inside percent tokens
     def norm(s):

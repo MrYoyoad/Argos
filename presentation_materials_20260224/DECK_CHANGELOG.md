@@ -26,6 +26,50 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-03 — **Round 8 — Audit-driven cleanup pass on Round 7** (LANDED)
+
+User reviewed Round 7 + posted 27 specific feedback items + Opus 4.7 review (6 fixes). Three parallel sub-agents executed; final integration here.
+
+**Group A (slides 8, 17, 20–25, 26, 30, 32, 33, 36, 37, 38, 40):**
+- Slide 8: replaced "camera angle" reason (symmetrical to our model — doesn't differentiate) with FATIGUE & ATTENTION + TRAINING SCALE — both real structural human-vs-system gaps.
+- Slide 17 (new positive example): added video poster + bigger TRUST tier badge + "Overall confidence ~95%" line.
+- Slides 20–25 (judge examples): added video posters via new `video_key` parameter on `_client_judge_ex_slide`. Three-column layout when video present.
+- Slide 26 (headline): 62% → **71%** (post-aggregation NIV-Y+P from MBR-default production state).
+- Slide 30: added "tier-first, colors second" caption below screenshot.
+- Slide 32 (three-tier UI): rounded percentages 23.8/37.5/38.7 → 24/38/39.
+- Slide 33: added video poster (`salvage` clip).
+- Slide 36 (NUMBERS-AND-NAMES card): softened from "1 million vs 1 billion at 96% confidence" alarm to "still being tuned, verify against the video — known sharp edge."
+- Slide 37 title: "The model can produce confident text that's wrong" → "When the model is wrong about a topic — what it looks like."
+- Slide 38: added Obama-flagged video poster.
+- Slide 40 speaker note: full plot explanation (Trust 99% / Salvage 87% / Strip 23%, calibration story).
+
+**Group B (slide drops + hides + slide 52 rewrite):**
+- DROPPED from order: `slide_25d` (jesus phonetic-bridge example too sketchy), `slide_client_failure_worked_example` (item 17 not useful).
+- HIDDEN added: 41 (failure_taxonomy_full), 51 (aggregation_safety before/after bars — Opus said deck-redundant), 53 (pipeline_detailed bulk diagram).
+- Slide 52 (`validation_intro`) REWRITTEN — emphasizes runtime confidence vs. design-time IS metric (Opus pointed out this slide was misleading — "IS isn't what runs at deployment time"). Now correctly distinguishes calibration metric from runtime signal.
+- Speaker-note slide-number references repaired after slide moves.
+
+**Group C (slide 46/47/48 reshapes + What's-Next reorder + 3 user-confirmed fixes):**
+- Slide 43 (`claims`): dropped 1 more pair (5→4), bumped body Pt(13)→Pt(14), row_h 0.62"→0.72". Reads at projection scale now.
+- Slide 44 (`trust_without_ground_truth`): swapped CONFIG STABILITY card with WILD VIDEOS framing per item 19. **Q1 fix**: rewrote "GROWS IN YOUR HANDS" body to make domain-training-pass explicit (was implying automatic online learning). **Q2 fix**: speaker notes now flag that the 16-config stability claim was measured on the design-time IS metric (per `docs/evaluation/is_cross_config_validation.md` §10.4) — not the runtime confidence signal. Visible card now talks about wild-video validation, which is the more honest claim for the runtime story.
+- Slide 45 (`trust_operating_points`) RESHAPED with capture/loss numbers per item 20: 630 trusted / 602 captured useful / 1 in 22 misled / 322 useful below threshold. 4-step click-reveal.
+- Slide 55 (`engineering_journey`): milestone CHRONOLOGY reordered per item 24. Months 1–2 (Research integration → 37 bugs fixed across three open-source codebases) → Months 2–4 (Production refactor + dual-environment, parallel) → Months 4–5 (Confidence layer) → Months 5–6 (N-best aggregation + judge validation).
+- Slide 56 (`deployment_options`): reframed from cost-ladder to "we handle both, same cost" per item 25.
+- Slide 60 (`arabic_high_level`): removed the "Which Arabic — MSA / Levantine / Egyptian / Gulf?" question; replaced with "small research pass on Arabic data — risk is low, mostly engineering work" per item 26.
+- **Section 13 reordered per item 27**: NEW first slide `slide_client_try_it_out` (PILOT / ADAPT / DECIDE cards) → multi-speaker (moved from §6) → Arabic (now first option) → quality_filter → next_milestone → feedback_loop → partnership_ask.
+
+**Q1 (overpromise fix)**: GROWS IN YOUR HANDS pill on slide 44 + slide 28 footer reframed to make domain-training-pass explicit. No automatic-online-learning implication.
+
+**Q2 (config stability metric vs confidence)**: VERIFIED — the 16-config Pearson r=0.925 stability claim was measured on the IS metric (per §10.4), not on the runtime confidence aggregate. Visible card on slide 44 now uses wild-video framing instead. Speaker note carries the verified attribution.
+
+**Q3 (slide 45 numbers)**: 630 trusted / 602 captured useful / 322 useful lost / 1 in 22 misled — all from `docs/confidence/client_trust_calibration.md`, all approved.
+
+**Final state**: 70 slides total / 14 hidden / 56 visible. Audits 7/7 green.
+
+- **COMMIT**: TBD.
+
+---
+
 ## 2026-05-03 — **Round 7 cut — `Argos_VSP_Client_Round7_May2026.pptx`** (LANDED)
 
 User reviewed Round 6 deck and posted 26 specific feedback items. Most are simplifications, slide drops, and "make it feel like a finished product" reframes. Plan: `.claude/plans/i-need-to-create-proud-cupcake.md` § Round 7. Executed via 3 parallel sub-agents.

@@ -40,9 +40,9 @@ from presentation.slides_future import (
 # slide_failure_deep_1a + 1b → MERGED into slide_client_failure_taxonomy_full.
 # slide_08 → DROPPED (duplicates the new failure_taxonomy slide).
 # slide_arabic_roadmap → REPLACED by slide_client_arabic_high_level.
-from presentation.slides_evaluation import (
-    slide_25d,                          # Salvage: 3 real recoveries (Round 5.1: WER stripped from card headers)
-)
+# Round 8 — slide_25d DROPPED (jesus phonetic-bridge example too sketchy
+# for client deck; replacement would require editing academic-shared
+# slides_evaluation.py). Whole slide dropped instead of card swap.
 from presentation.slides_research import (
     slide_failure_deep_2,               # Taxonomy worked examples (3 ref/hyp cards)
 )
@@ -116,8 +116,8 @@ from presentation.slides_client import (
     slide_client_halluc_caught,
     slide_client_seq_confidence_correlation,
     slide_client_trust_dashboard,
-    slide_client_failure_taxonomy_full,     # NEW Round 5.1 (merged 1a+1b)
-    slide_client_failure_worked_example,
+    slide_client_failure_taxonomy_full,     # NEW Round 5.1 (merged 1a+1b) — Round 8: HIDDEN
+    # slide_client_failure_worked_example dropped Round 8 — builder kept defined
     slide_client_hallucination_flag,
     slide_client_claims,                    # NEW Round 5.5 (credibility-hardening)
     slide_client_trust_without_ground_truth, # NEW Round 5.1 (deepest critique answer)
@@ -136,7 +136,9 @@ from presentation.slides_client import (
     slide_client_deployment_options,
     # slide_web_ui DROPPED (Round 5.1 — duplicate Live Demo placeholder)
 
-    # Section 13 — What's next
+    # Section 13 — What's next (Round 8 reorder: pilot first, then
+    # multi-speaker, then options with Arabic first)
+    slide_client_try_it_out,                # NEW Round 8 — pilot-first opener
     slide_client_quality_filter,
     slide_client_preprocessing_summary,
     slide_client_arabic_high_level,         # NEW Round 5.1 (replaces slide_arabic_roadmap)
@@ -236,12 +238,10 @@ def main():
         slide_client_human_ceiling,             # NEW Round 5.1 (why 45-52%)
         # § Why hard
         slide_client_visemes,
-        # § What we built — multi-speaker moved here in Round 5.1.
-        # engineering_journey moved from here to §Engineering (Round 5.2) so
-        # the engineering section carries the substantive depth instead of
-        # a thin "what we did" footnote.
+        # § What we built — Round 8: multi-speaker moved BACK to §13
+        # (What's next) per user feedback that the partnership ask
+        # should lead with try-it-out → multi-speaker → options.
         slide_client_what_we_built,
-        slide_client_multi_speaker_today_vs_path,   # MOVED UP from §13
         # § How to use it — Demo
         slide_client_demo_intro,
         slide_client_demo_video_embed,
@@ -290,12 +290,10 @@ def main():
         slide_client_seq_confidence_correlation,
         slide_client_trust_dashboard,
         # Failure-mode taxonomy (Round 5.1: 1a+1b merged into one slide)
-        slide_client_failure_taxonomy_full,     # NEW Round 5.1 (replaces slide_08 + 1a + 1b)
-        slide_client_failure_worked_example,
-        # Round 7: slide_failure_deep_2 dropped from active deck (academic
-        # borrow; failure taxonomy + worked example cover this beat).
-        # Salvage examples (Round 5.1: 25e dropped — jalapeno duplicates judge_ex5)
-        slide_25d,                              # Borrowed: 3 real recoveries
+        slide_client_failure_taxonomy_full,     # Round 8: HIDDEN (item 14)
+        # Round 8: slide_client_failure_worked_example DROPPED (item 17 — not useful)
+        # Round 7: slide_failure_deep_2 dropped from active deck.
+        # Round 8: slide_25d DROPPED (item 16 — phonetic-bridge "jesus" example too sketchy)
         # Summary stat + the deepest-critique reframe + closer
         slide_client_hallucination_flag,
         slide_client_claims,                        # NEW Round 5.5 — claims/non-claims credibility-harden
@@ -321,12 +319,14 @@ def main():
         slide_client_engineering_journey,       # MOVED Round 5.2 from §What-we-built — deeper rewrite
         slide_client_deployment_options,        # Cloud/on-prem
 
-        # § What's next (Round 5.1: data_ask + investment_ask merged into partnership_ask)
+        # § What's next (Round 8 reorder per user: pilot-first, then
+        # multi-speaker, then options with Arabic FIRST among options)
         _section_whats_next,
+        slide_client_try_it_out,                # NEW Round 8 — pilot-first opener
+        slide_client_multi_speaker_today_vs_path,   # MOVED Round 8 from §6 — engineering shipping
+        # Then options:
+        slide_client_arabic_high_level,         # FIRST option (Round 8 reorder)
         slide_client_quality_filter,
-        # Round 7: slide_client_preprocessing_summary dropped (the
-        # quality_filter slide already conveys the pre-processing message).
-        slide_client_arabic_high_level,         # NEW Round 5.1 (replaces academic arabic_roadmap)
         slide_client_next_milestone,            # NEW Round 5.8 — what investment buys (stronger LLM + more data)
         slide_client_feedback_loop_ask,         # NEW Round 5.13 — soft client-feedback ask
         slide_client_partnership_ask,           # NEW Round 5.1 (merged ask) — partnership logistics
@@ -365,23 +365,27 @@ def main():
     # stay in the .pptx file as backup but PowerPoint skips them during
     # presentation. python-pptx has no direct hide-slide API; set the
     # show="0" attribute on <p:sldId> directly. 1-based indices.
-    # Round 7: indices recomputed after gallery→appendix, preprocessing_summary
-    # drop, failure_deep_2 drop, how_to_read/three_tier swap, +slide_17_png
-    # appendix add. Old → new shifts from prior round's HIDDEN_SLIDES baseline.
+    # Round 8: indices recomputed after dropping slide_client_failure_worked_example
+    # (was 43) and slide_25d (was 44). Everything from old slide 45 onward
+    # shifts down by 2. Newly added: 42 (failure_taxonomy_full), 52
+    # (aggregation_safety). Slide 41 (trust_dashboard) hidden because the
+    # "62%" headline is being reframed to "71%" elsewhere — this slide is
+    # redundant after that update.
     HIDDEN_SLIDES = [
-        14,  # demo_recap "What you just saw" — thin transition; demo speaks for itself
-        21,  # Output Example 2 — Truncated but Core Preserved (judge_ex2)
-        23,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4)
-        24,  # Output Example 5 — Cooking Domain (judge_ex5)
-        41,  # trust_dashboard "62% useful — on real-world video" — duplicates headline
-        44,  # slide_25d (LLM Salvage 3 cases) — overlaps with case-study slides
-        45,  # hallucination_flag "1 in 5" — duplicates headline
-        49,  # what_this_means — thin transition
-        56,  # slide_client_pipeline_detailed (8-stage diagram) — too unclear here
-        60,  # _section_whats_next transition — implicit pivot
-        66,  # recap "Three things to take with you" — trim close section
-        70,  # Round 7: video_gallery — appendix-only
-        71,  # Round 7: slide_17_png (8-stage academic pipeline) — appendix-only
+        13,  # demo_recap "What you just saw" — thin transition
+        20,  # Output Example 2 — Truncated but Core Preserved (judge_ex2)
+        22,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4)
+        23,  # Output Example 5 — Cooking Domain (judge_ex5)
+        40,  # trust_dashboard "62% useful" — duplicates headline
+        41,  # failure_taxonomy_full — hide; speaker can recall via worked-example beat
+        42,  # hallucination_flag "1 in 5" — duplicates headline
+        46,  # what_this_means — thin transition
+        51,  # aggregation_safety before/after bars — hide
+        53,  # pipeline_detailed (8-stage diagram) — too unclear here
+        57,  # _section_whats_next transition — implicit pivot
+        65,  # recap "Three things to take with you" — trim close section
+        69,  # video_gallery — appendix-only
+        70,  # slide_pipeline_appendix — appendix-only
     ]
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn
