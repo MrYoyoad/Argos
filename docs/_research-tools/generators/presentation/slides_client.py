@@ -198,7 +198,7 @@ def slide_client_what_we_built(prs):
 
     items = [
         ("1. PIPELINE",       TEAL,
-         "Nine automatic stages from raw video to confidence-scored transcript. Containerized; runs anywhere with a GPU."),
+         "Eight automatic stages from raw video to confidence-scored transcript. Containerized; runs anywhere with a GPU."),
         ("2. WEB UI",         TEAL,
          "Drag-and-drop, live progress, downloadable HTML report. No command line required."),
         ("3. MODEL",          GOLD,
@@ -633,7 +633,7 @@ def slide_client_demo_video_embed(prs):
              size=Pt(13), color=LGRAY, align=PP_ALIGN.CENTER)
     add_text(slide,
              "If video does not embed before the meeting, narrate the demo: "
-             "drag-drop upload → 9-stage pipeline → color-coded report.",
+             "drag-drop upload → 8-stage pipeline → color-coded report.",
              box_x, box_y + Inches(4.3), box_w, Inches(0.6),
              size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -654,7 +654,7 @@ def slide_client_demo_recap(prs):
 
     add_bullets(slide, [
         "Drag-drop upload — no command line, no scripting",
-        "Nine automatic stages — face detection, mouth cropping, recognition, decoding",
+        "Eight automatic stages — face detection, mouth cropping, recognition, decoding",
         "Per-word color coding — green = confident AND beams agreed, yellow = review, red = avoid (numbers capped at yellow)",
         "Per-segment Intelligibility Score — calibrated against expert judgment",
         "Output is a downloadable HTML report you can hand a reviewer",
