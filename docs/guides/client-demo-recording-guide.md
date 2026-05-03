@@ -47,12 +47,13 @@ presentation_materials_20260224/06_demo_videos/_ui_walkthrough_clientpitch.mp4
 
 Don't skip these. The most expensive thing in this 48 hours is a recording where the demo crashed.
 
-1. **Pre-run the pipeline once** end-to-end on the same input video you're about to record with. Confirm nothing crashes. Confirm the report opens. Confirm the word-level color coding renders.
-2. **Stage the input video** — pick one with clear speech and one or two named entities. Confirm it produces a high-IS, mostly-green output. **Do not gamble on a fresh clip during the recording.**
-3. **Clear the output folder** so the Complete screen looks fresh during the demo.
-4. **Close Slack, email, calendar, notifications.** macOS Do Not Disturb on. Quit anything that might pop up.
-5. **Set browser zoom 110–125%** so text is readable in the recorded video.
-6. **One full dry-run aloud, with a timer.** Aim under 5 minutes. If you go over, cut something.
+1. **Pre-run the pipeline once** end-to-end on the same input video you're about to record with. Confirm nothing crashes. Confirm the report opens. Confirm the tier badges (Trust / Salvage / Strip) and per-word coloring (blue / orange / purple) both render.
+2. **Stage the input video** — pick one with clear speech and one or two named entities. Confirm it produces a high-IS, mostly-blue output with at least one Trust-tier segment, plus ideally one Salvage and one Strip segment elsewhere in the report so you can demo all three tiers in Scene 3. **Do not gamble on a fresh clip during the recording.**
+3. **Decode with `VSP_NBEST=1`** so the joint conf + beam-agreement rule and tier badges actually fire. Without it, the report falls back to a conf-only coloring with no tier pills — which is *not* the story we're telling clients.
+4. **Clear the output folder** so the Complete screen looks fresh during the demo.
+5. **Close Slack, email, calendar, notifications.** macOS Do Not Disturb on. Quit anything that might pop up.
+6. **Set browser zoom 110–125%** so text is readable in the recorded video.
+7. **One full dry-run aloud, with a timer.** Aim under 5 minutes. If you go over, cut something.
 
 ---
 
@@ -77,20 +78,36 @@ Read these out loud while you click. **Pause 1–2 seconds between scenes** to m
 ### Scene 3 — The report (2:00–3:30) — *most important scene*
 > *(Click "Open Results." Open the HTML report.)*
 >
-> "Here's the part most clients care about. Each segment has the decoded transcript with **per-word confidence color-coding**. Green words are high confidence. Yellow are worth a quick review. Red flags potential errors."
+> "Here's the part most clients care about. Every segment tells you twice how much to trust it — once at the **segment level** with a tier badge, and once at the **word level** with per-word coloring."
 >
-> *(Scroll slowly. Hover over a green word, then a yellow word, then a red word. Don't rush — let the viewer's eye land on each one.)*
+> *(Point to the rightmost column.)*
 >
-> "On the right, you'll see the segment-level Intelligibility Score. This is calibrated against expert judgment — segments above 3.8 are clearly conveyed, between 2 and 3.8 are useful with context, below 2 we flag for review."
+> "Each segment is tagged **Trust**, **Salvage**, or **Strip**. Trust means the segment is solidly transcribed — read it normally. Salvage means it's useful but partial — verify names and numbers. Strip means we don't trust it enough to color the words at all, so we grey them out — skim for gist, don't quote."
+>
+> *(Scroll to a Trust segment. Hover over a blue word, then an orange word, then a purple word.)*
+>
+> "Inside a segment, words are **blue** for high confidence, **orange** for medium, **purple** for low. The blue threshold isn't just probability — the model also has to agree with itself across multiple decoding hypotheses. That second signal catches confident-but-wrong fluent guesses, which is the most dangerous failure mode in lip reading."
+>
+> *(Scroll to a Strip-tier segment to show the grey-italic stripped coloring + banner.)*
+>
+> "When the segment-level confidence falls below our reliability floor, we strip the coloring entirely — because at that point the per-word signal is misleading. The system tells you *not* to trust it, instead of pretending it's sure."
+>
+> *(Point to the IS column.)*
+>
+> "On the right is the segment-level Intelligibility Score. Calibrated against expert judgment — above 3.8 is clearly conveyed, between 2 and 3.8 is useful with context, below 2 we flag for review."
 
 ### Scene 4 — The trust message (3:30–4:30)
-> *(Scroll to a hallucinated / red-flagged segment. Or pull up the dashboard.)*
+> *(Scroll to a Strip-tier or hallucinated segment.)*
 >
-> "Here's a segment the system flagged as low-confidence. The model knew it wasn't sure — it's marked red, low IS, pulled out of the 'usable' bucket automatically. **You don't have to review every segment to find the bad ones; the system finds them for you.** That's the difference between this and a black-box transcript."
+> "Here's a segment the system flagged as unreliable. The model knew it wasn't sure — Strip badge, low IS, coloring removed, automatically pulled out of the 'usable' bucket. **You don't have to review every segment to find the bad ones; the system finds them for you.** That's the difference between this and a black-box transcript."
+>
+> *(Optionally point to a number or a proper name in any segment.)*
+>
+> "One special rule worth knowing: numbers, names, dates, and dollar amounts are always capped at orange — even when the model is sure. Lip reading physically cannot disambiguate 'fifteen' from 'fifty' or 'million' from 'billion'. The system refuses to mark those blue, so you always know to verify them against the source."
 >
 > *(Pause. End on the dashboard or Complete screen.)*
 >
-> "That's the whole pipeline. Drag in, walk away, come back to color-coded results you can trust."
+> "That's the whole pipeline. Drag in, walk away, come back to color-coded results you can trust — with the system telling you exactly which words and segments to trust."
 
 ---
 

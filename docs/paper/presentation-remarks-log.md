@@ -440,3 +440,15 @@ User asked me to assess `/data/conversation_datasets/` (RealTalk + AMI + EgoCom 
 - Deferred: EgoCom + Seamless downloads (to be scheduled later).
 
 Deliverables: `presentation_materials_20260224/06_demo_videos/realtalk/` (30 burned face clips, 5 Mode-B composites, 75 frame snapshots, analysis md+json), curated picks at `realtalk_demo_picks.md`.
+
+---
+
+## 2026-05-03 — Demo recording script updated for live client meeting
+
+User asked to launch the server and refresh the recording script for narrating live over a screen-recording in a client meeting. Server already running at http://127.0.0.1:8765.
+
+Script updates ([docs/guides/client-demo-recording-guide.md](../guides/client-demo-recording-guide.md)):
+- Scene 3 rewritten: word colors are now **blue/orange/purple** (not green/yellow/red) and tier badges **Trust/Salvage/Strip** added — both reflect the May 2 2026 production UI (joint conf + beam-agreement rule, MBR n-best as default display).
+- Scene 3 now demos the Strip-tier "coloring removed" treatment explicitly — the system telling you *not* to trust a segment is half the story.
+- Scene 4 adds the numbers/names/dates orange-cap rule (lip-reading can't disambiguate "fifteen" vs "fifty", "million" vs "billion").
+- Pre-record checklist updated: must decode with `VSP_NBEST=1` for the joint rule + tier pills to render; staged input video must produce all three tiers (Trust + Salvage + Strip) so all three can be demoed.
