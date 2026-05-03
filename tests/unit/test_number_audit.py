@@ -50,8 +50,8 @@ BORROWED_SLIDES = {
     # Round 8: slide_25d dropped (jesus phonetic-bridge example), and
     # slide_client_failure_worked_example dropped — everything past old
     # slide 44 shifts down by 2.
-    53,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    67,  # slide_thank_you       — close
+    42,  # slide_data_flow       — 5-step model architecture (LoRA stripped) (was 53)
+    55,  # slide_thank_you       — close (was 67)
 }
 
 

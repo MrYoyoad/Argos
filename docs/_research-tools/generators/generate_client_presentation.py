@@ -174,7 +174,7 @@ _section_engineering = make_section_transition(
 )
 _section_whats_next = make_section_transition(
     "WHAT'S NEXT",
-    "The path to multi-speaker, more languages, your domain",
+    "",
 )
 
 
@@ -245,7 +245,7 @@ def main():
         # § How to use it — Demo
         slide_client_demo_intro,
         slide_client_demo_video_embed,
-        slide_client_demo_recap,
+        # slide_client_demo_recap moved to APPENDIX (Round 8.7 — was thin transition)
         # § Real outputs — Section transition + gallery + cleans + 3 Obama + 6 verdict-tagged
         _section_real_outputs,
         # Round 7: video_gallery moved to appendix (after thank_you).
@@ -253,18 +253,9 @@ def main():
         slide_client_example_simple_positive,   # NEW Round 7 — non-Obama clean win
         slide_client_clean_outputs_gallery,     # NEW Round 5.1 — 6 cleans
         slide_client_example_partial,           # Obama segment 31 — partial
-        # slide_client_example_flagged DROPPED Round 5.10 — redundant with
-        # slide_client_halluc_real_example (same Obama segment 5 content,
-        # same "Rwanda's genocide" failure mode). The hallucination trio
-        # (slides 36-38 in Round 5.10) tells this story more dramatically.
-        # New Mode 2.2 + Mode 3.1 case-study slides cover topic-shift and
-        # Strip-saves (genuinely different failure modes) in §how-to-read.
-        # 6 client-wrapper judge examples (Round 5.1: verdict-tag instead of WER strip)
+        # 3 client-wrapper judge examples kept visible (1, 3, 6); 2/4/5 moved to appendix
         slide_client_judge_ex1,
-        slide_client_judge_ex2,
         slide_client_judge_ex3,
-        slide_client_judge_ex4,
-        slide_client_judge_ex5,
         slide_client_judge_ex6,
         # § Headline numbers — lands as summary, not opening
         slide_client_headline_numbers,
@@ -282,24 +273,21 @@ def main():
         slide_client_case_topic_shift,          # NEW Round 5.10 — topic-shift hallucination caught (gardening → nuclear)
         slide_client_case_strip_save,           # NEW Round 5.10 — Strip catches fluent fabrication
         slide_client_pitfalls,                  # NEW Round 5.9 — three rules
-        # Hallucination case-study trio
-        slide_client_halluc_problem,
-        slide_client_halluc_real_example,
+        # Hallucination story collapsed to a single slide (Round 8.7) —
+        # halluc_problem + halluc_real_example moved to APPENDIX.
         slide_client_halluc_caught,
         # Per-segment + sequence confidence
         slide_client_seq_confidence_correlation,
-        slide_client_trust_dashboard,
-        # Failure-mode taxonomy (Round 5.1: 1a+1b merged into one slide)
-        slide_client_failure_taxonomy_full,     # Round 8: HIDDEN (item 14)
+        # slide_client_trust_dashboard moved to APPENDIX (duplicates headline)
+        # slide_client_failure_taxonomy_full moved to APPENDIX (Round 8 dial-back)
         # Round 8: slide_client_failure_worked_example DROPPED (item 17 — not useful)
         # Round 7: slide_failure_deep_2 dropped from active deck.
         # Round 8: slide_25d DROPPED (item 16 — phonetic-bridge "jesus" example too sketchy)
-        # Summary stat + the deepest-critique reframe + closer
-        slide_client_hallucination_flag,
+        # slide_client_hallucination_flag moved to APPENDIX (duplicates headline)
         slide_client_claims,                        # NEW Round 5.5 — claims/non-claims credibility-harden
         slide_client_trust_without_ground_truth,    # NEW Round 5.1
         slide_client_trust_operating_points,        # NEW Round 5.15 — permissive/moderate/strict thresholds
-        slide_client_what_this_means,
+        # slide_client_what_this_means moved to APPENDIX (thin transition)
 
         # § Validation (Round 5.1: validation_summary dropped)
         _section_validation,
@@ -314,7 +302,7 @@ def main():
         # data_flow + deployment options. The engineering section now
         # carries real depth instead of a single architecture slide.)
         _section_engineering,
-        slide_client_pipeline_detailed,         # NEW Round 5.2: 8-stage operational pipeline (height-bound)
+        # slide_client_pipeline_detailed moved to APPENDIX (Round 8 — bulk PNG, unclear)
         slide_data_flow,                        # Borrowed: 5-step model architecture (LoRA stripped)
         slide_client_engineering_journey,       # MOVED Round 5.2 from §What-we-built — deeper rewrite
         slide_client_deployment_options,        # Cloud/on-prem
@@ -332,15 +320,30 @@ def main():
         slide_client_partnership_ask,           # NEW Round 5.1 (merged ask) — partnership logistics
 
         # § Close (no transition — flows directly from partnership ask)
-        slide_client_recap,
+        # slide_client_recap moved to APPENDIX (Round 8 — trim close section)
         slide_client_integration_commitment,
         slide_client_next_steps,
         slide_thank_you,                        # Borrowed: close
 
-        # ═══════ APPENDIX (hidden in presentation, preserved in file) ═══════
-        # Round 7: appendix-only slides (HIDDEN by index below).
-        slide_client_video_gallery,             # Round 7: gallery moved to appendix
-        slide_pipeline_appendix,                # Round 7: 8-stage pipeline (height-bound wrapper) — appendix
+        # ═══════ APPENDIX (hidden in presentation, physically last in file) ═══════
+        # Round 8.7 reorganization: every slide that was previously hidden
+        # mid-deck is now collected here at the end of the file. This keeps
+        # them available for Q&A reference while making sure they don't
+        # appear mid-flow in PowerPoint Normal view.
+        slide_client_demo_recap,                # was inline @ slide 13
+        slide_client_judge_ex2,                 # was inline @ slide 20
+        slide_client_judge_ex4,                 # was inline @ slide 22
+        slide_client_judge_ex5,                 # was inline @ slide 23
+        slide_client_halluc_problem,            # was inline @ slide 36
+        slide_client_halluc_real_example,       # was inline @ slide 37
+        slide_client_trust_dashboard,           # was inline @ slide 40
+        slide_client_failure_taxonomy_full,     # was inline @ slide 41
+        slide_client_hallucination_flag,        # was inline @ slide 42
+        slide_client_what_this_means,           # was inline @ slide 46
+        slide_client_pipeline_detailed,         # was inline @ slide 52
+        slide_client_recap,                     # was inline @ slide 64
+        slide_client_video_gallery,             # appendix since Round 7
+        slide_pipeline_appendix,                # appendix since Round 7
     ]
 
     total = len(builders)
@@ -371,23 +374,9 @@ def main():
     # (aggregation_safety). Slide 41 (trust_dashboard) hidden because the
     # "62%" headline is being reframed to "71%" elsewhere — this slide is
     # redundant after that update.
-    HIDDEN_SLIDES = [
-        13,  # demo_recap "What you just saw" — thin transition
-        20,  # Output Example 2 — Truncated but Core Preserved (judge_ex2)
-        22,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4)
-        23,  # Output Example 5 — Cooking Domain (judge_ex5)
-        36,  # hallucination_problem — Round 8.3: dial-back, collapse trio
-        37,  # hallucination_real_example — Round 8.3: dial-back, collapse trio
-        40,  # trust_dashboard "62% useful" — duplicates headline
-        41,  # failure_taxonomy_full — hide; speaker can recall via worked-example beat
-        42,  # hallucination_flag "1 in 5" — duplicates headline
-        46,  # what_this_means — thin transition
-        52,  # pipeline_detailed (8-stage diagram) — too unclear here (was 53 pre-drop)
-        56,  # _section_whats_next transition — implicit pivot (was 57)
-        64,  # recap "Three things to take with you" — trim close section (was 65)
-        68,  # video_gallery — appendix-only (was 69)
-        69,  # slide_pipeline_appendix — appendix-only (was 70)
-    ]
+    # Round 8.7 — all hidden slides moved to appendix block at file end.
+    # Visible slides 1-55 (where 55 is thank_you); slides 56-69 are appendix.
+    HIDDEN_SLIDES = list(range(56, 70))  # 56..69 inclusive — every appendix slide
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn
         sldIdLst = prs.slides._sldIdLst

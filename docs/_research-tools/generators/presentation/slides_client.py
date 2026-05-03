@@ -1016,14 +1016,14 @@ def slide_client_trust_dashboard(prs):
     (see slide_client_seq_confidence_correlation)."""
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "62% useful — on real-world video, not benchmark data")
+    add_title(slide, "71% useful — on real-world video, not benchmark data")
     add_accent_line(slide)
 
     # Left column — the headline number
     left_w = Inches(5.8)
     add_rect(slide, MX, Inches(1.7), left_w, Inches(4.7),
              fill_color=NAVY2, border_color=None)
-    add_text(slide, "62%",
+    add_text(slide, "71%",
              MX, Inches(1.95), left_w, Inches(2.2),
              size=Pt(140), bold=True, color=GREEN, align=PP_ALIGN.CENTER)
     add_text(slide, "of segments deliver useful output today",
@@ -1038,7 +1038,7 @@ def slide_client_trust_dashboard(prs):
     right_w = Inches(5.93)
     add_rect(slide, right_x, Inches(1.7), right_w, Inches(4.7),
              fill_color=NAVY2, border_color=None)
-    add_text(slide, "WHAT THAT 62% IS UP AGAINST",
+    add_text(slide, "WHAT THAT 71% IS UP AGAINST",
              right_x + Inches(0.3), Inches(1.85), right_w - Inches(0.6), Inches(0.4),
              size=Pt(13), bold=True, color=CORAL)
     add_bullets(slide, [
@@ -2372,45 +2372,41 @@ def slide_client_example_simple_positive(prs):
     add_title(slide, "Example — clean output on everyday content")
     add_accent_line(slide)
 
-    # Subtitle (Round 8.3 — moved up, height shrunk to clear TRUST TIER pill)
+    # Row 1: subtitle (left) + confidence badge (right)
+    badge_w = Inches(2.2)
     add_text(slide,
              "When the speaker is centered and visual signal is good — "
              "the system delivers.",
-             MX, Inches(1.5), CW, Inches(0.3),
-             size=Pt(14), color=LGRAY, italic=True,
+             MX, Inches(1.5), CW - badge_w - Inches(0.2), Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True)
+    badge_x = MX + CW - badge_w
+    add_rect(slide, badge_x, Inches(1.5), badge_w, Inches(0.4),
+             fill_color=NAVY3, border_color=GREEN, border_width=Pt(1.0))
+    add_text(slide, "CONFIDENCE: HIGH",
+             badge_x, Inches(1.55), badge_w, Inches(0.3),
+             size=Pt(13), bold=True, color=GREEN,
              align=PP_ALIGN.CENTER)
 
-    # Round 8.3 — TRUST TIER pill moved below subtitle, smaller
-    badge_w = Inches(1.8)
-    badge_x = MX
-    add_rect(slide, badge_x, Inches(1.85), badge_w, Inches(0.4),
-             fill_color=GREEN, border_color=GREEN, border_width=Pt(1.0))
-    add_text(slide, "TRUST TIER",
-             badge_x, Inches(1.85) + Inches(0.05),
-             badge_w, Inches(0.3),
-             size=Pt(13), bold=True, color=WHITE,
-             align=PP_ALIGN.CENTER)
+    # Hero video, centered
+    vid_w = Inches(6.0)
+    vid_h = Inches(3.4)
+    vid_x = (SL_W - vid_w) // 2
+    vid_y = Inches(2.1)
+    add_video(slide, "entity_success", vid_x, vid_y, vid_w, vid_h)
 
-    # Two-column body — LEFT (REF/HYP) shrunk, RIGHT (READER'S VIEW + video)
-    col_gap = Inches(0.2)
-    col_w = Inches(5.5)
-    col_w_right = CW - col_w - col_gap
-
-    # LEFT: REF + HYP
-    refhyp_group = []
-    refhyp_group.append(add_text(slide, "REFERENCE",
-             MX, Inches(2.15), Inches(1.4), Inches(0.35),
-             size=Pt(11), bold=True, color=LGRAY))
-    refhyp_group.append(add_text(slide,
+    # REFERENCE label + text
+    add_text(slide, "REFERENCE",
+             MX, Inches(5.55), CW, Inches(0.25),
+             size=Pt(10), bold=True, color=LGRAY)
+    add_text(slide,
              "because as far as i know i haven't seen it",
-             MX, Inches(2.5), col_w, Inches(1.2),
-             size=Pt(13), color=LGRAY, italic=True))
+             MX, Inches(5.78), CW, Inches(0.4),
+             size=Pt(13), color=LGRAY, italic=True)
 
-    refhyp_group.append(add_text(slide, "HYPOTHESIS",
-             MX, Inches(3.9), Inches(1.4), Inches(0.35),
-             size=Pt(11), bold=True, color=WHITE))
-
-    # All-green hypothesis with 1 yellow word ("seen") for visual variety
+    # HYPOTHESIS label + color-coded text
+    add_text(slide, "HYPOTHESIS",
+             MX, Inches(6.20), CW, Inches(0.25),
+             size=Pt(10), bold=True, color=WHITE)
     runs = [
         ("because ",  {"size": Pt(13), "color": GREEN}),
         ("as ",       {"size": Pt(13), "color": GREEN}),
@@ -2423,55 +2419,20 @@ def slide_client_example_simple_positive(prs):
         ("seen ",     {"size": Pt(13), "color": YELLOW}),
         ("it",        {"size": Pt(13), "color": GREEN}),
     ]
-    refhyp_group.append(add_rich_text(slide, [runs],
-             MX, Inches(4.25), col_w, Inches(1.5)))
+    add_rich_text(slide, [runs],
+                  MX, Inches(6.43), CW, Inches(0.5))
 
-    # RIGHT: READER'S VIEW card (top, shorter) + video poster below
-    reader_group = []
-    rv_x = MX + col_w + col_gap
-    rv_y = Inches(2.15)
-    rv_h = Inches(2.0)
-    reader_group.append(add_rect(slide, rv_x, rv_y, col_w_right, rv_h,
-             fill_color=NAVY2, border_color=GREEN, border_width=Pt(1.0)))
-    reader_group.append(add_text(slide, "READER'S VIEW",
-             rv_x + Inches(0.2), rv_y + Inches(0.15),
-             col_w_right - Inches(0.4), Inches(0.3),
-             size=Pt(12), bold=True, color=GREEN))
-    reader_group.append(add_text(slide,
-             "All words confident. The reviewer trusts this without "
-             "rechecking — what 'high-confidence' looks like in practice.",
-             rv_x + Inches(0.2), rv_y + Inches(0.55),
-             col_w_right - Inches(0.4), rv_h - Inches(0.65),
-             size=Pt(12), color=WHITE))
-
-    # Round 8 — video poster on the right, below the READER'S VIEW card
-    vid_x = rv_x
-    vid_y = Inches(4.4)
-    vid_w = col_w_right
-    vid_h = Inches(2.05)
-    add_video(slide, "entity_success", vid_x, vid_y, vid_w, vid_h)
-    add_text(slide, "Click to play in PowerPoint",
-             vid_x, vid_y + vid_h + Inches(0.02), vid_w, Inches(0.22),
-             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
-
-    # Round 8 — overall confidence note (Round 8.3 — left of closing line, on
-    # the LEFT column so the right column's "Click to play" caption clears).
-    add_text(slide, "Overall confidence: ~95%.",
-             MX, Inches(6.2), col_w, Inches(0.3),
-             size=Pt(12), color=GREEN, italic=True, bold=True)
-
-    # Closing line (Round 8.3 — bumped down so it sits below the right-side
-    # "Click to play" caption that ends at y=6.69).
+    # Closing line
     add_text(slide,
              "The system gets out of the way when conditions are good.",
-             MX, Inches(6.72), CW, Inches(0.25),
-             size=Pt(11), color=GREEN, italic=True,
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(12), color=GREEN, italic=True,
              align=PP_ALIGN.CENTER)
 
-    # Tiny legend (Round 8.3 — pulled up off the slide-number footer)
+    # Legend
     add_text(slide,
              "GREEN: confident   YELLOW: review   RED: likely error",
-             MX, Inches(6.98), CW, Inches(0.2),
+             MX, Inches(7.30), CW, Inches(0.2),
              size=Pt(9), color=LGRAY, italic=True,
              align=PP_ALIGN.CENTER)
 
@@ -2489,7 +2450,6 @@ def slide_client_example_simple_positive(prs):
         "no numbers. Demonstrates the system's clean-conditions baseline "
         "on everyday speech."
     ))
-    add_animations(slide, [refhyp_group, reader_group], click_reveal=False)
     return slide
 
 
@@ -2594,127 +2554,81 @@ def _client_judge_ex_slide(prs, *, title, subtitle, ref_text, hyp_runs,
                             card_border=GOLD,
                             confidence_label=None, confidence_color=None,
                             video_key=None):
-    """Round 5.16f — uniform client styling for the 6 judge example slides.
+    """Round 8.7 — hero-video layout for judge example slides.
 
-    Layout matches `slide_client_reader_example` and `slide_client_case_topic_shift`:
-    title + accent line, italic subtitle, two-column body (REF/HYP left,
-    READER'S VIEW card right), closing punchline, tiny legend, logo+num.
+    Centered hero video on top, REF (label-above-text) + HYP (color-coded)
+    stacked below, closing line + legend at bottom. The subtitle is one
+    line; the closing line replaces the old READER'S VIEW card.
 
-    Visible text avoids NIV / kappa / IS / WER scores per N9; speaker notes
-    keep the underlying numbers intact.
+    `reader_view_lead` and `reader_view_body` parameters retained for
+    backward compatibility but only the closing line is shown — kept in
+    speaker notes are still passed via `notes`.
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
     add_title(slide, title)
     add_accent_line(slide)
 
-    # Subtitle — one-sentence punch line of what this example demonstrates
+    # Row 1: subtitle (left) + tier badge (right)
+    badge_w = Inches(2.2)
     add_text(slide, subtitle,
-             MX, Inches(1.5), CW, Inches(0.45),
-             size=Pt(14), color=LGRAY, italic=True,
+             MX, Inches(1.5), CW - badge_w - Inches(0.2), Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True)
+    if confidence_color == CORAL:
+        badge_text = "CONFIDENCE: LOW"
+        badge_color = CORAL
+    elif confidence_color == GOLD:
+        badge_text = "CONFIDENCE: MIXED"
+        badge_color = GOLD
+    else:
+        badge_text = "CONFIDENCE: HIGH"
+        badge_color = GREEN
+    badge_x = MX + CW - badge_w
+    add_rect(slide, badge_x, Inches(1.5), badge_w, Inches(0.4),
+             fill_color=NAVY3, border_color=badge_color, border_width=Pt(1.0))
+    add_text(slide, badge_text,
+             badge_x, Inches(1.55), badge_w, Inches(0.3),
+             size=Pt(13), bold=True, color=badge_color,
              align=PP_ALIGN.CENTER)
 
-    # Round 8 — three-column body when video_key is provided.
-    # LEFT (REF/HYP) wider, RIGHT split into video poster (top) +
-    # READER'S VIEW card (below).
-    col_gap = Inches(0.3)
+    # Hero video, centered horizontally
     if video_key:
-        right_w = Inches(3.0)
-        col_w = CW - right_w - col_gap
-    else:
-        col_w = (CW - col_gap) / 2
+        vid_w = Inches(6.0)
+        vid_h = Inches(3.4)
+        vid_x = (SL_W - vid_w) // 2
+        vid_y = Inches(2.1)
+        add_video(slide, video_key, vid_x, vid_y, vid_w, vid_h)
 
-    # LEFT: REF + HYP — group 1 (visible on entry)
-    refhyp_group = []
-    ref_y = Inches(2.15)
-    refhyp_group.append(add_text(slide, "REFERENCE",
-             MX, ref_y, Inches(1.4), Inches(0.35),
-             size=Pt(11), bold=True, color=LGRAY))
-    refhyp_group.append(add_text(slide, ref_text,
-             MX, ref_y + Inches(0.4), col_w, Inches(1.55),
-             size=Pt(13), color=LGRAY, italic=True))
+    # Row 3: REFERENCE label + text (stacked)
+    add_text(slide, "REFERENCE",
+             MX, Inches(5.55), CW, Inches(0.25),
+             size=Pt(10), bold=True, color=LGRAY)
+    add_text(slide, ref_text,
+             MX, Inches(5.78), CW, Inches(0.4),
+             size=Pt(13), color=LGRAY, italic=True)
 
-    hyp_y = Inches(4.05)
-    refhyp_group.append(add_text(slide, "HYPOTHESIS",
-             MX, hyp_y, Inches(1.4), Inches(0.35),
-             size=Pt(11), bold=True, color=WHITE))
-    refhyp_group.append(add_rich_text(slide, [hyp_runs],
-                  MX, hyp_y + Inches(0.4), col_w, Inches(2.0)))
+    # Row 4: HYPOTHESIS label + color-coded text
+    add_text(slide, "HYPOTHESIS",
+             MX, Inches(6.20), CW, Inches(0.25),
+             size=Pt(10), bold=True, color=WHITE)
+    add_rich_text(slide, [hyp_runs],
+                  MX, Inches(6.43), CW, Inches(0.5))
 
-    # RIGHT: optional video poster (top) + READER'S VIEW card (below).
-    reader_group = []
-    rv_x = MX + col_w + col_gap
-    if video_key:
-        vid_w = Inches(3.0)
-        vid_h = Inches(2.25)
-        vid_y = Inches(1.45)
-        add_video(slide, video_key, rv_x, vid_y, vid_w, vid_h)
-        rv_y = Inches(3.85)
-        rv_h = Inches(2.7)
-        rv_w = vid_w
-    else:
-        rv_y = ref_y
-        rv_h = Inches(4.4)
-        rv_w = col_w
-    reader_group.append(add_rect(slide, rv_x, rv_y, rv_w, rv_h,
-             fill_color=NAVY2, border_color=card_border, border_width=Pt(1.0)))
-    reader_group.append(add_text(slide, "READER'S VIEW",
-             rv_x + Inches(0.2), rv_y + Inches(0.15),
-             rv_w - Inches(0.4), Inches(0.3),
-             size=Pt(12), bold=True, color=card_border))
-    if video_key:
-        reader_group.append(add_text(slide, reader_view_lead,
-                 rv_x + Inches(0.2), rv_y + Inches(0.5),
-                 rv_w - Inches(0.4), Inches(0.9),
-                 size=Pt(11), color=WHITE, bold=True))
-        reader_group.append(add_text(slide, reader_view_body,
-                 rv_x + Inches(0.2), rv_y + Inches(1.4),
-                 rv_w - Inches(0.4), rv_h - Inches(1.5),
-                 size=Pt(11), color=WHITE))
-    else:
-        reader_group.append(add_text(slide, reader_view_lead,
-                 rv_x + Inches(0.25), rv_y + Inches(0.6),
-                 rv_w - Inches(0.5), Inches(1.4),
-                 size=Pt(13), color=WHITE, bold=True))
-        reader_group.append(add_text(slide, reader_view_body,
-                 rv_x + Inches(0.25), rv_y + Inches(2.15),
-                 rv_w - Inches(0.5), Inches(2.1),
-                 size=Pt(13), color=WHITE))
-
-    # Closing line — group 3 (second click)
-    closing_group = []
-    closing_group.append(add_text(slide, closing_line,
-             MX, Inches(6.55), CW, Inches(0.4),
+    # Closing line
+    add_text(slide, closing_line,
+             MX, Inches(7.0), CW, Inches(0.3),
              size=Pt(12), color=closing_color, italic=True,
-             align=PP_ALIGN.CENTER))
+             align=PP_ALIGN.CENTER)
 
-    # Round 8.3: optional confidence label placed in the gap between
-    # subtitle (ends y=1.95) and REFERENCE (starts y=2.15). Right-aligned,
-    # short, doesn't compete with the centered subtitle.
-    if confidence_label:
-        if confidence_color == CORAL:
-            short = "Confidence: low"
-        elif confidence_color == GOLD:
-            short = "Confidence: mixed"
-        else:
-            short = "Confidence: high"
-        conf_w = Inches(2.0)
-        add_text(slide, short,
-                 MX + CW - conf_w, Inches(1.96), conf_w, Inches(0.18),
-                 size=Pt(10), color=confidence_color or GREEN,
-                 italic=True, bold=True, align=PP_ALIGN.RIGHT)
-
-    # Tiny legend (static)
+    # Legend
     add_text(slide,
              "GREEN: confident   YELLOW: review   RED: likely error",
-             MX, Inches(7.0), CW, Inches(0.3),
+             MX, Inches(7.30), CW, Inches(0.2),
              size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
     set_notes(slide, notes)
-    add_animations(slide, [refhyp_group, reader_group, closing_group],
-                   click_reveal=False)
     return slide
 
 
@@ -3025,38 +2939,92 @@ def slide_client_arabic_high_level(prs):
     """
     slide = new_slide(prs)
     _auto_num[0] += 1
-    add_title(slide, "Available — Arabic, on request")
+    add_title(slide, "Arabic — real engineering work, mapped end-to-end")
     add_accent_line(slide)
 
-    # Single-paragraph framing
+    # Subtitle — sets the "we know what this takes" tone
     add_text(slide,
-             "Same architecture, retrained on Arabic data.",
-             MX, Inches(1.9), CW, Inches(0.6),
-             size=Pt(28), bold=True, color=TEAL, align=PP_ALIGN.CENTER)
-    add_text(slide,
-             "Path is mapped. Engagement on request.",
-             MX, Inches(2.7), CW, Inches(0.6),
-             size=Pt(17), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
-    # Round 8 — pill with low-risk-mostly-work framing carries the message;
-    # cost-ladder lines (separately-funded, 2-3 month timeline / costs scale)
-    # removed here to avoid stepping on the pill's tone.
+             "Same architecture. Three engineering phases. "
+             "Each phase is a known unknown with a clear path.",
+             MX, Inches(1.5), CW, Inches(0.5),
+             size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    risk_y = Inches(3.6)
-    add_rect(slide, MX, risk_y, CW, Inches(1.0),
+    # Three numbered phase cards — concrete engineering work
+    card_gap = Inches(0.25)
+    card_w = (CW - 2 * card_gap) / 3
+    card_top = Inches(2.2)
+    card_h = Inches(3.5)
+
+    phases = [
+        {
+            "num": "1",
+            "color": TEAL,
+            "head": "DATA",
+            "sub": "the longest phase",
+            "body": "Curate an Arabic lip-reading corpus — speakers, "
+                    "dialects, lighting conditions matched to the target "
+                    "use case. Where the work actually lives.",
+        },
+        {
+            "num": "2",
+            "color": GOLD,
+            "head": "VISUAL ENCODER",
+            "sub": "retrain on Arabic mouths",
+            "body": "Adapt the front-end (the part that sees lips) to "
+                    "Arabic visemes. Different inventory than English. "
+                    "Bounded engineering — the architecture doesn't change.",
+        },
+        {
+            "num": "3",
+            "color": GREEN,
+            "head": "DECODER",
+            "sub": "fine-tune on Arabic text",
+            "body": "Train the language head on Arabic text + the new "
+                    "visual signal. Same training loop, new corpus. "
+                    "Last phase before validation.",
+        },
+    ]
+    for i, ph in enumerate(phases):
+        x = MX + i * (card_w + card_gap)
+        add_rect(slide, x, card_top, card_w, card_h,
+                 fill_color=NAVY2, border_color=ph["color"],
+                 border_width=Pt(1.5))
+        # Phase number
+        add_text(slide, ph["num"],
+                 x + Inches(0.2), card_top + Inches(0.2),
+                 card_w - Inches(0.4), Inches(0.6),
+                 size=Pt(36), bold=True, color=ph["color"],
+                 align=PP_ALIGN.CENTER)
+        # Head
+        add_text(slide, ph["head"],
+                 x + Inches(0.2), card_top + Inches(0.95),
+                 card_w - Inches(0.4), Inches(0.4),
+                 size=Pt(15), bold=True, color=WHITE,
+                 align=PP_ALIGN.CENTER)
+        # Sub
+        add_text(slide, ph["sub"],
+                 x + Inches(0.2), card_top + Inches(1.4),
+                 card_w - Inches(0.4), Inches(0.3),
+                 size=Pt(11), color=ph["color"], italic=True,
+                 align=PP_ALIGN.CENTER)
+        # Body
+        add_text(slide, ph["body"],
+                 x + Inches(0.25), card_top + Inches(1.85),
+                 card_w - Inches(0.5), card_h - Inches(2.0),
+                 size=Pt(13), color=LGRAY,
+                 align=PP_ALIGN.CENTER)
+
+    # Bottom anchor — partnership / engagement framing
+    anchor_y = card_top + card_h + Inches(0.2)
+    add_rect(slide, MX, anchor_y, CW, Inches(0.55),
              fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
     add_text(slide,
-             "Requires a small research pass on Arabic data — "
-             "risk is low, it's mostly engineering work. "
-             "We've mapped the path.",
-             MX + Inches(0.3), risk_y + Inches(0.2),
-             CW - Inches(0.6), Inches(0.65),
-             size=Pt(15), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
-
-    add_text(slide,
-             "Detailed roadmap (encoder choice, dataset mapping, training schedule) "
-             "in the appendix and on follow-up.",
-             MX, Inches(6.7), CW, Inches(0.4),
-             size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+             "Real engineering — months of focused work. Mapped, scoped, "
+             "and ready to engage when you are.",
+             MX + Inches(0.3), anchor_y + Inches(0.13),
+             CW - Inches(0.6), Inches(0.3),
+             size=Pt(13), bold=True, color=WHITE, italic=True,
+             align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -4843,12 +4811,11 @@ def slide_client_reader_example(prs):
              CW - badge_w - Inches(0.2), Inches(0.3),
              size=Pt(11), color=LGRAY, italic=True)
 
-    # Round 8 — three-column: LEFT REF/HYP narrower, RIGHT READER'S VIEW
-    # narrower, video poster at far right.
-    col_gap = Inches(0.2)
-    left_w = Inches(5.0)
-    right_w = Inches(4.0)
-    vid_w = Inches(3.0)
+    # Round 8.7 — video dropped (the salvage clip didn't match the segment's
+    # REF text). Expand 2-column layout: LEFT REF/HYP, RIGHT READER'S VIEW.
+    col_gap = Inches(0.3)
+    left_w = Inches(6.0)
+    right_w = CW - left_w - col_gap
 
     # LEFT: REF row
     # Round 7: replaced the networking example (which overlapped slide 22's
@@ -4876,57 +4843,48 @@ def slide_client_reader_example(prs):
     #   know 0.79, so 0.78, shin 0.45, has 0.72, an 0.50.
     # Bands: green ≥ 0.82, yellow 0.65–0.82, red < 0.65.
     runs = [
-        ("this ",       {"size": Pt(13), "color": YELLOW}),
-        ("is ",         {"size": Pt(13), "color": GREEN}),
-        ("an ",         {"size": Pt(13), "color": GREEN}),
-        ("interesting ",{"size": Pt(13), "color": GREEN}),
-        ("thing ",      {"size": Pt(13), "color": GREEN}),
-        ("to ",         {"size": Pt(13), "color": GREEN}),
-        ("know ",       {"size": Pt(13), "color": YELLOW}),
-        ("so ",         {"size": Pt(13), "color": YELLOW}),
-        ("shin ",       {"size": Pt(13), "color": CORAL}),
-        ("has ",        {"size": Pt(13), "color": YELLOW}),
-        ("an",          {"size": Pt(13), "color": CORAL}),
+        ("this ",       {"size": Pt(15), "color": YELLOW}),
+        ("is ",         {"size": Pt(15), "color": GREEN}),
+        ("an ",         {"size": Pt(15), "color": GREEN}),
+        ("interesting ",{"size": Pt(15), "color": GREEN}),
+        ("thing ",      {"size": Pt(15), "color": GREEN}),
+        ("to ",         {"size": Pt(15), "color": GREEN}),
+        ("know ",       {"size": Pt(15), "color": YELLOW}),
+        ("so ",         {"size": Pt(15), "color": YELLOW}),
+        ("shin ",       {"size": Pt(15), "color": CORAL}),
+        ("has ",        {"size": Pt(15), "color": YELLOW}),
+        ("an",          {"size": Pt(15), "color": CORAL}),
     ]
     add_rich_text(slide, [runs], MX, hyp_y + Inches(0.4),
                   col_w, Inches(2.0))
 
-    # MIDDLE COLUMN: Reader's view card (narrower)
+    # RIGHT COLUMN: Reader's view card (expanded to fill freed video width)
     rv_x = MX + col_w + col_gap
     rv_y = ref_y
     rv_h = Inches(4.4)
     add_rect(slide, rv_x, rv_y, right_w, rv_h,
              fill_color=NAVY2, border_color=GOLD, border_width=Pt(1.0))
     add_text(slide, "READER'S VIEW",
-             rv_x + Inches(0.2), rv_y + Inches(0.15),
-             right_w - Inches(0.4), Inches(0.3),
+             rv_x + Inches(0.25), rv_y + Inches(0.15),
+             right_w - Inches(0.5), Inches(0.3),
              size=Pt(12), bold=True, color=GOLD)
     add_text(slide,
              "Green spine: \"is an interesting thing to…\" That carries "
              "the speaker's framing — they're introducing a thing of interest.",
-             rv_x + Inches(0.2), rv_y + Inches(0.55),
-             right_w - Inches(0.4), Inches(1.1),
-             size=Pt(12), color=WHITE)
+             rv_x + Inches(0.25), rv_y + Inches(0.6),
+             right_w - Inches(0.5), Inches(1.2),
+             size=Pt(13), color=WHITE)
     add_text(slide,
              "Two red words (\"shin\", trailing \"an\") are wrong — and the "
              "reviewer sees them immediately. Exactly where the eye lands.",
-             rv_x + Inches(0.2), rv_y + Inches(1.75),
-             right_w - Inches(0.4), Inches(1.4),
-             size=Pt(12), color=WHITE)
+             rv_x + Inches(0.25), rv_y + Inches(2.0),
+             right_w - Inches(0.5), Inches(1.3),
+             size=Pt(13), color=WHITE)
     add_text(slide,
              "The colors converted a partial transcript into a usable gist.",
-             rv_x + Inches(0.2), rv_y + Inches(3.3),
-             right_w - Inches(0.4), Inches(0.9),
-             size=Pt(12), bold=True, color=GOLD, italic=True)
-
-    # RIGHT COLUMN — Round 8: video poster
-    vid_x = rv_x + right_w + col_gap
-    vid_y = Inches(2.15)
-    vid_h = Inches(2.25)
-    add_video(slide, "salvage", vid_x, vid_y, vid_w, vid_h)
-    add_text(slide, "Click to play in PowerPoint",
-             vid_x, vid_y + vid_h + Inches(0.05), vid_w, Inches(0.25),
-             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+             rv_x + Inches(0.25), rv_y + Inches(3.4),
+             right_w - Inches(0.5), Inches(0.9),
+             size=Pt(13), bold=True, color=GOLD, italic=True)
 
     # Closing line — why the save matters
     add_text(slide,
@@ -4996,56 +4954,40 @@ def slide_client_case_topic_shift(prs):
     add_title(slide, "When the model invents a different topic — colors catch it")
     add_accent_line(slide)
 
-    # Tier badge + banner row
-    badge_y = Inches(1.45)
-    badge_w = Inches(2.8)
-    add_rect(slide, MX, badge_y, badge_w, Inches(0.4),
+    # Row 1: subtitle (left) + confidence badge (right)
+    badge_w = Inches(2.2)
+    add_text(slide,
+             "Fluent prose on a totally wrong topic — exactly what the colors are for.",
+             MX, Inches(1.5), CW - badge_w - Inches(0.2), Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True)
+    badge_x = MX + CW - badge_w
+    add_rect(slide, badge_x, Inches(1.5), badge_w, Inches(0.4),
              fill_color=NAVY3, border_color=GOLD, border_width=Pt(1.0))
-    add_text(slide, "SALVAGE TIER",
-             MX, badge_y + Inches(0.05),
-             badge_w, Inches(0.3),
+    add_text(slide, "CONFIDENCE: MIXED",
+             badge_x, Inches(1.55), badge_w, Inches(0.3),
              size=Pt(13), bold=True, color=GOLD,
              align=PP_ALIGN.CENTER)
-    add_text(slide,
-             "Overall confidence 79% (Salvage tier) — banner shown to the reviewer: "
-             "\"Reading carefully — verify names, numbers, critical details.\"",
-             MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
-             CW - badge_w - Inches(0.2), Inches(0.3),
-             size=Pt(10), color=LGRAY, italic=True)
 
-    # Video poster on the right
-    vid_w = Inches(3.4)
-    vid_h = Inches(2.55)
-    vid_x = MX + CW - vid_w
-    vid_y = Inches(2.0)
+    # Hero video, centered
+    vid_w = Inches(6.0)
+    vid_h = Inches(3.4)
+    vid_x = (SL_W - vid_w) // 2
+    vid_y = Inches(2.1)
     add_video(slide, "case_topic_shift", vid_x, vid_y, vid_w, vid_h)
-    add_text(slide, "Click to play in PowerPoint",
-             vid_x, vid_y + vid_h + Inches(0.05), vid_w, Inches(0.25),
-             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    # REF + HYP text block on the left
-    text_right = vid_x - Inches(0.25)
-    text_label_w = Inches(1.4)
-    text_body_left = MX + text_label_w + Inches(0.1)
-    text_body_w = text_right - text_body_left
-
-    # REF — gardening/landscaping content
-    ref_y = Inches(2.0)
-    add_text(slide, "REFERENCE (a gardening discussion)",
-             MX, ref_y, text_body_left - MX, Inches(0.3),
+    # REFERENCE
+    add_text(slide, "REFERENCE",
+             MX, Inches(5.55), CW, Inches(0.25),
              size=Pt(10), bold=True, color=LGRAY)
     add_text(slide,
-             "\"…what we're going to look at now is what happens if "
-             "we start bringing the concept of woody beds or hula "
-             "culture into this and a little bit of excavation…\"",
-             MX, ref_y + Inches(0.32),
-             text_right - MX, Inches(1.0),
-             size=Pt(12), color=LGRAY, italic=True)
+             "\"…what happens if we start bringing the concept of woody beds "
+             "or hula culture into this and a little bit of excavation…\"",
+             MX, Inches(5.78), CW, Inches(0.4),
+             size=Pt(13), color=LGRAY, italic=True)
 
-    # HYP — nuclear weapons hallucination
-    hyp_y = Inches(3.5)
-    add_text(slide, "HYPOTHESIS (model invented a different topic)",
-             MX, hyp_y, text_right - MX, Inches(0.3),
+    # HYPOTHESIS
+    add_text(slide, "HYPOTHESIS",
+             MX, Inches(6.20), CW, Inches(0.25),
              size=Pt(10), bold=True, color=WHITE)
     runs = [
         ("we're ",         {"size": Pt(13), "color": YELLOW}),
@@ -5075,46 +5017,23 @@ def slide_client_case_topic_shift(prs):
         ("of ",            {"size": Pt(13), "color": GREEN}),
         ("escalation ",    {"size": Pt(13), "color": YELLOW, "bold": True}),
         ("and ",           {"size": Pt(13), "color": GREEN}),
-        ("how ",           {"size": Pt(13), "color": GREEN}),
-        ("we ",            {"size": Pt(13), "color": GREEN}),
-        ("got ",           {"size": Pt(13), "color": CORAL}),
-        ("into ",          {"size": Pt(13), "color": YELLOW}),
-        ("the ",           {"size": Pt(13), "color": GREEN}),
         ("cuban ",         {"size": Pt(13), "color": CORAL, "bold": True}),
         ("missile ",       {"size": Pt(13), "color": GREEN, "bold": True}),
         ("crisis",         {"size": Pt(13), "color": GREEN, "bold": True}),
     ]
-    add_rich_text(slide, [runs], MX, hyp_y + Inches(0.32),
-                  text_right - MX, Inches(1.4))
+    add_rich_text(slide, [runs],
+                  MX, Inches(6.43), CW, Inches(0.5))
 
-    # READER'S VIEW pill — bottom (Round 8.3 — height shrunk to clear closing line)
-    rv_y = Inches(5.2)
-    add_rect(slide, MX, rv_y, CW, Inches(1.15),
-             fill_color=NAVY2, border_color=CORAL, border_width=Pt(1.0))
-    add_text(slide, "READER'S VIEW",
-             MX + Inches(0.3), rv_y + Inches(0.1),
-             Inches(2.5), Inches(0.3),
-             size=Pt(11), bold=True, color=CORAL)
+    # Closing line
     add_text(slide,
-             "Without colors, a downstream pipeline records this segment "
-             "as a discussion of nuclear weapons. Wrong tags, wrong "
-             "summaries, wrong searches. With colors, every topic-"
-             "defining wrong word is flagged. The reader knows the "
-             "topic isn't nuclear weapons — and goes to the video.",
-             MX + Inches(0.3), rv_y + Inches(0.4),
-             CW - Inches(0.6), Inches(0.7),
-             size=Pt(11), color=WHITE)
-
-    # Closing line — why the save matters (Round 8.3 — moved up to clear footer)
-    add_text(slide,
-             "Without colors, the wrong topic enters the reviewer's "
-             "summary as fact. With colors, it stops at the flag.",
-             MX, Inches(6.5), CW, Inches(0.3),
-             size=Pt(11), color=CORAL, italic=True, bold=True,
+             "Without colors, the wrong topic enters reports as fact. "
+             "With colors, it stops at the flag.",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(12), color=CORAL, italic=True,
              align=PP_ALIGN.CENTER)
     add_text(slide,
              "GREEN: confident   YELLOW: review   RED: likely error",
-             MX, Inches(6.85), CW, Inches(0.25),
+             MX, Inches(7.30), CW, Inches(0.2),
              size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
@@ -5162,97 +5081,56 @@ def slide_client_case_strip_save(prs):
     add_title(slide, "When the model has no signal — Strip catches fluent fabrication")
     add_accent_line(slide)
 
-    # Tier badge + banner row
-    badge_y = Inches(1.45)
-    badge_w = Inches(2.8)
-    add_rect(slide, MX, badge_y, badge_w, Inches(0.4),
-             fill_color=NAVY3, border_color=LGRAY, border_width=Pt(1.0))
-    add_text(slide, "STRIP TIER",
-             MX, badge_y + Inches(0.05),
-             badge_w, Inches(0.3),
-             size=Pt(13), bold=True, color=LGRAY,
-             align=PP_ALIGN.CENTER)
+    # Row 1: subtitle (left) + confidence badge (right)
+    badge_w = Inches(2.2)
     add_text(slide,
-             "Overall confidence 21% (Strip tier) — banner shown: \"Model is "
-             "unsure — text may not be reliable, even where it looks confident.\"",
-             MX + badge_w + Inches(0.2), badge_y + Inches(0.05),
-             CW - badge_w - Inches(0.2), Inches(0.3),
-             size=Pt(10), color=LGRAY, italic=True)
+             "A fluent sentence with no underlying signal — Strip tier marks it as unusable.",
+             MX, Inches(1.5), CW - badge_w - Inches(0.2), Inches(0.5),
+             size=Pt(14), color=LGRAY, italic=True)
+    badge_x = MX + CW - badge_w
+    add_rect(slide, badge_x, Inches(1.5), badge_w, Inches(0.4),
+             fill_color=NAVY3, border_color=CORAL, border_width=Pt(1.0))
+    add_text(slide, "CONFIDENCE: LOW",
+             badge_x, Inches(1.55), badge_w, Inches(0.3),
+             size=Pt(13), bold=True, color=CORAL,
+             align=PP_ALIGN.CENTER)
 
-    # Video poster on the right
-    vid_w = Inches(3.4)
-    vid_h = Inches(2.55)
-    vid_x = MX + CW - vid_w
-    vid_y = Inches(2.0)
+    # Hero video, centered
+    vid_w = Inches(6.0)
+    vid_h = Inches(3.4)
+    vid_x = (SL_W - vid_w) // 2
+    vid_y = Inches(2.1)
     add_video(slide, "case_strip_save", vid_x, vid_y, vid_w, vid_h)
-    add_text(slide, "Click to play in PowerPoint",
-             vid_x, vid_y + vid_h + Inches(0.05), vid_w, Inches(0.25),
-             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    text_right = vid_x - Inches(0.25)
-
-    # REF
-    ref_y = Inches(2.0)
-    add_text(slide, "REFERENCE (what was actually said)",
-             MX, ref_y, text_right - MX, Inches(0.3),
+    # REFERENCE
+    add_text(slide, "REFERENCE",
+             MX, Inches(5.55), CW, Inches(0.25),
              size=Pt(10), bold=True, color=LGRAY)
     add_text(slide,
-             "\"china to take off to cross the pacific ocean "
-             "can you tell us…\"",
-             MX, ref_y + Inches(0.32),
-             text_right - MX, Inches(0.6),
+             "\"china to take off to cross the pacific ocean can you tell us…\"",
+             MX, Inches(5.78), CW, Inches(0.4),
              size=Pt(13), color=LGRAY, italic=True)
 
-    # HYP — shown in plain grey italic per Strip policy
-    hyp_y = Inches(3.2)
-    add_text(slide, "HYPOTHESIS (Strip tier — coloring removed in the UI)",
-             MX, hyp_y, text_right - MX, Inches(0.3),
+    # HYPOTHESIS — Strip policy: shown without coloring (plain grey italic)
+    add_text(slide, "HYPOTHESIS (Strip tier — coloring removed)",
+             MX, Inches(6.20), CW, Inches(0.25),
              size=Pt(10), bold=True, color=WHITE)
     add_text(slide,
-             "\"i don't think that's a good idea\"",
-             MX, hyp_y + Inches(0.35),
-             text_right - MX, Inches(0.5),
-             size=Pt(15), color=LGRAY, italic=True)
+             "\"i don't think that's a good idea\"  — every word below 25% confidence.",
+             MX, Inches(6.43), CW, Inches(0.5),
+             size=Pt(13), color=LGRAY, italic=True)
 
-    # Per-word confidence headline (numbers dropped Round 5.16e — were noise)
-    pw_y = Inches(4.05)
-    add_text(slide, "PER-WORD CONFIDENCE",
-             MX, pw_y, text_right - MX, Inches(0.3),
-             size=Pt(10), bold=True, color=CORAL)
+    # Closing line
     add_text(slide,
-             "Every word below 25% confidence — no signal anywhere.",
-             MX, pw_y + Inches(0.32),
-             text_right - MX, Inches(0.5),
-             size=Pt(13), color=CORAL, italic=True)
-
-    # READER'S VIEW pill — bottom
-    rv_y = Inches(5.0)
-    add_rect(slide, MX, rv_y, CW, Inches(1.65),
-             fill_color=NAVY2, border_color=LGRAY, border_width=Pt(1.0))
-    add_text(slide, "READER'S VIEW",
-             MX + Inches(0.3), rv_y + Inches(0.15),
-             Inches(2.5), Inches(0.3),
-             size=Pt(11), bold=True, color=LGRAY)
-    add_text(slide,
-             "The hypothesis reads as a confident opinion. Every word "
-             "is wrong. Every word is below 25% confidence. Without "
-             "this signal, a downstream pipeline records a fabricated "
-             "quote — \"the speaker said this is a bad idea\" — that "
-             "the speaker never said. With this signal, the segment "
-             "is correctly labelled \"no signal\" and the reader goes "
-             "to the video. No false belief is created.",
-             MX + Inches(0.3), rv_y + Inches(0.45),
-             CW - Inches(0.6), Inches(1.15),
-             size=Pt(12), color=WHITE)
-
-    # Closing line — why the save matters
-    add_text(slide,
-             "Without this signal, a fabricated quote enters the "
-             "transcript and downstream reports. With it, the segment "
-             "is labelled \"no signal.\"",
-             MX, Inches(6.85), CW, Inches(0.3),
-             size=Pt(11), color=TEAL, italic=True, bold=True,
+             "Without Strip, a fabricated quote enters reports. "
+             "With Strip, the segment is labelled \"no signal.\"",
+             MX, Inches(7.0), CW, Inches(0.3),
+             size=Pt(12), color=TEAL, italic=True,
              align=PP_ALIGN.CENTER)
+    add_text(slide,
+             "GREEN: confident   YELLOW: review   RED: likely error",
+             MX, Inches(7.30), CW, Inches(0.2),
+             size=Pt(9), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_logo(slide)
     add_slide_num(slide, _auto_num[0])
@@ -5489,8 +5367,7 @@ def slide_client_halluc_caught(prs):
     add_accent_line(slide)
 
     add_text(slide,
-             "One example. The model produced fluent text on the wrong topic. "
-             "The trust signals flagged it before review.",
+             "The trust signals flag this before review.",
              MX, Inches(1.45), CW, Inches(0.5),
              size=Pt(13), color=LGRAY, italic=True)
 
@@ -5548,10 +5425,10 @@ def slide_client_halluc_caught(prs):
          "Lowest-confidence word at p = 0.02.",
          CORAL),
         ("AUTO-EXCLUDED",
-         "Segment auto-excluded from \"useful output.\"",
+         "Segment dropped from useful output.",
          GOLD),
         ("REVIEWER PATH",
-         "Reviewer goes straight to the flagged spans.",
+         "Reviewer jumps straight to flagged spans.",
          TEAL),
     ]
     for i, (label, body, color) in enumerate(signals):
