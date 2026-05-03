@@ -120,6 +120,53 @@ This is the close. Use it when the conversation moves toward "what's next."
 
 ---
 
+## "How does the model + reviewer actually work in practice?"
+
+**"The reviewer's task is verification, not lip-reading. They don't generate text from scratch — they get the model's draft with per-word color coding, watch the video once, and make accept-reject-replace decisions. Verification is far easier than generation, the same way 'is Paris the capital of France' is easier than 'name the capital of France.' Topic context resolves whole categories of error the model can't disambiguate alone — domain vocabulary, named entities, fluent hallucinations. It's tens of minutes per video, not hours."**
+
+The line to land: **"The model is a high-quality first draft with calibrated uncertainty. The human triages."**
+
+---
+
+## "What score would a human actually get on your intelligibility metric?"
+
+**"On the same 1,497-segment wild content: an unaided lay viewer would score around 0.9 out of 5 — they can't lip-read. A deaf adult would score around 2.7. A trained forensic expert around 3.0. The model alone is at 2.52, so we're roughly tied with a deaf-adult lip-reader, half a tier behind a forensic expert. But a single reviewer with topic context plus the model's output reaches around 3.8 — beating any single human alone by a meaningful margin. These are pre-pilot estimates derived from the published lip-reading literature plugged into our metric formula; the structural gaps hold even within the error bars."**
+
+The line to land: **"Alone the model ties a deaf adult. With one reviewer, the combined system beats the forensic expert."**
+
+If pressed on methodology: *"It's an estimation pass — Path B in our methodology doc — and we want to firm it up with a small human pilot on your domain. The combined system number is the deployment-relevant one."*
+
+---
+
+## "How does 1 reviewer + Argos compare to a 5-person lip-reading team?"
+
+This is the buying decision compressed into one comparison. Lead with the table, not the prose.
+
+**"Roughly tied on quality, fifty to a hundred times cheaper, and substantially more consistent. A 5-expert team with arbitration costs around 200 to 400 dollars per minute of video and produces transcripts that vary expert-to-expert and day-to-day — that's why courts require warnings about lip-reading evidence. One trained reviewer plus Argos costs about 3 to 6 dollars per minute, runs deterministically on the model side, and the reviewer's verification task has higher inter-rater agreement than lip-reading from scratch. You're not replacing 5 experts with the model — you're replacing them with one reviewer plus the model, at a fraction of the cost, with auditable per-word confidence."**
+
+| Axis | 5 experts (with context) | 1 reviewer + Argos |
+|---|---|---|
+| Quality (IS / 5) | ~3.7 – 4.0 | ~3.8 |
+| Cost / minute of video | $200 – 400 | $3 – 6 |
+| Reproducibility | Poor (documented) | High (deterministic + verification task) |
+| Throughput | Days per video | Tens of minutes |
+
+The line to land: **"Same quality. One to two orders of magnitude cheaper. Structurally more reproducible."**
+
+Caveat if pressed: the 5-expert quality figure is the softest — there's no clean academic benchmark for consensus forensic lip-reading. The cost and reproducibility advantages don't depend on the quality number being precise; they hold structurally.
+
+---
+
+## "Why is the per-word coloring useful for the reviewer specifically?"
+
+**"Because it's attention triage. Without coloring, the reviewer has to verify every word against the lip movements — high cognitive load, fatigue errors. With coloring, in segments where coloring is shown, green words are around 87% reliable, yellows are roughly coin-flip, reds are around 25%. A 15-word segment colored mostly green lets the reviewer focus on three words instead of fifteen. That's a five-times speed-up on a verification task that's already five-to-ten times faster than from-scratch lip-reading. We don't claim the model knows when it's right. We claim it tells the reviewer where to look first."**
+
+The line to land: **"Confidence is attention triage. The reviewer reads green, scrutinizes yellow, distrusts red."**
+
+If pressed on green leakage: *"About 9% of green words are still wrong, mostly low-impact words. For numbers and named entities the reviewer should always verify regardless of color — that's a UI rule, not a model claim."*
+
+---
+
 ## Things NOT to say
 
 - **"62% accurate"** — say "62% review-useful" or "62% contained recoverable meaning"
@@ -130,6 +177,10 @@ This is the close. Use it when the conversation moves toward "what's next."
 - **"This replaces human review"** — say "this routes human review to the right places"
 - **"AI validating AI"** if the audience asks about the validation method — pivot to "blind LLM at scale, human validation on your domain next"
 - **"State of the art"** — overclaiming, sets you up for benchmarks fight
+- **"The model beats human lip readers"** — alone, on wild content, it doesn't. Say *"the combined system beats unaided humans"* or *"the deployment unit is reviewer plus model"*
+- **"Our IS score of 2.52 is good"** — middle of the pack alone. Say *"the deployment system reaches around 3.8, well above any single human"*
+- **"The model knows where it's wrong"** — say *"the model surfaces uncertainty quantitatively, the reviewer decides"*
+- **"Replaces a team of lip readers"** — say *"replaces a team of lip readers with one reviewer, at a fraction of the cost, with auditable confidence"*
 
 ---
 
