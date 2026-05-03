@@ -14,6 +14,24 @@ from typing import Any, Dict, List, Optional, Tuple
 import editdistance
 import sys
 
+# Per-word confidence classifier (band thresholds, numeric cap rule).
+# Imported from compute_word_confidence so the report and the sidecar
+# generator stay in lockstep on what counts as conf-high / conf-med / conf-low.
+try:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from compute_word_confidence import classify as _classify_prob, is_numeric as _is_numeric
+except ImportError:
+    def _classify_prob(p):
+        if p is None:
+            return "conf-unknown"
+        if p >= 0.85:
+            return "conf-high"
+        if p >= 0.40:
+            return "conf-med"
+        return "conf-low"
+    def _is_numeric(_w):
+        return False
+
 # -----------------------
 # IS scoring (optional, via --compute-is)
 # -----------------------
@@ -178,10 +196,10 @@ th{background:#f5f5f5; text-align:left; font-weight:600}
 .m-green{background:#d4edda; color:#155724; font-weight:700; text-align:center}
 .m-yellow{background:#fff3cd; color:#856404; font-weight:700; text-align:center}
 .m-red{background:#f8d7da; color:#721c24; font-weight:700; text-align:center}
-/* Confidence palette (blue/orange/purple): per-word confidence + tier pills */
+/* Confidence palette (blue/orange/teal): per-word confidence + tier pills */
 .conf-high,.tier-pill.trust  {background:#cfe2ff; color:#084298}
 .conf-med, .tier-pill.salvage{background:#ffe5b4; color:#8a4b00}
-.conf-low, .tier-pill.strip  {background:#e2c4f0; color:#4b0082}
+.conf-low, .tier-pill.strip  {background:#b2dfdb; color:#00695c}
 .conf-high,.conf-med,.conf-low{font-weight:700; padding:0 2px; border-radius:2px}
 .conf-low{font-weight:800}
 .conf-stripped{color:#666; font-style:italic}
@@ -189,7 +207,7 @@ th{background:#f5f5f5; text-align:left; font-weight:600}
            font-size:0.78em; font-weight:700; vertical-align:middle}
 .tier-banner{display:block; padding:4px 8px; margin-bottom:5px; border-radius:3px;
              font-size:0.78em; font-weight:600;
-             background:#f4ecf7; color:#4b0082; border-left:3px solid #4b0082}
+             background:#e0f2f1; color:#00695c; border-left:3px solid #00695c}
 small{color:#777}
 pre{white-space:pre-wrap; word-break:break-word; margin:0}
 tr.video-sep td{background:#eef2f6; color:#4a5568; font-weight:600;
@@ -207,7 +225,7 @@ details.legend[open] > p{margin:6px 0}
 &nbsp;&nbsp;<b>Confidence:</b> <span class="conf-high">high</span> · <span class="conf-med">some</span> · <span class="conf-low">avoid</span>
 &nbsp;&nbsp;<b>Tier:</b> <span class="tier-pill trust">Trust</span> <span class="tier-pill salvage">Salvage</span> <span class="tier-pill strip">Strip</span>
 </p>
-<p class="legend">Green/blue = <b>trust</b>. Yellow/orange = <b>inspect</b>. Red/purple = <b>don't believe</b>. Numbers and named entities cap at <b>inspect</b>.</p>
+<p class="legend">Green/blue = <b>trust</b>. Yellow/orange = <b>inspect</b>. Red/teal = <b>don't believe</b>. Numbers and named entities cap at <b>inspect</b>.</p>
 """
 
 HTML_TAIL = "</table></body></html>"
@@ -827,7 +845,17 @@ def main() -> None:
                             w, p = entry[0], entry[1]
                         else:
                             w, p = str(entry), None
-                        words_payload.append({"word": w, "prob": p})
+                        # Attach conf_class so the HTML renderer paints the
+                        # word. Without this, swapped MBR/vote words land in
+                        # conf_html() with no class and render as plain text
+                        # (the "no per-word coloring" bug fixed May 3 2026).
+                        # MBR posterior is calibrated; we use the simple
+                        # band rule (no agreement axis), with the same
+                        # numeric cap classify_joint applies.
+                        cls = _classify_prob(p if isinstance(p, (int, float)) else None)
+                        if cls == "conf-high" and _is_numeric(w):
+                            cls = "conf-med"
+                        words_payload.append({"word": w, "prob": p, "conf_class": cls})
                         if isinstance(p, (int, float)):
                             probs.append(float(p))
                     summary = {}
@@ -1111,7 +1139,6 @@ def main() -> None:
                 metrics_cells += '<td>-</td><td>-</td>'
 
         # Confidence-colored hyp goes in its own column when do_conf is on.
-        # The reliability tier (Trust / Salvage / Strip) governs whether per-word
         # Tier (Trust/Salvage/Strip) drives coloring; the per-segment pill in the
         # metrics column carries the tier signal — no per-row banner.
         if do_conf:

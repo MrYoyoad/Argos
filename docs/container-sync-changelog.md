@@ -1827,3 +1827,21 @@ The joint rule is **not** an experimental opt-in. It is the production default a
 **Backward compatibility**: None broken. Calling `make_burn.py --segment_dir ...` from any old wrapper now errors with "unrecognized arguments"; only `lib/outputs.sh` invokes this script in our pipelines, and it has been updated.
 
 **Path translation note**: No hardcoded paths. EC2 and `/workspace/` paths translate identically.
+
+### Per-Word Confidence Coloring: Restore Paint Under MBR Display + Recolor Strip Tier Teal (May 3 2026)
+
+**Problem**: With `--display-method hyp_mbr` (the production default since May 2 2026), the "Hypothesis (Confidence)" column rendered as plain text in Trust/Salvage rows — no blue/orange/teal spans. Tier pills still appeared. Cause: when `make_report.py` swapped the displayed hyp to MBR, it rebuilt `word_conf` from MBR's per-word probs but did not attach a `conf_class` field, so `conf_html()` fell through to escaped plain text for every word. Strip rows still rendered (their branch wraps everything in `.conf-stripped`), which is why the bug looked like "Salvage rows lost coloring" rather than "all rows lost coloring."
+
+**Fix**:
+
+- `VSP-LLM/scripts/make_report.py` — when swapping in MBR/vote/safe word probs, classify each prob via `compute_word_confidence.classify()` and apply the numeric cap (`is_numeric` → cap conf-high to conf-med). Imported `classify` and `is_numeric` at module top with a hardcoded fallback so the script still runs if the sidecar generator is missing. Recolored the third tier from purple `#e2c4f0/#4b0082` to teal `#b2dfdb/#00695c` for `.conf-low` / `.tier-pill.strip` / `.tier-banner`. Updated the legend text from "Red/purple = don't believe" to "Red/teal = don't believe".
+
+**Files mirrored from EC2**:
+
+- `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/make_report.py` (verbatim copy from `/home/ubuntu/VSP-LLM/scripts/make_report.py`)
+
+**Container action**: Drop in the patched file. No other changes required.
+
+**Verification (EC2, 7 segments, latest decode artifacts)**: Before fix: 6 colored spans across the report (3 Strip rows wrapping their text, 0 paint in Salvage). After fix with `--display-method hyp_mbr`: 17 conf-high + 42 conf-med + 6 conf-low spans in the Salvage rows, plus 6 conf-stripped wraps in Strip rows. Tier pill counts unchanged.
+
+**Path translation note**: No hardcoded paths. EC2 and `/workspace/` paths translate identically.
