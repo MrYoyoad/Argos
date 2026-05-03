@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RealTalk demo — VSP-LLM lip-reading on conversational data</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1280px;margin:30px auto;padding:0 24px;color:#222;background:#fafafa;line-height:1.45}
+h1{font-size:28px;margin-bottom:6px}
+h2{margin-top:48px;border-bottom:2px solid #1F77B4;padding-bottom:6px}
+.tagline{color:#666;font-size:15px;margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-title{font-weight:600;font-size:14px}
+.card-title .time{color:#888;font-weight:400;margin-left:6px}
+.card-body video{width:100%;height:auto;border-radius:4px;background:#000}
+.meta{font-size:13px;margin-top:10px;line-height:1.6}
+.meta .ref{color:#555}
+.meta .hyp{color:#1F77B4;font-weight:500}
+.sxs-card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:18px;margin-bottom:24px}
+.sxs-card h3{margin-top:0;font-size:16px}
+.summary{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:18px;margin-bottom:30px}
+.summary table{border-collapse:collapse;width:100%}
+.summary td,.summary th{padding:8px 14px;border-bottom:1px solid #eee;text-align:left}
+.summary th{background:#f4f6f9}
+</style>
+</head>
+<body>
+<h1>RealTalk demo deliverables</h1>
+<p class="tagline">25 candidate windows, 5 Mode-B side-by-sides, hyp_mbr displayed, agreement-aware trust bands.
+Pipeline run: <code>flat_runs_archive/20260503_000805</code> · partner run: <code>20260503_004919</code>.</p>
+
+
+<div class="summary">
+  <table>
+    <tr><th>Total candidates</th><td>25</td></tr>
+    <tr><th>Clearly Conveyed (IS ≥ 3.80)</th><td>5 (20%)</td></tr>
+    <tr><th>Salvage (2.00 ≤ IS < 3.80)</th><td>9 (36%)</td></tr>
+    <tr><th>Failed (IS < 2.00)</th><td>11 (44%)</td></tr>
+    <tr><th>Mean WER (top-1 = MBR)</th><td>64.8%</td></tr>
+    <tr><th>Mean IS</th><td>2.29</td></tr>
+  </table>
+</div>
+
+
+<h2>Mode-B side-by-side composites (5)</h2>
+<p>Both speakers, original two-shot audio, agreement-aware colored hypothesis on each half.
+The "active speaker" is visually self-evident — listener side has empty / red / hallucinated output that the trust layer flags.</p>
+
+<div class="sxs-card">
+  <h3>12XM5_1lyrc__win0240</h3>
+  <video controls preload="metadata" playsinline style="width:100%;max-width:920px;">
+    <source src="12XM5_1lyrc__win0240__sidebyside.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="sxs-card">
+  <h3>7LcWBEVtGwA__win0520</h3>
+  <video controls preload="metadata" playsinline style="width:100%;max-width:920px;">
+    <source src="7LcWBEVtGwA__win0520__sidebyside.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="sxs-card">
+  <h3>RfhG9O99MIY__win0230</h3>
+  <video controls preload="metadata" playsinline style="width:100%;max-width:920px;">
+    <source src="RfhG9O99MIY__win0230__sidebyside.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="sxs-card">
+  <h3>V1tcw5SLwmM__win0360</h3>
+  <video controls preload="metadata" playsinline style="width:100%;max-width:920px;">
+    <source src="V1tcw5SLwmM__win0360__sidebyside.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="sxs-card">
+  <h3>nvqZ0zrca4I__win0040</h3>
+  <video controls preload="metadata" playsinline style="width:100%;max-width:920px;">
+    <source src="nvqZ0zrca4I__win0040__sidebyside.mp4" type="video/mp4">
+  </video>
+</div>
+
+
+<h2>Clearly Conveyed (5)</h2>
+<div class="grid">
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">12XM5_1lyrc__p0 <span class="time">@ 240s</span></div>
+    <span style="background:#00B050;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 5.00 · Y</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/12XM5_1lyrc__p0__win0240__mid.jpg">
+      <source src="12XM5_1lyrc__p0__win0240__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 0% (top1) / 0% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.756 → trust <b>Salvage</b></div>
+      <div class="ref"><b>REF</b>: in the united states i just think that you&#x27;re taking it like a trooper that you are i think</div>
+      <div class="hyp"><b>HYP</b>: in the united states i just think that you&#x27;re taking it like a trooper that you are i think</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">7LcWBEVtGwA__p1 <span class="time">@ 520s</span></div>
+    <span style="background:#00B050;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 4.72 · Y</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/7LcWBEVtGwA__p1__win0520__mid.jpg">
+      <source src="7LcWBEVtGwA__p1__win0520__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 15% (top1) / 15% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.742 → trust <b>Salvage</b></div>
+      <div class="ref"><b>REF</b>: that&#x27;s god too and you&#x27;re the one that introduced me to god i wouldn&#x27;t have a context of who god was if it wasn&#x27;t for you and for that faith you have but i just…</div>
+      <div class="hyp"><b>HYP</b>: that&#x27;s god too when you&#x27;re the one that introduced me to god like i wouldn&#x27;t have a context of who god was if it wasn&#x27;t for you for that faith cradle but like i…</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">V1tcw5SLwmM__p1 <span class="time">@ 360s</span></div>
+    <span style="background:#00B050;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 4.58 · Y</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/V1tcw5SLwmM__p1__win0360__mid.jpg">
+      <source src="V1tcw5SLwmM__p1__win0360__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 20% (top1) / 20% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.779 → trust <b>Salvage</b></div>
+      <div class="ref"><b>REF</b>: and babies like right out of the gate i&#x27;m like this is gonna be my trap him method i&#x27;ll have all of his children and it&#x27;ll be perfect and we&#x27;ll be together fore…</div>
+      <div class="hyp"><b>HYP</b>: babies like right out of the gate i&#x27;m like this is going to be my trappy method i&#x27;ll have all of these children and it will be perfect and we&#x27;ll be together for…</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">RfhG9O99MIY__p1 <span class="time">@ 230s</span></div>
+    <span style="background:#00B050;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 4.38 · Y</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/RfhG9O99MIY__p1__win0230__mid.jpg">
+      <source src="RfhG9O99MIY__p1__win0230__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 28% (top1) / 28% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.776 → trust <b>Salvage</b></div>
+      <div class="ref"><b>REF</b>: his music in one of my videos for real he said yes he&#x27;s coming to toronto so i fly back tomorrow morning to shoot him that night yeah oh so i&#x27;m shooting him i&#x27;m…</div>
+      <div class="hyp"><b>HYP</b>: music in one of my videos and he said yes he&#x27;s coming to toronto so i fly back tomorrow morning to shoot him that night yeah so i was doing like his photographe…</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">nvqZ0zrca4I__p1 <span class="time">@ 40s</span></div>
+    <span style="background:#00B050;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 4.36 · Y</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/nvqZ0zrca4I__p1__win0040__mid.jpg">
+      <source src="nvqZ0zrca4I__p1__win0040__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 31% (top1) / 31% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.697 → trust <b>Salvage</b></div>
+      <div class="ref"><b>REF</b>: that i have with you okay probably driving back from canada oh my god i felt really bad because i was really angry and like grumpy</div>
+      <div class="hyp"><b>HYP</b>: have in you i was driving back from canada oh my god i felt really bad because i was really angry and that grew into</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<h2>Salvage (9)</h2>
+<div class="grid">
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">nvqZ0zrca4I__p0 <span class="time">@ 140s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 3.67 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/nvqZ0zrca4I__p0__win0140__mid.jpg">
+      <source src="nvqZ0zrca4I__p0__win0140__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 55% (top1) / 55% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.615 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: like getting older is like we&#x27;re not old or anything but it&#x27;s crazy as time passes we just like really can&#x27;t see one another and i get scared like</div>
+      <div class="hyp"><b>HYP</b>: getting older is crazy it&#x27;s like time passes and we just get really close to one another and then get scared</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">MJueiM5zCxs__p0 <span class="time">@ 190s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 3.40 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/MJueiM5zCxs__p0__win0190__mid.jpg">
+      <source src="MJueiM5zCxs__p0__win0190__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 48% (top1) / 48% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.620 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: my parents are the best example but i mean they dated for four weeks and they were married for 23 24 years so it&#x27;s like i don&#x27;t feel like</div>
+      <div class="hyp"><b>HYP</b>: my parents got married at the age of 18 i mean they dated for four years they were married for 42 years it&#x27;s like i don&#x27;t know for that</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">v4yOlWUlOGM__p1 <span class="time">@ 130s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 3.36 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/v4yOlWUlOGM__p1__win0130__mid.jpg">
+      <source src="v4yOlWUlOGM__p1__win0130__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 52% (top1) / 52% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.673 → trust <b>Salvage</b></div>
+      <div class="ref"><b>REF</b>: i could care less i don&#x27;t think about when we were 10 11 years old do i wish i had a friend with me and help me with school and you know help me get a&#x27;s or just…</div>
+      <div class="hyp"><b>HYP</b>: i couldn&#x27;t get this out of my mind when we were 11 and 12 years old so i wish i had a friend with me that had helped me with school and could call me at night o…</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">6UmiNVjZwB0__p1 <span class="time">@ 200s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 3.02 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/6UmiNVjZwB0__p1__win0200__mid.jpg">
+      <source src="6UmiNVjZwB0__p1__win0200__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 57% (top1) / 57% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.682 → trust <b>Salvage</b></div>
+      <div class="ref"><b>REF</b>: ugh there could be something right around that corner i&#x27;m not gonna check like most people do in horror movies where they&#x27;re like like you&#x27;re knocking on the do…</div>
+      <div class="hyp"><b>HYP</b>: i&#x27;m not going to do that like most people do in horror movies like either knocking on the door at 12 o&#x27;clock in the night</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">UnQEcquyAYI__p0 <span class="time">@ 70s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 2.94 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/UnQEcquyAYI__p0__win0070__mid.jpg">
+      <source src="UnQEcquyAYI__p0__win0070__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 58% (top1) / 58% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.637 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: were crying it was about like unicorns and clouds but it actually works it&#x27;s shame to am today you stopped crying you were able to relax so that one i do</div>
+      <div class="hyp"><b>HYP</b>: crying it was about like you don&#x27;t always have to yell but it actually works and you stop crying and you&#x27;re able to relax so that will get you</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">8i2gkAhvTvc__p1 <span class="time">@ 310s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 2.81 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/8i2gkAhvTvc__p1__win0310__mid.jpg">
+      <source src="8i2gkAhvTvc__p1__win0310__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 66% (top1) / 66% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.588 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: so i really think it was a trip where you came down to boston we packed shit up and we drove to new york i made you pee in a bottle while listening to beethoven…</div>
+      <div class="hyp"><b>HYP</b>: so i really think it was a dream you know i came off the bus and i packed it up and i drove to new york city and i made it over and</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">12XM5_1lyrc__p1 <span class="time">@ 300s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 2.80 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/12XM5_1lyrc__p1__win0300__mid.jpg">
+      <source src="12XM5_1lyrc__p1__win0300__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 57% (top1) / 57% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.594 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: easy but i said he got me this far i know he gonna pull me too so i just you know just humble myself and i call upon a man and this you know i just say you know…</div>
+      <div class="hyp"><b>HYP</b>: easy but i said i&#x27;m in this far i know it&#x27;s going to be tough so i just doubled myself when i call upon the body men that&#x27;s the truth every morning i get up</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">5M9kx6mrXrA__p0 <span class="time">@ 70s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 2.72 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/5M9kx6mrXrA__p0__win0070__mid.jpg">
+      <source src="5M9kx6mrXrA__p0__win0070__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 44% (top1) / 44% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.620 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: not long island which i kept thinking was long island which is dumb and there was a moment when we were on the phone or</div>
+      <div class="hyp"><b>HYP</b>: which i kept thinking with all this and there was a moment when we were on the floor</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">5M9kx6mrXrA__p0 <span class="time">@ 380s</span></div>
+    <span style="background:#1F77B4;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 2.44 · P</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/5M9kx6mrXrA__p0__win0380__mid.jpg">
+      <source src="5M9kx6mrXrA__p0__win0380__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 66% (top1) / 66% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.539 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: that&#x27;s what people do they google it and it&#x27;s like theodore roosevelt said this you don&#x27;t know shit about theodore roosevelt you just thought this quote was lik…</div>
+      <div class="hyp"><b>HYP</b>: that&#x27;s what people don&#x27;t get cool is that i didn&#x27;t think of it all like that until i started this quote was like enough to convince people that i</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<h2>Failed (11)</h2>
+<div class="grid">
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">12XM5_1lyrc__p0 <span class="time">@ 230s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 1.87 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/12XM5_1lyrc__p0__win0230__mid.jpg">
+      <source src="12XM5_1lyrc__p0__win0230__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 69% (top1) / 69% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.608 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: you still have some pending legal things going on that can jeopardize your stay perhaps here</div>
+      <div class="hyp"><b>HYP</b>: should i be submitting little things going on that gemini should say perhaps the</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">MJueiM5zCxs__p0 <span class="time">@ 610s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 1.59 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/MJueiM5zCxs__p0__win0610__mid.jpg">
+      <source src="MJueiM5zCxs__p0__win0610__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 100% (top1) / 100% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.512 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: um your new york experience i think anytime i think</div>
+      <div class="hyp"><b>HYP</b>: i don&#x27;t know two years better i think the next time i take</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">MkV7LSXtzkQ__p1 <span class="time">@ 560s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 1.02 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/MkV7LSXtzkQ__p1__win0560__mid.jpg">
+      <source src="MkV7LSXtzkQ__p1__win0560__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 83% (top1) / 83% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.459 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: you&#x27;d buy something and say thanks marty oh when he died yeah my dark sense of humor is there to say yeah right when are you proudest of me</div>
+      <div class="hyp"><b>HYP</b>: when he died my daughter&#x27;s tutor said to her</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">ee8Qwiu4N50__p1 <span class="time">@ 60s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.97 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/ee8Qwiu4N50__p1__win0060__mid.jpg">
+      <source src="ee8Qwiu4N50__p1__win0060__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 88% (top1) / 88% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.520 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: or i could have had a better car but when i first got the jeep instead of the jeep that situation had me off my baby midnight i miss her that&#x27;s the name of my c…</div>
+      <div class="hyp"><b>HYP</b>: when i was at the gym staying in shape so my name is mikayla and i&#x27;m here but i&#x27;ll</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">FzCjvLU7u7Q__p1 <span class="time">@ 550s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.71 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/FzCjvLU7u7Q__p1__win0550__mid.jpg">
+      <source src="FzCjvLU7u7Q__p1__win0550__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 93% (top1) / 93% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.438 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: so i mean that&#x27;s why that&#x27;s one thing that i do that for you because just like you already know i don&#x27;t tolerate shit with pri and she knows</div>
+      <div class="hyp"><b>HYP</b>: so that&#x27;s what i&#x27;m going to talk about today</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">v43L_FaHz28__p0 <span class="time">@ 390s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.65 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/v43L_FaHz28__p0__win0390__mid.jpg">
+      <source src="v43L_FaHz28__p0__win0390__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 94% (top1) / 94% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.464 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: connecticut is such a huge thing you know like my whole life i thought i will live in new york city i will never live anywhere else i will never move back to co…</div>
+      <div class="hyp"><b>HYP</b>: when i was a little girl i always wanted to be a princess</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">v43L_FaHz28__p1 <span class="time">@ 440s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.30 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/v43L_FaHz28__p1__win0440__mid.jpg">
+      <source src="v43L_FaHz28__p1__win0440__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 97% (top1) / 97% (MBR)</div>
+      <div><b>sentence_conf</b>: 0.421 → trust <b>Strip</b></div>
+      <div class="ref"><b>REF</b>: probably the biggest deal i didn&#x27;t think we&#x27;d be back here anytime soon and i kind of had resigned myself to being fine with that well you left connecticut</div>
+      <div class="hyp"><b>HYP</b>: well you have seen anything</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">RfhG9O99MIY__p0 <span class="time">@ 210s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.00 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/RfhG9O99MIY__p0__win0210__mid.jpg">
+      <source src="RfhG9O99MIY__p0__win0210__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 100% (top1) / 100% (MBR)</div>
+      <div><b>sentence_conf</b>: — → trust <b>—</b></div>
+      <div class="ref"><b>REF</b>: you know i like there&#x27;s just too many good artists out there like i can give you who i&#x27;ve been listening to lately okay yeah which is like i&#x27;ve been listening t…</div>
+      <div class="hyp"><b>HYP</b>: [empty]</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">_0VwR9WPS-k__p0 <span class="time">@ 30s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.00 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/_0VwR9WPS-k__p0__win0030__mid.jpg">
+      <source src="_0VwR9WPS-k__p0__win0030__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 100% (top1) / 100% (MBR)</div>
+      <div><b>sentence_conf</b>: — → trust <b>—</b></div>
+      <div class="ref"><b>REF</b>: on the bench in washington square park i was just like oh like any other person would have just been like i&#x27;m out like this is too much and we were just like</div>
+      <div class="hyp"><b>HYP</b>: [empty]</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Z2vxS15RWMU__p0 <span class="time">@ 90s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.00 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/Z2vxS15RWMU__p0__win0090__mid.jpg">
+      <source src="Z2vxS15RWMU__p0__win0090__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 100% (top1) / 100% (MBR)</div>
+      <div><b>sentence_conf</b>: — → trust <b>—</b></div>
+      <div class="ref"><b>REF</b>: fuckery and lies you know what i&#x27;m saying and only you can untie them cause i&#x27;m back out here i&#x27;m like yo trevor let&#x27;s go come over here whoopty whoop whatever …</div>
+      <div class="hyp"><b>HYP</b>: [empty]</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Z2vxS15RWMU__p0 <span class="time">@ 320s</span></div>
+    <span style="background:#888;color:#fff;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;">IS 0.00 · N</span>
+  </div>
+  <div class="card-body">
+    <video controls preload="metadata" muted playsinline width="320" poster="frames/Z2vxS15RWMU__p0__win0320__mid.jpg">
+      <source src="Z2vxS15RWMU__p0__win0320__burned.mp4" type="video/mp4">
+    </video>
+    <div class="meta">
+      <div><b>WER</b>: 100% (top1) / 100% (MBR)</div>
+      <div><b>sentence_conf</b>: — → trust <b>—</b></div>
+      <div class="ref"><b>REF</b>: not their selves so you can&#x27;t deal with that person as if oh that&#x27;s trevor no that&#x27;s trevor on drugs you can&#x27;t deal with you know you understand what i&#x27;m saying…</div>
+      <div class="hyp"><b>HYP</b>: [empty]</div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+</body>
+</html>

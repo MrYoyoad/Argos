@@ -56,14 +56,43 @@ Full list in `realtalk_analysis.md`.
 
 ---
 
-## C. Failure-Mode Catalog (for Limitations slide)
+## C. Failure-Mode Breakdown — Two Failure Stories for the Deck
 
-11 segments at IS < 2.00. Visible failure modes from frame inspection:
+11 segments scored IS < 2.00. The pipeline's IS analyzer classifies them into mutually-exclusive failure modes; grouping into the two stories that matter for the deck:
 
-1. **Non-speech mouth motion** — `RfhG9O99MIY__p0 @ 210s`: speaker laughing with eyes closed, lips moving but not phonating speech → empty HYP. **Visual: laughing close-up.**
-2. **Off-axis pose** — `Z2vxS15RWMU__p0 @ 90s,320s`: speaker looking far right, lips partially occluded → empty HYP.
-3. **Low speech density** — `_0VwR9WPS-k__p0 @ 30s`: visually clean but the window has long pauses → empty HYP.
-4. **Confident hallucination** — `v43L_FaHz28__p1 @ 440s`: REF "probably the biggest deal i didn't think we'd be back here anytime soon..." → HYP "well you have seen anything" — short, confident, completely wrong. **Confidence layer (sentence_conf 0.42, Strip tier) catches it.** Strong "automatic flagging" demo.
+### C.1 — Honest Abstention (model emits nothing rather than guess) — 4 segments
+
+This is the **safe failure mode**: visual conditions degrade and the model returns empty rather than fabricate. IS=0, WER=100%, no text on the burned clip — just `[no output]` in red. Whisper still hears the speaker (REF is non-empty), but the lip-read decoder declines to commit. **Surveillance-friendly behavior.**
+
+| utt_id | REF preview | Why visual signal failed (from frames) |
+|---|---|---|
+| `RfhG9O99MIY__p0 @ 210s` | "you know i like there's just too many good artists..." | **Laughing, eyes closed** — non-speech mouth motion |
+| `Z2vxS15RWMU__p0 @ 90s` | "fuckery and lies you know what i'm saying..." | **Off-axis pose** — speaker looking far right |
+| `Z2vxS15RWMU__p0 @ 320s` | "not their selves so you can't deal with that person..." | **Hand occluding mouth** + second face leaking into crop |
+| `_0VwR9WPS-k__p0 @ 30s` | "on the bench in washington square park..." | **Hand wiping eye / looking down** — emotional moment, mouth out of canonical position |
+
+In all 4, the dataset's `current_speaker` label says the cropped speaker IS talking 88–100% of frames — they're audibly speaking, the **visual conditions** are the blocker. Not a model failure; a model **honestly recognizing it can't decode**.
+
+### C.2 — Dangerous Hallucination (fluent but wrong) — 4 segments (`Total Topic Drift` + `Phonetically Similar but Wrong Topic`)
+
+The opposite failure: visually plausible mouth shapes lead the LLM to produce a confident, fluent, fully-wrong sentence. **This is the dangerous failure mode for any production use.** Trust layer catches all 4 (sconf 0.42–0.61 → trust Strip).
+
+| utt_id | REF | HYP (hallucinated) | sconf · trust |
+|---|---|---|---|
+| `v43L_FaHz28__p0 @ 390s` | "connecticut is such a huge thing you know like my whole life i thought i will live in new..." | **"when i was a little girl i always wanted to be a princess"** | 0.464 · Strip |
+| `FzCjvLU7u7Q__p1 @ 550s` | "so i mean that's why that's one thing that i do that for you because just like you already..." | "so that's what i'm going to talk about today" | 0.438 · Strip |
+| `ee8Qwiu4N50__p1 @ 60s` | "or i could have had a better car but when i first got the jeep..." | "when i was at the gym staying in shape so my name is mikayla and i'm here..." | 0.520 · Strip |
+| `12XM5_1lyrc__p0 @ 230s` | "you still have some pending legal things going on that can jeopardize your stay..." | "should i be submitting little things going on that gemini should say perhaps the" | 0.608 · Strip |
+
+**Deck role:** the 1st row is the textbook "automatic flagging" demo — completely confident-looking sentence, completely wrong, system flags it Strip-tier with no human in the loop.
+
+### C.3 — Partial Failure (some words right, drift on rest) — 3 segments
+
+Mode 'Content Word Errors', 'Entity Destruction', 'Accumulated Small Errors' or 'Truncation'. Mid-tier failures where some content survives but the sentence is mostly wrong. Less photogenic for the deck — neither cleanly safe nor cleanly dangerous. Skip unless we need a "middle case."
+
+### Summary for the deck
+
+> The system has **two distinct failure modes**: (a) **honest abstention** (visual degraded → empty output, IS=0, easy to filter) and (b) **dangerous hallucination** (fluent wrong sentence). The trust layer (sentence_conf, agreement-aware bands) catches the dangerous mode automatically — every hallucination in this batch was flagged Strip-tier.
 
 ---
 
