@@ -1325,9 +1325,9 @@ def slide_client_validation_intro(prs):
     ], MX, Inches(2.6), CW, Inches(3.5), size=Pt(18))
 
     add_text(slide,
-             "The runtime signal — what you see in the report — is the "
-             "calibrated thing. IS is an evaluation metric we use during "
-             "development; it doesn't run on your video at deployment time.",
+             "The runtime confidence signal — the per-word colors and the "
+             "per-segment trust score that ship with every report — is what "
+             "we validated. No development-only scoring in the loop.",
              MX, Inches(6.35), CW, Inches(0.7),
              size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1520,9 +1520,9 @@ def slide_client_aggregation_safety(prs):
     anchor_group.append(add_rect(slide, MX, anchor_y, CW, Inches(0.7),
              fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75)))
     anchor_group.append(add_text(slide,
-             "The 62% review-useful and 82% agreement numbers were "
-             "measured BEFORE aggregation. With it, they're floors, "
-             "not ceilings.",
+             "The headline 71% review-useful is the post-aggregation "
+             "number. Every other number on every other slide is the "
+             "before-aggregation floor.",
              MX + Inches(0.3), anchor_y + Inches(0.18),
              CW - Inches(0.6), Inches(0.4),
              size=Pt(13), bold=True, color=WHITE, italic=True,
@@ -2434,7 +2434,7 @@ def slide_client_example_simple_positive(prs):
     vid_y = Inches(4.4)
     vid_w = col_w_right
     vid_h = Inches(2.05)
-    add_video_poster(slide, "entity_success", vid_x, vid_y, vid_w, vid_h)
+    add_video(slide, "entity_success", vid_x, vid_y, vid_w, vid_h)
     add_text(slide, "Click to play in PowerPoint",
              vid_x, vid_y + vid_h + Inches(0.02), vid_w, Inches(0.22),
              size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -2631,7 +2631,7 @@ def _client_judge_ex_slide(prs, *, title, subtitle, ref_text, hyp_runs,
         vid_w = Inches(3.0)
         vid_h = Inches(2.25)
         vid_y = Inches(1.45)
-        add_video_poster(slide, video_key, rv_x, vid_y, vid_w, vid_h)
+        add_video(slide, video_key, rv_x, vid_y, vid_w, vid_h)
         rv_y = Inches(3.85)
         rv_h = Inches(2.7)
         rv_w = vid_w
@@ -3162,7 +3162,7 @@ def slide_client_next_milestone(prs):
 
     # Footer — ties back to "very usable today" in plain English.
     add_text(slide,
-             "Today's 62% review-useful is real and deployable. Each "
+             "Today's 71% review-useful is real and deployable. Each "
              "upgrade is its own scoped, funded effort — not bundled.",
              MX, Inches(7.0), CW, Inches(0.3),
              size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -4916,7 +4916,7 @@ def slide_client_reader_example(prs):
     vid_x = rv_x + right_w + col_gap
     vid_y = Inches(2.15)
     vid_h = Inches(2.25)
-    add_video_poster(slide, "salvage", vid_x, vid_y, vid_w, vid_h)
+    add_video(slide, "salvage", vid_x, vid_y, vid_w, vid_h)
     add_text(slide, "Click to play in PowerPoint",
              vid_x, vid_y + vid_h + Inches(0.05), vid_w, Inches(0.25),
              size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
