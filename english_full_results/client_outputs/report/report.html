@@ -1,22 +1,48 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
 <style>
-body{font-family:system-ui,Arial; margin:20px}
+body{font-family:system-ui,Arial; margin:20px; color:#222}
 table{border-collapse:collapse; width:100%}
-td,th{border:1px solid #ddd; padding:10px; vertical-align:top}
-th{background:#f5f5f5; text-align:left}
+td,th{border:1px solid #ddd; padding:8px; vertical-align:top}
+th{background:#f5f5f5; text-align:left; font-weight:600}
+/* Quality palette (green/yellow/red): per-word accuracy + metric cells */
 .ok{color:#0a7a0a; font-weight:700}
 .rep{color:#b58900; font-weight:800}
 .ins{color:#b00020; font-weight:800}
 .m-green{background:#d4edda; color:#155724; font-weight:700; text-align:center}
 .m-yellow{background:#fff3cd; color:#856404; font-weight:700; text-align:center}
 .m-red{background:#f8d7da; color:#721c24; font-weight:700; text-align:center}
-small{color:#555}
+/* Confidence palette (blue/orange/purple): per-word confidence + tier pills */
+.conf-high,.tier-pill.trust  {background:#cfe2ff; color:#084298}
+.conf-med, .tier-pill.salvage{background:#ffe5b4; color:#8a4b00}
+.conf-low, .tier-pill.strip  {background:#e2c4f0; color:#4b0082}
+.conf-high,.conf-med,.conf-low{font-weight:700; padding:0 2px; border-radius:2px}
+.conf-low{font-weight:800}
+.conf-stripped{color:#666; font-style:italic}
+.tier-pill{display:inline-block; padding:1px 7px; border-radius:9px;
+           font-size:0.78em; font-weight:700; vertical-align:middle}
+.tier-banner{display:block; padding:4px 8px; margin-bottom:5px; border-radius:3px;
+             font-size:0.78em; font-weight:600;
+             background:#f4ecf7; color:#4b0082; border-left:3px solid #4b0082}
+small{color:#777}
 pre{white-space:pre-wrap; word-break:break-word; margin:0}
-.summary{background:#e9ecef; padding:12px; border-radius:6px; margin-bottom:16px}
+.summary{background:#e9ecef; padding:10px 12px; border-radius:6px; margin-bottom:12px; font-size:0.9em}
+.legend{font-size:0.85em; color:#444; margin:6px 0 12px}
+.legend > b{color:#222}
+details.legend summary{cursor:pointer; font-weight:600; color:#222; margin-top:4px}
+details.legend[open] > p{margin:6px 0}
 </style></head><body>
-<h2>ASR Report (REF vs HYP)</h2>
-<p><span class="ok">green</span>=match, <span class="rep">yellow</span>=mismatch/shift, <span class="ins">red</span>=inserted/made-up</p>
+<h2>ASR Report</h2>
+<p class="legend">
+<b>Accuracy:</b> <span class="ok">match</span> · <span class="rep">wrong place</span> · <span class="ins">made up</span>
+&nbsp;&nbsp;<b>Confidence:</b> <span class="conf-high">high</span> · <span class="conf-med">some</span> · <span class="conf-low">avoid</span>
+&nbsp;&nbsp;<b>Tier:</b> <span class="tier-pill trust">Trust</span> <span class="tier-pill salvage">Salvage</span> <span class="tier-pill strip">Strip</span>
+</p>
+<details class="legend"><summary>What the colors mean</summary>
+<p><b>Accuracy</b> — green: exact match; yellow: word is in the reference but in the wrong position; red: not in the reference.</p>
+<p><b>Confidence</b> — blue: top-1 prob ≥0.95 <i>and</i> ≥80% beam agreement; orange: ≥0.65 <i>and</i> ≥50% beams; purple: below either. Digits and number-words ("billion", "1024") are capped at orange — lip-reading can't disambiguate them. Shown only when n-best decode is captured.</p>
+<p><b>Tier</b> (segment mean per-word prob) — Trust ≥0.82 (coloring is reliable); Salvage 0.65–0.82 (verify names, numbers, critical details); Strip &lt;0.65 (per-word coloring removed; treat hypothesis as unreliable).</p>
+</details>
 <div class="summary" style="font-size:0.9em"><b>Run Parameters</b><br><b>beam:</b> 20 &nbsp;|&nbsp; <b>length_penalty:</b> 0.0 &nbsp;|&nbsp; <b>repetition_penalty:</b> 1.2 &nbsp;|&nbsp; <b>max_len:</b> 2.0 &times; src + 200 (cap 2048) &nbsp;|&nbsp; <b>no_repeat_ngram:</b> 3 &nbsp;|&nbsp; <b>lm_weight:</b> 0.0 &nbsp;|&nbsp; <b>max_tokens:</b> 1000 &nbsp;|&nbsp; <b>GPU:</b> 14.7 GB (small) &nbsp;|&nbsp; <b>Model:</b> checkpoint_finetune.pt &nbsp;|&nbsp; <b>Decoded:</b> 2026-02-18T08:51:57 &nbsp;|&nbsp; <b>Segments:</b> 1497</div><div class="summary"><b>OVERALL | WER: 64.1% | WWER: 60.5% | NEA Recall: 39% | NEA F1: 39% | IS: 2.53/5.0 | Captured: 601/1497 (40.1%) | Mode: spaCy POS/NER | Segments: 1497</b></div><table>
 <tr><th>ID</th><th>Reference</th><th>Hypothesis (colored)</th><th>WER</th><th>WWER</th><th>NEA Recall</th><th>IS</th></tr>
 <tr><td><b>-0dKADuskCI_6__0959cf94</b><br><small>-0dKADuskCI_6__0959cf94_00_000000_000128</small></td><td><pre>then we have the costal cartilages costal always refers to ribs so these are right here</pre></td><td><pre><span class="ins">that</span> <span class="ok">we</span> <span class="ok">have</span> <span class="ins">they</span> <span class="ins">cause</span> <span class="ins">our</span> <span class="ins">hormones</span> <span class="rep">to</span> <span class="ins">go</span> <span class="ins">haywire</span> <span class="rep">so</span> <span class="rep">these</span> <span class="rep">are</span> <span class="ins">my</span> <span class="ins">heroes</span></pre></td><td class="m-red">68.8%</td><td class="m-red">73.1%</td><td class="m-red" title="Missed: always, cartilages, costal, here, refers, ribs, right, then">11%</td><td class="m-red" title="Poor">1.94</td></tr>

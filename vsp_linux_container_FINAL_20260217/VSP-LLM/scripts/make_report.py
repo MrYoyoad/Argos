@@ -167,47 +167,51 @@ def conf_html(words: List[Dict[str, Any]], tier: str = "Trust") -> str:
 HTML_HEAD = """<!doctype html>
 <html><head><meta charset="utf-8">
 <style>
-body{font-family:system-ui,Arial; margin:20px}
+body{font-family:system-ui,Arial; margin:20px; color:#222}
 table{border-collapse:collapse; width:100%}
-td,th{border:1px solid #ddd; padding:10px; vertical-align:top}
-th{background:#f5f5f5; text-align:left}
+td,th{border:1px solid #ddd; padding:8px; vertical-align:top}
+th{background:#f5f5f5; text-align:left; font-weight:600}
+/* Quality palette (green/yellow/red): per-word accuracy + metric cells */
 .ok{color:#0a7a0a; font-weight:700}
 .rep{color:#b58900; font-weight:800}
 .ins{color:#b00020; font-weight:800}
 .m-green{background:#d4edda; color:#155724; font-weight:700; text-align:center}
 .m-yellow{background:#fff3cd; color:#856404; font-weight:700; text-align:center}
 .m-red{background:#f8d7da; color:#721c24; font-weight:700; text-align:center}
-.conf-high{background:#cfe2ff; color:#084298; font-weight:700; padding:0 2px; border-radius:2px}
-.conf-med {background:#ffe5b4; color:#8a4b00; font-weight:700; padding:0 2px; border-radius:2px}
-.conf-low {background:#e2c4f0; color:#4b0082; font-weight:800; padding:0 2px; border-radius:2px}
+/* Confidence palette (blue/orange/purple): per-word confidence + tier pills */
+.conf-high,.tier-pill.trust  {background:#cfe2ff; color:#084298}
+.conf-med, .tier-pill.salvage{background:#ffe5b4; color:#8a4b00}
+.conf-low, .tier-pill.strip  {background:#e2c4f0; color:#4b0082}
+.conf-high,.conf-med,.conf-low{font-weight:700; padding:0 2px; border-radius:2px}
+.conf-low{font-weight:800}
 .conf-stripped{color:#666; font-style:italic}
-.tier-banner{display:block; padding:6px 10px; margin-bottom:6px; border-radius:4px;
-             font-size:0.82em; font-weight:600}
-.tier-banner.salvage{background:#fff7e0; color:#7a5800; border-left:3px solid #d4a017}
-.tier-banner.strip  {background:#f0e0e8; color:#5a1a3a; border-left:3px solid #a04060}
 .tier-pill{display:inline-block; padding:1px 7px; border-radius:9px;
            font-size:0.78em; font-weight:700; vertical-align:middle}
-.tier-pill.trust  {background:#d4edda; color:#155724}
-.tier-pill.salvage{background:#fff3cd; color:#856404}
-.tier-pill.strip  {background:#f8d7da; color:#721c24}
-.label-acc{display:inline-block; min-width:6.5em; color:#555; font-size:0.85em; font-weight:600}
-.label-conf{display:inline-block; min-width:6.5em; color:#555; font-size:0.85em; font-weight:600}
-small{color:#555}
+.tier-banner{display:block; padding:4px 8px; margin-bottom:5px; border-radius:3px;
+             font-size:0.78em; font-weight:600;
+             background:#f4ecf7; color:#4b0082; border-left:3px solid #4b0082}
+small{color:#777}
 pre{white-space:pre-wrap; word-break:break-word; margin:0}
-.summary{background:#e9ecef; padding:12px; border-radius:6px; margin-bottom:16px}
+tr.video-sep td{background:#eef2f6; color:#4a5568; font-weight:600;
+                font-size:0.82em; padding:6px 10px; border-top:2px solid #94a3b8;
+                letter-spacing:0.02em}
+.summary{background:#e9ecef; padding:10px 12px; border-radius:6px; margin-bottom:12px; font-size:0.9em}
+.legend{font-size:0.85em; color:#444; margin:6px 0 12px}
+.legend > b{color:#222}
+details.legend summary{cursor:pointer; font-weight:600; color:#222; margin-top:4px}
+details.legend[open] > p{margin:6px 0}
 </style></head><body>
-<h2>ASR Report (REF vs HYP)</h2>
-<p><b>Accuracy:</b> <span class="ok">green</span>=match, <span class="rep">yellow</span>=mismatch/shift, <span class="ins">red</span>=inserted/made-up</p>
-<p><b>Confidence (joint top-1 prob &amp; beam agreement):</b>
-   <span class="conf-high">blue</span>=high (prob&ge;0.95 <i>and</i> &ge;80% of beams agree),
-   <span class="conf-med">orange</span>=some signal (prob&ge;0.65 <i>and</i> &ge;50% beams agree),
-   <span class="conf-low">purple</span>=avoid (low prob or disagreed beams) &mdash;
-   <i>only shown when n-best + per-token scores were captured during decode</i></p>
-<p><b>Numeric tokens:</b> digits and number-words (e.g. "billion", "1024") are capped at orange regardless of softmax probability &mdash; lip-reading cannot disambiguate them.</p>
-<p><b>Reliability tier</b> (segment-level, keyed on sentence_confidence):
-   <span class="tier-pill trust">Trust</span> &ge;0.82 — coloring is reliable as labeled.
-   <span class="tier-pill salvage">Salvage</span> 0.65&ndash;0.82 — coloring shown with caveat banner; verify names, numbers, critical details.
-   <span class="tier-pill strip">Strip</span> &lt;0.65 — per-word coloring removed because green leakage exceeds 50% in this regime; treat the whole hypothesis as unreliable.</p>
+<h2>ASR Report</h2>
+<p class="legend">
+<b>Accuracy:</b> <span class="ok">match</span> · <span class="rep">wrong place</span> · <span class="ins">made up</span>
+&nbsp;&nbsp;<b>Confidence:</b> <span class="conf-high">high</span> · <span class="conf-med">some</span> · <span class="conf-low">avoid</span>
+&nbsp;&nbsp;<b>Tier:</b> <span class="tier-pill trust">Trust</span> <span class="tier-pill salvage">Salvage</span> <span class="tier-pill strip">Strip</span>
+</p>
+<details class="legend"><summary>What the colors mean</summary>
+<p><b>Accuracy</b> — green: exact match; yellow: word is in the reference but in the wrong position; red: not in the reference.</p>
+<p><b>Confidence</b> — blue: top-1 prob ≥0.95 <i>and</i> ≥80% beam agreement; orange: ≥0.65 <i>and</i> ≥50% beams; purple: below either. Digits and number-words ("billion", "1024") are capped at orange — lip-reading can't disambiguate them. Shown only when n-best decode is captured.</p>
+<p><b>Tier</b> (segment mean per-word prob) — Trust ≥0.82 (coloring is reliable); Salvage 0.65–0.82 (verify names, numbers, critical details); Strip &lt;0.65 (per-word coloring removed; treat hypothesis as unreliable).</p>
+</details>
 """
 
 HTML_TAIL = "</table></body></html>"
@@ -492,6 +496,37 @@ def parse_segment_id(segment_id: str) -> Tuple[str, int, int, int]:
         return segment_id, -1, -1, -1
 
 
+# Realtalk per-speaker windowed clips: <video>__p<N>__win<start_sec>
+_REALTALK_RE = re.compile(r'^(.+?)__p(\d+)__win(\d+)$')
+
+
+def parse_realtalk_id(base: str) -> Optional[Tuple[str, int, int]]:
+    """Return (video_id, speaker_idx, win_start_sec) if `base` matches the
+    realtalk per-speaker pattern, else None."""
+    m = _REALTALK_RE.match(base)
+    if not m:
+        return None
+    video, p_idx, win = m.groups()
+    return video, int(p_idx), int(win)
+
+
+def _speaker_label(idx: int) -> str:
+    return f"Speaker {chr(ord('A') + idx)}" if 0 <= idx < 26 else f"Speaker {idx + 1}"
+
+
+def _format_seconds(sec: int) -> str:
+    return f"{sec // 60}:{sec % 60:02d}"
+
+
+def _pretty_base(base: str) -> str:
+    """Pretty form of the base ID; for realtalk: `<video> · Speaker A · 0:23`."""
+    rt = parse_realtalk_id(base)
+    if rt:
+        video, p_idx, win = rt
+        return f"{video} · {_speaker_label(p_idx)} · {_format_seconds(win)}"
+    return base
+
+
 def build_display_names(recs: List[Rec]) -> Dict[str, str]:
     """
     Build user-friendly display names for segment IDs.
@@ -499,6 +534,7 @@ def build_display_names(recs: List[Rec]) -> Dict[str, str]:
     Single-segment videos  -> just base name (e.g., "Obama")
     Multi-segment videos   -> "Obama - Part 1", "Obama - Part 2", etc.
     Non-segmented IDs      -> returned as-is (e.g., "00008")
+    Realtalk pattern       -> `<video> · Speaker A · 0:23` (with " · Part N" suffix when multi-segment)
     """
     # Group records by base video ID
     groups: Dict[str, List[Tuple[int, str]]] = {}
@@ -510,15 +546,14 @@ def build_display_names(recs: List[Rec]) -> Dict[str, str]:
 
     names: Dict[str, str] = {}
     for base, entries in groups.items():
+        pretty = _pretty_base(base)
         if len(entries) == 1:
-            # Single segment (or non-segmented) -> just base name
             _, utt_id = entries[0]
-            names[utt_id] = base
+            names[utt_id] = pretty
         else:
-            # Multi-segment -> sort by seg_idx and assign Part numbers
             entries.sort(key=lambda x: x[0])
             for part_num, (_, utt_id) in enumerate(entries, 1):
-                names[utt_id] = f"{base} - Part {part_num}"
+                names[utt_id] = f"{pretty} · Part {part_num}"
 
     return names
 
@@ -780,12 +815,14 @@ def main() -> None:
                     new_text = v.get("text", "")
                     new_wc = v.get("word_confs_calibrated") or v.get("word_confs") or []
                 else:
+                    # hyp_top1 is stored as a plain string; not expected here but tolerated.
                     new_text = v if isinstance(v, str) else ""
                     new_wc = rec.get("hyp_top1_word_confs_calibrated") or rec.get("hyp_top1_word_confs") or []
                 if not new_text:
                     n_missing += 1
                     continue
                 r.hypo = new_text
+                # Replace per-word conf data so the HTML/CSV use the chosen method's confs.
                 if new_wc:
                     words_payload = []
                     probs = []
@@ -805,13 +842,45 @@ def main() -> None:
                     word_conf[r.utt_id] = {"words": words_payload, "summary": summary}
                 n_swapped += 1
             if n_swapped:
-                do_conf = bool(word_conf)
+                do_conf = bool(word_conf)  # may have flipped on if it was off
             print(f"[INFO] Display method: {args.display_method} — swapped {n_swapped} segments, "
                   f"{n_missing} fell back to top1 (no aggregated record or empty method text).")
 
-    # Build display names and sort by (base_video_id, segment_index)
+    # Build display names; sort by (video, speaker, window, sub-segment) for
+    # realtalk IDs so all clips from the same speaker cluster together,
+    # then fall back to (base, seg_idx) for everything else.
     display_names = build_display_names(recs)
-    recs.sort(key=lambda r: (parse_segment_id(r.utt_id)[0], parse_segment_id(r.utt_id)[1]))
+
+    def _sort_key(r):
+        base, seg_idx, _, _ = parse_segment_id(r.utt_id)
+        rt = parse_realtalk_id(base)
+        if rt:
+            video, p_idx, win = rt
+            # leading 0 puts realtalk rows ahead of mixed non-realtalk rows
+            return (0, video, p_idx, win, seg_idx)
+        return (1, base, 0, 0, seg_idx)
+    recs.sort(key=_sort_key)
+
+    # Identify "tail" rows from the realtalk windowing: every 300-frame window
+    # is split into a primary segment (frames 0–300) and a 50-frame tail
+    # (frames 250–300) that's mostly noise. Hide tails from the HTML report
+    # but keep them in the CSV so power users can still inspect them.
+    realtalk_groups: Dict[str, List[Tuple[int, int, int, str]]] = {}
+    for r in recs:
+        base, seg_idx, sf, ef = parse_segment_id(r.utt_id)
+        if parse_realtalk_id(base):
+            realtalk_groups.setdefault(base, []).append((seg_idx, sf, ef, r.utt_id))
+    hidden_utts: set = set()
+    for base, items in realtalk_groups.items():
+        has_primary = any(idx == 0 for idx, _, _, _ in items)
+        if not has_primary:
+            continue
+        for idx, sf, ef, utt_id in items:
+            if idx >= 1 and sf >= 0 and (ef - sf) < 100:
+                hidden_utts.add(utt_id)
+    if hidden_utts:
+        print(f"[INFO] Hiding {len(hidden_utts)} realtalk tail segments from HTML "
+              f"(kept in CSV)")
 
     print(f"[INFO] Metrics mode: {_metrics_mode()}")
 
@@ -886,6 +955,7 @@ def main() -> None:
     total_agg_wer = {m: 0.0 for m in AGG_METHODS}
     total_is = 0.0
     n_with_ref = 0
+    prev_video: Optional[str] = None  # tracks video boundary for HTML separator rows
 
     for r in recs:
         ref = r.ref or ""
@@ -1053,36 +1123,39 @@ def main() -> None:
         # If no per-segment confidence data, render plain (uncolored) hyp.
         if do_conf:
             if seg_words:
-                if seg_tier == "Salvage":
+                if seg_tier == "Strip":
                     banner = (
-                        '<span class="tier-banner salvage">'
-                        'Model uncertain — verify names, numbers, and critical details.'
-                        '</span>'
+                        '<span class="tier-banner">Coloring removed — '
+                        'low segment confidence; treat hypothesis as unreliable.</span>'
                     )
                     conf_cell = f'<td>{banner}<pre>{conf_html(seg_words, tier=seg_tier)}</pre></td>'
-                elif seg_tier == "Strip":
-                    banner = (
-                        '<span class="tier-banner strip">'
-                        'Low-confidence segment — per-word coloring removed. '
-                        'Treat hypothesis as unreliable even where it looks fluent.'
-                        '</span>'
-                    )
-                    conf_cell = f'<td>{banner}<pre>{conf_html(seg_words, tier=seg_tier)}</pre></td>'
-                else:  # Trust or empty tier — original behavior
+                else:  # Trust, Salvage, or empty tier — pill in metrics column carries the signal
                     conf_cell = f'<td><pre>{conf_html(seg_words, tier=seg_tier or "Trust")}</pre></td>'
             else:
                 conf_cell = f'<td><pre>{escape(hyp)}</pre></td>'
         else:
             conf_cell = ""
 
-        html_rows.append(
-            f"<tr><td><b>{escape(dname)}</b><br>"
-            f"<small>{escape(r.utt_id)}</small></td>"
-            f"<td><pre>{escape(ref)}</pre></td>"
-            f"<td><pre>{hyp_html(tagged)}</pre></td>"
-            f"{conf_cell}"
-            f"{metrics_cells}</tr>"
-        )
+        # Skip tail rows from HTML (still in CSV). Decide BEFORE inserting any
+        # separator row so a hidden tail doesn't cause a spurious break.
+        if r.utt_id not in hidden_utts:
+            base_for_sep, _, _, _ = parse_segment_id(r.utt_id)
+            rt_for_sep = parse_realtalk_id(base_for_sep)
+            this_video = rt_for_sep[0] if rt_for_sep else base_for_sep
+            if prev_video is not None and this_video != prev_video:
+                html_rows.append(
+                    f'<tr class="video-sep"><td colspan="99">{escape(this_video)}</td></tr>'
+                )
+            prev_video = this_video
+
+            html_rows.append(
+                f"<tr><td><b>{escape(dname)}</b><br>"
+                f"<small>{escape(r.utt_id)}</small></td>"
+                f"<td><pre>{escape(ref)}</pre></td>"
+                f"<td><pre>{hyp_html(tagged)}</pre></td>"
+                f"{conf_cell}"
+                f"{metrics_cells}</tr>"
+            )
 
         # Plain text block
         metrics_line = ""
@@ -1202,8 +1275,17 @@ def main() -> None:
         f'<th>WER</th><th>WWER</th><th>NEA Recall</th>{is_th}{sent_conf_th}{tier_th}</tr>\n'
         + "\n".join(html_rows)
     )
+    html_footnote = ""
+    if hidden_utts:
+        html_footnote = (
+            f'<p class="legend" style="margin-top:14px">'
+            f'{len(hidden_utts)} short tail segment(s) hidden from this view '
+            f'(realtalk window overlap; full data preserved in <code>report.csv</code>).'
+            f'</p>'
+        )
     (out_dir / "report.html").write_text(
-        HTML_HEAD + html_params + html_summary + html_table + HTML_TAIL,
+        HTML_HEAD + html_params + html_summary + html_table + "</table>"
+        + html_footnote + "</body></html>",
         encoding="utf-8"
     )
 
