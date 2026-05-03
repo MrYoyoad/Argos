@@ -3011,24 +3011,11 @@ def slide_client_arabic_high_level(prs):
              "Path is mapped. Engagement on request.",
              MX, Inches(2.7), CW, Inches(0.6),
              size=Pt(17), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
-    # Honest scope marker — not a config flip
-    add_rect(slide, MX + Inches(1.0), Inches(3.5), CW - Inches(2.0), Inches(0.85),
-             fill_color=NAVY3, border_color=GOLD, border_width=Pt(1.0))
-    add_text(slide,
-             "This is real engineering work — not a configuration flip. "
-             "Arabic is a separately-scoped, separately-funded effort.",
-             MX + Inches(1.2), Inches(3.6),
-             CW - Inches(2.4), Inches(0.65),
-             size=Pt(14), bold=True, color=GOLD, italic=True,
-             align=PP_ALIGN.CENTER)
-    add_text(slide,
-             "Realistic timeline: 2–3 months from go. Costs scale with "
-             "dataset size and dialect coverage.",
-             MX, Inches(4.55), CW, Inches(0.6),
-             size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    # Round 8 — pill with low-risk-mostly-work framing carries the message;
+    # cost-ladder lines (separately-funded, 2-3 month timeline / costs scale)
+    # removed here to avoid stepping on the pill's tone.
 
-    # Round 8 — replace "Which Arabic?" question with low-risk-mostly-work framing
-    risk_y = Inches(5.45)
+    risk_y = Inches(3.6)
     add_rect(slide, MX, risk_y, CW, Inches(1.0),
              fill_color=NAVY3, border_color=TEAL, border_width=Pt(0.75))
     add_text(slide,
