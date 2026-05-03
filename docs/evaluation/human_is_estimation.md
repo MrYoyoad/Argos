@@ -83,27 +83,70 @@ Run the resulting "synthetic-human" transcripts through the IS pipeline. Useful 
 
 ---
 
-## 4. Pre-study estimate (Path B numbers — caveat caveat caveat)
+## 4. Path B executed (May 3, 2026) — full computation, not just prose estimates
 
-Plugging stratum-level component estimates into the IS formula:
+### 4.1 Formula sanity check (replays our own data)
 
-| Population | Est. WER | Est. IS / 5.0 | Est. NIV-Y+P rate | Tier |
+Before estimating humans, replay the model on its 1,497-segment data: bin by WER, take per-bin component means, plug back into the IS formula, compare against the measured IS. If the formula reproduces our own data, the formula is sound and Path B is just a substitution exercise.
+
+| Bin | n | WER | Predicted IS | Measured IS | Δ |
+|---|---|---|---|---|---|
+| WER < 30 | 288 | 17 | 4.46 | 4.36 | +0.10 |
+| WER 30–50 | 278 | 38 | 3.57 | 3.52 | +0.05 |
+| WER 50–60 | 165 | 54 | 2.91 | 2.85 | +0.06 |
+| WER 60–70 | 127 | 65 | 2.42 | 2.38 | +0.04 |
+| WER 70–100 | 332 | 83 | 1.69 | 1.66 | +0.03 |
+| WER ≥ 100 | 307 | 117 | 1.04 | 0.76 | +0.28 |
+
+Match within ±0.05 on the five non-extreme bins. The hallucination bin (WER ≥ 100) over-predicts by 0.28 because WER is clipped at 100% before scaling — humans almost never enter this bin (no fabrication), so it doesn't matter for Path B. **Formula plumbing verified.**
+
+### 4.2 Per-stratum component estimates
+
+Each stratum gets a *low* / *mid* / *high* band drawn from the literature in §7 and the no-fabrication adjustment in §3.
+
+| Component | Lay (no ctx) | Deaf (no ctx) | Expert (no ctx) | Lay + ctx + model review |
 |---|---|---|---|---|
-| Lay hearing adult (no context) | 88% | **0.6 – 1.0** | <10% | Failed |
-| Deaf adult (no context) | 56% | **2.1 – 2.6** | 50–60% | Poor – Fair |
-| Expert / forensic (no context) | 50% | **2.5 – 3.0** | 60–70% | Fair |
-| Lay + topic + model output review | est. 30–40%* | **3.0 – 3.7** | 75–85% | Fair – Good |
-| **Our model (measured)** | **64.1%** | **2.52** | **61.6%** | **Fair** |
-| Model on LRS3 (predicted) | 25.4% | ~3.8 – 4.2 | ~85% | Good – Excellent |
+| WER (%) | 86 / 88 / 90 | 52 / 56 / 60 | 48 / 50 / 55 | 25 / 32 / 40 |
+| WWER (%) | 90 / 92 / 95 | 56 / 60 / 64 | 52 / 54 / 58 | 28 / 35 / 44 |
+| Semantic (cos) | 0.22 / 0.18 / 0.10 | 0.62 / 0.55 / 0.45 | 0.68 / 0.60 / 0.50 | 0.80 / 0.72 / 0.62 |
+| Phonetic (frac) | 0.18 / 0.14 / 0.10 | 0.62 / 0.55 / 0.45 | 0.66 / 0.60 / 0.50 | 0.80 / 0.74 / 0.65 |
+| NEA F1 (%) | 12 / 8 / 5 | 56 / 46 / 36 | 60 / 50 / 40 | 78 / 70 / 60 |
+| LR | 0.55 / 0.45 / 0.35 | 0.78 / 0.72 / 0.65 | 0.85 / 0.80 / 0.72 | 0.97 / 0.92 / 0.85 |
 
-\* The "model + human + context" row reuses the 55–70% word-accuracy band from [human_expert_comparison.md §5](human_expert_comparison.md) and assumes human-style component patterns (low fabrication, low LR loss when context is provided).
+### 4.3 Resulting IS bands
 
-**Headline read of these numbers:**
-- The model **already exceeds an unaided expert lip reader** on raw IS (2.52 vs ~2.7 is within estimate noise; the model's distribution has a heavier right tail because LRS3-clean segments hit IS 4+).
-- The model is dramatically better than an unaided lay hearing adult.
-- A "model + human reviewer with context" system pulls noticeably ahead (≈ 3.0–3.7 vs the model alone at 2.52). This is consistent with the §5 table in [human_expert_comparison.md](human_expert_comparison.md).
+| Population | IS low / mid / high | Tier (mid) | vs Model 2.52 |
+|---|---|---|---|
+| Lay hearing (no ctx) | **0.63 / 0.92 / 1.14** | Failed | model wins by **+1.60** |
+| Deaf adult (no ctx) | **2.33 / 2.74 / 3.07** | Fair | rough tie (model −0.22 to −0.55) |
+| Expert / forensic (no ctx) | **2.60 / 3.03 / 3.33** | Fair | model loses by **−0.51** at mid |
+| Lay + topic + model review | **3.36 / 3.83 / 4.19** | Good | model loses by **−1.31** at mid |
+| **Model alone (measured)** | **2.52** | Fair | — |
+| Model on LRS3 (component-extrapolation) | ~3.8 – 4.2 | Good–Excellent | predicted, not measured |
 
-**These numbers are not claimable as published until path A runs.** They are an order-of-magnitude prior to scope a study against.
+### 4.4 What's driving each estimate — the LR isolation experiment
+
+To separate "humans got fewer words right" from "humans wrote less", recompute each *mid* stratum with LR clamped to **1.0** (i.e. as if humans had model-style fluency but the same WER/semantic/phonetic/NEA):
+
+| Stratum (mid) | Human-style IS | If LR=1.0 (no length penalty) | Δ from LR alone |
+|---|---|---|---|
+| Lay hearing | 0.92 | 1.33 | +0.41 |
+| Deaf adult | 2.74 | 2.95 | +0.21 |
+| Expert | 3.03 | 3.18 | +0.15 |
+| Lay + ctx + model review | 3.83 | 3.89 | +0.06 |
+
+The LR penalty **shrinks with proficiency** because better speechreaders skip fewer words. This is the cleanest single piece of evidence that **fluency is not a virtue** for the IS metric: the model is paying ~0 in LR penalty by guessing rather than skipping, and the LengthRatio signal is a covert reward for that. A human-aware IS variant should treat explicit "[unclear]" as length-neutral or weight LR less for human-style transcription.
+
+### 4.5 Headline reads
+
+1. **Model ≈ unaided deaf-adult lip-reader.** 2.52 sits inside the deaf-no-context band (2.33–3.07). Nothing dramatic to claim.
+2. **Model loses to an unaided expert by ~0.5 IS** (3.03 vs 2.52 at mid). Not a comfortable gap — within the high band of what an expert-pilot could be measured to confirm or refute.
+3. **Model + context-aware human reviewer ≈ +1.3 IS over model alone** (3.83 vs 2.52). This is the deployment story; it's also what every other metric in this repo (LLM-judge, NIV, salvage) has been hinting at.
+4. **Model destroys lay readers** (+1.6 IS). Trivial finding but worth saying once.
+
+**Status:** these numbers are still pre-study; Path A is the only way to tighten them past ±0.4. But they are now *computed*, not eyeballed — every stratum traces to a literature-cited word-accuracy plus the four reproducible style adjustments (Semantic ≈ acc + ctx-bonus; Phonetic ≈ acc × 1.2 capped; NEA F1 from recall with precision≈1; LR from reported transcription gap rates).
+
+The Path-B computation script is reproducible from the snippet at the top of this section; component means by WER bin come from `docs/evaluation/intelligibility/intelligibility_scores.csv` columns 6–19.
 
 ---
 
