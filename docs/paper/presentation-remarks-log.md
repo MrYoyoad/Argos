@@ -511,3 +511,8 @@ User pasted competitive landscape research (Symphonic Labs / "Read Their Lips", 
 - `QA_CHEAT_SHEET.md` shortened from 383 lines to ~50 lines: closing line, three anchor numbers, three lines-to-land, 13-row top Q&A table, don't-say→say swaps, pull-only block.
 - `QA_CHEAT_SHEET.pdf` regenerated via `/tmp/build_cheatsheet_pdf.py` (reportlab) — single page, letter, dense tables.
 - Per-slide talking points removed (they live in `v9_NAVIGATION_GUIDE_for_existing_pptx.md`, no need to duplicate).
+
+### Follow-up (same date) — competition Q&A folded into one-pager
+- The 4 competitive rows the user added to `.md` (Whisper / Google STT, AV-HuBERT / VSP-LLM open source, Read Their Lips / LipReadPro, 121 Captions forensic stance) are now in the PDF too.
+- Dropped "What's different vs other lip-reading work?" row from both `.md` and PDF — the 4 competitive rows answer that more concretely, and trimming this kept the page from overflowing.
+- PDF tightened (cell font 7.3→6.7, padding 2→1.5px) to fit 16-row Q&A on a single page. Verified.

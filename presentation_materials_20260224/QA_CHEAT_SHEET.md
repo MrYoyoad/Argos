@@ -23,7 +23,6 @@
 | **Evidence use?** | "Only with human review and confidence metadata. Evidence-discovery and review-acceleration tool — not standalone evidence." |
 | **Cherry-picked examples?** | "Curated for teaching range; the headline numbers are full 1,497-segment, not selected. We can run your clips next." |
 | **Is green always correct?** | "No. 92.8% reliable in high-quality segments, 21.8% in low. UI policy: ≥0.82 full coloring, 0.65–0.82 amber banner, <0.65 strip. *The UI removes coloring where it would lie.*" |
-| **What's different vs other lip-reading work?** | "Real-world end-to-end pipeline (not LRS3-only); uncertainty surfaced at every level; deployable infrastructure cloud-or-on-prem — not a research codebase." |
 | **Human IS comparison?** | "Lay ~0.9, deaf adult ~2.7, forensic expert ~3.0, model alone 2.52, **reviewer + model ~3.8**. Alone we tie a deaf adult; combined system beats the expert." |
 | **vs 5-expert team?** | "Same quality (~3.8 IS), **50–100× cheaper** ($3–6/min vs $200–400/min), structurally more reproducible. One reviewer + Argos, not five experts." |
 | **Could it be misused?** | "Yes — that's why we ship it as reviewable evidence stream, not autonomous truth. Won't deploy without human verification. Deal-breaker for us." |
