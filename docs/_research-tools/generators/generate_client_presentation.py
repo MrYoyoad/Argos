@@ -26,6 +26,7 @@ from presentation.slides_opening import (
 )
 from presentation.slides_engineering import (
     slide_web_ui,                       # UI overview
+    slide_17_png,                       # 8-stage pipeline (full PNG) — appendix-only
 )
 from presentation.slides_future import (
     slide_thank_you,                    # close
@@ -81,6 +82,7 @@ from presentation.slides_client import (
     slide_client_video_gallery,
     # slide_client_examples_intro DROPPED (Round 5.1 — overlaps with deep examples)
     slide_client_example_perfect,
+    slide_client_example_simple_positive,   # NEW Round 7 — non-Obama clean win
     slide_client_clean_outputs_gallery,     # NEW Round 5.1 (6-tile gallery of clean outputs)
     slide_client_example_partial,
     # slide_client_example_flagged — DROPPED Round 5.10 from active deck
@@ -174,7 +176,37 @@ _section_whats_next = make_section_transition(
 )
 
 
-OUTPUT = MATERIALS / "Argos_VSP_Client_Round6_May2026.pptx"
+OUTPUT = MATERIALS / "Argos_VSP_Client_Round7_May2026.pptx"
+
+
+def slide_pipeline_appendix(prs):
+    """Round 7 — height-bound wrapper for the 8-stage academic pipeline PNG.
+
+    `slide_17_png` uses `width=CW` which makes the image overflow the
+    slide vertically (the source PNG is wide-aspect). Render a height-
+    bound copy here for the appendix instead.
+    """
+    from presentation.helpers import new_slide, add_title, add_accent_line, add_image, add_logo, add_slide_num, set_notes
+    from presentation.config import IMG, MX, MY, CT, CW, _auto_num
+    from pptx.util import Inches
+    slide = new_slide(prs)
+    _auto_num[0] += 1
+    add_title(slide, "8-Stage Automated Pipeline (appendix)")
+    add_accent_line(slide)
+    # Height-bound centered image
+    img_h = Inches(5.3)
+    img_w = Inches(11.5)
+    img_x = (SL_W - img_w) // 2
+    img_y = Inches(1.55)
+    add_image(slide, "pipeline_detailed", img_x, img_y, width=img_w, height=img_h)
+    add_logo(slide)
+    add_slide_num(slide, _auto_num[0])
+    set_notes(slide,
+        "Appendix: full pipeline diagram showing 8 stages with ASR as "
+        "evaluation-only side-branch. Data flow: .mp4 → normalize → mouth "
+        "crop → LRS3 convert → manifests → K-means → LLM decode → reports. "
+        "ASR (Whisper) provides reference text for WER/IS scoring only.")
+    return slide
 
 
 def main():
@@ -216,8 +248,9 @@ def main():
         slide_client_demo_recap,
         # § Real outputs — Section transition + gallery + cleans + 3 Obama + 6 verdict-tagged
         _section_real_outputs,
-        slide_client_video_gallery,
+        # Round 7: video_gallery moved to appendix (after thank_you).
         slide_client_example_perfect,           # Obama segment 14 — perfect
+        slide_client_example_simple_positive,   # NEW Round 7 — non-Obama clean win
         slide_client_clean_outputs_gallery,     # NEW Round 5.1 — 6 cleans
         slide_client_example_partial,           # Obama segment 31 — partial
         # slide_client_example_flagged DROPPED Round 5.10 — redundant with
@@ -241,9 +274,10 @@ def main():
         slide_client_confidence_question,
         slide_client_two_layer_confidence,
         slide_client_word_color_coding,
-        slide_client_three_tier_policy,         # NEW Round 5.6 — band-reliability + three-tier UI
-        # How a reviewer reads the output (operational instruction)
+        # Round 7: how_to_read placed BEFORE three_tier_policy so the
+        # decision-flow primer comes first, then the policy elaboration.
         slide_client_how_to_read,               # NEW Round 5.9 — decision flow (tier → colors → numbers/names)
+        slide_client_three_tier_policy,         # NEW Round 5.6 — band-reliability + three-tier UI
         slide_client_reader_example,            # NEW Round 5.9 — Salvage worked example (networking, gist recovered)
         slide_client_case_topic_shift,          # NEW Round 5.10 — topic-shift hallucination caught (gardening → nuclear)
         slide_client_case_strip_save,           # NEW Round 5.10 — Strip catches fluent fabrication
@@ -258,7 +292,8 @@ def main():
         # Failure-mode taxonomy (Round 5.1: 1a+1b merged into one slide)
         slide_client_failure_taxonomy_full,     # NEW Round 5.1 (replaces slide_08 + 1a + 1b)
         slide_client_failure_worked_example,
-        slide_failure_deep_2,                   # Borrowed: 3 real ref/hyp cases
+        # Round 7: slide_failure_deep_2 dropped from active deck (academic
+        # borrow; failure taxonomy + worked example cover this beat).
         # Salvage examples (Round 5.1: 25e dropped — jalapeno duplicates judge_ex5)
         slide_25d,                              # Borrowed: 3 real recoveries
         # Summary stat + the deepest-critique reframe + closer
@@ -289,7 +324,8 @@ def main():
         # § What's next (Round 5.1: data_ask + investment_ask merged into partnership_ask)
         _section_whats_next,
         slide_client_quality_filter,
-        slide_client_preprocessing_summary,
+        # Round 7: slide_client_preprocessing_summary dropped (the
+        # quality_filter slide already conveys the pre-processing message).
         slide_client_arabic_high_level,         # NEW Round 5.1 (replaces academic arabic_roadmap)
         slide_client_next_milestone,            # NEW Round 5.8 — what investment buys (stronger LLM + more data)
         slide_client_feedback_loop_ask,         # NEW Round 5.13 — soft client-feedback ask
@@ -300,6 +336,11 @@ def main():
         slide_client_integration_commitment,
         slide_client_next_steps,
         slide_thank_you,                        # Borrowed: close
+
+        # ═══════ APPENDIX (hidden in presentation, preserved in file) ═══════
+        # Round 7: appendix-only slides (HIDDEN by index below).
+        slide_client_video_gallery,             # Round 7: gallery moved to appendix
+        slide_pipeline_appendix,                # Round 7: 8-stage pipeline (height-bound wrapper) — appendix
     ]
 
     total = len(builders)
@@ -324,24 +365,23 @@ def main():
     # stay in the .pptx file as backup but PowerPoint skips them during
     # presentation. python-pptx has no direct hide-slide API; set the
     # show="0" attribute on <p:sldId> directly. 1-based indices.
+    # Round 7: indices recomputed after gallery→appendix, preprocessing_summary
+    # drop, failure_deep_2 drop, how_to_read/three_tier swap, +slide_17_png
+    # appendix add. Old → new shifts from prior round's HIDDEN_SLIDES baseline.
     HIDDEN_SLIDES = [
-        14,  # demo_recap "What you just saw" — Round 5.12: thin transition; demo speaks for itself
-        21,  # Output Example 2 — Truncated but Core Preserved (judge_ex2 — overlaps with example_partial)
-        23,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4 — overlaps with judge_ex3 Technical Drift)
-        24,  # Output Example 5 — Cooking Domain (judge_ex5 — domain too specific)
-        41,  # trust_dashboard "62% useful — on real-world video" — duplicates slide 26 headline
-        45,  # slide_25d (LLM Salvage 3 cases) — overlaps with new Round 5.10 case-study slides 34/35
-        46,  # hallucination_flag "1 in 5" — duplicates slide 26 headline + slides 34/35 demonstrate flagging
-        50,  # what_this_means "What this means for your workflow" — thin transition,
-             # the trust section already conveys the workflow implication.
-             # Index 49 → 50 in Round 5.15.
-        57,  # slide_client_pipeline_detailed (8-stage diagram) — too unclear;
-             # simpler 3-component overview at slide 4 covers this beat.
-             # Index 56 → 57 in Round 5.15.
-        61,  # _section_whats_next transition — Act 3's What's Next pivot is implicit.
-             # Index 60 → 61 in Round 5.15.
-        68,  # recap "Three things to take with you" — trim close section.
-             # Index 67 → 68 in Round 5.15.
+        14,  # demo_recap "What you just saw" — thin transition; demo speaks for itself
+        21,  # Output Example 2 — Truncated but Core Preserved (judge_ex2)
+        23,  # Output Example 4 — Scientific Vocabulary Lost (judge_ex4)
+        24,  # Output Example 5 — Cooking Domain (judge_ex5)
+        41,  # trust_dashboard "62% useful — on real-world video" — duplicates headline
+        44,  # slide_25d (LLM Salvage 3 cases) — overlaps with case-study slides
+        45,  # hallucination_flag "1 in 5" — duplicates headline
+        49,  # what_this_means — thin transition
+        56,  # slide_client_pipeline_detailed (8-stage diagram) — too unclear here
+        60,  # _section_whats_next transition — implicit pivot
+        66,  # recap "Three things to take with you" — trim close section
+        70,  # Round 7: video_gallery — appendix-only
+        71,  # Round 7: slide_17_png (8-stage academic pipeline) — appendix-only
     ]
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn

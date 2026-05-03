@@ -1,6 +1,6 @@
 # Argos VSP Client Deck — Changelog
 
-**File:** `Argos_VSP_Client_*.pptx` (currently `Argos_VSP_Client_Round6_May2026.pptx`)
+**File:** `Argos_VSP_Client_*.pptx` (currently `Argos_VSP_Client_Round7_May2026.pptx`)
 **Generator:** `docs/_research-tools/generators/generate_client_presentation.py`
 **Builders:** `docs/_research-tools/generators/presentation/slides_client.py`
 
@@ -23,6 +23,44 @@ Each entry:
 - **COMMIT** (short SHA, looked up via `git log`)
 
 Reverse-chronological: newest entry on top.
+
+---
+
+## 2026-05-03 — **Round 7 cut — `Argos_VSP_Client_Round7_May2026.pptx`** (LANDED)
+
+User reviewed Round 6 deck and posted 26 specific feedback items. Most are simplifications, slide drops, and "make it feel like a finished product" reframes. Plan: `.claude/plans/i-need-to-create-proud-cupcake.md` § Round 7. Executed via 3 parallel sub-agents.
+
+**Wording / cosmetic (Agent 1):**
+- Slide 10 (`what_we_built`): scrubbed "Intelligibility Score" / "WER" / "IS" → "calibrated metrics" / "well-measured against expert review" / "agreement scores."
+- Slide 31 (`three_tier_policy`): dropped the bottom anchor ("18% to 93%…") — moved to speaker notes.
+- Slide 47 (`claims`): body bumped 11pt → 13pt; row_h 0.55" → 0.62"; dropped one philosophical pair ("Confidence equals factual truth"); reworded "Replace human review in high-stakes use" → "Replace human judgment for time-critical decisions". 6 → 5 pairs.
+- Slide 48 (`trust_without_ground_truth`): added italic line "Validated on real-world wild video — varied quality, lighting, head angles, multi-speaker scenes — no curated benchmark."
+- Slide 59 (`engineering_journey`): title "four passes, four months" → "four passes, **six** months."
+- Slide 39 (`halluc_caught`): de-alarmed with "These are cases the model already routes away from your team. You see the safe outputs."
+- Output examples (17, 19, 20, 22, 25): added per-slide confidence labels ("model rated this segment high-confidence" / "mixed-confidence segment").
+- Slide 26: speaker notes cleaned of overstated hallucination framing.
+- Slide 33 (`reader_example`): replaced networking example with a non-overlapping conversational segment ("interesting thing to do…").
+
+**Slide replacements (Agent 2):**
+- Slide 49 (`trust_operating_points`) → REPLACED with single recommendation ("Trust if ≥ 30% of words are green") + footer pill noting reviewer can override at any time. 2-step click-reveal.
+- Slide 55 (`aggregation_safety`) → REPLACED with before/after bar comparison (68% → 71%, +2.7 pp; styled like slide 53's bar chart).
+- NEW slide between examples 1 and gallery: `slide_client_example_simple_positive` — non-Obama everyday segment ("because as far as i know i haven't seen it").
+- Slide 30 (`word_color_coding`): screenshot enlarged to 10" × 4.95", centered.
+
+**Structural moves + appendix + plot (Agent 3):**
+- Reading order: word-color (30) → how-reviewer-reads (31) → three-tier UI (32). Reviewer mental model lands first.
+- Slide 16 (`video_gallery`) moved to appendix (hidden, after thank_you).
+- Dropped from order: `slide_failure_deep_2` (academic borrow) and `slide_client_preprocessing_summary` (subsumed).
+- "What's next" reframed: quality_filter → "Optional add-on"; arabic → "Available — on request"; next_milestone → "Optional — domain-specific training run"; feedback_loop → "How a domain-tuned version comes together". Multi-speaker stays as the only "in flight" engineering item.
+- Appendix: pulled academic 8-stage pipeline PNG into hidden `slide_pipeline_appendix` (height-bound wrapper around `slide_17_png` to clear footer).
+- Slide 40: replaced unhelpful IS-confidence-gate plot with new clean 3-bar chart (Trust 99% / Salvage 87% / Strip 23% useful output). New generator: `docs/_research-tools/generators/generate_tier_useful_plot.py`. Image: `confidence_tier_useful.png`.
+- HIDDEN_SLIDES recomputed: 13 hidden total. BORROWED_SLIDES updated post-renumbering.
+
+**File rename:** `Argos_VSP_Client_Round6_May2026.pptx` → `Argos_VSP_Client_Round7_May2026.pptx`. Generator output, both audit `DECK` constants, PRE_MEETING_CHECKLIST, this header all updated.
+
+71 slides total / 58 visible / 13 hidden. Audits 7/7 green. Old Round-5/6 files retained on disk as frozen references.
+
+- **COMMIT**: TBD.
 
 ---
 

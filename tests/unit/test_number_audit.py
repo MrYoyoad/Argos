@@ -36,7 +36,7 @@ import pytest
 from pptx import Presentation
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round6_May2026.pptx"
+DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round7_May2026.pptx"
 
 # Slide indices (1-based) for BORROWED builders. Recomputed for Round 5
 # after the framing-v2 reorder + 12 academic borrows landed (six judge
@@ -47,12 +47,14 @@ DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round6_
 # values which Round-5 framing accepts (architecture-overview slides
 # are OK for the partner audience).
 BORROWED_SLIDES = {
-    # Round 5.15: trust_operating_points slide added after trust_without_ground_truth;
-    # slides at and after position 49 shifted +1.
-    44,  # slide_failure_deep_2  — 3 worked ref/hyp examples
-    45,  # slide_25d             — salvage recoveries (WER stripped from headers)
-    59,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
-    71,  # slide_thank_you       — close
+    # Round 7: failure_deep_2 dropped, gallery moved to appendix,
+    # slide_pipeline_appendix added (height-bound local wrapper of
+    # slide_17_png — not strictly borrowed, but the body is the academic
+    # PNG so we exempt it the same way), preprocessing_summary dropped,
+    # how_to_read/three_tier swapped.
+    43,  # slide_25d             — salvage recoveries (WER stripped from headers)
+    56,  # slide_data_flow       — 5-step model architecture (LoRA stripped)
+    68,  # slide_thank_you       — close
 }
 
 
@@ -278,6 +280,14 @@ def test_visible_percentages_are_canonical_or_derivative(deck):
         "65%",                # Permissive (≥30% green): 65.2% recall of useful segments
         "34%",                # Moderate (≥50% green): 33.8% recall — rounded to 34%
         "8%",                 # Strict (≥70% green): 7.6% recall — rounded to 8%
+    })
+    # Round 7 — n-best aggregation before/after on slide 54
+    # (slide_client_aggregation_safety). Source: MEMORY.md "n-best methods
+    # v3" line — baseline NIV-Y+P 68.4% → hyp_mbr 71.1% (+2.7pp,
+    # paired McNemar p=0.0002).
+    approved.update({
+        "68%",                # baseline NIV-Y+P (first guess only): 68.4% rounded
+        "71%",                # hyp_mbr NIV-Y+P (consensus): 71.1% rounded
     })
     # Strip whitespace inside percent tokens
     def norm(s):

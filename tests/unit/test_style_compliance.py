@@ -35,7 +35,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round6_May2026.pptx"
+DECK = REPO_ROOT / "presentation_materials_20260224" / "Argos_VSP_Client_Round7_May2026.pptx"
 
 SLIDE_W = Emu(int(13.333 * 914400))
 SLIDE_H = Emu(int(7.5 * 914400))
