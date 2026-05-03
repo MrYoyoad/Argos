@@ -452,3 +452,48 @@ Script updates ([docs/guides/client-demo-recording-guide.md](../guides/client-de
 - Scene 3 now demos the Strip-tier "coloring removed" treatment explicitly — the system telling you *not* to trust a segment is half the story.
 - Scene 4 adds the numbers/names/dates orange-cap rule (lip-reading can't disambiguate "fifteen" vs "fifty", "million" vs "billion").
 - Pre-record checklist updated: must decode with `VSP_NBEST=1` for the joint rule + tier pills to render; staged input video must produce all three tiers (Trust + Salvage + Strip) so all three can be demoed.
+
+---
+
+## 2026-05-03 — Round v9 + v9.1 — Client deck end-to-end fixes pass
+
+User reviewed Round 8.8 deck. Posted 17 specific fix items + 4 deliverables. Then a follow-up "no text-only example slides" rule. Then the "did you put the correct video for the slide" pushback that became v9.1.
+
+### v9 fixes applied
+1. **RealTalk slide overhauled** (#1+#2+#3): ▶ play caption added under each video tile, REF/HYP boxes enlarged 0.6"→0.85" (no more truncation), STRIP REF rewritten to "you'd buy something and say thanks marty oh when he died" for clearer narrative contrast vs HYP "when he died my daughter's tutor said to her", footer relabeled "Source: RealTalk conversational dataset.   BLUE = good (trust)   ORANGE = mid (review)   PURPLE = bad (don't trust)".
+2. **Example 5 wrong video** (#4): initially removed the Obama placeholder and dropped the slide; v9.1 restored with the correct `judge_entity` clip (4D634qUi2BI bernreuter→rogers solar PV).
+3. **Three-tier policy card numbers clearer** (#6): "Blue right ~7 in 10 here —" → "**9 out of 10 blue words are correct**" / "**7 out of 10 blue words are correct**" / "**Less than 5 in 10 would be right**".
+4. **Slide 30 truncation** (#7): smaller hero video, REF/HYP boxes enlarged, font 13→11 on long HYP run.
+5. **Example 11 unclear** (#8): added inline "WHAT THE SPEAKER ACTUALLY SAID" REF block above the colored hypothesis. v9.1 also added Obama segment 5 video tile to the right column.
+6. **Trust threshold slide reframed** (#9 — IMPORTANT): headline now reads "**65% of segments deliver useful output**" + "Less than 5% of bad signals slip through as useful." 71% moved to footnote. 65% applied as baseline number across the deck (value-prop S3 also bumped).
+7. **Slide 39 cross-config stability** (#10): title rewritten "Why the trust signal is stable across conditions".
+8. **Deployment slide moved forward** (#11): now lands right after What We Built, before the demo+examples block.
+9. **Restructure** (#12): section order is now early examples (E1 Obama Trust + E2 RealTalk) → tier explanation block → later examples (E3–E11). Audience learns the tier mental model after 2 examples, then reads the rest with that model in hand. Explicit "BLUE good / ORANGE mid / PURPLE bad" line on RealTalk slide.
+10. **Arabic money explicit** (#13): title now "Arabic — three engineering phases (**funded engagement**)"; "On request" → "Available — funded engagement".
+11. **next_steps slide dropped** (#14): generic placeholder cards.
+12. **demo_recap colors** (#15): aligned to BLUE/ORANGE/PURPLE.
+13. **Pre-meeting commitment sentence removed** (#17): "Before this meeting, we'll run 3-5 of YOUR clips through the system" + "Bring a clip when you can" both deleted from canonical_scenario.
+
+### Deferred follow-up (logged in DECK_CHANGELOG; #16)
+- Replace embedded UI screenshot on `slide_client_word_color_coding` with a fresh capture in the new blue/orange/purple palette.
+- Repaint per-segment burned-in HYP overlays on demo MP4s (`06_demo_videos/`) — currently still green/yellow/red.
+- Speaker-notes cleanup (~58 changelog-meta hits + 12 stale slide-N references). Surgical per-builder pass needed (not bulk regex — that destroyed file indentation last try).
+
+### Deliverables produced
+- `Argos_VSP_Client_v9_May2026.pptx` (66 slides / 52 visible / 14 appendix). 7/7 audit tests pass.
+- `v9_MANUAL_FIX_GUIDE_for_old_pptx.md` — 13 prioritized by-hand fixes for Round 8 deck if v9 unavailable.
+- `v9_NAVIGATION_GUIDE_for_existing_pptx.md` — slide-by-slide what-to-say + Q&A backstops.
+- `.claude/plans/i-need-to-create-proud-cupcake.md` — Round v9 section appended.
+
+---
+
+## 2026-05-03 — Cheat sheet redo (one page)
+
+| # | Request | Status |
+|---|---------|--------|
+| 1 | Redo `QA_CHEAT_SHEET.md` as a 1-page-max top-ideas-and-answers sheet (drop slide-by-slide notes, drop verbose framing, keep only top Q&A + lines to land + don't-say swaps) | done |
+
+### Applied
+- `QA_CHEAT_SHEET.md` shortened from 383 lines to ~50 lines: closing line, three anchor numbers, three lines-to-land, 13-row top Q&A table, don't-say→say swaps, pull-only block.
+- `QA_CHEAT_SHEET.pdf` regenerated via `/tmp/build_cheatsheet_pdf.py` (reportlab) — single page, letter, dense tables.
+- Per-slide talking points removed (they live in `v9_NAVIGATION_GUIDE_for_existing_pptx.md`, no need to duplicate).
