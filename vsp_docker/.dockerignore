@@ -5,6 +5,12 @@ __pycache__/
 
 # Big raw videos (you mount these at runtime)
 **/*.mp4
+# ...except curated test fixtures used by post_install_check.sh
+!galaxy_export/samples/*.mp4
+
+# Pre-regen backup directories
+galaxy_export.pre-regen-*/
+galaxy_export.pre-claude-backup/
 
 # Host virtualenvs – Docker recreates these
 galaxy_export/auto_avsr/pre-process-venv

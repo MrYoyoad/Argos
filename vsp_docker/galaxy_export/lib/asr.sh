@@ -18,7 +18,7 @@ source "${MODULE_DIR}/common.sh"
 #   $4 - DATA_NAME (e.g., "flat")
 #   $5 - SEGMENTATION_ENABLED flag (0 or 1)
 #   $6 - SEG_DURATION value
-#   $7 - RAW_DIR (input video directory - for .transcriptions/)
+#   $7 - HOME directory (for .transcriptions/)
 run_asr_transcription() {
   local prep_root="$1"
   local asr_venv="$2"
@@ -26,7 +26,7 @@ run_asr_transcription() {
   local data_name="$4"
   local segmentation_enabled="${5:-1}"
   local seg_duration="${6:-12}"
-  local raw_dir="$7"
+  local home_dir="$7"
 
   log_stage "3" "Running ASR on videos"
 
@@ -38,8 +38,8 @@ run_asr_transcription() {
     dir_suffix="whole"
   fi
 
-  # Get the video directory - use normalized videos from flat/ (with audio), not preprocessed mouth crops
-  local segment_vid_dir="$auto_avsr_dir/${data_name}"
+  # Get the video directory (segmented or whole)
+  local segment_vid_dir="$prep_root/${data_name}/${data_name}_video_${dir_suffix}"
   local segment_txt_dir="$prep_root/${data_name}/${data_name}_text_${dir_suffix}"
 
   if [ ! -d "$segment_vid_dir" ]; then
@@ -55,10 +55,7 @@ run_asr_transcription() {
   # STEP 0.6: Copy existing transcriptions from .transcriptions/ to working directory
   # ============================================
   echo ">>> [0.6] Checking for existing transcriptions"
-
-  # Use .transcriptions directory in the input video directory
-  # This automatically works with any mount point or path
-  local transcriptions_dir="${raw_dir}/.transcriptions"
+  local transcriptions_dir="$home_dir/vsp_input/.transcriptions"
 
   if [ -d "$transcriptions_dir" ]; then
     local copied_count=0
@@ -97,13 +94,29 @@ run_asr_transcription() {
     return 1
   }
 
+  # Auto-detect Whisper model cache directory
+  local base_dir="$(dirname "$auto_avsr_dir")"
+  local whisper_root=""
+  if [ -d "$base_dir/whisper" ]; then
+    whisper_root="$base_dir/whisper"
+  elif [ -d "$HOME/.cache/whisper" ]; then
+    whisper_root="$HOME/.cache/whisper"
+  fi
+
+  local download_root_arg=""
+  if [ -n "$whisper_root" ]; then
+    echo ">>> [3] Using Whisper model cache: $whisper_root"
+    download_root_arg="--download_root $whisper_root"
+  fi
+
   python3 "$auto_avsr_dir/asr_to_words_notime.py" \
     --in_videos "$segment_vid_dir" \
     --out_wrd   "$segment_wrd_tmp" \
     --model medium \
     --lang en \
     --tokenize alnum \
-    --lower || {
+    --lower \
+    $download_root_arg || {
     log_error "Whisper ASR failed"
     deactivate
     return 1

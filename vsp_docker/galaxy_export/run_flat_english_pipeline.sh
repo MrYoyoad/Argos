@@ -14,14 +14,19 @@ RAW_DIR="$(realpath "$RAW_DIR")"
 # GLOBAL CONFIG
 ########################
 
-# Auto-detect installation directory from script location
+# Auto-detect installation directory from script location.
 # Works regardless of where galaxy_export is installed (/home/ubuntu, /workspace, /host, etc.)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BASE_DIR="$SCRIPT_DIR"
+HOME_DIR="$SCRIPT_DIR"
 
-AUTO_AVSR="${BASE_DIR}/auto_avsr"
-VSP="${BASE_DIR}/VSP-LLM"
-AVH="${BASE_DIR}/av_hubert"
+# Source environment detection from config module (sets ENV_TYPE=ec2 or container).
+# This is required by lib/outputs.sh to enable IS scoring on EC2.
+# We only use ENV_TYPE from config.sh — all paths are set explicitly below.
+source "${SCRIPT_DIR}/lib/config.sh"
+
+AUTO_AVSR="${HOME_DIR}/auto_avsr"
+VSP="${HOME_DIR}/VSP-LLM"
+AVH="${HOME_DIR}/av_hubert"
 
 DATA_NAME="flat"
 LANG="en"
@@ -53,12 +58,9 @@ LAB_DIR="${VSP}/${DATA_NAME}_labels"
 WRD_ROOT="${PREP_ROOT}/433h_data"
 DECODE_ROOT="${VSP}/decode"
 
-# CONTAINER VERSION: Hardcoded /workspace paths for standalone Linux container
-# - galaxy_export code at: /host/galaxy_export
-# - venvs at: /workspace/...
-ASR_VENV="/workspace/auto_avsr/pre-process-venv"
-PREP_VENV="/workspace/auto_avsr/pre-process-venv"
-VSP_VENV="/workspace/vsp-llm-yoad-venv"
+ASR_VENV="${AUTO_AVSR}/pre-process-venv"
+PREP_VENV="${AUTO_AVSR}/pre-process-venv"
+VSP_VENV="${HOME_DIR}/vsp-llm-yoad-venv"
 
 ########################
 # ARCHIVE PREVIOUS RUN
@@ -67,7 +69,7 @@ VSP_VENV="/workspace/vsp-llm-yoad-venv"
 source "${SCRIPT_DIR}/lib/archive.sh"
 
 # Archive standard directories
-ARCHIVE_ROOT=$(archive_previous_run "$BASE_DIR" "$SEG_DURATION" \
+ARCHIVE_ROOT=$(archive_previous_run "$HOME_DIR" "$SEG_DURATION" \
   "${WRD_DIR}" "${TXT_DIR}" "${READY_DIR}" "${FEAT_DIR}" "${LAB_DIR}")
 
 # Archive PREP_ROOT with special handling for segment transcriptions
@@ -415,7 +417,7 @@ fi
 
 # Run ASR transcription (includes Steps 0.6, 3, and 1.5)
 run_asr_transcription "$PREP_ROOT" "$ASR_VENV" "$AUTO_AVSR" "$DATA_NAME" \
-  "$SEGMENTATION_ENABLED" "$SEG_DURATION" "$RAW_DIR" || {
+  "$SEGMENTATION_ENABLED" "$SEG_DURATION" "$HOME" || {
   echo "ERROR: ASR transcription failed" >&2
   exit 4
 }

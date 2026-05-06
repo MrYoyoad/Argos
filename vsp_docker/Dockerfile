@@ -3,6 +3,13 @@ FROM nvidia/cuda:12.8.0-base-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /workspace
 
+# Point HuggingFace cache at the bundled is_model_cache (MiniLM for IS scoring).
+# Without this env, sentence-transformers tries ~/.cache/huggingface and fails offline.
+ENV HF_HOME=/workspace/is_model_cache
+ENV HUGGINGFACE_HUB_CACHE=/workspace/is_model_cache/hub
+ENV TRANSFORMERS_OFFLINE=0
+ENV HF_HUB_OFFLINE=0
+
 # --- System deps ---
 # build-essential needed for packages that build from source (e.g., editdistance in your vsp env)
 RUN apt-get update && apt-get install -y \
@@ -258,5 +265,48 @@ RUN /workspace/vsp-llm-yoad-venv/bin/pip install \
 # Editable fairseq exactly as in your freeze
 RUN /workspace/vsp-llm-yoad-venv/bin/pip install -e \
   "git+https://github.com/Sally-SH/VSP-LLM.git@91c4f3d4418ac9cd0f6328f043de5e48e1d091b2#egg=fairseq&subdirectory=fairseq"
+
+######################################################################
+# IS scoring deps (sentence-transformers + Metaphone + doublemetaphone)
+# These power lib/outputs.sh::run_outputs IS scoring + NIV labels.
+# Wheels are also cached at /workspace/is_wheels/ as a runtime fallback
+# (lib/outputs.sh:88-98 uses --no-index --find-links from there).
+######################################################################
+RUN /workspace/vsp-llm-yoad-venv/bin/pip install --no-index --find-links=/workspace/is_wheels \
+  sentence-transformers==5.1.2 \
+  Metaphone==0.6 \
+  doublemetaphone==1.2
+
+######################################################################
+# Pre-build fairseq Cython extensions
+# Otherwise lib/decode.sh runs an in-container build on first decode
+# (slow, fragile, requires internet for any missing build deps).
+######################################################################
+RUN cd /workspace/VSP-LLM/fairseq && \
+  /workspace/vsp-llm-yoad-venv/bin/python setup.py build_ext --inplace && \
+  /workspace/vsp-llm-yoad-venv/bin/python -c "import fairseq.data.data_utils_fast; print('fairseq Cython ext OK')"
+
+######################################################################
+# Pre-warm MediaPipe weights so first face-detection call is offline
+# MediaPipe lazy-downloads model files on first use; pre-trigger that
+# at build time while we still have internet.
+######################################################################
+RUN /workspace/auto_avsr/pre-process-venv/bin/python -c \
+  "import mediapipe as mp; \
+   det = mp.solutions.face_detection.FaceDetection(); \
+   print('MediaPipe pre-warm OK')"
+
+######################################################################
+# Pre-warm Whisper cache to ~/.cache/whisper so the ASR module finds it
+# offline. galaxy_export/whisper_cache/ holds the medium.en model.
+######################################################################
+RUN mkdir -p /root/.cache/whisper && \
+  cp -r /workspace/whisper_cache/. /root/.cache/whisper/ && \
+  ls /root/.cache/whisper/
+
+######################################################################
+# In-build smoke: run the module test suite. Fail-fast on regression.
+######################################################################
+RUN bash /workspace/lib/test_all_modules.sh
 
 ENTRYPOINT ["/bin/bash"]
