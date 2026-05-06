@@ -272,13 +272,15 @@ RUN /workspace/vsp-llm-yoad-venv/bin/pip install -e \
 ######################################################################
 # IS scoring deps (sentence-transformers + Metaphone + doublemetaphone)
 # These power lib/outputs.sh::run_outputs IS scoring + NIV labels.
-# Wheels are also cached at /workspace/is_wheels/ as a runtime fallback
-# (lib/outputs.sh:88-98 uses --no-index --find-links from there).
+# At build time we have internet, so pip can fetch transitive deps
+# (e.g. Pillow) that aren't in the local wheel cache. The is_wheels/ dir
+# stays in the image as a runtime fallback for lib/outputs.sh:88-98.
 ######################################################################
-RUN /workspace/vsp-llm-yoad-venv/bin/pip install --no-index --find-links=/workspace/is_wheels \
+RUN /workspace/vsp-llm-yoad-venv/bin/pip install --find-links=/workspace/is_wheels \
   sentence-transformers==5.1.2 \
   Metaphone==0.6 \
-  doublemetaphone==1.2
+  doublemetaphone==1.2 \
+  Pillow==11.3.0
 
 ######################################################################
 # Pre-build fairseq Cython extensions
