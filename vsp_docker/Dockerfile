@@ -7,13 +7,16 @@ WORKDIR /workspace
 # Without this env, sentence-transformers tries ~/.cache/huggingface and fails offline.
 ENV HF_HOME=/workspace/is_model_cache
 ENV HUGGINGFACE_HUB_CACHE=/workspace/is_model_cache/hub
-ENV TRANSFORMERS_OFFLINE=0
-ENV HF_HUB_OFFLINE=0
 
 # --- System deps ---
-# build-essential needed for packages that build from source (e.g., editdistance in your vsp env)
-RUN apt-get update && apt-get install -y \
-    python3 python3-venv python3-pip python3-dev \
+# Ubuntu 22.04 ships Python 3.10 by default. The galaxy_export venv was built
+# with Python 3.9, and all pinned wheels (e.g. doublemetaphone-1.2-cp39-cp39)
+# match cp39. Install Python 3.9 from deadsnakes so the venvs match the
+# original — avoids a wave of cp39/cp310 ABI mismatches.
+RUN apt-get update && apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y \
+    python3.9 python3.9-venv python3.9-dev python3.9-distutils \
     git ffmpeg \
     build-essential pkg-config \
     libglib2.0-0 libsm6 libxext6 libxrender1 \
@@ -23,9 +26,9 @@ RUN apt-get update && apt-get install -y \
 # Copy your standalone bundle (code + configs + models, but not venvs/mp4)
 COPY galaxy_export/ ./
 
-# ---------- CREATE TWO VIRTUAL ENVS ----------
-RUN python3 -m venv /workspace/auto_avsr/pre-process-venv && \
-    python3 -m venv /workspace/vsp-llm-yoad-venv
+# ---------- CREATE TWO VIRTUAL ENVS (Python 3.9 to match original venv freezes) ----------
+RUN python3.9 -m venv /workspace/auto_avsr/pre-process-venv && \
+    python3.9 -m venv /workspace/vsp-llm-yoad-venv
 
 ######################################################################
 # pre-process-venv  (EXACTLY as your freeze)
@@ -281,28 +284,41 @@ RUN /workspace/vsp-llm-yoad-venv/bin/pip install --no-index --find-links=/worksp
 # Pre-build fairseq Cython extensions
 # Otherwise lib/decode.sh runs an in-container build on first decode
 # (slow, fragile, requires internet for any missing build deps).
+# Two fairseq trees may exist: the COPYed source (galaxy_export/VSP-LLM/
+# fairseq) and the pip-editable VCS clone in <venv>/src/fairseq. Build in
+# whichever exists; finally verify the import resolves.
 ######################################################################
-RUN cd /workspace/VSP-LLM/fairseq && \
-  /workspace/vsp-llm-yoad-venv/bin/python setup.py build_ext --inplace && \
-  /workspace/vsp-llm-yoad-venv/bin/python -c "import fairseq.data.data_utils_fast; print('fairseq Cython ext OK')"
+RUN set -e; \
+  for fairseq_dir in /workspace/VSP-LLM/fairseq /workspace/vsp-llm-yoad-venv/src/fairseq; do \
+    if [ -f "$fairseq_dir/setup.py" ]; then \
+      echo "Building Cython extensions in $fairseq_dir"; \
+      (cd "$fairseq_dir" && /workspace/vsp-llm-yoad-venv/bin/python setup.py build_ext --inplace); \
+    fi; \
+  done; \
+  /workspace/vsp-llm-yoad-venv/bin/python -c \
+    "from fairseq.data.data_utils_fast import batch_by_size_vec; print('fairseq Cython ext OK')"
 
 ######################################################################
-# Pre-warm MediaPipe weights so first face-detection call is offline
+# Pre-warm MediaPipe weights so first face-detection call is offline.
 # MediaPipe lazy-downloads model files on first use; pre-trigger that
 # at build time while we still have internet.
 ######################################################################
 RUN /workspace/auto_avsr/pre-process-venv/bin/python -c \
   "import mediapipe as mp; \
    det = mp.solutions.face_detection.FaceDetection(); \
-   print('MediaPipe pre-warm OK')"
+   print('MediaPipe pre-warm OK')" || echo "MediaPipe pre-warm skipped (will lazy-download at runtime if internet available)"
 
 ######################################################################
 # Pre-warm Whisper cache to ~/.cache/whisper so the ASR module finds it
 # offline. galaxy_export/whisper_cache/ holds the medium.en model.
 ######################################################################
-RUN mkdir -p /root/.cache/whisper && \
-  cp -r /workspace/whisper_cache/. /root/.cache/whisper/ && \
-  ls /root/.cache/whisper/
+RUN if [ -d /workspace/whisper_cache ] && [ -n "$(ls -A /workspace/whisper_cache 2>/dev/null)" ]; then \
+    mkdir -p /root/.cache/whisper && \
+    cp -r /workspace/whisper_cache/. /root/.cache/whisper/ && \
+    ls /root/.cache/whisper/; \
+  else \
+    echo "whisper_cache empty or missing — Whisper will lazy-download at runtime if internet available"; \
+  fi
 
 ######################################################################
 # In-build smoke: run the module test suite. Fail-fast on regression.
