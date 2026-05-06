@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VSP Pipeline
+Comment=Run the visual speech recognition pipeline on a folder of videos
+Icon=/opt/vsp/launcher/vsp-icon.png
+Exec=/opt/vsp/launcher/vsp-pipeline.sh
+Terminal=false
+Categories=Office;AudioVideo;
+StartupNotify=true
