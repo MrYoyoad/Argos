@@ -52,6 +52,7 @@ from presentation.slides_client import (
     # Section 1 — Hello
     slide_client_title,
     slide_client_about_argos,
+    slide_client_value_prop_headline,           # NEW 8.8 — outcomes-first dashboard
 
     # Section 2 — Background (deepened in Round 5.1)
     slide_client_what_is_vsr,
@@ -83,6 +84,7 @@ from presentation.slides_client import (
     # slide_client_examples_intro DROPPED (Round 5.1 — overlaps with deep examples)
     slide_client_example_perfect,
     slide_client_example_simple_positive,   # NEW Round 7 — non-Obama clean win
+    slide_client_realtalk_spectrum,         # NEW 8.8 — conversational two-people Trust/Salvage/Strip
     slide_client_clean_outputs_gallery,     # NEW Round 5.1 (6-tile gallery of clean outputs)
     slide_client_example_partial,
     # slide_client_example_flagged — DROPPED Round 5.10 from active deck
@@ -178,7 +180,7 @@ _section_whats_next = make_section_transition(
 )
 
 
-OUTPUT = MATERIALS / "Argos_VSP_Client_Round8_May2026.pptx"
+OUTPUT = MATERIALS / "Argos_VSP_Client_v10_May2026.pptx"
 
 
 def slide_pipeline_appendix(prs):
@@ -218,11 +220,12 @@ def main():
     prs.slide_width = SL_W
     prs.slide_height = SL_H
 
-    print("Generating client presentation (Round 5 — framing-v2)...")
+    print("Generating client presentation (v10 — color pass + audit-locked fixes)...")
 
     builders = [
         # ═══════ ACT 1 — IT WORKS (0:00 – 0:30) ═══════
-        # § Hello
+        # § Hello — v9.3: value_prop_headline (S3) DROPPED per user decision (a)
+        # — S15 headline_numbers is the single headline slide.
         slide_client_title,
         slide_client_about_argos,
         # § Background — opens with WHAT and HOW so the audience has a
@@ -236,48 +239,45 @@ def main():
         # § Compared to today — Round-5 anchor
         slide_client_compared_to_today,
         slide_client_human_ceiling,             # NEW Round 5.1 (why 45-52%)
-        # § Why hard
-        slide_client_visemes,
+        # § Why hard — Round 8.8: visemes DROPPED (overlapped with human_ceiling)
+        # slide_client_visemes,
         # § What we built — Round 8: multi-speaker moved BACK to §13
         # (What's next) per user feedback that the partnership ask
         # should lead with try-it-out → multi-speaker → options.
         slide_client_what_we_built,
+        slide_client_deployment_options,        # MOVED 8.9 — deploy intent up front (cloud/on-prem)
         # § How to use it — Demo
         slide_client_demo_intro,
         slide_client_demo_video_embed,
         # slide_client_demo_recap moved to APPENDIX (Round 8.7 — was thin transition)
         # § Real outputs — Section transition + gallery + cleans + 3 Obama + 6 verdict-tagged
         _section_real_outputs,
-        # Round 7: video_gallery moved to appendix (after thank_you).
-        slide_client_example_perfect,           # Obama segment 14 — perfect
-        slide_client_example_simple_positive,   # NEW Round 7 — non-Obama clean win
-        slide_client_clean_outputs_gallery,     # NEW Round 5.1 — 6 cleans
-        slide_client_example_partial,           # Obama segment 31 — partial
-        # 3 client-wrapper judge examples kept visible (1, 3, 6); 2/4/5 moved to appendix
-        slide_client_judge_ex1,
-        slide_client_judge_ex3,
-        slide_client_judge_ex6,
-        # § Headline numbers — lands as summary, not opening
-        slide_client_headline_numbers,
-
-        # ═══════ ACT 2 — YOU CAN TRUST IT (0:38 – 1:18) ═══════
+        # Round 8.9 (#11+#12): structure is now examples → tiers → more examples
+        slide_client_headline_numbers,          # headline numbers up front
+        slide_client_example_perfect,           # E1 — Obama Trust
+        slide_client_realtalk_spectrum,         # E2 — Conversational Trust/Salvage/Strip spectrum
+        # ── tier explanation lands HERE (between early examples and later examples) ──
         _section_trust,
         slide_client_confidence_question,
         slide_client_two_layer_confidence,
-        slide_client_word_color_coding,
-        # Round 7: how_to_read placed BEFORE three_tier_policy so the
-        # decision-flow primer comes first, then the policy elaboration.
-        slide_client_how_to_read,               # NEW Round 5.9 — decision flow (tier → colors → numbers/names)
-        slide_client_three_tier_policy,         # NEW Round 5.6 — band-reliability + three-tier UI
-        slide_client_reader_example,            # NEW Round 5.9 — Salvage worked example (networking, gist recovered)
-        slide_client_case_topic_shift,          # NEW Round 5.10 — topic-shift hallucination caught (gardening → nuclear)
-        slide_client_case_strip_save,           # NEW Round 5.10 — Strip catches fluent fabrication
-        slide_client_pitfalls,                  # NEW Round 5.9 — three rules
-        # Hallucination story collapsed to a single slide (Round 8.7) —
-        # halluc_problem + halluc_real_example moved to APPENDIX.
-        slide_client_halluc_caught,
-        # Per-segment + sequence confidence
-        slide_client_seq_confidence_correlation,
+        slide_client_word_color_coding,         # blue good / orange mid / purple bad
+        slide_client_three_tier_policy,         # tier UI policy
+        slide_client_how_to_read,               # decision flow
+        # v9.3: slide_client_seq_confidence_correlation CUT per user lock
+        # ── back to more examples now that audience knows how to read them ──
+        slide_client_clean_outputs_gallery,     # E3 — gallery of six cleans
+        slide_client_example_partial,           # E4 — Obama Salvage
+        slide_client_judge_ex1,                 # E5 — named entity swap (judge_entity video, restored v9.1)
+        slide_client_judge_ex3,                 # E6 — technical vocab drift (judge_router video)
+        slide_client_judge_ex6,                 # E7 — topic hijack (judge_lights video)
+
+        # ═══════ ACT 2 — Worked-example deep dives (post-tier-explanation) ═══════
+        # Trust section moved up above (between early examples and later examples).
+        # These are deeper case studies the audience can now read with the tier mental model.
+        slide_client_reader_example,            # E8 — Salvage walk-through
+        slide_client_case_topic_shift,          # E9 — Strip topic invented
+        slide_client_case_strip_save,           # E10 — Strip fluent fabrication
+        slide_client_halluc_caught,             # E11 — Strip hallucination flagged
         # slide_client_trust_dashboard moved to APPENDIX (duplicates headline)
         # slide_client_failure_taxonomy_full moved to APPENDIX (Round 8 dial-back)
         # Round 8: slide_client_failure_worked_example DROPPED (item 17 — not useful)
@@ -305,7 +305,7 @@ def main():
         # slide_client_pipeline_detailed moved to APPENDIX (Round 8 — bulk PNG, unclear)
         slide_data_flow,                        # Borrowed: 5-step model architecture (LoRA stripped)
         slide_client_engineering_journey,       # MOVED Round 5.2 from §What-we-built — deeper rewrite
-        slide_client_deployment_options,        # Cloud/on-prem
+        # Round 8.9: deployment_options moved to right after What We Built (before Real Outputs)
 
         # § What's next (Round 8 reorder per user: pilot-first, then
         # multi-speaker, then options with Arabic FIRST among options)
@@ -319,10 +319,7 @@ def main():
         slide_client_feedback_loop_ask,         # NEW Round 5.13 — soft client-feedback ask
         slide_client_partnership_ask,           # NEW Round 5.1 (merged ask) — partnership logistics
 
-        # § Close (no transition — flows directly from partnership ask)
-        # slide_client_recap moved to APPENDIX (Round 8 — trim close section)
-        slide_client_integration_commitment,
-        slide_client_next_steps,
+        # § Close — Round 8.9: next_steps DROPPED (user request — generic placeholder)
         slide_thank_you,                        # Borrowed: close
 
         # ═══════ APPENDIX (hidden in presentation, physically last in file) ═══════
@@ -376,7 +373,8 @@ def main():
     # redundant after that update.
     # Round 8.7 — all hidden slides moved to appendix block at file end.
     # Visible slides 1-55 (where 55 is thank_you); slides 56-69 are appendix.
-    HIDDEN_SLIDES = list(range(56, 70))  # 56..69 inclusive — every appendix slide
+    # Round 8.9: net -1 visible from 8.8 (dropped next_steps).
+    HIDDEN_SLIDES = list(range(51, 65))  # v9.3: -2 from value_prop+seq_corr drops  # 53..66 inclusive — every appendix slide
     if HIDDEN_SLIDES:
         from pptx.oxml.ns import qn
         sldIdLst = prs.slides._sldIdLst
@@ -387,6 +385,37 @@ def main():
                 print(f"  HIDDEN  slide {n:2d} (preserved in file, skipped in presentation)")
             else:
                 print(f"  WARNING: hidden-slide index {n} out of range")
+
+    # v9.4 — Q&A backstops on thank_you (last visible slide). Notes only.
+    # Audience never sees these; presenter uses them as a deflection map.
+    from presentation.helpers import set_notes
+    qa_notes = (
+        "Q&A BACKSTOPS — what to deflect to:\n"
+        "\n"
+        "  • If asked about confidence stability across configs → slide 38 (cross-config).\n"
+        "  • If asked about per-word calibration breakdown → slide 21 (three-tier policy).\n"
+        "  • If asked about hallucination examples → slide 31 (E11), or hidden examples 55-58.\n"
+        "  • If asked about failure mode counts → hidden slide 59 (failure modes).\n"
+        "  • If asked about IS internals → IS is not on visible slides; deflect to per-segment "
+        "confidence on slide 21.\n"
+        "  • If asked about WER → 36% on the 1,497-segment baseline. WER is the wrong metric "
+        "for lip reading — meaning preservation matters more. That's why we use the 65% useful number.\n"
+        "  • If asked about pricing → don't quote a number. Pilot is fixed-fee, named scope. "
+        "Production engagement scales with monthly volume. Set up a call with commercial team.\n"
+        "  • If asked about other languages → architecture is language-flexible (AV-HuBERT visual "
+        "encoder isn't English-locked). Adding a language is a funded engagement: source data + "
+        "your reviewer time + 6-10 weeks.\n"
+    )
+    # Find thank_you slide (last visible). Iterate from end and find one with 'Thank' in title.
+    for slide in list(prs.slides)[::-1]:
+        for sh in slide.shapes:
+            if sh.has_text_frame and "Thank" in sh.text:
+                set_notes(slide, qa_notes)
+                print("  Q&A BACKSTOPS notes set on thank_you slide")
+                break
+        else:
+            continue
+        break
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT))

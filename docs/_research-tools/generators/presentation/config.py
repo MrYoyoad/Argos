@@ -115,6 +115,11 @@ VID = {
     # (Same source video as the legacy `entity_destroy` key — referenced
     # via a separate, semantically-named key for the case-study slide.)
     "case_strip_save":      VIDEOS / "EMfcKvHA5Uc_0__b74dba61_with_hyp.mp4",
+    # RealTalk dataset (Round 8.8) — conversational two-person video,
+    # spans Trust/Salvage/Strip on everyday speech.
+    "realtalk_trust":   VIDEOS / "realtalk" / "12XM5_1lyrc__p0__win0240__burned.mp4",
+    "realtalk_salvage": VIDEOS / "realtalk" / "7LcWBEVtGwA__p1__win0520__burned.mp4",
+    "realtalk_strip":   VIDEOS / "realtalk" / "MkV7LSXtzkQ__p1__win0560__burned.mp4",
 }
 
 POSTER_DIR = MATERIALS / ".poster_frames"
@@ -143,6 +148,12 @@ RED     = RGBColor(0xF4, 0x43, 0x36)
 DRED    = RGBColor(0xB7, 0x1C, 0x1C)
 NAVY2   = RGBColor(0x15, 0x2A, 0x40)  # slightly lighter navy for cards
 NAVY3   = RGBColor(0x1A, 0x35, 0x50)  # lighter still for hover cards
+
+# Production word-confidence palette (May 2 2026): joint conf+beam-agreement
+# bands. BLUE = trust, ORANGE (above) = review, PURPLE = avoid. Saturated
+# variants of the production HTML highlights (#cfe2ff/#ffe5b4/#e2c4f0).
+BLUE    = RGBColor(0x4F, 0x8F, 0xF7)
+PURPLE  = RGBColor(0xB0, 0x66, 0xD9)
 
 FONT = "Calibri"
 

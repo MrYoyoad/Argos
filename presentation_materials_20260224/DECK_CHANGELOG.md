@@ -26,6 +26,113 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-03 — **v9.1 — Example 5 video correctly sourced** (LANDED)
+
+User pushback on v9.0: "did you put the correct video for the slide i asked you?" Honest answer was no — `judge_ex1` (bernreuter→rogers solar PV named-entity swap) had `video_key=None` after the wrong Obama placeholder was removed, then the slide was dropped entirely in the no-text-only-examples pass.
+
+**Fix:** located `judge_entity` key already in `config.py` mapping to `4D634qUi2BI_0__93a9f2b4_with_hyp.mp4` (1.2 MB, exists). Set `video_key="judge_entity"` on `slide_client_judge_ex1`. Re-added to visible builders. Renumbered example titles back to E5 / E6 / E7 / E8 / E9 / E10 / E11.
+
+**Also added:** Obama segment 5 video tile (`obama_flagged`) to bottom-right of `slide_client_halluc_caught` (E11) so the critical hallucination demo isn't text-only either. Right-column signal cards compacted to make room.
+
+**Final example inventory (10 of 11 with videos; E8 reading-the-colors walk-through is intentionally text-only — pedagogical, video isn't the point):**
+
+| # | Slide | Video |
+|---|---|---|
+| E1 | Trust: clean speech (Obama) | obama_perfect |
+| E2 | Real conversations: Trust+Salvage+Strip | 3× RealTalk |
+| E3 | Trust: gallery of six | 6× clean videos |
+| E4 | Salvage: partial recovery (Obama) | obama_partial |
+| E5 | Salvage: named-entity swap | **judge_entity (FIXED v9.1)** |
+| E6 | Salvage: technical-vocab drift | judge_router |
+| E7 | Strip-flag: topic hijack | judge_lights |
+| E8 | Salvage: reading the colors | TEXT-ONLY (intentional) |
+| E9 | Strip: topic invented | case_topic_shift |
+| E10 | Strip: fluent fabrication | case_strip_save |
+| E11 | Strip: hallucination flagged (Obama) | obama_flagged (NEW v9.1) |
+
+**Final state:** 66 slides / 52 visible / 14 appendix. File: `Argos_VSP_Client_v9_May2026.pptx`.
+
+---
+
+## 2026-05-03 — **v9 — User-feedback fixes pass** (LANDED)
+
+User reviewed Round 8.8 + posted 17 specific fix items + 4 deliverables. File renamed to `Argos_VSP_Client_v9_May2026.pptx` (was `Round8_9` mid-pass) — 66 slides total / 52 visible / 14 appendix. Companion docs renamed to `v9_MANUAL_FIX_GUIDE_for_old_pptx.md` and `v9_NAVIGATION_GUIDE_for_existing_pptx.md`.
+
+**RESTRUCTURE (#11 + #12 + #14):**
+- Moved `slide_client_deployment_options` from §7 Engineering to immediately after §3 What We Built — deploy intent is up front (cloud/on-prem) before audience sees the demo.
+- §4 Real Outputs now lands the early-example block + tier-explanation + later-example block in a single sequence: headline numbers → Example 1 (Obama Trust) → Example 2 (RealTalk spectrum) → tier section (word-color → three-tier UI → how-to-read → seq-conf chart) → Examples 3–11. Audience sees a couple of examples, learns the tier mental model, then reads the rest with that model in hand.
+- DROPPED `slide_client_next_steps` (generic placeholder cards; deferred to per-client customization).
+
+**REALTALK SLIDE (#1 + #2 + #3):**
+- Added "▶ click to play in PowerPoint" caption under each video tile (#1 — videos were embedded but had no play indicator).
+- Increased REF/HYP text-box heights from 0.6"/0.65" → 0.85" each, video tile shrunk slightly to make room (#2 — eliminates truncation).
+- STRIP REF rewritten to "you'd buy something and say thanks marty oh when he died" — clearer narrative contrast with HYP "when he died my daughter's tutor said to her" (#3).
+- Footer relabeled: "Source: RealTalk conversational dataset.   BLUE = good (trust)   ORANGE = mid (review)   PURPLE = bad (don't trust)" (per #12 explicit color-meaning ask).
+
+**EXAMPLE SLIDE FIXES:**
+- Example 5 (`judge_ex1`) `video_key=None` — removed Obama-placeholder video (was misleading per #4; source clip not in deck-local set).
+- Example 7 (`judge_ex6`) confidence label clarified to ORANGE (mixed-confidence is correct framing — fluent text but wrong topic) (#5).
+- Example 9 (`case_topic_shift`) layout rebuilt: smaller hero video, larger REF/HYP boxes, font 13→11 on long HYP run — fixes truncation (#7).
+- Example 11 (`halluc_caught`) — added inline "WHAT THE SPEAKER ACTUALLY SAID" REF block above the colored hypothesis, so audience sees the contrast directly (#8 — was unclear without the REF).
+
+**THREE-TIER POLICY CARD (#6):**
+- Inner numbers rewritten as plain "X out of 10 blue words are correct" instead of cryptic "Blue right ~7 in 10 here —". Trust: "9 out of 10". Salvage: "7 out of 10". Strip: "Less than 5 in 10 would be right".
+
+**TRUST THRESHOLD SLIDE (#9 — IMPORTANT):**
+- Reframed entire slide. Headline card now reads **"65% of segments deliver useful output"** with subtitle **"Less than 5% of bad signals slip through as useful."** 71% theoretical ceiling moved to a footnote. Default-recommendation card replaced with "Two numbers worth memorizing. Everything else falls out of these."
+- Value-prop slide (S3) bumped from 71% → 65% baseline framing to match. 71% kept as parenthetical "theoretical ceiling with full beam aggregation."
+
+**OTHER:**
+- Slide 39/40 cross-config-stability title rewritten to "Why the trust signal is stable across conditions" (#10 clarity).
+- Arabic slide retitled "Arabic — three engineering phases (funded engagement)"; "On request" card line → "Available — funded engagement" (#13 makes the money ask explicit).
+- Removed "Before this meeting, we'll run 3-5 of YOUR clips through the system" sentence + "Bring a clip when you can" line from `canonical_scenario` slide (#17).
+- `demo_recap` (hidden appendix) colors aligned to new BLUE/ORANGE/PURPLE palette (#15 — slide 54 in user numbering).
+
+**DEFERRED — explicit follow-up needed (#16):**
+- Replace the embedded UI screenshot on `slide_client_word_color_coding` (S21) with a fresh capture of the actual report HTML in the new blue/orange/purple palette. Current screenshot still shows the legacy green/yellow/red coloring.
+- Repaint per-segment burned-in HYP overlays on the demo MP4s under `06_demo_videos/` to match the new palette. Burned-in word colors in those videos are still green/yellow/red.
+- Both deferred for time; flagged here for the next bake.
+
+**ALSO DEFERRED:** Speaker-notes cleanup (~58 changelog-meta hits + 12 stale slide-N references). Notes still readable, just contain "Round 5.X — " framing. Should be a per-builder surgical pass — not bulk regex (which destroyed file indentation last time).
+
+**TESTS:** `tests/unit/test_number_audit.py` + `tests/unit/test_style_compliance.py` — 7/7 pass.
+
+**VISUAL QA:** soffice → pdftoppm → spot-checked S17 (RealTalk), S22 (three-tier policy with new "9-out-of-10" numbers), S33 (E11 with REF visible), S36 (65% reframe). All four critical fixes confirmed landing.
+
+---
+
+## 2026-05-03 — **Round 8.8 — Selling-to-existing-team-new-clients pass** (LANDED)
+
+Two-pass audit (80 findings) → user picked Batches 1 + 3 + 4, plus a new value-prop opener and a RealTalk conversational example. Notes-cleanup batch (Batch 2) deferred — first attempt with bulk regex destroyed file indentation; reverted and shipped without it.
+
+**File:** `Argos_VSP_Client_Round8_8_May2026.pptx` (67 slides total / 53 visible / 14 appendix).
+
+**STRUCTURAL (Batch 4):**
+- DROPPED 4 visible builders: `slide_client_visemes` (overlapped with `human_ceiling` viseme example), `slide_client_example_simple_positive` (Trust beat covered by Obama clean + 6-tile gallery), `slide_client_pitfalls` (137-word restatement of three-tier policy), `slide_client_integration_commitment` (repeated `deployment_options` cloud/on-prem cards).
+- ADDED 2 new builders: `slide_client_value_prop_headline` (S3 — outcomes-first dashboard for new stakeholders, 71% / 24% / 1-in-5 / 82%-anchor) and `slide_client_realtalk_spectrum` (S16 — three two-people RealTalk conversations spanning Trust/Salvage/Strip in one frame).
+- REORDERED: `slide_client_headline_numbers` moved BEFORE the example slides (audience hears the headline first); `slide_client_seq_confidence_correlation` moved right after `three_tier_policy` (chart validates the policy immediately).
+- KEPT: `slide_client_what_is_lipreading_not` (S5) — user explicitly said "the what is it not slide is good".
+- Net visible: −2 slides.
+
+**TITLE RENAME (Batch 1, Dim A):** unified scheme `Example N — Tier: Headline` across all visible + appendix example slides. 17 titles renamed; numbered E1–E11 in viewing order, hidden examples → Appendix Example A–F.
+
+**PALETTE MIGRATION (Batch 3):** production blue/orange/purple (Trust/Salvage/Strip). Added `BLUE = #4F8FF7` and `PURPLE = #B066D9` to `config.py`. Migrated `_color_for_class` so all sidecar-driven HYP renderings use new palette; updated `three_tier_policy`, `how_to_read`, `_example_slide` confidence badges, all REF/HYP rich-text runs (`"color": GREEN/YELLOW/CORAL` → `BLUE/ORANGE/PURPLE`), all 14 in-deck legend strips, all closing italics naming colors. Production HTML report screenshot recapture deferred.
+
+**OTHER:**
+- S1 cover: April 2026 → **May 2026**.
+- S7 (canonical scenario) DISTANCE card: dropped "6–15 m" range → **"wide range of camera distances — close-up to far observer — as long as film quality is good enough."**
+- S15 (Obama clean) takeaway: "p=0.02" jargon → "probability 0.02".
+- Hidden slide titles ending with periods stripped.
+- Orchestrator stdout label updated; output filename Round 8 → Round 8.8.
+
+**TESTS:** `tests/unit/test_number_audit.py` + `tests/unit/test_style_compliance.py` — 7/7 pass.
+
+**VISUAL QA:** soffice → pdftoppm → subagent inspection on slides 1–18. Confirmed: May date, value-prop dashboard, RealTalk three-column layout, distance wording, blue/orange/purple palette landing on example slides. Two initial flags from low-DPI rendering resolved at 150 DPI.
+
+**KNOWN DEFER:** notes cleanup (~58 changelog-meta hits + 12 stale slide-N refs in speaker notes). Aborted bulk-regex approach on first attempt; not worth re-trying under time pressure. Speaker notes still readable but contain "Round 5.X — " / "Round 8 (item N): " framing. Plan: surgical per-builder rewrites in a follow-up pass.
+
+---
+
 ## 2026-05-03 — **Round 8 — Audit-driven cleanup pass on Round 7** (LANDED)
 
 User reviewed Round 7 + posted 27 specific feedback items + Opus 4.7 review (6 fixes). Three parallel sub-agents executed; final integration here.
