@@ -255,7 +255,7 @@ def main():
         slide_08,                       # Failure-mode taxonomy bar (FAILURE)
         slide_failure_deep_1a,          # Failure deep (consolidated)
         slide_failure_deep_2,           # Failure modes: examples (text)
-        slide_failure_live_demo,        # Failure modes: live video (halluc + topic_drift)
+        slide_failure_live_demo,        # Failure modes: live video (halluc + street_photo)
         slide_25d,                      # LLM salvage: three recoveries
         slide_25e,                      # LLM salvage: domain context
 
