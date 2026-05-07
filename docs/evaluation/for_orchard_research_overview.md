@@ -5,6 +5,10 @@
 **Reviewed**: 2026-05-07
 **Source numbers cross-checked against**: `docs/evaluation/after_amosi_audit.md` and `docs/evaluation/intelligibility_methodology.md`
 
+> **Numbers verified against:** MBR-default canonicals (`after_amosi_audit.md`).
+> Deck reviewed at 89 slides; current deck is 88 slides (1 slide removed post-review).
+> Review conclusions remain valid — no structural changes since this review.
+
 ---
 
 ## TL;DR

@@ -2,7 +2,7 @@
 
 Tracking completed missions and the prioritized backlog of future work for the Argos VSP pipeline. Backlog items are informed by the 6 research reports (in `docs/evaluation/`, `docs/tuning/`, `docs/prompts/`, `docs/confidence/`, `docs/beam-search/`, `docs/finetuning/`) and operational experience.
 
-**Current baseline** (english_full run, 1,497 segments): WER 64.1%, WWER 60.5%, IS 2.53/5.0, NEA F1 38.9%, Captured 40.1%, Salvage 51.1%
+**Current baseline** (english_full run, 1,497 segments): WER 64.1% top-1 / 63.8% MBR, WWER 60.5%, IS 2.532/5.0 top-1 / 2.547 MBR, NEA F1 38.9%, NIV-Y+P 61.9% (MBR), NIV-Y+P + LLM salvage 62.3% (MBR)
 
 ---
 
@@ -79,6 +79,8 @@ Tracking completed missions and the prioritized backlog of future work for the A
 | **5 - Advanced** | 12, 13, 14 | Multi-speaker, streaming, auto-tuning | — |
 | **1.5 - Quality** | 15 | Pre-decode video quality heuristics | Saves compute, informs M4/M9 |
 | **UI Quality-of-Life** | 16 | Save trained k-means weights to golden list | UX — eliminates manual SCP step |
+| **Client Integration** | 17 | Non-tier confidence display for direct-use clients | Client UX — score-faithful coloring |
+| **Personalization** | 18 | Per-speaker fine-tuning when speaker video is abundant | Speculative 20–40% rel WER on target speaker |
 
 ---
 
@@ -343,6 +345,46 @@ Tracking completed missions and the prioritized backlog of future work for the A
 - **Expected Impact**: At minimum, logging quality metadata enables post-hoc analysis of why segments fail (currently impossible — failures are silent). With gating, could skip 15-25% of segments predicted to fail, saving proportional decode time. Quality scores also inform Mission 9 (fine-tuning data curation: filter face confidence > 0.9, remove head pose > 30°)
 - **Effort**: Phase 1 (store existing scores): 4-6 hours. Phase 2 (new signals): 1-2 days. Phase 3-4 (composite score + validation): 1-2 days
 - **Dependencies**: None (can start immediately; improves Missions 4, 9, and 14)
+
+---
+
+### Mission 17: Client-Configurable Confidence Display (Non-Tier / Direct-Use Mode)
+- **Priority**: MEDIUM
+- **Status**: TODO — not yet scoped
+- **Goal**: Provide an alternative confidence presentation for clients who consume confidence directly (e.g., feeding scores into their own thresholds, downstream models, or risk gating) rather than relying on the trust/salvage/strip tier UI.
+- **Motivation**: The current band UI (green/yellow/red, joint conf+agreement, capped-at-yellow rule from `agreement_aware_bands.md`) is calibrated for human readers acting on tiered actions. Clients that want to use the raw probability — for example, to set their own cut-off, weight an aggregation, or condition another model — find the tiered colours either misleading (because of the agreement cap) or actively interfering with how they read the numbers. We need a coloring/display mode that is faithful to the underlying score and does not impose our policy on top of theirs.
+- **Items**:
+  - Audit which downstream uses of confidence are tier-bound (UI heatmap, salvage gating) vs. score-bound (client API consumers, ROVER weights, future Mission 4.1 calibration).
+  - Add a display mode flag (`VSP_CONFIDENCE_DISPLAY=tiered|raw|monotone`): `tiered` = current joint-band UI; `raw` = monotone gradient of `top1_conf` (or `mbr_posterior`) without the agreement cap; `monotone` = same gradient but greyscale to remove implied recommendation.
+  - In `make_report.py` / HTML renderer, expose the chosen mode and emit a small legend explaining the semantics ("this colour reflects the raw probability, not a recommended action").
+  - Investigate exposing the **correlation between confidence and downstream performance** as a per-client / per-domain calibration table — e.g., for a given client's domain, P(correct | conf bucket) computed from any labeled data they provide. If they have none, fall back to the global B3 stratified table from `band_reliability_by_niv.md`.
+  - Provide an export (`confidence_calibration.json`) that ships the raw conf, the band-reliability lookup, and any per-domain correction so clients can plug it into their own pipeline.
+- **Open questions**:
+  - Should `mbr_posterior` (now the default displayed text per Mission 6) or `top1_conf` be the canonical raw signal? MBR posterior compresses to {0, 0.4–0.8, 1.0} — may be poor for direct thresholding. Probably emit both and let the client pick.
+  - How to communicate that band reliability is conditional on segment mean_prob (the stratified finding from `band_reliability_lesson.md`) — a flat per-word colour will lie about reliability inside low-quality segments.
+- **Dependencies**: Mission 4 (shipped), Mission 6 (shipped). Real per-domain calibration depends on Mission 4.1 data (B3 GPU run).
+- **Research**: [band_reliability_lesson.md](../../.claude/projects/-home-ubuntu/memory/band_reliability_lesson.md), [agreement_aware_bands.md](../../.claude/projects/-home-ubuntu/memory/agreement_aware_bands.md), [band_reliability_by_niv.md](../confidence/band_reliability_by_niv.md)
+
+---
+
+### Mission 18: Per-Speaker Fine-Tuning ("Personalized Lip-Reader")
+- **Priority**: MEDIUM
+- **Status**: TODO — research question, not yet scoped
+- **Goal**: Investigate how to fine-tune the model for a specific individual when enough video of that individual exists, producing a personalized lip-reader that outperforms the speaker-independent baseline on that person.
+- **Motivation**: Mission 9 (population-level AVSpeech fine-tuning) was data-limited. Per-speaker adaptation is a different regime: even tens of minutes of one speaker's video may carry enough signal to specialize the model to that face/articulation/vocabulary. This is a recurring client ask (one prominent subject — interviews, lectures, deposition footage — where they have hours of material).
+- **Items**:
+  - **Data side**: define the minimum useful per-speaker corpus (segments × duration × label quality). Reuse the existing flat-format pipeline to stage one-speaker datasets; investigate whether Whisper transcripts are sufficient or whether human-verified labels are required at this scale.
+  - **Adaptation strategies to compare**:
+    - Speaker-conditioned LoRA on the LLM decoder only (cheapest, builds on Exp A infra).
+    - Speaker-conditioned LoRA on AV-HuBERT top layers (addresses the encoder-bottleneck finding from Mission 9).
+    - Speaker-embedding conditioning (a small learned vector concatenated to the LLM prompt or to the encoder; one set of base weights, many speakers).
+    - Test-time adaptation / prompt-based personalization (no weight updates — use a few labeled examples in-context).
+  - **Evaluation**: held-out segments of the same speaker; compare against speaker-independent baseline on that speaker; check for catastrophic forgetting on the general 1,497-segment set.
+  - **Operational**: how does a personalized model get packaged and selected at inference time? (Likely a registry similar to the golden-kmeans store from Mission 16, but for LoRA adapters.)
+  - **Risk**: per-speaker overfitting on noisy ASR labels — likely needs to combine with Mission 9 Phase 3 (label quality) ideas. Also a privacy/consent angle for client-supplied speaker data.
+- **Expected impact**: speculative; literature on speaker adaptation in audio ASR routinely shows 20–40% relative WER reduction with even an hour of in-domain speech, so a similar order of magnitude is plausible here when one speaker's video budget is large. A pilot on a single high-volume subject would clarify.
+- **Dependencies**: Mission 9 infrastructure (training harness, eval sweep). Mission 16-style adapter registry would help operationally.
+- **Research references to seed**: speaker-adaptive ASR literature (i-vectors, speaker LoRA in Whisper / SeamlessM4T), speaker-conditioned VSR (e.g., AV-HuBERT speaker-aware variants).
 
 ---
 
