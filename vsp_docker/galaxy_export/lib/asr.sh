@@ -26,7 +26,7 @@ run_asr_transcription() {
   local data_name="$4"
   local segmentation_enabled="${5:-1}"
   local seg_duration="${6:-12}"
-  local home_dir="$7"
+  local raw_dir="$7"  # input video dir (.transcriptions lives here)
 
   log_stage "3" "Running ASR on videos"
 
@@ -38,8 +38,10 @@ run_asr_transcription() {
     dir_suffix="whole"
   fi
 
-  # Get the video directory (segmented or whole)
-  local segment_vid_dir="$prep_root/${data_name}/${data_name}_video_${dir_suffix}"
+  # Get the video directory — use normalized videos from auto_avsr/${data_name}
+  # (these have audio), NOT preprocessed mouth crops (audio-stripped — Whisper
+  # would emit silent fillers).
+  local segment_vid_dir="$auto_avsr_dir/${data_name}"
   local segment_txt_dir="$prep_root/${data_name}/${data_name}_text_${dir_suffix}"
 
   if [ ! -d "$segment_vid_dir" ]; then
@@ -55,7 +57,15 @@ run_asr_transcription() {
   # STEP 0.6: Copy existing transcriptions from .transcriptions/ to working directory
   # ============================================
   echo ">>> [0.6] Checking for existing transcriptions"
-  local transcriptions_dir="$home_dir/vsp_input/.transcriptions"
+  # Resolve transcriptions dir: prefer VSP_TRANSCRIPTIONS_DIR (launcher
+  # bind-mount, persistent across runs) over ${raw_dir}/.transcriptions
+  # (EC2 dev pattern). Both are checked; whichever exists is used.
+  local transcriptions_dir
+  if [ -n "${VSP_TRANSCRIPTIONS_DIR:-}" ] && [ -d "${VSP_TRANSCRIPTIONS_DIR}" ]; then
+    transcriptions_dir="${VSP_TRANSCRIPTIONS_DIR}"
+  else
+    transcriptions_dir="${raw_dir}/.transcriptions"
+  fi
 
   if [ -d "$transcriptions_dir" ]; then
     local copied_count=0
@@ -128,7 +138,35 @@ run_asr_transcription() {
   # STEP 1.5: Save new Whisper outputs to .transcriptions/ for future reuse
   # ============================================
   echo ">>> [1.5] Saving new auto-transcriptions to .transcriptions/"
-  mkdir -p "$transcriptions_dir"
+
+  # Resolve the canonical transcriptions dir.
+  # Priority:
+  #   1. $VSP_TRANSCRIPTIONS_DIR (launcher bind-mount — persistent across runs,
+  #      writable even when input is :ro). Cleanest for the air-gapped container.
+  #   2. ${raw_dir}/.transcriptions (EC2 dev: input dir is rw, transcriptions live alongside videos)
+  #   3. fallback chain: VSP_OUTPUT_DIR/.transcriptions, /tmp/vsp_transcriptions
+  #
+  # Persistence guarantee: VSP_TRANSCRIPTIONS_DIR (when set) is mounted by the
+  # launcher to a STABLE host path (~/vsp-transcriptions/<dataset>/), so .wrd
+  # files survive across pipeline runs and Whisper skips re-transcribing them.
+  if [ -n "${VSP_TRANSCRIPTIONS_DIR:-}" ]; then
+    transcriptions_dir="${VSP_TRANSCRIPTIONS_DIR}"
+    echo ">>> [1.5] Using VSP_TRANSCRIPTIONS_DIR=${transcriptions_dir} (persistent across runs)"
+  fi
+
+  if ! mkdir -p "$transcriptions_dir" 2>/dev/null; then
+    if [ -n "${VSP_OUTPUT_DIR:-}" ] && [ -w "${VSP_OUTPUT_DIR}" ]; then
+      transcriptions_dir="${VSP_OUTPUT_DIR}/.transcriptions"
+      echo ">>> [1.5] Input dir is read-only; using VSP_OUTPUT_DIR/.transcriptions (warning: this run only)"
+    else
+      transcriptions_dir="/tmp/vsp_transcriptions"
+      echo ">>> [1.5] Input dir is read-only and VSP_OUTPUT_DIR not writable; using $transcriptions_dir (volatile)"
+    fi
+    mkdir -p "$transcriptions_dir" || {
+      echo ">>> [1.5] WARNING: Cannot create any writable transcriptions dir; skipping persistence."
+      return 0
+    }
+  fi
 
   # Load metadata to check which transcriptions are manual
   local metadata_file="$transcriptions_dir/metadata.json"

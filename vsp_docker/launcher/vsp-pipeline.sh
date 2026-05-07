@@ -43,6 +43,16 @@ if [ ! -d "$INPUT_DIR" ]; then
   exit 1
 fi
 
+# --- Persistent transcriptions dir (per-input-dataset) ---
+# Survives across pipeline runs so Whisper skips already-transcribed segments
+# AND manual transcription edits are kept. Keyed by basename of the input dir
+# so different datasets don't collide. Lives on the host (writable) — input
+# is mounted :ro for safety, so transcriptions can't live alongside videos
+# in the container.
+DATASET_NAME="$(basename "$INPUT_DIR")"
+TRANS_DIR="$HOME/vsp-transcriptions/${DATASET_NAME}"
+mkdir -p "$TRANS_DIR"
+
 # --- Pick a terminal that actually exists on this DE ---
 TERM_CMD=""
 for t in x-terminal-emulator gnome-terminal konsole xfce4-terminal mate-terminal terminator alacritty kitty xterm; do
@@ -68,18 +78,21 @@ cat > "$RUN_SCRIPT" <<EOF
 #!/usr/bin/env bash
 set -uo pipefail
 echo "VSP Pipeline launcher"
-echo "Image:        $IMG_TAG"
-echo "Input:        $INPUT_DIR (read-only)"
-echo "Output:       $OUT_DIR"
-echo "Started:      \$(date)"
+echo "Image:           $IMG_TAG"
+echo "Input:           $INPUT_DIR (read-only)"
+echo "Output:          $OUT_DIR"
+echo "Transcriptions:  $TRANS_DIR (persistent across runs; keyed by dataset name)"
+echo "Started:         \$(date)"
 echo
 echo "Press Ctrl+C to abort. The container will be removed on exit."
 echo "----------------------------------------"
 
 docker run --name vsp --gpus all \\
   -e VSP_OUTPUT_DIR=/data/out \\
+  -e VSP_TRANSCRIPTIONS_DIR=/data/transcriptions \\
   -v $(printf '%q' "$INPUT_DIR"):/data/in:ro \\
   -v $(printf '%q' "$OUT_DIR"):/data/out \\
+  -v $(printf '%q' "$TRANS_DIR"):/data/transcriptions \\
   $IMG_TAG \\
   /workspace/run_flat_english_pipeline.sh /data/in
 RC=\$?

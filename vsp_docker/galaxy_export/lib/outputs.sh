@@ -124,7 +124,14 @@ run_client_outputs() {
   local agg_json=""
   if [ -f "$nbest_json" ]; then
     echo ">>> [8] Aggregating n-best beams (MBR / weighted-vote / safe / xseg-merge)"
+    # Look for nbest_aggregate.py in known locations.
+    # Container: /workspace/lib/nbest_aggregate.py (synced from EC2)
+    # EC2 dev:   ~/lib/nbest_aggregate.py
+    # Older:     $vsp_dir/scripts/nbest_aggregate.py
     local agg_script="$vsp_dir/scripts/nbest_aggregate.py"
+    if [ ! -f "$agg_script" ] && [ -f "$(dirname "${BASH_SOURCE[0]}")/nbest_aggregate.py" ]; then
+      agg_script="$(dirname "${BASH_SOURCE[0]}")/nbest_aggregate.py"
+    fi
     if [ ! -f "$agg_script" ]; then
       agg_script="${HOME}/lib/nbest_aggregate.py"
     fi
@@ -301,15 +308,9 @@ print(f'[INFO] Copied {copied} lip crop(s) to {lip_dir}')
     || log_warn "Confidence breakdown report failed (non-critical) — main report still available"
 
   # Default output is the two HTML files. Prune intermediates unless caller
-  # asked for the full output set (VSP_FULL_OUTPUTS=1).
-  if [ "$full_outputs" != "1" ]; then
-    echo ">>> [8] Pruning intermediates — keeping only HTML reports"
-    find "$report_dir" -mindepth 1 -maxdepth 1 \
-      ! -name 'report.html' \
-      ! -name 'confidence_breakdown.html' \
-      -exec rm -rf {} + 2>/dev/null || true
-  fi
-
+  # asked for the full output set (VSP_FULL_OUTPUTS=1) OR is using
+  # VSP_OUTPUT_DIR (container case — operator wants full artifacts).
+  # Prune happens AFTER the export hook below so the export gets the full set.
   log_info "Client outputs complete"
   log_info "Outputs saved to: $post_root"
 
@@ -360,6 +361,19 @@ print(f'[INFO] Copied {copied} lip crop(s) to {lip_dir}')
     fi
 
     log_info "Exported ${copied} artifact group(s) to ${VSP_OUTPUT_DIR}"
+  fi
+
+  # ---- Prune intermediates AFTER export ----
+  # The export above gets the full artifact set. Local report_dir gets pruned
+  # to just the two HTML files (default behavior) unless VSP_FULL_OUTPUTS=1.
+  # In the container case, the export already captured everything the operator
+  # cares about, so pruning the in-container copy doesn't lose anything.
+  if [ "$full_outputs" != "1" ]; then
+    echo ">>> [8] Pruning intermediates — keeping only HTML reports"
+    find "$report_dir" -mindepth 1 -maxdepth 1 \
+      ! -name 'report.html' \
+      ! -name 'confidence_breakdown.html' \
+      -exec rm -rf {} + 2>/dev/null || true
   fi
 
   return 0

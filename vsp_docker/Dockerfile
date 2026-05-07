@@ -270,17 +270,27 @@ RUN /workspace/vsp-llm-yoad-venv/bin/pip install -e \
   "git+https://github.com/Sally-SH/VSP-LLM.git@91c4f3d4418ac9cd0f6328f043de5e48e1d091b2#egg=fairseq&subdirectory=fairseq"
 
 ######################################################################
-# IS scoring deps (sentence-transformers + Metaphone + doublemetaphone)
-# These power lib/outputs.sh::run_outputs IS scoring + NIV labels.
-# At build time we have internet, so pip can fetch transitive deps
-# (e.g. Pillow) that aren't in the local wheel cache. The is_wheels/ dir
-# stays in the image as a runtime fallback for lib/outputs.sh:88-98.
+# IS scoring + agreement-aware bands deps
+# - sentence-transformers + Metaphone + doublemetaphone: IS scoring
+# - Pillow: transitive of sentence-transformers
+# - matplotlib: required by docs/_research-tools/generators/analyze_beam_variance.py,
+#   which compute_word_agreement.py imports for the per-word beam agreement
+#   feature. Without matplotlib the agreement-aware bands silently degrade.
+# - spaCy + en_core_web_sm: NER tagging for NEA / WWER / number-cap rules in
+#   make_report.py. Runtime-install fallback in lib/outputs.sh fails offline,
+#   so install at build time when we still have internet.
 ######################################################################
 RUN /workspace/vsp-llm-yoad-venv/bin/pip install --find-links=/workspace/is_wheels \
   sentence-transformers==5.1.2 \
   Metaphone==0.6 \
   doublemetaphone==1.2 \
-  Pillow==11.3.0
+  Pillow==11.3.0 \
+  matplotlib==3.9.4
+
+# spaCy install — local wheels are cp311 but our venv is cp39, so use PyPI.
+# Internet at build time; pinned to the version validated on EC2.
+RUN /workspace/vsp-llm-yoad-venv/bin/pip install spacy==3.8.13 && \
+    /workspace/vsp-llm-yoad-venv/bin/python -m spacy download en_core_web_sm
 
 ######################################################################
 # Pre-build fairseq Cython extensions

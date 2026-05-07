@@ -26,6 +26,7 @@ run_lrs3_preparation() {
   SEG_DURATION="$seg_duration" \
   DIR_SUFFIX="$dir_suffix" \
   LRS3_ROOT="$prep_root" \
+  VENV="${PREP_VENV:-}" \
   bash "$avh_dir/avhubert/preparation/flat_to_lrs3_preperation.sh" \
     "$prep_root" || {
     log_error "flat_to_lrs3_preperation.sh failed"
