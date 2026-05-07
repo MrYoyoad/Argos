@@ -513,6 +513,12 @@ User pasted competitive landscape research (Symphonic Labs / "Read Their Lips", 
 - Deep text-render audit: **0 issues** across 88 slides. New slide 42: **0 bbox issues**.
 - Pre-existing bbox audit MAJORs: 279 OVERLAP/OCCLUSION false positives from intentional card layouts and animation click-reveal groups (present since bigfonts pass, not caused by this change).
 
+### Follow-up: swap RIGHT clip (user feedback: examples too bad)
+- User: "some examples that are not that bad? its too bad i feel. at least one" — both clips were total failures (STRIP tier), leaving no sense of graceful degradation.
+- Swapped `topic_drift` (WER 97%, IS 0.37, STRIP) → `street_photo` (WER 56%, IS 2.91 Fair, NIV-Y+P, INSPECT/ORANGE).
+- `street_photo`: topic correctly captured (street photography subject), only speaker names lost (james/will → "i'm here"). Meaningful spectrum: graceful partial failure vs total hallucination.
+- COMMIT: dcf1486. Deep text-render audit: **0 issues**.
+
 ---
 
 ## 2026-05-03 — Cheat sheet redo (one page)

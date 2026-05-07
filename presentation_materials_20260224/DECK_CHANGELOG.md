@@ -72,10 +72,10 @@ Across the 5 academic-deck slide modules, removed visible "May 2 2026 / Apr 30 2
 
 ## 2026-05-07 — **For Orchard: §3 failure-mode live video slide** (LANDED)
 
-- **WHAT:** Added `slide_failure_live_demo` (2-column layout) after the text-only taxonomy slide `slide_failure_deep_2`. LEFT: `halluc` clip (carry strap → holocaust denier, WER 100%, IS 0.81, STRIP). RIGHT: `topic_drift` clip (weight loss → princess, WER 97%, IS 0.37, STRIP). §3 now has live evidence for the two most severe failure modes.
-- **WHY:** §3 failure anatomy was entirely text-only after the audience has seen live videos in §1 and §5 — jarring gap. The two clips are already embedded in slide 60's demo intro; this reuses them as research evidence earlier in the narrative.
+- **WHAT:** Added `slide_failure_live_demo` (2-column layout) after the text-only taxonomy slide `slide_failure_deep_2`. LEFT: `street_photo` clip (james/will → "i'm here", WER 56%, IS 2.91 Fair, NIV-Y+P, INSPECT/ORANGE — topic captured, names lost). RIGHT: `halluc` clip (carry strap → holocaust denier, WER 100%, IS 0.81, STRIP). §3 now has live evidence spanning the failure spectrum: graceful partial failure vs total hallucination.
+- **WHY:** §3 failure anatomy was entirely text-only after the audience has seen live videos in §1 and §5 — jarring gap. Initial build used topic_drift (WER 97%, STRIP) for the right slot, but user feedback ("too bad — at least one that isn't that bad") prompted swap to street_photo, which is NIV-Y+P and INSPECT tier, giving a meaningful failure gradient.
 - **FILES:** `slides_evaluation.py` (new function), `generate_for_orchard_presentation.py` (import + builders insert).
-- **COMMIT:** e9e7a7d. Deck: 88 slides / 79 visible / 9 appendix. Deep text-render audit: 0 issues.
+- **COMMITS:** e9e7a7d (initial build with topic_drift), dcf1486 (swap → street_photo). Deck: 88 slides / 79 visible / 9 appendix. Deep text-render audit: 0 issues.
 
 ---
 
