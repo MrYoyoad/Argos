@@ -3670,53 +3670,62 @@ def slide_demo_obama_salvage(prs):
 
 
 def slide_demo_obama_strip(prs):
-    """Obama segment 5 - hallucination caught (closest-to-Strip in the Obama set).
+    """INSPECT-tier example — circadian/hormone segment, structure preserved.
 
-    NOTE: Per render-log finding, obama_flagged actually shows the INSPECT
-    badge (not STRIP) because its mean_prob is 0.799 - above the 0.65
-    strip-coloring boundary. Reframed accordingly.
+    Replaced Obama segment 5 with a non-Obama INSPECT exemplar: the model
+    keeps the "tells us when to X" repeating-clause structure but loses
+    the domain vocabulary (cortisol/testosterone/light cycles → eat/turns/
+    stops). mean_prob = 0.739 sits squarely in the Salvage band (0.65 ≤
+    mean_prob < 0.82), and the clip was rendered with the full
+    agreement-aware joint rule (VSP_NBEST=1 sidecar available).
     """
-    runs = [
-        ("[per-word colors load from the conf-only sidecar; ", {"size": Pt(24), "color": LGRAY}),
-        ("min word probability 0.02 - the model 'knew' the fabrication]",
-         {"size": Pt(24), "color": LGRAY, "italic": True}),
-    ]
     # audit:after_amosi_narrative_actions.md fix #13 - first INSPECT
     # mention; gloss it inline so the audience knows it is the
     # production label for what the research literature calls 'Salvage'.
+    # Per-word color sample: structure-preserved (BLUE) "tells us when to make"
+    # vs domain-vocab replacement (ORANGE/PURPLE).
+    runs = [
+        ("tells us when to make ", {"size": Pt(22), "color": BLUE}),
+        ("stops", {"size": Pt(22), "color": PURPLE, "bold": True}),
+        (" — vs ref's ", {"size": Pt(22), "color": LGRAY}),
+        ("cortisol/testosterone", {"size": Pt(22), "color": ORANGE, "italic": True}),
+    ]
     _demo_research_slide(prs,
-        title="Demo — Obama: INSPECT (lowest-confidence segment)",
-        video_key="obama_flagged",
-        ref="heroic citizens saved even more heartbreak and destruction",
+        title="Demo — INSPECT: structure preserved, vocabulary lost",
+        video_key="judge_cortisol",
+        ref="couples us to light cycles in our environment tells us when "
+            "to sleep tells us when to make cortisol tells us when to "
+            "make testosterone basically switches on",
         hyp_runs=runs,
-        metrics_line="WER ~ 45%   /   IS ~ 1.5   /   sequence_conf low   "
-                     "/   mean_prob = 0.799  (just inside Salvage)",
+        metrics_line="WER 43%   /   IS 2.66 (Salvage)   /   "
+                     "mean_prob = 0.739   /   min word conf 0.12  "
+                     "(VSP_NBEST=1, joint band rule)",
         badge_text="TIER: INSPECT",
-        badge_color=PURPLE,
-        # audit:bigfonts — body trimmed from 4 sentences to 2. Cut: the
-        # INSPECT/Salvage glossary aside (kept in speaker notes).
-        body="Model fabricated 'rwanda's genocide'. Per-token softmax "
-             "bottomed at 0.02 — system flagged before reviewer saw it.",
-        notes="Obama bin Laden announcement, segment #5 (14.98-18.58 s). "
-              "Reference: 'heroic citizens saved even more heartbreak and "
-              "destruction'. Hypothesis: 'rwanda's genocide even more "
-              "heartbreaking is russia'. WER ~45%, IS ~1.5, mean_prob = "
-              "0.799 — that places the segment in the Salvage band "
-              "(above the 0.65 strip-coloring boundary), so the "
-              "production badge is INSPECT and not STRIP. This is the "
-              "closest-to-STRIP example available in the Obama set; the "
-              "client deck called it 'STRIP' for narrative simplicity. "
-              "The headline number is the minimum per-word probability "
-              "of 0.02 — the LLM was uncertain about the fabricated "
-              "tokens ('rwanda's genocide') even while emitting them "
-              "fluently, so the system flagged the segment before any "
-              "reviewer saw it. Per-word colours render from the "
-              "conf-only sidecar because this decode predates "
-              "VSP_NBEST=1. NIV-N green-band reliability is only 37% per "
-              "the band-by-NIV stratification slide, which confirms why "
-              "the Strip tier (mean_prob < 0.65) drops colours entirely. "
-              "Sources: docs/confidence/band_reliability_by_niv.md, "
-              "docs/evaluation/llm_judge/llm_judge_analysis.md.")
+        badge_color=ORANGE,
+        body="Repeating 'tells us when to X' structure preserved, but "
+             "domain vocabulary (cortisol, testosterone) replaced.",
+        notes="Non-Obama INSPECT exemplar (segment "
+              "9HanJOCw2Sc_11__19c7ec4e_00_000000_000261, ~13s). "
+              "Reference: '… couples us to light cycles in our "
+              "environment tells us when to sleep tells us when to make "
+              "cortisol tells us when to make testosterone basically "
+              "switches on'. Hypothesis: 'the job prescription takes "
+              "into account our environment tells us what to eat tells "
+              "us where to make turns tells us when to make stops "
+              "basically switches on'. WER 43%, NEA F1 43% (lost "
+              "entities: cortisol, couples, cycles, light, sleep, "
+              "testosterone), IS 2.66 (Tier 3 Fair, NIV-Y+P). mean_prob "
+              "= 0.739, sequence_conf in the Salvage band (0.65–0.82). "
+              "min word conf = 0.12 on entity-replacement tokens "
+              "(stops). Why this is a clean INSPECT: the "
+              "circadian/hormones → behaviour-script semantic drift is "
+              "a recoverable failure mode for a viewer who knows the "
+              "topic, but the model still flagged the entity replacements "
+              "via the joint conf+agreement rule. Per-word colors render "
+              "from the agreement-aware sidecar (this decode had "
+              "VSP_NBEST=1, unlike Obama segments). Sources: "
+              "english_full_nbest_eval/report_v2/report.csv, "
+              "docs/confidence/band_reliability_by_niv.md.")
 
 
 def slide_demo_judge_entity(prs):
