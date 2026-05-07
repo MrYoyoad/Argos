@@ -266,6 +266,48 @@ The 9 hidden appendix slides (81–89) are likely Q&A targets:
 
 ---
 
+## Experiments Run & Checked (Project Overview)
+
+This addendum summarizes every experiment, hypothesis, or heuristic explored during the project — what was tried, what shipped, what didn't, and what's still open. Compact reference; full detail in the linked source doc per row.
+
+| Experiment / hypothesis | Status | Outcome | Slide | Source doc |
+|---|---|---|---|---|
+| LLM-as-Judge gold-standard calibration | ✅ shipped | 1,497-pair Opus blind eval; intra-rater 87% exact agreement on 30 resampled pairs | 17, 18 | docs/evaluation/llm_judge/llm_judge_analysis.md |
+| Intelligibility Score (IS) — 6-signal metric | ✅ shipped | r=−0.71 with WER; κ=0.690 (Y) / 0.818 (Y+P) vs judge; design-time LLM-distilled, runtime-deterministic | 28–32 | docs/evaluation/intelligibility_methodology.md |
+| NIV threshold calibration vs Opus judge | ✅ shipped | IS≥3.80 (Y) / IS≥2.00 (Y+P); IS beats WER by +0.061 (Y) and +0.041 (Y+P) on κ | 17, 35 | docs/evaluation/threshold_calibration_vs_opus.md |
+| IS PCA — independent dimensions | ⚠️ surprising | 2 PCs explain 87.9% (not 3 as hypothesized); semantic loads on PC1, not independent | 31, 33 | docs/evaluation/is_pca_analysis.md |
+| Cross-config stability of IS | ✅ shipped | r=0.925 across 16 top-1 decode-parameter configs (NOT MBR); std=0.015 | 70 | docs/evaluation/is_cross_config_validation.md |
+| LLM Salvage heuristic (15-rule decision tree) | ✅ shipped | Recovers 165/900 metric-failed segments (18%); +11pp effective capture | 43, 44 | docs/evaluation/llm_salvage/llm_salvage_analysis.md |
+| Context-aware judge re-evaluation | 🔬 done | Context is STRICTER not lenient: 230 downgrades vs 68 upgrades; Y→P dominant transition | 26 | docs/evaluation/llm_judge/context_eval/context_eval_analysis.md |
+| Per-word confidence + 3-tier policy | ✅ shipped | T_trust=0.89, T_safe=0.82, T_salvage=0.74; F1-max for NIV-Y at 0.82 | 47–58 | docs/confidence/threshold_design.md |
+| Joint conf+beam-agreement bands | ✅ shipped | Joint rule: green = top1_conf≥0.95 AND beam_agreement≥0.80; ~2× more informative than top-1 alone | 56, 57 | docs/confidence/confidence_shape_and_beam_disagree_design.md |
+| Confidence-trajectory clustering (peer signal hypothesis) | ❌ negative | Clusters reduce to tier ordering; no separation of failure types beyond Trust/Salvage/Strip bands | — | docs/confidence/confidence_shape_and_beam_disagree_design.md |
+| Band reliability stratified by NIV outcome | ✅ shipped | P(correct \| green/yellow/red) = 87/49/25% within Y+P; 62.5pp spread confirms band signal | 51, 53 | docs/confidence/band_reliability_by_niv.md |
+| N-best aggregation: MBR vs voting (Mission 6) | ✅ shipped | MBR Y+P 71.1% vs baseline 68.4%, paired McNemar p=0.00017; vote_conf p=0.00257; MBR shipped as default | 59–61 | docs/beam-search/n_best_implementation.md |
+| v1 vs v3 LLM-Judge prompt design | 📝 lesson | Single-side conf injection biased v1 against n-best methods; dual-conf v3 reversed verdict; identical-text drift 27%→13% | 62 | docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md |
+| Hyperparameter tuning (Mission 7) | ❌ negative | 13 experiments (beam, lenpen, sampling, greedy); baseline (beam=20, lenpen=0) most robust; no parameter combination meaningfully improves WER | 75 (notes) | docs/tuning/report_2_hyperparameter_tuning.md |
+| Fine-tuning Exp A (r=16) + Exp B (r=64) — Mission 9 | ❌ negative | Both data-limited at 1,273 AVSpeech segs; severe overfitting (~95% train, ~60% val); r=64 was 3.1pp worse than r=16; dataset is the bottleneck | 75 | docs/finetuning/training-research-notes.md |
+| Topic-label prompt experiment (Mission 8) | ⚠️ partial | ~284 segments (19%) show domain vocabulary confusion that a topic label at decode time would help; not yet implemented | future | docs/prompts/topic_label_experiment.md |
+| Human-IS Path B (pre-study estimates) | 🔬 estimate | Lay 0.6–1.1, deaf 2.3–3.1, expert 2.6–3.3, lay+ctx+model 3.4–4.2; model 2.547 ≈ deaf-no-context | 84 (hidden) | docs/evaluation/human_is_estimation.md |
+| LLM upgrade projection (Llama-2 → Llama-3 / Qwen / Aya) | 🔬 projection | −3 to −8 pp WER expected from VALLR scaling-law literature; not measured | 73, 74 | docs/evaluation/llm_upgrade_analysis.md |
+| Arabic adaptation roadmap | 📋 plan | Cross-lingual transfer plan + 5–10K hr Arabic broadcast collection; 2–3 months Phase 1 | 76–78 | docs/paper/arabic-vsp-adaptation.md |
+
+**Status icons**: ✅ shipped • ❌ negative result • ⚠️ surprising / partial • 🔬 estimate/projection • 📝 lesson learned • 📋 future plan.
+
+### Narrative
+
+**Shipped to production**: IS metric + NIV thresholds (calibrated vs Opus judge), per-word confidence with 3-tier policy and joint conf+beam-agreement bands, NIV-stratified band reliability in the UI, design-time LLM Salvage heuristic, and MBR n-best as default displayed output — the full evaluation + trust stack.
+
+**Negative results worth keeping**: Mission 7 (13 hyperparameter experiments) and Mission 9 (LoRA r=16 and r=64) both negative, pointing at the same root cause — dataset is the bottleneck, not architecture or decoding. Decode parameters reached diminishing returns; LoRA needs ≥20K segments and a stronger LLM.
+
+**Methodological surprises**: PCA showed 2 independent dimensions not 3, with semantic loading on PC1. The v1 LLM-judge prompt self-biased against n-best methods; dual-conf v3 reversed the verdict. Context-aware judging was stricter, not lenient. Trajectory clustering collapsed onto tier ordering.
+
+**Projection, not measurement**: LLM-upgrade WER deltas, Phase 3–5 roadmap deltas, Path B human-IS estimates, and the Arabic Phase 1 timeline are literature-anchored, not pilot data.
+
+**Open threads**: topic-label prompt injection (Mission 8), Path A human-IS pilot to confirm Path B, and cross-config validation extended to MBR (current r=0.925 is top-1 only).
+
+---
+
 ## Source citations
 
 - **Deck**: `/home/ubuntu/presentation_materials_20260224/Argos_VSP_For_Orchard_May2026.pptx` (89 slides, 80 visible, 9 hidden)
