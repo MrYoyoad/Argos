@@ -70,9 +70,35 @@ Across the 5 academic-deck slide modules, removed visible "May 2 2026 / Apr 30 2
 
 ---
 
+## 2026-05-07 — **For Orchard: §3 failure-mode live video slide** (LANDED)
+
+- **WHAT:** Added `slide_failure_live_demo` (2-column layout) after the text-only taxonomy slide `slide_failure_deep_2`. LEFT: `halluc` clip (carry strap → holocaust denier, WER 100%, IS 0.81, STRIP). RIGHT: `topic_drift` clip (weight loss → princess, WER 97%, IS 0.37, STRIP). §3 now has live evidence for the two most severe failure modes.
+- **WHY:** §3 failure anatomy was entirely text-only after the audience has seen live videos in §1 and §5 — jarring gap. The two clips are already embedded in slide 60's demo intro; this reuses them as research evidence earlier in the narrative.
+- **FILES:** `slides_evaluation.py` (new function), `generate_for_orchard_presentation.py` (import + builders insert).
+- **COMMIT:** e9e7a7d. Deck: 88 slides / 79 visible / 9 appendix. Deep text-render audit: 0 issues.
+
+---
+
+## 2026-05-07 — **For Orchard: early live example + demo video swaps** (LANDED)
+
+- **WHAT:** (a) New `slide_live_example_intro` (Obama 14, 29 words, WER 0%, IS 5.00, 27/29 green) inserted after "What is VSP?" so the audience gets a live taste before the metrics deep-dive. (b) Demo TRUST slide swapped from Obama to AI-lady Indian-accent IS=5 clip (`clean_tech`) — harder/more-convincing visual target. (c) Demo INSPECT/STRIP slide swapped from Obama to `judge_cortisol` (cortisol/testosterone vocabulary drift, non-Obama, agreement-aware bands applied). (d) STYLE_GUIDE §7.7 V7 rule added: badge color must match tier name.
+- **WHY:** Obama clips in §5 TRUST/STRIP tiles gave wrong impression (prepared political speech = too easy for TRUST; purple badge on INSPECT = wrong color per V7 rule). AI-lady clip is real conversational speech with IS=5 at harder visual conditions. Judge_cortisol is a clean INSPECT: structure preserved, domain vocab replaced.
+- **FILES:** `slides_evaluation.py`, `config.py`, `generate_for_orchard_presentation.py`, `STYLE_GUIDE.md`.
+- **COMMITS:** 8e9b7d3 (swap TRUST+INSPECT), 6e4e40c (Obama demo-intro tile restore), 09a840a (live_example_intro new slide).
+
+---
+
+## 2026-05-07 — **For Orchard: research-overview review fixes** (LANDED)
+
+- **WHAT:** Applied all A/B/C/D/E category fixes from the pptx research-overview review: (A1) math-first opener in §4; (B1) slide_a16 promoted from appendix to main body; (C2/C3) §3 split into §3a Capture + §3b Failure Anatomy with visible divider; (D1) IS dimensions corrected from "3 independent dimensions" to "2 PCs, semantic NOT independent"; (E1) McNemar p-value and F1-max detail added in speaker notes. Also slide_36 κ typo fixed (was showing 0.52 twice; corrected to κ=0.82 Y+P / κ=0.69 Y / κ=0.52 legacy IS≥3.0).
+- **FILES:** `slides_evaluation.py`, `slides_research.py`, `slides_opening.py`, `generate_for_orchard_presentation.py`.
+- **COMMITS:** 2698586 + 67bd993.
+
+---
+
 ## 2026-05-06 — **For Orchard May2026 — Academic deck May update** (LANDED)
 
-Internal 2-hour academic talk for research peers. Reference deck = `Argos_VSP_Final_84slides_Mar2026.pptx` (the AFTER_AMOSI master). Restructured into a 5-section narrative — Problem / Evaluation / Proof / Confidence / Demo+Future — with all numbers rebased onto MBR-default decode (production since May 2 2026). 89 slides total / 80 visible / 9 appendix.
+Internal 2-hour academic talk for research peers. Reference deck = `Argos_VSP_Final_84slides_Mar2026.pptx` (the AFTER_AMOSI master). Restructured into a 5-section narrative — Problem / Evaluation / Proof / Confidence / Demo+Future — with all numbers rebased onto MBR-default decode (production since May 2 2026). 89 slides initial build → 88 slides after subsequent rounds.
 
 **WHAT — Audits & data:**
 - Built end-to-end audit script `scripts/audit_after_amosi_numbers.py` → emits `docs/evaluation/after_amosi_audit.md` + `.json` (286 flat keys, top-1 vs MBR side-by-side). MEMORY.md updated with MBR-default values.
@@ -105,10 +131,10 @@ Internal 2-hour academic talk for research peers. Reference deck = `Argos_VSP_Fi
 - NEW changelog: `docs/changelog/after_amosi_audit.md`
 - Plots regen: 11 PNGs in `presentation_materials_20260224/01_plots_for_slides/` (5 overwritten + 6 new), originals archived to `_archive_march2026/`
 - Demo videos: 8 MP4s in `presentation_materials_20260224/06_demo_videos/`, originals archived to `_archive_pre_may6/`
-- Output: `presentation_materials_20260224/Argos_VSP_AFTER_AMOSI_May2026.pptx` (31 MB)
+- Output: `presentation_materials_20260224/Argos_VSP_For_Orchard_May2026.pptx` (renamed from AFTER_AMOSI in 4b0f0d6)
 - MEMORY.md updated with MBR-default key numbers
 
-**COMMIT:** _to be filled in after `git commit`_
+**COMMIT:** 4b0f0d6 (initial build / rename). Subsequent rounds: 9e997a6 (bigfonts), 2698586+67bd993 (research-overview fixes), 8e9b7d3+09a840a (video swaps + live example), e9e7a7d (§3 failure-mode videos).
 
 ---
 
