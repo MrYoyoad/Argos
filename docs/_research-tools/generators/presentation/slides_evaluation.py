@@ -2074,16 +2074,13 @@ def slide_disagreement_context(prs):
         rw - Inches(0.4), Inches(1.8),
         size=Pt(24), color=LGRAY))
 
-    # CUT v3: shrunk body 24->18pt + dropped one bullet so 3 bullets
-    # fit in the 1.4" height without overflowing into the bottom strip
-    # (the 4th example moved to speaker notes).
+    # C2 (research-overview pacing): "more context false positives" inline
+    # list dropped from body \u2014 full list moved to speaker notes; appendix
+    # A9 (Context Transition Matrix) shows the full structure.
     more = add_text(slide,
-        "More context false positives:\n"
-        "\u2022 \"lazy natural\" \u2192 \"lazy astronaut\" (hair \u2192 space)\n"
-        "\u2022 \"needle\" \u2192 \"neck\" (knitting \u2192 medical)\n"
-        "\u2022 \"student loan debt\" \u2192 \"south korea\" (US \u2192 intl)",
-        rx, CT + Inches(3.5), rw, Inches(1.4),
-        size=Pt(18), color=LGRAY)
+        "Full list of context false positives \u2014 see Appendix A9.",
+        rx, CT + Inches(3.5), rw, Inches(0.5),
+        size=Pt(18), color=LGRAY, italic=True)
 
     # Bottom strip
     # CUT v3: top 6.35 -> 6.20 + frame h 1.0 -> 0.40 so Pt(24) bottom
@@ -2287,8 +2284,10 @@ def slide_confidence_problem(prs):
     # audit:after_amosi_narrative_actions.md fix #14 - "next slide"
     # phrasing replaced; works under reorder.
     # CUT v3: top 6.4 -> 6.20 to keep Pt(24) wrap under safe 7.05.
+    # A1 (research-overview): two-layer math now PRECEDES this slide so
+    # the bottom callback points back, not forward.
     bottom = add_text(slide,
-        "Two layers of confidence (introduced below in this section): "
+        "Two layers of confidence (just shown): "
         "per-word from the LLM softmax, per-segment as the aggregate.",
         MX, Inches(6.02), CW, Inches(1.0),
         size=Pt(24), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
@@ -2299,9 +2298,9 @@ def slide_confidence_problem(prs):
         "judge - all these are EVALUATION-time signals that need a "
         "reference. In production on user video, no reference exists. We "
         "need a calibrated runtime confidence signal computed from model "
-        "outputs only. This slide sets up the question; the two-layer "
-        "scheme is introduced in the slides that follow this one in the "
-        "current section ordering.",
+        "outputs only. The two-layer math (per-word softmax + per-segment "
+        "mean log-prob) was introduced on the preceding slide; this slide "
+        "frames why we need it at all in production.",
         [[intro], [bul], [bottom]], click_reveal=True)
 
 

@@ -470,23 +470,29 @@ def slide_29(prs):  # audit:bigfonts
     add_title(slide, "Fine-Tuning: Limited Data, Limited Gains")
     add_accent_line(slide)
 
-    # Two plots side by side — reduced height to leave room for text
+    # Two plots side by side — reduced height to leave room for text.
+    # D1 (research-overview): plot_h shrunk 3.8 -> 3.0 to fit a third
+    # ablation bullet at Pt(24); findings frame extends 1.6 -> 2.4.
     col_w = Inches(5.9)
     gap = Inches(0.33)
-    plot_h = Inches(3.8)
+    plot_h = Inches(3.0)
     rx = MX + col_w + gap
 
     img_l = add_image(slide, "ft_loss", MX, CT, width=col_w, height=plot_h)
     img_r = add_image(slide, "ft_impact", rx, CT, width=col_w, height=plot_h)
 
-    # Key findings below plots — h bumped 1.2 -> 1.6 for Pt(24) wrap (audit:bigfonts).
+    # Key findings below plots — h bumped 1.6 -> 2.4 for 3rd bullet at Pt(24).
     find_y = CT + plot_h + Inches(0.15)
+    # D1 (research-overview): promote 1-line ablation summary to body.
+    # Bullets trimmed for Pt(24) one-line wraps where possible.
     lb = add_bullets(slide, [
-        ("LoRA 1,273 segs: IS 2.49 \u2192 2.31 (r=16) \u2192 2.02 (r=64). "
-         "Fine-tuning made IS WORSE.", {"bold": True, "color": CORAL}),
+        ("LoRA 1,273 segs: IS 2.49 \u2192 2.31 (r=16) \u2192 2.02 (r=64).",
+         {"bold": True, "color": CORAL}),
+        ("Ablations: r=16 + r=64 LoRA \u2014 both data-limited at 1.3K segs",
+         {"color": LGRAY}),
         ("Bottleneck is DATA QUANTITY (need 20K+), not tuning.",
          {"bold": True, "color": GREEN}),
-    ], MX, find_y, CW, Inches(1.6), size=Pt(24))
+    ], MX, find_y, CW, Inches(2.4), size=Pt(24))
 
     _finish(slide, 29,
         "Fine-tuning experiments with LoRA on 1,273 AVSpeech segments — "
@@ -526,29 +532,31 @@ def slide_30(prs):  # audit:bigfonts
     add_title(slide, "Stronger LLM + Smart Prompts = Force Multiplier")
     add_accent_line(slide)
 
-    # audit:bigfonts — middle GER bullet shortened (full def in notes).
+    # B1 (research-overview): "Future" column dropped — Arabic /
+    # multi-speaker / streaming are covered later in §5.4 (Arabic
+    # roadmap slides). Reclaim space: widen the two remaining columns
+    # and bump bullets back to Pt(22) for readability.
     cols = [
         ("LLM Upgrade (needs training)", [
-            "Llama 3.1 8B: drop-in (hidden 4096)",
-            "≈ Llama-2 70B, 128K vocab/ctx",
-            ("Training: ~2\u20134 wks, 5K+ segs", {"bold": True}),
-            "Alone: \u22123 to \u22128 pp WER",
+            "Llama 3.1 8B: drop-in (hidden dim 4096)",
+            "≈ Llama-2 70B, 128K vocab / context",
+            ("Training: ~2\u20134 weeks, 5K+ segments",
+             {"bold": True}),
+            "Alone: \u22123 to \u22128 pp WER (projection)",
         ], TEAL),
         ("Smart Prompts (multiplier)", [
             "7 strategies: topic, count, anti-halluc, GER",
-            "Llama-2: +5\u201310pp | Llama 3.1: +12\u201320pp",
-            ("GER: N-best \u2192 correction LLM", {"color": LGRAY}),
-            ("GER alone: +8\u201315pp, no retrain", {"color": GREEN}),
+            "Llama-2: +5\u201310pp  |  Llama 3.1: +12\u201320pp",
+            ("GER = feed N-best \u2192 correction LLM",
+             {"color": LGRAY}),
+            ("GER alone: +8\u201315pp WER, no retrain",
+             {"color": GREEN}),
         ], CORAL),
-        ("Future", [
-            "Arabic (K-means exists)",
-            "Multi-speaker, streaming",
-        ], LGRAY),
     ]
 
-    cw = Inches(3.6)
-    gap = Inches(0.5)
-    total = 3 * cw + 2 * gap
+    cw = Inches(5.5)
+    gap = Inches(0.6)
+    total = 2 * cw + gap
     cx = (SL_W - total) / 2
 
     col_groups = []
@@ -559,9 +567,9 @@ def slide_30(prs):  # audit:bigfonts
         t = add_text(slide, title, x + Inches(0.2), CT + Inches(0.15),
                  cw - Inches(0.4), Inches(1.0),
                  size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
-        # CUT v3 (overflow): Pt(24) -> Pt(18) so 4 bullets at narrow width fit.
+        # B1: column widened 3.6"->5.5" — bullets bumped Pt(18)->Pt(22).
         b = add_bullets(slide, items, x + Inches(0.2), CT + Inches(0.7),
-                    cw - Inches(0.4), Inches(3.5), size=Pt(18))
+                    cw - Inches(0.4), Inches(3.5), size=Pt(22))
         col_groups.append([r, t, b])
 
     # Academic references — bumped to 12pt for readability floor; venue

@@ -52,6 +52,7 @@ from presentation.slides_opening import (
 )
 from presentation.slides_research import (
     slide_research_transition,
+    slide_failure_anatomy_transition,
     slide_is_motivation, slide_is_intro,
     slide_is_weight_rationale, slide_is_calc_examples,
     slide_is_dimensions, slide_is_radar, slide_is_wer_scatter,
@@ -238,12 +239,16 @@ def main():
         # ─── §3. Where It Works — and How It Fails ───────────────────
         # SECTION SPLIT v5 (per research-overview review):
         # §3a Capture (where it works) = slide_07 + slide_metric_transition
-        # §3b Failure Anatomy = slide_08 + deep_1a + 1b consolidated + 2 + salvage
+        # §3b Failure Anatomy = visible divider + slide_08 + deep_1a + 2 + salvage
         # Cut: slide_failure_deep_1b (overlapping content with 1a — taxonomy
         # categories now fit in one slide). slide_a13 cut (overlaps with
         # slide_failure_deep_2 — same "real failure examples" framing).
+        # E1 (research-overview): visible section divider added between the
+        # capture half and the failure-anatomy half so the audience sees the
+        # split, not just the orchestrator comment.
         slide_07,                       # IS results: useful output (CAPTURE)
         slide_metric_transition,        # Three numbers transition (CAPTURE)
+        slide_failure_anatomy_transition,  # E1: visible §3a → §3b divider
         slide_08,                       # Failure-mode taxonomy bar (FAILURE)
         slide_failure_deep_1a,          # Failure deep (consolidated)
         slide_failure_deep_2,           # Failure modes: examples
@@ -251,8 +256,12 @@ def main():
         slide_25e,                      # LLM salvage: domain context
 
         # ─── §4. Confidence — Trustable output w/o GT (18 slides) ────
-        slide_confidence_problem,
+        # A1 (research-overview): math-first opener — slide_two_layer_
+        # confidence_research moved BEFORE slide_confidence_problem so the
+        # closed-form math lands as the §4 hook; the prose runtime-vs-
+        # eval framing follows as a "what we do with it" callback.
         slide_two_layer_confidence_research,
+        slide_confidence_problem,
         slide_confidence_scoring,
         slide_per_word_confidence_distribution,
         slide_band_reliability_overall,

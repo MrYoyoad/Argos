@@ -722,62 +722,48 @@ def slide_is_radar(prs):
         "measured profiles from LRS3 benchmark and YouTube evaluation.",
         MX, CT, CW, Inches(0.93), size=Pt(22), color=LGRAY, italic=True)
 
-    # Two radars side by side: LRS3-vs-YouTube dual on the LEFT,
-    # captured-vs-failed (MBR-IS, P6_is_radar) on the RIGHT. The dual radar
-    # tells the cross-domain story; the captured/failed radar tells the
-    # within-YouTube quality-band story. Together they motivate Mission 9.
-    img_top = CT + Inches(0.65)
-    img_h = SL_H - img_top - Inches(1.85)   # leave room for caption + footer
-    img_w = Inches(5.9)
-    inner_gap = Inches(0.2)
-    total_w = img_w * 2 + inner_gap
-    left_x = (SL_W - total_w) / 2
+    # C3 (research-overview pacing): single radar on slide — the
+    # captured-vs-failed (MBR-IS) radar carries the within-domain quality-
+    # band story, which is the deck's headline. The cross-domain LRS3-vs-
+    # YouTube radar is moved to speaker notes (the "why YouTube is harder"
+    # framing was already covered on slide 11).
+    img_top = CT + Inches(0.55)
+    img_h = SL_H - img_top - Inches(1.65)   # leave room for caption + footer
+    img_w = Inches(7.0)
+    img_x = (SL_W - img_w) / 2
 
-    img_left = add_image(slide, "P6b_radar_dual", left_x, img_top,
+    img_main = add_image(slide, "P6_is_radar", img_x, img_top,
                          width=img_w, height=img_h)
-    img_right = add_image(slide, "P6_is_radar",
-                          left_x + img_w + inner_gap, img_top,
-                          width=img_w, height=img_h)
 
-    # Caption row underneath identifying each radar
+    # Single caption underneath
     cap_y = img_top + img_h + Inches(0.05)
-    cap_left = add_text(slide,
-        "LRS3 vs YouTube (cross-domain gap)",
-        left_x, cap_y, img_w, Inches(0.3),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
-    cap_right = add_text(slide,
+    cap_main = add_text(slide,
         "Captured vs Failed within YouTube (quality bands, MBR-IS)",
-        left_x + img_w + inner_gap, cap_y, img_w, Inches(0.8),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, cap_y, CW, Inches(0.4),
+        size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Two radars now share the slide. LEFT (P6b_radar_dual): LRS3 "
-        "benchmark (measured, n=170) vs YouTube real-world (measured, "
-        "n=1,497) — the cross-domain gap. RIGHT (P6_is_radar, newly "
-        "embedded May 2026): captured vs failed segments within the "
-        "YouTube run, computed on the MBR-IS components — the within-domain "
-        "quality-band gap.\n\n"
-        "LRS3 values (all measured): Semantic 0.779, Phonetic 0.794, "
-        "1-WER 0.689, 1-WWER 0.662, NEA 0.683, LenRatio 0.971.\n"
-        "YouTube values (all measured): Semantic 0.58, Phonetic 0.52, "
-        "1-WER 0.36, 1-WWER 0.38, NEA 0.39, LenRatio 0.72.\n\n"
-        "Key insight: the radar shape reveals where each condition is "
-        "strong and weak. Length Ratio stays high even for YouTube "
-        "(the model generates approximately the correct amount of text "
-        "even when the text itself is wrong). The collapsed axes (WER, "
-        "WWER, NEA) are where the domain gap hits hardest — entity F1 "
-        "drops from 68% on LRS3 to 39% on YouTube, a 29-point fall "
-        "that names alone cannot explain. The new captured-vs-failed "
-        "panel on the right shows that within YouTube the same axes "
-        "(WER, WWER, NEA) are again the discriminators between useful "
-        "and unusable output — the metrics that fail across domains "
-        "are the same ones that fail within domain. Mention to peers: "
-        "when we plot expected radars for stronger LLMs (Mission 9 "
-        "LLM-upgrade slide later in the deck), the dominant pull-up is "
-        "on the YouTube Semantic and 1-WWER axes, not on length. "
+        "Single-radar layout (May 2026 trim, research-overview C3): the "
+        "captured-vs-failed radar carries the headline — same axes (WER, "
+        "WWER, NEA) discriminate useful vs unusable output within YouTube. "
+        "Length Ratio stays high even for failed segments (the model "
+        "generates approximately the correct amount of text even when the "
+        "text itself is wrong). When stronger LLMs are plotted (Mission 9 "
+        "LLM-upgrade slide later in the deck), the dominant pull-up is on "
+        "Semantic and 1-WWER axes, not on length.\n\n"
+        "CROSS-DOMAIN COMPARISON (moved from body — speaker note only): "
+        "the LRS3 benchmark vs YouTube real-world dual-radar (P6b_radar_dual) "
+        "shows the cross-domain gap. LRS3 values (measured, n=170): "
+        "Semantic 0.779, Phonetic 0.794, 1-WER 0.689, 1-WWER 0.662, NEA "
+        "0.683, LenRatio 0.971. YouTube values (measured, n=1,497): "
+        "Semantic 0.58, Phonetic 0.52, 1-WER 0.36, 1-WWER 0.38, NEA 0.39, "
+        "LenRatio 0.72. Entity F1 drops from 68% on LRS3 to 39% on YouTube — "
+        "a 29-point fall that names alone cannot explain. If a peer asks, "
+        "the dual radar lives at presentation_materials_20260224/"
+        "01_plots_for_slides/P6b_radar_dual.png.\n\n"
         "Sources: docs/evaluation/intelligibility_methodology.md, "
         "docs/evaluation/intelligibility/intelligibility_summary.json.",
-        [[img_left, img_right, cap_left, cap_right]])
+        [[img_main, cap_main]])
 
 
 def slide_is_wer_scatter(prs):
@@ -2303,5 +2289,38 @@ def slide_research_transition(prs):
         "Section transition: we now present the research findings — our novel "
         "Intelligibility Score metric, root cause analysis, failure mode taxonomy, "
         "and decode tuning experiments.")
+
+
+def slide_failure_anatomy_transition(prs):
+    """Section divider (E1, research-overview): visible split inside §3
+    between the 'Capture' subsection (slides 37-38) and the 'Failure
+    Anatomy' subsection (slides 39-45). Mirrors the existing transition
+    pattern used for §2, §4-eng, §5-future."""
+    slide = new_slide(prs)
+
+    add_text(slide, "FAILURE ANATOMY",
+             MX, Inches(2.2), CW, Inches(1.2),
+             size=Pt(48), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+    add_text(slide, "Where the System Fails — and Why",
+             MX, Inches(3.5), CW, Inches(0.6),
+             size=Pt(30), color=LGRAY, align=PP_ALIGN.CENTER)
+
+    add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
+             fill_color=CORAL)
+
+    add_text(slide,
+        "Six failure modes → LLM salvage → trust-tier triage",
+        MX, Inches(4.8), CW, Inches(0.5),
+        size=Pt(22), color=MGRAY, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Section transition (visible §3 split, May 2026): we have just "
+        "shown the 'where it works' half of §3 (Oracle vs Realistic, "
+        "MBR aggregation funnel). We now turn to the 'failure anatomy' "
+        "half: failure-mode taxonomy, deep dives, and the LLM-salvage "
+        "recovery story. This divider exists per the research-overview "
+        "review which flagged §3 as titled-for-success but body-heavy "
+        "with failure analysis.")
+
 
 
