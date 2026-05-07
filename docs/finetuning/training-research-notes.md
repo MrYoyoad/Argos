@@ -1,8 +1,12 @@
-# VSP-LLM Fine-Tuning Research Notes
+# VSP-LLM Fine-Tuning Research Notes — FINAL (data ceiling, not model capacity)
+
+> **Canonical fine-tuning doc.** Replaces the deleted report_6_finetuning_analysis.{md,docx} and checkpoint_correlation_report.md. The PDF snapshot of report 6 is archived at `docs/_archive/reports/report_6_finetuning_analysis.pdf`. Two figures retained: `plots/FT_03_overfitting_gap.png` (train-vs-val divergence) and `plots/FT_11_clean_summary.png` (single-image dashboard). Comparison CSV at `experiments/finetune_comparison.csv`. LLM-judge eval at `llm_judge/finetune_llm_judge_comparison.{md,csv}`.
+>
+> **Headline:** Exp A (r=16) and Exp B (r=64) on 1,273 AVSpeech segments both showed severe overfitting (~95% train, ~60% val accuracy); Exp B was 3.1pp worse than Exp A. Claude-Judge eval (224 val): Baseline IS=2.487, A=2.312, B=2.023; LLM Y+P ~51-54% across all three (no improvement from FT). Conclusion: this experiment was **data-limited at 1.3K segments**, well below the ~1K minimum for LoRA generalization. Tested the dataset's limits, not the model's capacity.
 
 Research thoughts on improving VSP-LLM for domain-specific AVSpeech fine-tuning. The pretrained model was trained on LRS3 (433h TED talks) and is applied to AVSpeech-style YouTube videos.
 
-**Current baseline**: WER 64.1%, WWER 60.5%, NEA Recall 39% on 1497 segments (english_full run using `checkpoint_finetune.pt`).
+**Current baseline (production, MBR-default)**: WER 63.8% (top-1: 64.1%), WWER 60.5%, NEA Recall 39%, IS 2.547 (top-1: 2.52) on 1497 segments (english_full run using `checkpoint_finetune.pt`). See [after_amosi_audit.md](../evaluation/after_amosi_audit.md).
 
 ## Key References
 
