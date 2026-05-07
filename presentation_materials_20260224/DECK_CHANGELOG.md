@@ -26,7 +26,7 @@ Reverse-chronological: newest entry on top.
 
 ---
 
-## 2026-05-06 — **AFTER_AMOSI May2026 — Academic deck May update** (LANDED)
+## 2026-05-06 — **For Orchard May2026 — Academic deck May update** (LANDED)
 
 Internal 2-hour academic talk for research peers. Reference deck = `Argos_VSP_Final_84slides_Mar2026.pptx` (the AFTER_AMOSI master). Restructured into a 5-section narrative — Problem / Evaluation / Proof / Confidence / Demo+Future — with all numbers rebased onto MBR-default decode (production since May 2 2026). 89 slides total / 80 visible / 9 appendix.
 
