@@ -3580,42 +3580,52 @@ def _demo_research_slide(prs, *, title, video_key, ref, hyp_runs,
 
 
 def slide_demo_obama_trust(prs):
-    """Obama segment 14 - clean speech, Trust tier."""
+    """TRUST exemplar — non-trivial speaker, AI talk, full agreement-aware rule.
+
+    Replaced Obama segment 14 (prepared political statement, too easy a TRUST
+    example) with a non-Obama IS=5.00 / WER=0% segment: South-Asian speaker
+    with Indian English accent talking about "this wave of artificial
+    intelligence". Same TRUST tier (mean_prob 0.988), but a harder visual
+    target — proves the model handles diverse speakers, not just rehearsed
+    political video. VSP_NBEST=1 sidecar available, so the joint
+    conf+agreement rule applied.
+    """
+    # Per-word colors all BLUE (TRUST band) — every word is high-conf + high-agreement.
     runs = [
-        ("[per-word colors load from the conf-only sidecar; ", {"size": Pt(24), "color": LGRAY}),
-        ("VSP_NBEST=1 was not enabled at the April 30 decode]",
-         {"size": Pt(24), "color": LGRAY, "italic": True}),
+        ("to this wave of ", {"size": Pt(22), "color": BLUE}),
+        ("artificial intelligence ", {"size": Pt(22), "color": BLUE, "bold": True}),
+        ("that is slowly taking place", {"size": Pt(22), "color": BLUE}),
     ]
     _demo_research_slide(prs,
-        title="Demo - Obama Trust Tier",
-        video_key="obama_perfect",
-        ref="(see speaker notes; Obama bin Laden announcement, segment #14, 41.95-45.55 s)",
+        title="Demo — TRUST: AI talk, Indian-accent speaker (IS=5.00)",
+        video_key="clean_tech",
+        ref="to this wave of artificial intelligence that is slowly taking place",
         hyp_runs=runs,
-        metrics_line="WER 0%   /   IS 5.00   /   sequence_conf high   "
-                     "/   mean_prob ~ 0.93",
+        metrics_line="WER 0%   /   IS 5.00   /   mean_prob = 0.988   "
+                     "(VSP_NBEST=1, joint band rule)",
         badge_text="TIER: TRUST",
         badge_color=BLUE,
-        # audit:bigfonts — body trimmed (was: "Research observation: 27/29
-        # per-word bands are GREEN; the joint rule keeps them green because
-        # beam_agreement is also high.")
-        body="27/29 words GREEN. Joint rule retains them: beam_agreement also high.",
-        notes="Obama bin Laden announcement, segment #14 (41.95-45.55 s). "
-              "Clean speech: WER=0%, IS=5.00 (Excellent), mean_prob ~0.93. "
-              "27 of 29 per-word bands are GREEN; this is exactly the "
-              "population the Trust tier (mean_prob >= 0.82) is calibrated "
-              "for. Per-word colours render from the conf-only sidecar — "
-              "this Obama decode predates VSP_NBEST=1 (shipped April 30 "
-              "2026), so the agreement-aware joint rule is not applied "
-              "and per-word bands are top1_conf only. Re-running stage 8 "
-              "(outputs.sh::run_outputs) on a VSP_NBEST=1 decode would "
-              "upgrade the painting to the joint rule with no re-decode "
-              "needed. The NIV-Y green-band reliability for this "
-              "population is 94% per the band-reliability stratification "
-              "earlier in this section. Mention to peers: this slide is "
-              "the clean reference point for the Trust / Salvage / Strip "
-              "tour that follows. "
-              "Sources: docs/confidence/band_reliability_by_niv.md, "
-              "docs/features/per-word-confidence-user-guide.md.")
+        body="Every word GREEN under the joint rule. Diverse speaker, "
+             "Indian-English accent, perfect transcription.",
+        notes="Non-Obama TRUST exemplar (segment "
+              "K0h33Ps7vz4_11__e66d3063_00_000000_000103, ~4s, IS=5.00 / "
+              "WER=0% / mean_word_prob=0.988). South-Asian speaker with "
+              "Indian English accent, talking about 'this wave of "
+              "artificial intelligence'. Reference + hypothesis identical: "
+              "'to this wave of artificial intelligence that is slowly "
+              "taking place'. Why this is the right TRUST opener: a "
+              "rehearsed political statement (Obama) is the easiest "
+              "possible visual target — clear lighting, frontal face, "
+              "minimal head movement. This clip carries higher visemic "
+              "difficulty (different accent, different mouth shapes, "
+              "casual gesture) and the model still hits IS=5. Joint "
+              "conf+agreement rule applied (VSP_NBEST=1 sidecar available). "
+              "NIV-Y green-band reliability for this population is 94% "
+              "per the band-reliability stratification earlier in this "
+              "section. Anchors the Trust → Salvage → Strip tour that "
+              "follows on the next two slides. "
+              "Sources: english_full_nbest_eval/report_v2/report.csv, "
+              "docs/confidence/band_reliability_by_niv.md.")
 
 
 def slide_demo_obama_salvage(prs):

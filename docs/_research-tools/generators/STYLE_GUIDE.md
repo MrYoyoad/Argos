@@ -606,6 +606,20 @@ The slide shows the headline; speaker notes carry the full reasoning, citations,
 
 These slides may carry up to 8 short bullets, but each bullet still respects V2 (minimum text). If even 8 isn't enough, split.
 
+**V7 — Tier-badge color must match tier-name (production palette).**
+
+When a demo slide carries a `badge_text="TIER: X"` overlay, its `badge_color` must match the production palette baked into `VSP-LLM/scripts/make_burn.py`:
+
+| Tier name | Color constant | Hex anchor | Usage |
+|---|---|---|---|
+| **TRUST** | `BLUE` | #4DD0E1 | High-confidence + agreement; ≥30% green threshold met |
+| **INSPECT** / **SALVAGE** | `ORANGE` | #FF8A65 | Mixed confidence; partial recovery; trust gate at user discretion |
+| **STRIP** / **DON'T BELIEVE** | `PURPLE` | #B39DDB | Low confidence or hallucination; per-word colors stripped |
+
+Mismatch (e.g., `badge_text="INSPECT"` with `badge_color=PURPLE`) is silently misleading — the audience reads the color, not the word. The video itself burns the badge in matching color via `make_burn.py`; the slide overlay must use the same mapping. **Production label aliases**: INSPECT ≡ Salvage (research term); DON'T BELIEVE ≡ Strip (research term). Use either pair, but never mix the *labels* with the wrong *color*.
+
+This rule is enforced ad-hoc; consider adding a grep-based check to `audit_pptx_text_render.py` that flags `badge_color != expected[badge_text]` per slide.
+
 ---
 
 # Cross-Format Rules
