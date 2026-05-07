@@ -46,6 +46,15 @@ IMG = {
     "pipeline_visual": PLOTS / "pipeline_visual_strip.png",
     "pipeline_detailed": PLOTS / "pipeline_detailed.png",
     "llm_judge_report": PLOTS / "llm_judge_report_30_screenshot.png",
+    # MBR-IS regeneration assets (May 6 2026 — see
+    # 01_plots_for_slides/REGENERATION_LOG_20260506.md). Built by
+    # docs/_research-tools/generators/regenerate_after_amosi_plots.py.
+    "P_method_comparison": PLOTS / "P_method_comparison.png",
+    "P_band_reliability_stratified": PLOTS / "P_band_reliability_stratified.png",
+    "P_band_reliability_by_niv": PLOTS / "P_band_reliability_by_niv.png",
+    "P_v3_judge_paired": PLOTS / "P_v3_judge_paired.png",
+    "P_failure_taxonomy": PLOTS / "P_failure_taxonomy.png",
+    "P_llm_salvage": PLOTS / "P_llm_salvage.png",
 }
 
 VID = {
@@ -118,7 +127,14 @@ VID = {
     # RealTalk dataset (Round 8.8) — conversational two-person video,
     # spans Trust/Salvage/Strip on everyday speech.
     "realtalk_trust":   VIDEOS / "realtalk" / "12XM5_1lyrc__p0__win0240__burned.mp4",
-    "realtalk_salvage": VIDEOS / "realtalk" / "7LcWBEVtGwA__p1__win0520__burned.mp4",
+    # realtalk_salvage repointed 2026-05-06: previous 7LcWBEVtGwA__p1__win0520
+    # had mean_prob=0.847 — just above the 0.82 TRUST threshold, so the new
+    # agreement-aware rule painted it as TRUST tier (badge=TRUST), which
+    # contradicted the slide's "salvage / partial recovery" narrative.
+    # Switched to slot-7 from realtalk_demo_picks.md ("Long Island" visemic-
+    # confusion segment, mean_prob=0.673 → genuine SALVAGE/INSPECT badge,
+    # IS=2.80, WER=44%).
+    "realtalk_salvage": VIDEOS / "realtalk" / "5M9kx6mrXrA__p0__win0070__burned.mp4",
     "realtalk_strip":   VIDEOS / "realtalk" / "MkV7LSXtzkQ__p1__win0560__burned.mp4",
 }
 

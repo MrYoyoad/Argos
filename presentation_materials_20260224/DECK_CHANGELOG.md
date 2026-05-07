@@ -26,6 +26,48 @@ Reverse-chronological: newest entry on top.
 
 ---
 
+## 2026-05-06 — **AFTER_AMOSI May2026 — Academic deck May update** (LANDED)
+
+Internal 2-hour academic talk for research peers. Reference deck = `Argos_VSP_Final_84slides_Mar2026.pptx` (the AFTER_AMOSI master). Restructured into a 5-section narrative — Problem / Evaluation / Proof / Confidence / Demo+Future — with all numbers rebased onto MBR-default decode (production since May 2 2026). 89 slides total / 80 visible / 9 appendix.
+
+**WHAT — Audits & data:**
+- Built end-to-end audit script `scripts/audit_after_amosi_numbers.py` → emits `docs/evaluation/after_amosi_audit.md` + `.json` (286 flat keys, top-1 vs MBR side-by-side). MEMORY.md updated with MBR-default values.
+- PPTX number audit (`docs/evaluation/pptx_number_audit.{csv,md}`, `pptx_slides_to_update.md`): 3,284 numeric tokens across 220 slides; 935 flagged NEEDS_VERIFICATION; deprecated framing already migrated in earlier passes (zero WRONG_FRAMING_FIX hits).
+- PPTX visual+structural audit (`pptx_visual_audit.{json,md}`, `pptx_fix_manifest.md`): 4 BLOCKERS in March master (orphan animations + off-canvas pic), 380 total issues. 3 BLOCKERS fixed (slide_02, slide_14b, slide_15); 4th (slide_17_png) self-resolved by switching to programmatic slide_17.
+- Plot regen against MBR-IS: 5 PNGs overwritten (P1_quality_tiers, P3b_is_trajectory, P6_is_radar, P6b_radar_dual, P7_is_wer_scatter); 6 NEW plots (P_method_comparison, P_band_reliability_stratified, P_band_reliability_by_niv, P_v3_judge_paired, P_failure_taxonomy, P_llm_salvage). March PNGs archived.
+- Demo videos re-rendered with May 2 agreement-aware band rule: 8 clips through `make_burn.py --word_confidence`. Obama clips fall back to conf-only (no VSP_NBEST=1 in Apr 30 decode); judge_entity now lands STRIP under the new rule (strengthens the entity-swap narrative); realtalk_salvage clip swapped from mean=0.847 (would show TRUST) to mean=0.673 (genuine INSPECT). All originals backed up.
+
+**WHAT — Slide changes:**
+- New orchestrator `docs/_research-tools/generators/generate_after_amosi_presentation.py` (output: `Argos_VSP_AFTER_AMOSI_May2026.pptx`).
+- §0 Opening: `slide_what_was_done_*` updated with confidence/n-best/MBR ship lines; `slide_toc` re-staged to 5-section narrative.
+- §1 Problem: NEW `slide_diversity_of_inputs` (between slide_06 and slide_wer_lies). Pipeline switched from `slide_17_png` → programmatic `slide_17` (animateable, enlargeable).
+- §2 Evaluation: NEW `slide_literature_metrics_problem`. NIV/IS/PCA framing already in March deck — no rework needed.
+- §3 Proof: `slide_07` restaged as **Oracle vs Realistic** two-card layout (Oracle = NIV-Y+P 61.92%, Judge Y+P 71.08%; Realistic = ≥30% green Trust-gate at 65.2% recall / 5.6% FPR / 630 trusted). `slide_metric_transition` re-staged as 4-card Oracle→Realistic flow under MBR. Tier counts updated to 291/324/312/329/241.
+- §4 Confidence (biggest update vs March): 13 NEW slide functions in `slides_evaluation.py` covering per-word distribution, band reliability (overall + stratified + by-NIV), green leakage, three thresholds, three-tier policy, agreement-aware bands, agreement-vs-conf information gain, trust-gate ROC, n-best judge paired tests, MBR decision, v1-vs-v3 judge lesson.
+- §5 Demo+Future: 5 demo slides lifted from `slides_client.py` and reframed for academic audience (Obama trust/salvage/strip + judge entity/vocab). Strip-tier slide title disclosed: "INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)" since Obama set has no genuine STRIP-tier segment.
+- Appendix (9 hidden): `slide_human_is_path_b` (Path B pre-study estimates, hidden by default), `slide_appendix_pca_loadings` (PC1 68.4% / PC2 19.5%, retires the 3-dimensions framing), `slide_appendix_mcnemar_full` (full McNemar table on 5,988 verdicts).
+- Headline numbers verified at render time: PASS on 2.547 (MBR IS), 61.92% (NIV-Y+P MBR), 71.08% (Judge MBR Y+P), 5.6% (trust-gate FPR).
+
+**WHY:**
+- The March 11 deck used top-1 baseline numbers throughout. Production switched to MBR-default May 2; every per-segment IS, NIV count, tier distribution, and judge verdict was recomputed.
+- Real win lives at the LLM-Judge level, not the deterministic-metric level: Judge Y+P shifts +2.67pp (p=0.00017 paired McNemar) under MBR vs only +0.27pp on NIV-Y+P. Hence the Oracle-vs-Realistic framing — the deck now anchors on what the judge says is the model's upper bound, then on what the user actually trusts post-gate.
+- Per-word confidence shipped Apr 30; agreement-aware bands shipped May 2; n-best aggregation (MBR default) shipped May 2; v3 judge paired tests landed May 2. This deck is the first venue for an academic-audience walk-through of all three.
+
+**FILES (touched in this round):**
+- NEW: `docs/_research-tools/generators/generate_after_amosi_presentation.py`
+- NEW: `scripts/audit_after_amosi_numbers.py`, `scripts/extract_pptx_numbers.py`, `scripts/audit_pptx_visual_structure.py`, `scripts/_audit_build_reports.py`
+- Edited: `docs/_research-tools/generators/presentation/slides_opening.py`, `slides_research.py`, `slides_evaluation.py`, `slides_future.py`, `config.py` (IMG dict)
+- NEW audit docs: `docs/evaluation/after_amosi_audit.{md,json}`, `pptx_number_audit.{csv,md}`, `pptx_slides_to_update.md`, `pptx_visual_audit.{json,md}`, `pptx_fix_manifest.md`
+- NEW changelog: `docs/changelog/after_amosi_audit.md`
+- Plots regen: 11 PNGs in `presentation_materials_20260224/01_plots_for_slides/` (5 overwritten + 6 new), originals archived to `_archive_march2026/`
+- Demo videos: 8 MP4s in `presentation_materials_20260224/06_demo_videos/`, originals archived to `_archive_pre_may6/`
+- Output: `presentation_materials_20260224/Argos_VSP_AFTER_AMOSI_May2026.pptx` (31 MB)
+- MEMORY.md updated with MBR-default key numbers
+
+**COMMIT:** _to be filled in after `git commit`_
+
+---
+
 ## 2026-05-03 — **v9.1 — Example 5 video correctly sourced** (LANDED)
 
 User pushback on v9.0: "did you put the correct video for the slide i asked you?" Honest answer was no — `judge_ex1` (bernreuter→rogers solar PV named-entity swap) had `video_key=None` after the wrong Obama placeholder was removed, then the slide was dropped entirely in the no-text-only-examples pass.

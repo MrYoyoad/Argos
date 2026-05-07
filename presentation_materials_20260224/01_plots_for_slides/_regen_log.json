@@ -1,0 +1,116 @@
+{
+  "P1_quality_tiers": {
+    "counts": [
+      291,
+      324,
+      312,
+      329,
+      241
+    ],
+    "pcts": [
+      19.4,
+      21.6,
+      20.8,
+      22.0,
+      16.1
+    ],
+    "n": 1497,
+    "niv_y": 23.91449565798263,
+    "niv_yp": 61.92384769539078,
+    "mean_is": 2.5467370412354526
+  },
+  "P3b_is_trajectory": {
+    "n_y_mbr": 358,
+    "n_yp_mbr": 927,
+    "n_y_top1": 359,
+    "n_yp_top1": 923,
+    "mean_is_mbr": 2.5467370412354526,
+    "mean_is_top1": 2.5322451140226
+  },
+  "P7_is_wer_scatter": {
+    "gap_y": 52,
+    "gap_yp": 437
+  },
+  "P_method_comparison": {
+    "means": {
+      "hyp_top1": 2.5322,
+      "hyp_mbr": 2.5467,
+      "hyp_vote_score": 2.5377,
+      "hyp_vote_conf": 2.545
+    }
+  },
+  "P_band_reliability_stratified": {
+    "bins": [
+      "<0.40",
+      "0.40-0.55",
+      "0.55-0.65",
+      "0.65-0.75",
+      "0.75-0.85",
+      "\u22650.85"
+    ],
+    "p_correct": [
+      18.2,
+      21.8,
+      41.3,
+      69.6,
+      83.8,
+      92.8
+    ],
+    "coverage": [
+      94,
+      229,
+      229,
+      317,
+      316,
+      242
+    ]
+  },
+  "P_band_reliability_by_niv": {
+    "green": [
+      94.1,
+      79.7,
+      37.1
+    ],
+    "yellow": [
+      65.2,
+      41.2,
+      16.9
+    ],
+    "red": [
+      38.7,
+      20.3,
+      6.9
+    ]
+  },
+  "P_v3_judge_paired": {
+    "yp_pct": {
+      "top1": 68.4,
+      "mbr": 71.1,
+      "vote_score": 69.3,
+      "vote_conf": 70.5
+    },
+    "y_pct": {
+      "top1": 13.1,
+      "mbr": 13.9,
+      "vote_score": 14.0,
+      "vote_conf": 12.5
+    }
+  },
+  "P_failure_taxonomy": {
+    "mbr_niv_n": 570,
+    "counts": {
+      "Wrong Topic": 253,
+      "Hallucination": 107,
+      "Signal Loss": 79,
+      "Right Topic\nWrong Details": 79,
+      "Accumulated\nErrors": 52
+    },
+    "pct": {
+      "Wrong Topic": 44.4,
+      "Hallucination": 18.8,
+      "Signal Loss": 13.9,
+      "Right Topic\nWrong Details": 13.8,
+      "Accumulated\nErrors": 9.1
+    }
+  }
+}

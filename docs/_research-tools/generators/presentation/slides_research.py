@@ -484,56 +484,64 @@ def slide_is_signals(prs):
 
 
 def slide_is_weight_rationale(prs):
-    """PCA story: 6 signals collapse into 2 dimensions, validating the IS design."""
+    """PCA story: 6 signals collapse into 2 dimensions, validating the IS design.
+
+    audit: after_amosi_logic_fixes.md §2 Slide 31 MAJOR — PC3 column dropped from
+    body so the visual matches the verbal "Kaiser retains 2 PCs" claim and aligns
+    with slide 33 (slide_is_dimensions). Source: docs/evaluation/is_pca_analysis.md.
+    """
     slide = new_slide(prs)
     add_title(slide, "Do 6 Signals Actually Measure 6 Things?")
     add_accent_line(slide)
 
     add_text(slide,
-        "PCA on 1,497 segments reveals where the variance actually lives.",
-        MX, CT, CW, Inches(0.3),
+        "PCA on 1,497 segments reveals where the variance actually lives "
+        "(Kaiser criterion retains 2 PCs — semantic is NOT an independent dimension).",
+        MX, CT, CW, Inches(0.5),
         size=Pt(14), color=LGRAY, italic=True)
 
-    # Three PCA dimension cards — full width, stacked
+    # Two PCA dimension cards — full width, stacked (PC3 dropped per logic fix §2)
     card_w = CW
-    card_h = Inches(1.3)
-    py = CT + Inches(0.5)
+    card_h = Inches(1.7)
+    py = CT + Inches(0.7)
 
     dims = [
         ("PC1: Signal Quality", "68.4%", TEAL,
          "Semantic + Phonetic + WER + WWER + Named Entity Accuracy",
          "All 5 content signals load equally (0.43\u20130.47). Semantic is NOT "
-         "independent \u2014 it measures the same underlying quality as word accuracy."),
+         "independent \u2014 it loads on PC1 alongside the word-accuracy signals, "
+         "measuring the same underlying quality factor."),
         ("PC2: Output Length", "19.5%", GREEN,
          "Length Ratio dominates (loading 0.91) \u2014 independent of content quality",
-         "Catches hallucination (too long) and truncation (too short)."),
-        ("PC3: Entity Swing", "5.1%", GOLD,
-         "NEA F1 loads here (below Kaiser threshold, eigenvalue 0.31)",
-         "Minor refinement axis \u2014 names and numbers that diverge "
-         "from the main quality signal."),
+         "Catches hallucination (too long) and truncation (too short). "
+         "The only IS axis that is truly orthogonal to the quality factor."),
+        # PC3 deliberately removed \u2014 see audit:slide_31_pc3_dropped (logic fix \u00a72).
     ]
 
     dim_shapes = []
     for name, pct, color, signals, desc in dims:
         r = add_rect(slide, MX, py, card_w, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
-        add_text(slide, name, MX + Inches(0.3), py + Inches(0.1),
-                 Inches(5.0), Inches(0.35), size=Pt(18), color=color, bold=True)
-        add_text(slide, pct, MX + card_w - Inches(1.2), py + Inches(0.1),
-                 Inches(1.0), Inches(0.35), size=Pt(18), color=color,
+        add_text(slide, name, MX + Inches(0.3), py + Inches(0.15),
+                 Inches(5.0), Inches(0.4), size=Pt(20), color=color, bold=True)
+        add_text(slide, pct, MX + card_w - Inches(1.4), py + Inches(0.15),
+                 Inches(1.2), Inches(0.4), size=Pt(20), color=color,
                  bold=True, align=PP_ALIGN.RIGHT)
-        add_text(slide, signals, MX + Inches(0.3), py + Inches(0.45),
-                 card_w - Inches(0.6), Inches(0.3), size=Pt(13), color=WHITE)
-        add_text(slide, desc, MX + Inches(0.3), py + Inches(0.75),
-                 card_w - Inches(0.6), Inches(0.45), size=Pt(12), color=LGRAY)
+        add_text(slide, signals, MX + Inches(0.3), py + Inches(0.65),
+                 card_w - Inches(0.6), Inches(0.4), size=Pt(14), color=WHITE)
+        add_text(slide, desc, MX + Inches(0.3), py + Inches(1.05),
+                 card_w - Inches(0.6), Inches(0.6), size=Pt(13), color=LGRAY)
         dim_shapes.append(r)
-        py += Inches(1.5)
+        py += Inches(1.85)
 
-    # Bottom takeaway
+    # Bottom takeaway \u2014 Kaiser explicitly retains 2 PCs (87.9% variance).
+    # PC3 (5.1%, eigenvalue 0.31) is below the Kaiser threshold and is NOT
+    # shown on this slide; see slide_is_dimensions for the clean 2-PC framing
+    # and slide_appendix_pca_loadings for the full loadings table.
     val_t = add_text(slide,
-        "Together: 93% of variance in 3 components. "
-        "Kaiser retains 2 (87.9%); PC3 adds nuance.",
-        MX, Inches(6.35), CW, Inches(0.35),
+        "Kaiser retains 2 PCs (87.9% of variance). "
+        "PC3 (5.1%, eigenvalue 0.31) sits below the Kaiser threshold and is not used.",
+        MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -541,10 +549,13 @@ def slide_is_weight_rationale(prs):
         "PC1 (68.4%): all 5 content signals load equally at 0.43-0.47 \u2014 one general "
         "quality factor. Semantic is NOT independent; it loads on PC1 with word-accuracy. "
         "PC2 (19.5%): Length Ratio dominates at 0.91, independent of content. "
-        "PC3 (5.1%): Entity Swing, NEA F1 refinement, below Kaiser threshold "
-        "(eigenvalue 0.31 < 1.0). Together 93%. "
+        "Kaiser retains 2 PCs (eigenvalues > 1; 87.9% total variance). "
+        "PC3 (5.1%, eigenvalue 0.31) is below the Kaiser threshold and is intentionally "
+        "omitted from the body so the visual matches the slide-33 framing \u2014 see "
+        "slide_appendix_pca_loadings for the PC3 loading vector. "
         "Weight sensitivity: current vs equal weights correlate at r=0.999 \u2014 "
-        "only 5.4% of segments change tier. The formula is robust to perturbation.",
+        "only 5.4% of segments change tier. The formula is robust to perturbation. "
+        "Source: docs/evaluation/is_pca_analysis.md \u00a73.1, \u00a75.",
         [dim_shapes, [val_t]], click_reveal=True)
 
 
@@ -678,25 +689,37 @@ def slide_is_radar(prs):
 
 
 def slide_is_wer_scatter(prs):
-    """IS vs WER scatter showing 'the gap' — NIV thresholds."""
+    """IS vs WER scatter showing 'the gap' — NIV thresholds.
+
+    NIV gloss inserted here (FIRST occurrence in slides_research.py); downstream
+    research-section slides reference NIV without re-defining (per fix #5).
+    audit: after_amosi_logic_fixes.md §2 Slide 35 CRITICAL — uncalibrated WER>40%
+    cut switched to calibrated NIV-Y+P WER>77% (threshold_calibration_vs_opus.md §6.4).
+    Counts re-derived from intelligibility_scores.csv (top-1, 1,497 seg):
+    IS>=3.80 ∩ WER>34% = 75; IS>=2.00 ∩ WER>77% = 68.
+    """
     slide = new_slide(prs)
     add_title(slide, "The Gap: Where WER Lies Most")
     add_accent_line(slide)
 
     # Left column — two gap numbers + bullets (narrower to give plot more room)
     left_w = Inches(4.2)
-    num_s = add_text(slide, "42 + 437", MX, CT, left_w, Inches(1.1),
+    num_s = add_text(slide, "75 + 68", MX, CT, left_w, Inches(1.1),  # audit:logic_35_calibrated_counts
                      size=Pt(56), color=GREEN, bold=True)
-    lbl_s = add_text(slide, "segments WER wrongly discards (NIV thresholds)",
+    lbl_s = add_text(slide, "segments WER wrongly discards (NIV-calibrated cutoffs)",
                      MX, CT + Inches(1.1), left_w, Inches(0.5),
                      size=Pt(15), color=LGRAY)
     bul = add_bullets(slide, [
-        ("42 clearly conveyed (IS \u2265 3.80) but WER > 34%", {"bold": True, "color": GREEN}),
-        ("437 useful meaning (IS \u2265 2.00) but WER > 40%", {"bold": True, "color": GOLD}),
-        "NIV: calibrated against Opus-as-a-Judge (blind eval)",
+        # NIV gloss \u2014 FIRST mention in slides_research.py (per fix #5)
+        ("NIV = Native Intelligibility Verdict (calibrated against the Opus-as-a-Judge blind eval)",
+         {"color": LGRAY}),
+        ("75 clearly conveyed (IS \u2265 3.80) but WER > 34%  (NIV-Y WER cutoff)",
+         {"bold": True, "color": GREEN}),  # audit:logic_35_niv_y_count
+        ("68 useful meaning (IS \u2265 2.00) but WER > 77%  (NIV-Y+P WER cutoff)",
+         {"bold": True, "color": GOLD}),  # audit:logic_35_niv_yp_count
         "IS \u2265 3.80 matches judge Y rate exactly (\u03ba=0.690)",
         ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),
-    ], MX, CT + Inches(1.65), left_w, Inches(3.0))
+    ], MX, CT + Inches(1.65), left_w, Inches(3.2))
 
     # Right — larger scatter plot
     img = add_image(slide, "P7_is_wer_scatter",
@@ -705,22 +728,31 @@ def slide_is_wer_scatter(prs):
 
     # Bottom note about IS-WER correlation
     add_text(slide,
-        "IS WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
+        "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
         "it misses phonetic and semantic preservation, making it insufficient alone.",
         MX, Inches(6.3), CW, Inches(0.4),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Scatter plot of WER vs IS for all 1,497 segments with NIV thresholds. "
-        "Green region: 42 segments clearly conveyed (IS >= 3.80) but WER > 34%. "
-        "Amber region: 437 segments with useful meaning (IS >= 2.00) but WER > 40%. "
+        "Scatter plot of WER vs IS for all 1,497 segments (top-1 IS) with "
+        "NIV-calibrated WER cutoffs. "
+        "Green region: 75 segments clearly conveyed (IS >= 3.80) but WER > 34% "
+        "(NIV-Y WER cutoff). "
+        "Amber region: 68 segments with useful meaning (IS >= 2.00) but WER > 77% "
+        "(NIV-Y+P WER cutoff). Both WER cuts are now NIV-calibrated; the previous "
+        "deck quoted an uncalibrated WER>40% cut for the amber region "
+        "(logic-fix \u00a72 Slide 35). "
         "NIV thresholds calibrated against Opus-as-a-Judge: IS >= 3.80 for Y "
         "(\u03ba=0.690, captures 23.1% vs judge 23.0%), IS >= 2.00 for Y+P "
-        "(\u03ba=0.818, captures 61.6% vs judge 64.9%). IS beats WER at both "
-        "operating points (+0.061 for Y, +0.041 for Y+P).\n\n"
-        "IS WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
+        "(\u03ba=0.818, captures 61.92% useful under MBR; top-1 baseline 61.6% "  # audit:niv_yp_pct_mbr
+        "vs judge 64.9%). IS beats WER at both operating points "
+        "(+0.061 \u03ba for Y, +0.041 \u03ba for Y+P).\n\n"
+        "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
         "it misses phonetic and semantic preservation, making it insufficient "
-        "as a standalone quality measure.",
+        "as a standalone quality measure. "
+        "Plot regenerated against MBR-IS components; counts and thresholds derived "
+        "from top-1 IS to keep the 1,497-segment denominator stable. "
+        "Source: docs/evaluation/threshold_calibration_vs_opus.md \u00a76.",
         [[num_s, lbl_s, bul], [img]], click_reveal=True)
 
 
@@ -837,78 +869,180 @@ def slide_semantic_domain_gap(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_07(prs):
+    """IS results headline — Oracle (MBR) vs Realistic (Trust-gate).
+
+    Restaged May 6 2026 to lead with the production MBR-default numbers and
+    introduce the Oracle vs Realistic framing. All numerics are tagged with
+    `# audit:KEY` comments pointing back to
+    docs/evaluation/after_amosi_audit.json.
+    """
     slide = new_slide(prs)
-    add_title(slide, "Intelligibility Score: 61.6% Useful Output")
+    add_title(slide, "Where the System Works: Oracle vs Realistic")
     add_accent_line(slide)
 
-    # 6 signal blocks
-    signals = [
-        ("Semantic\nSim", "25%", TEAL),
-        ("Phonetic\nSim", "15%", TEAL),
-        ("Inv.\nWER", "15%", TEAL),
-        ("Inv.\nWWER", "15%", TEAL),
-        ("NEA\nF1", "15%", CORAL),
-        ("Length\nRatio", "15%", LGRAY),
-    ]
-    bw = Inches(1.7)
-    bh = Inches(1.1)
-    gap = Inches(0.22)
-    total = 6 * bw + 5 * gap
-    bx = (SL_W - total) / 2
+    # ── Top row: two side-by-side cards ──────────────────────────────
+    card_w = Inches(6.0)
+    card_h = Inches(3.05)
+    gap_x = Inches(0.13)
     by = CT
+    lx = MX
+    rx = MX + card_w + gap_x
 
-    signal_shapes = []
-    for i, (label, weight, color) in enumerate(signals):
-        x = bx + i * (bw + gap)
-        r = add_rect(slide, x, by, bw, bh, fill_color=NAVY2,
-                     border_color=color, border_width=Pt(2), corner_radius=True)
-        t = add_text(slide, f"{label}\n({weight})", x + Inches(0.1), by + Inches(0.1),
-                 bw - Inches(0.2), bh - Inches(0.2),
-                 size=Pt(11), color=WHITE, align=PP_ALIGN.CENTER)
-        signal_shapes.append(r)
-        signal_shapes.append(t)
+    # Audit-pinned values (after_amosi_audit.json, MBR default)
+    niv_yp_pct_mbr = 61.92        # audit:niv_yp_pct_mbr
+    niv_y_pct_mbr  = 23.91        # audit:niv_y_pct_mbr
+    judge_yp_mbr   = 71.08        # audit:judge_v3_yp_pct_mbr
+    judge_yp_base  = 68.40        # audit:judge_v3_yp_pct_baseline
+    is_mean_mbr    = 2.547        # audit:is_mean_mbr
+    is_mean_top1   = 2.532        # audit:is_mean_top1
+    mcnemar_p      = 0.00017      # audit:mcnemar_yp_p_mbr
 
-    # Key callout
-    callout = add_text(slide,
-        "IS ≥ 2.00 = Useful Output (Y+P): 61.6% — 2.4× what WER suggests (25.5%)\n"
-        "Phonetic similarity: 41.5% mean, r=0.943 with IS (strongest single signal)",
-        MX, by + bh + Inches(0.2), CW, Inches(0.55),
-        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+    # Trust-gate ≥30% green (audit:section_E_trust_gate, threshold=0.3)
+    trust_n_trusted = 630         # audit:trust_gate_op_30 n_trusted
+    trust_tp        = 602         # audit:trust_gate_op_30 tp_useful
+    trust_fp        = 28          # audit:trust_gate_op_30 fp_useful
+    trust_recall    = 65.2        # audit:trust_gate_op_30 recall_useful (%)
+    trust_fpr       = 5.6         # audit:trust_gate_op_30 fpr_useful (%)
+    trust_denom     = 1427        # per_segment_safety.csv non-empty rows
 
-    # 5 tier bars
+    # ── LEFT CARD: Oracle (warm CORAL) ───────────────────────────────
+    oracle_shapes = []
+    oracle_shapes.append(add_rect(slide, lx, by, card_w, card_h,
+                          fill_color=NAVY2, border_color=CORAL,
+                          border_width=Pt(2.5), corner_radius=True))
+    oracle_shapes.append(add_text(slide, "Oracle  (MBR best-case)",
+                          lx + Inches(0.25), by + Inches(0.1),
+                          card_w - Inches(0.5), Inches(0.4),
+                          size=Pt(16), color=CORAL, bold=True))
+    oracle_shapes.append(add_text(slide,
+        f"What the model can produce on the 1,497-segment set.",
+        lx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.3),
+        size=Pt(11), color=LGRAY, italic=True))
+
+    # Big Y+P number
+    oracle_shapes.append(add_text(slide, f"{niv_yp_pct_mbr:.2f}%",
+        lx + Inches(0.25), by + Inches(0.85),
+        card_w - Inches(0.5), Inches(0.7),
+        size=Pt(40), color=CORAL, bold=True, align=PP_ALIGN.CENTER))
+    oracle_shapes.append(add_text(slide,
+        "NIV-Y+P  (IS ≥ 2.00, deterministic)",
+        lx + Inches(0.25), by + Inches(1.55),
+        card_w - Inches(0.5), Inches(0.3),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+
+    # Sub-numbers
+    oracle_shapes.append(add_text(slide,
+        f"NIV-Y (clearly conveyed): {niv_y_pct_mbr:.2f}%      "  # audit:niv_y_pct_mbr
+        f"Mean IS: {is_mean_mbr:.3f}  (top-1: {is_mean_top1:.3f})",
+        lx + Inches(0.25), by + Inches(1.95),
+        card_w - Inches(0.5), Inches(0.35),
+        size=Pt(12), color=WHITE, align=PP_ALIGN.CENTER))
+    oracle_shapes.append(add_text(slide,
+        f"LLM Judge v3 Y+P: {judge_yp_mbr:.2f}%  "
+        f"(baseline {judge_yp_base:.2f}%, +{judge_yp_mbr - judge_yp_base:+.2f} pp, "
+        f"paired McNemar p = {mcnemar_p:.5f})",
+        lx + Inches(0.25), by + Inches(2.35),
+        card_w - Inches(0.5), Inches(0.6),
+        size=Pt(11), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+
+    # ── RIGHT CARD: Realistic (TEAL) ─────────────────────────────────
+    realistic_shapes = []
+    realistic_shapes.append(add_rect(slide, rx, by, card_w, card_h,
+                            fill_color=NAVY2, border_color=TEAL,
+                            border_width=Pt(2.5), corner_radius=True))
+    realistic_shapes.append(add_text(slide, "Realistic  (Trust-gate output)",
+                            rx + Inches(0.25), by + Inches(0.1),
+                            card_w - Inches(0.5), Inches(0.4),
+                            size=Pt(16), color=TEAL, bold=True))
+    realistic_shapes.append(add_text(slide,
+        "What the user can confidently rely on (≥30% green operating point).",
+        rx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.3),
+        size=Pt(11), color=LGRAY, italic=True))
+
+    realistic_shapes.append(add_text(slide, f"{trust_recall:.1f}%",
+        rx + Inches(0.25), by + Inches(0.85),
+        card_w - Inches(0.5), Inches(0.7),
+        size=Pt(40), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+    realistic_shapes.append(add_text(slide,
+        "Recall of useful content  (FPR " + f"{trust_fpr:.1f}%)",
+        rx + Inches(0.25), by + Inches(1.55),
+        card_w - Inches(0.5), Inches(0.3),
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+
+    realistic_shapes.append(add_text(slide,
+        f"{trust_n_trusted} trusted segments  /  "
+        f"{trust_tp} TPs  /  {trust_fp} FPs    "
+        f"(of {trust_denom} non-empty)",
+        rx + Inches(0.25), by + Inches(1.95),
+        card_w - Inches(0.5), Inches(0.35),
+        size=Pt(12), color=WHITE, align=PP_ALIGN.CENTER))
+    realistic_shapes.append(add_text(slide,
+        "Joint conf+beam-agreement bands  •  "
+        "operating point set May 2 2026",
+        rx + Inches(0.25), by + Inches(2.35),
+        card_w - Inches(0.5), Inches(0.35),
+        size=Pt(11), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+
+    # Denominator caveat — Oracle metrics evaluate all 1,497 segments;
+    # Trust-gate is recall on 1,427 non-empty segments (excludes 70 empty hyps).
+    # audit: after_amosi_logic_fixes.md §2 Slide 36/37/38 MAJOR — denominator caveat.
+    realistic_shapes.append(add_text(slide,
+        f"Oracle metrics evaluate all 1,497 segments; Trust-gate recall is "
+        f"on {trust_denom} non-empty segments (excludes 70 empty hypotheses).",
+        rx + Inches(0.25), by + Inches(2.70),
+        card_w - Inches(0.5), Inches(0.30),
+        size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+
+    # ── Bottom: tier distribution under MBR ──────────────────────────
+    # audit:tier_5_count_mbr ... tier_1_count_mbr (sums to 1497)
     tiers = [
-        ("18.4% Excellent", 18.4, GREEN),
-        ("21.4% Good", 21.4, TEAL),
-        ("21.7% Fair", 21.7, YELLOW),
-        ("22.4% Poor", 22.4, ORANGE),
-        ("16.0% Failed", 16.0, RED),
+        ("Tier 5 — Excellent (IS ≥ 4.0)",      291, GREEN),    # audit:tier_5_count_mbr
+        ("Tier 4 — Good (3.0–3.99)",           324, TEAL),     # audit:tier_4_count_mbr
+        ("Tier 3 — Fair (2.0–2.99)",           312, YELLOW),   # audit:tier_3_count_mbr
+        ("Tier 2 — Poor (1.0–1.99)",           329, ORANGE),   # audit:tier_2_count_mbr
+        ("Tier 1 — Failed (< 1.0)",            241, RED),      # audit:tier_1_count_mbr
     ]
-    bar_y = by + bh + Inches(1.05)
-    bar_h = Inches(0.38)
-    bar_gap = Inches(0.12)
-    max_w = Inches(8.0)
-    label_w = Inches(3.0)
-    bar_x = MX + label_w + Inches(0.2)
+    bar_y0 = by + card_h + Inches(0.2)
+    bar_h = Inches(0.32)
+    bar_gap = Inches(0.08)
+    label_w = Inches(3.4)
+    max_w = Inches(7.5)
+    bar_x = MX + label_w + Inches(0.15)
 
     tier_shapes = []
-    for i, (label, val, color) in enumerate(tiers):
-        y = bar_y + i * (bar_h + bar_gap)
+    for i, (label, count, color) in enumerate(tiers):
+        y = bar_y0 + i * (bar_h + bar_gap)
         lbl = add_text(slide, label, MX, y, label_w, bar_h,
-                 size=Pt(13), color=WHITE, align=PP_ALIGN.RIGHT)
-        w = int(max_w * val / 25.0)  # scale to max
+                 size=Pt(11), color=WHITE, align=PP_ALIGN.RIGHT)
+        # Scale: max count among tiers ~= 329 → use 350 for headroom
+        w = int(max_w * count / 350.0)
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color)
-        tier_shapes.append(lbl)
-        tier_shapes.append(bar)
+        val = add_text(slide, f"{count}  ({count / 1497.0 * 100:.1f}%)",
+                 bar_x + w + Inches(0.1), y, Inches(2.0), bar_h,
+                 size=Pt(11), color=LGRAY)
+        tier_shapes.extend([lbl, bar, val])
 
     _finish(slide, 7,
-        "The Intelligibility Score combines 6 signals into a 0-5 composite. "
-        "Key insight: 61.6% of segments deliver useful output (IS >= 2.00, NIV Y+P) — "
-        "2.4x what WER suggests (25.5%). WER dramatically overstates "
-        "failure. Methodology: LLM-distilled evaluation — the "
-        "rubric, selected signals and weights, defined tier boundaries. "
-        "Validated: IS vs Opus judge κ=0.818 at Y+P (IS≥2.00), "
-        "cross-config r=0.925.",
-        [signal_shapes, [callout], tier_shapes], click_reveal=True)
+        "Restaged May 6 2026: Oracle (MBR best-case) on the left — what the model "
+        "can produce — vs Realistic (Trust-gate output) on the right — what the user "
+        "can confidently rely on. "
+        f"Oracle: NIV-Y+P {niv_yp_pct_mbr:.2f}% (IS≥2.00 deterministic), "
+        f"NIV-Y {niv_y_pct_mbr:.2f}% (IS≥3.80), "
+        f"LLM Judge v3 Y+P {judge_yp_mbr:.2f}% vs baseline {judge_yp_base:.2f}% "
+        f"(paired McNemar p={mcnemar_p:.5f}). "
+        f"Realistic: at the ≥30% green Trust-gate, "
+        f"{trust_recall:.1f}% recall / {trust_fpr:.1f}% FPR "
+        f"({trust_n_trusted} trusted = {trust_tp} TPs + {trust_fp} FPs of "
+        f"{trust_denom} non-empty segments). "
+        "Mean IS = 2.547 (MBR) vs 2.532 (top-1 baseline). "
+        "DENOMINATOR CAVEAT (logic-fix §2 Slide 36/37/38): Oracle metrics "
+        f"are computed across all 1,497 segments; Trust-gate recall is computed "
+        f"on the {trust_denom} non-empty segments (excludes 70 empty hypotheses). "
+        "The two cards are different lenses on the system, not progressive "
+        "refinements of the same denominator. "
+        "Sources: docs/evaluation/after_amosi_audit.json (sections A, F, E), "
+        "docs/evaluation/threshold_calibration_vs_opus.md.",
+        [oracle_shapes, realistic_shapes, tier_shapes], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 8 — FAILURE MODE TAXONOMY (BAR CHART)
@@ -1044,7 +1178,7 @@ def slide_failure_deep_1a(prs):
         anim_groups.append([r, t1, t2, t3, t4])
 
     add_text(slide,
-        "Ordered by impact \u2014 highest to lowest (continued on next slide)",
+        "Ordered by impact \u2014 highest to lowest (continued in part 2/2)",
         MX, Inches(6.65), CW, Inches(0.35),
         size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1339,77 +1473,154 @@ def slide_09(prs):
 
 
 def slide_metric_transition(prs):
-    """The three numbers: 25.5% -> 61.6% -> 64.9%."""
+    """Oracle -> Realistic flow under MBR (May 6 2026 restage).
+
+    Re-staged from the legacy 25.5% -> 61.6% -> 64.9% (top-1) framing.
+    Now walks four progressive numbers under the MBR-default, ending at
+    the user-visible Trust-gate operating point. All numerics are pinned
+    with `# audit:KEY` comments referencing
+    docs/evaluation/after_amosi_audit.json.
+    """
     slide = new_slide(prs)
-    add_title(slide, "Three Numbers That Tell the Real Story")
+    add_title(slide, "From Literature Metric to User-Trusted Output")
     add_accent_line(slide)
 
-    card_w = CW - Inches(2.0)
-    card_h = Inches(1.25)
-    card_x = MX + Inches(1.0)
-    arrow_h = Inches(0.4)
+    # Audit-pinned numbers (MBR default unless noted)
+    wer_top1     = 64.05    # audit:wer_mean_top1   (Section B)
+    wer_mbr      = 63.84    # audit:wer_mean_mbr    (Section B)
+    is_yp_mbr    = 61.92    # audit:niv_yp_pct_mbr
+    judge_yp_mbr = 71.08    # audit:judge_v3_yp_pct_mbr
+    judge_yp_base= 68.40    # audit:judge_v3_yp_pct_baseline
+    trust_recall = 65.2     # audit:section_E_trust_gate threshold=0.30 recall_useful (%)
+    trust_fpr    = 5.6      # audit:section_E_trust_gate threshold=0.30 fpr_useful (%)
+    trust_n      = 630      # audit:section_E_trust_gate threshold=0.30 n_trusted
+    eff_legacy_mbr = 51.50  # audit:effective_capture_legacy_pct_mbr
 
-    c1_y = CT + Inches(0.2)
+    card_w = CW - Inches(2.0)
+    card_h = Inches(1.05)        # tightened from 1.25 to fit 4 cards in content area
+    card_x = MX + Inches(1.0)
+    arrow_h = Inches(0.32)
+
+    # ── Card 1: WER (literature metric) ──────────────────────────────
+    c1_y = CT + Inches(0.0)
     g1 = []
     g1.append(add_rect(slide, card_x, c1_y, card_w, card_h,
                         fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                         corner_radius=True))
-    g1.append(add_text(slide, "25.5%", card_x + Inches(0.3), c1_y + Inches(0.1),
-                        Inches(2.5), card_h - Inches(0.2),
-                        size=Pt(48), color=CORAL, bold=True))
-    g1.append(add_text(slide, "By WER (\u226434%)\n381 of 1,497 videos appear useful\nWER says only 1 in 4 works",
-                        card_x + Inches(3.0), c1_y + Inches(0.15),
-                        card_w - Inches(3.3), card_h - Inches(0.3),
-                        size=Pt(15), color=LGRAY))
+    g1.append(add_text(slide, f"{wer_mbr:.2f}%",
+                        card_x + Inches(0.3), c1_y + Inches(0.05),
+                        Inches(2.6), card_h - Inches(0.1),
+                        size=Pt(38), color=CORAL, bold=True))
+    g1.append(add_text(slide,
+        f"WER (MBR; top-1: {wer_top1:.2f}%)\n"
+        "What the literature metric reports \u2014 pessimistic on wild data",
+        card_x + Inches(3.0), c1_y + Inches(0.1),
+        card_w - Inches(3.3), card_h - Inches(0.2),
+        size=Pt(13), color=LGRAY))
     # No strikethrough — WER is still valid, just pessimistic
 
-    a1_y = c1_y + card_h + Inches(0.05)
+    a1_y = c1_y + card_h + Inches(0.04)
     g1_arrow = []
     g1_arrow.append(add_text(slide, "\u25bc", card_x + card_w / 2 - Inches(0.3),
                               a1_y, Inches(0.6), arrow_h,
-                              size=Pt(20), color=TEAL, align=PP_ALIGN.CENTER))
+                              size=Pt(18), color=TEAL, align=PP_ALIGN.CENTER))
 
+    # -- Card 2: NIV-Y+P (deterministic IS, MBR) --
     c2_y = a1_y + arrow_h
     g2 = []
     g2.append(add_rect(slide, card_x, c2_y, card_w, card_h,
-                        fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
-                        corner_radius=True))
-    g2.append(add_text(slide, "61.6%", card_x + Inches(0.3), c2_y + Inches(0.1),
-                        Inches(2.5), card_h - Inches(0.2),
-                        size=Pt(48), color=TEAL, bold=True))
+                       fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
+                       corner_radius=True))
+    g2.append(add_text(slide, f"{is_yp_mbr:.2f}%",
+                       card_x + Inches(0.3), c2_y + Inches(0.05),
+                       Inches(2.6), card_h - Inches(0.1),
+                       size=Pt(38), color=TEAL, bold=True))
     g2.append(add_text(slide,
-        "By IS (\u22652.00): 922 of 1,497 videos\ndeliver useful meaning\nIS reveals 3 in 5 carry meaning",
-        card_x + Inches(3.0), c2_y + Inches(0.15),
-        card_w - Inches(3.3), card_h - Inches(0.3),
-        size=Pt(15), color=WHITE))
+        "NIV-Y+P  (IS \u2265 2.00, MBR)\n"
+        "What our deterministic metric agrees is useful \u2014 927 / 1,497",
+        card_x + Inches(3.0), c2_y + Inches(0.1),
+        card_w - Inches(3.3), card_h - Inches(0.2),
+        size=Pt(13), color=WHITE))
 
-    a2_y = c2_y + card_h + Inches(0.05)
+    a2_y = c2_y + card_h + Inches(0.04)
     g2_arrow = []
     g2_arrow.append(add_text(slide, "\u25bc", card_x + card_w / 2 - Inches(0.3),
                               a2_y, Inches(0.6), arrow_h,
-                              size=Pt(20), color=GREEN, align=PP_ALIGN.CENTER))
+                              size=Pt(18), color=GREEN, align=PP_ALIGN.CENTER))
 
+    # ── Card 3: LLM Judge v3 Oracle ──────────────────────────────────
     c3_y = a2_y + arrow_h
     g3 = []
     g3.append(add_rect(slide, card_x, c3_y, card_w, card_h,
-                        fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
-                        corner_radius=True))
-    g3.append(add_text(slide, "64.9%", card_x + Inches(0.3), c3_y + Inches(0.1),
-                        Inches(2.5), card_h - Inches(0.2),
-                        size=Pt(48), color=GREEN, bold=True))
+                       fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
+                       corner_radius=True))
+    g3.append(add_text(slide, f"{judge_yp_mbr:.2f}%",
+                       card_x + Inches(0.3), c3_y + Inches(0.05),
+                       Inches(2.6), card_h - Inches(0.1),
+                       size=Pt(38), color=GREEN, bold=True))
     g3.append(add_text(slide,
-        "By LLM Judge (Y+P): 971 of 1,497\nconfirmed useful\nExpert judgment confirms 2 in 3 work",
-        card_x + Inches(3.0), c3_y + Inches(0.15),
-        card_w - Inches(3.3), card_h - Inches(0.3),
-        size=Pt(15), color=WHITE))
+        f"LLM Judge v3 Y+P  (MBR Oracle; baseline {judge_yp_base:.2f}%)\n"
+        "What an independent reviewer says is useful — paired p = 0.00017",
+        card_x + Inches(3.0), c3_y + Inches(0.1),
+        card_w - Inches(3.3), card_h - Inches(0.2),
+        size=Pt(13), color=WHITE))
+
+    a3_y = c3_y + card_h + Inches(0.04)
+    g3_arrow = [add_text(slide, "▼", card_x + card_w / 2 - Inches(0.3),
+                         a3_y, Inches(0.6), arrow_h,
+                         size=Pt(18), color=GOLD, align=PP_ALIGN.CENTER)]
+
+    # ── Card 4: Realistic — Trust-gate operating point ───────────────
+    c4_y = a3_y + arrow_h
+    g4 = []
+    g4.append(add_rect(slide, card_x, c4_y, card_w, card_h,
+                       fill_color=NAVY2, border_color=GOLD, border_width=Pt(2),
+                       corner_radius=True))
+    g4.append(add_text(slide, f"{trust_recall:.1f}%",
+                       card_x + Inches(0.3), c4_y + Inches(0.05),
+                       Inches(2.6), card_h - Inches(0.1),
+                       size=Pt(38), color=GOLD, bold=True))
+    g4.append(add_text(slide,
+        f"Trust gate  ≥30% green  •  recall of useful, FPR {trust_fpr:.1f}%\n"
+        f"What a user can confidently rely on  ({trust_n} trusted segments)",
+        card_x + Inches(3.0), c4_y + Inches(0.1),
+        card_w - Inches(3.3), card_h - Inches(0.2),
+        size=Pt(13), color=WHITE))
+
+    # Denominator caveat — Cards 1/2/3 evaluate all 1,497 segments;
+    # Card 4 (Trust-gate) is recall on 1,427 non-empty segments.
+    # audit: after_amosi_logic_fixes.md §2 Slide 36/37/38 MAJOR — apples-to-oranges
+    # denominator caveat (1,497 vs 1,427).
+    foot_y = c4_y + card_h + Inches(0.06)
+    g4.append(add_text(slide,
+        "Cards 1–3 are computed across all 1,497 segments; "
+        "Card 4 (Trust gate) is recall on 1,427 non-empty segments "
+        "(excludes 70 empty hypotheses). The funnel is four lenses, not four "
+        "progressive refinements of the same denominator.",
+        card_x, foot_y, card_w, Inches(0.40),
+        size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
-        "Three numbers answering the same question: 'How many videos are useful?' "
-        "WER (≤34%): 25.5% (381/1,497) — most pessimistic, uses NIV-calibrated threshold. "
-        "IS (≥2.00): 61.6% (922/1,497) — captures useful meaning. "
-        "LLM Judge (Y+P): 64.9% (971/1,497) — expert confirms. "
-        "Progressive revelation: WER dramatically understates quality.",
-        [g1, g1_arrow + g2, g2_arrow + g3], click_reveal=True)
+        "Restaged May 6 2026 as Oracle -> Realistic flow under MBR. "
+        f"Card 1 — WER {wer_mbr:.2f}% (top-1 {wer_top1:.2f}%): the literature "
+        "metric, pessimistic on wild data. "
+        f"Card 2 — NIV-Y+P {is_yp_mbr:.2f}% (MBR-IS): our deterministic metric "
+        "agrees on 927/1,497. "
+        f"Card 3 — LLM Judge v3 Y+P {judge_yp_mbr:.2f}% (MBR Oracle, +2.67 pp vs "
+        f"baseline {judge_yp_base:.2f}%, paired McNemar p=0.00017): independent "
+        "reviewer confirms. "
+        f"Card 4 — Trust gate ≥30% green: {trust_recall:.1f}% recall, "
+        f"{trust_fpr:.1f}% FPR ({trust_n} trusted). "
+        "Legacy salvage framing dropped — replaced by Trust-gate operating point. "
+        f"For reference, the legacy IS≥3.0 + LLM-context-prob salvage rate under "
+        f"MBR is {eff_legacy_mbr:.2f}% (audit:effective_capture_legacy_pct_mbr). "
+        "DENOMINATOR CAVEAT (logic-fix §2 Slide 36/37/38): Cards 1–3 are "
+        "evaluated across all 1,497 segments; Card 4 (Trust gate) is recall on "
+        "1,427 non-empty segments (excludes 70 empty hypotheses). The funnel is "
+        "four metrics on different denominators, not four progressive refinements "
+        "of the same number. "
+        "Sources: docs/evaluation/after_amosi_audit.md sections A, B, E, F.",
+        [g1, g1_arrow + g2, g2_arrow + g3, g3_arrow + g4], click_reveal=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1537,7 +1748,10 @@ def slide_tuning_summary(prs):
              MX + Inches(0.25), CT + Inches(2.75), col_w - Inches(0.5), Inches(0.3),
              size=Pt(16), color=CORAL, bold=True)
     kf_bullets = add_bullets(slide, [
-        "Segment rankings identical across all configs (r > 0.92)",
+        # audit: after_amosi_logic_fixes.md fix #8 — cross-config caveat:
+        # 16 top-1 decode-parameter configs; MBR not included.
+        "Segment rankings identical across all configs (r > 0.92, "
+        "16 top-1 decode-parameter configs; MBR not included)",
         "Good segments stay good; bad ones stay bad regardless",
         ("Bottleneck = visual encoder, not decode parameters",
          {"bold": True, "color": CORAL}),
@@ -1551,16 +1765,19 @@ def slide_tuning_summary(prs):
 
     # Config J note (shorter)
     j_note = add_text(slide,
-        "Config J: lenpen=1.0, temp=0.5",
+        "Config J: lenpen=1.0, temp=0.5  (Baseline = top-1 decode, pre-MBR)",
         rx, CT + Inches(0.4), col_w, Inches(0.25),
         size=Pt(12), color=MGRAY, italic=True)
 
-    headers = ["Metric", "Baseline", "Config J", "\u0394"]
+    # audit: numbers below are top-1 baseline anchors from the 13-experiment
+    # tuning sweep (legitimate pre-MBR baseline framing, OK_TOP1_AS_BASELINE).
+    # Shadows is_mean_top1, niv_yp_pct_top1, hallucination_pct_top1.
+    headers = ["Metric", "Baseline (top-1)", "Config J", "\u0394"]
     rows = [
-        ["Mean IS", "2.53", "2.60", "+0.07"],
-        ["Useful (IS\u22652)", "61.6%", "62.8%", "+1.2pp"],
+        ["Mean IS", "2.53", "2.60", "+0.07"],            # audit:is_mean_top1 (baseline anchor)
+        ["Useful (IS\u22652)", "61.6%", "62.8%", "+1.2pp"],  # audit:niv_yp_pct_top1 (baseline anchor)
         ["Empty outputs", "4.7%", "0%", "\u221270"],
-        ["Hallucinations", "20.5%", "23.2%", "+41"],
+        ["Hallucinations", "20.5%", "23.2%", "+41"],     # audit:hallucination_pct_top1 (baseline anchor)
         ["Mean WWER", "60.5%", "59.8%", "\u22120.7pp"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.75), col_w,
@@ -1580,7 +1797,10 @@ def slide_tuning_summary(prs):
         "showed minimal improvement. Best config (J = lenpen=1.0, temp=0.5) eliminates empty outputs "
         "but increases hallucinations by 13%. Net IS gain only +0.08. "
         "Per-segment rankings are identical across configs (r > 0.92), proving "
-        "the bottleneck is the visual encoder, not decode parameters.\n\n"
+        "the bottleneck is the visual encoder, not decode parameters. "
+        "Caveat: cross-config validation covers 16 top-1 decode-parameter "
+        "variants; MBR n-best aggregation is NOT in the 16 configs (audit: "
+        "after_amosi_audit.json `cross_config_includes_mbr: False`).\n\n"
         "The original slide included a length penalty sensitivity chart showing "
         "the empty-vs-hallucination trade-off: lenpen=-0.5 causes 44.9% empty "
         "outputs; baseline (lenpen=0) has 4.7% empties; lenpen=1.0 (Config J) "
@@ -1655,15 +1875,23 @@ def slide_design_philosophy(prs):
 
 
 def slide_is_dimensions(prs):
-    """Two quality dimensions from PCA analysis."""
+    """Two quality dimensions from PCA analysis.
+
+    Verified May 6 2026: framing is correct (2 PCs, Kaiser, 87.9% total).
+    The legacy "3 dimensions" claim is fully purged from this slide.
+    Source: docs/evaluation/is_pca_analysis.md.
+    """
     slide = new_slide(prs)
     add_title(slide, "Two Dimensions of Quality (PCA)")
     add_accent_line(slide)
 
+    # PCA result is independent of decode method (computed on top-1 IS components,
+    # but PC structure is a property of the IS formula itself, so it carries over
+    # to MBR). No audit:KEY required \u2014 the values are stable across the audit.
     add_text(slide, "PCA retains 2 principal components (Kaiser criterion: eigenvalue > 1):",
              MX, CT, CW, Inches(0.4), size=Pt(15), color=LGRAY)
 
-    # Two cards
+    # Two cards (PC1 = 68.4%, PC2 = 19.5%, total = 87.9%)
     dims = [
         ("PC1: Signal Quality", "68.4%", "of total variance",
          "All 5 content signals load equally\n(0.43\u20130.47 each)",
@@ -1712,12 +1940,16 @@ def slide_is_dimensions(prs):
         card_groups.append([r, t1, t2, t3, t4, t5])
 
     _finish(slide, 0,
-        "PCA retains 2 principal components. PC1 (68.4%): all 5 content signals "
-        "load equally (0.43-0.47) \u2014 one general quality factor driven by the "
-        "visual encoder. Semantic is NOT independent; it loads on PC1 just like "
-        "word-accuracy signals. PC2 (19.5%): Length Ratio dominates (0.91), "
-        "truly independent of content quality. Together: 87.9% of variance. "
-        "PC3 (entity swing, 5.1%) is below Kaiser threshold.",
+        "PCA retains 2 principal components (Kaiser, eigenvalue > 1). "
+        "PC1 (68.4%): all 5 content signals load equally (0.43-0.47) \u2014 one "
+        "general quality factor driven by the visual encoder. Semantic is NOT "
+        "independent; it loads on PC1 just like word-accuracy signals. "
+        "PC2 (19.5%): Length Ratio dominates (0.91), truly independent of "
+        "content quality. Together: 87.9% of variance. PC3 (entity swing, "
+        "5.1%) is below Kaiser threshold and is not used. "
+        "The legacy 3-dimensions framing is fully retired \u2014 this slide and "
+        "downstream narrative use 2 PCs only. "
+        "See docs/evaluation/is_pca_analysis.md for the full PCA table.",
         card_groups, click_reveal=True)
 
 
