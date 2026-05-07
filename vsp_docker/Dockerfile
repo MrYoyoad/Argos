@@ -288,8 +288,9 @@ RUN /workspace/vsp-llm-yoad-venv/bin/pip install --find-links=/workspace/is_whee
   matplotlib==3.9.4
 
 # spaCy install — local wheels are cp311 but our venv is cp39, so use PyPI.
-# Internet at build time; pinned to the version validated on EC2.
-RUN /workspace/vsp-llm-yoad-venv/bin/pip install spacy==3.8.13 && \
+# Pinned to the EC2-validated version (3.8.11) + thinc 8.3.9. Latest 3.8.13
+# requires thinc>=8.3.12 which has no cp39 wheel.
+RUN /workspace/vsp-llm-yoad-venv/bin/pip install spacy==3.8.11 thinc==8.3.9 && \
     /workspace/vsp-llm-yoad-venv/bin/python -m spacy download en_core_web_sm
 
 ######################################################################

@@ -23,10 +23,11 @@ echo "Installing VSP launcher into $PREFIX..."
 mkdir -p "$PREFIX"
 
 # --- Copy launcher artifacts ---
-cp "${KIT_DIR}/vsp-pipeline.sh" "${PREFIX}/vsp-pipeline.sh"
-cp "${KIT_DIR}/image.tag"       "${PREFIX}/image.tag"
-cp "${KIT_DIR}/apply_update.sh" "${PREFIX}/apply_update.sh" 2>/dev/null || true
-cp "${KIT_DIR}/rollback.sh"     "${PREFIX}/rollback.sh"     2>/dev/null || true
+cp "${KIT_DIR}/vsp-pipeline.sh"   "${PREFIX}/vsp-pipeline.sh"      # CLI mode (zenity folder picker)
+cp "${KIT_DIR}/vsp-start.sh"      "${PREFIX}/vsp-start.sh"  2>/dev/null || true   # UI mode (browser)
+cp "${KIT_DIR}/image.tag"         "${PREFIX}/image.tag"
+cp "${KIT_DIR}/apply_update.sh"   "${PREFIX}/apply_update.sh" 2>/dev/null || true
+cp "${KIT_DIR}/rollback.sh"       "${PREFIX}/rollback.sh"     2>/dev/null || true
 chmod +x "${PREFIX}"/*.sh
 [ -f "${PREFIX}/image.tag" ] && chmod 644 "${PREFIX}/image.tag"
 
@@ -43,18 +44,29 @@ if [ -z "$TARGET_HOME" ] || [ ! -d "$TARGET_HOME" ]; then
 else
   DESKTOP_DIR="${TARGET_HOME}/Desktop"
   mkdir -p "$DESKTOP_DIR"
+  # CLI mode shortcut
   cp "${KIT_DIR}/VSP-Pipeline.desktop" "${DESKTOP_DIR}/VSP-Pipeline.desktop"
   chmod +x "${DESKTOP_DIR}/VSP-Pipeline.desktop"
   chown "${TARGET_USER}:" "${DESKTOP_DIR}/VSP-Pipeline.desktop" 2>/dev/null || true
 
+  # UI mode shortcut (browser-based interface, drag-drop, progress)
+  if [ -f "${KIT_DIR}/VSP-Pipeline-UI.desktop" ]; then
+    cp "${KIT_DIR}/VSP-Pipeline-UI.desktop" "${DESKTOP_DIR}/VSP-Pipeline-UI.desktop"
+    chmod +x "${DESKTOP_DIR}/VSP-Pipeline-UI.desktop"
+    chown "${TARGET_USER}:" "${DESKTOP_DIR}/VSP-Pipeline-UI.desktop" 2>/dev/null || true
+  fi
+
   # GNOME / Cinnamon: mark as trusted so it shows the proper icon, not "Untrusted launcher"
   if command -v gio >/dev/null 2>&1; then
     sudo -u "$TARGET_USER" gio set "${DESKTOP_DIR}/VSP-Pipeline.desktop" metadata::trusted true 2>/dev/null || true
+    [ -f "${DESKTOP_DIR}/VSP-Pipeline-UI.desktop" ] && \
+      sudo -u "$TARGET_USER" gio set "${DESKTOP_DIR}/VSP-Pipeline-UI.desktop" metadata::trusted true 2>/dev/null || true
   fi
 
-  # Plain shell-script fallback for DEs that don't honor .desktop files
+  # Plain shell-script fallbacks for DEs that don't honor .desktop files
   ln -sf "${PREFIX}/vsp-pipeline.sh" "${DESKTOP_DIR}/VSP Pipeline.sh"
-  echo "Desktop shortcut placed at: ${DESKTOP_DIR}/VSP-Pipeline.desktop"
+  [ -f "${PREFIX}/vsp-start.sh" ] && ln -sf "${PREFIX}/vsp-start.sh" "${DESKTOP_DIR}/VSP Pipeline UI.sh"
+  echo "Desktop shortcuts placed at: ${DESKTOP_DIR}/VSP-Pipeline*.desktop"
 fi
 
 # --- Refresh the desktop database (KDE) ---

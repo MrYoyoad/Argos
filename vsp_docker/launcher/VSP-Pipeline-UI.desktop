@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VSP Pipeline (UI)
+Comment=Open the VSP Pipeline web interface (drag-drop, progress, transcription editing)
+Icon=/opt/vsp/launcher/vsp-icon.png
+Exec=/opt/vsp/launcher/vsp-start.sh
+Terminal=false
+Categories=Office;AudioVideo;
+StartupNotify=true
