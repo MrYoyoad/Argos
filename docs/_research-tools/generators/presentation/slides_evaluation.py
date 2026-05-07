@@ -195,8 +195,10 @@ def slide_15(prs):
     vid_y = CT + Inches(0.1)
 
     # audit:bigfonts \u2014 descs trimmed to 2 lines so 18pt fits in h=1.05.
+    # Leftmost OK tile uses obama_perfect (segment #14, WER 0%, IS 5.00,
+    # 27/29 words at conf-high) \u2014 most convincing per-word coloring in the deck.
     vids = [
-        ("smartphone", '"consumers want a bigger smartphone"\n\u2192 "...will not upgrade their smartphone"', "WER 28%  IS 4.1", TEAL),
+        ("obama_perfect", '"\u2026the tireless and heroic work of our military"\n\u2192 (perfect \u2014 27/29 words green)', "WER 0%  IS 5.00", TEAL),
         ("street_photo", '"james and will talk about street photography"\n\u2192 "i\'m here to talk about street photography"', "WER 56%  IS 2.9", CORAL),
         ("halluc", '"carry strap"\n\u2192 "holocaust denier"', "WER 100%  IS 0.8", RED),
     ]
@@ -228,20 +230,26 @@ def slide_15(prs):
     anim_groups.append([foot])
 
     _finish(slide, 15,
-        "Three demos side by side. Left: 'consumers want a bigger smartphone' "
-        "becomes 'consumers will not upgrade their smartphone' (IS 4.1 - "
-        "meaning is close but the key verb is flipped: 'want' to 'will not'. "
-        "This is what good output looks like - mostly right, small errors). "
-        "Center: 'james and will talk about street photography' becomes "
-        "'i'm here to talk about street photography' (IS 2.9 - "
-        "the topic is captured perfectly but speaker names are lost. "
-        "This is the near-miss zone). "
-        "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
-        "IS 0.8 - fluent but completely fabricated). Click each video to play. "
-        "BLOCKER fix May 2026: animation references previously orphaned spids "
-        "[4,7,10]; rebuilt to pass real shape handles. Mention to peers: this "
-        "is the qualitative bridge from the confidence section into the "
-        "demo segments that follow. "
+        "Three demos side by side, picked to span the quality range. "
+        "LEFT (Obama segment 14, 29 words, the most convincing per-word "
+        "coloring in the deck): WER 0%, IS 5.00 — REF and HYP identical "
+        "('…and our allies over the last 10 years thanks to the tireless "
+        "and heroic work of our military and our counterterrorism "
+        "professionals we've made great strides in that effort'). 27 of "
+        "29 per-word bands GREEN at conf-high; the remaining 2 yellow. "
+        "Sentence_conf 0.72 (Salvage band) — the *segment-level* "
+        "confidence is conservative because of two yellow words, but the "
+        "WER says zero, IS says perfect. This is exactly the kind of "
+        "example that motivates the joint conf+agreement rule explained "
+        "earlier in §4. "
+        "CENTER ('james and will talk about street photography' → "
+        "'i'm here to talk about street photography', IS 2.9): topic "
+        "captured perfectly but speaker names lost — the near-miss zone. "
+        "RIGHT ('carry strap' → 'holocaust denier', IS 0.8): "
+        "hallucination, fluent but completely fabricated. Click each "
+        "video to play. Mention to peers: this is the qualitative "
+        "bridge from the confidence section into the demo segments that "
+        "follow. "
         "Sources: docs/evaluation/intelligibility_methodology.md, "
         "docs/evaluation/llm_judge/llm_judge_analysis.md.",
         anim_groups, click_reveal=True)
