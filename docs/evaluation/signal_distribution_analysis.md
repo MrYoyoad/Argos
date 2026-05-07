@@ -320,8 +320,8 @@ Segments split by median Semantic (0.412) and median InvWER (0.389):
 | InvWWER | 0.648 | 0.381 | +0.267 | +0.80σ |
 | NEA F1 | 0.639 | 0.389 | +0.249 | +0.68σ |
 | Length Ratio | 0.933 | 0.925 | +0.008 | +0.02σ |
-| **IS** | **3.66** | **2.52** | **+1.14** | — |
-| **WER%** | **36.0** | **64.1** | **−28.1** | — |
+| **IS** | **3.66** | **2.547** (top-1: 2.52) | **+1.11** | — |
+| **WER%** | **36.0** | **63.8** (top-1: 64.1) | **−27.8** | — |
 
 LRS3 is better across all signals, but Semantic has the **largest normalized gap** (+0.95σ vs +0.68–0.80σ for others). The domain advantage shows most in meaning preservation.
 

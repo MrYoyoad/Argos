@@ -38,14 +38,14 @@ Only ~30% of English phonemes are visually distinguishable. The 44 English phone
 | Condition | WER | Word Accuracy |
 |-----------|-----|---------------|
 | LRS3 benchmark (clean, trained domain) | 25.4% | **74.6%** |
-| Real-world YouTube (1,497 segments) | 64.1% | **35.9%** |
+| Real-world YouTube (1,497 segments) | 63.8% MBR / 64.1% top-1 | **~36%** |
 
 | Metric | Value |
 |--------|-------|
 | LLM Judge Y+P (any useful meaning) | 64.9% |
-| NIV Y+P (useful, IS ≥ 2.00) | 61.6% |
-| Hallucination rate | 20.5% |
-| *Legacy: IS ≥ 3.0 + salvage* | *51.1% (superseded by NIV)* |
+| NIV Y+P (useful, IS ≥ 2.00) | 61.9% MBR / 61.7% top-1 |
+| Hallucination rate | 20.7% MBR / 20.5% top-1 |
+| *Legacy: IS ≥ 3.0 + salvage (deprecated)* | *51.1% (superseded by NIV)* |
 
 ### State-of-the-Art Comparison (LRS3 Benchmark)
 
@@ -73,7 +73,7 @@ The model produces fluent candidate text. The human doesn't need to lip-read fro
 The model's worst failure mode — 20.5% fluent hallucinations — is exactly where a human adds the most value. A human watching a cooking video who reads "the quantum field collapses" immediately knows it's wrong. Our context-aware LLM Judge evaluation showed 230 judgment downgrades when context was available, proving context knowledge is a powerful filter.
 
 **3. The salvage effect is real.**
-Our LLM salvage analysis found 165 metric-failed segments were actually recoverable — phonetic bridges, entity preservation, structural matches. A human naturally performs this salvage. Under NIV thresholds (IS ≥ 2.00), 922/1,497 segments (61.6%) already qualify as useful; a human reviewer would push this higher still.
+Our LLM salvage analysis found 165 metric-failed segments were actually recoverable — phonetic bridges, entity preservation, structural matches. A human naturally performs this salvage. Under NIV thresholds (IS ≥ 2.00), 927 MBR / 923 top-1 of 1,497 segments (~62%) already qualify as useful; a human reviewer would push this higher still.
 
 **4. Topic context eliminates homophene ambiguity.**
 Our LLM Judge found ~284 segments (19%) where domain vocabulary confusion was the primary failure. If a human knows "this is a medical lecture," they resolve "bear/bare/bar" type ambiguities that the model can't. Research confirms that topic knowledge and context are as important as visual information for speechreading accuracy (ASHA 2021).

@@ -2,7 +2,7 @@
 
 ## Context
 
-The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 64.1%, IS 2.52/5.0**. The original paper reports 25.4% WER on clean LRS3 TED talks. This analysis quantifies the expected improvement from upgrading to Llama 3.1 8B.
+The VSP-LLM pipeline currently uses **Llama-2-7B** (4-bit quantized, LoRA r=16) as its decoder. Current baseline on AVSpeech YouTube data: **WER 63.8% (top-1: 64.1%), IS 2.547/5.0 (top-1: 2.52)** under MBR-default display per [after_amosi_audit.md](after_amosi_audit.md). The original paper reports 25.4% WER on clean LRS3 TED talks. This analysis quantifies the expected improvement from upgrading to Llama 3.1 8B.
 
 ---
 
@@ -80,7 +80,7 @@ Signal profiles per category from [signal_distribution_analysis.md](signal_distr
 | **Right Topic Wrong Details** | 79 | 13.8% | ~2.13 | 0.40 / 0.49 / 0.29 / 0.29 / 0.18 / 0.90 | **Highest** — entity/vocabulary disambiguation | ~20-30% (~16-24 segs) |
 | **Accumulated Errors** | 52 | 9.1% | ~2.33 | 0.38 / 0.53 / 0.34 / 0.34 / 0.31 / 0.93 | High — stronger context catches small errors | ~15-25% (~8-13 segs) |
 
-**Estimated total recovery: ~68-119 segments** (LLM swap only), pushing the NIV Y+P useful rate from **61.6% to ~66-70%**. With prompt engineering unlocked by Llama 3.1 8B, the combined gain reaches ~72-77% (Scenario B below).
+**Estimated total recovery: ~68-119 segments** (LLM swap only), pushing the NIV Y+P useful rate from **61.9% to ~66-70%**. With prompt engineering unlocked by Llama 3.1 8B, the combined gain reaches ~72-77% (Scenario B below).
 
 **What each fix requires** (from signal profiles):
 - **Wrong Topic**: primarily a SEMANTIC fix — Semantic needs to jump from 0.10 to ~0.55 (+0.45). Biggest IS gap of any recoverable category.
@@ -150,9 +150,9 @@ Extrapolating: Llama 3.1 8B (2.7x larger than 3B, same architecture family) shou
 
 | Metric | Current (Llama-2-7B) | Projected (Llama 3.1 8B) | Change |
 |--------|---------------------|--------------------------|--------|
-| **WER** | 64.1% | ~56-61% | **-3 to -8 pp** |
-| **IS** | 2.52/5.0 | ~2.7-2.9 | **+0.2-0.4** |
-| **Useful rate** (NIV Y+P, IS ≥ 2.00) | 61.6% | ~66-70% | **+4-8 pp** |
+| **WER** | 63.8% (top-1: 64.1%) | ~56-61% | **-3 to -8 pp** |
+| **IS** | 2.547/5.0 (top-1: 2.52) | ~2.7-2.9 | **+0.2-0.4** |
+| **Useful rate** (NIV Y+P, IS ≥ 2.00) | 61.9% (top-1: 61.7%) | ~66-70% | **+4-8 pp** |
 | **Hallucination rate** | 20.5% | ~15-18% | **-2-5 pp** |
 | **Empty outputs** | 4.7% (70 segments) | ~3-4% | **-1 pp** |
 
@@ -177,7 +177,7 @@ The ICLR 2024 scaling law paper (Zhang et al.) shows fine-tuning follows a **mul
 
 | Configuration | Projected WER | Useful Rate (NIV Y+P) |
 |--------------|--------------|--------------|
-| Current: Llama-2-7B + 1.3K segments | 64.1% | 61.6% |
+| Current: Llama-2-7B + 1.3K segments | 63.8% (top-1: 64.1%) | 61.9% (top-1: 61.7%) |
 | Llama 3.1 8B + 1.3K segments | ~56-61% | ~66-70% |
 | Llama 3.1 8B + 20K segments | ~40-45% | ~75-82% |
 | Llama 3.1 8B + 50K segments + prompts | ~35-40% | ~82-88% |

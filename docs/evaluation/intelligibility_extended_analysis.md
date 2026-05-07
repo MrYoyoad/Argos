@@ -1,7 +1,9 @@
 # IS Extended Analysis: Topic, Length, Config Variants & Word Count
 
 **Parent document:** [intelligibility_methodology.md](intelligibility_methodology.md) (Sections 1-11: core IS methodology)
-**Date:** 2026-02-24 (extended through March 2026)
+**Date:** 2026-02-24 (extended through March 2026; numbers refreshed 2026-05-07 to MBR-default)
+
+> **Production-default numbers** are MBR-as-display per [after_amosi_audit.md](after_amosi_audit.md). Top-1 baseline values are labeled inline where contrast matters.
 
 ---
 
@@ -11,7 +13,7 @@ Topics are assigned by keyword matching on reference text across 10 categories (
 
 ### Baseline Results by Topic (sorted by Mean IS)
 
-*Note: "Captured%" uses legacy IS ≥ 3.0 threshold. Under NIV Y+P (IS ≥ 2.00), the overall useful rate is 61.6%. Per-topic NIV rates are in the PPTX generator ([slides_research.py](../../_research-tools/generators/presentation/slides_research.py)).*
+*Note: "Captured%" uses legacy IS ≥ 3.0 threshold (deprecated; use NIV thresholds). Under NIV Y+P (IS ≥ 2.00), the overall useful rate is 61.9% (MBR-default; top-1: 61.7%). Per-topic NIV rates are in the PPTX generator ([slides_research.py](../../_research-tools/generators/presentation/slides_research.py)).*
 
 | Topic | N | Mean IS | WER | Captured% | Ctx Rule% | Ctx LLM% |
 |-------|---|---------|-----|-----------|-----------|----------|
@@ -77,9 +79,9 @@ All other parameters identical (beam=20, top_p=0.9, rep_penalty=1.2, no_repeat_n
 
 | Metric | Baseline | Config J | Config C |
 |--------|----------|----------|----------|
-| Mean IS | 2.52 | **2.60** | 2.57 |
-| Useful (IS >= 2.00, NIV Y+P) | 922 (61.6%) | **938 (62.7%)** | 928 (62.0%) |
-| *Legacy: Captured (IS >= 3.0)* | *601 (40.1%)* | *622 (41.5%)* | *594 (39.7%)* |
+| Mean IS | 2.547 (top-1: 2.52) | **2.60** | 2.57 |
+| Useful (IS >= 2.00, NIV Y+P) | 927 (61.9%) (top-1: 923, 61.7%) | **938 (62.7%)** | 928 (62.0%) |
+| *Legacy: Captured (IS >= 3.0, deprecated)* | *615 (41.1%) (top-1: 601, 40.1%)* | *622 (41.5%)* | *594 (39.7%)* |
 | Empty Predictions | 70 (4.7%) | **0** | **0** |
 | Hallucinations (WER >= 100%) | 307 (20.5%) | 348 (23.2%) | 360 (24.0%) |
 | Mean WER | **64.1%** | 78.9% | 79.3% |
@@ -231,10 +233,10 @@ Already at correct length, word choice problems. ~0% improvement from word count
 
 | Metric | Current | Fine-Tuned w/ Word Count | Change |
 |---|---|---|---|
-| Useful (IS >= 2.00, NIV Y+P) | 922 (61.6%) | ~960-980 (64-65%) | **+38 to +58 (+2.5-3.9pp)** |
-| *Legacy: Captured (IS >= 3.0)* | *597 (39.9%)* | *~640-660 (42.7-44.1%)* | *+43 to +63 (+3-4pp)* |
+| Useful (IS >= 2.00, NIV Y+P) | 927 (61.9%) (top-1: 923, 61.7%) | ~960-980 (64-65%) | **+38 to +58 (+2.5-3.9pp)** |
+| *Legacy: Captured (IS >= 3.0, deprecated)* | *615 (41.1%) (top-1: 601, 40.1%)* | *~640-660 (42.7-44.1%)* | *+43 to +63 (+3-4pp)* |
 | Non-useful hallucinations | 108 (18.8% of 575) | ~80-90 | **-18 to -28** |
-| Mean IS | 2.52 | ~2.60-2.65 | **+0.08-0.13** |
+| Mean IS | 2.547 (top-1: 2.52) | ~2.60-2.65 | **+0.08-0.13** |
 | Short segment (5-10w) useful% | ~55% | ~61-65% | **+6-10pp** |
 | Long segment (20+w) useful% | ~67% | ~69-71% | **+2-4pp** |
 
@@ -274,7 +276,7 @@ These are complementary — Config J's lenpen=1.0 could be combined with word co
 
 *(Full analysis: [llm_salvage/llm_salvage_analysis.md](llm_salvage/llm_salvage_analysis.md))*
 
-Under NIV thresholds, 922 of 1,497 segments (61.6%) are useful (IS >= 2.00). The remaining 575 are non-useful. *Legacy note: under the superseded IS >= 3.0 threshold, the LLM heuristic identified 165 of 900 metric-failed segments (18.3%) as having recoverable meaning, raising effective capture from 40.1% to 51.1%. This salvage analysis predated NIV adoption and is less relevant under the broader NIV Y+P operating point.*
+Under NIV thresholds, 927 of 1,497 segments (61.9%) are useful (IS >= 2.00, MBR-default; top-1: 923, 61.7%). The remaining ~570 are non-useful. *Legacy note: under the superseded IS >= 3.0 threshold (deprecated), the LLM heuristic identified 165 of 900 metric-failed segments (18.3%) as having recoverable meaning, raising effective capture from 40.1% to 51.1%. This salvage analysis predated NIV adoption and is less relevant under the broader NIV Y+P operating point.*
 
 6 recovery categories: Phonetic Bridge (93), Structure Match (74), Semantic Preservation (57), Hidden Gems (54), Entity-Preserved (44), WER Over-Punishment (27).
 

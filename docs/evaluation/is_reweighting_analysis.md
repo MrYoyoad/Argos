@@ -1,8 +1,10 @@
 # IS Reweighting Analysis: NEA Up, Length Ratio Down
 
 **Argos — The Orchard**
-**Date:** 2026-03-10
+**Date:** 2026-03-10 (numbers refreshed 2026-05-07 to MBR-default)
 **Dataset:** 1,497 segments (full AVSpeech baseline)
+
+> **Note:** This is a method-comparison analysis — both axes (Original IS and reweighted variants) are computed on top-1 outputs. Production-default IS for the **Original** scheme on MBR-displayed text is mean 2.547 (top-1: 2.52). The reweighting analysis is decode-method-independent.
 
 ---
 

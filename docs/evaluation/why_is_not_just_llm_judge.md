@@ -1,6 +1,6 @@
 # Why IS — Not Just LLM-as-a-Judge
 
-> **Note (March 2026):** This document uses the legacy IS ≥ 3.0 threshold (40.1% captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.6% useful (κ=0.818), IS ≥ 3.80 = 23.1% clearly conveyed (κ=0.690). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
+> **Note (March 2026, refreshed May 2026):** This document uses the legacy IS ≥ 3.0 threshold (deprecated; ~40-41% captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.9% MBR / 61.7% top-1 useful (κ=0.796 / 0.816), IS ≥ 3.80 = 23.9% MBR / 24.0% top-1 clearly conveyed (κ=0.693 / 0.707). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md) and [after_amosi_audit.md](after_amosi_audit.md).
 
 ## The Problem
 

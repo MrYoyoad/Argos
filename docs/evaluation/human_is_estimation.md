@@ -9,8 +9,8 @@
 
 ## 1. Why this matters
 
-Our model's headline number is **IS = 2.52 / 5.0** on 1,497 wild YouTube segments.
-Without a human IS on the same content, "2.52" is unanchored: is it 60% of human, 90%, 110%?
+Our model's headline number is **IS = 2.547 / 5.0** (MBR-default; top-1: 2.52) on 1,497 wild YouTube segments.
+Without a human IS on the same content, "2.547" is unanchored: is it 60% of human, 90%, 110%?
 
 The existing [human_expert_comparison.md](human_expert_comparison.md) compares humans and the model on **WER / meaning-capture %**, drawn from external literature. It does not put humans on the IS scale. That is the gap this note addresses.
 
@@ -115,13 +115,13 @@ Each stratum gets a *low* / *mid* / *high* band drawn from the literature in §7
 
 ### 4.3 Resulting IS bands
 
-| Population | IS low / mid / high | Tier (mid) | vs Model 2.52 |
+| Population | IS low / mid / high | Tier (mid) | vs Model 2.547 |
 |---|---|---|---|
 | Lay hearing (no ctx) | **0.63 / 0.92 / 1.14** | Failed | model wins by **+1.60** |
 | Deaf adult (no ctx) | **2.33 / 2.74 / 3.07** | Fair | rough tie (model −0.22 to −0.55) |
 | Expert / forensic (no ctx) | **2.60 / 3.03 / 3.33** | Fair | model loses by **−0.51** at mid |
 | Lay + topic + model review | **3.36 / 3.83 / 4.19** | Good | model loses by **−1.31** at mid |
-| **Model alone (measured)** | **2.52** | Fair | — |
+| **Model alone (measured, MBR-default)** | **2.547** (top-1: 2.52) | Fair | — |
 | Model on LRS3 (component-extrapolation) | ~3.8 – 4.2 | Good–Excellent | predicted, not measured |
 
 ### 4.4 What's driving each estimate — the LR isolation experiment
@@ -139,9 +139,9 @@ The LR penalty **shrinks with proficiency** because better speechreaders skip fe
 
 ### 4.5 Headline reads
 
-1. **Model ≈ unaided deaf-adult lip-reader.** 2.52 sits inside the deaf-no-context band (2.33–3.07). Nothing dramatic to claim.
-2. **Model loses to an unaided expert by ~0.5 IS** (3.03 vs 2.52 at mid). Not a comfortable gap — within the high band of what an expert-pilot could be measured to confirm or refute.
-3. **Model + context-aware human reviewer ≈ +1.3 IS over model alone** (3.83 vs 2.52). This is the deployment story; it's also what every other metric in this repo (LLM-judge, NIV, salvage) has been hinting at.
+1. **Model ≈ unaided deaf-adult lip-reader.** 2.547 (MBR) / 2.52 (top-1) sits inside the deaf-no-context band (2.33–3.07). Nothing dramatic to claim.
+2. **Model loses to an unaided expert by ~0.5 IS** (3.03 vs 2.547 at mid). Not a comfortable gap — within the high band of what an expert-pilot could be measured to confirm or refute.
+3. **Model + context-aware human reviewer ≈ +1.3 IS over model alone** (3.83 vs 2.547). This is the deployment story; it's also what every other metric in this repo (LLM-judge, NIV, salvage) has been hinting at.
 4. **Model destroys lay readers** (+1.6 IS). Trivial finding but worth saying once.
 
 **Status:** these numbers are still pre-study; Path A is the only way to tighten them past ±0.4. But they are now *computed*, not eyeballed — every stratum traces to a literature-cited word-accuracy plus the four reproducible style adjustments (Semantic ≈ acc + ctx-bonus; Phonetic ≈ acc × 1.2 capped; NEA F1 from recall with precision≈1; LR from reported transcription gap rates).

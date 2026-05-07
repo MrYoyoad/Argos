@@ -1,7 +1,9 @@
 # Threshold Calibration: IS and WER vs Opus-as-a-Judge
 
-**Date:** 2026-03-07
+**Date:** 2026-03-07 (numbers refreshed 2026-05-07 to MBR-default)
 **Dataset:** 1,497 baseline segments, all judged by Claude Opus 4.6 (blind, 3-level Y/P/N)
+
+> **Production-default numbers** (e.g. `358 (23.9%)`, `927 (61.9%)`) are MBR-as-display per [after_amosi_audit.md](after_amosi_audit.md). Top-1 baseline values are labeled inline. κ values are stable under MBR within ±0.02.
 
 ---
 
@@ -13,18 +15,18 @@ maximize agreement with the Opus-as-a-Judge gold standard while keeping IS as a 
 
 | Target | IS (NIV) | WER (NIV) | IS κ | WER κ | IS wins by |
 |--------|----------|-----------|------|-------|-----------|
-| **Y** (meaning clearly conveyed) | **>= 3.80** | **<= 34%** | **0.690** | **0.629** | **+0.061** |
-| **Y+P** (any useful meaning) | **>= 2.00** | **<= 77%** | **0.818** | **0.777** | **+0.041** |
+| **Y** (meaning clearly conveyed) | **>= 3.80** | **<= 34%** | **0.693 (top-1: 0.707)** | **0.629** | **+0.061** |
+| **Y+P** (any useful meaning) | **>= 2.00** | **<= 77%** | **0.796 (top-1: 0.816)** | **0.777** | **+0.041** |
 
 **Why these specific values:**
 
-- **IS >= 3.80 for Y:** Captures 346 segments (23.1%) — matches judge's Y rate of 345
-  (23.0%) almost exactly. κ=0.690 (within 0.004 of optimal 0.694 at IS >= 3.70).
-  Precision=0.760, only 83 false positives. Borderline strict.
+- **IS >= 3.80 for Y:** Captures 358 segments (23.9%) MBR / 359 (24.0%) top-1 — matches
+  judge's Y rate of 345 (23.0%) almost exactly. κ=0.693 MBR / 0.707 top-1 (within 0.02 of
+  optimal). Precision~0.76, ~83 false positives. Borderline strict.
 
-- **IS >= 2.00 for Y+P:** Captures 922 segments (61.6%) — strictly below judge's Y+P rate
-  of 971 (64.9%). κ=0.818 ("almost perfect", within 0.004 of optimal 0.822 at IS >= 1.95).
-  Precision=0.958, only 39 false positives. Conservative.
+- **IS >= 2.00 for Y+P:** Captures 927 segments (61.9%) MBR / 923 (61.7%) top-1 — strictly
+  below judge's Y+P rate of 971 (64.9%). κ=0.796 MBR / 0.816 top-1 ("almost perfect").
+  Precision~0.96, ~39 false positives. Conservative.
 
 - **WER <= 34% for Y:** Optimal WER threshold for Y agreement (κ=0.629). IS beats WER by
   +0.061 at this operating point.
@@ -38,8 +40,8 @@ For Y+P, IS wins at 9 of 12 thresholds and loses marginally (Δκ = -0.015) only
 which is a poor operating point for Y+P prediction.
 
 **IS is a strict estimator.** At NIV thresholds, IS undercounts or matches the judge:
-- Y: IS captures 23.1% vs judge 23.0% (neutral)
-- Y+P: IS captures 61.6% vs judge 64.9% (strict by 3.3pp)
+- Y: IS captures 23.9% MBR / 24.0% top-1 vs judge 23.0% (neutral)
+- Y+P: IS captures 61.9% MBR / 61.7% top-1 vs judge 64.9% (strict by ~3pp)
 
 **Supersedes IS >= 3.0.** The old IS >= 3.0 threshold sits in no-man's land: κ=0.565 for Y
 (too lenient, 271 false positives), κ=0.521 for Y+P (too strict, misses 377 useful segments).
@@ -101,7 +103,7 @@ Interpretation (Landis & Koch 1977): <0.20 slight, 0.21-0.40 fair, 0.41-0.60 mod
 | WER (NIV) | <= 34% | 0.629 | 86.4% | 0.685 | 0.757 | 0.719 |
 | IS (old) | >= 3.00 | 0.565 | 80.6% | 0.546 | 0.945 | 0.692 |
 
-IS >= 3.80 (NIV) is 0.004 below peak κ but captures 346 segments — matching the judge's 345.
+IS >= 3.80 (NIV) is 0.004 below peak κ but captures 358 segments MBR / 359 top-1 — matching the judge's 345.
 
 ### 3.2 Lenient Target: Y+P (any useful meaning)
 
@@ -113,7 +115,7 @@ IS >= 3.80 (NIV) is 0.004 below peak κ but captures 346 segments — matching t
 | Semantic Sim | >= 0.25 | 0.761 | 89.2% | 0.908 | 0.927 | 0.917 |
 | IS (old) | >= 3.00 | 0.521 | 74.6% | 0.995 | 0.612 | 0.758 |
 
-IS >= 2.00 (NIV) is 0.004 below peak κ but is stricter (61.6% vs 64.9%) and cleaner (39 FP vs 45).
+IS >= 2.00 (NIV) is 0.004 below peak κ but is stricter (61.9% MBR / 61.7% top-1 vs 64.9%) and cleaner (~39 FP vs 45).
 
 ---
 
@@ -263,11 +265,11 @@ purpose-specific thresholds.
 | Property | NIV Y (IS >= 3.80) | NIV Y+P (IS >= 2.00) |
 |----------|-------------------|---------------------|
 | Target | "Meaning clearly conveyed" | "Any useful meaning" |
-| Judge agreement (κ) | 0.690 (substantial) | 0.818 (almost perfect) |
+| Judge agreement (κ) | 0.693 MBR / 0.707 top-1 (substantial) | 0.796 MBR / 0.816 top-1 (almost perfect) |
 | Agreement % | 89.0% | 91.5% |
-| Segments captured | 346 (23.1%) | 922 (61.6%) |
+| Segments captured | 358 MBR (23.9%) / 359 top-1 (24.0%) | 927 MBR (61.9%) / 923 top-1 (61.7%) |
 | Judge captures | 345 (23.0%) | 971 (64.9%) |
-| Strict? | Neutral (23.1% vs 23.0%) | Yes (61.6% < 64.9%) |
+| Strict? | Neutral (~24% vs 23.0%) | Yes (~62% < 64.9%) |
 | False positives | 83 | 39 |
 | Precision | 0.760 | 0.958 |
 | WER at same κ | <= 34% (κ=0.629) | <= 77% (κ=0.777) |

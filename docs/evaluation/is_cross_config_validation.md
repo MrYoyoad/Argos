@@ -1,7 +1,9 @@
 # IS Cross-Configuration Validation & LLM Judge Analysis
 
 **Parent document:** [is_correlation_analysis.md](is_correlation_analysis.md) (Sections 0-9: core correlation analysis)
-**Date:** 2026-03-02
+**Date:** 2026-03-02 (numbers refreshed 2026-05-07 to MBR-default)
+
+> **Cross-config r=0.925 caveat:** the 16-config sweep was top-1 across decode parameter variations only — n-best aggregation methods (MBR, vote_conf, vote_score) were NOT in the 16. The IS-stability claim therefore characterizes top-1 robustness across decode hyperparameters; n-best stability is reported separately. See [after_amosi_audit.md](after_amosi_audit.md).
 
 ---
 
@@ -41,7 +43,7 @@ How stable are IS-component correlations across different decode configurations?
 | full_decode_C (lenpen=1) | 2.535 | 38.5% | 79.3% | 0.444 | 0.545 |
 | full_decode_J (lenpen=1+sampling) | **2.571** | **40.5%** | 78.9% | 0.443 | 0.543 |
 
-*Note: "Captured" uses the legacy IS ≥ 3.0 threshold. For the baseline, the NIV Y+P threshold (IS ≥ 2.00) identifies 922/1,497 useful segments (61.6%, κ=0.818 vs Opus judge), superseding the IS ≥ 3.0 operating point (κ=0.521). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).*
+*Note: "Captured" uses the legacy IS ≥ 3.0 threshold (deprecated). For the baseline, the NIV Y+P threshold (IS ≥ 2.00) identifies 927/1,497 (61.9%) MBR / 923 (61.7%) top-1 useful segments (κ=0.796 MBR / 0.816 top-1 vs Opus judge), superseding the IS ≥ 3.0 operating point (κ=0.521). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).*
 
 Config J has the highest IS (+0.086 over baseline) and capture rate (+1.8pp) despite having significantly higher WER (+14.8pp). This demonstrates IS's advantage over WER: the longer outputs from lenpen=1 contain more errors by WER's count but preserve more meaning (higher semantic and phonetic similarity).
 
@@ -92,8 +94,8 @@ The LLM heuristic's high recall (99.2%) and intentional optimism (precision 78.2
 | Metric | Value |
 |--------|-------|
 | Divergent segments (LLM >= 0.5, IS < 3.0) | 165 / 900 failed (18.3%) |
-| Useful segments (NIV Y+P: IS ≥ 2.00) | 922 / 1,497 (61.6%), κ=0.818 vs Opus judge |
-| Legacy effective capture (IS ≥ 3.0 + salvage) | 766 / 1,497 (51.1%) vs 601 (40.1%) — superseded by NIV |
+| Useful segments (NIV Y+P: IS ≥ 2.00) | 927 / 1,497 (61.9%) MBR / 923 (61.7%) top-1, κ=0.796 MBR / 0.816 top-1 vs Opus judge |
+| Legacy effective capture (IS ≥ 3.0 + salvage, deprecated) | 766 / 1,497 (51.1%) vs 615 (41.1%) MBR / 601 (40.1%) top-1 — superseded by NIV |
 | Uplift (legacy) | +11.0 percentage points (+27.6% relative) |
 
 The 165 segments break down into 6 recovery categories: hidden gems (54), semantic preservation (57), phonetic bridge (93), entity-preserved (44), structure match (74), WER over-punishment (27). Categories overlap as segments can exhibit multiple recovery signals simultaneously.
@@ -129,9 +131,9 @@ Claude Opus 4.6 evaluated all 1,497 hypothesis-reference pairs using holistic LL
 |--------|-------|
 | **LLM strict capture (Y only)** | 345 / 1,497 (23.0%) |
 | **LLM lenient capture (Y + P)** | 971 / 1,497 (64.9%) |
-| **NIV Y+P useful (IS ≥ 2.00)** | **922 / 1,497 (61.6%)** |
-| **NIV Y clearly conveyed (IS ≥ 3.80)** | **346 / 1,497 (23.1%)** |
-| Legacy IS >= 3.0 capture | 601 / 1,497 (40.1%) |
+| **NIV Y+P useful (IS ≥ 2.00)** | **927 / 1,497 (61.9%) MBR / 923 (61.7%) top-1** |
+| **NIV Y clearly conveyed (IS ≥ 3.80)** | **358 / 1,497 (23.9%) MBR / 359 (24.0%) top-1** |
+| Legacy IS >= 3.0 capture (deprecated) | 615 / 1,497 (41.1%) MBR / 601 (40.1%) top-1 |
 | Legacy IS + salvage capture | 766 / 1,497 (51.1%) |
 | **Intra-rater reliability** | 86.7% exact, 100% lenient (30 duplicates) |
 
@@ -140,7 +142,7 @@ Claude Opus 4.6 evaluated all 1,497 hypothesis-reference pairs using holistic LL
 | Comparison | Kappa | Notes |
 |------------|-------|-------|
 | **LLM Y vs IS ≥ 3.80 (NIV Y)** | **0.690** | 23.1% vs judge 23.0% — near-perfect rate match |
-| **LLM Y+P vs IS ≥ 2.00 (NIV Y+P)** | **0.818** | 61.6% vs judge 64.9% — strong agreement |
+| **LLM Y+P vs IS ≥ 2.00 (NIV Y+P)** | **0.796 MBR / 0.816 top-1** | 61.9% MBR / 61.7% top-1 vs judge 64.9% — strong agreement |
 
 ### Legacy agreement (IS ≥ 3.0 — superseded)
 
@@ -178,6 +180,6 @@ In the 626 P-coded segments, the most commonly preserved elements are structure 
 
 ### Implications for IS Framework
 
-1. **NIV thresholds resolve the IS ≥ 3.0 limitations:** The legacy IS ≥ 3.0 threshold captured only 40.1% and had weak agreement (κ=0.521 for Y+P). The NIV Y+P threshold (IS ≥ 2.00) identifies 922 useful segments (61.6%) with strong agreement (κ=0.818), closely matching the judge's 64.9% Y+P rate.
+1. **NIV thresholds resolve the IS ≥ 3.0 limitations:** The legacy IS ≥ 3.0 threshold captured only ~40-41% and had weak agreement (κ=0.521 for Y+P). The NIV Y+P threshold (IS ≥ 2.00) identifies 927 useful segments (61.9%) MBR / 923 (61.7%) top-1 with strong agreement (κ=0.796 MBR / 0.816 top-1), closely matching the judge's 64.9% Y+P rate.
 2. **IS ≥ 3.80 matches strict quality:** 23.1% of segments pass NIV Y, matching the judge's 23.0% Y rate (κ=0.690). IS beats WER at both operating points (+0.061κ for Y, +0.041κ for Y+P).
 3. **The llm_context_prob salvage hypothesis is validated:** The 165 salvage segments (legacy IS < 3.0, llm_context_prob ≥ 0.5) align with the P-heavy boundary zone identified by the LLM judge. Under NIV thresholds, most of these segments already score IS ≥ 2.00 and are counted as useful without needing a separate salvage mechanism.

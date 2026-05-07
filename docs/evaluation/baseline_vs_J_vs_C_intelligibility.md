@@ -1,6 +1,6 @@
 # Intelligibility Comparison: Baseline vs Config J vs Config C
 
-> **Note (March 2026):** This document uses the legacy IS ≥ 3.0 threshold (40.1% captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.6% useful (κ=0.818), IS ≥ 3.80 = 23.1% clearly conveyed (κ=0.690). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
+> **Note (March 2026, refreshed May 2026):** This document uses the legacy IS ≥ 3.0 threshold (deprecated; 40.1% top-1 / 41.1% MBR captured). Current NIV thresholds supersede this: IS ≥ 2.00 = 61.7% top-1 / 61.9% MBR useful (κ=0.816 / 0.796), IS ≥ 3.80 = 24.0% top-1 / 23.9% MBR clearly conveyed (κ=0.707 / 0.693). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md) and [after_amosi_audit.md](after_amosi_audit.md).
 
 **Argos -- The Orchard**
 **Date:** 2026-02-25
@@ -30,9 +30,10 @@ Config J = stochastic decode with length penalty. Config C = deterministic versi
 
 | Metric | Baseline | Config J | Config C | J vs Base | C vs Base |
 |--------|----------|----------|----------|-----------|-----------|
-| **Mean IS** | 2.53 | **2.60** | 2.57 | +0.07 | +0.04 |
-| **Median IS** | 2.54 | **2.63** | 2.59 | +0.09 | +0.05 |
-| **Properly Captured (IS >= 3)** | 601 (40.1%) | **622 (41.5%)** | 594 (39.7%) | +21 (+1.4pp) | -7 (-0.4pp) |
+| **Mean IS** | 2.547 (top-1: 2.53) | **2.60** | 2.57 | +0.05 | +0.02 |
+| **Median IS** | 2.600 (top-1: 2.54) | **2.63** | 2.59 | +0.03 | -0.01 |
+| **Properly Captured (IS >= 3, deprecated)** | 615 MBR (41.1%) / 601 top-1 (40.1%) | **622 (41.5%)** | 594 (39.7%) | +7 (+0.4pp) | -7 (-0.4pp) |
+| **NIV Y+P (IS >= 2.00)** | 927 MBR (61.9%) / 923 top-1 (61.7%) | — | — | — | — |
 | **Empty Predictions** | 70 (4.7%) | **0 (0.0%)** | **0 (0.0%)** | -70 | -70 |
 | **Mean WER** | **64.1%** | 78.9% | 79.3% | +14.8pp | +15.2pp |
 | **Mean WWER** | **60.5%** | 62.8% | 63.8% | +2.3pp | +3.3pp |
@@ -264,4 +265,4 @@ Semantic Sim and IS are stable across all configs, while WER and Length Ratio ar
 
 ### Implication
 
-The fact that IS and the LLM judge agree at r > 0.93 on all three full-decode configs means the modest IS differences between Baseline (2.52), Config C (2.57), and Config J (2.60) represent real quality differences — not measurement noise.
+The fact that IS and the LLM judge agree at r > 0.93 on all three full-decode configs means the modest IS differences between Baseline (2.547 MBR / 2.52 top-1), Config C (2.57), and Config J (2.60) represent real quality differences — not measurement noise.

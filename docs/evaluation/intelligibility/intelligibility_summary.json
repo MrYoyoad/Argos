@@ -1,5 +1,26 @@
 {
   "source_csv": "/home/ubuntu/english_full_results/client_outputs/report/report.csv",
+  "_note": "Top-1 baseline values below. MBR-default production values are in 'mbr_default' block. Updated 2026-05-07 to reference after_amosi_audit.md.",
+  "production_default": "mbr",
+  "mbr_default": {
+    "mean_is": 2.547,
+    "median_is": 2.600,
+    "niv_useful_count": 927,
+    "niv_useful_pct": 61.92,
+    "niv_clearly_conveyed_count": 358,
+    "niv_clearly_conveyed_pct": 23.91,
+    "legacy_captured_count_is3": 615,
+    "legacy_captured_pct_is3": 41.1,
+    "kappa_vs_opus_Y": 0.693,
+    "kappa_vs_opus_YP": 0.796,
+    "tier_distribution": {
+      "5_excellent": { "count": 291, "pct": 19.4 },
+      "4_good": { "count": 324, "pct": 21.6 },
+      "3_fair": { "count": 312, "pct": 20.8 },
+      "2_poor": { "count": 329, "pct": 22.0 },
+      "1_failed": { "count": 241, "pct": 16.1 }
+    }
+  },
   "n_segments": 1497,
   "n_empty_hyp": 70,
   "mean_is": 2.532,
@@ -11,6 +32,8 @@
   "niv_useful_pct": 61.6,
   "niv_clearly_conveyed_count": 346,
   "niv_clearly_conveyed_pct": 23.1,
+  "kappa_vs_opus_Y": 0.707,
+  "kappa_vs_opus_YP": 0.816,
   "tier_distribution": {
     "5_excellent": { "count": 288, "pct": 19.2 },
     "4_good": { "count": 313, "pct": 20.9 },

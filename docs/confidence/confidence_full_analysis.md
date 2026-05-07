@@ -8,7 +8,7 @@
 
 **Term key (used throughout this report).**
 
-- **IS** — Intelligibility Score (0-5), our 6-signal composite quality metric. Mean across the 1,497-segment baseline = 2.52.
+- **IS** — Intelligibility Score (0-5), our 6-signal composite quality metric. Mean across the 1,497-segment baseline = **2.547** (MBR-default; top-1: 2.52). See [after_amosi_audit.md](../evaluation/after_amosi_audit.md).
 - **NIV-Y** ("clearly intelligible") — a segment with IS ≥ 3.80; the bar for a clean win, calibrated against an Opus-as-Judge gold standard.
 - **NIV-N** ("not intelligible") — a segment with IS < 2.00; clear failure.
 - **mean_word_prob** — the per-segment average of per-word probabilities, where each per-word probability is the *minimum* max-softmax across the sub-tokens that make up the word.

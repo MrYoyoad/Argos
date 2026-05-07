@@ -1,8 +1,10 @@
 # Intelligibility Score (IS) — Methodology & Examples
 
 **Argos — The Orchard**
-**Date:** 2026-02-24
+**Date:** 2026-02-24 (numbers refreshed 2026-05-07 to MBR-default)
 **Author:** Yoad Oxman
+
+> **Production-default numbers** are MBR-as-display per [after_amosi_audit.md](after_amosi_audit.md). Top-1 baseline values appear labeled "(top-1)" where contrast matters.
 
 ---
 
@@ -309,8 +311,8 @@ All signals scaled to 0-5 before combining. Final IS range: 0.0 to 5.0.
 
 | Target | IS Threshold | κ | Captures | Judge rate |
 |--------|-------------|------|----------|-----------|
-| **Y** ("meaning clearly conveyed") | **IS >= 3.80** | 0.690 | 346 (23.1%) | 345 (23.0%) |
-| **Y+P** ("any useful meaning") | **IS >= 2.00** | 0.818 | 922 (61.6%) | 971 (64.9%) |
+| **Y** ("meaning clearly conveyed") | **IS >= 3.80** | 0.693 (top-1: 0.707) | 358 (23.9%) (top-1: 359, 24.0%) | 345 (23.0%) |
+| **Y+P** ("any useful meaning") | **IS >= 2.00** | 0.796 (top-1: 0.816) | 927 (61.9%) (top-1: 923, 61.7%) | 971 (64.9%) |
 
 IS beats WER at both operating points: +0.061 for Y (vs WER <= 34%), +0.041 for Y+P (vs WER <= 77%). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md) for full analysis.
 

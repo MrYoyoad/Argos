@@ -1,8 +1,10 @@
 # IS Metric — Component Correlation Analysis
 
 **Argos — The Orchard**
-**Date:** 2026-03-02
+**Date:** 2026-03-02 (numbers refreshed 2026-05-07 to MBR-default)
 **Dataset:** 1,497 segments (full AVSpeech baseline, February 2026)
+
+> Production-default numbers are MBR-as-display per [after_amosi_audit.md](after_amosi_audit.md). Top-1 baseline values labeled inline.
 
 ---
 
@@ -115,7 +117,7 @@ Correlation analysis reveals that the 6 signals collapse into **3 independent di
 2. **Meaning preservation** (Semantic — partially redundant with word accuracy at r=0.82) → ~28% of IS variance
 3. **Output sanity** (Length Ratio — largely independent of other signals) → ~9% of IS variance
 
-The heuristic LLM-knowledge-based judge (`llm_context_prob`) correlates at **r=0.93** with IS and achieves **88.6% agreement** at the legacy IS ≥ 3.0 threshold (Cohen's κ=0.773). **NIV thresholds** (March 2026) supersede IS ≥ 3.0: IS ≥ 3.80 for Y (κ=0.690 vs Opus judge), IS ≥ 2.00 for Y+P (κ=0.818, 922/1,497 useful). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
+The heuristic LLM-knowledge-based judge (`llm_context_prob`) correlates at **r=0.93** with IS and achieves **88.6% agreement** at the legacy IS ≥ 3.0 threshold (Cohen's κ=0.773). **NIV thresholds** (March 2026) supersede IS ≥ 3.0: IS ≥ 3.80 for Y (κ=0.693 MBR / 0.707 top-1 vs Opus judge), IS ≥ 2.00 for Y+P (κ=0.796 MBR / 0.816 top-1, 927/1,497 MBR / 923 top-1 useful). See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
 
 ---
 
@@ -446,7 +448,7 @@ We also ran **Claude Opus 4.6 as a per-sample judge** on all 1,497 pairs in two 
 
 Opus Y aligns best with IS ≥ 3.75–4.00 (Tier 5, "Excellent"). The judge reserves full endorsement for only the highest-quality outputs.
 
-**Interpretation**: The three evaluation systems (IS, heuristic, Opus judge) agree on **ranking** (Pearson r = 0.85–0.93) but disagree on **where to draw the line**. The legacy IS ≥ 3.0 threshold was conservative; the Opus judge's natural Y+P boundary is IS ≥ 2.0, which became the **NIV Y+P threshold** (κ=0.818, 922/1,497 segments useful). The Y threshold was set at IS ≥ 3.80 (κ=0.690, 346/1,497 clearly conveyed). These NIV thresholds supersede IS ≥ 3.0. See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
+**Interpretation**: The three evaluation systems (IS, heuristic, Opus judge) agree on **ranking** (Pearson r = 0.85–0.93) but disagree on **where to draw the line**. The legacy IS ≥ 3.0 threshold was conservative; the Opus judge's natural Y+P boundary is IS ≥ 2.0, which became the **NIV Y+P threshold** (κ=0.796 MBR / 0.816 top-1, 927/1,497 MBR / 923 top-1 segments useful). The Y threshold was set at IS ≥ 3.80 (κ=0.693 MBR / 0.707 top-1, 358/1,497 MBR / 359 top-1 clearly conveyed). These NIV thresholds supersede IS ≥ 3.0. See [threshold_calibration_vs_opus.md](threshold_calibration_vs_opus.md).
 
 - **Bug note (2026-03-05):** An earlier computation returned NaN for the context-aware judge due to using column name `context_judge` instead of the correct column name `context` in `context_eval_results.csv`. This has been resolved.
 
@@ -456,7 +458,8 @@ Opus Y aligns best with IS ≥ 3.75–4.00 (Tier 5, "Excellent"). The judge rese
 
 | Metric | Mean | Median | Std | Min | Max | Skew |
 |--------|------|--------|-----|-----|-----|------|
-| IS Score | 2.520 | 2.538 | 1.372 | 0.000 | 5.000 | -0.055 |
+| IS Score (top-1) | 2.520 | 2.538 | 1.372 | 0.000 | 5.000 | -0.055 |
+| IS Score (MBR-default) | 2.547 | 2.600 | — | 0.000 | 5.000 | — |
 | Semantic Sim | 0.437 | 0.412 | 0.308 | -0.093 | 1.000 | 0.215 |
 | Phonetic Sim | 0.552 | 0.588 | 0.276 | 0.000 | 1.000 | -0.344 |
 | WER % | 64.054 | 61.100 | 39.277 | 0.000 | 400.000 | 1.599 |
