@@ -3587,6 +3587,60 @@ def _demo_research_slide(prs, *, title, video_key, ref, hyp_runs,
             click_reveal=True)
 
 
+def slide_live_example_intro(prs):
+    """Early example — Obama 14 (29 words, all green) — sets the bar.
+
+    Placed near the start of the deck (after 'What is VSP?') to give the
+    audience a concrete, visceral taste of what the system delivers
+    BEFORE diving into pipeline + benchmarks + metrics. Same Obama clip
+    used later in slide 60's demo intro for callback.
+    """
+    # Sample of the per-word coloring (full transcript is in REF + the video).
+    runs = [
+        ("…the ", {"size": Pt(22), "color": BLUE}),
+        ("tireless and heroic ", {"size": Pt(22), "color": BLUE, "bold": True}),
+        ("work of our ", {"size": Pt(22), "color": BLUE}),
+        ("counterterrorism", {"size": Pt(22), "color": GOLD, "italic": True}),
+        (" professionals…", {"size": Pt(22), "color": BLUE}),
+    ]
+    _demo_research_slide(prs,
+        title="Live example — clean speech, perfect transcription",
+        video_key="obama_perfect",
+        ref="and our allies over the last 10 years thanks to the tireless "
+            "and heroic work of our military and our counterterrorism "
+            "professionals we've made great strides in that effort",
+        hyp_runs=runs,
+        metrics_line="WER 0%   /   IS 5.00 (Excellent)   /   29 words   "
+                     "/   27 of 29 GREEN  (per-word conf)",
+        badge_text="TIER: TRUST",
+        badge_color=BLUE,
+        body="Reference and prediction are identical (WER 0%). 27 of 29 "
+             "per-word confidence bands GREEN — the model is sure, and "
+             "it's right.",
+        notes="Early-deck taste: this is the upper bound. Obama bin "
+              "Laden announcement segment 14 (41.95-45.55 s, 29 words). "
+              "REF and HYP are character-for-character identical: "
+              "'and our allies over the last 10 years thanks to the "
+              "tireless and heroic work of our military and our "
+              "counterterrorism professionals we've made great strides "
+              "in that effort'. WER = 0%, IS = 5.00 (Tier 5 Excellent), "
+              "27 of 29 per-word confidence bands GREEN at high "
+              "conf-only threshold (this Obama decode predates "
+              "VSP_NBEST=1 so the joint conf+agreement rule is not "
+              "applied — but the visual is the same, and at 27/29 green "
+              "the upgrade would not change the picture). Why this "
+              "slide opens the deck: research peers see the punchline "
+              "first — 'yes, the system can deliver perfect output on "
+              "real-world video' — before the metric debate. This "
+              "primes the rest of §1 ('but is it always like this?' → "
+              "no, average is 62% NIV-Y+P, hence the metric work in "
+              "§2). Same clip recurs as the leftmost tile in slide 60's "
+              "demo intro, anchoring a callback. "
+              "Source: flat_runs_archive/20260430_234843/"
+              "client_outputs/report/report.csv "
+              "(050111_OsamaBinLadenStatement_HD_14_004195_004555).")
+
+
 def slide_demo_obama_trust(prs):
     """TRUST exemplar — non-trivial speaker, AI talk, full agreement-aware rule.
 

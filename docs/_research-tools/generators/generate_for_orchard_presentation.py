@@ -68,6 +68,7 @@ from presentation.slides_evaluation import (
     slide_25d, slide_25e,
     slide_15,
     slide_metric_disagreement, slide_metric_disagreement_2,
+    slide_live_example_intro,
 )
 from presentation.slides_engineering import (
     slide_17,           # programmatic (NOT slide_17_png)
@@ -201,8 +202,9 @@ def main():
         slide_what_was_done_2,          # What was done? (2/2)
         slide_toc,                      # TOC
 
-        # ─── §1. The Problem (10 slides) ─────────────────────────────
+        # ─── §1. The Problem (11 slides) ─────────────────────────────
         slide_02,                       # What is VSP?
+        slide_live_example_intro,       # Live taste — Obama 29-word perfect
         slide_visemes,                  # Visemes
         slide_03,                       # Three components
         slide_data_flow,                # Data flow
