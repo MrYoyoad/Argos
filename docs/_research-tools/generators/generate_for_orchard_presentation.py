@@ -212,17 +212,18 @@ def main():
         slide_diversity_of_inputs,      # Diversity of inputs
         slide_wer_lies,                 # WER: the metric that lies
 
-        # ─── §2. Evaluation — How do you evaluate lip-reading? (16) ──
+        # ─── §2. Evaluation — How do you evaluate lip-reading? ──────
+        # Cut: trimmed judge examples 6 → 4 (kept ex1, ex3, ex5, ex6 — the
+        # most distinct failure modes). Examples 2, 4 collapse into ex5 in
+        # speaker notes (same "core preserved despite WER" pattern).
         slide_research_transition,      # Section divider
         slide_literature_metrics_problem,
         slide_llm_judge,                # LLM-as-a-Judge intro
         slide_llm_judge_30,             # LLM judge deep dive
-        slide_judge_ex1,
-        slide_judge_ex2,
-        slide_judge_ex3,
-        slide_judge_ex4,
-        slide_judge_ex5,
-        slide_judge_ex6,
+        slide_judge_ex1,                # Named entity swap
+        slide_judge_ex3,                # Technical vocab drift
+        slide_judge_ex5,                # Cooking domain confusion
+        slide_judge_ex6,                # Topic hijack
         slide_disagreement_blind,
         slide_disagreement_context,
         slide_is_motivation,            # Why LLM Judge isn't enough
@@ -234,16 +235,20 @@ def main():
         slide_is_wer_scatter,           # IS vs WER scatter
         slide_a16,                      # IS x judge tier (cross-tab)
 
-        # ─── §3. Proof — Where the system works (8 slides) ───────────
-        slide_07,                       # IS results: useful output
-        slide_metric_transition,        # Three numbers transition
-        slide_08,                       # Failure-mode taxonomy bar
-        slide_failure_deep_1a,          # Failure deep 1/2
-        slide_failure_deep_1b,          # Failure deep 2/2
+        # ─── §3. Where It Works — and How It Fails ───────────────────
+        # SECTION SPLIT v5 (per research-overview review):
+        # §3a Capture (where it works) = slide_07 + slide_metric_transition
+        # §3b Failure Anatomy = slide_08 + deep_1a + 1b consolidated + 2 + salvage
+        # Cut: slide_failure_deep_1b (overlapping content with 1a — taxonomy
+        # categories now fit in one slide). slide_a13 cut (overlaps with
+        # slide_failure_deep_2 — same "real failure examples" framing).
+        slide_07,                       # IS results: useful output (CAPTURE)
+        slide_metric_transition,        # Three numbers transition (CAPTURE)
+        slide_08,                       # Failure-mode taxonomy bar (FAILURE)
+        slide_failure_deep_1a,          # Failure deep (consolidated)
         slide_failure_deep_2,           # Failure modes: examples
         slide_25d,                      # LLM salvage: three recoveries
         slide_25e,                      # LLM salvage: domain context
-        slide_a13,                      # Failure mode examples (table)
 
         # ─── §4. Confidence — Trustable output w/o GT (18 slides) ────
         slide_confidence_problem,

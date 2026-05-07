@@ -94,7 +94,12 @@ def slide_is_motivation(prs):
         "3. Continuous signal: IS is 0-5 continuous vs coarse Y/P/N.\n"
         "4. Known biases: 12+ documented LLM judge biases. IS has none.\n"
         "5. Decomposability: IS breaks into 6 components mapping to specific "
-        "failure modes. Bottom line: IS is operational, LLM judge is validation.",
+        "failure modes. Bottom line: IS is operational, LLM judge is validation.\n\n"
+        "PEER DETAIL — On 'LLM judges have biases': see Zheng et al. 2024 "
+        "(LLM-as-a-Judge survey). Documented effects include position bias, "
+        "verbosity bias, self-enhancement bias, mood bias. Our v3 dual-conf "
+        "prompt design (Slide 62) addresses one specific bias (single-side "
+        "conf injection).",
         [[sub]] + card_groups + [[takeaway]], click_reveal=True)
 
 
@@ -587,7 +592,15 @@ def slide_is_weight_rationale(prs):
         "omitted from the body so the visual matches the slide-33 framing \u2014 see "
         "slide_appendix_pca_loadings for the PC3 loading vector. "
         "Weight sensitivity: current vs equal weights correlate at r=0.999 \u2014 "
-        "only 5% of segments change tier. The formula is robust to perturbation. "
+        "only 5% of segments change tier. The formula is robust to perturbation.\n\n"
+        "PEER DETAIL \u2014 Kaiser criterion: keep PCs whose eigenvalue > 1, i.e., "
+        "explaining at least 1/k = 16.7% of variance for 6 standardized "
+        "inputs. Only PC1 (68%) and PC2 (20%) clear the bar; PC3 (5%) sits "
+        "below.\n\n"
+        "PEER DETAIL \u2014 Equal-weights ablation: replacing the (0.25, 0.15\u00d75) "
+        "weights with uniform (1/6\u00d76) keeps segment ranking nearly "
+        "identical (Pearson r=0.999 between IS and IS-equal-weights). The "
+        "chosen weights are not fragile. "
         "Source: docs/evaluation/is_pca_analysis.md \u00a73.1, \u00a75.",
         [dim_shapes, [val_t]], click_reveal=True)
 
@@ -601,7 +614,8 @@ def slide_is_calc_examples(prs):
     col_w = Inches(5.8)
     gap = Inches(0.53)
     # CUT v3 (overflow): card_h 4.6 -> 5.4 to absorb taller calc rows.
-    card_h = Inches(5.4)
+    # FOOTER add: card_h 5.4 -> 5.30 to free 0.10" for closed-form IS formula.
+    card_h = Inches(5.30)
 
     def _draw_calc_card(slide, x, label, is_val, color, ref, hyp, lines, summary):
         """Draw one calculation card at position x. Returns list of all shapes."""
@@ -682,6 +696,13 @@ def slide_is_calc_examples(prs):
         "carry strap",
         "holocaust denier explanation of the final act",
         bad_lines, "Sum \u00d7 5 = 0.81 \u2192 IS 0.8 (Failed)")
+
+    # Closed-form IS formula footer (italic LGRAY Pt(16)). Card_h shrunk
+    # 5.4 -> 5.30 to free 0.10" footer band above safe-zone limit (7.05).
+    add_text(slide,
+        "IS = 5 \u00d7 (0.25\u00b7Sem + 0.15\u00b7(Phon + InvWER + InvWWER + NEA + LR))",
+        MX, Inches(6.78), CW, Inches(0.22),
+        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Two IS calculation examples. Left: good segment (IS 4.2) with high "
@@ -802,12 +823,16 @@ def slide_is_wer_scatter(prs):
                     MX + left_w + Inches(0.2), CT - Inches(0.2),
                     width=CW - left_w - Inches(0.2))
 
-    # Bottom note about IS-WER correlation
+    # Bottom note about IS-WER correlation (single line at Pt(16)).
     add_text(slide,
-        "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
-        "it misses phonetic and semantic preservation, making it insufficient alone.",
-        MX, Inches(6.3), CW, Inches(0.45),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "WER correlates with IS (r\u2248\u22120.7) but misses phonetic and semantic preservation.",
+        MX, Inches(6.45), CW, Inches(0.30),
+        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    # Caveat footer: distinguish IS-failure bucket from the WER-unusable bucket.
+    add_text(slide,
+        "(IS<2.00 \u2260 WER unusable bucket \u2014 different metrics)",
+        MX, Inches(6.78), CW, Inches(0.25),
+        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Scatter plot of WER vs IS for all 1,497 segments (top-1 IS) with "
@@ -827,7 +852,9 @@ def slide_is_wer_scatter(prs):
         "it misses phonetic and semantic preservation, making it insufficient "
         "as a standalone quality measure. "
         "Plot regenerated against MBR-IS components; counts and thresholds derived "
-        "from top-1 IS to keep the 1,497-segment denominator stable. "
+        "from top-1 IS to keep the 1,497-segment denominator stable.\n\n"
+        "PEER DETAIL \u2014 WER vs IS: Pearson r = \u22120.71 on raw values, n=1,497. "
+        "Negative because lower WER \u2192 higher IS. "
         "Source: docs/evaluation/threshold_calibration_vs_opus.md \u00a76.",
         [[num_s, lbl_s, bul], [img]], click_reveal=True)
 
@@ -953,7 +980,7 @@ def slide_07(prs):
     docs/evaluation/after_amosi_audit.json.
     """
     slide = new_slide(prs)
-    add_title(slide, "Where the System Works: Oracle vs Realistic")
+    add_title(slide, "Where It Works — and How It Fails: Oracle vs Realistic")
     add_accent_line(slide)
 
     # ── Top row: two side-by-side cards ──────────────────────────────
@@ -1126,7 +1153,11 @@ def slide_07(prs):
         "Tier distribution under MBR (bottom of slide): Tier 5 — Excellent "
         "(IS >= 4.0) holds 291 segments = 19% (audit:tier_5_pct_mbr); "
         "Tier 4 (3.0-3.99) 324 = 22%; Tier 3 (2.0-2.99) 312 = 21%; "
-        "Tier 2 (1.0-1.99) 329 = 22%; Tier 1 (<1.0) 241 = 16%. "
+        "Tier 2 (1.0-1.99) 329 = 22%; Tier 1 (<1.0) 241 = 16%.\n\n"
+        "PEER DETAIL — 1,427 = 1,497 − 70 empty hypotheses (model emitted "
+        "no tokens; usually below decode threshold). Trust-gate operating "
+        "points computed on 1,427 since empty segments cannot be 'trusted'. "
+        "IS distribution metrics use full 1,497 (treating empty as IS=0). "
         "Sources: docs/evaluation/after_amosi_audit.json (sections A, F, E), "
         "docs/evaluation/threshold_calibration_vs_opus.md.",
         [oracle_shapes, realistic_shapes, tier_shapes], click_reveal=True)
@@ -1785,7 +1816,13 @@ def slide_metric_transition(prs):  # audit:bigfonts2
         "evaluated across all 1,497 segments; Card 4 (Trust gate) is recall on "
         "1,427 non-empty segments (excludes 70 empty hypotheses). The funnel is "
         "four metrics on different denominators, not four progressive refinements "
-        "of the same number. "
+        "of the same number.\n\n"
+        "PEER DETAIL — Paired McNemar: contingency on 1,497 segments per "
+        "method. For MBR Y+P: b=89 (baseline-N → MBR-Y+P), c=49 "
+        "(baseline-Y+P → MBR-N), chi^2 = (b−c)^2/(b+c) = 11.6, two-tailed "
+        "p=0.00017. Bonferroni-adjusted threshold for 8 simultaneous tests "
+        "(4 methods × 2 verdict cuts) is alpha=0.00625; both MBR "
+        "(p=0.00017) and vote_conf (p=0.00257) survive. "
         "Sources: docs/evaluation/after_amosi_audit.md sections A, B, E, F.",
         [g1, g1_arrow + g2, g2_arrow + g3, g3_arrow + g4], click_reveal=True)
 

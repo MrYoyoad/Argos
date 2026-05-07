@@ -274,7 +274,7 @@ def slide_toc(prs):  # audit:bigfonts
         ("2. How Do You Evaluate Lip-Reading?",
          "1,497 wild segments \u2022 IS \u2022 LLM-as-a-Judge",
          TEAL),
-        ("3. Where the System Works",
+        ("3. Where It Works \u2014 and How It Fails",
          "Oracle vs Realistic \u2022 Failure modes \u2022 MBR n-best",
          TEAL),
         ("4. Confidence Without Ground Truth",
@@ -452,7 +452,12 @@ def slide_02(prs):  # audit:bigfonts
         "candidate text (the hardest part of lip reading). The human's job becomes "
         "verification, not generation — dramatically easier. Hallucination risk "
         "drops from 20% to <5% with human filtering. "
-        "Source: docs/evaluation/human_is_estimation.md (Path B pre-study estimates).",
+        "Source: docs/evaluation/human_is_estimation.md (Path B pre-study estimates).\n\n"
+        "PEER CAVEAT: 'System + human outperforms expert lip readers' is a "
+        "Path B pre-study estimate (see Appendix Human-IS); not yet validated "
+        "by a head-to-head measurement. Expert human lip-readers reach ~3.0 "
+        "IS, model+ctx+human reviewer projects to ~3.8 IS; the gap is the "
+        "value of the trust gate UI.",
         [[sub, vid_shape], [bottom]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -525,7 +530,12 @@ def slide_03(prs):  # audit:bigfonts
         "backbone is a drop-in replacement that requires only adapter "
         "retraining (no new projection geometry). Mention to peers: this is "
         "the VSP-LLM design from Yeo et al. 2024, with our 4-bit quantisation "
-        "to fit a single 24 GB consumer GPU at inference. "
+        "to fit a single 24 GB consumer GPU at inference.\n\n"
+        "PEER DETAIL: K-means stage clusters AV-HuBERT features (1024-dim) "
+        "into K=500 units (paper default), used during VSP-LLM training to "
+        "predict viseme-style discrete units. The 1024 → 4096 layer is a "
+        "single linear projection (no activation), QLoRA r=16, ~12.6M "
+        "trainable params. "
         "Sources: docs/paper/VSP-LLM_paper.pdf, "
         "docs/finetuning/training-research-notes.md (LoRA r=16 setup).",
         [[img], block_groups[0] + [arrows[0]] + block_groups[1] + [arrows[1]] + block_groups[2]], click_reveal=True)
@@ -567,7 +577,13 @@ def slide_04(prs):  # audit:bigfonts
               "baseline 64%) \u2014 2.5x worse. The dataset is different, and that "
               "explains the gap.\n\n"
               "Note: Our best LRS3 reproduction achieved 32% WER \u2014 gap likely "
-              "due to pretrain/test split differences. "
+              "due to pretrain/test split differences.\n\n"
+              "PEER CAVEAT: 25% WER baseline is the paper-as-published number "
+              "on LRS3. Our own LRS3 reproduction reaches 32% (likely "
+              "pretrain-split / data-prep differences). Either way the "
+              "wild-data gap is multiplicative \u2014 choosing 25% as the "
+              "denominator gives the paper-as-published 2.5x; using our 32% "
+              "still leaves a 2.0x gap. "
               "See docs/evaluation/after_amosi_audit.md (Section F) and "
               "docs/beam-search/n_best_implementation.md.")
     # OVERLAP fix (round 2): shift citation note down to y=6.80 so it clears
@@ -790,7 +806,11 @@ def slide_diversity_of_inputs(prs):  # audit:bigfonts2
         "10–360s windows for evaluation. Speakers include diverse accents, "
         "ages, and occlusions (hands, microphones, partial faces). This is why "
         "WER on our set (64% top-1, 64% MBR) is far worse than LRS3 "
-        "(~25%) — fundamentally harder data, not a worse model. "
+        "(~25%) — fundamentally harder data, not a worse model.\n\n"
+        "PEER DETAIL: 1,497-segment evaluation set was curated from a larger "
+        "pool of YouTube content; segments balanced across topic categories "
+        "(interviews, talks, casual conversation, technical, religious) but "
+        "not formally stratified. "
         "See docs/architecture.md for dataset description and "
         "docs/evaluation/after_amosi_audit.md for the corresponding numbers.",
         [[bul], [img_shape]], click_reveal=True)

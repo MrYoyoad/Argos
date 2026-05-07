@@ -100,7 +100,11 @@ def slide_24(prs):  # audit:bigfonts
         "top-1-only (r=0.925 across 16 decode-parameter configs); MBR "
         "validation is the v3 paired Judge test in the next subsection. "
         "Mention to peers: this slide is the framing for everything in "
-        "Section 5 — the roadmap is calibrated against IS, not WER. "
+        "Section 5 — the roadmap is calibrated against IS, not WER.\n\n"
+        "PEER DETAIL — Cross-config r = 0.925 was computed on 16 top-1 "
+        "decode-parameter configs (13 tuning at n=107 + 3 full at "
+        "n=1,497). MBR aggregation was NOT one of the 16 configs — that "
+        "comparison is the v3 paired test (Slides 59-62). "
         "Sources: docs/evaluation/is_cross_config_validation.md, "
         "docs/evaluation/after_amosi_audit.md (Section F).",
         [[r1], [r2, img]], click_reveal=True)
@@ -193,6 +197,11 @@ def slide_26(prs):  # audit:bigfonts2
              size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 26,
+        "PROJECTION CAVEAT: the +0.98 IS staircase is a literature-derived "
+        "projection (ROVER/VALLR/scaling-law deltas mapped through the "
+        "IS-vs-WER linearization at ~0.033 IS/pp). Phase deltas are "
+        "estimates, not ablation-validated measurements; phase overlaps "
+        "may shrink the realized gain.\n\n"
         "Five phases targeting 574 non-useful segments (IS < 2.00, "
         "approximately 38% of the 1,497-segment evaluation set) drawn from "
         "our failure taxonomy. Headline: starting from 62% useful (NIV "
@@ -219,7 +228,13 @@ def slide_26(prs):  # audit:bigfonts2
         "Combined: +0.98 IS -> target IS 3.3-3.7 (80-85% useful Y+P). "
         "Where phases overlap (e.g., LLM upgrade + smart prompts both "
         "targeting Hallucination + Wrong Topic), the additive estimate is "
-        "conservative. "
+        "conservative.\n\n"
+        "PEER DETAIL — Phase deltas (+0.13 / +0.40 / +0.35 / +0.10) are "
+        "projections from a linearized IS-vs-WER conversion (~0.033 IS "
+        "per pp WER) using literature-cited scaling laws (ROVER −5–8% "
+        "WER, VALLR −26% WER, ICLR 2024 +10% per data-doubling). The "
+        "+0.98 sum assumes phase-targeted failures don't overlap; with "
+        "overlap the realized gain may be smaller. "
         "Sources: docs/evaluation/intelligibility_methodology.md, "
         "docs/evaluation/after_amosi_audit.md (Section F).",
         [step_shapes, [img, bottom]], click_reveal=True)
@@ -290,6 +305,11 @@ def slide_26b(prs):  # audit:bigfonts
     bottom = None  # placeholder for animation list compatibility
 
     _finish(slide, 0,
+        "PROJECTION CAVEAT: the +0.98 IS staircase is a literature-derived "
+        "projection (ROVER/VALLR/scaling-law deltas mapped through the "
+        "IS-vs-WER linearization at ~0.033 IS/pp). Phase deltas are "
+        "estimates, not ablation-validated measurements; phase overlaps "
+        "may shrink the realized gain.\n\n"
         "IS trajectory derived from 574 non-useful segments (IS < 2.00).\n"
         "Current IS 2.547 (62% useful, NIV Y+P, MBR n-best). "
         "See docs/evaluation/after_amosi_audit.md (Section F).\n"
@@ -482,7 +502,13 @@ def slide_29(prs):  # audit:bigfonts
         "quantity (need 20K+ segments, not 1.3K), not parameter tuning. "
         "Mention to peers: this is a data-limited result; a stronger LLM "
         "backbone with 20K-50K segments is expected to produce "
-        "substantially better numbers. "
+        "substantially better numbers.\n\n"
+        "ABLATION DETAIL (peer Q&A): We ran 2 LoRA configurations: "
+        "rank-16 and rank-64, both fine-tuned on the AVSpeech 1,273-segment "
+        "subset. Both showed severe overfitting — train accuracy ~95% "
+        "vs val ~60%. r=64 was 3.1pp WER worse than r=16 (more capacity "
+        "overfits faster on tiny data). Conclusion: dataset is the "
+        "bottleneck, not architecture or recipe. "
         "Sources: docs/finetuning/training-research-notes.md, "
         "docs/evaluation/llm_upgrade_analysis.md.",
         [[img_l, img_r], [lb]], click_reveal=True)
@@ -570,7 +596,11 @@ def slide_30(prs):  # audit:bigfonts
         "the visual bottleneck limits gains; the upper end (8pp) assumes "
         "language disambiguation is the primary bottleneck for our failure "
         "modes. Mention to peers: this is the framing for the quantified "
-        "LLM-upgrade slide that follows. "
+        "LLM-upgrade slide that follows.\n\n"
+        "PEER DETAIL — −3 to −8 pp WER LLM-swap range bracket = VALLR's "
+        "−6 pp on LRS3 between Llama-2-7B and Llama-3-8B ± 2 pp slack "
+        "for our wild-data domain shift. Caveat: projection, not "
+        "measurement. "
         "Sources: docs/evaluation/llm_upgrade_analysis.md, "
         "docs/finetuning/training-research-notes.md.",
         col_groups)
@@ -942,7 +972,16 @@ def slide_arabic_avhubert(prs):  # audit:bigfonts
         "the visual encoder has learned which lip movements correspond to which sound clusters. "
         "The 'English-ness' lives in which visual distinctions the model learned to care about \u2014 "
         "e.g., it never learned to distinguish Arabic emphatics (\u0635 vs \u0633) which involve "
-        "visible pharyngeal constriction. But this is an optimization target, not a hard blocker.",
+        "visible pharyngeal constriction. But this is an optimization target, not a hard blocker.\n\n"
+        "BIGGEST PRACTICAL CHALLENGE: there is no Arabic LRS3-equivalent "
+        "dataset publicly available. Concrete plan: (1) start with "
+        "cross-lingual transfer from English AV-HuBERT pretraining; "
+        "(2) bootstrap Arabic discrete units from MFCC features on Arabic "
+        "broadcast media; (3) run K-means on Arabic AV-HuBERT features for "
+        "the discrete unit codebook; (4) collect ~5-10K hours of Arabic "
+        "broadcast video over 2-3 months for fine-tuning. Phase 1 delivers "
+        "a degraded-but-working English-bootstrapped Arabic system; "
+        "Phase 2 adds Arabic-native pretraining as data accumulates.",
         anim_groups, click_reveal=True)
 
 
@@ -985,7 +1024,11 @@ def slide_arabic_changes(prs):  # audit:bigfonts
         "Arabic emphatics example: \u0635 (emphatic S) vs \u0633 (plain S) have visible pharyngeal constriction "
         "that the English-pretrained encoder never learned to distinguish. Fine-tuning would teach this.\n\n"
         "Data challenge: No Arabic equivalent of LRS3. Options include custom collection from Arabic "
-        "broadcast/YouTube, or cross-lingual pretraining strategies.",
+        "broadcast/YouTube, or cross-lingual pretraining strategies. "
+        "See the cross-lingual transfer plan on the previous slide "
+        "(slide_arabic_avhubert): English AV-HuBERT bootstrap → MFCC-based "
+        "Arabic discrete units → K-means recluster on Arabic features → "
+        "5-10K hour Arabic broadcast collection over 2-3 months.",
         anim_groups, click_reveal=True)
 
 
@@ -1003,8 +1046,8 @@ def slide_31(prs):  # audit:bigfonts
     # Anchors: audit:niv_yp_pct_mbr (62%), audit:judge_v3_yp_pct_mbr (71%),
     # audit:judge_v3_yp_pct_baseline (68%), audit:mcnemar_yp_p_mbr (0.00017).
     takeaways = [
-        ("1", "Rigorous assessment on 1,497 segments. IS metric reveals "
-              "62% useful (NIV Y+P, MBR); LLM judge v1 confirms 65%."),
+        ("1", "Novel IS metric — first AVSR intelligibility "
+              "decomposition. 1,497 segs: 62% useful (NIV Y+P, MBR)."),
         ("2", "Production system shipped: standalone container, UI, "
               "37 bugs fixed, 8-stage pipeline, 37 tests, 8 reports."),
         ("3", "Model strong after MBR: 71% useful per Judge v3 (paired). "
@@ -1013,31 +1056,38 @@ def slide_31(prs):  # audit:bigfonts
               "Y+P 71% vs 68% baseline, p = 0.00017 paired McNemar."),
         ("5", "Clear path forward: stronger LLM + prompts + 20K+ data. "
               "Arabic replication plan: 2\u20133 months."),
+        ("!", "Limitations: thresholds Llama-2-7b-specific; single-rater "
+              "LLM judge; fine-tuning data-limited at 1.3K segs."),
     ]
 
-    # card_h bumped 0.95 -> 1.05 to fit Pt(24) two-line text (audit:bigfonts).
-    card_h = Inches(1.05)
-    gap = Inches(0.06)
-    circle_d = Inches(0.65)
+    # 6th "Limitations" card requires tighter packing. card_h 1.05 -> 0.88,
+    # gap 0.06 -> 0.04 keeps total <= 7.05" safe-zone bottom.
+    card_h = Inches(0.88)
+    gap = Inches(0.04)
+    circle_d = Inches(0.55)
 
     card_groups = []
     for i, (num, text) in enumerate(takeaways):
         y = CT + i * (card_h + gap)
 
+        # 6th card flagged as Limitations (warm accent for caveat).
+        is_caveat = (num == "!")
+        accent = GOLD if is_caveat else TEAL
+
         # Card background
         r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
-                     border_color=TEAL, border_width=Pt(1), corner_radius=True)
+                     border_color=accent, border_width=Pt(1), corner_radius=True)
 
         # Number circle — vertically centered in card
         cy = y + (card_h - circle_d) / 2
         circle = slide.shapes.add_shape(
             MSO_SHAPE.OVAL, MX + Inches(0.2), cy, circle_d, circle_d)
         circle.fill.solid()
-        circle.fill.fore_color.rgb = TEAL
+        circle.fill.fore_color.rgb = accent
         circle.line.fill.background()
         nt = add_text(slide, num, MX + Inches(0.2), cy,
                  circle_d, circle_d,
-                 size=Pt(30), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
         # Text — left-aligned next to circle
         tb = add_text(slide, text,
@@ -1047,8 +1097,9 @@ def slide_31(prs):  # audit:bigfonts
         card_groups.append([r, circle, nt, tb])
 
     _finish(slide, 31,
-        "Five takeaways anchored to the headline numbers from this deck. "
-        "(1) Rigorous assessment with the novel IS metric and full failure "
+        "Five takeaways plus one limitations strip. "
+        "(1) Rigorous assessment with the **novel** IS metric — first "
+        "decomposition of intelligibility for AVSR — and full failure "
         "analysis: 62% useful Y+P with MBR n-best, 65% confirmed by "
         "LLM judge v1 blind on the same 1,497 pairs (Pearson r=0.85 "
         "between IS and judge). "
@@ -1063,8 +1114,18 @@ def slide_31(prs):  # audit:bigfonts
         "and the Trust gate also shipped. "
         "(5) Clear path forward for English improvement (stronger LLM + "
         "smart prompts + 20K+ training data) and Arabic adaptation "
-        "(2-3 months). Mention to peers: each takeaway maps to one "
-        "section of the deck and one MD/CSV in docs/. "
+        "(2-3 months). "
+        "Limitations strip (gold band, '!'): three caveats peers will "
+        "ask about. (a) Joint conf+agreement band thresholds (top1_conf "
+        ">= 0.95, beam_agreement >= 0.80) were swept on Llama-2-7b "
+        "outputs; any LLM swap forces re-running diagnose_confidence_signals.py. "
+        "(b) The LLM judge is a single rater (Claude Opus 4.6 for v1 "
+        "blind, 4.7 for v3 paired); intra-rater is 86.7% on 30 duplicates "
+        "but inter-rater is unmeasured. (c) Fine-tuning experiments at "
+        "1.3K AVSpeech segments hit a data floor; LoRA generalization "
+        "needs 20K+ before a fair conclusion. "
+        "Mention to peers: each takeaway maps to one section of the "
+        "deck and one MD/CSV in docs/. "
         "Sources: docs/evaluation/after_amosi_audit.md (Section F), "
         "docs/beam-search/n_best_implementation.md, "
         "docs/evaluation/llm_judge/llm_judge_analysis.md.",

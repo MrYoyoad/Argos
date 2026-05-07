@@ -1255,7 +1255,16 @@ def slide_llm_judge(prs):
         "peers: this is the calibration anchor for everything downstream — "
         "the IS thresholds, the NIV-Y / NIV-Y+P operating points, and the "
         "n-best v3 paired tests later in the deck. Full cross-tab in "
-        "appendix slide A8 (a16 builder). "
+        "appendix slide A8 (a16 builder).\n\n"
+        "PEER DETAIL — Cohen's kappa: kappa = (P_obs − P_chance)/(1 − "
+        "P_chance) on a 2×2 of (judge {Y, not-Y}) × (IS-NIV "
+        "{>=threshold, <threshold}) on n=1,497. For kappa=0.690 the "
+        "cells are 273/86/72/1066. Intra-rater 87% = exact-agreement on "
+        "30 randomly resampled pairs.\n\n"
+        "PEER DETAIL — IS thresholds were calibrated by sweeping IS in "
+        "0.05 steps and picking the value that maximizes kappa vs "
+        "judge-{Y, not-Y}: NIV-Y at IS>=3.80 (kappa=0.690), NIV-Y+P at "
+        "IS>=2.00 (kappa=0.818). "
         "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
         "docs/evaluation/threshold_calibration_vs_opus.md.",
         [[lt, lb],
@@ -1969,6 +1978,9 @@ def slide_disagreement_blind(prs):
         "operating thresholds in this slide are NIV-Y (IS>=3.80, kappa=0.690) "
         "and NIV-Y+P (IS>=2.00, kappa=0.818) calibrated against the same "
         "Opus judge.\n\n"
+        "PEER DETAIL — 98% agreement = 1,466/1,497 segments fall in the "
+        "same Y+P-vs-N bucket. The 22-segment disagreement region splits "
+        "19 IS-too-harsh + 3 IS-too-generous.\n\n"
         "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
         "docs/evaluation/threshold_calibration_vs_opus.md.",
         [left_shapes, right_shapes, [bot]], click_reveal=True)
@@ -2820,7 +2832,10 @@ def slide_three_thresholds(prs):
         "UI strips word colouring entirely on those segments. All four "
         "thresholds are Llama-2-7b specific; an LLM swap forces "
         "re-running diagnose_confidence_signals.py and re-fitting the "
-        "operating points. "
+        "operating points.\n\n"
+        "PEER DETAIL — T_safe = 0.82 chosen as F1-max for class NIV-Y on "
+        "`mean_prob`: sweep T from 0.50 to 0.95 in 0.01 steps; predictor = "
+        "`mean_prob >= T`; label = judge-Y; pick argmax F1. "
         "Sources: docs/confidence/band_reliability_by_niv.md, "
         "docs/confidence/three_thresholds.md.",
         [[sub, tbl], op, [bot]], click_reveal=True)
@@ -3056,7 +3071,12 @@ def slide_agreement_aware_bands(prs):
         "yellow regardless. Beam agreement is roughly 2x more informative "
         "than top-1 conf at high conf - quantified below in this section. "
         "CAVEAT: thresholds are Llama-2-7b specific; an LLM swap forces "
-        "re-running the diagnostic.",
+        "re-running the diagnostic.\n\n"
+        "PEER DETAIL — beam_agreement(token, position) = fraction of the "
+        "20 n-best hypotheses that emit the same word at that position "
+        "after MBR alignment. Joint band thresholds (top1_conf >= 0.95, "
+        "beam_agreement >= 0.80) chosen by sweep maximizing P(correct | "
+        "green) at fixed coverage. Llama-2-7b specific.",
         [[sub]] + band_groups + [why, [bot]], click_reveal=True)
 
 
@@ -3193,7 +3213,12 @@ def slide_client_trust_calibration(prs):
         "default at fraction-of-green >= 30%: 65% recall, 6% FPR. "
         "Audit JSON keys: trustgate_new_t30_recall, "
         "trustgate_new_t30_fpr, trustgate_new_t30_precision, "
-        "trustgate_new_t30_pct_clearly_conveyed.",
+        "trustgate_new_t30_pct_clearly_conveyed.\n\n"
+        "PEER DETAIL — Operating points from sweeping fraction-of-green "
+        "thresholds (10%, 20%, 30%, ...) over NIV-Y+P target labels on "
+        "n=1,427 non-empty segments. Recall = TP / (TP + FN) on Y+P "
+        "labels; FPR = FP / (FP + TN) on judge-N labels. >=30% green is "
+        "the F1-max operating point we ship.",
         [[sub, tbl], [pick], [bot]], click_reveal=True)
 
 
@@ -3306,7 +3331,16 @@ def slide_nbest_v3_judge_paired_tests(prs):  # audit:bigfonts2
         "The original paired plot was shrunk from 6.5\"x4.5\" to "
         "6.5\"x2.4\" to make room. "
         "Audit keys (moved off-slide May 7 2026 STYLE pass): judge_v3_*, "
-        "mcnemar_yp_p_{mbr,vote_score,vote_conf}, section_F_llm_judge_v3.",
+        "mcnemar_yp_p_{mbr,vote_score,vote_conf}, section_F_llm_judge_v3.\n\n"
+        "PEER DETAIL — MBR posterior per word ~ exp of MBR's normalized "
+        "log-prob over the 20 n-best candidates conditioned on the chosen "
+        "hypothesis; averaged over all words, mean = 0.867. Voting methods "
+        "(vote_conf, vote_score) emit agreement scores in narrow [0.4, "
+        "0.8] which don't map onto the band-reliability thresholds; this "
+        "is why MBR was chosen as the production default. Identical-text "
+        "drift = % of method-method paired runs where both methods emit "
+        "the same text yet the judge gives different verdicts (intra-rater "
+        "noise floor); 27% under v1 dropped to 12-14% under v3 dual-conf.",
         [[sub, img, img_methods, cap_methods], [tbl, take], [bot]],
         click_reveal=True)
 
@@ -3601,8 +3635,7 @@ def slide_demo_obama_salvage(prs):
          {"size": Pt(24), "color": LGRAY, "italic": True}),
     ]
     _demo_research_slide(prs,
-        title="Demo - Obama: TRUST under conf-only fallback "
-              "(no n-best sidecar - partial recovery still narrated)",
+        title="Demo — Obama: Trust Tier (conf-only fallback)",
         video_key="obama_partial",
         ref="(see speaker notes; Obama bin Laden announcement, segment #31, 92.90-96.50 s)",
         hyp_runs=runs,
@@ -3653,7 +3686,7 @@ def slide_demo_obama_strip(prs):
     # mention; gloss it inline so the audience knows it is the
     # production label for what the research literature calls 'Salvage'.
     _demo_research_slide(prs,
-        title="Demo - INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)",
+        title="Demo — Obama: INSPECT (lowest-confidence segment)",
         video_key="obama_flagged",
         ref="heroic citizens saved even more heartbreak and destruction",
         hyp_runs=runs,
