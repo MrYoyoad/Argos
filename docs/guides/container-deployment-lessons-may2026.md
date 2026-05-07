@@ -6,7 +6,7 @@ A consolidated record of every bug found while building the new air-gapped VSP c
 
 - Goal: produce ONE clean self-contained Docker image (~58–66 GB) that runs the full VSP pipeline air-gapped on a client machine. Single tag, single tarball, no layered patch flows.
 - Source of truth: `/home/ubuntu/lib/`, `/home/ubuntu/run_flat_english_pipeline.sh`, `/home/ubuntu/VSP-LLM/`, `/home/ubuntu/auto_avsr/`, `/home/ubuntu/av_hubert/`, `/home/ubuntu/docs/_research-tools/generators/`, `/home/ubuntu/vsp-ui/`.
-- Build context: `/home/ubuntu/vsp_docker/galaxy_export/` (legacy name — to be renamed `container_payload/` or similar).
+- Build context: `/home/ubuntu/vsp_docker/container_payload_20260507/` (renamed from the legacy `galaxy_export/` on 2026-05-07).
 - Reference deployment: `/home/ubuntu/vsp_linux_container_FINAL_20260217/` — the previously-shipped client kit. Its `INSTALL.sh` is the canonical list of files that need container-specific patches. Use it as the path-translation gold standard.
 
 ## Architecture
@@ -25,9 +25,9 @@ Each entry: **what failed**, **why**, **fix**, **what to grep for next time**.
 
 ### 1. `--download_root` vs `--whisper_cache` mismatch
 **Fail:** Whisper ASR step crashed: `unrecognized arguments: --download_root /root/.cache/whisper`.
-**Why:** `lib/asr.sh` was synced from EC2 main (uses `--download_root`) but `auto_avsr/asr_to_words_notime.py` in galaxy_export was an older version (used `--whisper_cache`). Sync of `lib/` only is not enough — must also sync `auto_avsr/`.
-**Fix:** rsync the EC2 `auto_avsr/`, `av_hubert/`, `VSP-LLM/scripts/`, `VSP-LLM/src/`, `docs/_research-tools/generators/` into galaxy_export. Use the previous kit's INSTALL.sh as the canonical list of patched groups.
-**Grep:** `grep -rn 'whisper_cache' galaxy_export/auto_avsr/` should be 0 (it's `download_root` now).
+**Why:** `lib/asr.sh` was synced from EC2 main (uses `--download_root`) but `auto_avsr/asr_to_words_notime.py` in container_payload_20260507 was an older version (used `--whisper_cache`). Sync of `lib/` only is not enough — must also sync `auto_avsr/`.
+**Fix:** rsync the EC2 `auto_avsr/`, `av_hubert/`, `VSP-LLM/scripts/`, `VSP-LLM/src/`, `docs/_research-tools/generators/` into container_payload_20260507. Use the previous kit's INSTALL.sh as the canonical list of patched groups.
+**Grep:** `grep -rn 'whisper_cache' container_payload_20260507/auto_avsr/` should be 0 (it's `download_root` now).
 
 ### 2. `flat_to_lrs3_preperation.sh` hardcoded venv path
 **Fail:** Step 4 LRS3 prep: `/home/ubuntu/auto_avsr/pre-process-venv/bin/activate: No such file or directory`.
@@ -62,9 +62,9 @@ Each entry: **what failed**, **why**, **fix**, **what to grep for next time**.
 
 ### 7. Whisper cache layout — extra `whisper/` subdir
 **Fail:** Whisper re-downloads `medium.pt` (1.4 GB) at runtime even though cache is in the image.
-**Why:** `galaxy_export/whisper_cache/` had layout `whisper_cache/whisper/medium.pt`. The Dockerfile copy `cp -r /workspace/whisper_cache/. /root/.cache/whisper/` produced `/root/.cache/whisper/whisper/medium.pt` — extra subdir. Whisper looks for `/root/.cache/whisper/medium.pt` (no nesting).
-**Fix:** Flatten in `galaxy_export/whisper_cache/` so file is at `whisper_cache/medium.pt` (no extra subdir).
-**Grep:** `ls galaxy_export/whisper_cache/` → should show `medium.pt` directly, not a `whisper/` subdir.
+**Why:** `container_payload_20260507/whisper_cache/` had layout `whisper_cache/whisper/medium.pt`. The Dockerfile copy `cp -r /workspace/whisper_cache/. /root/.cache/whisper/` produced `/root/.cache/whisper/whisper/medium.pt` — extra subdir. Whisper looks for `/root/.cache/whisper/medium.pt` (no nesting).
+**Fix:** Flatten in `container_payload_20260507/whisper_cache/` so file is at `whisper_cache/medium.pt` (no extra subdir).
+**Grep:** `ls container_payload_20260507/whisper_cache/` → should show `medium.pt` directly, not a `whisper/` subdir.
 **Air-gapped impact:** Critical. With internet at build time it works (Whisper just re-downloads). Without internet at client install it fails.
 
 ### 8. Step 1.5 transcription save crashes on read-only input mount
@@ -81,7 +81,7 @@ Each entry: **what failed**, **why**, **fix**, **what to grep for next time**.
 
 ### 10. `vsp-ui/app/config.py` env detection misses flat layout
 **Fail:** UI mode would mis-detect EC2 layout, look for `~/vsp_input/` which doesn't exist in container.
-**Why:** `_detect_environment()` checks `/host/galaxy_export` (legacy) and `/workspace/galaxy_export` (legacy), but our flat layout has galaxy_export contents AT `/workspace/`, not in a subdir.
+**Why:** `_detect_environment()` checks `/host/container_payload_20260507` (legacy) and `/workspace/container_payload_20260507` (legacy), but our flat layout has container_payload_20260507 contents AT `/workspace/`, not in a subdir.
 **Fix:** Add a first-priority branch: `if Path("/workspace/run_flat_english_pipeline.sh").exists() and Path("/workspace/lib/config.sh").exists(): base_dir = Path("/workspace"); input_dir = Path(env_or "/data/in")`.
 **Grep:** `grep -A3 'Container — flat layout' vsp-ui/app/config.py`.
 
@@ -101,15 +101,15 @@ Each entry: **what failed**, **why**, **fix**, **what to grep for next time**.
 **Fail:** `report.csv` had `is_score, is_tier, is_label` (where `is_label` is "Fair"/"Good"/etc, the tier name) but NO `niv` column with the Y/P/N verdict.
 **Fix:** `make_report.py` imports `niv_label` from `generate_intelligibility_scores`, adds `"niv"` to `csv_header` when `--compute-is`, computes `niv_label(score)` per row.
 
-### 15. Bloat in galaxy_export
+### 15. Bloat in container_payload_20260507
 **Fail:** Image was 66 GB. Could be smaller.
 **Why:** `auto_avsr/flat/` (1.2 GB old EC2 videos), `auto_avsr/preprocess_ready_flat/` (1.2 GB), `auto_avsr/preprocessed_flat_seg4/` (305 MB), training tarballs `english_1000_subset_hrz*.tar.gz` (1.2 GB), unused `VSP-LLM/checkpoints/checkpoint_freeze.pt` (3.9 GB), `av_hubert/avhubert_flat/` duplicate (7 MB).
-**Fix:** Delete from galaxy_export before final build. Saves ~8 GB. Final image ~58 GB.
+**Fix:** Delete from container_payload_20260507 before final build. Saves ~8 GB. Final image ~58 GB.
 **Grep before final build:**
 ```bash
-du -sh galaxy_export/auto_avsr/{flat,preprocess_ready_*,preprocessed_*,*.tar.gz,backups_flat} \
-       galaxy_export/VSP-LLM/checkpoints/checkpoint_freeze.pt \
-       galaxy_export/av_hubert/avhubert_flat 2>/dev/null
+du -sh container_payload_20260507/auto_avsr/{flat,preprocess_ready_*,preprocessed_*,*.tar.gz,backups_flat} \
+       container_payload_20260507/VSP-LLM/checkpoints/checkpoint_freeze.pt \
+       container_payload_20260507/av_hubert/avhubert_flat 2>/dev/null
 ```
 All should report "No such file or directory."
 
@@ -173,9 +173,9 @@ Both share `image.tag` (single source of truth for which image to invoke).
 
 ## Process for next deployment
 
-1. **Wholesale regen** `galaxy_export/lib/` and `run_flat_english_pipeline.sh` from EC2 main. Translate `${HOME}/HOME_DIR` → `SCRIPT_DIR` auto-detection.
+1. **Wholesale regen** `container_payload_20260507/lib/` and `run_flat_english_pipeline.sh` from EC2 main. Translate `${HOME}/HOME_DIR` → `SCRIPT_DIR` auto-detection.
 2. **Audit script: walk INSTALL.sh of previous kit.** That's the canonical list of files needing container-specific patches. For each group, decide: take previous-kit version (path-tested), take EC2 version (newer features), or merge.
-3. **Sync helper modules:** `docs/_research-tools/generators/{_alignment,analyze_beam_variance,generate_intelligibility_scores,compute_word_confidence}.py` go into the same path inside galaxy_export.
+3. **Sync helper modules:** `docs/_research-tools/generators/{_alignment,analyze_beam_variance,generate_intelligibility_scores,compute_word_confidence}.py` go into the same path inside container_payload_20260507.
 4. **Sync `vsp-ui/`** in full but apply 3 patches (config.py env detect, config.py server settings, transcription_manager.py).
 5. **Bake at build time** anything that would otherwise lazy-download: matplotlib, spaCy + model, Whisper cache (right layout), MediaPipe pre-warm, fairseq Cython prebake, IS deps.
 6. **Set offline env vars** in launchers (HF_HUB_OFFLINE, TRANSFORMERS_OFFLINE, HF_DATASETS_OFFLINE).
@@ -190,7 +190,7 @@ The user's preference: **one Docker image, one tag, one tarball — no layered p
 ## Cleanup sweep before final build
 
 ```bash
-cd /home/ubuntu/vsp_docker/galaxy_export
+cd /home/ubuntu/vsp_docker/container_payload_20260507
 # Runtime data that gets recreated by the pipeline:
 rm -rf auto_avsr/flat auto_avsr/flat_prepared auto_avsr/preprocessed_* auto_avsr/preprocess_ready_* \
        auto_avsr/flat_wrd auto_avsr/flat_txt VSP-LLM/outputs/2025-* VSP-LLM/outputs/2026-* \

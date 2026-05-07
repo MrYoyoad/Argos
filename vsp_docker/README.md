@@ -8,7 +8,7 @@ This directory builds and packages the VSP visual-speech pipeline as a single Do
 vsp_docker/
 ├── Dockerfile             — defines the air-gapped image (CUDA 12.8 base + 2 venvs + prebakes)
 ├── .dockerignore          — excludes venvs and the regen backup; keeps samples/*.mp4 in context
-├── galaxy_export/         — self-contained build context (43 GB, mostly weights)
+├── container_payload_20260507/         — self-contained build context (43 GB, mostly weights)
 │   ├── lib/               — pipeline modules (regenerated from /home/ubuntu/lib/ — not edited here)
 │   ├── run_flat_english_pipeline.sh
 │   ├── auto_avsr/, VSP-LLM/, av_hubert/   — source repos + checkpoints + Llama-2-7b-hf
@@ -30,7 +30,7 @@ vsp_docker/
 │   ├── install_launcher.sh     — places launcher under /opt/vsp/launcher/ + desktop shortcut
 │   ├── apply_update.sh         — atomic code-only update flow (load → smoke → flip tag)
 │   └── rollback.sh             — flip back to image.tag.previous
-├── samples/               — smoke-test fixtures (also live inside galaxy_export/samples/)
+├── samples/               — smoke-test fixtures (also live inside container_payload_20260507/samples/)
 ├── CLIENT_INSTALL.md      — operator-facing install guide (ships with the kit)
 └── client-troubleshooting.md  — symptom -> fix table (ships with the kit)
 ```

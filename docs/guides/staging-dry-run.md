@@ -85,7 +85,7 @@ This is where most bugs appear. Watch for:
 - Empty `intelligibility_scores.csv` — IS scoring not wired up
 - New-palette colors missing from `report.html` — wrong make_report.py
 
-Each of these is a build-side bug. Iterate: edit galaxy_export, rebuild image, re-transfer to staging, retest.
+Each of these is a build-side bug. Iterate: edit container_payload_20260507, rebuild image, re-transfer to staging, retest.
 
 ### 5. Pin the legend selector
 

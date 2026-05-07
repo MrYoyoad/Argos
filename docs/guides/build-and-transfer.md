@@ -9,15 +9,15 @@ Run on the EC2 build box (`/home/ubuntu/`):
 - `docker` working with NVIDIA Container Toolkit (verify: `docker run --rm --gpus all nvidia/cuda:12.8.0-base-ubuntu22.04 nvidia-smi`)
 - ≥ 200 GB free on `/var/lib/docker` (build artifacts + final image + pre-build cache)
 - Internet access (for `apt-get`, PyTorch wheels, openai-whisper git checkout, fairseq git clone)
-- Up-to-date `vsp_docker/galaxy_export/` matching latest EC2 main (run the regen procedure in `Chunk 1` of the plan if it's stale)
+- Up-to-date `vsp_docker/container_payload_20260507/` matching latest EC2 main (run the regen procedure in `Chunk 1` of the plan if it's stale)
 
 Verify before kicking off a build:
 
 ```bash
 df -h /var/lib/docker
 docker system df
-ls -la vsp_docker/galaxy_export/face_alignment vsp_docker/galaxy_export/golden_weights vsp_docker/galaxy_export/is_wheels
-bash vsp_docker/galaxy_export/lib/test_all_modules.sh   # Should pass on EC2
+ls -la vsp_docker/container_payload_20260507/face_alignment vsp_docker/container_payload_20260507/golden_weights vsp_docker/container_payload_20260507/is_wheels
+bash vsp_docker/container_payload_20260507/lib/test_all_modules.sh   # Should pass on EC2
 ```
 
 ## Build
@@ -31,7 +31,7 @@ docker build -t "vsp-llm-pipeline:${BUILD_ID}" -f Dockerfile . 2>&1 | tee /tmp/v
 Build takes 30-60 min on a c5.4xlarge-class box. The slow steps are:
 
 - Step 1: `apt-get install` — ~1 min
-- Step 4: `COPY galaxy_export/ ./` — 1-3 min for 43 GB
+- Step 4: `COPY container_payload_20260507/ ./` — 1-3 min for 43 GB
 - Steps 6-7: pip install for `pre-process-venv` (cu128 PyTorch + Whisper + ASR deps) — 5-10 min
 - Steps 11-13: pip install for `vsp-llm-yoad-venv` (cu124 PyTorch + transformers + fairseq + IS deps) — 10-20 min
 - Step 15: Cython prebake — 1-3 min

@@ -1,11 +1,11 @@
 # Code-only Updates — Air-gapped VSP Image
 
 > **DEPRECATED — do not use the layered-patch flow described below.**
-> The VSP container ships as ONE clean self-contained docker image (single tag, single tarball, no `FROM <previous-tag>` layering). When source files change, sync EC2 → galaxy_export wholesale and **rebuild the image fully**, overwriting the existing tag. Build is ~20-30 min with pip's HTTP cache; result is one unambiguous image.
+> The VSP container ships as ONE clean self-contained docker image (single tag, single tarball, no `FROM <previous-tag>` layering). When source files change, sync EC2 → container_payload_20260507 wholesale and **rebuild the image fully**, overwriting the existing tag. Build is ~20-30 min with pip's HTTP cache; result is one unambiguous image.
 >
 > This doc is kept only for historical reference. The fast-iteration value of layered patches doesn't outweigh operator confusion at the client (two tags on disk, `docker history` clutter, "which is current" ambiguity).
 >
-> If a code change is needed: edit galaxy_export source → `docker build -t vsp-llm-pipeline:client-build-NNN ...` → `docker save | zstd` → ship the full tarball → `docker load` on client → bump `image.tag`. The previous image can stay loaded for rollback (apply_update.sh + rollback.sh remain valid for the load/swap mechanism — they just operate on full-rebuild images now).
+> If a code change is needed: edit container_payload_20260507 source → `docker build -t vsp-llm-pipeline:client-build-NNN ...` → `docker save | zstd` → ship the full tarball → `docker load` on client → bump `image.tag`. The previous image can stay loaded for rollback (apply_update.sh + rollback.sh remain valid for the load/swap mechanism — they just operate on full-rebuild images now).
 
 ---
 
@@ -33,14 +33,14 @@ cd /home/ubuntu/vsp_docker
 PREV_TAG="client-build-001"
 NEW_BUILD="client-build-002"
 
-# 1. Edit the files in galaxy_export/lib/, run_flat_english_pipeline.sh, etc.
+# 1. Edit the files in container_payload_20260507/lib/, run_flat_english_pipeline.sh, etc.
 #    (Or rsync from /home/ubuntu/lib/ if you've fixed things on EC2.)
 
 # 2. Write a tiny patch Dockerfile:
 cat > Dockerfile.patch <<EOF
 FROM vsp-llm-pipeline:${PREV_TAG}
-COPY galaxy_export/lib /workspace/lib
-COPY galaxy_export/run_flat_english_pipeline.sh /workspace/
+COPY container_payload_20260507/lib /workspace/lib
+COPY container_payload_20260507/run_flat_english_pipeline.sh /workspace/
 # Add other COPYs if other files changed (e.g. VSP-LLM/scripts/make_report.py)
 EOF
 
