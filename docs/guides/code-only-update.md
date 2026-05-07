@@ -1,5 +1,14 @@
 # Code-only Updates — Air-gapped VSP Image
 
+> **DEPRECATED — do not use the layered-patch flow described below.**
+> The VSP container ships as ONE clean self-contained docker image (single tag, single tarball, no `FROM <previous-tag>` layering). When source files change, sync EC2 → galaxy_export wholesale and **rebuild the image fully**, overwriting the existing tag. Build is ~20-30 min with pip's HTTP cache; result is one unambiguous image.
+>
+> This doc is kept only for historical reference. The fast-iteration value of layered patches doesn't outweigh operator confusion at the client (two tags on disk, `docker history` clutter, "which is current" ambiguity).
+>
+> If a code change is needed: edit galaxy_export source → `docker build -t vsp-llm-pipeline:client-build-NNN ...` → `docker save | zstd` → ship the full tarball → `docker load` on client → bump `image.tag`. The previous image can stay loaded for rollback (apply_update.sh + rollback.sh remain valid for the load/swap mechanism — they just operate on full-rebuild images now).
+
+---
+
 Internal guide for shipping small code patches to an already-deployed client without re-transferring the full 40 GB image. Audience: Yoad.
 
 ## When to use this flow
