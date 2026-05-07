@@ -317,7 +317,7 @@ def slide_is_intro_c(prs):
         card_w - Inches(0.4), Inches(0.9),
         size=Pt(12), color=WHITE)
     add_text(slide,
-        "\u25b8 Mean F1 = 38.9% \u2014 entities missed in 85% of segments.\n"
+        "\u25b8 Mean F1 = 39% \u2014 entities missed in 85% of segments.\n"
         "  Names are the hardest thing for lip reading: "
         "\"McRae\" has no visual cue that distinguishes it from any other word.",
         MX + Inches(0.2), c2_y + Inches(1.4),
@@ -343,7 +343,7 @@ def slide_is_intro_c(prs):
         "the wrong vocabulary. NEA: Named Entity F1 using spaCy NER "
         "extraction. Binary per entity (no partial credit) — either the "
         "name landed or it did not. Mean F1 across our 1,497 segments is "
-        "only 38.9% — entities are missed in 85% of segments. Names are "
+        "only 39% — entities are missed in 85% of segments. Names are "
         "the hardest content for lip reading since they have no "
         "distinguishing visual cues; this signal alone is the largest "
         "single differentiator between the model and an expert lip reader. "
@@ -504,8 +504,8 @@ def slide_is_signals(prs):
         "Six signals with weight rationale. Semantic (25%) gets the highest "
         "weight because meaning preservation is the ultimate goal. The other "
         "5 signals each get 15%. PCA shows all 5 content signals load equally "
-        "on PC1 (0.43-0.47) \u2014 one general quality factor (68.4% of variance). "
-        "Length Ratio is independent (PC2, 19.5%). Semantic's higher weight is "
+        "on PC1 (0.43-0.47) \u2014 one general quality factor (68% of variance). "
+        "Length Ratio is independent (PC2, 20%). Semantic's higher weight is "
         "justified because it captures paraphrasing that word metrics miss.",
         anim_groups)
 
@@ -533,12 +533,12 @@ def slide_is_weight_rationale(prs):
     py = CT + Inches(0.7)
 
     dims = [
-        ("PC1: Signal Quality", "68.4%", TEAL,
+        ("PC1: Signal Quality", "68%", TEAL,
          "Semantic + Phonetic + WER + WWER + Named Entity Accuracy",
          "All 5 content signals load equally (0.43\u20130.47). Semantic is NOT "
          "independent \u2014 it loads on PC1 alongside the word-accuracy signals, "
          "measuring the same underlying quality factor."),
-        ("PC2: Output Length", "19.5%", GREEN,
+        ("PC2: Output Length", "20%", GREEN,
          "Length Ratio dominates (loading 0.91) \u2014 independent of content quality",
          "Catches hallucination (too long) and truncation (too short). "
          "The only IS axis that is truly orthogonal to the quality factor."),
@@ -561,27 +561,27 @@ def slide_is_weight_rationale(prs):
         dim_shapes.append(r)
         py += Inches(1.85)
 
-    # Bottom takeaway \u2014 Kaiser explicitly retains 2 PCs (87.9% variance).
-    # PC3 (5.1%, eigenvalue 0.31) is below the Kaiser threshold and is NOT
+    # Bottom takeaway \u2014 Kaiser explicitly retains 2 PCs (88% variance).
+    # PC3 (5%, eigenvalue 0.31) is below the Kaiser threshold and is NOT
     # shown on this slide; see slide_is_dimensions for the clean 2-PC framing
     # and slide_appendix_pca_loadings for the full loadings table.
     val_t = add_text(slide,
-        "Kaiser retains 2 PCs (87.9% of variance). "
-        "PC3 (5.1%, eigenvalue 0.31) sits below the Kaiser threshold and is not used.",
+        "Kaiser retains 2 PCs (88% of variance). "
+        "PC3 (5%, eigenvalue 0.31) sits below the Kaiser threshold and is not used.",
         MX, Inches(6.35), CW, Inches(0.4),
         size=Pt(13), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "PCA story. Kaiser criterion PCA on 6 standardized IS signals. "
-        "PC1 (68.4%): all 5 content signals load equally at 0.43-0.47 \u2014 one general "
+        "PC1 (68%): all 5 content signals load equally at 0.43-0.47 \u2014 one general "
         "quality factor. Semantic is NOT independent; it loads on PC1 with word-accuracy. "
-        "PC2 (19.5%): Length Ratio dominates at 0.91, independent of content. "
-        "Kaiser retains 2 PCs (eigenvalues > 1; 87.9% total variance). "
-        "PC3 (5.1%, eigenvalue 0.31) is below the Kaiser threshold and is intentionally "
+        "PC2 (20%): Length Ratio dominates at 0.91, independent of content. "
+        "Kaiser retains 2 PCs (eigenvalues > 1; 88% total variance). "
+        "PC3 (5%, eigenvalue 0.31) is below the Kaiser threshold and is intentionally "
         "omitted from the body so the visual matches the slide-33 framing \u2014 see "
         "slide_appendix_pca_loadings for the PC3 loading vector. "
         "Weight sensitivity: current vs equal weights correlate at r=0.999 \u2014 "
-        "only 5.4% of segments change tier. The formula is robust to perturbation. "
+        "only 5% of segments change tier. The formula is robust to perturbation. "
         "Source: docs/evaluation/is_pca_analysis.md \u00a73.1, \u00a75.",
         [dim_shapes, [val_t]], click_reveal=True)
 
@@ -733,7 +733,7 @@ def slide_is_radar(prs):
         "(the model generates approximately the correct amount of text "
         "even when the text itself is wrong). The collapsed axes (WER, "
         "WWER, NEA) are where the domain gap hits hardest — entity F1 "
-        "drops from 68.3% on LRS3 to 38.9% on YouTube, a 29-point fall "
+        "drops from 68% on LRS3 to 39% on YouTube, a 29-point fall "
         "that names alone cannot explain. The new captured-vs-failed "
         "panel on the right shows that within YouTube the same axes "
         "(WER, WWER, NEA) are again the discriminators between useful "
@@ -802,9 +802,9 @@ def slide_is_wer_scatter(prs):
         "deck quoted an uncalibrated WER>40% cut for the amber region "
         "(logic-fix \u00a72 Slide 35). "
         "NIV thresholds calibrated against Opus-as-a-Judge: IS >= 3.80 for Y "
-        "(\u03ba=0.690, captures 23.1% vs judge 23.0%), IS >= 2.00 for Y+P "
-        "(\u03ba=0.818, captures 61.92% useful under MBR; top-1 baseline 61.6% "  # audit:niv_yp_pct_mbr
-        "vs judge 64.9%). IS beats WER at both operating points "
+        "(\u03ba=0.690, captures 23% vs judge 23%), IS >= 2.00 for Y+P "
+        "(\u03ba=0.818, captures 62% useful under MBR; top-1 baseline 62% "  # audit:niv_yp_pct_mbr
+        "vs judge 65%). IS beats WER at both operating points "
         "(+0.061 \u03ba for Y, +0.041 \u03ba for Y+P).\n\n"
         "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
         "it misses phonetic and semantic preservation, making it insufficient "
@@ -1102,9 +1102,9 @@ def slide_07(prs):
         "The two cards are different lenses on the system, not progressive "
         "refinements of the same denominator. "
         "Tier distribution under MBR (bottom of slide): Tier 5 — Excellent "
-        "(IS >= 4.0) holds 291 segments = 19.4% (audit:tier_5_pct_mbr); "
-        "Tier 4 (3.0-3.99) 324 = 21.6%; Tier 3 (2.0-2.99) 312 = 20.8%; "
-        "Tier 2 (1.0-1.99) 329 = 22.0%; Tier 1 (<1.0) 241 = 16.1%. "
+        "(IS >= 4.0) holds 291 segments = 19% (audit:tier_5_pct_mbr); "
+        "Tier 4 (3.0-3.99) 324 = 22%; Tier 3 (2.0-2.99) 312 = 21%; "
+        "Tier 2 (1.0-1.99) 329 = 22%; Tier 1 (<1.0) 241 = 16%. "
         "Sources: docs/evaluation/after_amosi_audit.json (sections A, F, E), "
         "docs/evaluation/threshold_calibration_vs_opus.md.",
         [oracle_shapes, realistic_shapes, tier_shapes], click_reveal=True)
@@ -1184,12 +1184,12 @@ def slide_08(prs):
 
     _finish(slide, 8,
         "574 below-threshold segments (IS < 2.00) classified into 5 mutually "
-        "exclusive failure categories. Wrong Topic dominates at 44.4% (255 "
+        "exclusive failure categories. Wrong Topic dominates at 44% (255 "
         "segments) and combines topic drift with phonetic confusion. "
-        "Hallucination is second at 18.8% (108) — fluent but fabricated text, "
+        "Hallucination is second at 19% (108) — fluent but fabricated text, "
         "the most dangerous failure mode for downstream consumers. Signal "
-        "Loss (13.9%, 80 segments) and Right Topic Wrong Details (13.8%, 79 "
-        "segments) are roughly tied. Accumulated Errors drops to just 9.1% "
+        "Loss (14%, 80 segments) and Right Topic Wrong Details (14%, 79 "
+        "segments) are roughly tied. Accumulated Errors drops to just 9% "
         "(52 segments) because most mild-error segments now fall above the "
         "IS 2.00 threshold. This taxonomy maps directly to our roadmap: "
         "Wrong Topic responds to topic-aware prompting (Mission 8); "
@@ -1231,15 +1231,15 @@ def slide_failure_deep_1a(prs):
         size=Pt(12), color=MGRAY, italic=True)
 
     modes_1 = [
-        ("1. Wrong Topic", "44.4%", "255 segments", ORANGE,
+        ("1. Wrong Topic", "44%", "255 segments", ORANGE,
          "Mouth shapes decoded to wrong domain",
          "Semantic < 0.2 (phonetic-matched or not)",
          "Ref: \u201cweight loss and diet\u201d \u2192 Hyp: \u201cwanted to be a princess\u201d"),
-        ("2. Hallucination", "18.8%", "108 segments", YELLOW,
+        ("2. Hallucination", "19%", "108 segments", YELLOW,
          "Model invented fake text",
          "WER \u2265 100% (output longer than reference)",
          "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier explanation of the final act\u201d"),
-        ("3. Right Topic, Wrong Details", "13.8%", "79 segments", RED,
+        ("3. Right Topic, Wrong Details", "14%", "79 segments", RED,
          "Roughly right but names/content words lost",
          "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
          "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
@@ -1281,13 +1281,13 @@ def slide_failure_deep_1a(prs):
         size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Failure taxonomy Part 1, ordered by impact. Wrong Topic (44.4%, "
+        "Failure taxonomy Part 1, ordered by impact. Wrong Topic (44%, "
         "255 of 574 below-threshold segments): the largest single category — "
         "mouth shapes decoded to a completely wrong domain (semantic "
         "similarity < 0.20, with or without phonetic match). Hallucination "
-        "(18.8%, 108 segments): the model invents fake text, deceptive but "
+        "(19%, 108 segments): the model invents fake text, deceptive but "
         "identifiable by length (WER >= 100% and output longer than "
-        "reference). Right Topic, Wrong Details (13.8%, 79 segments): the "
+        "reference). Right Topic, Wrong Details (14%, 79 segments): the "
         "client-trust killer — output looks right (semantic >= 0.20) but "
         "named-entity F1 < 20% or key content words substituted; the "
         "audience can guess the topic but cannot extract the specific "
@@ -1305,11 +1305,11 @@ def slide_failure_deep_1b(prs):
     add_accent_line(slide)
 
     modes_2 = [
-        ("4. Signal Loss", "13.9%", "80 segments", LGRAY,
+        ("4. Signal Loss", "14%", "80 segments", LGRAY,
          "Nothing came out",
          "Empty output OR length ratio < 0.3",
          "Ref: \u201cthe thirteenth amendment\u201d \u2192 Hyp: \u201c\u201d"),
-        ("5. Accumulated Errors", "9.1%", "52 segments", YELLOW,
+        ("5. Accumulated Errors", "9%", "52 segments", YELLOW,
          "Many small errors compound",
          "IS < 2.0 and doesn\u2019t match categories 1\u20133",
          "Many words slightly wrong throughout, meaning erodes"),
@@ -1349,7 +1349,7 @@ def slide_failure_deep_1b(prs):
     sum_y = y0 + 2 * (card_h + gap) + Inches(0.1)
     sr = add_rect(slide, MX, sum_y, CW, Inches(1.0), fill_color=NAVY2,
                   border_color=GOLD, border_width=Pt(2), corner_radius=True)
-    add_text(slide, "Key Insight: Categories 4 & 5 are lower impact but still 23.0% of failures",
+    add_text(slide, "Key Insight: Categories 4 & 5 are lower impact but still 23% of failures",
              MX + Inches(0.3), sum_y + Inches(0.1), CW - Inches(0.6), Inches(0.35),
              size=Pt(16), color=GOLD, bold=True)
     add_text(slide,
@@ -1360,14 +1360,14 @@ def slide_failure_deep_1b(prs):
     anim_groups.append([sr])
 
     _finish(slide, 0,
-        "Failure taxonomy Part 2. Signal Loss (13.9%, 80 segments): empty or "
+        "Failure taxonomy Part 2. Signal Loss (14%, 80 segments): empty or "
         "near-empty output (length ratio < 0.3) — detectable, filterable, "
         "and the lowest priority to fix because the failure self-reports. "
-        "Accumulated Errors (9.1%, 52 segments): death by a thousand cuts, "
+        "Accumulated Errors (9%, 52 segments): death by a thousand cuts, "
         "many small errors throughout the segment that compound to IS < "
         "2.00 without falling into any of categories 1-3 — responds well "
         "to N-best aggregation (ROVER, MBR), which is what Mission 6 "
-        "shipped on May 1 2026. Together categories 4 and 5 cover 23.0% "
+        "shipped on May 1 2026. Together categories 4 and 5 cover 23% "
         "of below-threshold failures, but unlike Wrong Topic and "
         "Hallucination they are mostly recoverable through engineering, "
         "not modeling. Mention to peers: when we run the n-best paired "
@@ -1404,7 +1404,7 @@ def slide_failure_deep_2(prs):
     examples = [
         {
             "title": "Hallucination",
-            "pct": "18.8%",
+            "pct": "19%",
             "color": CORAL,
             "ref": "carry strap",
             "hyp": "holocaust denier explanation\nof the final act",
@@ -1419,7 +1419,7 @@ def slide_failure_deep_2(prs):
         },
         {
             "title": "Wrong Topic",
-            "pct": "44.4%",
+            "pct": "44%",
             "color": GOLD,
             "ref": "i\u2019ve made lots of videos\nabout weight loss and diet",
             "hyp": "when i was a little girl i\nalways wanted to be a princess",
@@ -1434,7 +1434,7 @@ def slide_failure_deep_2(prs):
         },
         {
             "title": "Right Topic, Wrong Details",
-            "pct": "13.8%",
+            "pct": "14%",
             "color": TEAL,
             "ref": "about the 13th amendment\nthe 13th amendment is going",
             "hyp": "13th may mean something to\nhim because it can help him",
@@ -1500,7 +1500,7 @@ def slide_failure_deep_2(prs):
 
     _finish(slide, 0,
         "Three real examples drawn from our 1,497-segment evaluation, one per "
-        "category. Distribution numbers in the badges (18.8% / 44.4% / 13.8%) "
+        "category. Distribution numbers in the badges (19% / 44% / 14%) "
         "are the within-failure-set shares from the taxonomy bar chart earlier "
         "in this section, computed across the 574 below-threshold (IS<2.00) "
         "segments. Per-card metrics: Hallucination card WER 100% / IS 0.1; "
@@ -1543,11 +1543,11 @@ def slide_failure_deep_3(prs):
 
     headers = ["Category", "Impact", "Fix"]
     rows = [
-        ["Wrong Topic (44.4%)", "Very High — largest category", "LLM swap + data"],
-        ["Hallucination (18.8%)", "High — deceptive but identifiable", "Confidence scoring"],
-        ["Signal Loss (13.9%)", "Medium — detectable, filterable", "Quality filtering"],
-        ["Right Topic, Wrong Details (13.8%)", "Medium — clients lose trust", "Domain fine-tuning"],
-        ["Accumulated Errors (9.1%)", "Lower — death by 1000 cuts", "N-best aggregation"],
+        ["Wrong Topic (44%)", "Very High — largest category", "LLM swap + data"],
+        ["Hallucination (19%)", "High — deceptive but identifiable", "Confidence scoring"],
+        ["Signal Loss (14%)", "Medium — detectable, filterable", "Quality filtering"],
+        ["Right Topic, Wrong Details (14%)", "Medium — clients lose trust", "Domain fine-tuning"],
+        ["Accumulated Errors (9%)", "Lower — death by 1000 cuts", "N-best aggregation"],
     ]
 
     # Color scheme: category and impact columns share severity color
@@ -1582,8 +1582,8 @@ def slide_failure_deep_3(prs):
         "(moderate, Hallucination), ORANGE (high, Wrong Topic), RED (critical, "
         "Right Topic Wrong Details), YELLOW (medium, Accumulated Errors). "
         "Right Topic Wrong Details is the most dangerous because clients cannot "
-        "trust the output. Wrong Topic is the LARGEST at 44.4% and the most "
-        "amenable to improvement through LLM upgrade. 54.3% of failures trace "
+        "trust the output. Wrong Topic is the LARGEST at 44% and the most "
+        "amenable to improvement through LLM upgrade. 54% of failures trace "
         "to the LLM backbone being too weak.",
         [[tbl], [callout_r, callout_t]], click_reveal=True)
 
@@ -1612,7 +1612,7 @@ def slide_09(prs):
 def slide_metric_transition(prs):
     """Oracle -> Realistic flow under MBR (May 6 2026 restage).
 
-    Re-staged from the legacy 25.5% -> 61.6% -> 64.9% (top-1) framing.
+    Re-staged from the legacy 26% -> 62% -> 65% (top-1) framing.
     Now walks four progressive numbers under the MBR-default, ending at
     the user-visible Trust-gate operating point. All numerics are pinned
     with `# audit:KEY` comments referencing
@@ -1769,13 +1769,13 @@ def slide_metric_transition(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_10(prs):
-    build_two_col(prs, 10, "Three Root Causes \u2014 Why 64.1% WER?",
+    build_two_col(prs, 10, "Three Root Causes \u2014 Why 64% WER?",
         "Root Causes", [
             ("1. Domain Mismatch", {"bold": True, "color": TEAL}),
             "Model trained on TED talks (LRS3); real-world: DIY, cooking, sports",
             ("2. Short Segments Fail", {"bold": True, "color": TEAL}),
             "Under 10 words: only 53% useful vs 68% for 20+ words",
-            ("3. Hallucination (20.5%)", {"bold": True, "color": TEAL}),
+            ("3. Hallucination (20%)", {"bold": True, "color": TEAL}),
             "LLM prior overwhelms weak visual signal \u2014 fluent but fabricated",
         ],
         "By the Numbers", [
@@ -1783,7 +1783,7 @@ def slide_10(prs):
             ("DIY/Home: IS 2.13, 41% useful \u2014 37pp gap", {"color": CORAL}),
             "Short (5\u201310 words): 74% WER, 53% useful",
             "Long (20+ words): 55% WER, 68% useful \u2014 15pp gap",
-            ("28.2% of failures = drift + hallucination", {"color": CORAL, "bold": True}),
+            ("28% of failures = drift + hallucination", {"color": CORAL, "bold": True}),
         ],
         "Three root causes explain most failures: domain mismatch (model trained "
         "on TED, tested on YouTube), short segments lacking context, and "
@@ -1814,7 +1814,7 @@ def slide_11(prs):
         ("Useful: 59% NEA F1 vs Non-useful: 6%",
          {"bold": True, "color": CORAL}),
         "53pp gap \u2014 largest differentiator of any signal",
-        "17.3% of IS variance (highest for 15%-weight signal)",
+        "17% of IS variance (highest for 15%-weight signal)",
         'A viewer can guess a missing "the" but not a missing name',
     ], MX, CT + Inches(0.5), col_w, Inches(3.8), size=Pt(13))
 
@@ -1847,7 +1847,7 @@ def slide_11(prs):
         "TAKEAWAY: Named entities are binary \u2014 either preserved or destroyed. "
         "The dense cluster at NEA=0 across all WWER levels shows that entity "
         "loss is catastrophic and independent of general word accuracy. This is "
-        "why NEA accounts for 17.3% of IS variance despite only 15% weight \u2014 "
+        "why NEA accounts for 17% of IS variance despite only 15% weight \u2014 "
         "it's the single most discriminating signal between useful and non-useful.",
         None)
 
@@ -1912,10 +1912,10 @@ def slide_tuning_summary(prs):
     headers = ["Metric", "Baseline (top-1)", "Config J", "\u0394"]
     rows = [
         ["Mean IS", "2.53", "2.60", "+0.07"],            # audit:is_mean_top1 (baseline anchor)
-        ["Useful (IS\u22652)", "61.6%", "62.8%", "+1.2pp"],  # audit:niv_yp_pct_top1 (baseline anchor)
-        ["Empty outputs", "4.7%", "0%", "\u221270"],
-        ["Hallucinations", "20.5%", "23.2%", "+41"],     # audit:hallucination_pct_top1 (baseline anchor)
-        ["Mean WWER", "60.5%", "59.8%", "\u22120.7pp"],
+        ["Useful (IS\u22652)", "62%", "63%", "+1.2pp"],  # audit:niv_yp_pct_top1 (baseline anchor)
+        ["Empty outputs", "5%", "0%", "\u221270"],
+        ["Hallucinations", "20%", "23%", "+41"],     # audit:hallucination_pct_top1 (baseline anchor)
+        ["Mean WWER", "60%", "60%", "\u22120.7pp"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.75), col_w,
                     row_height=Inches(0.38),
@@ -1939,10 +1939,10 @@ def slide_tuning_summary(prs):
         "variants; MBR n-best aggregation is NOT in the 16 configs (audit: "
         "after_amosi_audit.json `cross_config_includes_mbr: False`).\n\n"
         "The original slide included a length penalty sensitivity chart showing "
-        "the empty-vs-hallucination trade-off: lenpen=-0.5 causes 44.9% empty "
-        "outputs; baseline (lenpen=0) has 4.7% empties; lenpen=1.0 (Config J) "
-        "eliminates all empties but hallucinations rise from 20.5% to 23.2%; "
-        "lenpen=2.0 pushes hallucinations to 52.9%. This demonstrates the "
+        "the empty-vs-hallucination trade-off: lenpen=-0.5 causes 45% empty "
+        "outputs; baseline (lenpen=0) has 5% empties; lenpen=1.0 (Config J) "
+        "eliminates all empties but hallucinations rise from 20% to 23%; "
+        "lenpen=2.0 pushes hallucinations to 53%. This demonstrates the "
         "fundamental trade-off: length penalty controls whether the model stays "
         "silent (empty) or fabricates (hallucination). Config J chose the sweet "
         "spot — zero empties at the cost of +41 hallucinations.",
@@ -2014,7 +2014,7 @@ def slide_design_philosophy(prs):
 def slide_is_dimensions(prs):
     """Two quality dimensions from PCA analysis.
 
-    Verified May 6 2026: framing is correct (2 PCs, Kaiser, 87.9% total).
+    Verified May 6 2026: framing is correct (2 PCs, Kaiser, 88% total).
     The legacy "3 dimensions" claim is fully purged from this slide.
     Source: docs/evaluation/is_pca_analysis.md.
     """
@@ -2028,12 +2028,12 @@ def slide_is_dimensions(prs):
     add_text(slide, "PCA retains 2 principal components (Kaiser criterion: eigenvalue > 1):",
              MX, CT, CW, Inches(0.4), size=Pt(15), color=LGRAY)
 
-    # Two cards (PC1 = 68.4%, PC2 = 19.5%, total = 87.9%)
+    # Two cards (PC1 = 68%, PC2 = 20%, total = 88%)
     dims = [
-        ("PC1: Signal Quality", "68.4%", "of total variance",
+        ("PC1: Signal Quality", "68%", "of total variance",
          "All 5 content signals load equally\n(0.43\u20130.47 each)",
          "One general quality factor\ndriven by visual encoder", TEAL),
-        ("PC2: Output Length", "19.5%", "of total variance",
+        ("PC2: Output Length", "20%", "of total variance",
          "Length Ratio dominates\n(loading 0.91)",
          "Independent of content quality\nCatches hallucination & truncation", LGRAY),
     ]
@@ -2078,12 +2078,12 @@ def slide_is_dimensions(prs):
 
     _finish(slide, 0,
         "PCA retains 2 principal components (Kaiser, eigenvalue > 1). "
-        "PC1 (68.4%): all 5 content signals load equally (0.43-0.47) \u2014 one "
+        "PC1 (68%): all 5 content signals load equally (0.43-0.47) \u2014 one "
         "general quality factor driven by the visual encoder. Semantic is NOT "
         "independent; it loads on PC1 just like word-accuracy signals. "
-        "PC2 (19.5%): Length Ratio dominates (0.91), truly independent of "
-        "content quality. Together: 87.9% of variance. PC3 (entity swing, "
-        "5.1%) is below Kaiser threshold and is not used. "
+        "PC2 (20%): Length Ratio dominates (0.91), truly independent of "
+        "content quality. Together: 88% of variance. PC3 (entity swing, "
+        "5%) is below Kaiser threshold and is not used. "
         "The legacy 3-dimensions framing is fully retired \u2014 this slide and "
         "downstream narrative use 2 PCs only. "
         "See docs/evaluation/is_pca_analysis.md for the full PCA table.",

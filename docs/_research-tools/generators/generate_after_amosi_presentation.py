@@ -424,9 +424,9 @@ def main():
     plain = re.sub(r"<[^>]+>", "", all_text)
     checks = [
         ("2.547",  "MBR IS"),
-        ("61.92",  "NIV-Y+P (MBR)"),
-        ("71.08",  "judge MBR Y+P"),
-        ("5.6%",   "trust gate FPR"),
+        ("62%",    "NIV-Y+P (MBR)"),
+        ("71%",    "judge MBR Y+P"),
+        ("6%",     "trust gate FPR"),
     ]
     for needle, label in checks:
         status = "PASS" if needle in plain else "FAIL"

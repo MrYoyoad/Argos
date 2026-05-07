@@ -267,8 +267,8 @@ def slide_16(prs):
 
     # Two PCA dimensions (actual PCA results)
     dims = [
-        ("PC1: Signal Quality", "All 5 content signals load equally (0.43\u20130.47)", "68.4%", TEAL),
-        ("PC2: Output Length", "Length Ratio dominates (loading 0.91)", "19.5%", LGRAY),
+        ("PC1: Signal Quality", "All 5 content signals load equally (0.43\u20130.47)", "68%", TEAL),
+        ("PC2: Output Length", "Length Ratio dominates (loading 0.91)", "20%", LGRAY),
     ]
     dim_y = CT + Inches(0.5)
     for i, (name, signals, pct, color) in enumerate(dims):
@@ -278,7 +278,7 @@ def slide_16(prs):
         add_text(slide, f"{signals} \u2014 {pct} of variance",
                  rx + Inches(0.15), y + Inches(0.3), col_w - Inches(0.15),
                  Inches(0.3), size=Pt(11), color=LGRAY)
-    add_text(slide, "Together: 87.9% of total variance (Kaiser criterion)",
+    add_text(slide, "Together: 88% of total variance (Kaiser criterion)",
              rx + Inches(0.15), dim_y + 2 * Inches(0.75) + Inches(0.1),
              col_w - Inches(0.15), Inches(0.3), size=Pt(11), color=LGRAY)
 
@@ -306,11 +306,11 @@ def slide_16(prs):
         "taxonomy, success patterns. These were then encoded into deterministic "
         "formulas. No LLM is called per sample at runtime.\n\n"
         "PCA RESULTS (Kaiser criterion, 2 PCs retained):\n"
-        "PC1 (68.4%): Signal Quality — all 5 content signals load equally "
+        "PC1 (68%): Signal Quality — all 5 content signals load equally "
         "(0.43-0.47). Semantic is NOT independent of word accuracy.\n"
-        "PC2 (19.5%): Output Length — Length Ratio dominates (0.91). "
+        "PC2 (20%): Output Length — Length Ratio dominates (0.91). "
         "Independent of content quality.\n"
-        "Together: 87.9% of variance. The visual encoder drives PC1.\n\n"
+        "Together: 88% of variance. The visual encoder drives PC1.\n\n"
         "KEY FINDINGS:\n"
         "1. Phonetic Sim is the strongest single predictor (r=0.943) despite "
         "15% weight — most direct measure of visual encoder quality.\n"
@@ -337,7 +337,7 @@ def slide_25(prs):
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
     # IS metric — in CORAL for this variant
-    add_text(slide, "IS says 61.6%", MX + Inches(0.3), CT + Inches(0.2),
+    add_text(slide, "IS says 62%", MX + Inches(0.3), CT + Inches(0.2),
              CW - Inches(0.6), Inches(0.7),
              size=Pt(40), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "of segments pass (IS \u2265 2.00)",
@@ -346,7 +346,7 @@ def slide_25(prs):
              size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
 
     # LLM Judge — the validation
-    add_text(slide, "LLM Judge says 64.9%", MX + Inches(0.3), CT + Inches(1.5),
+    add_text(slide, "LLM Judge says 65%", MX + Inches(0.3), CT + Inches(1.5),
              CW - Inches(0.6), Inches(0.7),
              size=Pt(40), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "deliver useful output (Y + P)",
@@ -357,10 +357,10 @@ def slide_25(prs):
     # Key bullets below
     bul = add_bullets(slide, [
         ("IS conservatively undercounts \u2014 the real quality is higher "
-         "than 61.6% suggests", {"bold": True, "color": WHITE}),
+         "than 62% suggests", {"bold": True, "color": WHITE}),
         "LLM-as-a-Judge (blind, 1,497 pairs) confirms: nearly 2 in 3 "
          "segments carry useful meaning",
-        ("The gap (61.6% \u2192 64.9%) = segments with partial value "
+        ("The gap (62% \u2192 65%) = segments with partial value "
          "that strict metrics penalize", {}),
         ("IS is a floor, not a ceiling \u2014 designed to be cautious",
          {"color": TEAL}),
@@ -376,9 +376,9 @@ def slide_25(prs):
 
     _finish(slide, 25,
         "IS provides a conservative lower bound for transcription quality. "
-        "IS says 61.6% of segments are useful (IS >= 2.00). But an independent "
+        "IS says 62% of segments are useful (IS >= 2.00). But an independent "
         "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
-        "Y+P = 64.9% deliver useful output. The 25pp gap shows IS deliberately "
+        "Y+P = 65% deliver useful output. The 25pp gap shows IS deliberately "
         "undercounts: many segments with partial value are penalized by strict "
         "metrics. IS is a floor, not a ceiling \u2014 the real quality of the "
         "system is higher than our metric reports.",
@@ -647,7 +647,7 @@ def slide_25d(prs):
 
     _finish(slide, 0,
         "Three real salvage examples drawn from the LLM-Salvage analysis "
-        "(165 of 900 metric-failed segments are recoverable, 18.3%). The "
+        "(165 of 900 metric-failed segments are recoverable, 18%). The "
         "card on the left shows a Phonetic Bridge (IS 1.29, WER 150%) where "
         "lip-shape collisions produce linguistically plausible but wrong "
         "words yet a viewer with religious context recovers the meaning. "
@@ -933,8 +933,8 @@ def slide_is_deep_dive(prs):
 
     _finish(slide, 0,
         "IS validation conclusions. PCA retains 2 principal components: "
-        "signal quality (68.4%, all 5 content signals load equally) and "
-        "output length (19.5%, Length Ratio dominates). Semantic is NOT "
+        "signal quality (68%, all 5 content signals load equally) and "
+        "output length (20%, Length Ratio dominates). Semantic is NOT "
         "an independent dimension \u2014 it loads on PC1 alongside word-accuracy "
         "signals. Cross-config validation across 16 decode configurations "
         "confirms stability with mean r=0.925.",
@@ -1106,8 +1106,8 @@ def slide_two_eval_systems(prs):
              size=Pt(14), color=TEAL, bold=True)
     r1_b = add_bullets(slide, [
         "Strict metric: composite 0\u20135 score, two operating points",
-        ("IS \u2265 3.80 = Clearly conveyed: 23.1% (346/1,497)", {"bold": True}),
-        ("IS \u2265 2.00 = Any useful meaning: 61.6% (922/1,497)", {"bold": True}),
+        ("IS \u2265 3.80 = Clearly conveyed: 23% (346/1,497)", {"bold": True}),
+        ("IS \u2265 2.00 = Any useful meaning: 62% (922/1,497)", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(1.0), col_w - Inches(0.4), Inches(0.8),
        size=Pt(12))
 
@@ -1120,7 +1120,7 @@ def slide_two_eval_systems(prs):
              size=Pt(14), color=GREEN, bold=True)
     r2_b = add_bullets(slide, [
         "Holistic: Y/P/N per ref+hyp pair (1,497 pairs)",
-        ("Y = 23.0% clearly conveyed, Y+P = 64.9% useful", {"bold": True}),
+        ("Y = 23% clearly conveyed, Y+P = 65% useful", {"bold": True}),
     ], MX + Inches(0.2), CT + Inches(2.8), col_w - Inches(0.4), Inches(0.8),
        size=Pt(13))
 
@@ -1131,7 +1131,7 @@ def slide_two_eval_systems(prs):
 
     agree_txt = add_text(slide,
         "\u03ba = 0.818 (good agreement)\n"
-        "IS undercounts: 61.6% vs judge 64.9%.",
+        "IS undercounts: 62% vs judge 65%.",
         rx, CT + Inches(0.5), col_w, Inches(0.6),
         size=Pt(15), color=WHITE, bold=True)
 
@@ -1159,9 +1159,9 @@ def slide_two_eval_systems(prs):
 
     _finish(slide, 0,
         "Two evaluation systems with NIV thresholds. "
-        "IS >= 3.80 for clearly conveyed (23.1%, matches judge Y rate 23.0%, kappa=0.690). "
-        "IS >= 2.00 for any useful meaning (61.6%, kappa=0.818, almost perfect). "
-        "Opus-as-a-Judge: Y=23.0%, Y+P=64.9%. "
+        "IS >= 3.80 for clearly conveyed (23%, matches judge Y rate 23%, kappa=0.690). "
+        "IS >= 2.00 for any useful meaning (62%, kappa=0.818, almost perfect). "
+        "Opus-as-a-Judge: Y=23%, Y+P=65%. "
         "IS is a strict estimator — undercounts at both operating points. "
         "Old IS >= 3.0 threshold is superseded: it sat in no-man's land (kappa=0.565 for Y, 0.521 for Y+P).",
         [[lt, r1, r1_t, r1_b], [r2, r2_t, r2_b], [rt, agree_txt, tbl, we_t, we_b]], click_reveal=True)
@@ -1183,7 +1183,7 @@ def slide_llm_judge(prs):
         "Use a frontier LLM (Claude Opus) as an independent evaluator",
         "Evaluate every reference+hypothesis pair holistically",
         "3-level verdict: Y (preserved) / P (partial) / N (not preserved)",
-        ("30 duplicate pairs \u2192 86.7% intra-rater reliability", {"bold": True}),
+        ("30 duplicate pairs \u2192 87% intra-rater reliability", {"bold": True}),
     ], MX, CT + Inches(0.5), col_w, Inches(1.8), size=Pt(13))
 
     # Results table
@@ -1192,10 +1192,10 @@ def slide_llm_judge(prs):
 
     tbl = add_table(slide,
         ["Verdict", "Count", "%"],
-        [["Y (fully preserved)", "345", "23.0%"],
-         ["P (partially)", "626", "41.8%"],
-         ["N (not preserved)", "526", "35.1%"],
-         ["Y+P (any useful)", "971", "64.9%"]],
+        [["Y (fully preserved)", "345", "23%"],
+         ["P (partially)", "626", "42%"],
+         ["N (not preserved)", "526", "35%"],
+         ["Y+P (any useful)", "971", "65%"]],
         MX, CT + Inches(2.8), col_w, text_size=Pt(12),
         row_colors={0: {2: GREEN}, 2: {2: CORAL}, 3: {2: TEAL}})
 
@@ -1228,11 +1228,11 @@ def slide_llm_judge(prs):
         "1,497 pairs). Distinct from the v3 dual-conf judge run on the "
         "n-best paired-test slide later in this section, which uses "
         "Opus 4.7 with the dual-conf prompt across 5,988 verdicts. "
-        "Headline: Y=23.0% (345 of 1,497), P=41.8% (626), N=35.1% (526), "
-        "Y+P=64.9%. Intra-rater agreement 86.7% on the 30-pair duplicate "
+        "Headline: Y=23% (345 of 1,497), P=42% (626), N=35% (526), "
+        "Y+P=65%. Intra-rater agreement 87% on the 30-pair duplicate "
         "subset. Pearson r=0.85 between IS and the judge verdict, which is "
         "what justifies using IS as a deterministic surrogate. Threshold "
-        "sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 91.5% agreement); the "
+        "sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 92% agreement); the "
         "older IS>=3.0 cutoff under-counts (kappa=0.521) and is now retired. "
         "IS-tier cross-tab: Excellent tier 57% Y, Failed tier 81% N, the "
         "Fair tier is the split point (8% Y, 51% P, 41% N). Mention to "
@@ -1259,7 +1259,7 @@ def slide_context_eval(prs):
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
     # IS metric
-    add_text(slide, "IS says 61.6%", MX + Inches(0.3), CT + Inches(0.2),
+    add_text(slide, "IS says 62%", MX + Inches(0.3), CT + Inches(0.2),
              CW - Inches(0.6), Inches(0.7),
              size=Pt(40), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "of segments deliver useful output (IS \u2265 2.00)",
@@ -1268,7 +1268,7 @@ def slide_context_eval(prs):
              size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
 
     # LLM Judge
-    add_text(slide, "LLM Judge says 64.9%", MX + Inches(0.3), CT + Inches(1.5),
+    add_text(slide, "LLM Judge says 65%", MX + Inches(0.3), CT + Inches(1.5),
              CW - Inches(0.6), Inches(0.7),
              size=Pt(40), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "deliver useful output (Y + P)",
@@ -1278,11 +1278,11 @@ def slide_context_eval(prs):
 
     # Key bullets
     bul = add_bullets(slide, [
-        ("IS closely tracks LLM judge \u2014 61.6% vs 64.9% "
+        ("IS closely tracks LLM judge \u2014 62% vs 65% "
          "(\u03ba = 0.818)", {"bold": True, "color": WHITE}),
         "LLM-as-a-Judge (blind, 1,497 pairs) confirms: nearly 2 in 3 "
          "segments carry useful meaning",
-        ("The 3pp gap (61.6% \u2192 64.9%) = IS is a calibrated "
+        ("The 3pp gap (62% \u2192 65%) = IS is a calibrated "
          "surrogate, not an overcount", {}),
         ("IS is a floor, not a ceiling \u2014 designed to be cautious",
          {"color": TEAL}),
@@ -1298,9 +1298,9 @@ def slide_context_eval(prs):
 
     _finish(slide, 0,
         "IS is a calibrated surrogate metric for transcription quality. "
-        "IS says 61.6% of segments deliver useful output (IS >= 2.00). An independent "
+        "IS says 62% of segments deliver useful output (IS >= 2.00). An independent "
         "LLM-as-a-Judge evaluation (Claude Opus, blind, all 1,497 pairs) finds "
-        "Y+P = 64.9% deliver useful output. The 3pp gap shows IS deliberately "
+        "Y+P = 65% deliver useful output. The 3pp gap shows IS deliberately "
         "undercounts: many segments with partial value are penalized by strict "
         "metrics. IS is a floor, not a ceiling.",
         [[r1], [bul]], click_reveal=True)
@@ -1313,7 +1313,7 @@ def slide_what_good_looks_like(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "276 segments (18.4%) score IS \u2265 4.0 \u2014 Excellent quality:",
+        "276 segments (18%) score IS \u2265 4.0 \u2014 Excellent quality:",
         MX, CT, CW, Inches(0.35), size=Pt(15), color=LGRAY)
 
     tbl = add_table(slide,
@@ -1344,7 +1344,7 @@ def slide_what_good_looks_like(prs):
 
     # Stats
     add_bullets(slide, [
-        "276 segments (18.4%) \u2014 the architecture works",
+        "276 segments (18%) \u2014 the architecture works",
         "57% LLM Judge Y among Tier 5 \u2014 even the strictest evaluator agrees",
         "Business/Finance topics dominate Tier 5 (closest to training data)",
         ("Perfect transcription across 20\u201340 consecutive words \u2014 not luck",
@@ -1352,7 +1352,7 @@ def slide_what_good_looks_like(prs):
     ], MX, CT + Inches(3.7), CW, Inches(2.0), size=Pt(14))
 
     _finish(slide, 0,
-        "What good looks like: 276 segments (18.4%) achieve IS 4.0-5.0. "
+        "What good looks like: 276 segments (18%) achieve IS 4.0-5.0. "
         "Perfect word-for-word transcription over 20-40 consecutive words. "
         "The architecture works — the challenge is getting it to work "
         "consistently across all domains.",
@@ -1448,12 +1448,12 @@ def slide_llm_judge_30(prs):
     tbl = add_table(slide,
         ["Metric", "Value"],
         [["Segments", "30 (stratified sample)"],
-         ["Mean WER", "61.4%"],
+         ["Mean WER", "61%"],
          ["Mean IS", "2.67 / 5.0"],
-         ["LLM Judge: Y", "7  (23.3%)"],
-         ["LLM Judge: P", "12  (40.0%)"],
-         ["LLM Judge: N", "11  (36.7%)"],
-         ["Y + P", "19  (63.3%)"]],
+         ["LLM Judge: Y", "7  (23%)"],
+         ["LLM Judge: P", "12  (40%)"],
+         ["LLM Judge: N", "11  (37%)"],
+         ["Y + P", "19  (63%)"]],
         MX, CT + Inches(0.5), col_w, text_size=Pt(13),
         row_height=Inches(0.42),
         row_colors={3: {1: GREEN}, 5: {1: CORAL}, 6: {1: TEAL}})
@@ -1480,9 +1480,9 @@ def slide_llm_judge_30(prs):
     _finish(slide, 0,
         "30-sample overview: stratified sample drawn from the 1,497-segment "
         "evaluation set. The 30-pair sample distribution matches the full "
-        "dataset closely (Y=23.3% vs 23.0%, P=40.0% vs 41.8%, N=36.7% vs "
-        "35.1%) and confirms the smaller deep-dive sample is representative. "
-        "Mean WER 61.4% versus 64.1% on the full 1,497 segments; mean IS "
+        "dataset closely (Y=23% vs 23%, P=40% vs 42%, N=37% vs "
+        "35%) and confirms the smaller deep-dive sample is representative. "
+        "Mean WER 61% versus 64% on the full 1,497 segments; mean IS "
         "2.67 versus 2.547 on full. The interesting middle zone (IS 2.0-4.0) "
         "is where partial captures, phonetic bridges, and domain confusion "
         "live — these are the segments LLM Salvage and the Y+P NIV "
@@ -1574,7 +1574,7 @@ def slide_judge_ex1(prs):
             "forecasting pv installations could reach",
         hyp="market research firm rogers research is "
             "forecasting pv installations will reach",
-        wer="18.2%", wwer="15.0%", is_score="4.55",
+        wer="18%", wwer="15%", is_score="4.55",
         is_tier="Excellent", judge="Y",
         category="Named Entity Swap — meaning fully preserved",
         annotation="Only the company name changed (bernreuter \u2192 rogers) "
@@ -1582,10 +1582,10 @@ def slide_judge_ex1(prs):
                    "is perfectly captured. WER penalizes the name error equally "
                    "to any other word, but a viewer gets the full message.",
         notes="Named entity swap: 'bernreuter' becomes 'rogers' — visually "
-              "similar lip patterns for proper nouns. WER is 18.2% on this "
-              "segment, WWER 15.0% (the entity drops out at the same rate "
+              "similar lip patterns for proper nouns. WER is 18% on this "
+              "segment, WWER 15% (the entity drops out at the same rate "
               "common words do here, so weighting barely moves WER). Despite "
-              "18.2% WER, the core message about PV installation forecasts "
+              "18% WER, the core message about PV installation forecasts "
               "is fully preserved — only the company name is wrong, and the "
               "verb 'could' becomes 'will'. The LLM judge rates Y; IS is "
               "4.55, which sits in the Excellent tier. Mention to peers: "
@@ -1607,7 +1607,7 @@ def slide_judge_ex2(prs):
         hyp="in the 1980s when film companies decided they could "
             "bypass the theatrical distribution system altogether "
             "among other",
-        wer="48.1%", wwer="41.7%", is_score="3.69",
+        wer="48%", wwer="42%", is_score="3.69",
         is_tier="Good", judge="P",
         category="Truncation \u2014 beginning and end lost, core intact",
         annotation="The opening context ('home video market matured') and "
@@ -1615,7 +1615,7 @@ def slide_judge_ex2(prs):
                    "\u2014 1980s film companies bypassing theatrical distribution "
                    "\u2014 is captured verbatim. WER is 48% because of the "
                    "missing words, but meaning is substantially there.",
-        notes="Truncation example. WER is 48.1%, WWER 41.7% — both numbers "
+        notes="Truncation example. WER is 48%, WWER 42% — both numbers "
               "look like a clear failure if you stop at WER alone. But the "
               "actual content is dominated by a clean middle stretch: 'in "
               "the 1980s when film companies decided they could bypass the "
@@ -1641,7 +1641,7 @@ def slide_judge_ex3(prs):
         hyp="we need a radically different approach we must indeed "
             "find a way we can design existing roads to exist with "
             "existing structures and enable them for reuse",
-        wer="51.5%", wwer="47.1%", is_score="3.02",
+        wer="52%", wwer="47%", is_score="3.02",
         is_tier="Good", judge="P",
         category="Domain Vocabulary Drift \u2014 structure intact, terms swapped",
         annotation="The argument structure is perfect: 'radically different "
@@ -1667,14 +1667,14 @@ def slide_judge_ex4(prs):
         hyp="takes into account our environment tells us what "
             "to eat tells us where to make turns tells us when "
             "to make stops basically switches on",
-        wer="43.3%", wwer="56.8%", is_score="2.67",
+        wer="43%", wwer="57%", is_score="2.67",
         is_tier="Fair", judge="P",
         category="Scientific Terms Lost \u2014 repetitive structure preserved",
         annotation="The 'tells us when to X' pattern is captured perfectly "
                    "\u2014 all three repetitions preserved. But every scientific "
                    "term is wrong: cortisol \u2192 turns, testosterone \u2192 stops, "
-                   "light cycles \u2192 (gone). WWER (56.8%) is higher than WER "
-                   "(43.3%) because high-value content words are wrong.",
+                   "light cycles \u2192 (gone). WWER (57%) is higher than WER "
+                   "(43%) because high-value content words are wrong.",
         notes="Scientific vocabulary destroyed: cortisol becomes 'turns', "
               "testosterone becomes 'stops', light cycles dropped entirely. "
               "But the repetitive rhetorical structure ('tells us when to X') "
@@ -1690,7 +1690,7 @@ def slide_judge_ex5(prs):
         ref="and i have a tablespoon of jalapeno fresh jalapeno",
         hyp="and i have a dietary smoothie i've got the "
             "banana called fresh banana",
-        wer="88.9%", wwer="43.8%", is_score="2.07",
+        wer="89%", wwer="44%", is_score="2.07",
         is_tier="Fair", judge="P",
         category="Domain Confusion \u2014 food context right, ingredients wrong",
         annotation="The model knows it's a cooking video: 'dietary smoothie', "
@@ -1698,7 +1698,7 @@ def slide_judge_ex5(prs):
                    "ingredient is completely wrong: jalapeno \u2192 banana. A viewer "
                    "watching the video would see a pepper and immediately "
                    "override the garbled text \u2014 multimodal context helps.",
-        notes="Cooking domain confusion. WER is 88.9%, WWER drops to 43.8% "
+        notes="Cooking domain confusion. WER is 89%, WWER drops to 44% "
               "because the rare entity 'jalapeno' is the dominant high-value "
               "token; once it is wrong, low-value words barely matter. The "
               "model correctly infers the food domain (smoothie, banana, "
@@ -1725,7 +1725,7 @@ def slide_judge_ex6(prs):
         hyp="i actually used the overheard ghost whisperer "
             "music for that scene which i know is about to "
             "go on but the scene runs",
-        wer="73.9%", wwer="68.8%", is_score="1.79",
+        wer="74%", wwer="69%", is_score="1.79",
         is_tier="Poor", judge="P",
         category="Topic Hijack \u2014 grammatically fluent, completely wrong topic",
         annotation="'Overhead lights' \u2192 'overheard ghost whisperer' is a "
@@ -1758,8 +1758,8 @@ def slide_judge_report_screenshot(prs):
         "Screenshot of the interactive HTML report (30 stratified samples from "
         "1,497-segment dataset). Color-coded word diffs: green = match, "
         "yellow = substitution, red = insertion. Columns: WER, WWER, NEA F1, IS, "
-        "LLM Judge verdict (Y/P/N). Distribution: Y=23.3%, P=40.0%, N=36.7%, "
-        "Y+P=63.3%. Mean WER 61.4%, Mean IS 2.67/5.0.",
+        "LLM Judge verdict (Y/P/N). Distribution: Y=23%, P=40%, N=37%, "
+        "Y+P=63%. Mean WER 61%, Mean IS 2.67/5.0.",
         [[img]])
 
 
@@ -1775,7 +1775,7 @@ def slide_disagreement_blind(prs):
 
     # Subtitle
     sub = add_text(slide,
-        "22 of 1,497 segments (1.5%) — rare but revealing edge cases",
+        "22 of 1,497 segments (2%) — rare but revealing edge cases",
         MX, CT, CW, Inches(0.35),
         size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1794,7 +1794,7 @@ def slide_disagreement_blind(prs):
 
     left_shapes.append(add_rich_text(slide, [
         [("IS Too Harsh", {"size": Pt(16), "color": GREEN, "bold": True}),
-         ("  \u2014  19 cases (1.3%)", {"size": Pt(13), "color": LGRAY})],
+         ("  \u2014  19 cases (1%)", {"size": Pt(13), "color": LGRAY})],
     ], MX + Inches(0.25), card_y + Inches(0.15), card_w - Inches(0.5), Inches(0.35)))
 
     left_shapes.append(add_text(slide,
@@ -1848,7 +1848,7 @@ def slide_disagreement_blind(prs):
 
     right_shapes.append(add_rich_text(slide, [
         [("IS Too Generous", {"size": Pt(16), "color": CORAL, "bold": True}),
-         ("  \u2014  3 cases (0.2%)", {"size": Pt(13), "color": LGRAY})],
+         ("  \u2014  3 cases (0%)", {"size": Pt(13), "color": LGRAY})],
     ], rx + Inches(0.25), card_y + Inches(0.15), card_w - Inches(0.5), Inches(0.35)))
 
     right_shapes.append(add_text(slide,
@@ -1892,17 +1892,17 @@ def slide_disagreement_blind(prs):
 
     # Bottom strip
     bot = add_text(slide,
-        "98.5% agreement \u2014 disagreements are edge cases, not systemic failure",
+        "98% agreement \u2014 disagreements are edge cases, not systemic failure",
         MX, Inches(6.35), CW, Inches(0.35),
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "IS vs Opus Judge disagreement analysis (blind evaluation, all 1,497 "
-        "pairs). Headline: 22 segments (1.5% of the corpus) sit in the "
-        "disagreement region; 98.5% of the dataset agrees. The 22 "
+        "pairs). Headline: 22 segments (2% of the corpus) sit in the "
+        "disagreement region; 98% of the dataset agrees. The 22 "
         "split into 19 IS-too-harsh cases (judge Y, IS<2.00) and 3 "
         "IS-too-generous cases (judge N, IS>=2.00).\n\n"
-        "LEFT — IS False Negatives (19 cases, 1.3%): paraphrases, phonetic "
+        "LEFT — IS False Negatives (19 cases, 1%): paraphrases, phonetic "
         "bridges, and harmless hallucinations that preserve core meaning but "
         "score poorly on word-level signals. The headline left-card example "
         "('one really nice thing about this is' -> 'what a brilliant idea "
@@ -1913,7 +1913,7 @@ def slide_disagreement_blind(prs):
         "implications' captures 'human application' (IS 2.06, WER 100%); "
         "'to the next level' intact with trailing words added (IS 2.32, "
         "WER 100%).\n\n"
-        "RIGHT — IS False Positives (3 cases, 0.2%): semantic reversal "
+        "RIGHT — IS False Positives (3 cases, 0%): semantic reversal "
         "('unscrew' -> 'not to', IS 3.42, WER 29% — structural match hides "
         "the meaning inversion); domain swap ('blood extraction, "
         "x-ray' -> 'cut hair, ashram', IS 3.14); phonetic garbage ('one "
@@ -1961,7 +1961,7 @@ def slide_disagreement_context(prs):
     # OVERLAP fix: cap bullet height to 1.4 (was 1.8) so block ends at
     # CT+4.8 = 6.25 \u2014 leaves clean gap above bottom strip at y=6.35.
     add_bullets(slide, [
-        "80.1% of judgments stable across both modes",
+        "80% of judgments stable across both modes",
         "Only 1 N\u2192Y rescue in 1,497 pairs",
         ("Context is a quality tool, not a rescue tool",
          {"color": TEAL, "bold": True}),
@@ -2044,7 +2044,7 @@ def slide_disagreement_context(prs):
         "strongest argument for domain-aware fine-tuning: the model resolves "
         "lip movements to the wrong vocabulary domain. Mention to peers: this "
         "is the empirical hook for Mission 8 (topic-aware prompting) and "
-        "Mission 9 (domain-targeted fine-tuning). 80.1% of the 1,497 "
+        "Mission 9 (domain-targeted fine-tuning). 80% of the 1,497 "
         "judgments are stable across both modes; the disagreement region is "
         "narrow but interpretable. "
         "Sources: docs/evaluation/llm_judge/context_eval/context_eval_analysis.md, "
@@ -2094,7 +2094,7 @@ def slide_literature_metrics_problem(prs):
         "CER (Char Error Rate) on small alphabets - ASR/lip-reading",
         "Sometimes BLEU / METEOR for translation deck",
         ("Implicit assumption: WER is monotone in usefulness", {"color": CORAL}),
-        "Reported WERs on LRS3: AV-HuBERT 25.4%, AutoAVSR 19.1%, etc.",
+        "Reported WERs on LRS3: AV-HuBERT 25%, AutoAVSR 19%, etc.",
     ], MX + Inches(0.25), card_y + Inches(0.65),
        card_w - Inches(0.5), Inches(2.55), size=Pt(13)))
     # OVERLAP fix: bullets shrunk from h=3.0 to 2.55 (end y=card_y+3.20);
@@ -2167,7 +2167,7 @@ def slide_literature_metrics_problem(prs):
         "examples) and docs/evaluation/intelligibility_methodology.md "
         "(WER-IS dissociation). The point of this slide is to frame why we "
         "needed IS at all: the AVSR / VSP literature (LRS3, LRW, AVSpeech) "
-        "reports WER almost exclusively (AV-HuBERT 25.4%, AutoAVSR 19.1% on "
+        "reports WER almost exclusively (AV-HuBERT 25%, AutoAVSR 19% on "
         "LRS3), and WER conflates three downstream-distinct failure modes — "
         "gibberish, partial-but-useful, and fluent-hallucination. The "
         "bernreuter/rogers entity swap and the overhead-lights/"
@@ -2337,9 +2337,9 @@ def slide_per_word_confidence_distribution(prs):
     headers = ["Band", "JOINT n", "JOINT %", "LEGACY n", "LEGACY %"]
     rows = [
         # audit:perword_new_green_count vs perword_old_green_count, etc.
-        ["Green",  "7,591",  "32.6%", "11,309", "48.6%"],
-        ["Yellow", "6,571",  "28.2%",  "7,470", "32.1%"],
-        ["Red",    "9,099",  "39.1%",  "4,482", "19.3%"],
+        ["Green",  "7,591",  "33%", "11,309", "49%"],
+        ["Yellow", "6,571",  "28%",  "7,470", "32%"],
+        ["Red",    "9,099",  "39%",  "4,482", "19%"],
     ]
     row_colors = {
         0: {0: BLUE,   1: BLUE,   3: BLUE},
@@ -2367,7 +2367,7 @@ def slide_per_word_confidence_distribution(prs):
          "of green into red", {}),
         # audit:after_amosi_narrative_actions.md fix #14 - "next slide"
         # replaced with reorder-robust phrasing.
-        ("Each green is more reliable (89.8% vs 80.6%; quantified later "
+        ("Each green is more reliable (90% vs 81%; quantified later "
          "in this section)",
          {"color": GREEN, "bold": True}),
     ], MX + Inches(0.25), cy + Inches(0.55),
@@ -2393,11 +2393,11 @@ def slide_per_word_confidence_distribution(prs):
         "Distribution of per-word band assignments under the joint rule "
         "(top1_conf >= 0.95 AND beam_agreement >= 0.80) versus the legacy "
         "conf-only rule. Total 23,261 words across 1,427 segments. Under "
-        "the joint rule: Green 32.6% (7,591), Yellow 28.2% (6,571), Red "
-        "39.1% (9,099). Under legacy conf-only at 0.85: Green 48.6% "
-        "(11,309), Yellow 32.1% (7,470), Red 19.3% (4,482). The joint "
+        "the joint rule: Green 33% (7,591), Yellow 28% (6,571), Red "
+        "39% (9,099). Under legacy conf-only at 0.85: Green 49% "
+        "(11,309), Yellow 32% (7,470), Red 19% (4,482). The joint "
         "rule reclassifies roughly 3,700 words from green to red+yellow, "
-        "tightening green reliability from 80.6% to 89.8% (quantified "
+        "tightening green reliability from 81% to 90% (quantified "
         "later in this section). Mention to peers: this is the "
         "headline argument for adding beam_agreement as an independent "
         "axis on top of softmax probability — many of those reclassified "
@@ -2425,9 +2425,9 @@ def slide_band_reliability_overall(prs):
     headers = ["Band", "JOINT P(correct)", "LEGACY P(correct)", "Delta"]
     rows = [
         # audit:perword_new_green_p_correct vs perword_old_green_p_correct
-        ["Green",  "89.8%", "80.6%",  "+9.2pp"],
-        ["Yellow", "59.0%", "38.3%",  "+20.7pp"],
-        ["Red",    "21.7%", "15.4%",  "+6.3pp"],
+        ["Green",  "90%", "81%",  "+9.2pp"],
+        ["Yellow", "59%", "38%",  "+20.7pp"],
+        ["Red",    "22%", "15%",  "+6.3pp"],
     ]
     row_colors = {
         0: {0: BLUE,   1: GREEN, 3: GREEN},
@@ -2447,8 +2447,8 @@ def slide_band_reliability_overall(prs):
                     fill_color=NAVY2, border_color=BLUE, border_width=Pt(2),
                     corner_radius=True)
     take_t = add_text(slide,
-        "Joint rule's biggest reliability gain is in GREEN: 89.8% "
-        "vs 80.6% (+9.2pp).  Yellow gains the largest absolute lift "
+        "Joint rule's biggest reliability gain is in GREEN: 90% "
+        "vs 81% (+9.2pp).  Yellow gains the largest absolute lift "
         "(+20.7pp) because the legacy yellow band collected the high-conf-"
         "but-disagreed tokens that the joint rule reclassifies as red.",
         MX + Inches(0.3), CT + Inches(3.55), CW - Inches(0.6),
@@ -2465,9 +2465,9 @@ def slide_band_reliability_overall(prs):
         "corpus (1,427 segments). Computed by Levenshtein-aligning each "
         "hypothesis token to the reference and asking whether the colored "
         "band predicts that match. Under the joint rule: P(correct|green) "
-        "= 89.8%, P(correct|yellow) = 59.0%, P(correct|red) = 21.7%. Under "
-        "the legacy conf-only rule: 80.6% / 38.3% / 15.4%. The joint "
-        "rule's headline win is GREEN going from 80.6% to 89.8% reliable "
+        "= 90%, P(correct|yellow) = 59%, P(correct|red) = 22%. Under "
+        "the legacy conf-only rule: 81% / 38% / 15%. The joint "
+        "rule's headline win is GREEN going from 81% to 90% reliable "
         "(+9.2 pp); the larger absolute shift in YELLOW (+20.7 pp) "
         "reflects band relocations rather than a true reliability gain — "
         "the legacy yellow band was collecting high-conf-but-disagreed "
@@ -2489,7 +2489,7 @@ def slide_band_reliability_stratified(prs):
 
     sub = add_text(slide,
         "P(correct | green) stratified by segment mean_prob bin. "
-        "Green ranges from 96.4% (clean segments) to 18.2% (noisy ones).",
+        "Green ranges from 96% (clean segments) to 18% (noisy ones).",
         MX, CT, CW, Inches(0.4),
         size=Pt(12), color=LGRAY, italic=True)
 
@@ -2506,18 +2506,18 @@ def slide_band_reliability_stratified(prs):
     # Joint-rule bins (>=0.65 only) - per audit:section_D...stratified_by_seg_mean_conf
     headers = ["seg mean_prob", "P(grn correct)"]
     rows = [
-        ["0.85+ (very_high)", "96.4%"],   # audit:section_D...very_high.green_p_correct
-        ["0.75-0.85 (high)",  "91.7%"],   # audit:section_D...high.green_p_correct
-        ["0.65-0.75 (mid)",   "86.1%"],   # audit:section_D...mid.green_p_correct
+        ["0.85+ (very_high)", "96%"],   # audit:section_D...very_high.green_p_correct
+        ["0.75-0.85 (high)",  "92%"],   # audit:section_D...high.green_p_correct
+        ["0.65-0.75 (mid)",   "86%"],   # audit:section_D...mid.green_p_correct
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.85), rw,
                     text_size=Pt(11), row_height=Inches(0.4))
 
     leg_t = add_text(slide,
         "Below 0.65 (legacy rule only):\n"
-        "0.55-0.65: 41.3%\n"
-        "0.40-0.55: 21.8%\n"
-        "<0.40:    18.2%",
+        "0.55-0.65: 41%\n"
+        "0.40-0.55: 22%\n"
+        "<0.40:    18%",
         rx, CT + Inches(2.5), rw, Inches(1.6),
         size=Pt(12), color=LGRAY)
 
@@ -2540,14 +2540,14 @@ def slide_band_reliability_stratified(prs):
 
     _finish(slide, 0,
         "Per-word green-band reliability stratified by segment mean_prob. "
-        "Headline numbers: 96.4% reliable in the cleanest segments "
-        "(mean_prob >= 0.85), 91.7% in 0.75-0.85, 86.1% in 0.65-0.75. The "
+        "Headline numbers: 96% reliable in the cleanest segments "
+        "(mean_prob >= 0.85), 92% in 0.75-0.85, 86% in 0.65-0.75. The "
         "joint-rule diagnostic CSV is filtered at seg_mean_conf >= 0.65, "
         "so values below 0.65 must be recomputed from the legacy "
-        "conf-only rule on the B3 sidecar: 41.3% in 0.55-0.65, 21.8% in "
-        "0.40-0.55, 18.2% below 0.40. The bottom-strip 50% callout "
+        "conf-only rule on the B3 sidecar: 41% in 0.55-0.65, 22% in "
+        "0.40-0.55, 18% below 0.40. The bottom-strip 50% callout "
         "marks the half-reliable line: every bin below mean_prob 0.65 "
-        "sits under 50% (41.3% / 21.8% / 18.2%), so colouring those "
+        "sits under 50% (41% / 22% / 18%), so colouring those "
         "words green would actively mislead a viewer. The 47-percentage-"
         "point drop from the cleanest bin to the noisiest one is "
         "exactly why we set the strip-coloring boundary at mean_prob "
@@ -2567,11 +2567,11 @@ def slide_green_leakage_examples(prs):
     add_accent_line(slide)
 
     sub = add_text(slide,
-        "2,192 wrong-and-green words across 23,261 (9.4% leakage). "
+        "2,192 wrong-and-green words across 23,261 (9% leakage). "
         "Numerics and entities concentrate the danger.",
         MX, CT, CW, Inches(0.4),
         size=Pt(12), color=LGRAY, italic=True)
-    # 9.4% leakage = 2192/23261 (no single audit key; computable from
+    # 9% leakage = 2192/23261 (no single audit key; computable from
     # audit Section D totals - see audit-md:section-D + MEMORY).
 
     card_w = (CW - Inches(0.6)) / 3
@@ -2636,7 +2636,7 @@ def slide_green_leakage_examples(prs):
         "Production response: numbers are CAPPED at yellow under the new "
         "joint band rule, regardless of softmax probability. Entities are "
         "left in the joint-rule pipeline; calibration handles the rest. "
-        "The joint rule cuts green leakage from ~16% (legacy) to 9.4% "
+        "The joint rule cuts green leakage from ~16% (legacy) to 9% "
         "without losing too much green volume.",
         MX + Inches(0.25), Inches(5.75), CW - Inches(0.5),
         Inches(0.7), size=Pt(12), color=WHITE))
@@ -2703,7 +2703,7 @@ def slide_three_thresholds(prs):
     op.append(add_bullets(slide, [
         "Keeps 28% of segment volume",
         "IS_kept = 4.01  (Tier 4 - Good)",
-        "WER_kept = 27.5%",
+        "WER_kept = 28%",
         "Precision 71%   /   Recall 79%   for NIV-Y",
     ], MX + Inches(0.3), CT + Inches(3.75),
        CW - Inches(0.6), Inches(1.05), size=Pt(13)))
@@ -2720,7 +2720,7 @@ def slide_three_thresholds(prs):
         "90% reliable; highest precision, lowest recall). T_safe at >= "
         "0.82 (green is at least 85% reliable; F1-max for NIV-Y class on "
         "mean_prob — this is the operational default in the production UI: "
-        "keeps 28% of segment volume, IS_kept = 4.01, WER_kept = 27.5%, "
+        "keeps 28% of segment volume, IS_kept = 4.01, WER_kept = 28%, "
         "precision 71% and recall 79% on NIV-Y). T_salvage at >= 0.74 "
         "(green is at least 75% reliable; review zone). Below mean_prob "
         "0.65, even the green band is <50% reliable, so the production "
@@ -2749,9 +2749,9 @@ def slide_three_tier_policy_research(prs):
     headers = ["Tier", "Green n", "P(grn corr)", "Yellow n", "P(yel corr)",
                "Red n", "P(red corr)"]
     rows = [
-        ["Trust    (>=0.82)",   "3,923", "95.3%", "1,719", "76.1%", "  951", "42.0%"],
-        ["Salvage (0.65-0.82)","3,091", "89.1%", "3,241", "60.5%", "3,442", "27.7%"],
-        ["Strip   (<0.65)",     "  577", "56.2%", "1,611", "37.5%", "4,706", "13.1%"],
+        ["Trust    (>=0.82)",   "3,923", "95%", "1,719", "76%", "  951", "42%"],
+        ["Salvage (0.65-0.82)","3,091", "89%", "3,241", "60%", "3,442", "28%"],
+        ["Strip   (<0.65)",     "  577", "56%", "1,611", "38%", "4,706", "13%"],
     ]
     row_colors = {
         0: {0: BLUE,   2: GREEN},
@@ -2770,9 +2770,9 @@ def slide_three_tier_policy_research(prs):
              MX, CT + Inches(2.6), Inches(6.0), Inches(0.35),
              size=Pt(14), color=TEAL, bold=True))
     L.append(add_bullets(slide, [
-        ("Trust: green is 95.3% reliable. Auto-approve.", {"color": BLUE, "bold": True}),
-        ("Salvage: green is 89.1%. Pair with reviewer.", {"color": ORANGE}),
-        ("Strip: green is 56.2% - misleading. Drop colours.",
+        ("Trust: green is 95% reliable. Auto-approve.", {"color": BLUE, "bold": True}),
+        ("Salvage: green is 89%. Pair with reviewer.", {"color": ORANGE}),
+        ("Strip: green is 56% - misleading. Drop colours.",
          {"color": PURPLE, "bold": True}),
     ], MX, CT + Inches(3.0), Inches(6.0), Inches(2.5), size=Pt(13)))
 
@@ -2794,11 +2794,11 @@ def slide_three_tier_policy_research(prs):
         "Three-tier policy table — Trust / Salvage / Strip — with raw "
         "counts and per-band reliability values from the joint-rule "
         "diagnostic. Trust tier (segment mean_prob >= 0.82): green = "
-        "95.3% reliable on 3,923 words, yellow 76.1% on 1,719, red 42.0% "
+        "95% reliable on 3,923 words, yellow 76% on 1,719, red 42% "
         "on 951 — auto-approve threshold. Salvage tier (0.65 - 0.82): "
-        "green 89.1% on 3,091, yellow 60.5% on 3,241, red 27.7% on 3,442 "
+        "green 89% on 3,091, yellow 60% on 3,241, red 28% on 3,442 "
         "— pair with a human reviewer. Strip tier (< 0.65): green is "
-        "only 56.2% on 577 words, yellow 37.5% on 1,611, red 13.1% on "
+        "only 56% on 577 words, yellow 38% on 1,611, red 13% on "
         "4,706 — at this quality the green flag actively misleads, so "
         "the UI drops word colouring entirely. The three tiers are "
         "applied post-hoc: no re-decode is required to upgrade an old "
@@ -2837,10 +2837,10 @@ def slide_band_reliability_by_niv(prs):
     # audit-md:band_reliability_by_niv (no flat key in audit JSON)
     headers = ["Tier", "GRN", "YEL", "RED"]
     rows = [
-        ["Y+P combined", "87.2%", "48.9%", "24.7%"],
-        ["NIV-Y only",   "94.1%", "65.2%", "38.7%"],
-        ["NIV-P only",   "79.7%", "41.2%", "20.3%"],
-        ["NIV-N only",   "37.1%", "16.9%",  "6.9%"],
+        ["Y+P combined", "87%", "49%", "25%"],
+        ["NIV-Y only",   "94%", "65%", "39%"],
+        ["NIV-P only",   "80%", "41%", "20%"],
+        ["NIV-N only",   "37%", "17%",  "7%"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.85), rw,
                     text_size=Pt(10), row_height=Inches(0.4))
@@ -2868,10 +2868,10 @@ def slide_band_reliability_by_niv(prs):
         "per-NIV-tier band reliabilities (no band_by_niv_yp_* keys in "
         "after_amosi_audit.json; would be useful to add). Plot: "
         "P_band_reliability_by_niv.png. Within Y+P (useful content): "
-        "P(correct | green/yellow/red) = 87.2% / 48.9% / 24.7%, with "
+        "P(correct | green/yellow/red) = 87% / 49% / 25%, with "
         "62.5pp spread. NIV-P shows the steepest gradient (80/41/20%), "
         "which is why per-word flag is most valuable in the Salvage "
-        "tier. NIV-N green is only 37.1% reliable - confirms strip policy.",
+        "tier. NIV-N green is only 37% reliable - confirms strip policy.",
         [[sub, img], [rt, tbl, take], [bot]], click_reveal=True)
 
 
@@ -3002,7 +3002,7 @@ def slide_agreement_vs_conf_information(prs):
         ("Marginal info gain: beam_agreement carries ~2x the AUC of "
          "top1_conf in the conf>=0.95 regime", {"color": TEAL}),
         ("Practical effect: the joint-rule green band drops from 11,309 -> "
-         "7,591 words, but green P(correct) rises from 80.6% -> 89.8%",
+         "7,591 words, but green P(correct) rises from 81% -> 90%",
          {"color": GREEN}),
     ], MX, CT + Inches(2.95), CW, Inches(2.5), size=Pt(13)))
 
@@ -3022,7 +3022,7 @@ def slide_agreement_vs_conf_information(prs):
         "beam_agreement>=0.80 vs <0.80 gives a 54pp P(correct) gap "
         "(0.94 vs 0.40). Conf alone hides this gap inside green. Joint "
         "rule peels off the disagreed-but-confident tokens into yellow "
-        "and tightens green from 80.6% to 89.8%. audit-md:section-D "
+        "and tightens green from 81% to 90%. audit-md:section-D "
         "supplies overall green P(correct).",
         [[sub, tbl], why, [bot]], click_reveal=True)
 
@@ -3044,15 +3044,15 @@ def slide_client_trust_calibration(prs):
                "% clearly conveyed in trust"]
     rows = [
         # audit:trustgate_new_t10_*
-        ["fraction-green >= 10%", "1,041", "92.3%", "81.9%", "37.4%", "34.3%"],
+        ["fraction-green >= 10%", "1,041", "92%", "82%", "37%", "34%"],
         # audit:trustgate_new_t20_*
-        ["fraction-green >= 20%",   "818", "80.8%", "91.3%", "14.1%", "42.7%"],
+        ["fraction-green >= 20%",   "818", "81%", "91%", "14%", "43%"],
         # audit:trustgate_new_t30_*
-        ["fraction-green >= 30%  (default)", "630", "65.2%", "95.6%",  "5.6%", "52.5%"],
+        ["fraction-green >= 30%  (default)", "630", "65%", "96%",  "6%", "52%"],
         # audit:trustgate_new_t50_*
-        ["fraction-green >= 50%",   "321", "33.8%", "97.2%",  "1.8%", "72.0%"],
+        ["fraction-green >= 50%",   "321", "34%", "97%",  "2%", "72%"],
         # audit:trustgate_new_t70_*
-        ["fraction-green >= 70%",    "71",  "7.6%", "98.6%",  "0.2%", "88.7%"],
+        ["fraction-green >= 70%",    "71",  "8%", "99%",  "0%", "89%"],
     ]
     row_colors = {
         2: {0: BLUE, 1: BLUE, 2: GREEN, 3: GREEN, 4: GREEN, 5: GREEN},
@@ -3064,7 +3064,7 @@ def slide_client_trust_calibration(prs):
                     text_size=Pt(12), row_colors=row_colors)
 
     pick = add_text(slide,
-        "Recommended default: 30% green words -> 65.2% recall, 5.6% FPR. "
+        "Recommended default: 30% green words -> 65% recall, 6% FPR. "
         "Pick higher thresholds for mission-critical workflows; lower for "
         "high-recall research workflows.",
         MX, CT + Inches(3.7), CW, Inches(0.7),
@@ -3084,7 +3084,7 @@ def slide_client_trust_calibration(prs):
         "(per_segment_safety.csv, 70 empty-output segments excluded; "
         "see audit anomaly note about denominator difference between "
         "per-segment safety and full IS distribution). Recommended "
-        "default at fraction-of-green >= 30%: 65.2% recall, 5.6% FPR. "
+        "default at fraction-of-green >= 30%: 65% recall, 6% FPR. "
         "Audit JSON keys: trustgate_new_t30_recall, "
         "trustgate_new_t30_fpr, trustgate_new_t30_precision, "
         "trustgate_new_t30_pct_clearly_conveyed.",
@@ -3124,13 +3124,13 @@ def slide_nbest_v3_judge_paired_tests(prs):
     headers = ["Method", "Y%", "Y+P%", "YP McNemar p"]
     rows = [
         # audit:judge_v3_y_pct_baseline / _yp_pct_baseline
-        ["baseline",       "13.09%", "68.40%", "-"],
+        ["baseline",       "13%", "68%", "-"],
         # audit:judge_v3_y_pct_mbr / _yp_pct_mbr / mcnemar_yp_p_mbr
-        ["hyp_mbr",        "13.89%", "71.08%", "0.00017 ***"],
+        ["hyp_mbr",        "14%", "71%", "0.00017 ***"],
         # audit:judge_v3_y_pct_vote_score / _yp_pct_vote_score
-        ["hyp_vote_score", "13.96%", "69.27%", "0.149 (n.s.)"],
+        ["hyp_vote_score", "14%", "69%", "0.149 (n.s.)"],
         # audit:judge_v3_y_pct_vote_conf / _yp_pct_vote_conf / mcnemar_yp_p_vote_conf
-        ["hyp_vote_conf",  "12.49%", "70.47%", "0.00257 **"],
+        ["hyp_vote_conf",  "12%", "70%", "0.00257 **"],
     ]
     row_colors = {
         1: {2: GREEN, 3: GREEN},
@@ -3160,7 +3160,7 @@ def slide_nbest_v3_judge_paired_tests(prs):
          {"color": GREEN}),
         ("vote_score n.s. on Y+P (p=0.149)",
          {"color": LGRAY}),
-        ("Identical-text drift v3: 12.6 / 10.4 / 14.2% per method "
+        ("Identical-text drift v3: 12.6 / 10.4 / 14% per method "
          "(down from v1's 27%) - dual-conf prompt removed bias",
          {"color": TEAL}),
     ], rx, CT + Inches(3.0), rw, Inches(1.85), size=Pt(12))
@@ -3188,7 +3188,7 @@ def slide_nbest_v3_judge_paired_tests(prs):
         "Headline (v3): hyp_mbr +40 Y+P wins (p=0.00017), hyp_vote_conf "
         "+31 Y+P wins (p=0.00257); both highly significant. vote_score "
         "not significant (p=0.149). Y verdict tied across all methods. "
-        "Identical-text drift dropped from v1's 27% to 12.6-14.2% in v3 "
+        "Identical-text drift dropped from v1's 27% to 12.6-14% in v3 "
         "(audit:_note_drift) thanks to the dual-conf prompt anchor. "
         "5,988 total verdicts. "
         "Plot embed (May 2026): below the paired-test plot the slide now "
@@ -3226,7 +3226,7 @@ def slide_mbr_decision(prs):
         # audit:mcnemar_yp_method_only_*
         ["Y+P win delta",          "+40",         "+31",          "MBR"],
         # audit:judge_v3_intrarater_exact_*
-        ["Intra-rater (exact)",    "86.7%",       "80.0%",        "MBR  (matches gold std 83.3%)"],
+        ["Intra-rater (exact)",    "87%",       "80%",        "MBR  (matches gold std 83%)"],
         ["Per-word posterior",     "calibrated",  "agreement [0.4-0.8]", "MBR"],
         ["Compatible with bands",  "yes",         "narrow range",  "MBR"],
     ]
@@ -3270,8 +3270,8 @@ def slide_mbr_decision(prs):
         "docs/beam-search/n_best_implementation.md. Both MBR and "
         "vote_conf pass the v3 judge significance bar (Y+P McNemar "
         "p=0.00017 and 0.00257). MBR wins on (a) higher intra-rater "
-        "exact agreement (86.7% vs 80%, matches gold-standard top-1 "
-        "83.3%) and (b) calibrated per-word posterior compatible with "
+        "exact agreement (87% vs 80%, matches gold-standard top-1 "
+        "83%) and (b) calibrated per-word posterior compatible with "
         "the band-reliability thresholds; voting methods emit agreement "
         "scores in [0.4, 0.8] that don't map to T_trust/T_safe/T_salvage. "
         "Hybrid gating considered and rejected (+36 vs +37 = one rescue). "
@@ -3330,7 +3330,7 @@ def slide_v1_vs_v3_judge_lesson(prs):
          "instead of treating it as absolute", {}),
         ("Y+P verdict: vote_conf significantly WINS (p = 0.00257)",
          {"color": GREEN}),
-        ("Identical-text drift: 12.6 / 10.4 / 14.2% per method  "
+        ("Identical-text drift: 12.6 / 10.4 / 14% per method  "
          "(audit:_note_drift)", {"color": GREEN}),
         ("Bias direction: balanced",
          {"color": GREEN, "bold": True}),
@@ -3355,7 +3355,7 @@ def slide_v1_vs_v3_judge_lesson(prs):
         "variants - vote_conf significantly LOST on Y+P. v3 (dual-conf "
         "with baseline_conf anchor) flipped the verdict: vote_conf "
         "significantly WINS on Y+P (p=0.00257). Identical-text drift "
-        "fell from 27% to 12.6-14.2% per method (audit:_note_drift). "
+        "fell from 27% to 12.6-14% per method (audit:_note_drift). "
         "v1 is archived; v3 is the current gold standard. Transferable "
         "lesson: when prompting LLMs to compare hypotheses, always "
         "provide BOTH sides' confidence as anchors.",
@@ -3446,14 +3446,14 @@ def slide_demo_obama_trust(prs):
         video_key="obama_perfect",
         ref="(see speaker notes; Obama bin Laden announcement, segment #14, 41.95-45.55 s)",
         hyp_runs=runs,
-        metrics_line="WER 0.0%   /   IS 5.00   /   sequence_conf high   "
+        metrics_line="WER 0%   /   IS 5.00   /   sequence_conf high   "
                      "/   mean_prob ~ 0.93",
         badge_text="TIER: TRUST",
         badge_color=BLUE,
         body="Research observation: 27/29 per-word bands are GREEN; the joint "
              "rule keeps them green because beam_agreement is also high.",
         notes="Obama bin Laden announcement, segment #14 (41.95-45.55 s). "
-              "Clean speech: WER=0.0%, IS=5.00 (Excellent), mean_prob ~0.93. "
+              "Clean speech: WER=0%, IS=5.00 (Excellent), mean_prob ~0.93. "
               "27 of 29 per-word bands are GREEN; this is exactly the "
               "population the Trust tier (mean_prob >= 0.82) is calibrated "
               "for. Per-word colours render from the conf-only sidecar — "
@@ -3606,7 +3606,7 @@ def slide_demo_judge_entity(prs):
         ref="market research firm bernreuter research is forecasting "
             "pv installations could reach",
         hyp_runs=runs,
-        metrics_line="WER 18.2%   /   IS 4.55   /   sequence_conf mixed   "
+        metrics_line="WER 18%   /   IS 4.55   /   sequence_conf mixed   "
                      "/   mean_prob = 0.624  (Strip; full agreement-aware "
                      "rule applied, VSP_NBEST=1)",
         badge_text="TIER: STRIP",
@@ -3617,7 +3617,7 @@ def slide_demo_judge_entity(prs):
         notes="Source: slides_client.py::slide_client_judge_ex1 (reframed "
               "for research). bernreuter -> rogers entity swap; PV / "
               "will also flagged red under the joint conf+agreement rule "
-              "(per render-log inspection). WER 18.2%, IS 4.55 (Excellent), "
+              "(per render-log inspection). WER 18%, IS 4.55 (Excellent), "
               "LLM judge Y. mean_prob = 0.624 per "
               "english_full_nbest_eval/report_v2/report.csv "
               "(prior copy said ~0.71, corrected per "
@@ -3667,7 +3667,7 @@ def slide_demo_judge_vocab(prs):
             "to find a way how we can take existing routers existing "
             "switches existing links and enable them for research",
         hyp_runs=runs,
-        metrics_line="WER 51.5%   /   IS 3.02   /   sequence_conf mixed   "
+        metrics_line="WER 52%   /   IS 3.02   /   sequence_conf mixed   "
                      "/   mean_prob ~ 0.78  (Salvage; full agreement-aware "
                      "rule applied, VSP_NBEST=1)",
         badge_text="TIER: SALVAGE",
@@ -3679,7 +3679,7 @@ def slide_demo_judge_vocab(prs):
         notes="Networking-research segment where the model preserved the "
               "argument structure but swapped the domain vocabulary "
               "(routers -> roads, switches -> structures, links -> reuse). "
-              "WER 51.5%, IS 3.02 (Good tier), LLM judge P, mean_prob "
+              "WER 52%, IS 3.02 (Good tier), LLM judge P, mean_prob "
               "~0.78 (Salvage tier). DECODE MODE: this clip was decoded "
               "with VSP_NBEST=1 enabled so the agreement-aware sidecar is "
               "present and the full joint rule (top1_conf >= 0.95 AND "

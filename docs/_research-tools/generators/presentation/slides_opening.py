@@ -93,7 +93,7 @@ def slide_what_was_done_2(prs):
         "Mission 6 shipped (May 1 2026): n-best aggregation across 5 methods "
         "(MBR, score-vote, conf-vote, safe, xseg-merge); MBR promoted to "
         "production default May 2 2026",
-        "v3 LLM-as-Judge (Opus 4.7, paired): MBR Y+P = 71.1% vs baseline 68.4% "
+        "v3 LLM-as-Judge (Opus 4.7, paired): MBR Y+P = 71% vs baseline 68% "
         "(p = 0.00017 paired McNemar)",
         "Fully reproducible container build and model deployment "
         "between AWS and standalone computer",
@@ -109,7 +109,7 @@ def slide_what_was_done_2(prs):
     _finish(slide, 0,
         "Overview slide 2/2. Key findings: 65% useful output by LLM judge, "
         "IS metric validated, MBR n-best aggregation promoted to production "
-        "default (Y+P 71.1% vs 68.4% baseline, paired p=0.00017), failure "
+        "default (Y+P 71% vs 68% baseline, paired p=0.00017), failure "
         "analysis complete, reproducible deployment, and clear path forward "
         "for model improvement and Arabic adaptation. "
         "See docs/beam-search/n_best_implementation.md and "
@@ -129,13 +129,13 @@ def slide_exec_summary(prs):
     add_text(slide, "Three months of research and engineering on visual speech processing:",
              MX, CT, CW, Inches(0.4), size=Pt(16), color=LGRAY, italic=True)
 
-    # audit:wer_mean_mbr (63.84%) / audit:niv_yp_pct_mbr (61.92%) /
+    # audit:wer_mean_mbr (64%) / audit:niv_yp_pct_mbr (62%) /
     # audit:is_mean_mbr (2.547) \u2014 exec summary anchors to MBR-default values.
     items = [
         ("Evaluated a lip-reading AI on 1,497 real-world YouTube segments",
          {"bold": True}),
-        "Standard metric (WER) reports 63.84% error \u2014 2.5\u00d7 worse than benchmark",  # audit:wer_mean_mbr
-        ("Our new Intelligibility Score (IS) reveals 61.92% is actually useful \u2014 "
+        "Standard metric (WER) reports 64% error \u2014 2.5\u00d7 worse than benchmark",  # audit:wer_mean_mbr
+        ("Our new Intelligibility Score (IS) reveals 62% is actually useful \u2014 "
          "2.4\u00d7 what WER suggests",
          {"color": TEAL, "bold": True}),  # audit:niv_yp_pct_mbr
         "Built a complete production system: 8-stage pipeline, standalone container",
@@ -148,11 +148,11 @@ def slide_exec_summary(prs):
                       size=Pt(17), spacing=Pt(14))
 
     _finish(slide, 2,
-        # audit:niv_yp_pct_mbr (61.92%) / see docs/evaluation/after_amosi_audit.md
+        # audit:niv_yp_pct_mbr (62%) / see docs/evaluation/after_amosi_audit.md
         "Executive summary. Three months of work on visual speech processing. "
         "Key finding: WER dramatically overstates failure. Our Intelligibility "
-        "Score shows 61.92% of output is useful (NIV Y+P, MBR n-best), not the "
-        "25.5% WER suggests. Complete production system delivered. Clear "
+        "Score shows 62% of output is useful (NIV Y+P, MBR n-best), not the "
+        "26% WER suggests. Complete production system delivered. Clear "
         "roadmap to improve further. "
         "See docs/evaluation/after_amosi_audit.md (Section F).",
         [[bul]], click_reveal=True)
@@ -174,7 +174,7 @@ def slide_wer_lies(prs):
     wer_shapes.append(add_rect(slide, MX, CT, col_w, card_h,
                        fill_color=NAVY2, border_color=CORAL, border_width=Pt(3),
                        corner_radius=True))
-    wer_shapes.append(add_text(slide, "46.2%", MX + Inches(0.3), CT + Inches(0.2),
+    wer_shapes.append(add_text(slide, "46%", MX + Inches(0.3), CT + Inches(0.2),
                                 col_w - Inches(0.6), Inches(1.0),
                                 size=Pt(64), color=CORAL, bold=True,
                                 align=PP_ALIGN.CENTER))
@@ -238,7 +238,7 @@ def slide_wer_lies(prs):
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
-        "Side-by-side: same segment scores 46.2% WER (literature would call "
+        "Side-by-side: same segment scores 46% WER (literature would call "
         "that a failure) but IS 4.03 out of 5 (Tier 5, Excellent). The "
         "prediction preserves the complete meaning — six insertions and one "
         "deletion turn 'i want you to remember all these i want you to "
@@ -250,8 +250,8 @@ def slide_wer_lies(prs):
         "failure pattern at the top of our IS distribution and is exactly "
         "what aggregate WER fails to score correctly. "
         "Sources: docs/evaluation/intelligibility_methodology.md, "
-        "docs/evaluation/llm_judge/llm_judge_analysis.md (Y verdict 23.0% / "
-        "Y+P 64.9%).",
+        "docs/evaluation/llm_judge/llm_judge_analysis.md (Y verdict 23% / "
+        "Y+P 65%).",
         [wer_shapes, is_shapes, bottom_shapes], click_reveal=True)
 
 
@@ -264,7 +264,7 @@ def slide_toc(prs):
     # 5-section structure for the May 2026 academic deck.
     # Section labels track the new narrative (Problem / Evaluation /
     # Proof / Confidence / Demo+Future) \u2014 see task spec.
-    # audit:trustgate_t30_recall (~65%) / audit:trustgate_t30_fpr (5.6%) cited in §4.
+    # audit:trustgate_t30_recall (~65%) / audit:trustgate_t30_fpr (6%) cited in §4.
     sections = [
         ("1. The Problem",
          "What is lip reading? \u2022 Why visemes are invisible \u2022 "
@@ -280,7 +280,7 @@ def slide_toc(prs):
          TEAL),
         ("4. Confidence Without Ground Truth",
          "Per-word conf + beam-agreement bands \u2022 Trust-gate operating points "
-         "\u2022 65% recall at 5.6% FPR",
+         "\u2022 65% recall at 6% FPR",
          TEAL),
         ("5. Demo + Future Directions",
          "Live UI demo \u2022 Improvement roadmap "
@@ -412,14 +412,14 @@ def slide_02(prs):
 
     # Bottom text — expert lip reader comparison
     # audit:logic_fix slide 5 — "near-zero" overstates; source says "<5%".
-    # audit:hallu_pct_top1 (20.5%) — model-alone hallucination risk.
+    # audit:hallu_pct_top1 (20%) — model-alone hallucination risk.
     # OVERLAP fix: move up + shrink height so bottom edge sits above the
     # slide-num shape (y=7.12). Original top=6.78 + height=0.6 ended at 7.38
     # which collided with the slide-number textbox.
     bottom = add_text(slide,
         "System + human reader outperforms expert lip readers: "
         "55\u201370% vs 45\u201352% word accuracy; hallucination risk drops from "
-        "20.5% (model alone) to under 5% with human filtering.",
+        "20% (model alone) to under 5% with human filtering.",
         MX + Inches(1.2), Inches(6.62), CW - Inches(1.2), Inches(0.45),
         size=Pt(14), color=WHITE)
 
@@ -442,7 +442,7 @@ def slide_02(prs):
         "word accuracy, 75-85% meaning capture. Key insight: the model provides "
         "candidate text (the hardest part of lip reading). The human's job becomes "
         "verification, not generation — dramatically easier. Hallucination risk "
-        "drops from 20.5% to <5% with human filtering. "
+        "drops from 20% to <5% with human filtering. "
         "Source: docs/evaluation/human_is_estimation.md (Path B pre-study estimates).",
         [[sub, vid_shape], [bottom]], click_reveal=True)
 
@@ -495,7 +495,7 @@ def slide_03(prs):
 
     # Bottom note
     add_text(slide,
-             "Only 12.6M trainable params (0.19%). LLM is architecture-compatible — "
+             "Only 12.6M trainable params (0%). LLM is architecture-compatible — "
              "Llama 3.1 8B is a drop-in replacement (same 4096 hidden size).",
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True)
@@ -507,7 +507,7 @@ def slide_03(prs):
         "input dimension. The LLM then generates text autoregressively in the "
         "usual way. Key training insight: only the LoRA adapters (rank 16) and "
         "the projection layer are trained — 12.6M trainable parameters, just "
-        "0.19% of the 7B total. This makes the architecture LLM-upgradeable: "
+        "0% of the 7B total. This makes the architecture LLM-upgradeable: "
         "Llama 3.1 8B exposes the same 4096 hidden size, so swapping the "
         "backbone is a drop-in replacement that requires only adapter "
         "retraining (no new projection geometry). Mention to peers: this is "
@@ -526,15 +526,15 @@ def slide_03(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_04(prs):
-    # audit:wer_mean_mbr (63.84%) \u2014 MBR-anchored WER on our 1,497-segment set.
+    # audit:wer_mean_mbr (64%) \u2014 MBR-anchored WER on our 1,497-segment set.
     slide = build_split(prs, 4, "The Benchmark: Paper vs Reality", "P2_paper",
-        big_num="25.4%", num_color=TEAL,
+        big_num="25%", num_color=TEAL,
         num_label="WER on LRS3 (TED Talks)",
         bullets=[
             ("LRS3 benchmark: curated TED talks, ideal conditions", {"bold": True}),
             ("Our dataset: 1,497 real YouTube segments \u2014 nothing is controlled",
              {"color": CORAL, "bold": True}),
-            ("Result: 63.84% WER \u2014 2.5\u00d7 worse (MBR; top-1 baseline 64.05%)",
+            ("Result: 64% WER \u2014 2.5\u00d7 worse (MBR; top-1 baseline 64%)",
              {"color": CORAL, "bold": True}),  # audit:wer_mean_mbr / wer_mean_top1
             ("WER is the wrong metric \u2013 our new IS is the right one "
              "(or LLM as a judge)", {}),
@@ -543,11 +543,11 @@ def slide_04(prs):
                           # collided with the LRS3 reproduction note at y=6.85 and
                           # with the slide-number shape at y=7.12. We drop the
                           # redundant bottom_text and keep only the citation note.
-        notes="The paper reports 25.4% WER on LRS3 \u2014 a curated TED talks dataset "
+        notes="The paper reports 25% WER on LRS3 \u2014 a curated TED talks dataset "
               "with ideal conditions. Our 1,497 YouTube segments are fundamentally "
-              "harder: diverse speakers, topics, lighting, angles. Result: 63.84% "
+              "harder: diverse speakers, topics, lighting, angles. Result: 64% "
               "WER (MBR n-best, production default since May 2 2026; top-1 "
-              "baseline 64.05%) \u2014 2.5x worse. The dataset is different, and that "
+              "baseline 64%) \u2014 2.5x worse. The dataset is different, and that "
               "explains the gap.\n\n"
               "Note: Our best LRS3 reproduction achieved 32% WER \u2014 gap likely "
               "due to pretrain/test split differences. "
@@ -573,28 +573,28 @@ def slide_04(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_05(prs):
-    # audit:wer_mean_mbr (63.84%) — MBR-anchored.
+    # audit:wer_mean_mbr (64%) — MBR-anchored.
     build_split(prs, 5, "The Reality Gap", "P1_quality",
-        big_num="63.84%", num_color=CORAL,  # audit:wer_mean_mbr
-        num_label="Mean WER across 1,497 real-world segments (MBR; top-1: 64.05%)",
+        big_num="64%", num_color=CORAL,  # audit:wer_mean_mbr
+        num_label="Mean WER across 1,497 real-world segments (MBR; top-1: 64%)",
         bullets=[
-            ("25.5% Useful by WER (<30%, uncalibrated bucket)",
+            ("26% Useful by WER (<30%, uncalibrated bucket)",
              {"bullet": "\u25cf", "bullet_color": GREEN}),  # audit:logic_fix slide 11
-            ("17.4% Marginal (30-50%)", {"bullet": "\u25cf", "bullet_color": YELLOW}),
-            ("17.8% Poor (50-75%)", {"bullet": "\u25cf", "bullet_color": ORANGE}),
-            ("32.8% Unusable (75-100%)", {"bullet": "\u25cf", "bullet_color": RED}),
-            ("20.6% Hallucinated (>100%)", {"bullet": "\u25cf", "bullet_color": DRED}),
+            ("17% Marginal (30-50%)", {"bullet": "\u25cf", "bullet_color": YELLOW}),
+            ("18% Poor (50-75%)", {"bullet": "\u25cf", "bullet_color": ORANGE}),
+            ("33% Unusable (75-100%)", {"bullet": "\u25cf", "bullet_color": RED}),
+            ("21% Hallucinated (>100%)", {"bullet": "\u25cf", "bullet_color": DRED}),
         ],
         bottom_text="But WER overstates failure — see below.",  # audit:narrative — robust to reorder
-        notes="1,497 diverse YouTube segments. 63.84% mean WER under MBR "
+        notes="1,497 diverse YouTube segments. 64% mean WER under MBR "
               "n-best (production default since May 2 2026; top-1 baseline "
-              "64.05%) — 2.5x worse than "
-              "the paper's 25.4%. The five WER buckets together partition the "
-              "dataset: 25.5% Useful (WER<30%), 17.4% Marginal (30-50%), 17.8% "
-              "Poor (50-75%), 32.8% Unusable (75-100%), and 20.6% Hallucinated "
-              "(>100%). The 17.4% Marginal slice is the band where IS and LLM "
+              "64%) — 2.5x worse than "
+              "the paper's 25%. The five WER buckets together partition the "
+              "dataset: 26% Useful (WER<30%), 17% Marginal (30-50%), 18% "
+              "Poor (50-75%), 33% Unusable (75-100%), and 21% Hallucinated "
+              "(>100%). The 17% Marginal slice is the band where IS and LLM "
               "Salvage do most of their lifting; the calibrated NIV-Y operating "
-              "point is WER \u2264 34% (\u03ba=0.629). 20.6% "
+              "point is WER \u2264 34% (\u03ba=0.629). 21% "
               "are hallucinations — fluent text that's completely fabricated. This "
               "is the most dangerous failure mode. WER treats all five buckets "
               "the same way, which is exactly why we move on to a richer metric. "
@@ -768,7 +768,7 @@ def slide_diversity_of_inputs(prs):
         "studio recordings. Source clips range 20s to 1h; we segment them into "
         "10–360s windows for evaluation. Speakers include diverse accents, "
         "ages, and occlusions (hands, microphones, partial faces). This is why "
-        "WER on our set (64.05% top-1, 63.84% MBR) is far worse than LRS3 "
+        "WER on our set (64% top-1, 64% MBR) is far worse than LRS3 "
         "(~25%) — fundamentally harder data, not a worse model. "
         "See docs/architecture.md for dataset description and "
         "docs/evaluation/after_amosi_audit.md for the corresponding numbers.",
@@ -851,13 +851,13 @@ def slide_visemes(prs):
         "ambiguity per word. The poster frames show two different speakers whose "
         "mouth shapes look nearly identical while saying completely different "
         "words ('mom' vs 'bomb', 'pat' vs 'bat'). This is precisely why the "
-        "model alone hallucinates on 20.5% of segments — it has no way to "
+        "model alone hallucinates on 20% of segments — it has no way to "
         "resolve homophenes without context. The LLM component supplies that "
         "context, which is why the architecture is visual encoder + LLM rather "
         "than visual encoder alone. "
         "Sources: docs/evaluation/intelligibility_methodology.md (homophene "
         "rate), docs/evaluation/llm_judge/llm_judge_analysis.md (hallucination "
-        "rate 20.5%).",
+        "rate 20%).",
         [[lt, lb, tbl1], poster_shapes + [rt, tbl2]], click_reveal=True)
 
 

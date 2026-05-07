@@ -32,7 +32,7 @@ from .helpers import (
 
 def slide_24(prs):
     slide = new_slide(prs)
-    add_title(slide, "Starting from 61.9%, Not 25%")  # audit:niv_yp_pct_mbr
+    add_title(slide, "Starting from 62%, Not 25%")  # audit:niv_yp_pct_mbr
     add_accent_line(slide)
 
     col_w = Inches(3.4)
@@ -46,9 +46,9 @@ def slide_24(prs):
              col_w - Inches(0.4), Inches(0.35),
              size=Pt(16), color=CORAL, bold=True)
     add_bullets(slide, [
-        "25.5% useful by WER (<30%, uncalibrated bucket)",  # audit:logic_fix slide 11
+        "26% useful by WER (<30%, uncalibrated bucket)",  # audit:logic_fix slide 11
         "~3 in 4 segments fail by this cut",
-        "Ignores phonetic preservation (41.5%)",
+        "Ignores phonetic preservation (42%)",
     ], MX + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(1.2), size=Pt(13), bullet_color=CORAL)
 
@@ -61,9 +61,9 @@ def slide_24(prs):
              size=Pt(16), color=TEAL, bold=True)
     add_bullets(slide, [
         # audit:niv_yp_pct_mbr / audit:niv_yp_pct_top1
-        ("61.92% useful output (IS \u2265 2.00, MBR); top-1 baseline 61.66%",
+        ("62% useful output (IS \u2265 2.00, MBR); top-1 baseline 62%",
          {"bold": True}),
-        ("64.9% useful per Opus-as-a-Judge v1 blind "
+        ("65% useful per Opus-as-a-Judge v1 blind "
          "(Y+P = 971/1,497, Opus 4.6, gold standard)",
          {"color": GREEN}),
         # audit:cross_config_includes_mbr=False
@@ -81,21 +81,21 @@ def slide_24(prs):
     # Bottom
     add_text(slide,
              "The gap is real \u2014 but WER dramatically overstates failure. "
-             "61.92% useful by IS (Y+P, MBR), 64.9% confirmed by v1 blind "
+             "62% useful by IS (Y+P, MBR), 65% confirmed by v1 blind "
              "Opus-as-a-Judge.",  # audit:niv_yp_pct_mbr
              MX, Inches(6.3), CW, Inches(0.5),
              size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 24,
-        "This is the turning point. WER says 25.5% useful (uncalibrated <30% "
-        "cut). Our Intelligibility Score says 61.92% useful output (NIV Y+P, "
-        "MBR; top-1 baseline 61.66%) — roughly 2.4x more. WER correlates "
+        "This is the turning point. WER says 26% useful (uncalibrated <30% "
+        "cut). Our Intelligibility Score says 62% useful output (NIV Y+P, "
+        "MBR; top-1 baseline 62%) — roughly 2.4x more. WER correlates "
         "with IS (r ~ -0.7) but not perfectly — it misses phonetic and "
         "semantic preservation entirely. The bullet about phonetic "
         "preservation refers to the segment population where WER is "
         "discarding meaning that survives in the phonetic axis (mean "
-        "phonetic similarity 41.5% across the failure set). "
-        "Opus-as-a-Judge v1 blind (Opus 4.6, gold standard) confirms 64.9% "
+        "phonetic similarity 42% across the failure set). "
+        "Opus-as-a-Judge v1 blind (Opus 4.6, gold standard) confirms 65% "
         "useful output (Y+P = 971 of 1,497). Cross-config sweep is "
         "top-1-only (r=0.925 across 16 decode-parameter configs); MBR "
         "validation is the v3 paired Judge test in the next subsection. "
@@ -120,20 +120,20 @@ def slide_26(prs):
 
     # IS deltas derived from 574 non-useful segments (IS < 2.00) failure taxonomy.
     # audit:is_mean_mbr — Conversion: ~0.033 IS per pp WER
-    # (empirical: 2.547 IS @ 63.84% WER MBR to ~3.81 IS @ 25.4% WER paper).
+    # (empirical: 2.547 IS @ 64% WER MBR to ~3.81 IS @ 25% WER paper).
     # Per-category signal profiles from signal_distribution_analysis.md §8.
     # NOTE: Phases 1+2 already shipped by May 2 2026 (per audit:logic_fix
     # slide 41 / 59); remaining staircase is Phases 3-5.
     phases = [
         ("Phase 1 (shipped)", "Surface the good 62%",
          "Confidence scoring \u2014 flags known-good segments (shipped Apr 30 2026)",
-         "Targets: Signal Loss (80, 13.9%) | IS: perceived only (filtering, no recovery)", TEAL),
+         "Targets: Signal Loss (80, 14%) | IS: perceived only (filtering, no recovery)", TEAL),
         ("Phase 2 (shipped)", "Fix small & content errors",
          "N-best aggregation MBR (shipped May 2 2026; ROVER as alternative)",
-         "Targets: Accum. Errors (52, 9.1%) + Details (79, 13.8%) | IS: +0.13 (\u223c35 segs)", TEAL),
+         "Targets: Accum. Errors (52, 9%) + Details (79, 14%) | IS: +0.13 (\u223c35 segs)", TEAL),
         ("Phase 3", "Better world knowledge",
          "Llama 3.1 8B + context prompts",
-         "Targets: Halluc (108, 18.8%) + Wrong Topic (255, 44.4%) | IS: +0.40 (\u223c98 segs)", GREEN),
+         "Targets: Halluc (108, 19%) + Wrong Topic (255, 44%) | IS: +0.40 (\u223c98 segs)", GREEN),
         ("Phase 4", "Scale data 20K\u201350K",
          "Fine-tune visual encoder + projection on more data",
          "Targets: ALL 574 non-useful via better visual features | IS: +0.35", GREEN),
@@ -199,17 +199,17 @@ def slide_26(prs):
         "Y+P, IS 2.547 under MBR n-best), the staircase targets an "
         "improvement to 80-85% useful at IS 3.3-3.7.\n\n"
         "DERIVATION (signal profiles from signal_distribution_analysis.md):\n"
-        "Phase 1 (Confidence): Targets Signal Loss (80 segs, 13.9% of "
+        "Phase 1 (Confidence): Targets Signal Loss (80 segs, 14% of "
         "the failure pool) by surfacing the high-confidence slice — "
         "perceived improvement only, no IS change. 2-4 hours.\n"
-        "Phase 2 (N-Best): Targets Accum. Errors (52 segs, 9.1%, "
+        "Phase 2 (N-Best): Targets Accum. Errors (52 segs, 9%, "
         "IS~2.33, Phonetic 0.53 / InvWER 0.34 — small distributed fix) "
-        "+ Right Topic Wrong Details (79 segs, 13.8%, IS~2.13, NEA 0.18 "
+        "+ Right Topic Wrong Details (79 segs, 14%, IS~2.13, NEA 0.18 "
         "— needs +0.35 NEA). ROVER 5-8% relative WER reduction (Fiscus "
         "1997). ~35 segs recovered. IS +0.13.\n"
-        "Phase 3 (LLM Swap): Targets Hallucination (108 segs = 18.8% of "
+        "Phase 3 (LLM Swap): Targets Hallucination (108 segs = 19% of "
         "the failure pool, IS~0.87, InvWER -0.47 / LR 1.56 — needs "
-        "WER+length normalization) + Wrong Topic (255 segs = 44.4%, "
+        "WER+length normalization) + Wrong Topic (255 segs = 44%, "
         "IS~1.29, Semantic 0.10 — needs +0.45 Semantic). VALLR (ICCV "
         "2025) showed 26% relative WER improvement. ~98 segs. IS +0.40.\n"
         "Phase 4 (Data Scaling): All 574 benefit from better visual "
@@ -246,10 +246,10 @@ def slide_26b(prs):
     #   Hallucination IS~0.87, Signal Loss IS~0.01
     rx = MX + Inches(8.3)
     rw = Inches(3.8)
-    # audit:is_mean_mbr (2.547) / audit:niv_yp_pct_mbr (61.92%) \u2014
+    # audit:is_mean_mbr (2.547) / audit:niv_yp_pct_mbr (62%) \u2014
     # update Current to MBR-default values; phase forecasts unchanged.
     milestones = [
-        ("Current", "IS 2.547", "61.92% useful (Y+P)", "", CORAL),
+        ("Current", "IS 2.547", "62% useful (Y+P)", "", CORAL),
         ("Phase 1\u20132", "IS ~2.65",  "~65% useful (Y+P)",
          "Fixes: Accum (52) + Details (79) \u2014 131/574 targeted", TEAL),
         ("+ Phase 3", "IS ~3.05", "~73% useful (Y+P)",
@@ -282,13 +282,13 @@ def slide_26b(prs):
     # y=6.85, just below the last milestone card (ends 6.75) and clear of the
     # slide number (starts 7.12). Audit flagged 86% occlusion of TextBox 19.
     bottom = add_text(slide,
-             "Conversion: ~0.033 IS per pp WER (empirical: 2.547 IS @ 63.84% WER MBR \u2192 ~3.81 IS @ 25.4% WER paper).",
+             "Conversion: ~0.033 IS per pp WER (empirical: 2.547 IS @ 64% WER MBR \u2192 ~3.81 IS @ 25% WER paper).",
              MX, Inches(6.82), CW, Inches(0.30),
              size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "IS trajectory derived from 574 non-useful segments (IS < 2.00).\n"
-        "Current IS 2.547 (61.92% useful, NIV Y+P, MBR n-best). "
+        "Current IS 2.547 (62% useful, NIV Y+P, MBR n-best). "
         "See docs/evaluation/after_amosi_audit.md (Section F).\n"
         "Phase 1-2: IS ~2.65 (~65% useful). N-Best ROVER/MBR targets Accum Errors "
         "(52 segs, IS~2.33, Phonetic 0.53/InvWER 0.34) + Right Topic Wrong "
@@ -298,7 +298,7 @@ def slide_26b(prs):
         "(255 segs, IS~1.29, Semantic 0.10). ~98 segs recovered.\n"
         "Phase 4-5: IS ~3.50 (~82% useful). Data scaling improves visual "
         "encoder for ALL categories. GER post-correction for residual.\n"
-        "Conversion: ~0.033 IS per pp WER (2.547 IS @ 63.84% WER MBR to ~3.81 IS @ 25.4% WER paper).",
+        "Conversion: ~0.033 IS per pp WER (2.547 IS @ 64% WER MBR to ~3.81 IS @ 25% WER paper).",
         [[img], ms_shapes + [bottom]], click_reveal=True)
 
 
@@ -324,7 +324,7 @@ def slide_27(prs):
          {"color": GREEN, "bold": True, "size": Pt(18)}),
         ("Perceived error rate: 60% \u2192 ~20%",
          {"color": TEAL, "bold": True, "size": Pt(18)}),
-        ("Targets Signal Loss failure mode (13.9% of errors)",
+        ("Targets Signal Loss failure mode (14% of errors)",
          {"size": Pt(16)}),
     ], MX, CT + Inches(0.3), CW, Inches(3.0), size=Pt(16))
 
@@ -405,10 +405,10 @@ def slide_28(prs):
     # audit:judge_v3_yp_pct_baseline, audit:mcnemar_yp_p_mbr)
     iy = cy + ch + Inches(0.3)
     impact = add_bullets(slide, [
-        ("Measured v3 paired Judge: MBR Y+P 71.08% vs baseline 68.40% "
+        ("Measured v3 paired Judge: MBR Y+P 71% vs baseline 68% "
          "(p = 0.00017 paired McNemar)",
          {"color": GREEN, "bold": True}),  # audit:judge_v3_yp_pct_mbr
-        "Targets: Accumulated Errors (9.1%) \u2014 the \"death by a thousand cuts\" category",
+        "Targets: Accumulated Errors (9%) \u2014 the \"death by a thousand cuts\" category",
         "WER reduction: \u22121.56 pp on hyp_vote_conf; MBR is best on calibrated per-word posterior",
     ], MX, iy, CW, Inches(1.5), size=Pt(14))
 
@@ -423,12 +423,12 @@ def slide_28(prs):
         "N-best aggregation. Until May 2 2026 the pipeline kept only the top-1 "
         "hypothesis and discarded 19 alternatives. Mission 6 shipped MBR "
         "aggregation as production default on May 2 2026: the v3 paired Judge "
-        "test (Opus 4.7, dual-conf prompt) measured Y+P = 71.08% for MBR vs "
-        "68.40% for the top-1 baseline (p = 0.00017 paired McNemar). MBR was "
+        "test (Opus 4.7, dual-conf prompt) measured Y+P = 71% for MBR vs "
+        "68% for the top-1 baseline (p = 0.00017 paired McNemar). MBR was "
         "preferred over voting variants because it emits a calibrated per-word "
         "posterior that integrates with the band-reliability UI. ROVER remains "
         "as a reference alternative. Targets the Accumulated Errors category "
-        "(9.1% of failures). See docs/beam-search/n_best_implementation.md "
+        "(9% of failures). See docs/beam-search/n_best_implementation.md "
         "and docs/evaluation/after_amosi_audit.md (Section F).",
         [[r1], [r2], [impact]], click_reveal=True)
 
@@ -471,7 +471,7 @@ def slide_29(prs):
         "(rank 64): 3.1 percentage points worse on validation than Exp A. "
         "Claude-as-Judge evaluation on 224 validation segments: baseline "
         "IS 2.487, Exp A IS 2.312, Exp B IS 2.023. Empty-output rate rose "
-        "from 7.1% (baseline) to 12.5% (Exp A) to 26.8% (Exp B). LLM "
+        "from 7% (baseline) to 12% (Exp A) to 27% (Exp B). LLM "
         "Y+P stayed in the 51-54% band across all three configs — "
         "fine-tuning did not improve outcomes. The bottleneck is data "
         "quantity (need 20K+ segments, not 1.3K), not parameter tuning. "
@@ -609,8 +609,8 @@ def slide_30b(prs):
                          fill_color=NAVY2, border_color=GREEN,
                          border_width=Pt(2), corner_radius=True)
     vallr_text = add_text(slide,
-        "VALLR (ICCV 2025): Llama 3.2-3B achieved 18.7% WER\n"
-        "on LRS3 \u2014 beats our 7B Llama-2 (25.4%) with half the params",
+        "VALLR (ICCV 2025): Llama 3.2-3B achieved 19% WER\n"
+        "on LRS3 \u2014 beats our 7B Llama-2 (25%) with half the params",
         MX + Inches(0.25), vy + Inches(0.12),
         left_w - Inches(0.5), Inches(0.65),
         size=Pt(14), color=WHITE)
@@ -679,7 +679,7 @@ def slide_30b(prs):
         "32x context, 7.5x training data, +61% on MMLU. Same hidden "
         "dimension (4096) = architecture-compatible upgrade (requires adapter retraining).\n\n"
         "VALLR PROOF (ICCV 2025): Llama 3.2-3B (only 3B params) achieved "
-        "18.7% WER on LRS3 vs our 25.4% with Llama-2-7B. A smaller Llama 3 "
+        "19% WER on LRS3 vs our 25% with Llama-2-7B. A smaller Llama 3 "
         "model beats a bigger Llama 2 — proves the architecture upgrade "
         "is more important than parameter count.\n\n"
         "RIGHT: WER improvement waterfall.\n"
@@ -693,7 +693,7 @@ def slide_30b(prs):
         "- Combined target: 35-40% WER = roughly halving the error rate\n\n"
         "FAILURE MODES MOST HELPED (574 below-threshold, IS < 2.00):\n"
         "- Wrong Topic (255 segments, 10-20% recovery): dominant category "
-        "(44.4%), only helps when some visual signal exists; total drift = encoder failure\n"
+        "(44%), only helps when some visual signal exists; total drift = encoder failure\n"
         "- Hallucination (108 segments, 15-25% recovery): better calibrated "
         "model less likely to 'run ahead' of visual signal\n"
         "- Signal Loss (80 segments, <5%): encoder-level, LLM cannot help\n"
@@ -733,17 +733,17 @@ def slide_30c(prs):
     headers = ["Failure Mode", "Segments", "% of Failures",
                "LLM Impact", "Expected Recovery"]
     rows = [
-        ["Wrong Topic (total drift)", "143", "24.9%",
+        ["Wrong Topic (total drift)", "143", "25%",
          "Low \u2014 no visual signal to decode", "<5%"],
-        ["Wrong Topic (phonetic)", "112", "19.5%",
+        ["Wrong Topic (phonetic)", "112", "20%",
          "Moderate \u2014 better vocabulary prior", "10\u201320%"],
-        ["Hallucination", "108", "18.8%",
+        ["Hallucination", "108", "19%",
          "Moderate-High \u2014 better calibration", "15\u201325%"],
-        ["Right Topic, Wrong Details", "79", "13.8%",
+        ["Right Topic, Wrong Details", "79", "14%",
          "Highest \u2014 entity/vocabulary disambiguation", "25\u201335%"],
-        ["Signal Loss / Empty", "80", "13.9%",
+        ["Signal Loss / Empty", "80", "14%",
          "None \u2014 encoder failure", "<5%"],
-        ["Accumulated Errors", "52", "9.1%",
+        ["Accumulated Errors", "52", "9%",
          "High \u2014 context catches cascading errors", "20\u201330%"],
     ]
     tbl = add_table(slide, headers, rows,
@@ -792,7 +792,7 @@ def slide_30c(prs):
     _finish(slide, 0,
         "Backup detail slide for Q&A. Shows per-failure-mode recovery "
         "estimates with the full 6-row table.\n\n"
-        "Key point: Wrong Topic dominates at 44.4% (255 segments combined). "
+        "Key point: Wrong Topic dominates at 44% (255 segments combined). "
         "'Right Topic Wrong Details' (79 segments) is the sweet spot for "
         "LLM improvement — encoder captured right domain but LLM picked "
         "wrong words. Examples: 'admiral McRae' -> 'animal migratory'.\n\n"
@@ -801,7 +801,7 @@ def slide_30c(prs):
         "prior with 61% higher MMLU and 4x vocabulary directly fixes "
         "entity names and content words.\n\n"
         "Total estimated recovery from 574 below-threshold segments, "
-        "pushing useful output rate from 61.6% to ~70-75%.",
+        "pushing useful output rate from 62% to ~70-75%.",
         [[ft, tbl],
          [insight_box, insight_title, insight_text],
          [note_text]])
@@ -1001,23 +1001,23 @@ def slide_31(prs):
 
     # audit:logic_fix slide 79 \u2014 MBR (production default since May 2 2026)
     # was missing from takeaways; add takeaway #4. Numeric anchors:
-    # audit:niv_yp_pct_mbr (61.92%), audit:judge_v3_yp_pct_mbr (71.08%),
-    # audit:judge_v3_yp_pct_baseline (68.40%), audit:mcnemar_yp_p_mbr (0.00017).
+    # audit:niv_yp_pct_mbr (62%), audit:judge_v3_yp_pct_mbr (71%),
+    # audit:judge_v3_yp_pct_baseline (68%), audit:mcnemar_yp_p_mbr (0.00017).
     takeaways = [
         ("1", "Rigorous assessment: 2.5\u00d7 WER gap on 1,497 segments. "
-              "Novel IS metric reveals 61.92% useful output (NIV Y+P, MBR), "
-              "confirmed by LLM judge v1 blind at 64.9%. Full failure "
+              "Novel IS metric reveals 62% useful output (NIV Y+P, MBR), "
+              "confirmed by LLM judge v1 blind at 65%. Full failure "
               "analysis with improvement suggestions."),
         ("2", "Production system delivered: standalone container with "
               "professional UI, 37 bugs fixed, 8-stage pipeline, 37 tests, "
               "8 research reports \u2014 all from a paper with no working "
               "environment."),
-        ("3", "Model performs well after MBR: 71.08% useful per LLM Judge v3 "
+        ("3", "Model performs well after MBR: 71% useful per LLM Judge v3 "
               "(paired). IS metric shows high agreement with the v1 blind "
               "judge gold standard (\u03ba=0.818 at NIV-Y+P) and runs entirely on "
               "the standalone computer \u2014 no cloud dependency."),
         ("4", "MBR shipped as production default (May 2 2026, Mission 6) \u2014 "
-              "Judge v3 Y+P 71.08% vs baseline 68.40%, p = 0.00017 paired "
+              "Judge v3 Y+P 71% vs baseline 68%, p = 0.00017 paired "
               "McNemar. Joint conf+agreement bands + Trust gate also shipped."),
         ("5", "Clear path forward: stronger LLM + smart prompts + 20K+ "
               "training data to improve English performance. Full plan to "
@@ -1057,16 +1057,16 @@ def slide_31(prs):
     _finish(slide, 31,
         "Five takeaways anchored to the headline numbers from this deck. "
         "(1) Rigorous assessment with the novel IS metric and full failure "
-        "analysis: 61.92% useful Y+P with MBR n-best, 64.9% confirmed by "
+        "analysis: 62% useful Y+P with MBR n-best, 65% confirmed by "
         "LLM judge v1 blind on the same 1,497 pairs (Pearson r=0.85 "
         "between IS and judge). "
         "(2) Production system built from scratch — standalone container, "
         "UI, 8-stage pipeline, 37 tests, 8 research reports. "
-        "(3) Model performs well after MBR: 71.08% Y+P per LLM Judge v3 "
+        "(3) Model performs well after MBR: 71% Y+P per LLM Judge v3 "
         "paired test (Opus 4.7, 5,988 verdicts). IS shows kappa=0.818 "
         "agreement with judge at NIV-Y+P. "
         "(4) MBR shipped May 2 2026 as production default — Judge v3 "
-        "Y+P 71.08% vs baseline 68.40% (+2.68 pp absolute, p = 0.00017 "
+        "Y+P 71% vs baseline 68% (+2.68 pp absolute, p = 0.00017 "
         "paired McNemar over 5,988 verdicts). Joint conf+agreement bands "
         "and the Trust gate also shipped. "
         "(5) Clear path forward for English improvement (stronger LLM + "
@@ -1146,7 +1146,7 @@ def slide_a3(prs):
     add_accent_line(slide)
 
     add_text(slide, "Config H forces the model to generate longer text. "
-             "Mean WER: 539.6%\nThe model generates paragraphs of "
+             "Mean WER: 540%\nThe model generates paragraphs of "
              "hallucinated text:",
              MX, CT, CW, Inches(0.6), size=Pt(14), color=CORAL)
 
@@ -1171,7 +1171,7 @@ def slide_a3(prs):
 
     _finish(slide, "A2",
         "Config H (lenpen=2.0) produces catastrophic hallucinations. "
-        "Mean WER 539.6%. The model generates entire paragraphs of fluent "
+        "Mean WER 540%. The model generates entire paragraphs of fluent "
         "but completely fabricated text. This dramatically illustrates the "
         "LLM prior overwhelming the visual signal.")
 
@@ -1192,8 +1192,8 @@ def slide_a8(prs):
 
     tbl1 = add_table(slide,
         ["Component", "Signals", "Variance", "Loadings"],
-        [["PC1: Signal Quality", "All 5 content signals", "68.4%", "0.43\u20130.47 each"],
-         ["PC2: Output Length", "Length Ratio", "19.5%", "0.91"]],
+        [["PC1: Signal Quality", "All 5 content signals", "68%", "0.43\u20130.47 each"],
+         ["PC2: Output Length", "Length Ratio", "20%", "0.91"]],
         MX, CT + Inches(0.5), SRL - MX - Inches(0.1), text_size=Pt(11),
         row_height=Inches(0.35),
         col_widths=[Inches(1.6), Inches(1.8), Inches(1.1), Inches(1.4)])
@@ -1231,9 +1231,9 @@ def slide_a8(prs):
 
     _finish(slide, "A3",
         "PCA retains exactly 2 principal components under the Kaiser "
-        "criterion: PC1 captures signal quality (68.4% of variance, all 5 "
+        "criterion: PC1 captures signal quality (68% of variance, all 5 "
         "content signals load 0.43-0.47), PC2 captures output length "
-        "(19.5%, Length Ratio loads 0.91). Together 87.9% of variance. "
+        "(20%, Length Ratio loads 0.91). Together 88% of variance. "
         "Cross-config stability across 16 decode-parameter sweeps: "
         "Semantic, Phonetic, NEA are stable (std 0.017-0.059), while WER "
         "and Length Ratio are volatile (std 0.142-0.165) — exactly the "
@@ -1259,16 +1259,16 @@ def slide_a11(prs):
     add_text(slide, "Key Numbers", MX, CT, SLW, Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
 
-    # audit:niv_yp_pct_top1 (61.66%) — slide table reports the top-1 baseline
+    # audit:niv_yp_pct_top1 (62%) — slide table reports the top-1 baseline
     # because LLM-salvage analysis was conducted against the top-1 hypothesis
     # (heuristic was tuned on top-1; salvage analysis predates MBR shipping).
-    # Judge 64.9% is the v1 blind gold-standard (audit:llm_judge_v1).
+    # Judge 65% is the v1 blind gold-standard (audit:llm_judge_v1).
     tbl1 = add_table(slide,
         ["Metric", "Value"],
         [["Metric-failed segments", "900"],
-         ["LLM-recoverable", "165 (18.3%)"],
-         ["Useful output (IS ≥ 2.00, top-1)", "61.66%"],  # audit:niv_yp_pct_top1
-         ["LLM Judge v1 blind (Y+P)", "64.9%"],  # audit:llm_judge_v1
+         ["LLM-recoverable", "165 (18%)"],
+         ["Useful output (IS ≥ 2.00, top-1)", "62%"],  # audit:niv_yp_pct_top1
+         ["LLM Judge v1 blind (Y+P)", "65%"],  # audit:llm_judge_v1
          ["IS vs Judge agreement", "κ = 0.818"]],
         MX, CT + Inches(0.4), SLW, text_size=Pt(11),
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
@@ -1300,8 +1300,8 @@ def slide_a11(prs):
     _finish(slide, "A4",
         # audit:niv_yp_pct_top1 — LLM-salvage analysis is top-1-anchored.
         "165 of 900 metric-failed segments are recoverable by the LLM "
-        "heuristic. Useful output rate is 61.66% NIV Y+P (top-1; MBR "
-        "n-best lifts to 61.92%). 6 recovery categories (overlap, not "
+        "heuristic. Useful output rate is 62% NIV Y+P (top-1; MBR "
+        "n-best lifts to 62%). 6 recovery categories (overlap, not "
         "disjoint). 58% have moderate WER (50-70%). "
         "See docs/evaluation/llm_salvage/llm_salvage_analysis.md.")
 
@@ -1364,19 +1364,19 @@ def slide_a13(prs):
     # Canonical 5 categories from 574-segment failure taxonomy
     tbl = add_table(slide,
         ["Category", "% of Failures", "Reference", "Hypothesis", "WER", "IS"],
-        [["Wrong Topic\n(255 segs)",  "44.4%",
+        [["Wrong Topic\n(255 segs)",  "44%",
           '"weight loss and diet..."',
           '"wanted to be a princess..."', "97%", "0.38"],
-         ["Hallucination\n(108 segs)", "18.8%",
+         ["Hallucination\n(108 segs)", "19%",
           '"and body parts"',
           '"20 years ago when i was"', "200%", "0.00"],
-         ["Signal Loss\n(80 segs)",    "13.9%",
+         ["Signal Loss\n(80 segs)",    "14%",
           '"do you say i wonder what..."',
           "(empty)", "100%", "0.00"],
-         ["Right Topic,\nWrong Details\n(79 segs)", "13.8%",
+         ["Right Topic,\nWrong Details\n(79 segs)", "14%",
           '"13th amendment is going..."',
           '"13th may mean something..."', "60%", "1.86"],
-         ["Accumulated\nErrors (52 segs)", "9.1%",
+         ["Accumulated\nErrors (52 segs)", "9%",
           '"you\'re rich no no no..."',
           '"your ring that\'s not what..."', "67%", "1.64"]],
         MX, CT + Inches(0.4), CW, text_size=Pt(10),
@@ -1388,13 +1388,13 @@ def slide_a13(prs):
     _finish(slide, "A6",
         "Canonical 5 failure categories from the 574-segment taxonomy "
         "(IS < 2.00 on our 1,497-segment evaluation set). Wrong Topic is "
-        "the largest (44.4%, 255 segments) and combines topic drift with "
-        "phonetic confusion. Hallucination (18.8%, 108) is the most "
+        "the largest (44%, 255 segments) and combines topic drift with "
+        "phonetic confusion. Hallucination (19%, 108) is the most "
         "dangerous — fluent but fabricated text — because the output reads "
         "as confident even when it is invented from a 2-word reference. "
-        "Signal Loss (13.9%, 80) is the easiest to filter, Right Topic / "
-        "Wrong Details (13.8%, 79) is the client-trust killer, and "
-        "Accumulated Errors (9.1%, 52) responds well to N-best aggregation. "
+        "Signal Loss (14%, 80) is the easiest to filter, Right Topic / "
+        "Wrong Details (14%, 79) is the client-trust killer, and "
+        "Accumulated Errors (9%, 52) responds well to N-best aggregation. "
         "Each row in the table shows one canonical real example so a "
         "reader can match the rule to the data. "
         "Sources: docs/evaluation/intelligibility_methodology.md, "
@@ -1529,8 +1529,8 @@ def slide_insights(prs):
          "Tuning the LLM's decode parameters changes almost nothing.",
          TEAL),
         ("2", "WER dramatically overstates failure",
-         "61.6% useful (NIV Y+P) vs WER's 25.5% \u2014 2.4\u00d7 more. LLM Judge "
-         "confirms 64.9%. Most useful output has moderate WER (50\u201370%).",
+         "62% useful (NIV Y+P) vs WER's 26% \u2014 2.4\u00d7 more. LLM Judge "
+         "confirms 65%. Most useful output has moderate WER (50\u201370%).",
          GREEN),
         ("3", "Domain mismatch is the primary quality driver",
          "IS ranges from 3.08 (Business) to 2.13 (DIY). Training data is TED "
@@ -1605,7 +1605,7 @@ def slide_data_scaling(prs):
 
     tbl = add_table(slide,
         ["Phase", "Data", "WER", "IS Target", "Timeline"],
-        [["Current", "1.3K segs", "64.1%", "2.52", "\u2014"],
+        [["Current", "1.3K segs", "64%", "2.52", "\u2014"],
          ["Phase 1", "5K hrs", "55\u201358%", "~2.9", "2\u20134 wks"],
          ["Phase 2", "10K hrs", "48\u201352%", "~3.3", "4\u20136 wks"],
          ["Phase 3", "20K hrs", "42\u201346%", "~3.7", "6\u20138 wks"],
@@ -1654,7 +1654,7 @@ def slide_price_tag(prs):
 
     # Framing: the paper's training recipe already exists — we just need more data
     add_text(slide,
-        "The paper\u2019s training recipe already works (25.4% WER on LRS3). "
+        "The paper\u2019s training recipe already works (25% WER on LRS3). "
         "The only variable is data scale.",
         MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
 
@@ -1702,7 +1702,7 @@ def slide_price_tag(prs):
         "Cost projection focused on data scale as the single variable.\n\n"
         "The VSP-LLM paper already fine-tuned AV-HuBERT using a two-stage "
         "curriculum (freeze encoder 18K steps, unfreeze 12K steps) \u2014 this is "
-        "the paper's existing recipe, not something new. It achieved 25.4% WER "
+        "the paper's existing recipe, not something new. It achieved 25% WER "
         "on LRS3. The method works; it just needs more diverse data.\n\n"
         "Three data tiers: 5-10K hrs ($10-20K), 20K hrs ($30-40K sweet spot), "
         "50K hrs ($70-100K). Paper trained on only 433 hrs of LRS3.\n\n"
@@ -1725,11 +1725,11 @@ def slide_a16(prs):
 
     tbl = add_table(slide,
         ["IS Tier", "Y (count)", "Y%", "P (count)", "P%", "N (count)", "N%"],
-        [["5 \u2014 Excellent (4.0\u20135.0)", "157", "56.9%", "105", "38.0%", "14", "5.1%"],
-         ["4 \u2014 Good (3.0\u20133.99)", "67", "20.9%", "189", "58.9%", "65", "20.2%"],
-         ["3 \u2014 Fair (2.0\u20132.99)", "25", "7.7%", "167", "51.4%", "133", "40.9%"],
-         ["2 \u2014 Poor (1.0\u20131.99)", "14", "4.2%", "115", "34.2%", "207", "61.6%"],
-         ["1 \u2014 Failed (0.0\u20130.99)", "5", "2.1%", "41", "17.2%", "193", "80.8%"]],
+        [["5 \u2014 Excellent (4.0\u20135.0)", "157", "57%", "105", "38%", "14", "5%"],
+         ["4 \u2014 Good (3.0\u20133.99)", "67", "21%", "189", "59%", "65", "20%"],
+         ["3 \u2014 Fair (2.0\u20132.99)", "25", "8%", "167", "51%", "133", "41%"],
+         ["2 \u2014 Poor (1.0\u20131.99)", "14", "4%", "115", "34%", "207", "62%"],
+         ["1 \u2014 Failed (0.0\u20130.99)", "5", "2%", "41", "17%", "193", "81%"]],
         MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(11),
         row_height=Inches(0.38),
         col_widths=[Inches(2.8), Inches(1.2), Inches(1.0),
@@ -1752,13 +1752,13 @@ def slide_a16(prs):
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers across all 1,497 segments "
-        "(blind, Opus 4.6). Strong agreement at the extremes: 56.9% Y for "
-        "Tier 5 (Excellent), 80.8% N for Tier 1 (Failed). The interesting "
-        "middle: Tiers 2-3 get majority P verdicts (51.4% / 34.2%) — the "
+        "(blind, Opus 4.6). Strong agreement at the extremes: 57% Y for "
+        "Tier 5 (Excellent), 81% N for Tier 1 (Failed). The interesting "
+        "middle: Tiers 2-3 get majority P verdicts (51% / 34%) — the "
         "LLM sees partial meaning preservation that strict word-level "
         "metrics miss. Pearson r=0.85 between IS and the judge ordinal "
         "(Y=3, P=2, N=1). Threshold sweep: Y+P aligns best with IS>=2.00 "
-        "(kappa=0.818, 91.5% agreement); the legacy IS>=3.00 cutoff under-"
+        "(kappa=0.818, 92% agreement); the legacy IS>=3.00 cutoff under-"
         "counts (kappa=0.521). NIV thresholds adopted in March 2026: "
         "IS>=3.80 for Y (kappa=0.690), IS>=2.00 for Y+P (kappa=0.818). IS "
         "beats WER at both operating points (+0.061 for Y, +0.041 for Y+P). "
@@ -1800,10 +1800,10 @@ def slide_a17(prs):
     # Summary stats
     tbl2 = add_table(slide,
         ["Metric", "Value"],
-        [["Total downgrades", "230 (15.4%)"],
-         ["Total upgrades", "68 (4.5%)"],
-         ["Unchanged", "1,199 (80.1%)"],
-         ["Cross-condition agree.", "80.0%"]],
+        [["Total downgrades", "230 (15%)"],
+         ["Total upgrades", "68 (4%)"],
+         ["Unchanged", "1,199 (80%)"],
+         ["Cross-condition agree.", "80%"]],
         MX, CT + Inches(3.0), col_w * 0.7, text_size=Pt(11))
 
     # Right — per-topic deltas
@@ -1836,7 +1836,7 @@ def slide_a17(prs):
         "dominant pattern is Y -> P (138 of 345 Y verdicts, about 40% of "
         "all Y) — domain context reveals vocabulary failures the blind "
         "judge let slide. Total: 230 downgrades vs 68 upgrades, with "
-        "1,199 (80.1%) verdicts unchanged. Only 1 N -> Y rescue across "
+        "1,199 (80%) verdicts unchanged. Only 1 N -> Y rescue across "
         "all 1,497 pairs, confirming context is a quality tool not a "
         "rescue tool. Per-topic Y+P deltas are uniformly negative "
         "(-2pp to -4pp) across all seven topics; DIY/Home has the "
@@ -1958,14 +1958,14 @@ def slide_appendix_pca_loadings(prs):
 
     add_text(slide,
         "Kaiser criterion retains 2 components. Together they explain "
-        "87.9% of variance.",
+        "88% of variance.",
         MX, CT, CW, Inches(0.4),
         size=Pt(13), color=LGRAY)
 
     # Loadings table (PC1, PC2 only — PC3 dropped by Kaiser)
     tbl = add_table(slide,
-        ["Signal", "PC1 (Signal Quality, 68.4%)",
-         "PC2 (Output Length, 19.5%)"],
+        ["Signal", "PC1 (Signal Quality, 68%)",
+         "PC2 (Output Length, 20%)"],
         [["Semantic",     "+0.445", "+0.057"],
          ["Phonetic",     "+0.466", "+0.184"],
          ["InvWER",       "+0.431", "−0.367"],
@@ -1992,11 +1992,11 @@ def slide_appendix_pca_loadings(prs):
              rw - Inches(0.3), Inches(0.3),
              size=Pt(14), color=TEAL, bold=True)
     add_bullets(slide, [
-        "PC1 (68.4%) = signal quality — all 5 content "
+        "PC1 (68%) = signal quality — all 5 content "
         "signals load 0.43–0.47, virtually identical",
         ("Semantic is NOT an independent dimension — "
          "loads on PC1 with word-accuracy signals", {"color": GOLD}),
-        "PC2 (19.5%) = output length — Length Ratio dominates at 0.91",
+        "PC2 (20%) = output length — Length Ratio dominates at 0.91",
         ("The old '3 dimensions' framing was wrong",
          {"color": CORAL, "bold": True}),
     ], rx + Inches(0.15), CT + Inches(1.05), rw - Inches(0.3),
@@ -2021,11 +2021,11 @@ def slide_appendix_pca_loadings(prs):
     _finish(slide, "A",
         "Appendix slide (HIDDEN by default). PCA on the 6 standardized IS "
         "signals retains 2 principal components by the Kaiser criterion. "
-        "PC1 explains 68.4% of variance — all 5 content signals "
+        "PC1 explains 68% of variance — all 5 content signals "
         "(Semantic, Phonetic, InvWER, InvWWER, NEA F1) load nearly "
         "equally at 0.43–0.47, with Length Ratio near zero (0.083). "
-        "PC2 explains 19.5% — dominated by Length Ratio at 0.908. "
-        "Together: 87.9% of variance in 2 PCs. Key reframing: Semantic "
+        "PC2 explains 20% — dominated by Length Ratio at 0.908. "
+        "Together: 88% of variance in 2 PCs. Key reframing: Semantic "
         "is NOT an independent dimension; it loads on PC1 alongside "
         "word-accuracy signals. The old '3 dimensions' claim was wrong. "
         "Practically: when the visual encoder captures the speech signal, "
@@ -2095,7 +2095,7 @@ def slide_appendix_mcnemar_full(prs):
 
     # Caveat at y=6.40 -> 6.85 (clears bullets at 6.30, slide-num band at 7.12).
     add_text(slide,
-        "Caveat: identical-text drift varies (12.6% / 10.4% / 14.2% per "
+        "Caveat: identical-text drift varies (13% / 10% / 14% per "
         "method). Not a confound to McNemar (paired test absorbs ties), "
         "but worth noting — v3 prompt's shared baseline_conf anchor "
         "reduced drift from v1's 27%.",
@@ -2113,13 +2113,13 @@ def slide_appendix_mcnemar_full(prs):
         "significant). The significance survives restriction to the "
         "text-differing subset (mbr p = 0.004, vote_conf p = 0.011), "
         "ruling out an identical-text artefact. Note that identical-text "
-        "drift varies per method (12.6% / 10.4% / 14.2%) but does not "
+        "drift varies per method (13% / 10% / 14%) but does not "
         "confound McNemar because the paired test absorbs ties. The v3 "
         "dual-conf prompt's shared baseline_conf anchor cut this drift "
         "from v1's 27%, so the remaining drift is balanced intra-rater "
         "noise rather than directional bias. Final shipping decision: "
         "pure hyp_mbr as the default displayed output (highest "
-        "intra-rater 86.7%, calibrated per-word posterior compatible "
+        "intra-rater 87%, calibrated per-word posterior compatible "
         "with the band-reliability UI thresholds). "
         "Sources: docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md, "
         "docs/beam-search/n_best_implementation.md, "
@@ -2194,7 +2194,7 @@ def slide_confidence_scoring(prs):
         "0.95 AND beam_agreement >= 0.80, yellow requires >= 0.65 AND >= "
         "0.50; numbers are capped at yellow. Reading-guide framing for "
         "clients: at >= 30% green coverage we hit ~65% recall of useful "
-        "content with 5.6% false-positive rate. Perceived error rate "
+        "content with 6% false-positive rate. Perceived error rate "
         "drops from 60% to roughly 20% because the user reads only the "
         "trusted slice. The right-card 85% callout is the entity-level "
         "miss rate from the baseline analysis: names and numbers are "
