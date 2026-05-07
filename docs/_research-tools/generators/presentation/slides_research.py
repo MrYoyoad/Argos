@@ -34,7 +34,7 @@ def slide_is_motivation(prs):
 
     sub = add_text(slide,
         "Five reasons we built the Intelligibility Score (IS) framework",
-        MX, CT, CW, Inches(0.35), size=Pt(15), color=MGRAY, italic=True)
+        MX, CT, CW, Inches(0.35), size=Pt(20), color=MGRAY, italic=True)
 
     reasons = [
         ("\u2460 Deployment Constraint",
@@ -75,17 +75,17 @@ def slide_is_motivation(prs):
         t1 = add_text(slide, title,
                       x + Inches(0.20), y + Inches(0.10),
                       col_w - Inches(0.40), Inches(0.30),
-                      size=Pt(16), color=TEAL, bold=True)
+                      size=Pt(24), color=TEAL, bold=True)
         t2 = add_text(slide, body,
                       x + Inches(0.20), y + Inches(0.42),
-                      col_w - Inches(0.40), Inches(0.55),
-                      size=Pt(13), color=LGRAY)
+                      col_w - Inches(0.40), Inches(1.8),
+                      size=Pt(24), color=LGRAY)
         card_groups.append([r, t1, t2])
 
     takeaway = add_text(slide,
         "IS runs in production; LLM-as-a-Judge audits the IS framework. You need both.",
-        MX, Inches(5.85), CW, Inches(0.40),
-        size=Pt(15), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
+        MX, Inches(5.85), CW, Inches(1.0),
+        size=Pt(24), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Why IS, not just LLM judge? Five reasons:\n"
@@ -98,43 +98,43 @@ def slide_is_motivation(prs):
         [[sub]] + card_groups + [[takeaway]], click_reveal=True)
 
 
-def slide_is_intro_a(prs):
-    """IS Slide A: WER, WWER, and Length Ratio — the standard metrics."""
+def slide_is_intro_a(prs):  # audit:bigfonts2
+    """IS Slide A: WER, WWER, and Length Ratio — the standard metrics.
+
+    audit:bigfonts2 — Pass 2: shrunk card_h 1.65 -> 1.55, gap 0.08 -> 0.06,
+    examples shortened to one line each, formula moved up to y=6.55 so its
+    bottom (6.95) clears slide-num at 7.12.
+    """
     slide = new_slide(prs)
     add_title(slide, "IS Signals: Word Accuracy & Length")
     add_accent_line(slide)
 
-    # Top banner
+    # Top banner — shortened so Pt(24) fits on one line (audit:bigfonts)
     banner = add_rect(slide, MX, CT, CW, Inches(0.55), fill_color=NAVY2,
                       border_color=TEAL, border_width=Pt(2), corner_radius=True)
     banner_txt = add_text(slide,
-        "IS = composite of 6 signals (0\u20135).  IS \u2265 2.00 = \"Useful Output\" (Y+P).  "
-        "These 3 signals measure raw word accuracy and output sanity.",
-        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.4),
-        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+        "IS = 6 signals (0\u20135).  IS \u2265 2.00 = \"Useful\" (Y+P).  "
+        "These 3 measure word accuracy and sanity.",
+        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(1.0),
+        size=Pt(24), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     card_w = Inches(11.0)
-    card_h = Inches(1.35)
-    gap_y = Inches(0.10)
+    card_h = Inches(1.55)   # audit:bigfonts2 — shrunk 1.65 -> 1.55 to fit canvas
+    gap_y = Inches(0.06)    # audit:bigfonts2 — tighter 0.08 -> 0.06
     start_y = CT + Inches(0.70)
 
+    # audit:bigfonts2 — example bullets shortened to one line.
+    # CUT v2: dropped redundant "Like WER, but" framing on WWER.
     signals = [
         ("Inverse WER", "15%", CORAL,
-         "Standard Word Error Rate (substitutions + insertions + deletions "
-         "divided by reference length), then inverted: 1 \u2212 WER. "
-         "A baseline word-accuracy signal that treats all words equally.",
-         "Treats all words equally \u2014 every error costs the same."),
+         "1 \u2212 WER. All words equal.",
+         "Every error costs the same."),
         ("WWER (Weighted WER)", "15%", CORAL,
-         "Like WER, but content words (nouns, verbs, names) cost 2\u00d7 "
-         "and function words ('the', 'a', 'is') cost only 0.5\u00d7. "
-         "Losing a name hurts more than losing an article.",
-         'Example: "Admiral McRae" wrong = 2\u00d7 penalty. '
-         '"the" wrong = 0.5\u00d7 penalty.'),
+         "Content words 2\u00d7, function words 0.5\u00d7.",
+         '"Admiral McRae" 2\u00d7;  "the" 0.5\u00d7.'),
         ("Length Ratio", "15%", LGRAY,
-         "Output length divided by reference length. A safety check: "
-         "catches hallucination (ratio >> 1, model generates too much) "
-         "and truncation (ratio << 1, model cuts off early).",
-         "Hallucinated segments average ratio 2.8\u00d7."),
+         "len(hyp)/len(ref). Catches hallucination + truncation.",
+         "Hallucinated segments average 2.8\u00d7."),
     ]
 
     card_groups = []
@@ -143,27 +143,27 @@ def slide_is_intro_a(prs):
         r = add_rect(slide, MX, y, card_w, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
         t1 = add_text(slide, f"{name}  ({weight})",
-                 MX + Inches(0.2), y + Inches(0.08),
-                 card_w - Inches(0.4), Inches(0.3),
-                 size=Pt(15), color=color, bold=True)
+                 MX + Inches(0.2), y + Inches(0.06),
+                 card_w - Inches(0.4), Inches(0.36),
+                 size=Pt(24), color=color, bold=True)
         t2 = add_text(slide, how,
                  MX + Inches(0.2), y + Inches(0.42),
-                 card_w - Inches(0.4), Inches(0.50),
-                 size=Pt(12), color=WHITE)
-        # OVERLAP fix: shifted t3 from y+0.95 -> y+1.00 to clear t2 (h=0.50
-        # ends at y+0.92). Was 5% overlap (audit OVERLAP).
+                 card_w - Inches(0.4), Inches(0.55),
+                 size=Pt(24), color=WHITE)
+        # audit:bigfonts2 — t3 italic example moved to y+1.00 within tighter card
         t3 = add_text(slide, f"\u25b8 {example}",
                  MX + Inches(0.2), y + Inches(1.00),
-                 card_w - Inches(0.4), Inches(0.35),
-                 size=Pt(12), color=LGRAY, italic=True)
+                 card_w - Inches(0.4), Inches(0.40),
+                 size=Pt(20), color=LGRAY, italic=True)
         card_groups.append([r, t1, t2, t3])
 
-    # Formula at bottom
-    add_text(slide,
-        "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + WWER + NEA + Length)"
-        "   \u2022   Fully deterministic   \u2022   $0 per evaluation",
-        MX, Inches(6.55), CW, Inches(0.4),
-        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+    # CUT v2: removed bottom IS formula — overlapped card 3 after bumps.
+    # Visual-first per V1: the 3 cards carry meaning. audit:bigfonts2.
+    if False:  # CUT v2 — formula removed
+      add_text(slide,
+        "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + WWER + NEA + Length)",
+        MX, Inches(6.50), CW, Inches(0.4),
+        size=Pt(20), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "IS Slide A: Three standard word-accuracy signals. Inverse WER (15% "
@@ -184,66 +184,69 @@ def slide_is_intro_a(prs):
 
 
 def slide_is_intro_b(prs):
-    """IS Slide B: Semantic Similarity — meaning beyond words."""
+    """IS Slide B: Semantic Similarity — meaning beyond words.
+
+    audit:bigfonts — body frame heights grown so Pt(24) text doesn't overflow;
+    example card grown 1.2 -> 1.55. Weight callout widened for Pt(24).
+    """
     slide = new_slide(prs)
     add_title(slide, "IS Signals: Semantic Similarity")
     add_accent_line(slide)
 
-    # Weight callout — wide enough so text stays on one line
-    weight_r = add_rect(slide, MX, CT, Inches(4.8), Inches(0.5), fill_color=NAVY2,
+    # Weight callout — widened for Pt(24) bold (audit:bigfonts)
+    weight_r = add_rect(slide, MX, CT, Inches(5.6), Inches(0.55), fill_color=NAVY2,
                         border_color=TEAL, border_width=Pt(2), corner_radius=True)
     weight_t = add_text(slide, "Weight: 25% \u2014 the single largest signal",
                  MX + Inches(0.2), CT + Inches(0.06),
-                 Inches(4.4), Inches(0.38),
-                 size=Pt(14), color=TEAL, bold=True)
+                 Inches(5.2), Inches(1.0),
+                 size=Pt(24), color=TEAL, bold=True)
 
-    # Main explanation card
-    card_y = CT + Inches(0.75)
+    # Main explanation card — grown for taller body
+    card_y = CT + Inches(0.78)
     card_w = CW
-    card_h = Inches(2.8)
+    card_h = Inches(2.95)   # audit:bigfonts +0.15
     card_r = add_rect(slide, MX, card_y, card_w, card_h, fill_color=NAVY2,
                       border_color=TEAL, border_width=Pt(1.5), corner_radius=True)
 
     add_text(slide, "How It Works",
              MX + Inches(0.3), card_y + Inches(0.12),
-             card_w - Inches(0.6), Inches(0.3),
-             size=Pt(16), color=TEAL, bold=True)
+             card_w - Inches(0.6), Inches(0.36),
+             size=Pt(24), color=TEAL, bold=True)
 
     add_text(slide,
-        "1. Both reference and hypothesis are converted to 384-dimensional "
-        "sentence embeddings using SBERT (all-MiniLM-L6-v2).\n\n"
-        "2. Cosine similarity is computed between the two embedding vectors.\n\n"
-        "3. The result captures overall meaning \u2014 even if completely different "
-        "words are used, a high score means the same idea was communicated.",
-        MX + Inches(0.3), card_y + Inches(0.5),
-        card_w - Inches(0.6), Inches(1.8),
-        size=Pt(13), color=WHITE)
+        "1. Reference and hypothesis become 384-dim sentence embeddings "
+        "via SBERT (all-MiniLM-L6-v2).\n\n"
+        "2. Cosine similarity is computed between the two vectors.\n\n"
+        "3. Captures overall meaning even if word choice differs.",
+        MX + Inches(0.3), card_y + Inches(0.55),
+        card_w - Inches(0.6), Inches(2.30),
+        size=Pt(24), color=WHITE)
 
-    # Example card
-    ex_y = card_y + card_h + Inches(0.2)
-    ex_h = Inches(1.2)
+    # Example card — audit:bigfonts2 — h shrunk 1.55 -> 1.20 + caption shortened
+    ex_y = card_y + card_h + Inches(0.10)
+    ex_h = Inches(1.20)   # audit:bigfonts2 — shrunk 1.55 -> 1.20
     ex_r = add_rect(slide, MX, ex_y, card_w, ex_h, fill_color=NAVY2,
                     border_color=LGRAY, border_width=Pt(1.5), corner_radius=True)
 
     add_text(slide, "Example",
              MX + Inches(0.3), ex_y + Inches(0.08),
-             card_w - Inches(0.6), Inches(0.28),
-             size=Pt(14), color=LGRAY, bold=True)
+             card_w - Inches(0.6), Inches(0.32),
+             size=Pt(24), color=LGRAY, bold=True)
+    # CUT v2: reduced example to 2 lines to fit ex_h=1.20.
     add_text(slide,
-        '"the CEO resigned" vs "the chief executive stepped down"\n'
-        '\u2192 cosine similarity 0.91 \u2014 meaning preserved despite zero word overlap.\n'
-        'WER would report 80% error; Semantic Similarity sees the truth.',
-        MX + Inches(0.3), ex_y + Inches(0.4),
-        card_w - Inches(0.6), Inches(0.7),
-        size=Pt(12), color=LGRAY, italic=True)
+        '"the CEO resigned" vs "the chief executive stepped down" '
+        '-> cosine 0.91 (meaning preserved, zero word overlap).',
+        MX + Inches(0.3), ex_y + Inches(0.42),
+        card_w - Inches(0.6), Inches(0.75),
+        size=Pt(20), color=LGRAY, italic=True)
 
-    # Why it matters
-    why_y = ex_y + ex_h + Inches(0.2)
+    # Why it matters — audit:bigfonts2 — moved up + h shrunk to clear 7.05.
+    # CUT v2: shortened caption.
+    why_y = ex_y + ex_h + Inches(0.10)
     add_text(slide,
-        "Why it matters: lip reading often produces synonyms and paraphrases. "
-        "WER punishes these; Semantic Similarity rewards them.",
-        MX, why_y, CW, Inches(0.4),
-        size=Pt(13), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+        "WER punishes synonyms; Semantic rewards meaning preserved.",
+        MX, why_y, CW, Inches(0.40),
+        size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "IS Slide B: Semantic Similarity deep dive. This is the single "
@@ -265,40 +268,44 @@ def slide_is_intro_b(prs):
         [[weight_r, weight_t], [card_r], [ex_r]], click_reveal=True)
 
 
-def slide_is_intro_c(prs):
-    """IS Slide C: Phonetic Similarity and Named Entity Accuracy."""
+def slide_is_intro_c(prs):  # audit:bigfonts2
+    """IS Slide C: Phonetic Similarity and Named Entity Accuracy.
+
+    audit:bigfonts2 — Pass 2 BLOCKER fix: card_h shrunk 2.7 -> 2.45, gap
+    0.18 -> 0.15, bottom note REMOVED (was overflowing to y=7.63).
+    Content extends to ~6.58 now — well under slide-num zone at 7.12.
+    """
     slide = new_slide(prs)
     add_title(slide, "IS Signals: Phonetic & Named Entities")
     add_accent_line(slide)
 
     card_w = CW
-    card_h = Inches(2.4)
-    gap_y = Inches(0.2)
+    card_h = Inches(2.45)  # audit:bigfonts2 — shrunk 2.7 -> 2.45 to fit canvas
+    gap_y = Inches(0.15)
 
     # Card 1: Phonetic Similarity
-    c1_y = CT + Inches(0.1)
+    c1_y = CT + Inches(0.05)
     c1_r = add_rect(slide, MX, c1_y, card_w, card_h, fill_color=NAVY2,
                     border_color=TEAL, border_width=Pt(1.5), corner_radius=True)
     add_text(slide, "Phonetic Similarity  (15%)",
              MX + Inches(0.2), c1_y + Inches(0.08),
-             card_w - Inches(0.4), Inches(0.3),
-             size=Pt(15), color=TEAL, bold=True)
+             card_w - Inches(0.4), Inches(0.36),
+             size=Pt(24), color=TEAL, bold=True)
+    # CUT v2: trimmed body to ~2 lines at Pt(24). Original 3-sentence
+    # description moved to speaker notes. audit:bigfonts2.
     add_text(slide,
-        "Converts each word to IPA pronunciation using eng-to-ipa, "
-        "then computes character-level similarity between the phonetic strings. "
-        "Critical for lip reading: the model sees mouth shapes, not spellings \u2014 "
-        "so phonetically correct output is a sign the visual encoder worked.",
-        MX + Inches(0.2), c1_y + Inches(0.45),
-        card_w - Inches(0.4), Inches(0.9),
-        size=Pt(12), color=WHITE)
-    add_text(slide,
-        '\u25b8 Example: "Admiral McRae" vs "animal migration"\n'
-        '  IPA: /\u00e6dm\u026ar\u0259l m\u0259kre\u026a/ vs '
-        '/\u00e6n\u026am\u0259l ma\u026a\u0261re\u026a\u0283\u0259n/ '
-        '\u2192 0.68 (sounds similar despite looking completely different)',
-        MX + Inches(0.2), c1_y + Inches(1.4),
+        "Each word \u2192 IPA, then character similarity. "
+        "Phonetic match means the visual encoder worked.",
+        MX + Inches(0.2), c1_y + Inches(0.48),
         card_w - Inches(0.4), Inches(0.95),
-        size=Pt(12), color=LGRAY, italic=True)
+        size=Pt(24), color=WHITE)
+    # audit:bigfonts2 — caption moved up + tightened to fit smaller card_h=2.45.
+    add_text(slide,
+        '\u25b8 "Admiral McRae" vs "animal migration" \u2192 0.68 '
+        '(similar sounds, different words).',
+        MX + Inches(0.2), c1_y + Inches(1.45),
+        card_w - Inches(0.4), Inches(0.85),
+        size=Pt(20), color=LGRAY, italic=True)
 
     # Card 2: Named Entity Accuracy
     c2_y = c1_y + card_h + gap_y
@@ -306,30 +313,27 @@ def slide_is_intro_c(prs):
                     border_color=CORAL, border_width=Pt(1.5), corner_radius=True)
     add_text(slide, "Named Entity Accuracy (NEA)  (15%)",
              MX + Inches(0.2), c2_y + Inches(0.08),
-             card_w - Inches(0.4), Inches(0.3),
-             size=Pt(15), color=CORAL, bold=True)
+             card_w - Inches(0.4), Inches(0.36),
+             size=Pt(24), color=CORAL, bold=True)
+    # CUT v2: body shortened to ~2 lines at Pt(24); full description in
+    # speaker notes. audit:bigfonts2.
     add_text(slide,
-        "Extracts named entities (people, numbers, places) from both "
-        "reference and hypothesis using spaCy NER, then computes F1 "
-        "(precision \u00d7 recall). Binary per entity: either correct or "
-        "destroyed, no partial credit.",
-        MX + Inches(0.2), c2_y + Inches(0.45),
-        card_w - Inches(0.4), Inches(0.9),
-        size=Pt(12), color=WHITE)
-    add_text(slide,
-        "\u25b8 Mean F1 = 39% \u2014 entities missed in 85% of segments.\n"
-        "  Names are the hardest thing for lip reading: "
-        "\"McRae\" has no visual cue that distinguishes it from any other word.",
-        MX + Inches(0.2), c2_y + Inches(1.4),
+        "Names, numbers, places extracted by spaCy NER. "
+        "F1 = precision and recall, binary per entity.",
+        MX + Inches(0.2), c2_y + Inches(0.48),
         card_w - Inches(0.4), Inches(0.95),
-        size=Pt(12), color=LGRAY, italic=True)
-
-    # Bottom note
+        size=Pt(24), color=WHITE)
+    # audit:bigfonts2 — caption moved up + tightened to fit card_h=2.45.
+    # CUT v2: dropped "Names are hardest..." sentence.
     add_text(slide,
-        "Together these two signals capture what WER misses: "
-        "phonetic plausibility and entity preservation.",
-        MX, c2_y + card_h + Inches(0.15), CW, Inches(0.4),
-        size=Pt(13), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+        "\u25b8 Mean F1 = 39% \u2014 entities missed in 85% of segments.",
+        MX + Inches(0.2), c2_y + Inches(1.45),
+        card_w - Inches(0.4), Inches(0.85),
+        size=Pt(20), color=LGRAY, italic=True)
+
+    # CUT v2: removed bottom note "Together these capture..." — was forcing
+    # content past y=7.05 (BLOCKER from Pass 1 audit). Title + 2 cards
+    # already convey the takeaway. audit:bigfonts2.
 
     _finish(slide, 0,
         "IS Slide C: Phonetic Similarity and Named Entity Accuracy. Both "
@@ -370,19 +374,19 @@ def slide_tuning_intro(prs):
 
     # Left: The question
     lt = add_text(slide, "The Question", MX, CT, col_w, Inches(0.4),
-                  size=Pt(20), color=TEAL, bold=True)
+                  size=Pt(28), color=TEAL, bold=True)
     lb = add_bullets(slide, [
         "The visual encoder is the primary bottleneck",
         "But decode parameters control HOW the LLM generates text",
         "Can beam search, length penalty, or temperature improve output?",
         ("We ran 13 systematic experiments to find out", {"bold": True}),
-    ], MX, CT + Inches(0.55), col_w, Inches(3.0), size=Pt(15))
+    ], MX, CT + Inches(0.55), col_w, Inches(3.0), size=Pt(24))
 
     # Right: What we varied
     rx = MX + col_w + gap
     rw = CW - col_w - gap
     rt = add_text(slide, "Parameters Tested", rx, CT, rw, Inches(0.4),
-                  size=Pt(20), color=CORAL, bold=True)
+                  size=Pt(28), color=CORAL, bold=True)
 
     params = [
         ("Beam size", "5 \u2192 50 candidates"),
@@ -395,14 +399,14 @@ def slide_tuning_intro(prs):
     for name, desc in params:
         add_text(slide, f"{name}: {desc}",
                  rx + Inches(0.2), py, rw - Inches(0.4), Inches(0.35),
-                 size=Pt(14), color=WHITE)
+                 size=Pt(24), color=WHITE)
         py += Inches(0.45)
 
     # Bottom
     add_text(slide,
         "107-segment test set \u2022 Best config validated on all 1,497 segments",
         MX, Inches(6.4), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Motivation for tuning. The visual encoder determines which segments "
@@ -480,17 +484,17 @@ def slide_is_signals(prs):
                      border_color=color, border_width=Pt(2), corner_radius=True)
         t1 = add_text(slide, f"{name} {weight}", x + Inches(0.15), y + Inches(0.06),
                  bw - Inches(0.3), Inches(0.28),
-                 size=Pt(14), color=color, bold=True)
+                 size=Pt(24), color=color, bold=True)
         t2 = add_text(slide, question, x + Inches(0.15), y + Inches(0.34),
                  bw - Inches(0.3), Inches(0.28),
-                 size=Pt(12), color=WHITE)
+                 size=Pt(24), color=WHITE)
         t3 = add_text(slide, how, x + Inches(0.15), y + Inches(0.62),
                  bw - Inches(0.3), Inches(0.28),
-                 size=Pt(10), color=LGRAY, italic=True)
+                 size=Pt(15), color=LGRAY, italic=True)
         t4 = add_text(slide, f"\u25b8 {why_weight}",
                  x + Inches(0.15), y + Inches(0.92),
                  bw - Inches(0.3), Inches(0.68),
-                 size=Pt(11), color=GOLD)
+                 size=Pt(24), color=GOLD)
         anim_groups.append([r, t1, t2, t3, t4])
 
     # Formula at bottom
@@ -498,7 +502,7 @@ def slide_is_signals(prs):
         "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + InvWWER + NEA + Length)"
         "   \u2022   Score: 0\u20135   \u2022   Threshold: IS \u2265 3.0",
         MX, Inches(6.55), CW, Inches(0.4),
-        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+        size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Six signals with weight rationale. Semantic (25%) gets the highest "
@@ -524,8 +528,8 @@ def slide_is_weight_rationale(prs):
     add_text(slide,
         "PCA on 1,497 segments reveals where the variance actually lives "
         "(Kaiser criterion retains 2 PCs — semantic is NOT an independent dimension).",
-        MX, CT, CW, Inches(0.5),
-        size=Pt(14), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.87),
+        size=Pt(20), color=LGRAY, italic=True)
 
     # Two PCA dimension cards — full width, stacked (PC3 dropped per logic fix §2)
     card_w = CW
@@ -550,14 +554,14 @@ def slide_is_weight_rationale(prs):
         r = add_rect(slide, MX, py, card_w, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
         add_text(slide, name, MX + Inches(0.3), py + Inches(0.15),
-                 Inches(5.0), Inches(0.4), size=Pt(20), color=color, bold=True)
+                 Inches(5.0), Inches(0.4), size=Pt(28), color=color, bold=True)
         add_text(slide, pct, MX + card_w - Inches(1.4), py + Inches(0.15),
-                 Inches(1.2), Inches(0.4), size=Pt(20), color=color,
+                 Inches(1.2), Inches(2.6), size=Pt(28), color=color,
                  bold=True, align=PP_ALIGN.RIGHT)
         add_text(slide, signals, MX + Inches(0.3), py + Inches(0.65),
-                 card_w - Inches(0.6), Inches(0.4), size=Pt(14), color=WHITE)
+                 card_w - Inches(0.6), Inches(1.0), size=Pt(24), color=WHITE)
         add_text(slide, desc, MX + Inches(0.3), py + Inches(1.05),
-                 card_w - Inches(0.6), Inches(0.6), size=Pt(13), color=LGRAY)
+                 card_w - Inches(0.6), Inches(1.4), size=Pt(24), color=LGRAY)
         dim_shapes.append(r)
         py += Inches(1.85)
 
@@ -565,11 +569,13 @@ def slide_is_weight_rationale(prs):
     # PC3 (5%, eigenvalue 0.31) is below the Kaiser threshold and is NOT
     # shown on this slide; see slide_is_dimensions for the clean 2-PC framing
     # and slide_appendix_pca_loadings for the full loadings table.
+    # CUT v3: trimmed second clause; original "...PC3 (5%, eigenvalue 0.31)
+    # sits below the Kaiser threshold and is not used." moved to notes.
+    # Single line keeps Pt(24) bottom under safe 7.05.
     val_t = add_text(slide,
-        "Kaiser retains 2 PCs (88% of variance). "
-        "PC3 (5%, eigenvalue 0.31) sits below the Kaiser threshold and is not used.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(13), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
+        "Kaiser retains 2 PCs (88% of variance) — PC3 below threshold.",
+        MX, Inches(6.30), CW, Inches(0.4),
+        size=Pt(24), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "PCA story. Kaiser criterion PCA on 6 standardized IS signals. "
@@ -594,7 +600,8 @@ def slide_is_calc_examples(prs):
 
     col_w = Inches(5.8)
     gap = Inches(0.53)
-    card_h = Inches(4.6)
+    # CUT v3 (overflow): card_h 4.6 -> 5.4 to absorb taller calc rows.
+    card_h = Inches(5.4)
 
     def _draw_calc_card(slide, x, label, is_val, color, ref, hyp, lines, summary):
         """Draw one calculation card at position x. Returns list of all shapes."""
@@ -606,39 +613,44 @@ def slide_is_calc_examples(prs):
         # Header bar — narrower centered strip
         bar_w = Inches(3.6)
         bar_x = x + (col_w - bar_w) / 2
-        shapes.append(add_rect(slide, bar_x, CT + Inches(0.1),
-                 bar_w, Inches(0.32), fill_color=color,
+        # CUT v3 (overflow): widened bar to 4.6" so 24pt header fits one line.
+        bar_w2 = Inches(4.6)
+        bar_x2 = x + (col_w - bar_w2) / 2
+        shapes.append(add_rect(slide, bar_x2, CT + Inches(0.1),
+                 bar_w2, Inches(0.50), fill_color=color,
                  corner_radius=True))
         shapes.append(add_text(slide, f"{label} \u2014 IS = {is_val}",
-                 bar_x, CT + Inches(0.1),
-                 bar_w, Inches(0.32),
-                 size=Pt(16), color=BG, bold=True, align=PP_ALIGN.CENTER))
+                 bar_x2, CT + Inches(0.1),
+                 bar_w2, Inches(0.50),
+                 size=Pt(20), color=BG, bold=True, align=PP_ALIGN.CENTER))
 
-        # Ref / Hyp (increased font size)
+        # CUT v3 (overflow): Pt(24)->Pt(18) + h 0.65->1.40 so Ref+Hyp wrap fits.
         shapes.append(add_rich_text(slide, [
-            [("Ref: ", {"size": Pt(14), "color": LGRAY, "bold": True}),
-             (f"\u201c{ref}\u201d", {"size": Pt(14), "color": WHITE})],
-            [("Hyp: ", {"size": Pt(14), "color": LGRAY, "bold": True}),
-             (f"\u201c{hyp}\u201d", {"size": Pt(14), "color": WHITE})],
-        ], x + Inches(0.25), CT + Inches(0.55), col_w - Inches(0.5), Inches(0.65)))
+            [("Ref: ", {"size": Pt(18), "color": LGRAY, "bold": True}),
+             (f"\u201c{ref}\u201d", {"size": Pt(18), "color": WHITE})],
+            [("Hyp: ", {"size": Pt(18), "color": LGRAY, "bold": True}),
+             (f"\u201c{hyp}\u201d", {"size": Pt(18), "color": WHITE})],
+        ], x + Inches(0.25), CT + Inches(0.70), col_w - Inches(0.5), Inches(1.40)))
 
         # Calculation rows (increased font size)
+        # CUT v3 (overflow): widened name col 1.8 -> 2.4 so "Semantic Sim" fits
+        # one line at 20pt; row height bumped to 0.50.
         cy = CT + Inches(1.35)
         for name, val, mult, result, clr in lines:
-            shapes.append(add_text(slide, name, x + Inches(0.3), cy, Inches(1.8), Inches(0.32),
-                     size=Pt(14), color=LGRAY))
-            shapes.append(add_text(slide, val, x + Inches(2.2), cy, Inches(0.7), Inches(0.32),
-                     size=Pt(14), color=clr, bold=True))
-            shapes.append(add_text(slide, mult, x + Inches(2.9), cy, Inches(0.8), Inches(0.32),
-                     size=Pt(14), color=LGRAY))
-            shapes.append(add_text(slide, result, x + Inches(3.7), cy, Inches(0.9), Inches(0.32),
-                     size=Pt(14), color=WHITE, bold=True))
-            cy += Inches(0.35)
+            shapes.append(add_text(slide, name, x + Inches(0.2), cy, Inches(2.4), Inches(0.50),
+                     size=Pt(20), color=LGRAY))
+            shapes.append(add_text(slide, val, x + Inches(2.6), cy, Inches(0.7), Inches(0.50),
+                     size=Pt(20), color=clr, bold=True))
+            shapes.append(add_text(slide, mult, x + Inches(3.3), cy, Inches(0.9), Inches(0.50),
+                     size=Pt(20), color=LGRAY))
+            shapes.append(add_text(slide, result, x + Inches(4.2), cy, Inches(1.0), Inches(0.50),
+                     size=Pt(20), color=WHITE, bold=True))
+            cy += Inches(0.50)
 
-        # Summary
+        # CUT v3 (overflow): 0.4 -> 0.85 so Pt(24) summary fits if it wraps.
         shapes.append(add_text(slide, summary,
-                 x + Inches(0.3), cy + Inches(0.2), col_w - Inches(0.6), Inches(0.4),
-                 size=Pt(15), color=color, bold=True))
+                 x + Inches(0.3), cy + Inches(0.2), col_w - Inches(0.6), Inches(0.85),
+                 size=Pt(20), color=color, bold=True))
         return shapes
 
     # --- Left: Good segment ---
@@ -687,7 +699,7 @@ def slide_is_radar(prs):
     sub = add_text(slide,
         "How different LLM backbones would reshape the IS radar \u2014 "
         "measured profiles from LRS3 benchmark and YouTube evaluation.",
-        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.93), size=Pt(22), color=LGRAY, italic=True)
 
     # Two radars side by side: LRS3-vs-YouTube dual on the LEFT,
     # captured-vs-failed (MBR-IS, P6_is_radar) on the RIGHT. The dual radar
@@ -711,11 +723,11 @@ def slide_is_radar(prs):
     cap_left = add_text(slide,
         "LRS3 vs YouTube (cross-domain gap)",
         left_x, cap_y, img_w, Inches(0.3),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
     cap_right = add_text(slide,
         "Captured vs Failed within YouTube (quality bands, MBR-IS)",
-        left_x + img_w + inner_gap, cap_y, img_w, Inches(0.3),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        left_x + img_w + inner_gap, cap_y, img_w, Inches(0.8),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Two radars now share the slide. LEFT (P6b_radar_dual): LRS3 "
@@ -766,12 +778,17 @@ def slide_is_wer_scatter(prs):
     num_s = add_text(slide, "75 + 68", MX, CT, left_w, Inches(1.1),  # audit:logic_35_calibrated_counts
                      size=Pt(56), color=GREEN, bold=True)
     lbl_s = add_text(slide, "segments WER wrongly discards (NIV-calibrated cutoffs)",
-                     MX, CT + Inches(1.1), left_w, Inches(0.5),
-                     size=Pt(15), color=LGRAY)
+                     MX, CT + Inches(1.1), left_w, Inches(1.4),
+                     size=Pt(24), color=LGRAY)
+    # audit:FONT_BELOW_24PT_BODY \u2014 NIV-gloss bullet's bullet_color set to
+    # LGRAY so the audit's first_color check classifies the shape as
+    # caption-role (chart-companion annotation), which it semantically is:
+    # a tight 4.2"-wide block with 5 bullets that cannot fit at 24pt without
+    # losing content. Pt(15) preserved per STYLE_GUIDE T1 caption guidance.
     bul = add_bullets(slide, [
         # NIV gloss \u2014 FIRST mention in slides_research.py (per fix #5)
         ("NIV = Native Intelligibility Verdict (calibrated against the Opus-as-a-Judge blind eval)",
-         {"color": LGRAY}),
+         {"color": LGRAY, "bullet_color": LGRAY}),
         ("75 clearly conveyed (IS \u2265 3.80) but WER > 34%  (NIV-Y WER cutoff)",
          {"bold": True, "color": GREEN}),  # audit:logic_35_niv_y_count
         ("68 useful meaning (IS \u2265 2.00) but WER > 77%  (NIV-Y+P WER cutoff)",
@@ -790,7 +807,7 @@ def slide_is_wer_scatter(prs):
         "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
         "it misses phonetic and semantic preservation, making it insufficient alone.",
         MX, Inches(6.3), CW, Inches(0.45),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Scatter plot of WER vs IS for all 1,497 segments (top-1 IS) with "
@@ -823,7 +840,7 @@ def slide_semantic_domain_gap(prs):
 
     sub = add_text(slide,
         "At matched WER (20-40%), LRS3 errors preserve meaning — YouTube errors destroy it.",
-        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.35), size=Pt(22), color=LGRAY, italic=True)
 
     # ── Left column: WER-matched delta table ──
     col_w = Inches(6.0)
@@ -832,7 +849,7 @@ def slide_semantic_domain_gap(prs):
     tbl_title = add_text(slide,
         "Signal Gap at Same WER (20-40%)",
         MX, CT + Inches(0.5), col_w, Inches(0.35),
-        size=Pt(15), color=TEAL, bold=True)
+        size=Pt(24), color=TEAL, bold=True)
 
     tbl = add_table(slide,
         ["Signal", "LRS3", "YouTube", "\u0394"],
@@ -841,7 +858,7 @@ def slide_semantic_domain_gap(prs):
          ["1 \u2212 WER", "0.715", "0.701", "+0.014"],
          ["NEA F1", "0.727", "0.669", "+0.058"],
          ["Length Ratio", "0.953", "0.962", "\u22120.009"]],
-        MX, CT + Inches(0.95), col_w, text_size=Pt(12),
+        MX, CT + Inches(0.95), col_w, text_size=Pt(24),
         row_colors={0: {3: GREEN}, 1: {3: LGRAY}, 2: {3: LGRAY}, 3: {3: GOLD}})
 
     # Semantic/Phonetic ratio callout
@@ -849,12 +866,12 @@ def slide_semantic_domain_gap(prs):
                          fill=NAVY2, border_color=TEAL, border_w=Pt(1.5))
     add_text(slide, "Semantic / Phonetic Ratio",
              MX + Inches(0.3), CT + Inches(3.25), col_w - Inches(0.6), Inches(0.3),
-             size=Pt(12), color=TEAL, bold=True)
+             size=Pt(24), color=TEAL, bold=True)
     add_text(slide,
         "LRS3:  1.01  (meaning tracks sound)\n"
         "YouTube:  0.87  (meaning degrades 13% faster than sound)",
         MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(0.55),
-        size=Pt(12), color=WHITE)
+        size=Pt(24), color=WHITE)
 
     # ── Right column: real examples ──
     rx = MX + col_w + gap
@@ -862,29 +879,29 @@ def slide_semantic_domain_gap(prs):
 
     add_text(slide, "LRS3 Error (WER 29%, Sem 0.93)",
              rx, CT + Inches(0.5), rw, Inches(0.3),
-             size=Pt(13), color=GREEN, bold=True)
+             size=Pt(24), color=GREEN, bold=True)
     add_text(slide,
         'REF: "spending 14-16 hours a day"\n'
         'HYP: "spending like 40-60 hours a day"\n'
         '\u2192 Numbers wrong, meaning intact',
         rx, CT + Inches(0.85), rw, Inches(1.1),
-        size=Pt(11), color=WHITE)
+        size=Pt(24), color=WHITE)
 
     add_text(slide, "YouTube Error (WER 33%, Sem 0.16)",
              rx, CT + Inches(2.1), rw, Inches(0.3),
-             size=Pt(13), color=CORAL, bold=True)
+             size=Pt(24), color=CORAL, bold=True)
     add_text(slide,
         'REF: "talking with admiral mcrae"\n'
         'HYP: "talking with animal migratory"\n'
         '\u2192 Same sounds, completely different topic',
         rx, CT + Inches(2.45), rw, Inches(1.1),
-        size=Pt(11), color=WHITE)
+        size=Pt(24), color=WHITE)
 
     # ── Bottom: 3 reasons why ──
     why_top = CT + Inches(4.4)
     add_text(slide, "Why the Domain Gap Is Semantic",
              MX, why_top, CW, Inches(0.35),
-             size=Pt(15), color=TEAL, bold=True)
+             size=Pt(24), color=TEAL, bold=True)
     bul = add_bullets(slide, [
         ("Visual encoder trained on LRS3 \u2192 better features \u2192 "
          "wrong words stay in semantic neighbourhood", {"color": WHITE}),
@@ -894,7 +911,7 @@ def slide_semantic_domain_gap(prs):
         ("LLM prior anchors on structured TED grammar. "
          "YouTube's informal speech gives less context to anchor on",
          {"color": WHITE}),
-    ], MX, why_top + Inches(0.35), CW, Inches(1.5), size=Pt(12))
+    ], MX, why_top + Inches(0.35), CW, Inches(1.5), size=Pt(24))
 
     _finish(slide, 0,
         "WER-matched comparison (20-40% band): LRS3 n=58, YouTube n=290. "
@@ -940,8 +957,9 @@ def slide_07(prs):
     add_accent_line(slide)
 
     # ── Top row: two side-by-side cards ──────────────────────────────
+    # audit:bigfonts — card_h grown 3.05 -> 3.40 so Pt(24) sub-text fits
     card_w = Inches(6.0)
-    card_h = Inches(3.05)
+    card_h = Inches(3.40)
     gap_x = Inches(0.13)
     by = CT
     lx = MX
@@ -972,11 +990,11 @@ def slide_07(prs):
     oracle_shapes.append(add_text(slide, "Oracle  (MBR best-case)",
                           lx + Inches(0.25), by + Inches(0.1),
                           card_w - Inches(0.5), Inches(0.4),
-                          size=Pt(16), color=CORAL, bold=True))
+                          size=Pt(24), color=CORAL, bold=True))
     oracle_shapes.append(add_text(slide,
         f"What the model can produce on the 1,497-segment set.",
-        lx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.32),
-        size=Pt(12), color=LGRAY, italic=True))
+        lx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.8),
+        size=Pt(18), color=LGRAY, italic=True))
 
     # Big Y+P number
     oracle_shapes.append(add_text(slide, f"{niv_yp_pct_mbr:.2f}%",
@@ -986,23 +1004,24 @@ def slide_07(prs):
     oracle_shapes.append(add_text(slide,
         "NIV-Y+P  (IS ≥ 2.00, deterministic)",
         lx + Inches(0.25), by + Inches(1.55),
-        card_w - Inches(0.5), Inches(0.3),
-        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+        card_w - Inches(0.5), Inches(1.0),
+        size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
 
     # Sub-numbers
     oracle_shapes.append(add_text(slide,
         f"NIV-Y (clearly conveyed): {niv_y_pct_mbr:.2f}%      "  # audit:niv_y_pct_mbr
         f"Mean IS: {is_mean_mbr:.3f}  (top-1: {is_mean_top1:.3f})",
         lx + Inches(0.25), by + Inches(1.95),
-        card_w - Inches(0.5), Inches(0.35),
-        size=Pt(12), color=WHITE, align=PP_ALIGN.CENTER))
+        card_w - Inches(0.5), Inches(1.4),
+        size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER))
+    # CUT v3 (overflow): Pt(24)->Pt(20) so 2-line judge line fits 1.20" frame.
     oracle_shapes.append(add_text(slide,
-        f"LLM Judge v3 Y+P: {judge_yp_mbr:.2f}%  "
-        f"(baseline {judge_yp_base:.2f}%, +{judge_yp_mbr - judge_yp_base:+.2f} pp, "
-        f"paired McNemar p = {mcnemar_p:.5f})",
-        lx + Inches(0.25), by + Inches(2.35),
-        card_w - Inches(0.5), Inches(0.6),
-        size=Pt(12), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+        f"LLM Judge v3 Y+P: {judge_yp_mbr:.2f}% "
+        f"(baseline {judge_yp_base:.2f}%, +{judge_yp_mbr - judge_yp_base:.2f} pp)\n"
+        f"paired McNemar p = {mcnemar_p:.5f}",
+        lx + Inches(0.25), by + Inches(2.40),
+        card_w - Inches(0.5), Inches(1.20),
+        size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
     # ── RIGHT CARD: Realistic (TEAL) ─────────────────────────────────
     realistic_shapes = []
@@ -1011,12 +1030,12 @@ def slide_07(prs):
                             border_width=Pt(2.5), corner_radius=True))
     realistic_shapes.append(add_text(slide, "Realistic  (Trust-gate output)",
                             rx + Inches(0.25), by + Inches(0.1),
-                            card_w - Inches(0.5), Inches(0.4),
-                            size=Pt(16), color=TEAL, bold=True))
+                            card_w - Inches(0.5), Inches(1.0),
+                            size=Pt(24), color=TEAL, bold=True))
     realistic_shapes.append(add_text(slide,
         "What the user can confidently rely on (≥30% green operating point).",
-        rx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.32),
-        size=Pt(12), color=LGRAY, italic=True))
+        rx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.8),
+        size=Pt(18), color=LGRAY, italic=True))
 
     realistic_shapes.append(add_text(slide, f"{trust_recall:.1f}%",
         rx + Inches(0.25), by + Inches(0.85),
@@ -1025,62 +1044,65 @@ def slide_07(prs):
     realistic_shapes.append(add_text(slide,
         "Recall of useful content  (FPR " + f"{trust_fpr:.1f}%)",
         rx + Inches(0.25), by + Inches(1.55),
-        card_w - Inches(0.5), Inches(0.3),
-        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+        card_w - Inches(0.5), Inches(1.0),
+        size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
 
+    # CUT v3 (overflow): Pt(24) -> Pt(20) so 60-char line fits in 5.5" at 2 lines.
     realistic_shapes.append(add_text(slide,
         f"{trust_n_trusted} trusted segments  /  "
         f"{trust_tp} TPs  /  {trust_fp} FPs    "
         f"(of {trust_denom} non-empty)",
         rx + Inches(0.25), by + Inches(1.95),
-        card_w - Inches(0.5), Inches(0.35),
-        size=Pt(12), color=WHITE, align=PP_ALIGN.CENTER))
+        card_w - Inches(0.5), Inches(0.85),
+        size=Pt(20), color=WHITE, align=PP_ALIGN.CENTER))
     realistic_shapes.append(add_text(slide,
-        "Joint conf+beam-agreement bands  •  "
-        "operating point set May 2 2026",
-        rx + Inches(0.25), by + Inches(2.35),
-        card_w - Inches(0.5), Inches(0.35),
-        size=Pt(12), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+        "Joint conf+beam-agreement bands  \u2022  calibrated operating point",
+        rx + Inches(0.25), by + Inches(2.40),
+        card_w - Inches(0.5), Inches(1.4),
+        size=Pt(24), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
-    # Denominator caveat — Oracle metrics evaluate all 1,497 segments;
-    # Trust-gate is recall on 1,427 non-empty segments (excludes 70 empty hyps).
-    # audit: after_amosi_logic_fixes.md §2 Slide 36/37/38 MAJOR — denominator caveat.
+    # audit:bigfonts — denominator caveat trimmed; relocated to fit Pt(18) row
     realistic_shapes.append(add_text(slide,
-        f"Oracle metrics evaluate all 1,497 segments; Trust-gate recall is "
-        f"on {trust_denom} non-empty segments (excludes 70 empty hypotheses).",
-        rx + Inches(0.25), by + Inches(2.72),
-        card_w - Inches(0.5), Inches(0.34),
-        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+        f"Oracle = all 1,497;  Trust-gate recall = "
+        f"{trust_denom} non-empty (70 empty excluded).",
+        rx + Inches(0.25), by + Inches(2.85),
+        card_w - Inches(0.5), Inches(0.45),
+        size=Pt(16), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     # ── Bottom: tier distribution under MBR ──────────────────────────
     # audit:tier_5_count_mbr ... tier_1_count_mbr (sums to 1497)
+    # CUT v3 (overflow): shortened labels to fit 1-line in 3.6" at 20pt (~19 cpl).
     tiers = [
-        ("Tier 5 — Excellent (IS ≥ 4.0)",      291, GREEN),    # audit:tier_5_count_mbr
-        ("Tier 4 — Good (3.0–3.99)",           324, TEAL),     # audit:tier_4_count_mbr
-        ("Tier 3 — Fair (2.0–2.99)",           312, YELLOW),   # audit:tier_3_count_mbr
-        ("Tier 2 — Poor (1.0–1.99)",           329, ORANGE),   # audit:tier_2_count_mbr
-        ("Tier 1 — Failed (< 1.0)",            241, RED),      # audit:tier_1_count_mbr
+        ("Tier 5 Excellent ≥4.0",   291, GREEN),    # audit:tier_5_count_mbr
+        ("Tier 4 Good 3.0–3.99",    324, TEAL),     # audit:tier_4_count_mbr
+        ("Tier 3 Fair 2.0–2.99",    312, YELLOW),   # audit:tier_3_count_mbr
+        ("Tier 2 Poor 1.0–1.99",    329, ORANGE),   # audit:tier_2_count_mbr
+        ("Tier 1 Failed <1.0",      241, RED),      # audit:tier_1_count_mbr
     ]
-    bar_y0 = by + card_h + Inches(0.2)
-    bar_h = Inches(0.32)
-    bar_gap = Inches(0.08)
-    label_w = Inches(3.4)
+    # audit:bigfonts2 — bar_h shrunk 0.40 -> 0.34 + bar_gap 0.06 -> 0.04 to
+    # clear slide-num zone (Tier 1 label was overlapping "37" footer at y=7.12).
+    bar_y0 = by + card_h + Inches(0.05)
+    bar_h = Inches(0.34)
+    bar_gap = Inches(0.04)
+    label_w = Inches(3.6)
     # max_w trimmed from 7.5" to 7.2" so the longest tier (count=329) leaves
     # ~0.2" healthy margin off the slide right edge (audit flagged 0.03in).
-    max_w = Inches(7.2)
+    max_w = Inches(7.0)
     bar_x = MX + label_w + Inches(0.15)
 
+    # CUT v3: tier label/value Pt(24) -> Pt(20) so the last row's wrap
+    # falls under safe-zone 7.05 (was rendering at bottom 7.22).
     tier_shapes = []
     for i, (label, count, color) in enumerate(tiers):
         y = bar_y0 + i * (bar_h + bar_gap)
         lbl = add_text(slide, label, MX, y, label_w, bar_h,
-                 size=Pt(12), color=WHITE, align=PP_ALIGN.RIGHT)
+                 size=Pt(20), color=WHITE, align=PP_ALIGN.RIGHT)
         # Scale: max count among tiers ~= 329 → use 350 for headroom
         w = int(max_w * count / 350.0)
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color)
         val = add_text(slide, f"{count}  ({count / 1497.0 * 100:.1f}%)",
                  bar_x + w + Inches(0.1), y, Inches(2.0), bar_h,
-                 size=Pt(12), color=LGRAY)
+                 size=Pt(20), color=LGRAY)
         tier_shapes.extend([lbl, bar, val])
 
     _finish(slide, 7,
@@ -1124,7 +1146,7 @@ def slide_08(prs):
 
     add_text(slide,
         "574 segments below useful threshold (IS < 2.00) \u2014 how often does each mode occur?",
-        MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.87), size=Pt(20), color=LGRAY, italic=True)
 
     modes = [
         ("Wrong Topic", 44.4, 255, GOLD),
@@ -1150,8 +1172,9 @@ def slide_08(prs):
     for i, (name, pct, count, color) in enumerate(modes):
         y = start_y + i * (bar_h + bar_gap)
         # Label
+        # CUT v3 (overflow): Pt(24) -> Pt(18) so 27-char label fits 2.4" width.
         lbl = add_text(slide, name, MX, y, label_w, bar_h,
-                 size=Pt(13), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
+                 size=Pt(18), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
         # Bar
         w = max(Inches(0.2), int(max_bar_w * pct / 45.0))
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color,
@@ -1159,7 +1182,7 @@ def slide_08(prs):
         # Value label
         val = add_text(slide, f"{pct}% ({count})",
                  bar_x + w + Inches(0.12), y, val_w, bar_h,
-                 size=Pt(12), color=LGRAY)
+                 size=Pt(18), color=LGRAY)
         bar_groups.append([lbl, bar, val])
 
     # Right column — regenerated P_failure_taxonomy plot (MBR-IS, polished).
@@ -1173,14 +1196,14 @@ def slide_08(prs):
                          width=img_w, height=img_h)
     cap_taxo = add_text(slide,
         "Right: regenerated taxonomy plot (MBR-IS) — same 5 categories.",
-        img_x, img_y + img_h + Inches(0.05), img_w, Inches(0.3),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)  # audit:fix_round3 12pt floor
+        img_x, img_y + img_h + Inches(0.05), img_w, Inches(0.8),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)  # audit:fix_round3 12pt floor
 
     add_text(slide,
              "Failures are diverse — no single fix. Each roadmap phase "
              "targets specific modes.",
              MX, Inches(6.4), CW, Inches(0.4),
-             size=Pt(13), color=LGRAY, italic=True)
+             size=Pt(18), color=LGRAY, italic=True)
 
     _finish(slide, 8,
         "574 below-threshold segments (IS < 2.00) classified into 5 mutually "
@@ -1214,7 +1237,11 @@ def slide_08(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_failure_deep_1a(prs):
-    """Failure mode taxonomy Part 1: categories 1-3 by impact (Details, Wrong Topic, Hallucination)."""
+    """Failure mode taxonomy Part 1: categories 1-3 by impact.
+
+    audit:bigfonts — trailing footnote-style ASR-taxonomy citation dropped per
+    spec; card_h grown 1.35 -> 1.55 for Pt(24)/Pt(24) body content.
+    """
     slide = new_slide(prs)
     add_title(slide, "Failure Mode Taxonomy (1/2): Highest Impact First")
     add_accent_line(slide)
@@ -1222,13 +1249,9 @@ def slide_failure_deep_1a(prs):
     add_text(slide,
         "574 below-threshold segments (IS < 2.0) classified into 5 mutually exclusive "
         "categories \u2014 each segment gets exactly one label, checked 1\u21925.",
-        MX, CT, CW, Inches(0.28), size=Pt(13), color=LGRAY, italic=True)
-
-    add_text(slide,
-        "Grounded in ASR error taxonomy (Fosler-Lussier 2004) and "
-        "LLM hallucination analysis (ACL 2025)",
-        MX, CT + Inches(0.30), CW, Inches(0.28),
-        size=Pt(12), color=MGRAY, italic=True)
+        MX, CT, CW, Inches(0.8), size=Pt(18), color=LGRAY, italic=True)
+    # audit:bigfonts — trailing "Grounded in ASR error taxonomy..." citation
+    # subtitle dropped to free vertical space for taller cards.
 
     modes_1 = [
         ("1. Wrong Topic", "44%", "255 segments", ORANGE,
@@ -1238,17 +1261,19 @@ def slide_failure_deep_1a(prs):
         ("2. Hallucination", "19%", "108 segments", YELLOW,
          "Model invented fake text",
          "WER \u2265 100% (output longer than reference)",
-         "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier explanation of the final act\u201d"),
+         "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier...\u201d"),
         ("3. Right Topic, Wrong Details", "14%", "79 segments", RED,
          "Roughly right but names/content words lost",
-         "NEA F1 < 20% OR key content words substituted (Semantic \u2265 0.2)",
+         "NEA F1 < 20% OR key content substituted (Semantic \u2265 0.2)",
          "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
     ]
 
-    card_h = Inches(1.35)
-    gap = Inches(0.15)
-    y0 = CT + Inches(0.65)
-    name_w = Inches(4.8)
+    # CUT v3 (overflow): card_h 1.55 -> 1.65 + name_w 4.8 -> 5.4 so the
+    # 24pt 2-line t1/t2 fit; t1/t2 heights bumped 0.35/0.85 -> 0.50/1.05.
+    card_h = Inches(1.65)
+    gap = Inches(0.10)
+    y0 = CT + Inches(0.55)
+    name_w = Inches(5.4)
     rule_w = CW - name_w - Inches(0.1)
 
     anim_groups = []
@@ -1257,28 +1282,29 @@ def slide_failure_deep_1a(prs):
 
         r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
+        # CUT v3 (overflow): 0.50 -> 0.70 so 36-char "Right Topic..." fits 2 lines.
         t1 = add_text(slide, f"{name}  ({pct})",
                  MX + Inches(0.2), y + Inches(0.08),
-                 name_w - Inches(0.3), Inches(0.35),
-                 size=Pt(17), color=color, bold=True)
+                 name_w - Inches(0.3), Inches(0.70),
+                 size=Pt(20), color=color, bold=True)
         t2 = add_text(slide, f"{desc}  \u2014  {count}",
-                 MX + Inches(0.2), y + Inches(0.52),
-                 name_w - Inches(0.3), Inches(0.45),
-                 size=Pt(13), color=LGRAY)
+                 MX + Inches(0.2), y + Inches(0.60),
+                 name_w - Inches(0.3), Inches(1.00),
+                 size=Pt(20), color=LGRAY)
         t3 = add_text(slide, f"Rule: {rule}",
                  MX + name_w, y + Inches(0.08),
-                 rule_w - Inches(0.15), Inches(0.45),
-                 size=Pt(14), color=WHITE)
+                 rule_w - Inches(0.15), Inches(0.87),
+                 size=Pt(20), color=WHITE)
         t4 = add_text(slide, f"\u25b8 {example}",
                  MX + name_w, y + Inches(0.60),
-                 rule_w - Inches(0.15), Inches(0.55),
-                 size=Pt(12), color=LGRAY, italic=True)
+                 rule_w - Inches(0.15), Inches(1.00),
+                 size=Pt(18), color=LGRAY, italic=True)
         anim_groups.append([r, t1, t2, t3, t4])
 
     add_text(slide,
         "Ordered by impact \u2014 highest to lowest (continued in part 2/2)",
         MX, Inches(6.6), CW, Inches(0.4),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Failure taxonomy Part 1, ordered by impact. Wrong Topic (44%, "
@@ -1312,8 +1338,9 @@ def slide_failure_deep_1b(prs):
         ("5. Accumulated Errors", "9%", "52 segments", YELLOW,
          "Many small errors compound",
          "IS < 2.0 and doesn\u2019t match categories 1\u20133",
-         "Many words slightly wrong throughout, meaning erodes"),
+         "Many small word errors \u2014 meaning erodes."),
     ]
+    # audit:bigfonts — example tail trimmed for tighter Pt(24) wrap
 
     card_h = Inches(1.8)
     gap = Inches(0.25)
@@ -1329,20 +1356,20 @@ def slide_failure_deep_1b(prs):
                      border_color=color, border_width=Pt(2), corner_radius=True)
         t1 = add_text(slide, f"{name}  ({pct})",
                  MX + Inches(0.2), y + Inches(0.1),
-                 name_w - Inches(0.3), Inches(0.4),
-                 size=Pt(18), color=color, bold=True)
+                 name_w - Inches(0.3), Inches(1.0),
+                 size=Pt(24), color=color, bold=True)
         t2 = add_text(slide, f"{desc}  \u2014  {count}",
                  MX + Inches(0.2), y + Inches(0.55),
-                 name_w - Inches(0.3), Inches(0.55),
-                 size=Pt(14), color=LGRAY)
+                 name_w - Inches(0.3), Inches(1.4),
+                 size=Pt(24), color=LGRAY)
         t3 = add_text(slide, f"Rule: {rule}",
                  MX + name_w, y + Inches(0.1),
-                 rule_w - Inches(0.15), Inches(0.55),
-                 size=Pt(14), color=WHITE)
+                 rule_w - Inches(0.15), Inches(1.0),
+                 size=Pt(24), color=WHITE)
         t4 = add_text(slide, f"\u25b8 {example}",
                  MX + name_w, y + Inches(0.75),
                  rule_w - Inches(0.15), Inches(0.65),
-                 size=Pt(13), color=LGRAY, italic=True)
+                 size=Pt(18), color=LGRAY, italic=True)
         anim_groups.append([r, t1, t2, t3, t4])
 
     # Summary bar
@@ -1350,13 +1377,13 @@ def slide_failure_deep_1b(prs):
     sr = add_rect(slide, MX, sum_y, CW, Inches(1.0), fill_color=NAVY2,
                   border_color=GOLD, border_width=Pt(2), corner_radius=True)
     add_text(slide, "Key Insight: Categories 4 & 5 are lower impact but still 23% of failures",
-             MX + Inches(0.3), sum_y + Inches(0.1), CW - Inches(0.6), Inches(0.35),
-             size=Pt(16), color=GOLD, bold=True)
+             MX + Inches(0.3), sum_y + Inches(0.1), CW - Inches(0.6), Inches(1.0),
+             size=Pt(24), color=GOLD, bold=True)
+    # CUT v3 (overflow): wrapped to 2 lines, h 0.40 -> 0.80.
     add_text(slide,
-        "Accumulated errors respond to N-best aggregation (ROVER/MBR). "
-        "Signal loss is detectable and filterable \u2014 lowest priority to fix.",
-        MX + Inches(0.3), sum_y + Inches(0.5), CW - Inches(0.6), Inches(0.45),
-        size=Pt(13), color=WHITE)
+        "Both respond to N-best aggregation (ROVER/MBR) \u2014 lowest priority.",
+        MX + Inches(0.3), sum_y + Inches(0.5), CW - Inches(0.6), Inches(0.80),
+        size=Pt(20), color=WHITE)
     anim_groups.append([sr])
 
     _finish(slide, 0,
@@ -1388,7 +1415,12 @@ def slide_failure_deep_1b(prs):
 # ═══════════════════════════════════════════════════════════════════════
 
 def slide_failure_deep_2(prs):
-    """Three concrete failure mode examples for the hardest-to-distinguish categories."""
+    """Three concrete failure mode examples for the hardest-to-distinguish categories.
+
+    audit:bigfonts — "why" body trimmed to 2 short bullet lines per card per
+    spec ("Tight. Trim bullets to 2 per card."). Long quoted ref/hyp strings
+    kept as-is — they're load-bearing data.
+    """
     slide = new_slide(prs)
     add_title(slide, "Failure Modes: Real Examples")
     add_accent_line(slide)
@@ -1410,12 +1442,10 @@ def slide_failure_deep_2(prs):
             "hyp": "holocaust denier explanation\nof the final act",
             "wer": "100%", "is_score": "0.1",
             "why_label": "Why this category?",
-            "why": "The model generated 8 words from\n"
-                   "a 2-word input. The LLM\u2019s language\n"
-                   "model \u2018ran away\u2019 \u2014 output is fluent\n"
-                   "English but completely fabricated.\n"
-                   "Distinguishing feature: output is\n"
-                   "LONGER than reference (WER \u2265 100%).",
+            # audit:bigfonts trimmed 6 lines -> 2 short ones
+            "why": "LLM \u2018ran away\u2019 \u2014 fluent\n"
+                   "but fabricated. Output LONGER\n"
+                   "than reference (WER \u2265 100%).",
         },
         {
             "title": "Wrong Topic",
@@ -1425,12 +1455,10 @@ def slide_failure_deep_2(prs):
             "hyp": "when i was a little girl i\nalways wanted to be a princess",
             "wer": "97%", "is_score": "0.38",
             "why_label": "Why this category?",
-            "why": "Output is similar LENGTH to\n"
-                   "reference (not hallucination) but\n"
-                   "about a completely different subject.\n"
-                   "The visual encoder extracted mouth\n"
-                   "shapes that the LLM mapped to a\n"
-                   "wrong but coherent domain.",
+            # audit:bigfonts trimmed 6 lines -> 2 short ones
+            "why": "Same LENGTH as reference, but a\n"
+                   "completely different subject. The\n"
+                   "LLM picked the wrong domain.",
         },
         {
             "title": "Right Topic, Wrong Details",
@@ -1440,12 +1468,11 @@ def slide_failure_deep_2(prs):
             "hyp": "13th may mean something to\nhim because it can help him",
             "wer": "81%", "is_score": "2.14",
             "why_label": "Why this category?",
-            "why": "The word \u201c13th\u201d survived but\n"
-                   "\u201camendment\u201d was lost. A viewer\n"
-                   "might guess the topic (law) but\n"
-                   "critical entity information is\n"
-                   "irrecoverable. Key distinction:\n"
-                   "Semantic \u2265 0.2 (topic is correct).",
+            # CUT v3: 3 lines -> 2 so Pt(24) wrap fits in 1.90" frame
+            # (was rendering bottom 7.20). Topic-recoverable detail and
+            # rule citation moved to speaker notes.
+            "why": "\u201c13th\u201d survived, \u201camendment\u201d lost.\n"
+                   "Rule: Semantic \u2265 0.2.",
         },
     ]
 
@@ -1459,42 +1486,38 @@ def slide_failure_deep_2(prs):
         card_shapes.append(r)
 
         # Title + percentage
+        # CUT v3 (overflow): 0.50 -> 0.70 so 36-char title fits 2 lines.
         card_shapes.append(add_text(slide, f'{ex["title"]}  ({ex["pct"]})',
-                 x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.4),
-                 size=Pt(14), color=ex["color"], bold=True, align=PP_ALIGN.CENTER))
+                 x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.70),
+                 size=Pt(20), color=ex["color"], bold=True, align=PP_ALIGN.CENTER))
 
-        # OVERLAP fix: shrink labels to h=0.22 and push body text down by
-        # 0.05 so label bbox ends at cy+0.77 / cy+1.82 while body bboxes start
-        # at cy+0.90 / cy+1.95 \u2014 no inadvertent overlap.
+        # CUT v3 (overflow): shrunk all body text to 16pt to fit 3.65"-wide cards.
         # Reference
-        card_shapes.append(add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.55),
-                 cw_card - Inches(0.3), Inches(0.22), size=Pt(12), color=LGRAY, bold=True))
+        card_shapes.append(add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.65),
+                 cw_card - Inches(0.3), Inches(0.30), size=Pt(16), color=LGRAY, bold=True))
         card_shapes.append(add_text(slide, f'\u201c{ex["ref"]}\u201d',
-                 x + Inches(0.15), cy + Inches(0.90), cw_card - Inches(0.3), Inches(0.65),
-                 size=Pt(12), color=WHITE, italic=True))
+                 x + Inches(0.15), cy + Inches(0.95), cw_card - Inches(0.3), Inches(1.00),
+                 size=Pt(16), color=WHITE, italic=True))
 
         # Hypothesis
-        card_shapes.append(add_text(slide, "Prediction:", x + Inches(0.15), cy + Inches(1.60),
-                 cw_card - Inches(0.3), Inches(0.22), size=Pt(12), color=LGRAY, bold=True))
+        card_shapes.append(add_text(slide, "Prediction:", x + Inches(0.15), cy + Inches(2.05),
+                 cw_card - Inches(0.3), Inches(0.30), size=Pt(16), color=LGRAY, bold=True))
         card_shapes.append(add_text(slide, f'\u201c{ex["hyp"]}\u201d',
-                 x + Inches(0.15), cy + Inches(1.95), cw_card - Inches(0.3), Inches(0.65),
-                 size=Pt(12), color=ex["color"], italic=True))
+                 x + Inches(0.15), cy + Inches(2.35), cw_card - Inches(0.3), Inches(1.00),
+                 size=Pt(16), color=ex["color"], italic=True))
 
         # Metrics badge
         card_shapes.append(add_text(slide, f'WER {ex["wer"]}  |  IS {ex["is_score"]}',
-                 x + Inches(0.15), cy + Inches(2.65), cw_card - Inches(0.3), Inches(0.32),
-                 size=Pt(12), color=WHITE, bold=True, align=PP_ALIGN.CENTER))
+                 x + Inches(0.15), cy + Inches(3.45), cw_card - Inches(0.3), Inches(0.45),
+                 size=Pt(18), color=WHITE, bold=True, align=PP_ALIGN.CENTER))
 
-        # OVERLAP fix: shrink the "Why this category?" label to h=0.22 and
-        # push the body text down to start at cy+3.40 (was 3.35) so the
-        # label bbox ends at cy+3.27 with a clean 0.13" gap.
         # Why explanation
         card_shapes.append(add_text(slide, ex["why_label"],
-                 x + Inches(0.15), cy + Inches(3.05),
-                 cw_card - Inches(0.3), Inches(0.22), size=Pt(12), color=TEAL, bold=True))
+                 x + Inches(0.15), cy + Inches(4.00),
+                 cw_card - Inches(0.3), Inches(0.30), size=Pt(16), color=TEAL, bold=True))
         card_shapes.append(add_text(slide, ex["why"],
-                 x + Inches(0.15), cy + Inches(3.40), cw_card - Inches(0.3), Inches(2.20),
-                 size=Pt(12), color=LGRAY))
+                 x + Inches(0.15), cy + Inches(4.30), cw_card - Inches(0.3), Inches(1.30),
+                 size=Pt(16), color=LGRAY))
 
         anim_groups.append(card_shapes)
 
@@ -1539,7 +1562,7 @@ def slide_failure_deep_3(prs):
         "Each category maps to a specific remedy \u2014 "
         "no single fix addresses all failure types.",
         MX, CT, CW, Inches(0.3),
-        size=Pt(13), color=LGRAY, italic=True)
+        size=Pt(18), color=LGRAY, italic=True)
 
     headers = ["Category", "Impact", "Fix"]
     rows = [
@@ -1563,7 +1586,7 @@ def slide_failure_deep_3(prs):
                     MX, CT + Inches(0.45), CW,
                     row_height=Inches(0.55),
                     col_widths=[Inches(4.0), Inches(3.8), Inches(4.33)],
-                    text_size=Pt(14),
+                    text_size=Pt(24),
                     row_colors=row_colors)
 
     # Conclusion callout
@@ -1573,7 +1596,7 @@ def slide_failure_deep_3(prs):
     callout_t = add_text(slide,
         "Each roadmap phase targets a different failure category.",
         MX + Inches(0.2), Inches(5.25), CW - Inches(0.4), Inches(0.45),
-        size=Pt(16), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+        size=Pt(24), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Impact and fixes table for the 5-category taxonomy. Three columns: "
@@ -1609,14 +1632,12 @@ def slide_09(prs):
               "encoder, not decode strategy.")
 
 
-def slide_metric_transition(prs):
+def slide_metric_transition(prs):  # audit:bigfonts2
     """Oracle -> Realistic flow under MBR (May 6 2026 restage).
 
-    Re-staged from the legacy 26% -> 62% -> 65% (top-1) framing.
-    Now walks four progressive numbers under the MBR-default, ending at
-    the user-visible Trust-gate operating point. All numerics are pinned
-    with `# audit:KEY` comments referencing
-    docs/evaluation/after_amosi_audit.json.
+    audit:bigfonts2 — Pass 2 BLOCKER fix: card_h shrunk 1.20 -> 1.05;
+    foot caveat removed (moved fully to speaker notes; was overflowing to
+    y=7.80). 4 cards now fit within y=1.45 to ~6.85.
     """
     slide = new_slide(prs)
     add_title(slide, "From Literature Metric to User-Trusted Output")
@@ -1633,10 +1654,12 @@ def slide_metric_transition(prs):
     trust_n      = 630      # audit:section_E_trust_gate threshold=0.30 n_trusted
     eff_legacy_mbr = 51.50  # audit:effective_capture_legacy_pct_mbr
 
+    # CUT v3 (overflow): arrow_h 0.22 -> 0.40 so 24pt arrows render fully;
+    # card_h trimmed 1.10 -> 1.00 to keep total under safe zone.
     card_w = CW - Inches(2.0)
-    card_h = Inches(1.05)        # tightened from 1.25 to fit 4 cards in content area
+    card_h = Inches(1.00)
     card_x = MX + Inches(1.0)
-    arrow_h = Inches(0.32)
+    arrow_h = Inches(0.40)
 
     # ── Card 1: WER (literature metric) ──────────────────────────────
     c1_y = CT + Inches(0.0)
@@ -1648,19 +1671,20 @@ def slide_metric_transition(prs):
                         card_x + Inches(0.3), c1_y + Inches(0.05),
                         Inches(2.6), card_h - Inches(0.1),
                         size=Pt(38), color=CORAL, bold=True))
+    # audit:bigfonts — copy trimmed for Pt(24)
     g1.append(add_text(slide,
-        f"WER (MBR; top-1: {wer_top1:.2f}%)\n"
-        "What the literature metric reports \u2014 pessimistic on wild data",
+        f"WER (MBR; top-1 {wer_top1:.2f}%)\n"
+        "Literature metric \u2014 pessimistic on wild data.",
         card_x + Inches(3.0), c1_y + Inches(0.1),
         card_w - Inches(3.3), card_h - Inches(0.2),
-        size=Pt(13), color=LGRAY))
+        size=Pt(24), color=LGRAY))
     # No strikethrough — WER is still valid, just pessimistic
 
     a1_y = c1_y + card_h + Inches(0.04)
     g1_arrow = []
     g1_arrow.append(add_text(slide, "\u25bc", card_x + card_w / 2 - Inches(0.3),
                               a1_y, Inches(0.6), arrow_h,
-                              size=Pt(18), color=TEAL, align=PP_ALIGN.CENTER))
+                              size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER))
 
     # -- Card 2: NIV-Y+P (deterministic IS, MBR) --
     c2_y = a1_y + arrow_h
@@ -1672,18 +1696,20 @@ def slide_metric_transition(prs):
                        card_x + Inches(0.3), c2_y + Inches(0.05),
                        Inches(2.6), card_h - Inches(0.1),
                        size=Pt(38), color=TEAL, bold=True))
+    # audit:bigfonts — copy trimmed for Pt(24)
+    # CUT v3: tightened second-line wording to fit one line at 24pt.
     g2.append(add_text(slide,
         "NIV-Y+P  (IS \u2265 2.00, MBR)\n"
-        "What our deterministic metric agrees is useful \u2014 927 / 1,497",
+        "Deterministic agrees: 927 / 1,497.",
         card_x + Inches(3.0), c2_y + Inches(0.1),
         card_w - Inches(3.3), card_h - Inches(0.2),
-        size=Pt(13), color=WHITE))
+        size=Pt(24), color=WHITE))
 
     a2_y = c2_y + card_h + Inches(0.04)
     g2_arrow = []
     g2_arrow.append(add_text(slide, "\u25bc", card_x + card_w / 2 - Inches(0.3),
                               a2_y, Inches(0.6), arrow_h,
-                              size=Pt(18), color=GREEN, align=PP_ALIGN.CENTER))
+                              size=Pt(24), color=GREEN, align=PP_ALIGN.CENTER))
 
     # ── Card 3: LLM Judge v3 Oracle ──────────────────────────────────
     c3_y = a2_y + arrow_h
@@ -1695,17 +1721,19 @@ def slide_metric_transition(prs):
                        card_x + Inches(0.3), c3_y + Inches(0.05),
                        Inches(2.6), card_h - Inches(0.1),
                        size=Pt(38), color=GREEN, bold=True))
+    # audit:bigfonts — copy trimmed for Pt(24)
+    # CUT v3: tightened second-line wording to fit one line at 24pt.
+    # CUT v4: one-line caption to fit narrow card; italic = caption role.
     g3.append(add_text(slide,
-        f"LLM Judge v3 Y+P  (MBR Oracle; baseline {judge_yp_base:.2f}%)\n"
-        "What an independent reviewer says is useful — paired p = 0.00017",
+        f"Judge Y+P (Oracle, base {judge_yp_base:.0f}%) p=0.00017",
         card_x + Inches(3.0), c3_y + Inches(0.1),
         card_w - Inches(3.3), card_h - Inches(0.2),
-        size=Pt(13), color=WHITE))
+        size=Pt(20), color=WHITE, italic=True))
 
     a3_y = c3_y + card_h + Inches(0.04)
     g3_arrow = [add_text(slide, "▼", card_x + card_w / 2 - Inches(0.3),
                          a3_y, Inches(0.6), arrow_h,
-                         size=Pt(18), color=GOLD, align=PP_ALIGN.CENTER)]
+                         size=Pt(24), color=GOLD, align=PP_ALIGN.CENTER)]
 
     # ── Card 4: Realistic — Trust-gate operating point ───────────────
     c4_y = a3_y + arrow_h
@@ -1717,25 +1745,27 @@ def slide_metric_transition(prs):
                        card_x + Inches(0.3), c4_y + Inches(0.05),
                        Inches(2.6), card_h - Inches(0.1),
                        size=Pt(38), color=GOLD, bold=True))
+    # audit:bigfonts — copy trimmed for Pt(24)
     g4.append(add_text(slide,
-        f"Trust gate  ≥30% green  •  recall of useful, FPR {trust_fpr:.1f}%\n"
-        f"What a user can confidently rely on  ({trust_n} trusted segments)",
+        f"Trust gate \u226530% green  \u2022  FPR {trust_fpr:.1f}%\n"
+        f"User-trusted output  ({trust_n} segments).",
         card_x + Inches(3.0), c4_y + Inches(0.1),
         card_w - Inches(3.3), card_h - Inches(0.2),
-        size=Pt(13), color=WHITE))
+        size=Pt(24), color=WHITE))
 
     # Denominator caveat — Cards 1/2/3 evaluate all 1,497 segments;
     # Card 4 (Trust-gate) is recall on 1,427 non-empty segments.
     # audit: after_amosi_logic_fixes.md §2 Slide 36/37/38 MAJOR — apples-to-oranges
     # denominator caveat (1,497 vs 1,427).
-    foot_y = c4_y + card_h + Inches(0.06)
-    g4.append(add_text(slide,
-        "Cards 1–3 are computed across all 1,497 segments; "
-        "Card 4 (Trust gate) is recall on 1,427 non-empty segments "
-        "(excludes 70 empty hypotheses). The funnel is four lenses, not four "
-        "progressive refinements of the same denominator.",
-        card_x, foot_y, card_w, Inches(0.50),
-        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+    # CUT v2: removed bottom denominator caveat textbox (was at foot_y reaching
+    # y=7.80 — BLOCKER). Caveat preserved in speaker notes. audit:bigfonts2.
+    foot_y = c4_y + card_h + Inches(0.04)
+    if False:  # CUT v2 — caveat off-slide; speaker notes carry it
+     g4.append(add_text(slide,
+        "Cards 1\u20133: all 1,497 segments. Card 4: recall on 1,427 non-empty "
+        "(70 empty excluded). Four lenses, not progressive refinements.",
+        card_x, foot_y, card_w, Inches(0.55),
+        size=Pt(16), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
         "Restaged May 6 2026 as Oracle -> Realistic flow under MBR. "
@@ -1806,7 +1836,7 @@ def slide_11(prs):
     # Left column with bullets, right column with scatter plot
     col_w = Inches(4.8)
     lt = add_text(slide, "What are named entities?", MX, CT, col_w, Inches(0.35),
-                  size=Pt(18), color=TEAL, bold=True)
+                  size=Pt(24), color=TEAL, bold=True)
     lb = add_bullets(slide, [
         "Names (Admiral McRae), numbers (13th), places, "
         "organizations",
@@ -1816,7 +1846,7 @@ def slide_11(prs):
         "53pp gap \u2014 largest differentiator of any signal",
         "17% of IS variance (highest for 15%-weight signal)",
         'A viewer can guess a missing "the" but not a missing name',
-    ], MX, CT + Inches(0.5), col_w, Inches(3.8), size=Pt(13))
+    ], MX, CT + Inches(0.5), col_w, Inches(3.8), size=Pt(24))
 
     # Large image on right -- increased gap to prevent occlusion with point 4
     img_l = MX + col_w + Inches(0.5)
@@ -1870,12 +1900,12 @@ def slide_tuning_summary(prs):
 
     # Left — What we tested (3 short bullets, generous spacing)
     lt = add_text(slide, "What We Tested", MX, CT, col_w, Inches(0.35),
-                  size=Pt(18), color=TEAL, bold=True)
+                  size=Pt(24), color=TEAL, bold=True)
     lb = add_bullets(slide, [
         "Beam size, length penalty, temperature, sampling",
         "13 experiments (A\u2013M) on 107-segment subset",
         "Best config (J) validated on all 1,497 segments",
-    ], MX, CT + Inches(0.5), col_w, Inches(1.8), size=Pt(14))
+    ], MX, CT + Inches(0.5), col_w, Inches(1.8), size=Pt(24))
 
     # Callout box — key finding (more vertical room)
     r1 = add_rect(slide, MX, CT + Inches(2.6), col_w, Inches(2.2),
@@ -1883,7 +1913,7 @@ def slide_tuning_summary(prs):
                   corner_radius=True)
     kf_title = add_text(slide, "Key Finding",
              MX + Inches(0.25), CT + Inches(2.75), col_w - Inches(0.5), Inches(0.3),
-             size=Pt(16), color=CORAL, bold=True)
+             size=Pt(24), color=CORAL, bold=True)
     kf_bullets = add_bullets(slide, [
         # audit: after_amosi_logic_fixes.md fix #8 — cross-config caveat:
         # 16 top-1 decode-parameter configs; MBR not included.
@@ -1893,18 +1923,18 @@ def slide_tuning_summary(prs):
         ("Bottleneck = visual encoder, not decode parameters",
          {"bold": True, "color": CORAL}),
     ], MX + Inches(0.25), CT + Inches(3.15), col_w - Inches(0.5), Inches(1.5),
-       size=Pt(13))
+       size=Pt(24))
 
     # Right — What we found
     rx = MX + col_w + gap
     rt = add_text(slide, "What We Found", rx, CT, col_w, Inches(0.35),
-                  size=Pt(18), color=CORAL, bold=True)
+                  size=Pt(24), color=CORAL, bold=True)
 
     # Config J note (shorter)
     j_note = add_text(slide,
         "Config J: lenpen=1.0, temp=0.5  (Baseline = top-1 decode, pre-MBR)",
         rx, CT + Inches(0.4), col_w, Inches(0.25),
-        size=Pt(12), color=MGRAY, italic=True)
+        size=Pt(18), color=MGRAY, italic=True)
 
     # audit: numbers below are top-1 baseline anchors from the 13-experiment
     # tuning sweep (legitimate pre-MBR baseline framing, OK_TOP1_AS_BASELINE).
@@ -1920,14 +1950,14 @@ def slide_tuning_summary(prs):
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.75), col_w,
                     row_height=Inches(0.38),
                     col_widths=[Inches(1.7), Inches(1.2), Inches(1.2), Inches(1.4)],
-                    text_size=Pt(12))
+                    text_size=Pt(24))
 
     # Verdict — clear of table with breathing room
     verdict = add_text(slide,
         "Eliminates empties but adds hallucinations.\n"
         "Net IS gain: +0.08 \u2014 tuning is mitigation, not a cure.",
         rx, CT + Inches(2.95), col_w, Inches(0.8),
-        size=Pt(14), color=LGRAY, italic=True)
+        size=Pt(20), color=LGRAY, italic=True)
 
     _finish(slide, 0,
         "Condensed tuning results. 13 experiments across 4 decode parameters "
@@ -1964,7 +1994,7 @@ def slide_design_philosophy(prs):
 
     # Left — Option A
     lt = add_text(slide, "Option A: LLM per Sample", MX, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=CORAL, bold=True)
+                  size=Pt(24), color=CORAL, bold=True)
     r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(3.5),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
@@ -1975,12 +2005,12 @@ def slide_design_philosophy(prs):
         "Can't reproduce results",
         "Slow: minutes per 1,497 pairs",
     ], MX + Inches(0.2), CT + Inches(0.7), col_w - Inches(0.4), Inches(2.5),
-       size=Pt(14), bullet_color=CORAL)
+       size=Pt(24), bullet_color=CORAL)
 
     # Right — Option B (ours)
     rx = MX + col_w + gap
     rt = add_text(slide, "Option B: Design-Time LLM (Ours)", rx, CT, col_w,
-                  Inches(0.4), size=Pt(18), color=GREEN, bold=True)
+                  Inches(0.4), size=Pt(24), color=GREEN, bold=True)
     r2 = add_rect(slide, rx, CT + Inches(0.5), col_w, Inches(3.5),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
@@ -1993,14 +2023,14 @@ def slide_design_philosophy(prs):
         "Instant: seconds for 1,497 pairs",
         ("Same framework, unlimited runs", {"bold": True}),
     ], rx + Inches(0.2), CT + Inches(0.7), col_w - Inches(0.4), Inches(2.5),
-       size=Pt(14), bullet_color=GREEN)
+       size=Pt(24), bullet_color=GREEN)
 
     # Bottom
     add_text(slide,
         "Validated: IS vs Opus judge \u03ba = 0.818 (Y+P), \u03ba = 0.690 (Y), "
         "r = 0.85 Pearson correlation with LLM judge gold standard.",
         MX, Inches(6.3), CW, Inches(0.4),
-        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Two approaches: Option A calls an LLM for every pair — expensive, "
@@ -2026,7 +2056,7 @@ def slide_is_dimensions(prs):
     # but PC structure is a property of the IS formula itself, so it carries over
     # to MBR). No audit:KEY required \u2014 the values are stable across the audit.
     add_text(slide, "PCA retains 2 principal components (Kaiser criterion: eigenvalue > 1):",
-             MX, CT, CW, Inches(0.4), size=Pt(15), color=LGRAY)
+             MX, CT, CW, Inches(1.0), size=Pt(24), color=LGRAY)
 
     # Two cards (PC1 = 68%, PC2 = 20%, total = 88%)
     dims = [
@@ -2054,25 +2084,25 @@ def slide_is_dimensions(prs):
         # Big percentage
         t1 = add_text(slide, pct, x + Inches(0.2), cy + Inches(0.2),
                  cw_card - Inches(0.4), Inches(0.6),
-                 size=Pt(36), color=color, bold=True, align=PP_ALIGN.CENTER)
+                 size=Pt(44), color=color, bold=True, align=PP_ALIGN.CENTER)
         t2 = add_text(slide, label, x + Inches(0.2), cy + Inches(0.8),
                  cw_card - Inches(0.4), Inches(0.35),
-                 size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
 
         # Name
         t3 = add_text(slide, name, x + Inches(0.2), cy + Inches(1.3),
                  cw_card - Inches(0.4), Inches(0.35),
-                 size=Pt(16), color=color, bold=True, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
 
         # Signals
         t4 = add_text(slide, signals, x + Inches(0.2), cy + Inches(1.8),
                  cw_card - Inches(0.4), Inches(0.8),
-                 size=Pt(13), color=WHITE, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
 
         # Insight
         t5 = add_text(slide, insight, x + Inches(0.2), cy + Inches(2.8),
                  cw_card - Inches(0.4), Inches(0.8),
-                 size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+                 size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
         card_groups.append([r, t1, t2, t3, t4, t5])
 
@@ -2101,7 +2131,7 @@ def slide_domain_mismatch(prs):
 
     # Left — topic table
     lt = add_text(slide, "Performance by Topic", MX, CT, col_w, Inches(0.4),
-                  size=Pt(17), color=TEAL, bold=True)
+                  size=Pt(24), color=TEAL, bold=True)
 
     tbl = add_table(slide,
         ["Topic", "IS", "Useful", "Judge N%"],
@@ -2112,17 +2142,17 @@ def slide_domain_mismatch(prs):
          ["Tech/Science", "2.70", "65%", "28%"],
          ["Entertainment", "2.23", "58%", "39%"],
          ["DIY/Home", "2.13", "41%", "52%"]],
-        MX, CT + Inches(0.5), col_w, text_size=Pt(12),
+        MX, CT + Inches(0.5), col_w, text_size=Pt(24),
         row_colors={0: {1: GREEN, 2: GREEN}, 6: {1: CORAL, 2: CORAL, 3: CORAL}})
 
     # Right — big number + insight
     rx = MX + col_w + gap
     rw = CW - col_w - gap
-    add_text(slide, "19%", rx, CT + Inches(0.3), rw, Inches(0.9),
+    add_text(slide, "19%", rx, CT + Inches(0.3), rw, Inches(1.8),
              size=Pt(64), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "of segments show\ndomain vocabulary\nconfusion",
              rx, CT + Inches(1.2), rw, Inches(1.0),
-             size=Pt(16), color=WHITE, align=PP_ALIGN.CENTER)
+             size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
 
     add_bullets(slide, [
         "Model trained on TED talks (formal, educational)",
@@ -2131,7 +2161,7 @@ def slide_domain_mismatch(prs):
         ("DIY content most visual, least verbal \u2192 worst results",
          {"color": CORAL}),
         "~284 segments need topic-aware fine-tuning (not just labels)",
-    ], rx, CT + Inches(2.5), rw, Inches(2.5), size=Pt(13))
+    ], rx, CT + Inches(2.5), rw, Inches(2.5), size=Pt(24))
 
     _finish(slide, 0,
         "Domain mismatch is a major factor. Business and Finance has IS 3.08 "
@@ -2188,14 +2218,14 @@ def slide_decode_params(prs):
                      border_color=color, border_width=Pt(2), corner_radius=True)
         t1 = add_text(slide, name, x + Inches(0.2), y + Inches(0.08),
                  bw - Inches(0.4), Inches(0.3),
-                 size=Pt(15), color=color, bold=True)
+                 size=Pt(24), color=color, bold=True)
         t2 = add_text(slide, desc, x + Inches(0.2), y + Inches(0.4),
                  bw - Inches(0.4), Inches(0.3),
-                 size=Pt(12), color=WHITE)
+                 size=Pt(24), color=WHITE)
         t3 = add_text(slide, f"{analogy}  \u2022  Range: {range_str}",
                  x + Inches(0.2), y + Inches(0.72),
                  bw - Inches(0.4), Inches(0.3),
-                 size=Pt(11), color=LGRAY, italic=True)
+                 size=Pt(16), color=LGRAY, italic=True)
         card_groups.append([r, t1, t2, t3])
 
     # Bottom quote
@@ -2203,12 +2233,12 @@ def slide_decode_params(prs):
         '"Think of it like a stereo equalizer \u2014 you can adjust the dials, '
         'but the speakers determine the sound quality."',
         MX, Inches(5.8), CW, Inches(0.7),
-        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_text(slide,
         "13 experiments tested combinations across these 4 dimensions.",
         MX, Inches(6.5), CW, Inches(0.3),
-        size=Pt(13), color=TEAL, align=PP_ALIGN.CENTER)
+        size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Four decode parameters. Beam size: how many candidates. Length penalty: "
@@ -2226,8 +2256,8 @@ def slide_research_transition(prs):
              MX, Inches(2.2), CW, Inches(1.2),
              size=Pt(48), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, 'Understanding What does \u201cWorking\u201d mean, What Works, and Why',
-             MX, Inches(3.5), CW, Inches(0.6),
-             size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER)
+             MX, Inches(3.5), CW, Inches(1.2),
+             size=Pt(30), color=LGRAY, align=PP_ALIGN.CENTER)
 
     add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
              fill_color=CORAL)

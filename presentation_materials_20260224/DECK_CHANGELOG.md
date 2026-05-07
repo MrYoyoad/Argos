@@ -10,6 +10,17 @@ both what changed and *why*. Audits (style linter, number audit) catch
 mechanical regressions; this file is the human-readable record for
 narrative / framing / story decisions audits can't see.
 
+## Build rules (May-2026 small-screen review — apply to every new slide)
+
+These supersede earlier defaults. See `docs/_research-tools/generators/STYLE_GUIDE.md` §7.3 (T1) and §7.7 (V1–V6) for the full list.
+
+- **Body-text floor is 24pt.** Titles 32–40pt. Footers 16–18pt. Slide-numbers (bottom-left short numerics) are the only 12pt exception.
+- **Max 4 bullets per slide** (prefer 2–3). **Max 8 words per bullet.**
+- **Visual-first by default.** Plot/diagram/video/icon carries the meaning; text is the caption.
+- **Speaker notes carry the long form** — bodies stay terse.
+- **When content overflows, cut content** — never drop the font floor. Split into two slides if needed.
+- **Text-dense slides allowed** (V6): "What was done", Executive Summary, roadmap detail, Key Takeaways, methodology breakdowns, LLM-Judge × IS Tier — these may carry up to 8 short bullets but each bullet still respects the 8-word ceiling.
+
 ## Format
 
 Each entry:
@@ -23,6 +34,39 @@ Each entry:
 - **COMMIT** (short SHA, looked up via `git log`)
 
 Reverse-chronological: newest entry on top.
+
+---
+
+## 2026-05-07 — **Strip update-date stamps from slide body text** (LANDED)
+
+Across the 5 academic-deck slide modules, removed visible "May 2 2026 / Apr 30 2026 / May 1 2026" date suffixes from titles, captions and bullets. Speaker notes, code comments, and Python docstrings keep dates (they're informational and not visible on the slide). Title slide's "May 2026" talk date stays.
+
+**WHAT — Body-text edits (7 total across 5 files):**
+
+- `slides_opening.py`:
+  - `slide_what_was_done_1` bullet: "(Apr 30 2026) ... (May 2 2026)" → both date suffixes stripped.
+  - `slide_what_was_done_2` bullet: "Mission 6 shipped (May 1 2026): ... May 2 2026" → date references stripped.
+- `slides_research.py`:
+  - `slide_07` Realistic-card caption: "operating point set May 2 2026" → "calibrated operating point".
+- `slides_evaluation.py`:
+  - `slide_agreement_aware_bands` subtitle: "Production rule shipped May 2 2026" → "Production rule".
+  - Conf-only legacy-card bullet: "Used in pre-May-2026 deployments" → "Used in earlier deployments".
+- `slides_future.py`:
+  - `slide_26` staircase Phases 1+2 captions: "(shipped Apr 30 2026)" / "(shipped May 2 2026; ROVER…)" → "(shipped)" / "(shipped; ROVER…)".
+  - `slide_28` lead paragraph: "Until May 2 2026 we displayed only the top-1 hypothesis" → "Previously we displayed only the top-1 hypothesis".
+  - `slide_31` takeaway #4: "(May 2 2026, Mission 6)" → "(Mission 6)".
+  - `slide_confidence_scoring` title: "Confidence Scoring (shipped April 30 2026) — Surface the Good 65%" → "Confidence Scoring (shipped) — Surface the Good 65%".
+- `slides_engineering.py`: no body-text date stamps found; unchanged.
+
+**WHY:**
+- Update-date stamps in body text make a research deck feel temporary/incomplete to the audience (the talk doesn't need a "shipped on …" attribution next to every feature). Speaker can still mention a date out loud from notes if asked.
+- Talk-date "May 2026" on the title slide remains intentionally — that's the date of THIS presentation, not an update timestamp.
+
+**FILES:**
+- Edited: `docs/_research-tools/generators/presentation/slides_opening.py`, `slides_research.py`, `slides_evaluation.py`, `slides_future.py`
+- Verified clean ast.parse on all 5 academic-deck modules (slides_engineering.py untouched, slides_client.py out of scope).
+
+**COMMIT:** _to be filled in after `git commit`_
 
 ---
 

@@ -29,7 +29,7 @@ from pathlib import Path
 from pptx import Presentation
 
 from presentation.config import SL_W, SL_H, _auto_num
-from presentation.helpers import _fix_pptx_video_compat
+from presentation.helpers import _fix_pptx_video_compat, _strip_orphan_animation_refs
 
 # Override the default OUTPUT path defined in presentation/config.py.
 # (config.py's OUTPUT points at the client deck filename — we want the
@@ -406,6 +406,7 @@ def main():
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(OUTPUT))
     _fix_pptx_video_compat(str(OUTPUT))
+    _strip_orphan_animation_refs(str(OUTPUT))
     print(f"\nSaved: {OUTPUT}")
     print(f"Slides: {len(prs.slides)} (hidden: {sum(1 for b in builders if b in hidden_builders)})")
 

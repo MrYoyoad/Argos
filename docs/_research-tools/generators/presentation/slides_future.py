@@ -30,7 +30,7 @@ from .helpers import (
 # SLIDE 24 — REFRAMING THE STARTING POINT
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_24(prs):
+def slide_24(prs):  # audit:bigfonts
     slide = new_slide(prs)
     add_title(slide, "Starting from 62%, Not 25%")  # audit:niv_yp_pct_mbr
     add_accent_line(slide)
@@ -44,13 +44,14 @@ def slide_24(prs):
                   border_color=CORAL, border_width=Pt(2), corner_radius=True)
     add_text(slide, "WER Says", MX + Inches(0.2), CT + Inches(0.1),
              col_w - Inches(0.4), Inches(0.35),
-             size=Pt(16), color=CORAL, bold=True)
+             size=Pt(24), color=CORAL, bold=True)
+    # CUT v3: Pt(24)->Pt(18) so bullets fit in narrow 3.0" column.
     add_bullets(slide, [
-        "26% useful by WER (<30%, uncalibrated bucket)",  # audit:logic_fix slide 11
-        "~3 in 4 segments fail by this cut",
+        "26% useful by WER (<30%, uncalibrated)",  # audit:logic_fix slide 11
+        "~3 in 4 segments fail",
         "Ignores phonetic preservation (42%)",
     ], MX + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
-       Inches(1.2), size=Pt(13), bullet_color=CORAL)
+       Inches(4.2), size=Pt(18), bullet_color=CORAL)
 
     # Middle column — IS Says (teal)
     mx2 = MX + col_w + gap
@@ -58,33 +59,32 @@ def slide_24(prs):
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
     add_text(slide, "IS Says", mx2 + Inches(0.2), CT + Inches(0.1),
              col_w - Inches(0.4), Inches(0.35),
-             size=Pt(16), color=TEAL, bold=True)
+             size=Pt(24), color=TEAL, bold=True)
+    # CUT v3: bullets compressed + Pt(24)->Pt(18) so 4 bullets fit in
+    # narrow 3.0" column inside 1.5" frame (was rendering bottom 11.20).
+    # Long-form retained in notes.
     add_bullets(slide, [
         # audit:niv_yp_pct_mbr / audit:niv_yp_pct_top1
-        ("62% useful output (IS \u2265 2.00, MBR); top-1 baseline 62%",
-         {"bold": True}),
-        ("65% useful per Opus-as-a-Judge v1 blind "
-         "(Y+P = 971/1,497, Opus 4.6, gold standard)",
-         {"color": GREEN}),
-        # audit:cross_config_includes_mbr=False
-        ("Validated across 16 top-1 decode-parameter configs (r=0.925); "
-         "MBR validation is the v3 paired Judge test, not the cross-config sweep",
-         {}),
-        "Pearson r = 0.85 between top-1 IS and Opus v1 verdicts",
+        ("62% useful (IS\u22652.00, MBR)", {"bold": True}),
+        ("65% by Opus Judge (Y+P 971/1,497)", {"color": GREEN}),
+        ("16 configs validated (r=0.925)", {}),
+        "Pearson r=0.85 (IS vs Opus)",
     ], mx2 + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
-       Inches(1.5), size=Pt(12), bullet_color=TEAL)
+       Inches(2.6), size=Pt(18), bullet_color=TEAL)
 
     # Right — larger image
     img = add_image(slide, "P1_quality", MX + 2 * col_w + 2 * gap, CT - Inches(0.1),
                     width=img_w)
 
     # Bottom
+    # CUT v3: top 6.3 -> 6.20 + frame h 0.87 -> 0.55 so Pt(20) two-line wrap
+    # stays under safe 7.05 (was rendering 7.17).
     add_text(slide,
              "The gap is real \u2014 but WER dramatically overstates failure. "
              "62% useful by IS (Y+P, MBR), 65% confirmed by v1 blind "
              "Opus-as-a-Judge.",  # audit:niv_yp_pct_mbr
-             MX, Inches(6.3), CW, Inches(0.5),
-             size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+             MX, Inches(6.20), CW, Inches(0.55),
+             size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 24,
         "This is the turning point. WER says 26% useful (uncalibrated <30% "
@@ -113,7 +113,12 @@ def slide_24(prs):
 # SLIDE 26 — RESEARCH ROADMAP (STAIRCASE)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_26(prs):
+def slide_26(prs):  # audit:bigfonts2
+    """Five Phases \u2014 IS 2.5 to 3.3-3.7.
+
+    audit:bigfonts2 \u2014 Pass 2: bottom moved up 6.65 -> 6.55 + h shrunk
+    0.55 -> 0.40 to clear slide-num zone (steps end at 6.51).
+    """
     slide = new_slide(prs)
     add_title(slide, "Five Phases \u2014 From IS 2.5 to Target IS 3.3\u20133.7")
     add_accent_line(slide)
@@ -124,45 +129,50 @@ def slide_26(prs):
     # Per-category signal profiles from signal_distribution_analysis.md §8.
     # NOTE: Phases 1+2 already shipped by May 2 2026 (per audit:logic_fix
     # slide 41 / 59); remaining staircase is Phases 3-5.
+    # CUT v3: trimmed each phase's detail + is_note to ~50 chars each
+    # so the 2-line rich_text fits in step_h=0.92 at 24pt without
+    # overflowing. Full per-segment-count detail in speaker notes.
     phases = [
         ("Phase 1 (shipped)", "Surface the good 62%",
-         "Confidence scoring \u2014 flags known-good segments (shipped Apr 30 2026)",
-         "Targets: Signal Loss (80, 14%) | IS: perceived only (filtering, no recovery)", TEAL),
+         "Confidence scoring (shipped)",
+         "Filter only \u2014 IS unchanged", TEAL),
         ("Phase 2 (shipped)", "Fix small & content errors",
-         "N-best aggregation MBR (shipped May 2 2026; ROVER as alternative)",
-         "Targets: Accum. Errors (52, 9%) + Details (79, 14%) | IS: +0.13 (\u223c35 segs)", TEAL),
+         "N-best MBR (shipped)",
+         "IS +0.13 (\u223c35 segs)", TEAL),
         ("Phase 3", "Better world knowledge",
          "Llama 3.1 8B + context prompts",
-         "Targets: Halluc (108, 19%) + Wrong Topic (255, 44%) | IS: +0.40 (\u223c98 segs)", GREEN),
+         "IS +0.40 (\u223c98 segs)", GREEN),
         ("Phase 4", "Scale data 20K\u201350K",
-         "Fine-tune visual encoder + projection on more data",
-         "Targets: ALL 574 non-useful via better visual features | IS: +0.35", GREEN),
+         "Fine-tune visual encoder",
+         "IS +0.35 (all 574)", GREEN),
         ("Phase 5", "Error Correction (GER)",
-         "Second LLM corrects remaining decode errors",
-         "Targets: residual errors post-Phase 1\u20134 | IS: +0.10", LGRAY),
+         "Second LLM corrects residuals",
+         "IS +0.10", LGRAY),
     ]
 
-    # Staircase on left side
+    # CUT v4: step_h 1.10 + gap 0.00 → 5 steps fit in 5.50 vertical (start CT-0.10
+    # = 1.35, end 6.85). Inner frame 1.00" comfortably holds 2-line rich_text at Pt(18).
     step_w = Inches(5.8)
-    step_h = Inches(0.95)
-    step_indent = Inches(0.35)
-    start_y = CT - Inches(0.05)
+    step_h = Inches(1.10)
+    step_indent = Inches(0.30)
+    start_y = CT - Inches(0.10)
     start_x = MX
 
     step_shapes = []
     for i, (phase, desc, detail, is_note, color) in enumerate(phases):
         x = start_x + i * step_indent
-        y = start_y + i * (step_h + Inches(0.04))
+        y = start_y + i * (step_h + Inches(0.00))
         w = step_w - i * step_indent
         r = add_rect(slide, x, y, w, step_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
         step_shapes.append(r)
+        # CUT v4: collapsed 2-line rich_text → single line at Pt(18) for narrow steps.
+        # detail moved to speaker notes.
         step_shapes.append(add_rich_text(slide, [
-            [(phase, {"size": Pt(13), "color": color, "bold": True}),
-             (f"  {desc}", {"size": Pt(13), "color": WHITE})],
-            [(detail, {"size": Pt(12), "color": LGRAY, "italic": True}),
-             (f"   {is_note}", {"size": Pt(12), "color": GOLD})],
-        ], x + Inches(0.2), y + Inches(0.05), w - Inches(0.4), step_h - Inches(0.1)))
+            [(phase, {"size": Pt(18), "color": color, "bold": True}),
+             (f"  {desc}", {"size": Pt(18), "color": WHITE}),
+             (f"   {is_note}", {"size": Pt(16), "color": GOLD})],
+        ], x + Inches(0.2), y + Inches(0.20), w - Inches(0.4), step_h - Inches(0.3)))
 
     # WER trajectory image on right
     img = add_image(slide, "P3_trajectory",
@@ -171,26 +181,16 @@ def slide_26(prs):
     # audit:logic_fix slide 71 \u2014 phase deltas are additive, not multiplicative.
     # The ICLR 2024 reference (Biderman et al.) is about LoRA scaling, not
     # combining decode/aggregation/data-scaling phases.
+    # audit:bigfonts \u2014 bottom shortened + relocated to y=6.65 to clear
+    # bumped staircase (ends ~6.55). Refs relocated to speaker notes
+    # (ROVER 1997 / GER 2024 / LoRA 2024) to free bottom band.
+    # audit:is_mean_mbr \u2014 baseline is 2.547 under MBR n-best.
+    # audit:logic_fix slide 71 \u2014 phase deltas are additive, not multiplicative.
+    # CUT v2: subtitle compressed; moved up to y=6.55 + h=0.40.
     bottom = add_text(slide,
-             # audit:is_mean_mbr \u2014 baseline is 2.547 under MBR n-best.
-             "Combined target: IS 3.3\u20133.7 (~80\u201385% useful Y+P). "
-             "Phase deltas sum to +0.98 from 2.547 baseline \u2014 additive "
-             "under the IS-component model. Where phases overlap (e.g., LLM "
-             "upgrade + smart prompts both targeting Hallucination + Wrong "
-             "Topic), the additive estimate is conservative.",
-             MX, Inches(6.35), CW, Inches(0.55),
-             size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
-
-    # Academic references — LoRA scaling cited only for Phase 4 (data scaling),
-    # not for combining phases (audit:logic_fix slide 71). Bumped to 12pt for
-    # readability floor; abbreviated and lifted upward to fit (y=6.94, h=0.22
-    # = ends 7.16 — slide num starts at 7.12 but is positioned at MX..MX+0.5,
-    # so left-offset MX+1.0 keeps it horizontally clear). Full "(Biderman et
-    # al. 2024)" attribution moved to speaker notes.
-    add_text(slide,
-        "References: ROVER 1997  |  GER 2024  |  LoRA Scaling 2024",
-        MX + Inches(1.0), Inches(6.94), CW - Inches(1.0), Inches(0.22),
-        size=Pt(12), color=MGRAY, italic=True)
+             "Target: IS 3.3-3.7 (~80-85% Y+P). Phase deltas sum to +0.98.",
+             MX, Inches(6.55), CW, Inches(0.40),
+             size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 26,
         "Five phases targeting 574 non-useful segments (IS < 2.00, "
@@ -225,14 +225,14 @@ def slide_26(prs):
         [step_shapes, [img, bottom]], click_reveal=True)
 
 
-def slide_26b(prs):
+def slide_26b(prs):  # audit:bigfonts
     """26b: IS trajectory roadmap — parallel to WER trajectory on slide_26."""
     slide = new_slide(prs)
     add_title(slide, "IS Improvement Roadmap \u2014 From 2.5 to 3.5")
     add_accent_line(slide)
 
     add_text(slide, "Projected Intelligibility Score improvement per phase",
-             MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+             MX, CT, CW, Inches(0.35), size=Pt(22), color=LGRAY, italic=True)
 
     # IS trajectory plot (left side, large)
     img = add_image(slide, "P3b_is_trajectory",
@@ -249,42 +249,45 @@ def slide_26b(prs):
     # audit:is_mean_mbr (2.547) / audit:niv_yp_pct_mbr (62%) \u2014
     # update Current to MBR-default values; phase forecasts unchanged.
     milestones = [
-        ("Current", "IS 2.547", "62% useful (Y+P)", "", CORAL),
-        ("Phase 1\u20132", "IS ~2.65",  "~65% useful (Y+P)",
-         "Fixes: Accum (52) + Details (79) \u2014 131/574 targeted", TEAL),
-        ("+ Phase 3", "IS ~3.05", "~73% useful (Y+P)",
-         "Fixes: Halluc (108) + Wrong Topic (255) \u2014 363/574 targeted", GREEN),
-        ("+ Phase 4\u20135", "IS ~3.50", "~82% useful (Y+P)",
-         "Fixes: all remaining via data + GER post-correction", GREEN),
+        ("Current", "IS 2.547", "62% useful", "", CORAL),
+        ("Phase 1\u20132", "IS ~2.65",  "~65% useful",
+         "131/574 \u2014 Accum + Details", TEAL),
+        ("+ Phase 3", "IS ~3.05", "~73% useful",
+         "363/574 \u2014 Halluc + Wrong Topic", GREEN),
+        # CUT v3: trimmed failure_note from "Fixes: all remaining via data
+        # + GER post-correction" -> "data + GER" so the last card's italic
+        # line fits 1 line in the 3.5"-wide rw frame at Pt(18) (was 2
+        # lines, bottom 7.18). Full text in speaker notes.
+        ("+ Phase 4\u20135", "IS ~3.50", "~82% useful",
+         "data + GER", GREEN),
     ]
+    # Card text bands enlarged for Pt(24)/Pt(24)/Pt(24); per-row text
+     # boxes given more height to prevent clipping (audit:bigfonts).
     ms_shapes = []
     for i, (phase, is_val, cap_val, failure_note, color) in enumerate(milestones):
-        y = CT + Inches(0.45) + i * Inches(1.25)
-        card_h = Inches(1.10) if i > 0 else Inches(0.85)
+        y = CT + Inches(0.45) + i * Inches(1.30)
+        card_h = Inches(1.20) if i > 0 else Inches(0.95)
         ms_shapes.append(add_rect(slide, rx, y, rw, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True))
         ms_shapes.append(add_text(slide, phase, rx + Inches(0.15), y + Inches(0.05),
-                 rw - Inches(0.3), Inches(0.3),
-                 size=Pt(13), color=color, bold=True))
+                 rw - Inches(0.3), Inches(0.35),
+                 size=Pt(24), color=color, bold=True))
+        # CUT v4c: text2 dropped to Pt(18) so "IS X \u2022 Y% useful" fits 1 line.
         ms_shapes.append(add_text(slide, f"{is_val}  \u2022  {cap_val}",
-                 rx + Inches(0.15), y + Inches(0.35),
-                 rw - Inches(0.3), Inches(0.3),
-                 size=Pt(16), color=WHITE, bold=True))
+                 rx + Inches(0.15), y + Inches(0.38),
+                 rw - Inches(0.3), Inches(0.40),
+                 size=Pt(18), color=WHITE, bold=True))
         if i > 0:
             delta = float(is_val.replace("IS ~", "")) - 2.547  # audit:is_mean_mbr
             ms_shapes.append(add_text(slide, f"+{delta:.2f}  |  {failure_note}",
-                     rx + Inches(0.15), y + Inches(0.65),
-                     rw - Inches(0.3), Inches(0.40),
-                     size=Pt(12), color=WHITE, italic=True))
+                     rx + Inches(0.15), y + Inches(0.78),
+                     rw - Inches(0.3), Inches(0.42),
+                     size=Pt(14), color=WHITE, italic=True))
 
-    # audit:is_mean_mbr (2.547) \u2014 bottom conversion uses MBR-anchored values.
-    # Moved from y=6.35 (overlapped milestone i=3 footer at y=6.30..6.65) to
-    # y=6.85, just below the last milestone card (ends 6.75) and clear of the
-    # slide number (starts 7.12). Audit flagged 86% occlusion of TextBox 19.
-    bottom = add_text(slide,
-             "Conversion: ~0.033 IS per pp WER (empirical: 2.547 IS @ 64% WER MBR \u2192 ~3.81 IS @ 25% WER paper).",
-             MX, Inches(6.82), CW, Inches(0.30),
-             size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    # audit:bigfonts \u2014 bottom Conversion line relocated to speaker notes;
+    # bumped milestone cards now occupy the bottom band (last card ends
+    # ~7.00). Conversion factor (~0.033 IS/pp WER) preserved in notes.
+    bottom = None  # placeholder for animation list compatibility
 
     _finish(slide, 0,
         "IS trajectory derived from 574 non-useful segments (IS < 2.00).\n"
@@ -299,7 +302,7 @@ def slide_26b(prs):
         "Phase 4-5: IS ~3.50 (~82% useful). Data scaling improves visual "
         "encoder for ALL categories. GER post-correction for residual.\n"
         "Conversion: ~0.033 IS per pp WER (2.547 IS @ 64% WER MBR to ~3.81 IS @ 25% WER paper).",
-        [[img], ms_shapes + [bottom]], click_reveal=True)
+        [[img], ms_shapes], click_reveal=True)  # audit:bigfonts: bottom relocated to notes
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -310,7 +313,7 @@ def slide_26b(prs):
 # SLIDE 27 — PHASE 1: CONFIDENCE SCORING
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_27(prs):
+def slide_27(prs):  # audit:bigfonts
     """Phase 1 summary — brief recap (detail now on slide_confidence_scoring)."""
     slide = new_slide(prs)
     add_title(slide, "Confidence Scoring \u2014 Summary")
@@ -319,14 +322,14 @@ def slide_27(prs):
     # Single concise summary
     add_bullets(slide, [
         ("Beam scores are already computed \u2014 just surface them",
-         {"bold": True, "size": Pt(18)}),
+         {"bold": True, "size": Pt(24)}),
         ("2\u20134 hours to implement, zero retraining",
-         {"color": GREEN, "bold": True, "size": Pt(18)}),
+         {"color": GREEN, "bold": True, "size": Pt(24)}),
         ("Perceived error rate: 60% \u2192 ~20%",
-         {"color": TEAL, "bold": True, "size": Pt(18)}),
+         {"color": TEAL, "bold": True, "size": Pt(24)}),
         ("Targets Signal Loss failure mode (14% of errors)",
-         {"size": Pt(16)}),
-    ], MX, CT + Inches(0.3), CW, Inches(3.0), size=Pt(16))
+         {"size": Pt(24)}),
+    ], MX, CT + Inches(0.3), CW, Inches(3.0), size=Pt(24))
 
     # Quick visual callout
     r1 = add_rect(slide, MX + Inches(1.5), CT + Inches(3.5),
@@ -335,7 +338,7 @@ def slide_27(prs):
                   corner_radius=True)
     add_text(slide, "Fastest path to user value \u2014 Phase 1 is a quick win",
              MX + Inches(1.8), CT + Inches(3.55), CW - Inches(3.6), Inches(0.6),
-             size=Pt(18), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+             size=Pt(24), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 27,
         # audit:narrative — generic cross-reference (no hard slide number).
@@ -352,8 +355,12 @@ def slide_27(prs):
 # SLIDE 28 — PHASE 2: N-BEST AGGREGATION
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_28(prs):
-    """N-best Aggregation \u2014 MBR shipped May 2 2026 as production default."""
+def slide_28(prs):  # audit:bigfonts2
+    """N-best Aggregation \u2014 MBR shipped May 2 2026.
+
+    audit:bigfonts2 \u2014 Pass 2: impact h 1.85 -> 1.40 so bottom (6.20) clears
+    refs at y=6.55 cleanly; bullets each <= 8 words.
+    """
     slide = new_slide(prs)
     add_title(slide, "N-best Aggregation: From One to All 20 Hypotheses (Mission 6)")
     add_accent_line(slide)
@@ -361,10 +368,10 @@ def slide_28(prs):
     # Main point \u2014 past tense, MBR is shipped (audit:logic_fix #1, slide 59).
     # audit:narrative \u2014 generic cross-reference (no hard slide number).
     add_text(slide,
-             "Until May 2 2026 we displayed only the top-1 hypothesis. "
+             "Previously we displayed only the top-1 hypothesis. "
              "Mission 6 shipped MBR aggregation as the production default \u2014 "
              "the v3 paired Judge test below quantifies the lift.",
-             MX, CT, CW, Inches(0.7), size=Pt(14), color=WHITE, bold=True)
+             MX, CT, CW, Inches(1.4), size=Pt(24), color=WHITE, bold=True)
 
     # Two technique cards side by side
     cw = Inches(5.5)
@@ -375,49 +382,47 @@ def slide_28(prs):
     r1 = add_rect(slide, MX, cy, cw, ch, fill_color=NAVY2,
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
     add_text(slide, "ROVER (alternative)", MX + Inches(0.2), cy + Inches(0.1),
-             cw - Inches(0.4), Inches(0.3), size=Pt(16), color=TEAL, bold=True)
+             cw - Inches(0.4), Inches(0.3), size=Pt(24), color=TEAL, bold=True)
     add_text(slide, "Recognizer Output Voting Error Reduction",
-             MX + Inches(0.2), cy + Inches(0.42), cw - Inches(0.4), Inches(0.28),
-             size=Pt(12), color=LGRAY, italic=True)
+             MX + Inches(0.2), cy + Inches(0.42), cw - Inches(0.4), Inches(0.8),
+             size=Pt(18), color=LGRAY, italic=True)
     add_bullets(slide, [
         "Align all 20 hypotheses word-by-word",
         "Vote at each position \u2014 most common word wins",
         "Reduces random substitution errors",
-    ], MX + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.3),
-       size=Pt(13))
+    ], MX + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(2.6),
+       size=Pt(24))
 
     rx = MX + cw + gap
     r2 = add_rect(slide, rx, cy, cw, ch, fill_color=NAVY2,
                   border_color=GREEN, border_width=Pt(2), corner_radius=True)
     add_text(slide, "MBR (shipped, default)", rx + Inches(0.2), cy + Inches(0.1),
-             cw - Inches(0.4), Inches(0.3), size=Pt(16), color=GREEN, bold=True)
+             cw - Inches(0.4), Inches(0.3), size=Pt(24), color=GREEN, bold=True)
     add_text(slide, "Minimum Bayes Risk Decoding",
              rx + Inches(0.2), cy + Inches(0.42), cw - Inches(0.4), Inches(0.28),
-             size=Pt(12), color=LGRAY, italic=True)
+             size=Pt(18), color=LGRAY, italic=True)
     add_bullets(slide, [
         "Score each hypothesis against ALL others",
         "Pick the one most similar to the consensus",
         "Best single hypothesis, no alignment needed",
-    ], rx + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.3),
-       size=Pt(13))
+    ], rx + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(2.6),
+       size=Pt(24))
 
-    # Impact summary \u2014 measured, not expected (audit:judge_v3_yp_pct_mbr,
-    # audit:judge_v3_yp_pct_baseline, audit:mcnemar_yp_p_mbr)
+    # Impact summary \u2014 bullets <=8 words (audit:bigfonts2).
+    # Anchors: judge_v3_yp_pct_mbr / baseline / mcnemar.
     iy = cy + ch + Inches(0.3)
     impact = add_bullets(slide, [
-        ("Measured v3 paired Judge: MBR Y+P 71% vs baseline 68% "
-         "(p = 0.00017 paired McNemar)",
+        ("v3 Judge: MBR Y+P 71% vs base 68% (p=0.00017)",
          {"color": GREEN, "bold": True}),  # audit:judge_v3_yp_pct_mbr
-        "Targets: Accumulated Errors (9%) \u2014 the \"death by a thousand cuts\" category",
-        "WER reduction: \u22121.56 pp on hyp_vote_conf; MBR is best on calibrated per-word posterior",
-    ], MX, iy, CW, Inches(1.5), size=Pt(14))
+        "Targets Accumulated Errors (9% of failures)",
+        "WER -1.56 pp on hyp_vote_conf; MBR posterior calibrated",
+    ], MX, iy, CW, Inches(1.40), size=Pt(24))
 
-    # Academic references — bumped to 12pt for readability floor; shifted up
-    # slightly to fit footer band.
+    # Refs (audit:bigfonts \u2014 shifted to y=6.55 below bumped impact band).
     add_text(slide,
         "ROVER: Fiscus 1997  |  MBR: Kumar & Byrne 2004",
-        MX, Inches(6.40), CW, Inches(0.32),
-        size=Pt(12), color=MGRAY, italic=True)
+        MX, Inches(6.55), CW, Inches(0.32),
+        size=Pt(18), color=MGRAY, italic=True)
 
     _finish(slide, 28,
         "N-best aggregation. Until May 2 2026 the pipeline kept only the top-1 "
@@ -440,7 +445,7 @@ def slide_28(prs):
 # SLIDE 29 — FINE-TUNING + DATA SCALING
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_29(prs):
+def slide_29(prs):  # audit:bigfonts
     slide = new_slide(prs)
     add_title(slide, "Fine-Tuning: Limited Data, Limited Gains")
     add_accent_line(slide)
@@ -454,14 +459,14 @@ def slide_29(prs):
     img_l = add_image(slide, "ft_loss", MX, CT, width=col_w, height=plot_h)
     img_r = add_image(slide, "ft_impact", rx, CT, width=col_w, height=plot_h)
 
-    # Key findings below plots — with more room
+    # Key findings below plots — h bumped 1.2 -> 1.6 for Pt(24) wrap (audit:bigfonts).
     find_y = CT + plot_h + Inches(0.15)
     lb = add_bullets(slide, [
-        ("LoRA on 1,273 segments: IS 2.49 \u2192 2.31 (r=16) \u2192 2.02 (r=64) \u2014 "
-         "fine-tuning made IS WORSE", {"bold": True, "color": CORAL}),
-        ("Bottleneck is data quantity (need 20K+), not parameter tuning",
+        ("LoRA 1,273 segs: IS 2.49 \u2192 2.31 (r=16) \u2192 2.02 (r=64). "
+         "Fine-tuning made IS WORSE.", {"bold": True, "color": CORAL}),
+        ("Bottleneck is DATA QUANTITY (need 20K+), not tuning.",
          {"bold": True, "color": GREEN}),
-    ], MX, find_y, CW, Inches(1.2), size=Pt(15))
+    ], MX, find_y, CW, Inches(1.6), size=Pt(24))
 
     _finish(slide, 29,
         "Fine-tuning experiments with LoRA on 1,273 AVSpeech segments — "
@@ -490,27 +495,27 @@ def slide_29(prs):
 # SLIDE 30 — LLM UPGRADE + ADVANCED CAPABILITIES
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_30(prs):
+def slide_30(prs):  # audit:bigfonts
     slide = new_slide(prs)
     add_title(slide, "Stronger LLM + Smart Prompts = Force Multiplier")
     add_accent_line(slide)
 
+    # audit:bigfonts — middle GER bullet shortened (full def in notes).
     cols = [
-        ("LLM Upgrade (requires training)", [
-            "Llama 3.1 8B: drop-in (same hidden_size 4096)",
-            "Quality ≈ Llama-2 70B, 128K vocab, 128K context",
-            ("Training: ~2\u20134 weeks with 5K+ segments", {"bold": True}),
-            "Alone: -3 to -8pp WER",
+        ("LLM Upgrade (needs training)", [
+            "Llama 3.1 8B: drop-in (hidden 4096)",
+            "≈ Llama-2 70B, 128K vocab/ctx",
+            ("Training: ~2\u20134 wks, 5K+ segs", {"bold": True}),
+            "Alone: \u22123 to \u22128 pp WER",
         ], TEAL),
-        ("Smart Prompts (force multiplier)", [
-            "7 strategies: topic context, word count, anti-hallucination, GER",
-            "Llama-2: +5-10pp | Llama 3.1: +12-20pp",
-            ("GER = Generative Error Correction: feed N-best hypotheses "
-             "to a correction LLM that fixes errors", {"color": LGRAY}),
-            ("GER post-processing: +8-15pp, no retraining", {"color": GREEN}),
+        ("Smart Prompts (multiplier)", [
+            "7 strategies: topic, count, anti-halluc, GER",
+            "Llama-2: +5\u201310pp | Llama 3.1: +12\u201320pp",
+            ("GER: N-best \u2192 correction LLM", {"color": LGRAY}),
+            ("GER alone: +8\u201315pp, no retrain", {"color": GREEN}),
         ], CORAL),
         ("Future", [
-            "Arabic (K-means model exists)",
+            "Arabic (K-means exists)",
             "Multi-speaker, streaming",
         ], LGRAY),
     ]
@@ -526,10 +531,11 @@ def slide_30(prs):
         r = add_rect(slide, x, CT, cw, Inches(4.8), fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
         t = add_text(slide, title, x + Inches(0.2), CT + Inches(0.15),
-                 cw - Inches(0.4), Inches(0.45),
-                 size=Pt(15), color=color, bold=True, align=PP_ALIGN.CENTER)
+                 cw - Inches(0.4), Inches(1.0),
+                 size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
+        # CUT v3 (overflow): Pt(24) -> Pt(18) so 4 bullets at narrow width fit.
         b = add_bullets(slide, items, x + Inches(0.2), CT + Inches(0.7),
-                    cw - Inches(0.4), Inches(3.5), size=Pt(13))
+                    cw - Inches(0.4), Inches(3.5), size=Pt(18))
         col_groups.append([r, t, b])
 
     # Academic references — bumped to 12pt for readability floor; venue
@@ -538,7 +544,7 @@ def slide_30(prs):
     add_text(slide,
         "GER: Chen et al. 2024  |  Scaling Laws: Hoffmann et al. 2022",
         MX, Inches(6.50), CW, Inches(0.34),
-        size=Pt(12), color=MGRAY, italic=True)
+        size=Pt(18), color=MGRAY, italic=True)
 
     _finish(slide, 30,
         "Three columns of future capability. Left: LLM swap to Llama 3.1 "
@@ -574,7 +580,7 @@ def slide_30(prs):
 # SLIDE 30b — LLM UPGRADE: QUANTIFIED IMPACT
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_30b(prs):
+def slide_30b(prs):  # audit:bigfonts
     """Why upgrading from Llama-2-7B to Llama 3.1 8B matters — quantified."""
     slide = new_slide(prs)
     add_title(slide, "LLM Upgrade: Why It Matters")
@@ -588,7 +594,7 @@ def slide_30b(prs):
     # ── Left column: capability table + VALLR one-liner ──
     lt = add_text(slide, "Llama-2 7B \u2192 Llama 3.1 8B",
                   MX, CT, left_w, Inches(0.35),
-                  size=Pt(18), color=TEAL, bold=True)
+                  size=Pt(24), color=TEAL, bold=True)
 
     tbl_headers = ["", "Current", "Upgrade", ""]
     tbl_rows = [
@@ -601,7 +607,7 @@ def slide_30b(prs):
                     MX, CT + Inches(0.50), left_w,
                     row_height=Inches(0.42),
                     col_widths=[Inches(1.3), Inches(1.2), Inches(1.4), Inches(1.8)],
-                    text_size=Pt(14))
+                    text_size=Pt(24))
 
     # VALLR callout — single compact box
     vy = CT + Inches(2.75)
@@ -612,20 +618,20 @@ def slide_30b(prs):
         "VALLR (ICCV 2025): Llama 3.2-3B achieved 19% WER\n"
         "on LRS3 \u2014 beats our 7B Llama-2 (25%) with half the params",
         MX + Inches(0.25), vy + Inches(0.12),
-        left_w - Inches(0.5), Inches(0.65),
-        size=Pt(14), color=WHITE)
+        left_w - Inches(0.5), Inches(1.8),
+        size=Pt(24), color=WHITE)
 
-    # Drop-in callout
+    # Drop-in callout (audit:bigfonts — shortened for Pt(24) single line).
     drop_y = CT + Inches(3.85)
     drop_text = add_text(slide,
-        "Same hidden dimension (4096) = architecture-compatible upgrade, requires adapter retraining",
-        MX, drop_y, left_w, Inches(0.35),
-        size=Pt(14), color=LGRAY, italic=True)
+        "Same hidden dim (4096) — adapter retraining required",
+        MX, drop_y, left_w, Inches(0.87),
+        size=Pt(20), color=LGRAY, italic=True)
 
     # ── Right column: WER waterfall ──
     rt = add_text(slide, "Projected Impact",
                   rx, CT, right_w, Inches(0.35),
-                  size=Pt(18), color=CORAL, bold=True)
+                  size=Pt(24), color=CORAL, bold=True)
 
     waterfall = [
         ("Current WER",         "64%",       CORAL),
@@ -649,26 +655,26 @@ def slide_30b(prs):
         t1 = add_text(slide, label,
                       rx + Inches(0.2), wy + Inches(0.10),
                       right_w - Inches(1.8), Inches(0.35),
-                      size=Pt(14), color=WHITE)
+                      size=Pt(24), color=WHITE)
         t2 = add_text(slide, value,
                       rx + right_w - Inches(1.5), wy + Inches(0.10),
-                      Inches(1.3), Inches(0.35),
-                      size=Pt(16), color=clr, bold=True,
+                      Inches(1.3), Inches(1.0),
+                      size=Pt(24), color=clr, bold=True,
                       align=PP_ALIGN.RIGHT)
         wf_shapes.append([r, t1, t2])
         wy += row_h
 
-    # Key insight below waterfall
+    # Key insight below waterfall (audit:bigfonts — box h bumped for Pt(24)).
     ky = wy + Inches(0.15)
-    key_box = add_rect(slide, rx, ky, right_w, Inches(0.75),
+    key_box = add_rect(slide, rx, ky, right_w, Inches(1.00),
                        fill_color=NAVY2, border_color=TEAL,
                        border_width=Pt(2), corner_radius=True)
     key_text = add_text(slide,
-        "Strongest LLM impact: entity disambiguation\n"
-        "(79 segments) and accumulated errors (52 segments)",
+        "Strongest LLM lift: entity disambiguation (79 segs) "
+        "and accumulated errors (52 segs)",
         rx + Inches(0.2), ky + Inches(0.10),
-        right_w - Inches(0.4), Inches(0.55),
-        size=Pt(13), color=WHITE)
+        right_w - Inches(0.4), Inches(1.4),
+        size=Pt(24), color=WHITE)
 
     _finish(slide, 0,
         "LLM upgrade analysis — simplified view. The waterfall maps from "
@@ -718,7 +724,7 @@ def slide_30b(prs):
 # SLIDE 30c — LLM UPGRADE: FAILURE MODE DETAIL (hidden backup)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_30c(prs):
+def slide_30c(prs):  # audit:bigfonts
     """Backup slide: per-failure-mode recovery estimates + key insight."""
     slide = new_slide(prs)
     add_title(slide, "LLM Upgrade: Failure Mode Recovery Detail")
@@ -727,8 +733,8 @@ def slide_30c(prs):
     # ── Full-width failure mode table ──
     tbl_w = CW
     ft = add_text(slide, "Expected Recovery by Failure Category (574 below-threshold segments)",
-                  MX, CT, tbl_w, Inches(0.35),
-                  size=Pt(16), color=TEAL, bold=True)
+                  MX, CT, tbl_w, Inches(0.8),
+                  size=Pt(24), color=TEAL, bold=True)
 
     headers = ["Failure Mode", "Segments", "% of Failures",
                "LLM Impact", "Expected Recovery"]
@@ -751,43 +757,36 @@ def slide_30c(prs):
                     row_height=Inches(0.50),
                     col_widths=[Inches(2.2), Inches(1.0), Inches(1.2),
                                 Inches(4.5), Inches(1.4)],
-                    text_size=Pt(12))
+                    text_size=Pt(24))
 
-    # ── Key insight box ──
-    iy = CT + Inches(3.85)
-    insight_box = add_rect(slide, MX, iy, CW, Inches(1.0),
+    # Key insight box (audit:bigfonts \u2014 moved to y=4.00, h=1.40 for
+    # Pt(24) body wrap; insight text shortened, homophene example trimmed).
+    iy = CT + Inches(4.00)
+    insight_box = add_rect(slide, MX, iy, CW, Inches(1.40),
                            fill_color=NAVY2, border_color=TEAL,
                            border_width=Pt(2), corner_radius=True)
     insight_title = add_text(slide, "Why These Categories?",
                              MX + Inches(0.3), iy + Inches(0.10),
-                             CW - Inches(0.6), Inches(0.30),
-                             size=Pt(15), color=TEAL, bold=True)
+                             CW - Inches(0.6), Inches(0.35),
+                             size=Pt(24), color=TEAL, bold=True)
     insight_text = add_text(slide,
-        "The LLM\u2019s job is disambiguation: when lips show /p/, /b/, or /m/ "
-        "(identical mouth shape), the LLM picks the right word using language "
-        "context. \u201cRight Topic Wrong Details\u201d is where this matters most "
-        "\u2014 the encoder captured the domain, but Llama-2\u2019s weaker prior "
-        "picked \u201cadmiral\u201d \u2192 \u201canimal\u201d. A model with "
-        "61% higher MMLU and 4\u00d7 vocabulary resolves these directly.",
-        MX + Inches(0.3), iy + Inches(0.40),
-        CW - Inches(0.6), Inches(0.55),
-        size=Pt(13), color=WHITE)
+        "LLM disambiguates homophenes (/p/, /b/, /m/ look identical). "
+        "Right Topic Wrong Details: encoder got domain, weak prior "
+        "picked \u201cadmiral\u201d \u2192 \u201canimal\u201d. Stronger MMLU + 4\u00d7 vocab fixes it.",
+        MX + Inches(0.3), iy + Inches(0.50),
+        CW - Inches(0.6), Inches(0.85),
+        size=Pt(24), color=WHITE)
 
-    # ── Bottom: multiplicative scaling note ──
+    # Bottom note (audit:bigfonts \u2014 shortened + relocated to y=6.65).
     note_text = add_text(slide,
-        "Multiplicative scaling law (ICLR 2024): better model \u00d7 more data "
-        "= compounding gains. The LLM upgrade is most valuable when combined "
-        "with 20K+ training segments.",
-        MX, Inches(6.30), CW, Inches(0.35),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "ICLR 2024 scaling law: model \u00d7 data = compounding gains. "
+        "LLM upgrade pairs with 20K+ training segments.",
+        MX, Inches(6.65), CW, Inches(0.40),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    # References
-    add_text(slide,
-        "VALLR: Thomas et al. (ICCV 2025)  |  "
-        "Scaling Laws: Zhang et al. (ICLR 2024)  |  "
-        "Full analysis: docs/evaluation/llm_upgrade_analysis.md",
-        MX, Inches(6.65), CW, Inches(0.25),
-        size=Pt(8), color=MGRAY, italic=True)
+    # References (audit:bigfonts — relocated to speaker notes; bottom band
+    # used by relocated note_text). Originals: VALLR (ICCV 2025),
+    # Scaling Laws (ICLR 2024), docs/evaluation/llm_upgrade_analysis.md.
 
     _finish(slide, 0,
         "Backup detail slide for Q&A. Shows per-failure-mode recovery "
@@ -811,7 +810,7 @@ def slide_30c(prs):
 # ARABIC PIPELINE ROADMAP
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_arabic_roadmap(prs):
+def slide_arabic_roadmap(prs):  # audit:bigfonts
     """Arabic pipeline replication roadmap."""
     slide = new_slide(prs)
     add_title(slide, "Arabic Pipeline: Replication Roadmap")
@@ -822,44 +821,39 @@ def slide_arabic_roadmap(prs):
 
     # Left — what's needed, one topic per animation group
     lt = add_text(slide, "What\u2019s Needed & How We\u2019ll Do It",
-                  MX, CT, col_w, Inches(0.35),
-                  size=Pt(18), color=TEAL, bold=True)
+                  MX, CT, col_w, Inches(1.0),
+                  size=Pt(24), color=TEAL, bold=True)
 
+    # Details shortened to fit Pt(24) (audit:bigfonts).
     topics = [
-        (TEAL,  "Arabic AV-HuBERT encoder (BOTTLENECK)",
-         "Arabic has different phonemes (pharyngeals, emphatics) \u2014 "
-         "without fine-tuning, Arabic lips map to wrong clusters"),
+        (TEAL,  "AV-HuBERT encoder (BOTTLENECK)",
+         "Arabic phonemes need fine-tuning"),
         (TEAL,  "Arabic LLM backend",
-         "Swap Llama-2 for Arabic-capable LLM "
-         "(e.g. Jais, AceGPT, or Arabic-tuned Llama 3)"),
-        (CORAL, "Arabic evaluation dataset (UNKNOWN)",
-         "No Arabic lip-reading benchmark exists \u2014 "
-         "needs native speakers for MSA + dialect coverage"),
+         "Swap Llama-2 for Jais / AceGPT / Arabic Llama 3"),
+        (CORAL, "Eval dataset (UNKNOWN)",
+         "No Arabic lip-read benchmark; need native speakers"),
         (GREEN, "Training infrastructure",
-         "AWS GPU instance (existing) for AV-HuBERT fine-tuning "
-         "and K-means reclustering"),
-        (CORAL,  "RTL text & normalization",
-         "RTL handling, spaCy Arabic, diacritic handling, "
-         "Arabic NER \u2014 maturity unknown"),
+         "AWS GPU (existing) for fine-tune + reclustering"),
+        (CORAL, "RTL text & normalization",
+         "RTL, spaCy Arabic, diacritics, NER \u2014 maturity unknown"),
     ]
 
     topic_groups = []
     by = CT + Inches(0.45)
-    # Tightened topic block (0.85" → 0.78") so the last RTL bullet ends ~5.80"
-    # and clears the timeline callout below. Audit flagged 63% occlusion.
+    # Per-topic h bumped 0.78 -> 0.82 for Pt(24) heading + detail (audit:bigfonts).
     for clr, heading, detail in topics:
         grp = []
         grp.append(add_bullets(slide, [
             (heading, {"bold": True, "color": clr}),
             detail,
-        ], MX, by, col_w, Inches(0.78), size=Pt(13)))
+        ], MX, by, col_w, Inches(1.8), size=Pt(24)))
         topic_groups.append(grp)
-        by += Inches(0.78)
+        by += Inches(0.82)
 
     # Right — timeline with practical details
     rx = MX + col_w + gap
     rt = add_text(slide, "Practical Timeline", rx, CT, col_w, Inches(0.35),
-                  size=Pt(18), color=GREEN, bold=True)
+                  size=Pt(24), color=GREEN, bold=True)
 
     headers = ["Step", "Effort", "Risks / Unknowns"]
     rows = [
@@ -871,7 +865,7 @@ def slide_arabic_roadmap(prs):
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
                     row_height=Inches(0.55),
                     col_widths=[Inches(1.5), Inches(1.3), Inches(2.7)],
-                    text_size=Pt(11))
+                    text_size=Pt(24))
 
     # Timeline summary callout \u2014 moved down (5.85\u21926.00) so it sits below the
     # tightened topic block (last bullet now ends ~5.80"). Audit flagged 63%
@@ -879,17 +873,20 @@ def slide_arabic_roadmap(prs):
     timeline_box = add_rect(slide, MX, Inches(6.00), CW, Inches(0.50),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
+    # CUT v3: frame h 1.13 -> 0.40 so Pt(28) bottom stays under safe 7.05
+    # (was rendering 7.18).
     timeline_txt = add_text(slide,
              "Realistic estimate: 2\u20133 months (encoder pre-training is the bottleneck)",
-             MX + Inches(0.3), Inches(6.05), CW - Inches(0.6), Inches(0.40),
-             size=Pt(20), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+             MX + Inches(0.3), Inches(5.87), CW - Inches(0.6), Inches(1.13),
+             size=Pt(28), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
 
     # Bottom note (below callout box, above slide-number)
+    # CUT v3: top 6.60 -> 6.42 so Pt(18) two-line wrap stays under safe 7.05.
     note = add_text(slide,
         "Pipeline code is language-agnostic. Main bottlenecks: encoder pre-training "
         "data and eval dataset collection. No Arabic lip-reading benchmark exists.",
-        MX, Inches(6.60), CW, Inches(0.30),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.24), CW, Inches(0.8),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Animation: title → each topic one by one → right column → callout
     anim = [[lt]] + topic_groups + [[rt, tbl], [timeline_box, timeline_txt, note]]
@@ -911,7 +908,7 @@ def slide_arabic_roadmap(prs):
         anim, click_reveal=True)
 
 
-def slide_arabic_avhubert(prs):
+def slide_arabic_avhubert(prs):  # audit:bigfonts
     """AV-HuBERT: Why It's Not Language-Locked — individual animated bullets."""
     slide = new_slide(prs)
     add_title(slide, "AV-HuBERT: Why It\u2019s Not Language-Locked")
@@ -927,13 +924,14 @@ def slide_arabic_avhubert(prs):
         "Language specificity lives in downstream components, not the visual encoder",
     ]
 
+    # line_h bumped 0.60 -> 0.75 for Pt(24) wrap-safety (audit:bigfonts).
     by = CT + Inches(0.05)
-    line_h = Inches(0.60)
+    line_h = Inches(0.75)
     anim_groups = []
     for bullet in bullets_data:
         t = add_text(slide, "\u25b8  " + bullet,
                      MX, by, CW, line_h,
-                     size=Pt(15), color=WHITE)
+                     size=Pt(24), color=WHITE)
         anim_groups.append([t])
         by += line_h
 
@@ -948,7 +946,7 @@ def slide_arabic_avhubert(prs):
         anim_groups, click_reveal=True)
 
 
-def slide_arabic_changes(prs):
+def slide_arabic_changes(prs):  # audit:bigfonts
     """Arabic Adaptation: What Changes — individual animated bullets."""
     slide = new_slide(prs)
     add_title(slide, "Arabic Adaptation: What Changes")
@@ -965,13 +963,14 @@ def slide_arabic_changes(prs):
         "Biggest bottleneck: training data (no Arabic LRS3 equivalent at scale)",
     ]
 
+    # line_h bumped 0.55 -> 0.68 for Pt(24) wrap-safety (audit:bigfonts).
     by = CT + Inches(0.05)
-    line_h = Inches(0.55)
+    line_h = Inches(0.68)
     anim_groups = []
     for bullet in bullets_data:
         t = add_text(slide, "\u25b8  " + bullet,
                      MX, by, CW, line_h,
-                     size=Pt(14), color=WHITE)
+                     size=Pt(24), color=WHITE)
         anim_groups.append([t])
         by += line_h
 
@@ -994,39 +993,32 @@ def slide_arabic_changes(prs):
 # SLIDE 31 — SUMMARY
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_31(prs):
+def slide_31(prs):  # audit:bigfonts
     slide = new_slide(prs)
     add_title(slide, "Key Takeaways")
     add_accent_line(slide)
 
-    # audit:logic_fix slide 79 \u2014 MBR (production default since May 2 2026)
-    # was missing from takeaways; add takeaway #4. Numeric anchors:
-    # audit:niv_yp_pct_mbr (62%), audit:judge_v3_yp_pct_mbr (71%),
+    # audit:bigfonts \u2014 shortened takeaway text so each card fits 2 lines at
+    # Pt(24). Full numeric detail preserved in speaker notes below.
+    # Anchors: audit:niv_yp_pct_mbr (62%), audit:judge_v3_yp_pct_mbr (71%),
     # audit:judge_v3_yp_pct_baseline (68%), audit:mcnemar_yp_p_mbr (0.00017).
     takeaways = [
-        ("1", "Rigorous assessment: 2.5\u00d7 WER gap on 1,497 segments. "
-              "Novel IS metric reveals 62% useful output (NIV Y+P, MBR), "
-              "confirmed by LLM judge v1 blind at 65%. Full failure "
-              "analysis with improvement suggestions."),
-        ("2", "Production system delivered: standalone container with "
-              "professional UI, 37 bugs fixed, 8-stage pipeline, 37 tests, "
-              "8 research reports \u2014 all from a paper with no working "
-              "environment."),
-        ("3", "Model performs well after MBR: 71% useful per LLM Judge v3 "
-              "(paired). IS metric shows high agreement with the v1 blind "
-              "judge gold standard (\u03ba=0.818 at NIV-Y+P) and runs entirely on "
-              "the standalone computer \u2014 no cloud dependency."),
-        ("4", "MBR shipped as production default (May 2 2026, Mission 6) \u2014 "
-              "Judge v3 Y+P 71% vs baseline 68%, p = 0.00017 paired "
-              "McNemar. Joint conf+agreement bands + Trust gate also shipped."),
-        ("5", "Clear path forward: stronger LLM + smart prompts + 20K+ "
-              "training data to improve English performance. Full plan to "
-              "replicate the approach for an Arabic model in 2\u20133 months."),
+        ("1", "Rigorous assessment on 1,497 segments. IS metric reveals "
+              "62% useful (NIV Y+P, MBR); LLM judge v1 confirms 65%."),
+        ("2", "Production system shipped: standalone container, UI, "
+              "37 bugs fixed, 8-stage pipeline, 37 tests, 8 reports."),
+        ("3", "Model strong after MBR: 71% useful per Judge v3 (paired). "
+              "IS\u2014judge \u03ba=0.818 at NIV-Y+P; runs on-prem, no cloud."),
+        ("4", "MBR shipped as production default (Mission 6): Judge v3 "
+              "Y+P 71% vs 68% baseline, p = 0.00017 paired McNemar."),
+        ("5", "Clear path forward: stronger LLM + prompts + 20K+ data. "
+              "Arabic replication plan: 2\u20133 months."),
     ]
 
-    card_h = Inches(0.95)  # tightened to fit 5 cards (was 1.05 for 4)
-    gap = Inches(0.10)
-    circle_d = Inches(0.55)
+    # card_h bumped 0.95 -> 1.05 to fit Pt(24) two-line text (audit:bigfonts).
+    card_h = Inches(1.05)
+    gap = Inches(0.06)
+    circle_d = Inches(0.65)
 
     card_groups = []
     for i, (num, text) in enumerate(takeaways):
@@ -1045,13 +1037,13 @@ def slide_31(prs):
         circle.line.fill.background()
         nt = add_text(slide, num, MX + Inches(0.2), cy,
                  circle_d, circle_d,
-                 size=Pt(22), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+                 size=Pt(30), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
         # Text — left-aligned next to circle
         tb = add_text(slide, text,
                       MX + Inches(1.0), y + Inches(0.08),
                       CW - Inches(1.2), card_h - Inches(0.16),
-                      size=Pt(13), color=WHITE)
+                      size=Pt(24), color=WHITE)
         card_groups.append([r, circle, nt, tb])
 
     _finish(slide, 31,
@@ -1086,7 +1078,7 @@ def slide_31(prs):
 # APPENDIX SLIDES (A1–A13)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_a1(prs):
+def slide_a1(prs):  # audit:bigfonts
     """A1: Homophenes — The Lip-Reading Problem."""
     slide = new_slide(prs)
     add_title(slide, "A1: Homophenes — The Lip-Reading Problem")
@@ -1095,7 +1087,7 @@ def slide_a1(prs):
     # Left: viseme table
     add_text(slide, "50–70% of English sounds are invisible on lips.\n"
              "Multiple sounds produce identical mouth shapes:",
-             MX, CT, SLW, Inches(0.7), size=Pt(14), color=LGRAY)
+             MX, CT, SLW, Inches(1.8), size=Pt(24), color=LGRAY)
 
     tbl1 = add_table(slide,
         ["Viseme Group", "Sounds"],
@@ -1103,23 +1095,26 @@ def slide_a1(prs):
          ["Alveolar", "t, d, n, s, z, l"],
          ["Velar", "k, g, ng"],
          ["Labiodental", "f, v"]],
-        MX, CT + Inches(0.9), SLW, text_size=Pt(12))
+        MX, CT + Inches(0.9), SLW, text_size=Pt(24))
 
     # Right: confusable pairs
     add_text(slide, "Confusable word pairs (identical on lips):",
-             SRL, CT, SRW, Inches(0.5), size=Pt(14), color=LGRAY)
+             SRL, CT, SRW, Inches(1.0), size=Pt(24), color=LGRAY)
 
+    # tbl2 row_h set 0.40 for Pt(24); footer y shifted to 5.10 to clear
+    # 7-row table ending ~4.85 (audit:bigfonts).
     tbl2 = add_table(slide,
         ["Word A", "Word B"],
         [["mom", "bomb"], ["pat", "bat"], ["collar", "color"],
          ["pads", "pants"], ["admiral", "animal"],
          ["probiotics", "permafrost"]],
-        SRL, CT + Inches(0.6), SRW, text_size=Pt(12))
+        SRL, CT + Inches(0.6), SRW, text_size=Pt(24),
+        row_height=Inches(0.40))
 
     add_text(slide, 'Context is the ONLY disambiguation signal.\n'
-             'This is why the LLM component matters.',
-             SRL, CT + Inches(3.6), SRW, Inches(0.5),
-             size=Pt(12), color=TEAL, italic=True)
+             'This is why the LLM matters.',
+             SRL, CT + Inches(3.65), SRW, Inches(1.4),
+             size=Pt(24), color=TEAL, italic=True)
 
     _finish(slide, "A1",
         "Homophenes: visually identical mouth shapes for different sounds. "
@@ -1139,7 +1134,7 @@ def slide_a1(prs):
         [[tbl1], [tbl2]], click_reveal=True)
 
 
-def slide_a3(prs):
+def slide_a3(prs):  # audit:bigfonts
     """A2: Catastrophic lenpen=2.0."""
     slide = new_slide(prs)
     add_title(slide, "A2: Catastrophic lenpen=2.0 (Config H)")
@@ -1148,7 +1143,7 @@ def slide_a3(prs):
     add_text(slide, "Config H forces the model to generate longer text. "
              "Mean WER: 540%\nThe model generates paragraphs of "
              "hallucinated text:",
-             MX, CT, CW, Inches(0.6), size=Pt(14), color=CORAL)
+             MX, CT, CW, Inches(0.6), size=Pt(24), color=CORAL)
 
     tbl = add_table(slide,
         ["Segment", "Reference", "Config H Output", "WER"],
@@ -1161,13 +1156,13 @@ def slide_a3(prs):
          ["loebelfG9T4", '"so repeat make yourself at home"',
           '"don\'t forget to make yourself at home thank you very much '
           'that was a lot of fun..."', "4,183%"]],
-        MX, CT + Inches(0.8), CW, text_size=Pt(10),
+        MX, CT + Inches(0.8), CW, text_size=Pt(24),
         row_colors={0: {3: CORAL}, 1: {3: CORAL}, 2: {3: CORAL}})
 
     add_text(slide, "lenpen=2.0 removes the generation length brake, "
              "letting the LLM prior run unchecked.",
              MX, CT + Inches(3.4), CW, Inches(0.4),
-             size=Pt(11), color=LGRAY, italic=True)
+             size=Pt(16), color=LGRAY, italic=True)
 
     _finish(slide, "A2",
         "Config H (lenpen=2.0) produces catastrophic hallucinations. "
@@ -1176,7 +1171,7 @@ def slide_a3(prs):
         "LLM prior overwhelming the visual signal.")
 
 
-def slide_a8(prs):
+def slide_a8(prs):  # audit:bigfonts
     """A3: IS Component Correlation."""
     slide = new_slide(prs)
     add_title(slide, "A3: IS Component Correlation")
@@ -1187,21 +1182,22 @@ def slide_a8(prs):
     # than reaching CW*0.55 = 6.67 (right edge x=7.27, which collided with
     # the right-column "Cross-Config" caption starting at SRL=6.5).
     add_text(slide, "PCA: 6 IS signals collapse into 2 principal components:",
-             MX, CT, SRL - MX - Inches(0.1), Inches(0.4),
-             size=Pt(14), color=WHITE)
+             MX, CT, SRL - MX - Inches(0.1), Inches(1.0),
+             size=Pt(24), color=WHITE)
 
     tbl1 = add_table(slide,
         ["Component", "Signals", "Variance", "Loadings"],
         [["PC1: Signal Quality", "All 5 content signals", "68%", "0.43\u20130.47 each"],
          ["PC2: Output Length", "Length Ratio", "20%", "0.91"]],
-        MX, CT + Inches(0.5), SRL - MX - Inches(0.1), text_size=Pt(11),
+        MX, CT + Inches(0.5), SRL - MX - Inches(0.1), text_size=Pt(24),
         row_height=Inches(0.35),
         col_widths=[Inches(1.6), Inches(1.8), Inches(1.1), Inches(1.4)])
 
     # Cross-config stability
     add_text(slide, "Cross-Config Stability (16 configs)",
-             SRL, CT, SRW, Inches(0.35), size=Pt(14), color=TEAL, bold=True)
+             SRL, CT, SRW, Inches(1.0), size=Pt(24), color=TEAL, bold=True)
 
+    # tbl2 row_h bumped 0.30 -> 0.38 for Pt(24) (audit:bigfonts).
     tbl2 = add_table(slide,
         ["Signal", "Stability", "Std"],
         [["Semantic", "Stable", "0.017"],
@@ -1209,16 +1205,17 @@ def slide_a8(prs):
          ["NEA", "Stable", "0.023"],
          ["WER", "Volatile", "0.165"],
          ["Length", "Volatile", "0.142"]],
-        SRL, CT + Inches(0.4), SRW, text_size=Pt(10),
-        row_height=Inches(0.3),
+        SRL, CT + Inches(0.4), SRW, text_size=Pt(24),
+        row_height=Inches(0.38),
         row_colors={3: {1: CORAL}, 4: {1: CORAL},
                     0: {1: GREEN}, 1: {1: GREEN}, 2: {1: GREEN}})
 
-    # Heuristic validation — positioned below tbl2 (top 1.85 + 6*0.3 = 3.65)
+    # Heuristic validation — y shifted 2.35 -> 2.85 for bumped tbl2 (audit:bigfonts).
     add_text(slide, "Heuristic Validation (no runtime LLM)",
-             SRL, CT + Inches(2.35), SRW, Inches(0.3),
-             size=Pt(13), color=TEAL, bold=True)
+             SRL, CT + Inches(2.95), SRW, Inches(1.0),
+             size=Pt(24), color=TEAL, bold=True)
 
+    # tbl3 y shifted, row_h bumped 0.30 -> 0.38 (audit:bigfonts).
     tbl3 = add_table(slide,
         ["Metric", "Value"],
         [["Mean r", "0.925 (std 0.015)"],
@@ -1226,8 +1223,8 @@ def slide_a8(prs):
          ["Agreement (IS ≥ 3.80)", "κ = 0.690"],
          ["Recall (IS ≥ 2.00)", "97.6–100%"],
          ["Config range", "κ 0.62–0.86"]],
-        SRL, CT + Inches(2.75), SRW * 0.7, text_size=Pt(10),
-        row_height=Inches(0.3))
+        SRL, CT + Inches(3.35), SRW * 0.7, text_size=Pt(24),
+        row_height=Inches(0.38))
 
     _finish(slide, "A3",
         "PCA retains exactly 2 principal components under the Kaiser "
@@ -1249,7 +1246,7 @@ def slide_a8(prs):
         "docs/evaluation/is_cross_config_validation.md.")
 
 
-def slide_a11(prs):
+def slide_a11(prs):  # audit:bigfonts
     """A4: LLM Salvage — Recoverable Segments."""
     slide = new_slide(prs)
     add_title(slide, "A4: LLM Salvage — Recoverable Segments")
@@ -1257,30 +1254,32 @@ def slide_a11(prs):
 
     # Key numbers
     add_text(slide, "Key Numbers", MX, CT, SLW, Inches(0.3),
-             size=Pt(14), color=TEAL, bold=True)
+             size=Pt(24), color=TEAL, bold=True)
 
     # audit:niv_yp_pct_top1 (62%) — slide table reports the top-1 baseline
     # because LLM-salvage analysis was conducted against the top-1 hypothesis
     # (heuristic was tuned on top-1; salvage analysis predates MBR shipping).
     # Judge 65% is the v1 blind gold-standard (audit:llm_judge_v1).
+    # tbl1: row_h set 0.42 for Pt(24); long row labels shortened (audit:bigfonts).
     tbl1 = add_table(slide,
         ["Metric", "Value"],
-        [["Metric-failed segments", "900"],
+        [["Metric-failed segs", "900"],
          ["LLM-recoverable", "165 (18%)"],
-         ["Useful output (IS ≥ 2.00, top-1)", "62%"],  # audit:niv_yp_pct_top1
-         ["LLM Judge v1 blind (Y+P)", "65%"],  # audit:llm_judge_v1
-         ["IS vs Judge agreement", "κ = 0.818"]],
-        MX, CT + Inches(0.4), SLW, text_size=Pt(11),
+         ["Useful (IS ≥ 2.00, top-1)", "62%"],  # audit:niv_yp_pct_top1
+         ["Judge v1 blind (Y+P)", "65%"],  # audit:llm_judge_v1
+         ["IS vs Judge κ", "0.818"]],
+        MX, CT + Inches(0.4), SLW, text_size=Pt(24),
+        row_height=Inches(0.42),
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
 
-    add_text(slide, "58% of salvageable have moderate WER (50–70%).\n"
+    add_text(slide, "58% salvageable have WER 50–70%.\n"
              "Decision tree: 15 rules, r=0.934 with IS.",
-             MX, CT + Inches(2.8), SLW, Inches(0.7),
-             size=Pt(12), color=LGRAY)
+             MX, CT + Inches(3.20), SLW, Inches(1.4),
+             size=Pt(24), color=LGRAY)
 
-    # Recovery categories
-    add_text(slide, "6 Recovery Categories", SRL, CT, SRW, Inches(0.3),
-             size=Pt(14), color=TEAL, bold=True)
+    # Recovery categories — h aligned with bumped tbl1 (audit:bigfonts).
+    add_text(slide, "6 Recovery Categories", SRL, CT, SRW, Inches(0.35),
+             size=Pt(24), color=TEAL, bold=True)
 
     tbl2 = add_table(slide,
         ["Category", "N", "Key Signal"],
@@ -1290,12 +1289,13 @@ def slide_a11(prs):
          ["Entity-Preserved", "44", "NEA F1 ≥ 50%"],
          ["Structure Match", "74", "Word order intact"],
          ["WER Over-Punish.", "27", "WER−WWER ≥ 10pp"]],
-        SRL, CT + Inches(0.4), SRW, text_size=Pt(11))
+        SRL, CT + Inches(0.4), SRW, text_size=Pt(24),
+        row_height=Inches(0.42))
 
-    add_text(slide, "Categories overlap — segments can exhibit multiple "
-             "recovery signals. System delivers useful output for 1 in 2 segments.",
-             SRL, CT + Inches(3.2), SRW, Inches(0.6),
-             size=Pt(12), color=LGRAY, italic=True)
+    add_text(slide, "Categories overlap — system delivers useful output "
+             "for 1 in 2 segments.",
+             SRL, CT + Inches(3.45), SRW, Inches(0.7),
+             size=Pt(18), color=LGRAY, italic=True)
 
     _finish(slide, "A4",
         # audit:niv_yp_pct_top1 — LLM-salvage analysis is top-1-anchored.
@@ -1306,7 +1306,7 @@ def slide_a11(prs):
         "See docs/evaluation/llm_salvage/llm_salvage_analysis.md.")
 
 
-def slide_a11b(prs):
+def slide_a11b(prs):  # audit:bigfonts
     """A5: LLM Salvage — Curated Examples."""
     slide = new_slide(prs)
     add_title(slide, "A5: LLM Salvage — Curated Examples")
@@ -1314,7 +1314,7 @@ def slide_a11b(prs):
 
     add_text(slide, "One real example per recovery category — all IS < 2.0 "
              '(metrics say "failed") but heuristic says recoverable:',
-             MX, CT, CW, Inches(0.4), size=Pt(13), color=LGRAY)
+             MX, CT, CW, Inches(1.0), size=Pt(24), color=LGRAY)
 
     tbl = add_table(slide,
         ["Category", "Reference (excerpt)", "Hypothesis (excerpt)",
@@ -1343,8 +1343,8 @@ def slide_a11b(prs):
           "so um",
           "so i kind of",
           "150%", "2.06", "0.65"]],
-        MX, CT + Inches(0.6), CW, text_size=Pt(9),
-        row_height=Inches(0.45))
+        MX, CT + Inches(0.6), CW, text_size=Pt(24),
+        row_height=Inches(0.75))  # row_height 0.45 -> 0.75 for Pt(24) wrap (audit:bigfonts)
 
     _finish(slide, "A5",
         "Curated examples showing each of the 6 recovery categories. "
@@ -1352,14 +1352,14 @@ def slide_a11b(prs):
         "Categories overlap: a segment can exhibit multiple recovery signals.")
 
 
-def slide_a13(prs):
+def slide_a13(prs):  # audit:bigfonts
     """A6: Failure Mode Examples."""
     slide = new_slide(prs)
     add_title(slide, "A6: Failure Mode Examples")
     add_accent_line(slide)
 
     add_text(slide, "One real example per failure category (5 categories):",
-             MX, CT, CW, Inches(0.3), size=Pt(13), color=LGRAY)
+             MX, CT, CW, Inches(0.3), size=Pt(24), color=LGRAY)
 
     # Canonical 5 categories from 574-segment failure taxonomy
     tbl = add_table(slide,
@@ -1379,7 +1379,7 @@ def slide_a13(prs):
          ["Accumulated\nErrors (52 segs)", "9%",
           '"you\'re rich no no no..."',
           '"your ring that\'s not what..."', "67%", "1.64"]],
-        MX, CT + Inches(0.4), CW, text_size=Pt(10),
+        MX, CT + Inches(0.4), CW, text_size=Pt(24),
         row_height=Inches(0.70),
         col_widths=[Inches(1.8), Inches(1.0), Inches(2.8), Inches(2.8),
                     Inches(0.8), Inches(0.6)],
@@ -1409,14 +1409,14 @@ def slide_a13(prs):
 # SLIDE A15 — VIDEO GALLERY MAP
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_a15(prs):
+def slide_a15(prs):  # audit:bigfonts
     """A7: Reference table of all 34 example segments across the presentation."""
     slide = new_slide(prs)
     add_title(slide, "A7: Video Gallery — All Example Segments")
     add_accent_line(slide)
 
     add_text(slide, "★ = video embedded on a slide   ─ = available in burned_videos/ only",
-             MX, CT, CW, Inches(0.32), size=Pt(11), color=LGRAY, italic=True)
+             MX, CT, CW, Inches(0.32), size=Pt(16), color=LGRAY, italic=True)
 
     col_w = [Inches(2.1), Inches(1.7), Inches(0.8), Inches(0.7), Inches(0.5)]
     headers = ["Segment ID", "Category", "Slide", "WER", ""]
@@ -1469,15 +1469,16 @@ def slide_a15(prs):
     half = Inches(5.9)
     gap  = Inches(0.33)
 
+    # row_height bumped 0.28 -> 0.32 to fit Pt(24) text (audit:bigfonts).
     tbl_l = add_table(slide, headers, left_rows,
                       MX, CT + Inches(0.38), half,
-                      row_height=Inches(0.28), text_size=Pt(8),
+                      row_height=Inches(0.32), text_size=Pt(24),
                       col_widths=[Inches(1.85), Inches(1.5), Inches(0.7),
                                   Inches(0.6), Inches(0.45)])
 
     tbl_r = add_table(slide, headers, right_rows,
                       MX + half + gap, CT + Inches(0.38), half,
-                      row_height=Inches(0.28), text_size=Pt(8),
+                      row_height=Inches(0.32), text_size=Pt(24),
                       col_widths=[Inches(1.85), Inches(1.5), Inches(0.7),
                                   Inches(0.6), Inches(0.45)])
 
@@ -1493,7 +1494,7 @@ def slide_a15(prs):
 # NEW SLIDES — DEEP DIVES, CONTEXT, ENGINEERING, APPENDIX
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_future_transition(prs):
+def slide_future_transition(prs):  # audit:bigfonts
     """Section divider: entering future directions portion."""
     slide = new_slide(prs)
 
@@ -1502,14 +1503,14 @@ def slide_future_transition(prs):
              size=Pt(48), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "From Analysis to Action",
              MX, Inches(3.5), CW, Inches(0.6),
-             size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER)
+             size=Pt(30), color=LGRAY, align=PP_ALIGN.CENTER)
 
     add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
              fill_color=GREEN)
 
     add_text(slide, "5 research insights  \u2192  5-phase improvement roadmap",
              MX, Inches(4.8), CW, Inches(0.5),
-             size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
+             size=Pt(22), color=MGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Section transition: we now move from what we found to what we "
@@ -1517,7 +1518,7 @@ def slide_future_transition(prs):
         "improvement roadmap.")
 
 
-def slide_insights(prs):
+def slide_insights(prs):  # audit:bigfonts
     """Key research insights that inform the roadmap."""
     slide = new_slide(prs)
     add_title(slide, "Five Insights That Inform the Roadmap")
@@ -1562,11 +1563,11 @@ def slide_insights(prs):
         circle.line.fill.background()
         nt = add_text(slide, num, MX, y + Inches(0.1),
                  Inches(0.5), Inches(0.5),
-                 size=Pt(18), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
         rt = add_rich_text(slide, [
-            [(title, {"size": Pt(14), "color": WHITE, "bold": True})],
-            [(detail, {"size": Pt(11), "color": LGRAY})],
+            [(title, {"size": Pt(24), "color": WHITE, "bold": True})],
+            [(detail, {"size": Pt(24), "color": LGRAY})],
         ], MX + Inches(0.7), y + Inches(0.02),
            CW - Inches(0.8), step_h - Inches(0.04))
         insight_groups.append([circle, nt, rt])
@@ -1579,7 +1580,7 @@ def slide_insights(prs):
         insight_groups)
 
 
-def slide_data_scaling(prs):
+def slide_data_scaling(prs):  # audit:bigfonts
     """Data scaling evidence and projections."""
     slide = new_slide(prs)
     add_title(slide, "Data Scaling: The Path to IS 3.5–4.0")
@@ -1590,18 +1591,18 @@ def slide_data_scaling(prs):
 
     # Left — fine-tuning results + scaling law
     lt = add_text(slide, "Why More Data Is the Answer", MX, CT, col_w, Inches(0.4),
-                  size=Pt(17), color=CORAL, bold=True)
+                  size=Pt(24), color=CORAL, bold=True)
     lb = add_bullets(slide, [
         ("Current: 1,273 English segments \u2014 far below LoRA minimum", {"bold": True}),
         "Scaling law (ICLR 2024): data \u00d7 LLM quality = multiplicative gains",
         ("AVSpeech: 290K English videos available for curation", {"color": TEAL}),
         ("Next step: curate 20K\u201350K diverse English segments", {"bold": True, "color": GREEN}),
-    ], MX, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(14))
+    ], MX, CT + Inches(0.5), col_w, Inches(3.0), size=Pt(24))
 
     # Right — projection table with IS
     rx = MX + col_w + gap
     rt = add_text(slide, "Projected Impact on IS", rx, CT, col_w,
-                  Inches(0.4), size=Pt(17), color=TEAL, bold=True)
+                  Inches(0.4), size=Pt(24), color=TEAL, bold=True)
 
     tbl = add_table(slide,
         ["Phase", "Data", "WER", "IS Target", "Timeline"],
@@ -1610,7 +1611,7 @@ def slide_data_scaling(prs):
          ["Phase 2", "10K hrs", "48\u201352%", "~3.3", "4\u20136 wks"],
          ["Phase 3", "20K hrs", "42\u201346%", "~3.7", "6\u20138 wks"],
          ["Phase 4", "50K+ hrs", "38\u201342%", "~4.0+", "3\u20134 mo"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(13),
+        rx, CT + Inches(0.5), col_w, text_size=Pt(24),
         col_widths=[Inches(1.0), Inches(1.1), Inches(1.1), Inches(1.0), Inches(1.1)],
         row_colors={0: {2: CORAL}, 3: {3: GREEN}, 4: {3: GREEN}})
 
@@ -1620,23 +1621,23 @@ def slide_data_scaling(prs):
                   corner_radius=True)
     add_text(slide, "290K", rx + Inches(0.2), CT + Inches(3.1),
              Inches(1.2), Inches(0.4),
-             size=Pt(28), color=TEAL, bold=True)
+             size=Pt(36), color=TEAL, bold=True)
     add_text(slide, "AVSpeech English videos available\nfor training data curation",
              rx + Inches(1.5), CT + Inches(3.1), col_w - Inches(1.7),
-             Inches(0.7), size=Pt(13), color=WHITE)
+             Inches(0.7), size=Pt(24), color=WHITE)
 
     realistic_note = add_text(slide,
         "Timelines assume realistic training: bugs, bad epochs, debugging overhead \u2014 "
         "not ideal paper conditions.",
         rx, CT + Inches(4.1), col_w, Inches(0.35),
-        size=Pt(10), color=LGRAY, italic=True)
+        size=Pt(15), color=LGRAY, italic=True)
 
     # Academic references
     add_text(slide,
         "LoRA Scaling: Biderman et al. (2024), ICLR  |  "
         "AVSpeech: Ephrat et al. (2018), ACM TOG — 290K video dataset",
         MX, Inches(6.55), CW, Inches(0.3),
-        size=Pt(8), color=MGRAY, italic=True)
+        size=Pt(14), color=MGRAY, italic=True)
 
     _finish(slide, 0,
         "Data scaling projections based on ICLR 2024 multiplicative scaling "
@@ -1646,7 +1647,7 @@ def slide_data_scaling(prs):
         [[lt, lb], [rt], [tbl], [r1, realistic_note]], click_reveal=True)
 
 
-def slide_price_tag(prs):
+def slide_price_tag(prs):  # audit:bigfonts
     """Cost projections: data scale is the only variable."""
     slide = new_slide(prs)
     add_title(slide, "The Price Tag: What It Costs to Improve")
@@ -1656,7 +1657,7 @@ def slide_price_tag(prs):
     add_text(slide,
         "The paper\u2019s training recipe already works (25% WER on LRS3). "
         "The only variable is data scale.",
-        MX, CT, CW, Inches(0.35), size=Pt(14), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.35), size=Pt(20), color=LGRAY, italic=True)
 
     # Simple 3-column table: Data → Cost → Expected IS
     tbl_w = Inches(9.0)
@@ -1666,37 +1667,36 @@ def slide_price_tag(prs):
         [["5\u201310K hrs  (10\u201320\u00d7 paper)", "~$10\u201320K", "~3.0\u20133.5"],
          ["20K hrs  (46\u00d7 paper)", "~$30\u201340K", "~3.5\u20133.8"],
          ["50K hrs  (115\u00d7 paper)", "~$70\u2013100K", "~3.8\u20134.2"]],
-        tbl_x, CT + Inches(0.55), tbl_w, text_size=Pt(14),
+        tbl_x, CT + Inches(0.55), tbl_w, text_size=Pt(24),
         col_widths=[Inches(3.8), Inches(2.4), Inches(2.8)],
         row_height=Inches(0.5),
         row_colors={1: {1: GREEN, 2: GREEN}})
 
-    # Key insight callout
-    ins_y = CT + Inches(2.55)
-    r1 = add_rect(slide, MX, ins_y, CW, Inches(1.2),
+    # Key insight callout (audit:bigfonts \u2014 h bumped 1.2 -> 1.65 for Pt(24)).
+    ins_y = CT + Inches(2.65)
+    r1 = add_rect(slide, MX, ins_y, CW, Inches(1.65),
                    fill_color=NAVY2, border_color=GOLD, border_width=Pt(2),
                    corner_radius=True)
     add_text(slide, "Key insight",
              MX + Inches(0.25), ins_y + Inches(0.08),
-             Inches(3.0), Inches(0.28), size=Pt(15), color=GOLD, bold=True)
+             Inches(3.0), Inches(0.35), size=Pt(24), color=GOLD, bold=True)
     add_bullets(slide, [
-        "Paper used only 433 hrs of LRS3 \u2014 we need 20\u201350K hrs of diverse data",
-        ("Same training recipe, same model architecture \u2014 just more data",
-         {"color": TEAL}),
-        "Current IS 2.52 \u2192 target IS 3.5\u20134.0 requires ~46\u2013115\u00d7 data scale-up",
-    ], MX + Inches(0.2), ins_y + Inches(0.38), CW - Inches(0.4), Inches(0.75),
-        size=Pt(13))
+        "Paper: 433 hrs LRS3 \u2014 we need 20\u201350K hrs diverse data",
+        ("Same recipe \u2014 just more data", {"color": TEAL}),
+        "IS 2.52 \u2192 3.5\u20134.0 = ~46\u2013115\u00d7 scale-up",
+    ], MX + Inches(0.2), ins_y + Inches(0.45), CW - Inches(0.4), Inches(1.15),
+        size=Pt(24))
 
-    # LLM upgrade — requires adapter retraining but stacks with data investment
-    llm_y = ins_y + Inches(1.4)
-    r2 = add_rect(slide, MX, llm_y, CW, Inches(0.7),
+    # LLM upgrade (audit:bigfonts \u2014 y shifted to ins_y + 1.85).
+    llm_y = ins_y + Inches(1.85)
+    r2 = add_rect(slide, MX, llm_y, CW, Inches(0.85),
                    fill_color=NAVY2, border_color=TEAL, border_width=Pt(1),
                    corner_radius=True)
     add_text(slide, "LLM upgrade: Llama-2 \u2192 Llama 3.1 8B  "
-             "(+0.3\u20130.5 IS, requires adapter retraining, stacks with data investment)",
-             MX + Inches(0.25), llm_y + Inches(0.15),
-             CW - Inches(0.5), Inches(0.4),
-             size=Pt(13), color=TEAL)
+             "(+0.3\u20130.5 IS, adapter retraining required)",
+             MX + Inches(0.25), llm_y + Inches(0.20),
+             CW - Inches(0.5), Inches(0.5),
+             size=Pt(24), color=TEAL)
 
     _finish(slide, 0,
         "Cost projection focused on data scale as the single variable.\n\n"
@@ -1713,42 +1713,45 @@ def slide_price_tag(prs):
 
 
 
-def slide_a16(prs):
-    """A8: LLM Judge x IS Tier cross-tabulation."""
+def slide_a16(prs):  # audit:bigfonts2
+    """A8: LLM Judge x IS Tier cross-tabulation.
+
+    audit:bigfonts2 — Pass 2: bullets h 2.5 -> 1.85 (was extending to canvas
+    edge y=7.50); each bullet <=8 words.
+    """
     slide = new_slide(prs)
     add_title(slide, "A8: LLM Judge \u00d7 IS Tier Cross-Tabulation")
     add_accent_line(slide)
 
+    # audit:bigfonts \u2014 deleted N (count) column to free width for Pt(24)
+    # cells; only Y%, P%, N% are load-bearing in observations.
     add_text(slide,
-        "How the LLM judge verdict distributes across IS quality tiers (blind evaluation):",
-        MX, CT, CW, Inches(0.4), size=Pt(14), color=LGRAY)
+        "Judge verdict distribution across IS tiers (blind):",
+        MX, CT, CW, Inches(0.4), size=Pt(24), color=LGRAY)
 
     tbl = add_table(slide,
-        ["IS Tier", "Y (count)", "Y%", "P (count)", "P%", "N (count)", "N%"],
-        [["5 \u2014 Excellent (4.0\u20135.0)", "157", "57%", "105", "38%", "14", "5%"],
-         ["4 \u2014 Good (3.0\u20133.99)", "67", "21%", "189", "59%", "65", "20%"],
-         ["3 \u2014 Fair (2.0\u20132.99)", "25", "8%", "167", "51%", "133", "41%"],
-         ["2 \u2014 Poor (1.0\u20131.99)", "14", "4%", "115", "34%", "207", "62%"],
-         ["1 \u2014 Failed (0.0\u20130.99)", "5", "2%", "41", "17%", "193", "81%"]],
-        MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(11),
-        row_height=Inches(0.38),
-        col_widths=[Inches(2.8), Inches(1.2), Inches(1.0),
-                    Inches(1.2), Inches(1.0), Inches(1.2), Inches(1.0)],
-        row_colors={0: {2: GREEN}, 4: {6: CORAL}})
+        ["IS Tier", "Y", "Y%", "P", "P%", "N%"],
+        [["5 \u2014 Excellent", "157", "57%", "105", "38%", "5%"],
+         ["4 \u2014 Good",      "67",  "21%", "189", "59%", "20%"],
+         ["3 \u2014 Fair",      "25",  "8%",  "167", "51%", "41%"],
+         ["2 \u2014 Poor",      "14",  "4%",  "115", "34%", "62%"],
+         ["1 \u2014 Failed",    "5",   "2%",  "41",  "17%", "81%"]],
+        MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(24),
+        row_height=Inches(0.42),
+        col_widths=[Inches(2.6), Inches(1.4), Inches(1.4),
+                    Inches(1.4), Inches(1.4), Inches(1.8)],
+        row_colors={0: {2: GREEN}, 4: {5: CORAL}})
 
-    # Key observations
-    add_text(slide, "Key Observations:", MX, CT + Inches(2.95), CW, Inches(0.3),
-             size=Pt(15), color=TEAL, bold=True)
+    # Key observations \u2014 V6 dense; bullets <=8 words, h 2.5 -> 1.85.
+    # CUT v2: combined NIV + Pearson into single line via separate font color.
+    add_text(slide, "Key Observations:", MX, CT + Inches(3.10), CW, Inches(0.4),
+             size=Pt(24), color=TEAL, bold=True)
     add_bullets(slide, [
-        "IS Tier 5: 57% full Y \u2014 strong agreement on excellent output",
-        "IS Tiers 2-3: majority P not N \u2014 judge sees partial value metrics miss",
-        "IS Tier 1: 81% N \u2014 strong agreement on complete failure",
-        ("Pearson r = 0.85 between IS and judge verdict (coded Y=3, P=2, N=1)",
-         {"color": TEAL}),
-        ("Two NIV thresholds beat legacy IS \u2265 3.0 (\u03ba=0.52): "
-         "Y+P at IS \u2265 2.00 \u2192 \u03ba=0.82; Y at IS \u2265 3.80 \u2192 \u03ba=0.69",
-         {"color": GOLD}),
-    ], MX, CT + Inches(3.35), CW, Inches(2.0), size=Pt(13))
+        "Tier 5: 57% Y \u2014 strong excellent agreement",
+        "Tiers 2-3: majority P \u2014 partial value",
+        "Tier 1: 81% N \u2014 strong failure agreement",
+        ("Pearson r=0.85; NIV kappa 0.82 (Y+P), 0.69 (Y)", {"color": GOLD}),
+    ], MX, CT + Inches(3.55), CW, Inches(1.85), size=Pt(24))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers across all 1,497 segments "
@@ -1769,7 +1772,7 @@ def slide_a16(prs):
         "docs/evaluation/threshold_calibration_vs_opus.md.")
 
 
-def slide_a17(prs):
+def slide_a17(prs):  # audit:bigfonts
     """A9: Context-aware transition matrix and per-topic deltas."""
     slide = new_slide(prs)
     add_title(slide, "A9: Context Evaluation \u2014 Transition Details")
@@ -1780,22 +1783,22 @@ def slide_a17(prs):
 
     # Left — full transition matrix
     lt = add_text(slide, "Blind \u2192 Context Transition Matrix", MX, CT,
-                  col_w, Inches(0.4), size=Pt(17), color=TEAL, bold=True)
+                  col_w, Inches(1.0), size=Pt(24), color=TEAL, bold=True)
 
     tbl1 = add_table(slide,
         ["Blind \u2193 / Ctx \u2192", "Y", "P", "N", "Total"],
         [["Y", "207", "138", "0", "345"],
          ["P", "17", "519", "90", "626"],
          ["N", "1", "48", "477", "526"]],
-        MX, CT + Inches(0.5), col_w, text_size=Pt(12),
+        MX, CT + Inches(0.5), col_w, text_size=Pt(24),
         col_widths=[Inches(1.5), Inches(0.9), Inches(0.9),
                     Inches(0.9), Inches(0.9)],
         row_colors={0: {2: CORAL}, 1: {3: CORAL}})
 
     add_text(slide, "Dominant transition: Y\u2192P (138 cases, 40% of all Y)\n"
              "Only 1 N\u2192Y rescue across all 1,497 pairs",
-             MX, CT + Inches(2.2), col_w, Inches(0.6),
-             size=Pt(12), color=LGRAY)
+             MX, CT + Inches(2.2), col_w, Inches(1.8),
+             size=Pt(24), color=LGRAY)
 
     # Summary stats
     tbl2 = add_table(slide,
@@ -1804,13 +1807,15 @@ def slide_a17(prs):
          ["Total upgrades", "68 (4%)"],
          ["Unchanged", "1,199 (80%)"],
          ["Cross-condition agree.", "80%"]],
-        MX, CT + Inches(3.0), col_w * 0.7, text_size=Pt(11))
+        MX, CT + Inches(3.0), col_w * 0.7, text_size=Pt(24))
 
     # Right — per-topic deltas
     rx = MX + col_w + gap
     rt = add_text(slide, "Per-Topic Y+P Delta (Blind \u2192 Context)", rx, CT,
-                  col_w, Inches(0.4), size=Pt(17), color=CORAL, bold=True)
+                  col_w, Inches(1.0), size=Pt(24), color=CORAL, bold=True)
 
+    # tbl3 row_height set explicitly to 0.45 for Pt(24); footnote moved
+     # below table (audit:bigfonts).
     tbl3 = add_table(slide,
         ["Topic", "Blind Y+P", "Ctx Y+P", "\u0394"],
         [["Business/Finance", "72%", "70%", "\u22122pp"],
@@ -1820,15 +1825,14 @@ def slide_a17(prs):
          ["Tech/Science", "62%", "59%", "\u22123pp"],
          ["Sports/Health", "60%", "57%", "\u22123pp"],
          ["DIY/Home", "48%", "44%", "\u22124pp"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(11),
+        rx, CT + Inches(0.5), col_w, text_size=Pt(24),
+        row_height=Inches(0.40),
         row_colors={6: {3: CORAL}})
 
     add_text(slide,
-        "Context is uniformly stricter across all topics. DIY/Home has the "
-        "largest delta (\u22124pp) \u2014 context reveals the most visual-content "
-        "vocabulary failures.",
-        rx, CT + Inches(3.65), col_w, Inches(0.6),
-        size=Pt(12), color=LGRAY, italic=True)
+        "Context stricter everywhere; DIY/Home largest drop (\u22124pp).",
+        rx, CT + Inches(4.10), col_w, Inches(0.6),
+        size=Pt(18), color=LGRAY, italic=True)
 
     _finish(slide, "A9",
         "Full transition matrix and per-topic deltas for the context-aware "
@@ -1853,13 +1857,11 @@ def slide_a17(prs):
 # APPENDIX (academic) — Human-IS Path B estimates (HIDDEN by default)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_human_is_path_b(prs):
+def slide_human_is_path_b(prs):  # audit:bigfonts2
     """Appendix: Pre-study estimates of human IS performance (Path B).
 
-    HIDDEN by default — these are estimates from the IS formula plugged with
-    literature WER + component shifts, not measured human IS scores. Source:
-    docs/evaluation/human_is_estimation.md and after_amosi_audit.json
-    `human_is_*` keys (Section I).
+    audit:bigfonts2 — Pass 2 V6: bullets shrunk h 1.4 -> 1.0 + each <=8 words;
+    LR text shrunk; bottom now ends at 6.85 (was 7.25 — overlapping slide-num).
     """
     slide = new_slide(prs)
     add_title(slide, "Appendix: Human-IS Path B (Pre-Study Estimates)")
@@ -1870,19 +1872,19 @@ def slide_human_is_path_b(prs):
         "Path B: bin model 1,497 segments by WER, plug literature WER + "
         "component shifts into the same IS formula. Estimates, not "
         "measurements — needs Path A pilot to confirm.",
-        MX, CT, CW, Inches(0.6),
-        size=Pt(13), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(1.2),
+        size=Pt(20), color=LGRAY, italic=True)
 
-    # Main table — populations vs IS (low / mid / high) + tier
+    # Main table — row_height bumped 0.4 -> 0.46 for Pt(24) (audit:bigfonts)
     tbl = add_table(slide,
         ["Population", "low", "mid", "high", "tier (mid)"],
         [["Lay (no context)", "0.63", "0.92", "1.14", "Failed"],
          ["Deaf (no context)", "2.33", "2.74", "3.07", "Fair"],
          ["Expert (no context)", "2.60", "3.03", "3.33", "Fair"],
          ["Lay + ctx + model", "3.36", "3.83", "4.19", "Good"],
-         ["Model alone (measured, MBR)", "—", "2.547", "—", "measured"]],
-        MX, CT + Inches(0.7), CW * 0.78, text_size=Pt(12),
-        row_height=Inches(0.4),
+         ["Model alone (MBR, measured)", "—", "2.547", "—", "measured"]],
+        MX, CT + Inches(0.7), CW * 0.78, text_size=Pt(24),
+        row_height=Inches(0.46),
         col_widths=[Inches(3.4), Inches(1.1), Inches(1.1),
                     Inches(1.1), Inches(1.7)],
         # Highlight model row (last) in TEAL; expert in GOLD
@@ -1890,40 +1892,34 @@ def slide_human_is_path_b(prs):
                     2: {0: GOLD},
                     3: {0: GREEN}})
 
-    # Comparison call-outs
+    # Comparison call-outs — V6 bullets <=8 words; h 1.4 -> 1.0 (audit:bigfonts2).
+    # CUT v3: header up 3.95->3.50, bullets up 4.40->3.95 + Pt(24)->Pt(20)
+    # so 4 bullets fit under safe 7.05 (was rendering bottom 8.65).
     add_text(slide, "Where the model sits",
-             MX, CT + Inches(3.15), SLW, Inches(0.35),
-             size=Pt(15), color=TEAL, bold=True)
+             MX, CT + Inches(3.50), SLW, Inches(0.4),
+             size=Pt(24), color=TEAL, bold=True)
     add_bullets(slide, [
-        ("Model 2.547 ≈ deaf-no-context (2.74)", {"color": LGRAY}),
+        ("2.547 ~ deaf no-context (2.74)", {"color": LGRAY}),
         ("Loses to expert by ~0.5", {"color": CORAL}),
-        ("Loses to lay+ctx+model reviewer by ~1.3",
-         {"color": CORAL, "bold": True}),
-        ("Beats lay-no-context by ~1.6", {"color": GREEN}),
-    ], MX, CT + Inches(3.55), SLW, Inches(1.6), size=Pt(12))
+        ("Loses to lay+ctx+model by ~1.3", {"color": CORAL, "bold": True}),
+        ("Beats lay no-context by ~1.6", {"color": GREEN}),
+    ], MX, CT + Inches(3.95), SLW, Inches(1.53), size=Pt(20))
 
-    # LR isolation note (right column)
+    # CUT v3: header up 3.95->3.50, body up 4.40->3.95 + frame h 1.4->1.20
+    # so Pt(24) text 3 lines stay under safe 7.05 (was 7.25).
     add_text(slide, "LR isolation experiment",
-             SRL, CT + Inches(3.15), SRW, Inches(0.35),
-             size=Pt(15), color=GOLD, bold=True)
+             SRL, CT + Inches(3.50), SRW, Inches(0.4),
+             size=Pt(24), color=GOLD, bold=True)
     add_text(slide,
-        "Human-style LR (skipping uncertain words) costs:\n"
-        "  Lay: +0.41 IS  →  Deaf: +0.21  →\n"
-        "  Expert: +0.15  →  Lay+ctx+model: +0.06\n\n"
-        "Penalty shrinks with proficiency — fluency is a "
-        "covert reward in current LR scaling.",
-        SRL, CT + Inches(3.55), SRW, Inches(1.7),
-        size=Pt(12), color=LGRAY)
+        "Skip-uncertain LR cost:\n"
+        "  Lay +0.41  Deaf +0.21\n"
+        "  Expert +0.15  Lay+ctx+model +0.06",
+        SRL, CT + Inches(3.95), SRW, Inches(1.20),
+        size=Pt(24), color=LGRAY)
 
-    # Caveat strip
-    # LAYOUT fix: was at y=6.9 h=0.5 (bot_gap 0.10, audit). Moved up to y=6.70
-    # h=0.40 -> ends at 7.10, leaving 0.40" clearance from slide bottom (7.5).
-    add_text(slide,
-        "Caveat: Path B is pre-study. Reproducible Python snippet in "
-        "docs/evaluation/human_is_estimation.md §4. "
-        "Needs Path A pilot for measured ground truth.",
-        MX, Inches(6.70), CW, Inches(0.40),
-        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+    # Caveat strip — relocated to speaker notes; on-slide caveat removed
+    # because Pt(24) bullets extend to y=7.25 leaving no room (audit:bigfonts).
+    # Original caveat text preserved in _finish() notes below.
 
     _finish(slide, "A",
         "Appendix slide (HIDDEN by default in academic deck). Pre-study "
@@ -1945,7 +1941,7 @@ def slide_human_is_path_b(prs):
 # APPENDIX (academic) — PCA Component Loadings (HIDDEN by default)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_appendix_pca_loadings(prs):
+def slide_appendix_pca_loadings(prs):  # audit:bigfonts
     """Appendix: PCA loadings for the 6 IS signals.
 
     Reframes the old '3 dimensions' claim: Kaiser criterion retains 2 PCs.
@@ -1959,21 +1955,21 @@ def slide_appendix_pca_loadings(prs):
     add_text(slide,
         "Kaiser criterion retains 2 components. Together they explain "
         "88% of variance.",
-        MX, CT, CW, Inches(0.4),
-        size=Pt(13), color=LGRAY)
+        MX, CT, CW, Inches(1.0),
+        size=Pt(24), color=LGRAY)
 
-    # Loadings table (PC1, PC2 only — PC3 dropped by Kaiser)
+    # Loadings table (PC1, PC2 only — PC3 dropped by Kaiser).
+    # Headers shortened + row_height bumped 0.34 -> 0.40 for Pt(24) (audit:bigfonts).
     tbl = add_table(slide,
-        ["Signal", "PC1 (Signal Quality, 68%)",
-         "PC2 (Output Length, 20%)"],
+        ["Signal", "PC1 (Quality 68%)", "PC2 (Length 20%)"],
         [["Semantic",     "+0.445", "+0.057"],
          ["Phonetic",     "+0.466", "+0.184"],
          ["InvWER",       "+0.431", "−0.367"],
          ["InvWWER",      "+0.455", "−0.061"],
          ["NEA F1",       "+0.430", "−0.001"],
          ["LengthRatio",  "+0.083", "+0.908"]],
-        MX, CT + Inches(0.55), CW * 0.62, text_size=Pt(12),
-        row_height=Inches(0.34),
+        MX, CT + Inches(0.55), CW * 0.62, text_size=Pt(24),
+        row_height=Inches(0.40),
         col_widths=[Inches(2.0), Inches(3.2), Inches(2.6)],
         # Highlight the equally-loaded content cluster on PC1 (rows 0-4),
         # and the dominant LengthRatio loading on PC2 (row 5).
@@ -1990,25 +1986,26 @@ def slide_appendix_pca_loadings(prs):
                   border_width=Pt(2), corner_radius=True)
     add_text(slide, "Reframing", rx + Inches(0.15), CT + Inches(0.65),
              rw - Inches(0.3), Inches(0.3),
-             size=Pt(14), color=TEAL, bold=True)
+             size=Pt(24), color=TEAL, bold=True)
+    # CUT v3: bullets compressed + Pt(24)->Pt(18) so 4 bullets fit in 2.1"
+    # frame at narrow rw width (was rendering bottom 8.10).
     add_bullets(slide, [
-        "PC1 (68%) = signal quality — all 5 content "
-        "signals load 0.43–0.47, virtually identical",
-        ("Semantic is NOT an independent dimension — "
-         "loads on PC1 with word-accuracy signals", {"color": GOLD}),
-        "PC2 (20%) = output length — Length Ratio dominates at 0.91",
-        ("The old '3 dimensions' framing was wrong",
+        "PC1 (68%) = signal quality (all 5 load 0.43–0.47)",
+        ("Semantic is NOT independent — loads on PC1",
+         {"color": GOLD}),
+        "PC2 (20%) = output length (LR 0.91)",
+        ("Old '3 dimensions' framing was wrong",
          {"color": CORAL, "bold": True}),
     ], rx + Inches(0.15), CT + Inches(1.05), rw - Inches(0.3),
-       Inches(2.1), size=Pt(12))
+       Inches(2.6), size=Pt(18))
 
-    # Bottom — key takeaway
+    # Bottom — key takeaway. Shifted down y=4.10 (was 3.35) since table
+    # row_height bumped for Pt(24) text (audit:bigfonts).
     add_text(slide,
-        "Practical implication: when the visual encoder works, ALL "
-        "content metrics improve together. They are 5 views of the same "
-        "underlying quality, not 5 independent axes.",
-        MX, CT + Inches(3.35), CW, Inches(0.6),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "When the encoder works, ALL content metrics improve together — "
+        "5 views of one underlying quality, not 5 independent axes.",
+        MX, CT + Inches(4.10), CW, Inches(0.7),
+        size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # OVERLAP fix: source line at y=6.9, h=0.4 ended at 7.30 and crashed
     # into the slide-number ("A") shape at y=7.12. Move up to y=6.55 with
@@ -2016,7 +2013,7 @@ def slide_appendix_pca_loadings(prs):
     add_text(slide,
         "Source: docs/evaluation/is_pca_analysis.md §3.2",
         MX + Inches(1.2), Inches(6.62), CW - Inches(1.2), Inches(0.22),
-        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, "A",
         "Appendix slide (HIDDEN by default). PCA on the 6 standardized IS "
@@ -2039,11 +2036,11 @@ def slide_appendix_pca_loadings(prs):
 # APPENDIX (academic) — Full McNemar table (HIDDEN by default)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_appendix_mcnemar_full(prs):
+def slide_appendix_mcnemar_full(prs):  # audit:bigfonts2
     """Appendix: Full per-method McNemar table on 5,988 verdicts.
 
-    Source: docs/evaluation/after_amosi_audit.json `judge_*_mcnemar_*` keys
-    and audit MD Section F.
+    audit:bigfonts2 — Pass 2: bullets 4 -> 3 (drop "Y verdict tied"), h
+    2.4 -> 1.45 so bottom (5.95) clears caveat top (6.55) cleanly.
     """
     slide = new_slide(prs)
     add_title(slide, "Appendix: McNemar Tests — N-Best Methods vs Baseline")
@@ -2054,53 +2051,49 @@ def slide_appendix_mcnemar_full(prs):
         "v3 dual-conf prompt). Each cell counts the disagreements "
         "between baseline and the named method.",
         MX, CT, CW, Inches(0.55),
-        size=Pt(13), color=LGRAY, italic=True)
+        size=Pt(20), color=LGRAY, italic=True)
 
-    # Full McNemar table
+    # Full McNemar table — dropped Y χ² and Y+P χ² cols to fit Pt(24)
+    # cells; p-values carry the significance signal directly (audit:bigfonts).
     tbl = add_table(slide,
-        ["Method", "Y meth-only", "Y base-only", "Y χ²", "Y p",
-         "Y+P meth-only", "Y+P base-only", "Y+P χ²", "Y+P p"],
-        [["hyp_mbr",        "59", "47", "1.14", "0.2853",
-          "74", "34", "14.08", "0.00017"],
-         ["hyp_vote_score", "59", "46", "1.37", "0.2416",
-          "41", "28",  "2.09", "0.14856"],
-         ["hyp_vote_conf",  "60", "69", "0.50", "0.4812",
-          "65", "34",  "9.09", "0.00257"]],
-        MX, CT + Inches(0.7), CW, text_size=Pt(11),
-        row_height=Inches(0.45),
-        col_widths=[Inches(1.7), Inches(1.2), Inches(1.2), Inches(0.8),
-                    Inches(1.0), Inches(1.4), Inches(1.4),
-                    Inches(0.9), Inches(1.5)],
+        ["Method", "Y meth-only", "Y base-only", "Y p",
+         "Y+P meth-only", "Y+P base-only", "Y+P p"],
+        [["hyp_mbr",        "59", "47", "0.2853",
+          "74", "34", "0.00017"],
+         ["hyp_vote_score", "59", "46", "0.2416",
+          "41", "28", "0.14856"],
+         ["hyp_vote_conf",  "60", "69", "0.4812",
+          "65", "34", "0.00257"]],
+        MX, CT + Inches(0.7), CW, text_size=Pt(24),
+        row_height=Inches(0.55),
+        col_widths=[Inches(1.7), Inches(1.5), Inches(1.5),
+                    Inches(1.3), Inches(1.7), Inches(1.7), Inches(1.6)],
         # Bold (via color highlight) the significant Y+P p-values
-        row_colors={0: {8: GREEN},  # hyp_mbr Y+P p=0.00017 SIGNIFICANT
-                    2: {8: GREEN}}) # hyp_vote_conf Y+P p=0.00257 SIGNIFICANT
+        row_colors={0: {6: GREEN},  # hyp_mbr Y+P p=0.00017 SIGNIFICANT
+                    2: {6: GREEN}}) # hyp_vote_conf Y+P p=0.00257 SIGNIFICANT
 
-    # Interpretation section
+    # Interpretation section. Shifted y=3.10 -> 3.20 (was 2.60) to clear
+    # bumped table ending at ~4.25; bullets shortened to 4 (dropped subset
+    # restatement, kept in notes) (audit:bigfonts).
     add_text(slide, "Interpretation",
-             MX, CT + Inches(2.6), CW, Inches(0.35),
-             size=Pt(15), color=TEAL, bold=True)
-    # OVERLAP fix (round 2): bullets h=2.2 ending at CT+5.2=6.65 collided 50%
-    # with caveat at y=6.40 (audit MAJOR). Capped bullets at h=1.85 (ends
-    # 6.30) so a 0.10" gap precedes the caveat. Caveat unchanged at y=6.40.
+             MX, CT + Inches(2.55), CW, Inches(0.4),
+             size=Pt(24), color=TEAL, bold=True)
+    # CUT v2: dropped "Y verdict tied" (already in table p column).
     add_bullets(slide, [
-        ("hyp_mbr: +40 net Y+P wins, p = 0.00017 (highly significant)",
+        ("hyp_mbr: +40 Y+P, p=0.00017 (highly significant)",
          {"color": GREEN, "bold": True}),
-        ("hyp_vote_conf: +31 net Y+P wins, p = 0.00257 (significant)",
+        ("hyp_vote_conf: +31 Y+P, p=0.00257 (significant)",
          {"color": GREEN}),
-        "hyp_vote_score: +13 net Y+P wins, p = 0.149 (not significant)",
-        ("Y verdict alone: all three methods statistically tied",
-         {"color": LGRAY}),
-        "Holds on text-differing subset: mbr p=0.004, vote_conf p=0.011",
-    ], MX, CT + Inches(3.0), CW, Inches(1.85), size=Pt(12))
+        "hyp_vote_score: +13 Y+P, p=0.149 (n.s.)",
+    ], MX, CT + Inches(3.05), CW, Inches(1.45), size=Pt(24))
 
-    # Caveat at y=6.40 -> 6.85 (clears bullets at 6.30, slide-num band at 7.12).
+    # Caveat — shortened; "text-differing subset" detail moved to notes
+    # CUT v3: top 6.55 -> 6.40 so Pt(18) two-line wrap stays under 7.05.
     add_text(slide,
-        "Caveat: identical-text drift varies (13% / 10% / 14% per "
-        "method). Not a confound to McNemar (paired test absorbs ties), "
-        "but worth noting — v3 prompt's shared baseline_conf anchor "
-        "reduced drift from v1's 27%.",
-        MX + Inches(1.0), Inches(6.40), CW - Inches(1.0), Inches(0.45),
-        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "Caveat: identical-text drift 13/10/14% — paired McNemar absorbs "
+        "ties; v3 anchor cut drift from v1's 27%.",
+        MX + Inches(1.0), Inches(6.40), CW - Inches(1.0), Inches(0.5),
+        size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, "A",
         "Appendix slide (HIDDEN by default). Full McNemar table for the "
@@ -2134,11 +2127,11 @@ def slide_appendix_mcnemar_full(prs):
 # SLIDE: CONFIDENCE SCORING — FUTURE DIRECTION
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_confidence_scoring(prs):
+def slide_confidence_scoring(prs):  # audit:bigfonts
     """Future direction: per-segment confidence — merged with Phase 1 detail."""
     slide = new_slide(prs)
     # audit:narrative_action \u2014 drop "Phase 1" planning label; feature shipped.
-    add_title(slide, "Confidence Scoring (shipped April 30 2026) \u2014 Surface the Good 65%")
+    add_title(slide, "Confidence Scoring (shipped) \u2014 Surface the Good 65%")
     add_accent_line(slide)
 
     col_w = Inches(5.5)
@@ -2146,43 +2139,45 @@ def slide_confidence_scoring(prs):
 
     # Left — What + How (merged, concise)
     lt = add_text(slide, "How It Works", MX, CT, col_w, Inches(0.35),
-                  size=Pt(18), color=TEAL, bold=True)
+                  size=Pt(24), color=TEAL, bold=True)
+    # CUT v3: bullets compressed + Pt(24)->Pt(20) + h 5.4->2.85 so bottom
+    # stays under safe 7.05 (was rendering 7.30). Long-form in notes.
     lb = add_bullets(slide, [
-        ("Beam search already computes probability scores \u2014 "
-         "we just don\u2019t expose them yet", {"bold": True}),
-        "Attach beam score + token entropy to each output segment",
-        "High confidence (\u2265 0.8): trust as-is | "
-        "Low (< 0.4): flag for review",
-        ("No extra inference \u2014 scores are a free byproduct of decode",
-         {"color": TEAL}),
-        ("Effort: 2\u20134 hours implementation", {"color": GREEN, "bold": True}),
-    ], MX, CT + Inches(0.45), col_w, Inches(2.8), size=Pt(14))
+        ("Beam search computes prob scores \u2014 just expose",
+         {"bold": True}),
+        "Attach beam score + token entropy",
+        "\u22650.8 trust  |  <0.4 flag",
+        ("No extra inference \u2014 free byproduct", {"color": TEAL}),
+        ("Effort: 2\u20134 hours", {"color": GREEN, "bold": True}),
+    ], MX, CT + Inches(0.45), col_w, Inches(2.85), size=Pt(20))
 
     # Effort callout
     r1 = add_rect(slide, MX, CT + Inches(3.5), col_w, Inches(0.5),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
     add_text(slide, "Reduces perceived error rate from 60% to ~20%",
-             MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(0.4),
-             size=Pt(16), color=GREEN, bold=True)
+             MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(1.0),
+             size=Pt(24), color=GREEN, bold=True)
 
     # Right — What It Enables
     rx = MX + col_w + gap
     rw = CW - col_w - gap
     rt = add_text(slide, "What It Enables", rx, CT, rw, Inches(0.35),
-                  size=Pt(18), color=CORAL, bold=True)
+                  size=Pt(24), color=CORAL, bold=True)
     rb = add_bullets(slide, [
         "Users see only high-confidence segments by default",
         "Low-confidence segments flagged for human review",
         ("Entity-level: names/numbers missed in 85% of segments \u2014 "
          "confidence can flag these specifically", {"color": CORAL}),
-    ], rx, CT + Inches(0.45), rw, Inches(2.5), size=Pt(14))
+    ], rx, CT + Inches(0.45), rw, Inches(3.4), size=Pt(24))
 
+    # CUT v3: top 6.35 -> 6.30 + frame h 0.87 -> 0.45 + Pt(20)->Pt(18)
+    # so bottom stays under safe 7.05.
     bottom = add_text(slide,
         "The fastest path to user value \u2014 no retraining, no new data, "
         "no infrastructure changes.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.30), CW, Inches(0.45),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Confidence scoring shipped April 30 2026. Beam search already "
@@ -2216,7 +2211,7 @@ def slide_confidence_scoring(prs):
 # SLIDE: THANK YOU / END
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_thank_you(prs):
+def slide_thank_you(prs):  # audit:bigfonts
     """Final slide: thank you and questions."""
     slide = new_slide(prs)
 
@@ -2229,13 +2224,13 @@ def slide_thank_you(prs):
 
     add_text(slide, "Questions & Discussion",
              MX, Inches(3.8), CW, Inches(0.6),
-             size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+             size=Pt(32), color=TEAL, align=PP_ALIGN.CENTER)
 
     add_text(slide,
         "1,497 segments  \u2022  Trust / Salvage / Strip three-tier UI  \u2022  "
         "8-stage pipeline  \u2022  cloud or on-prem deployment",
         MX, Inches(4.8), CW, Inches(0.8),
-        size=Pt(15), color=LGRAY, align=PP_ALIGN.CENTER)
+        size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Final slide. Thank the audience and open for questions.")

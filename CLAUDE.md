@@ -53,7 +53,7 @@ This CLAUDE.md is a slim hub file. Detailed documentation lives in separate file
 - **Fixing standalone container bugs** → read the relevant bugs file in `vsp_linux_container_FINAL_20260217/`
 - **Training research, LoRA tuning, or fine-tuning strategy** → read [docs/finetuning/training-research-notes.md](docs/finetuning/training-research-notes.md) first
 - **Planning future work or picking up a new mission** → read [docs/backlog/mission-backlog.md](docs/backlog/mission-backlog.md) first (Missions 4-14, prioritized with research references)
-- **Writing or modifying a docx report generator** → read [docs/_research-tools/generators/STYLE_GUIDE.md](docs/_research-tools/generators/STYLE_GUIDE.md) first (header layout, cover page, TOC, page breaks, logo paths)
+- **Writing or modifying a docx report generator OR a slide builder** → read [docs/_research-tools/generators/STYLE_GUIDE.md](docs/_research-tools/generators/STYLE_GUIDE.md) first. **Critical PPTX rules** (May-2026 small-screen review): body-text floor is **24pt** (not 12pt; only bottom-left slide-number labels are exempt at 12pt); titles 32-40pt; bullets capped at **4 per slide / 8 words per bullet**; **visual-first by default** — plot/diagram/video carries the meaning, text is the caption (V1-V6 in STYLE_GUIDE §7.7); when content overflows, cut content (don't drop the font floor).
 - **Working on evaluation, metrics, or intelligibility scoring** → read [docs/evaluation/intelligibility_methodology.md](docs/evaluation/intelligibility_methodology.md) and [docs/evaluation/intelligibility/intelligibility_summary.json](docs/evaluation/intelligibility/intelligibility_summary.json) first
 
 Do NOT rely on memory or guessing — always read the file to get exact details.

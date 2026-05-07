@@ -90,7 +90,8 @@ def add_title(slide, text, top=MY, left=MX, width=None, size=Pt(32)):
     """Add title text box."""
     if width is None:
         width = CW
-    tb = slide.shapes.add_textbox(left, top, width, Inches(0.75))
+    # CUT v3 (overflow): 0.75 -> 1.10 so 32pt 2-line titles fit.
+    tb = slide.shapes.add_textbox(left, top, width, Inches(1.10))
     tf = tb.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
@@ -556,6 +557,100 @@ def _fix_pptx_video_compat(pptx_path):
         os.remove(tmp_path)
 
 
+def _strip_orphan_animation_refs(pptx_path):
+    """Post-process saved PPTX to remove animation references whose target
+    shape was deleted.
+
+    PowerPoint shows a "found a problem with content" repair dialog when
+    a slide's <p:timing> tree contains <p:spTgt spid="N"/> or its parent
+    <p:bldP spid="N"/> where N is not the id of any shape on the slide.
+    These orphan references survive when shapes are removed from a slide
+    after the animation was authored. We scrub them post-save by:
+      1. Collecting every existing shape id on the slide
+      2. Removing any spTgt / bldP whose spid points outside that set
+      3. Pruning empty parent par/seq nodes left behind
+
+    Uses lxml. Idempotent.
+    """
+    import zipfile, shutil, tempfile, re
+
+    P_NS = "http://schemas.openxmlformats.org/presentationml/2006/main"
+    NS = {"p": P_NS}
+
+    def _collect_shape_ids(root):
+        ids = set()
+        for tag in ("sp", "pic", "grpSp", "graphicFrame", "cxnSp"):
+            for el in root.iter(f"{{{P_NS}}}{tag}"):
+                cnv = el.find(f".//p:nvSpPr/p:cNvPr", NS)
+                if cnv is None:
+                    cnv = el.find(f".//p:nvPicPr/p:cNvPr", NS)
+                if cnv is None:
+                    cnv = el.find(f".//p:nvGrpSpPr/p:cNvPr", NS)
+                if cnv is None:
+                    cnv = el.find(f".//p:nvGraphicFramePr/p:cNvPr", NS)
+                if cnv is None:
+                    cnv = el.find(f".//p:nvCxnSpPr/p:cNvPr", NS)
+                if cnv is not None and cnv.get("id"):
+                    ids.add(cnv.get("id"))
+        return ids
+
+    def _scrub(xml_bytes):
+        root = etree.fromstring(xml_bytes)
+        ids = _collect_shape_ids(root)
+        removed = 0
+
+        # Remove spTgt with orphan spid by removing nearest <p:par>/<p:seq>
+        # ancestor if it carries this spTgt as its only effect target. Safer
+        # tactic: delete the whole nearest <p:par> containing the spTgt.
+        for spTgt in list(root.iter(f"{{{P_NS}}}spTgt")):
+            ref = spTgt.get("spid")
+            if ref and ref not in ids:
+                # Walk up to nearest p:par then delete it.
+                node = spTgt
+                while node is not None and node.tag != f"{{{P_NS}}}par":
+                    node = node.getparent()
+                if node is not None and node.getparent() is not None:
+                    node.getparent().remove(node)
+                    removed += 1
+
+        # Remove bldP with orphan spid (these live inside p:bldLst).
+        for bldP in list(root.iter(f"{{{P_NS}}}bldP")):
+            ref = bldP.get("spid")
+            if ref and ref not in ids:
+                p = bldP.getparent()
+                if p is not None:
+                    p.remove(bldP)
+                    removed += 1
+
+        # Prune now-empty p:bldLst (cosmetic; not strictly required).
+        for bldLst in list(root.iter(f"{{{P_NS}}}bldLst")):
+            if len(bldLst) == 0 and bldLst.getparent() is not None:
+                bldLst.getparent().remove(bldLst)
+
+        return etree.tostring(root, xml_declaration=True, encoding="UTF-8",
+                              standalone=True), removed
+
+    fd, tmp_path = tempfile.mkstemp(suffix=".pptx")
+    os.close(fd)
+    total_removed = 0
+    with zipfile.ZipFile(pptx_path) as zin:
+        with zipfile.ZipFile(tmp_path, "w", zipfile.ZIP_DEFLATED) as zout:
+            for item in zin.namelist():
+                raw = zin.read(item)
+                if re.match(r"ppt/slides/slide\d+\.xml$", item):
+                    new_raw, n = _scrub(raw)
+                    if n:
+                        raw = new_raw
+                        total_removed += n
+                zout.writestr(item, raw)
+
+    if total_removed:
+        shutil.move(tmp_path, pptx_path)
+        print(f"  Stripped {total_removed} orphan animation refs.")
+    else:
+        os.remove(tmp_path)
+
+
 def _para_indices(shape):
     """Return indices of non-empty paragraphs in shape's text frame."""
     try:
@@ -784,8 +879,13 @@ def _finish(slide, num, notes, anim_groups=None, click_reveal=True,
 
 def build_split(prs, num, title, image_key, notes, big_num=None,
                 num_color=TEAL, num_label=None, bullets=None,
-                bottom_text=None):
-    """Split layout: text/numbers left, image right."""
+                bottom_text=None, bullet_size=Pt(15)):
+    """Split layout: text/numbers left, image right.
+
+    bullet_size: per-call override for bullet font (default Pt(15) preserves
+    backward compatibility; pass Pt(24) for body-tier bullet text per audit
+    FONT_BELOW_24PT_BODY rule).
+    """
     slide = new_slide(prs)
     t = add_title(slide, title)
     add_accent_line(slide)
@@ -807,7 +907,7 @@ def build_split(prs, num, title, image_key, notes, big_num=None,
     if bullets:
         # Cap bullet height so it doesn't overlap bottom_text at y=6.4
         max_h = Inches(6.1) - top if bottom_text else CH - (top - CT) - Inches(0.3)
-        s = add_bullets(slide, bullets, MX, top, SLW, max_h)
+        s = add_bullets(slide, bullets, MX, top, SLW, max_h, size=bullet_size)
         left_shapes.append(s)
 
     if bottom_text:

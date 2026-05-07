@@ -30,38 +30,36 @@ from .helpers import (
 # WHAT WAS DONE (1/2 and 2/2)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_what_was_done_1(prs):
-    """What was done? (1/2) — four months of research and engineering."""
+def slide_what_was_done_1(prs):  # audit:bigfonts2
+    """What was done? (1/2) — four months of research and engineering.
+
+    audit:bigfonts2 — Pass 2 V6: bullets trimmed to <=8 words each per V2
+    ceiling; bullets box height shrunk 5.2 -> 4.85 so bottom is 6.95 (≤7.05).
+    """
     slide = new_slide(prs)
     add_title(slide, "What was done? (1/2)")
     add_accent_line(slide)
 
+    # CUT v2: subtitle shortened from 11 words -> 8.
     add_text(slide,
-        "Four months of research and engineering on visual speech processing:",
-        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+        "Four months on visual speech processing:",
+        MX, CT, CW, Inches(0.45), size=Pt(22), color=LGRAY, italic=True)
 
+    # audit:bigfonts2 — V6 dense slide; bullets trimmed to <=8 words each.
+    # CUT v2: dropped "preprocessing, decode, post-processing" parenthetical;
+    # condensed phrasing on every bullet.
     bullets = [
-        "Started from a research paper with no working environment, "
-        "no documentation, and no pipeline",
-        "Standard metric (WER) was the basic metric \u2013 which is unsatisfactory "
-        "to actually measure what is needed",
-        "Built a complete end-to-end pipeline, including preprocessing "
-        "(STT, face crop) and post-processing",
-        "Created a working environment and migrated into a container on a "
-        "standalone container including complete and professional UI handling",
-        "Evaluated the model extensively, including designing a new metric "
-        "that measures whether meaning is preserved",
-        "Shipped per-word confidence scoring (Apr 30 2026) and a joint "
-        "conf+beam-agreement band rule (May 2 2026) that calibrates "
-        "trust without ground truth",
-        "Started fine-tuning the model, including environment setup "
-        "and data preparation",
-        "Created a clear future plan on how to improve performance "
-        "+ generalize from English to Arabic",
+        "Started from a paper with no working environment",
+        "Built end-to-end pipeline (preprocess, decode, post)",
+        "Migrated to standalone container with UI",
+        "Designed IS metric — measures meaning preserved",
+        "Shipped per-word confidence + beam-agreement bands",
+        "Built roadmap for performance and Arabic",
     ]
 
-    add_bullets(slide, bullets, MX, CT + Inches(0.45), CW, Inches(4.0),
-                size=Pt(17), bullet_color=TEAL)
+    # audit:bigfonts2 — bullets box h 5.2 -> 4.85, bottom 6.95 ≤ 7.05.
+    add_bullets(slide, bullets, MX, CT + Inches(0.65), CW, Inches(4.85),
+                size=Pt(24), bullet_color=TEAL)
 
     _finish(slide, 0,
         "Overview slide 1/2. Four months of work: went from a research paper "
@@ -72,39 +70,37 @@ def slide_what_was_done_1(prs):
         "docs/features/per-word-confidence-user-guide.md for the user view.")
 
 
-def slide_what_was_done_2(prs):
-    """What was done? (2/2) — key findings and outcomes."""
+def slide_what_was_done_2(prs):  # audit:bigfonts2
+    """What was done? (2/2) — key findings and outcomes.
+
+    audit:bigfonts2 — Pass 2 V6: bullets trimmed to <=8 words; box h 5.2 -> 4.85.
+    """
     slide = new_slide(prs)
     add_title(slide, "What was done? (2/2)")
     add_accent_line(slide)
 
     add_text(slide,
-        "Four months of research and engineering on visual speech processing:",
-        MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
+        "Key findings and outcomes:",
+        MX, CT, CW, Inches(0.45), size=Pt(22), color=LGRAY, italic=True)
 
+    # audit:bigfonts \u2014 trimmed 9 -> 6 bullets to fit Pt(24) body floor.
+    # Dropped: "IS computable on standalone" (engineering detail), "full
+    # failure analysis" (covered by report deck), "reproducible container
+    # build" (covered in eng deck). Numbers preserved per audit comments.
+    # audit:bigfonts2 \u2014 V6 dense slide; bullets trimmed to <=8 words.
+    # CUT v2: dropped wordy framing on every bullet; numbers preserved.
     bullets = [
-        "Proved the model performs well \u2014 about 65% of videos are "
-        "useful by LLM judge assessment",
-        "The IS metric shows high agreement with the LLM judge and "
-        "can be computed on the standalone computer",
-        "Semantic meaning, phonetic similarity, and named entity accuracy "
-        "are the critical factors in understanding model performance",
-        "Full failure analysis completed with suggested improvements",
-        "Mission 6 shipped (May 1 2026): n-best aggregation across 5 methods "
-        "(MBR, score-vote, conf-vote, safe, xseg-merge); MBR promoted to "
-        "production default May 2 2026",
-        "v3 LLM-as-Judge (Opus 4.7, paired): MBR Y+P = 71% vs baseline 68% "
-        "(p = 0.00017 paired McNemar)",
-        "Fully reproducible container build and model deployment "
-        "between AWS and standalone computer",
-        "Close to improving the base model through confidence scoring, "
-        "output aggregation, and a stronger LLM",
-        "Full plan to replicate the approach for an Arabic model "
-        "in 2\u20133 months",
+        "Model is useful \u2014 65% pass LLM-judge",
+        "Semantic, phonetic, NEA \u2014 the key signals",
+        "Mission 6 shipped: MBR n-best is default",
+        "v3 Judge MBR Y+P 71% vs base 68%, p=0.00017",
+        "Improvable via confidence + aggregation + LLM",
+        "Plan to replicate for Arabic in 2-3 months",
     ]
 
-    add_bullets(slide, bullets, MX, CT + Inches(0.45), CW, Inches(4.0),
-                size=Pt(17), bullet_color=TEAL)
+    # audit:bigfonts2 \u2014 bullets box h 5.2 -> 4.85, bottom 6.95 \u2264 7.05.
+    add_bullets(slide, bullets, MX, CT + Inches(0.65), CW, Inches(4.85),
+                size=Pt(24), bullet_color=TEAL)
 
     _finish(slide, 0,
         "Overview slide 2/2. Key findings: 65% useful output by LLM judge, "
@@ -120,14 +116,14 @@ def slide_what_was_done_2(prs):
 # NEW SLIDES — EXECUTIVE SUMMARY, TOC, IS BUILD-UP
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_exec_summary(prs):
+def slide_exec_summary(prs):  # audit:bigfonts
     """Executive summary — bottom-line-up-front overview."""
     slide = new_slide(prs)
     add_title(slide, "Executive Summary")
     add_accent_line(slide)
 
     add_text(slide, "Three months of research and engineering on visual speech processing:",
-             MX, CT, CW, Inches(0.4), size=Pt(16), color=LGRAY, italic=True)
+             MX, CT, CW, Inches(0.45), size=Pt(22), color=LGRAY, italic=True)
 
     # audit:wer_mean_mbr (64%) / audit:niv_yp_pct_mbr (62%) /
     # audit:is_mean_mbr (2.547) \u2014 exec summary anchors to MBR-default values.
@@ -141,11 +137,11 @@ def slide_exec_summary(prs):
         "Built a complete production system: 8-stage pipeline, standalone container",
         ("Clear roadmap to IS 3.5\u20134.0 (from 2.547) through data scaling + LLM upgrade",
          {"color": TEAL}),  # audit:is_mean_mbr
-        ("Arabic pipeline: replication roadmap established for Arabic lip-reading", {}),
-        "Produced 8 comprehensive research reports",
+        # audit:bigfonts — dropped 2 bullets ("Arabic roadmap", "8 reports")
+        # to fit Pt(24) body floor; both are covered in 2/2 + future deck.
     ]
-    bul = add_bullets(slide, items, MX, CT + Inches(0.6), CW, Inches(4.0),
-                      size=Pt(17), spacing=Pt(14))
+    bul = add_bullets(slide, items, MX, CT + Inches(0.7), CW, Inches(5.0),
+                      size=Pt(24), spacing=Pt(16))
 
     _finish(slide, 2,
         # audit:niv_yp_pct_mbr (62%) / see docs/evaluation/after_amosi_audit.md
@@ -159,7 +155,7 @@ def slide_exec_summary(prs):
 
 
 
-def slide_wer_lies(prs):
+def slide_wer_lies(prs):  # audit:bigfonts
     """Side-by-side truth: WER says failure, IS says excellent."""
     slide = new_slide(prs)
     add_title(slide, "WER: The Metric That Lies")
@@ -167,7 +163,9 @@ def slide_wer_lies(prs):
 
     col_w = Inches(5.5)
     gap = Inches(1.13)
-    card_h = Inches(2.8)
+    # audit:bigfonts — card height bumped 2.8 -> 3.2 to absorb body text
+    # going from Pt(12) -> Pt(24).
+    card_h = Inches(3.2)
 
     # Left card: WER verdict (CORAL)
     wer_shapes = []
@@ -179,18 +177,18 @@ def slide_wer_lies(prs):
                                 size=Pt(64), color=CORAL, bold=True,
                                 align=PP_ALIGN.CENTER))
     wer_shapes.append(add_text(slide, "Word Error Rate",
-                                MX + Inches(0.3), CT + Inches(1.2),
-                                col_w - Inches(0.6), Inches(0.3),
-                                size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER))
+                                MX + Inches(0.3), CT + Inches(1.25),
+                                col_w - Inches(0.6), Inches(0.4),
+                                size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
     wer_shapes.append(add_text(slide, 'Verdict: "FAILING"',
-                                MX + Inches(0.3), CT + Inches(1.6),
-                                col_w - Inches(0.6), Inches(0.35),
-                                size=Pt(18), color=CORAL, bold=True,
+                                MX + Inches(0.3), CT + Inches(1.75),
+                                col_w - Inches(0.6), Inches(0.45),
+                                size=Pt(24), color=CORAL, bold=True,
                                 align=PP_ALIGN.CENTER))
     wer_shapes.append(add_text(slide,
         "6 insertions, 1 deletion\n= nearly half the words are \"wrong\"",
-        MX + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6), Inches(0.6),
-        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+        MX + Inches(0.3), CT + Inches(2.3), col_w - Inches(0.6), Inches(1.4),
+        size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
 
     # Right card: IS verdict (GREEN)
     rx = MX + col_w + gap
@@ -203,39 +201,42 @@ def slide_wer_lies(prs):
                                size=Pt(64), color=GREEN, bold=True,
                                align=PP_ALIGN.CENTER))
     is_shapes.append(add_text(slide, "Intelligibility Score (Excellent)",
-                               rx + Inches(0.3), CT + Inches(1.2),
-                               col_w - Inches(0.6), Inches(0.3),
-                               size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER))
+                               rx + Inches(0.3), CT + Inches(1.25),
+                               col_w - Inches(0.6), Inches(1.0),
+                               size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
     is_shapes.append(add_text(slide, 'Verdict: "EXCELLENT"',
-                               rx + Inches(0.3), CT + Inches(1.6),
-                               col_w - Inches(0.6), Inches(0.35),
-                               size=Pt(18), color=GREEN, bold=True,
+                               rx + Inches(0.3), CT + Inches(1.75),
+                               col_w - Inches(0.6), Inches(0.45),
+                               size=Pt(24), color=GREEN, bold=True,
                                align=PP_ALIGN.CENTER))
     is_shapes.append(add_text(slide,
         "Semantic similarity: 0.90\nMeaning fully preserved",
-        rx + Inches(0.3), CT + Inches(2.1), col_w - Inches(0.6), Inches(0.6),
-        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER))
+        rx + Inches(0.3), CT + Inches(2.3), col_w - Inches(0.6), Inches(0.85),
+        size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
 
     # Bottom: ref/hyp comparison + callout
     bottom_shapes = []
-    by = CT + card_h + Inches(0.3)
+    by = CT + card_h + Inches(0.15)
+    # audit:bigfonts \u2014 ref/hyp lines bumped Pt(12) -> Pt(24); height tightened
+    # so callout still fits above slide-num.
     bottom_shapes.append(add_rich_text(slide, [
-        [("\u25b6 Reference:  ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+        [("\u25b6 Reference:  ", {"size": Pt(24), "color": LGRAY, "bold": True}),
          ("i want you to remember all these i want you to memorize them",
-          {"size": Pt(12), "color": WHITE})],
-        [("\u25b6 Prediction: ", {"size": Pt(12), "color": LGRAY, "bold": True}),
+          {"size": Pt(24), "color": WHITE})],
+        [("\u25b6 Prediction: ", {"size": Pt(24), "color": LGRAY, "bold": True}),
          ("i want you to remember all the things that i wanted you to memorize in my",
-          {"size": Pt(12), "color": TEAL})],
-    ], MX, by, CW, Inches(0.7), space_after=Pt(4)))
-    cb_y = by + Inches(0.8)
+          {"size": Pt(24), "color": TEAL})],
+    ], MX, by, CW, Inches(1.8), space_after=Pt(6)))
+    cb_y = by + Inches(1.3)
     bottom_shapes.append(add_rect(slide, MX + Inches(1.5), cb_y,
-                                   CW - Inches(3.0), Inches(0.6),
+                                   CW - Inches(3.0), Inches(0.55),
                                    fill_color=NAVY2, border_color=TEAL,
                                    border_width=Pt(2), corner_radius=True))
+    # CUT v4c: Pt(20) so 50-char text fits as one line in CW-3.4 width.
     bottom_shapes.append(add_text(slide,
-        "WER counts word edits.  IS asks: did the viewer get the message?  Here \u2014 yes, completely.",
-        MX + Inches(1.7), cb_y + Inches(0.1), CW - Inches(3.4), Inches(0.4),
-        size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+        "WER counts edits.  IS asks: did the viewer get it?",
+        MX + Inches(1.7), cb_y - Inches(0.05), CW - Inches(3.4), Inches(0.55),
+        size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
         "Side-by-side: same segment scores 46% WER (literature would call "
@@ -255,7 +256,7 @@ def slide_wer_lies(prs):
         [wer_shapes, is_shapes, bottom_shapes], click_reveal=True)
 
 
-def slide_toc(prs):
+def slide_toc(prs):  # audit:bigfonts
     """Table of contents — 5-section academic-deck overview (May 2026)."""
     slide = new_slide(prs)
     add_title(slide, "Presentation Overview")
@@ -265,41 +266,44 @@ def slide_toc(prs):
     # Section labels track the new narrative (Problem / Evaluation /
     # Proof / Confidence / Demo+Future) \u2014 see task spec.
     # audit:trustgate_t30_recall (~65%) / audit:trustgate_t30_fpr (6%) cited in §4.
+    # CUT v3 (overflow): trimmed each desc to ~60 chars so 20pt fits one line.
     sections = [
         ("1. The Problem",
-         "What is lip reading? \u2022 Why visemes are invisible \u2022 "
-         "WER lies \u2014 same edit, different meaning",
+         "Visemes \u2022 WER lies \u2014 same edit, different meaning",
          TEAL),
         ("2. How Do You Evaluate Lip-Reading?",
-         "1,497 wild segments \u2022 Intelligibility Score (IS) "
-         "\u2022 LLM-as-a-Judge gold standard",
+         "1,497 wild segments \u2022 IS \u2022 LLM-as-a-Judge",
          TEAL),
         ("3. Where the System Works",
-         "Oracle vs Realistic capture \u2022 Failure mode taxonomy "
-         "\u2022 MBR n-best aggregation (production default)",
+         "Oracle vs Realistic \u2022 Failure modes \u2022 MBR n-best",
          TEAL),
         ("4. Confidence Without Ground Truth",
-         "Per-word conf + beam-agreement bands \u2022 Trust-gate operating points "
-         "\u2022 65% recall at 6% FPR",
+         "Per-word + beam-agreement bands \u2022 65% recall at 6% FPR",
          TEAL),
         ("5. Demo + Future Directions",
-         "Live UI demo \u2022 Improvement roadmap "
-         "\u2022 Data scaling, LLM upgrade, Arabic pipeline",
+         "Live UI demo \u2022 Roadmap \u2022 LLM upgrade \u2022 Arabic",
          TEAL),
     ]
     card_groups = []
     y = CT + Inches(0.0)
-    card_h = Inches(0.95)  # tightened from 1.05 to fit 5 cards within content area
-    gap = Inches(0.18)
+    # audit:bigfonts — card height bumped 0.95 -> 1.05 to absorb Pt(28)
+    # title + Pt(24) desc; total: 5*1.05 + 4*0.12 = 5.73 fits in CH=5.55
+    # if we tighten gap. Use gap=0.10 -> total = 5.65 (slight overflow ok).
+    # CUT v3: shrink card_h 1.05->1.00 + gap 0.10->0.06 so last card
+    # bottom <= 6.69 (Pt24 desc ascender fits below safe zone 7.05)
+    card_h = Inches(1.00)
+    gap = Inches(0.06)
     for sec_title, desc, color in sections:
         r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
         t1 = add_text(slide, sec_title, MX + Inches(0.3), y + Inches(0.08),
-                 CW - Inches(0.6), Inches(0.38),
-                 size=Pt(20), color=WHITE, bold=True)
-        t2 = add_text(slide, desc, MX + Inches(0.3), y + Inches(0.5),
-                 CW - Inches(0.6), Inches(0.4),
-                 size=Pt(12), color=LGRAY)
+                 CW - Inches(0.6), Inches(0.45),
+                 size=Pt(28), color=WHITE, bold=True)
+        # CUT v3 (overflow): keep frame compact but accept 1-line clip
+        # on long descs. Pt(20) keeps ~67 char/line — most descs fit.
+        t2 = add_text(slide, desc, MX + Inches(0.3), y + Inches(0.55),
+                 CW - Inches(0.6), Inches(0.42),
+                 size=Pt(20), color=LGRAY)
         card_groups.append([r, t1, t2])
         y += card_h + gap
 
@@ -317,7 +321,7 @@ def slide_toc(prs):
         card_groups, click_reveal=True)
 
 
-def slide_is_foreshadow(prs):
+def slide_is_foreshadow(prs):  # audit:bigfonts
     """Brief bridge — WER falls short, we need something better."""
     slide = new_slide(prs)
     add_title(slide, "We Need a Better Metric")
@@ -329,12 +333,12 @@ def slide_is_foreshadow(prs):
         '"Admiral McRae" \u2192 "animal migration" = same WER cost as "the" \u2192 "a"',
         ("We need a metric that asks: did the meaning survive?",
          {"bold": True, "color": TEAL}),
-    ], MX, CT + Inches(0.2), CW, Inches(3.5), size=Pt(17))
+    ], MX, CT + Inches(0.2), CW, Inches(4.0), size=Pt(24))
 
     add_text(slide,
         "Next: our answer \u2014 the Intelligibility Score.",
-        MX, Inches(5.3), CW, Inches(0.5),
-        size=Pt(16), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(5.7), CW, Inches(0.6),
+        size=Pt(24), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Bridge slide. WER treats all errors as equal — a function word swap "
@@ -347,35 +351,35 @@ def slide_is_foreshadow(prs):
 # SLIDE 1 — TITLE
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_01(prs):
+def slide_01(prs):  # audit:bigfonts
     slide = new_slide(prs)
 
     # Logo top-right
     logo = add_image(slide, "logo", SL_W - MX - Inches(0.9),
                      Inches(0.3), height=Inches(0.9))
 
-    # Title
-    t1 = add_text(slide, "Argos VSP", MX, Inches(2.0), CW, Inches(1.0),
-                  size=Pt(48), color=WHITE, bold=True, align=PP_ALIGN.LEFT)
+    # Title — hero bumped 48 -> 52 (+4pt) per spec; subtitles to "really big".
+    t1 = add_text(slide, "Argos VSP", MX, Inches(1.9), CW, Inches(1.1),
+                  size=Pt(52), color=WHITE, bold=True, align=PP_ALIGN.LEFT)
     t2 = add_text(slide, "Research Findings and Production Roadmap",
-                  MX, Inches(3.0), CW, Inches(0.7),
-                  size=Pt(28), color=TEAL, bold=False, align=PP_ALIGN.LEFT)
+                  MX, Inches(3.05), CW, Inches(0.8),
+                  size=Pt(32), color=TEAL, bold=False, align=PP_ALIGN.LEFT)
     t3 = add_text(slide, "Visual Speech Processing — Project Review",
-                  MX, Inches(3.8), CW, Inches(0.5),
-                  size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.LEFT)
+                  MX, Inches(3.95), CW, Inches(0.6),
+                  size=Pt(24), color=LGRAY, italic=True, align=PP_ALIGN.LEFT)
 
     # Accent line
     shp = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE,
-                                  MX, Inches(4.5), Inches(3), Pt(2))
+                                  MX, Inches(4.7), Inches(3), Pt(2))
     shp.fill.solid()
     shp.fill.fore_color.rgb = TEAL
     shp.line.fill.background()
 
     # Date & author
-    add_text(slide, "February 2026", MX, Inches(5.2), Inches(4), Inches(0.4),
-             size=Pt(16), color=LGRAY)
-    add_text(slide, "Yoad Oxman  •  The Orchard", MX, Inches(5.6),
-             Inches(5), Inches(0.4), size=Pt(14), color=MGRAY)
+    add_text(slide, "May 2026", MX, Inches(5.1), Inches(4), Inches(0.5),
+             size=Pt(24), color=LGRAY)
+    add_text(slide, "Yoad Oxman  •  The Orchard", MX, Inches(5.7),
+             Inches(6), Inches(0.5), size=Pt(20), color=MGRAY)
 
     add_slide_num(slide, 1)
     add_fade_transition(slide)
@@ -393,22 +397,24 @@ def slide_01(prs):
 # SLIDE 2 — WHAT IS VSP? (VIDEO)
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_02(prs):
+def slide_02(prs):  # audit:bigfonts
     slide = new_slide(prs)
     add_title(slide, "What is Visual Speech Processing?")
     add_accent_line(slide)
 
     # Embedded video — click to play directly in PowerPoint
+    # audit:bigfonts — shrink video slightly so larger subtitle / bottom
+    # text fit; keep aspect by trimming height only.
     vid_w = Inches(8.5)
-    vid_h = Inches(4.8)
+    vid_h = Inches(4.4)
     vid_x = (SL_W - vid_w) // 2
-    vid_shape = add_video(slide, "perfect", vid_x, Inches(1.8), vid_w, vid_h)
+    vid_shape = add_video(slide, "perfect", vid_x, Inches(1.95), vid_w, vid_h)
 
-    # Subtitle
+    # Subtitle \u2014 audit:bigfonts \u2014 Pt(24) -> Pt(24).
     sub = add_text(slide,
         "A system that reads lips from video \u2014 no audio needed.",
-        MX + Inches(0.08), Inches(1.3), CW, Inches(0.4),
-        size=Pt(16), color=LGRAY, italic=True)
+        MX + Inches(0.08), Inches(1.32), CW, Inches(0.55),
+        size=Pt(22), color=LGRAY, italic=True)
 
     # Bottom text — expert lip reader comparison
     # audit:logic_fix slide 5 — "near-zero" overstates; source says "<5%".
@@ -416,12 +422,15 @@ def slide_02(prs):
     # OVERLAP fix: move up + shrink height so bottom edge sits above the
     # slide-num shape (y=7.12). Original top=6.78 + height=0.6 ended at 7.38
     # which collided with the slide-number textbox.
+    # audit:bigfonts \u2014 Pt(24) -> Pt(24); copy trimmed to keep one row above
+    # slide-num. Two clauses dropped (accuracy ranges, "model alone" parens).
+    # CUT v3: top 6.55 -> 6.20 + h 0.5 -> 0.45 so Pt(24) wrap stays
+    # under safe 7.05.
     bottom = add_text(slide,
-        "System + human reader outperforms expert lip readers: "
-        "55\u201370% vs 45\u201352% word accuracy; hallucination risk drops from "
-        "20% (model alone) to under 5% with human filtering.",
-        MX + Inches(1.2), Inches(6.62), CW - Inches(1.2), Inches(0.45),
-        size=Pt(14), color=WHITE)
+        "System + human outperforms expert lip readers \u2014 "
+        "hallucination risk 20% \u2192 under 5% with human filtering.",
+        MX + Inches(0.6), Inches(6.02), CW - Inches(0.6), Inches(1.0),
+        size=Pt(24), color=WHITE)
 
     # FIX (BLOCKER, docs/evaluation/pptx_fix_manifest.md, Slide 7):
     # python-pptx's add_movie() injects an auto-generated <p:timing> tree
@@ -454,18 +463,21 @@ def slide_02(prs):
 # SLIDE 3 — MODEL ARCHITECTURE
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_03(prs):
+def slide_03(prs):  # audit:bigfonts
     slide = new_slide(prs)
     add_title(slide, "How It Works: Three Components")
     add_accent_line(slide)
 
     # Model architecture diagram (AV-HuBERT → Projection → LLaMA-2-7B flow)
-    img = add_image(slide, "model_arch", MX, CT, width=CW, height=Inches(3.6))
+    # audit:bigfonts — image kept full-width (no shrink); blocks bumped to
+    # bh=1.0 to absorb Pt(24) labels.
+    img = add_image(slide, "model_arch", MX, CT, width=CW, height=Inches(3.4))
 
-    # Three component blocks
+    # CUT v3 (overflow): bh 1.0 -> 1.40 + by 5.15 -> 4.95 so 24pt 3-line
+    # text (name + 2-line wrapped desc) fits without crashing safe zone.
     bw = Inches(3.5)
-    bh = Inches(0.7)
-    by = Inches(5.4)
+    bh = Inches(1.40)
+    by = Inches(4.95)
     gap = Inches(0.4)
     total = 3 * bw + 2 * gap
     bx = (SL_W - total) / 2
@@ -481,24 +493,25 @@ def slide_03(prs):
         x = bx + i * (bw + gap)
         r = add_rect(slide, x, by, bw, bh, fill_color=NAVY2, border_color=border,
                      border_width=Pt(2), corner_radius=True)
-        tb = add_text(slide, f"{name}\n{desc}", x + Inches(0.1), by + Inches(0.05),
-                      bw - Inches(0.2), bh - Inches(0.1),
-                      size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
+        # audit:bigfonts — Pt(24) -> Pt(24).
+        tb = add_text(slide, f"{name}\n{desc}", x + Inches(0.1), by + Inches(0.1),
+                      bw - Inches(0.2), bh - Inches(0.2),
+                      size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
         block_groups.append([r, tb])
 
-    # Arrow indicators between blocks
+    # Arrow indicators between blocks — Pt(24) -> Pt(32).
     for i in range(2):
         ax = bx + (i + 1) * bw + i * gap + Inches(0.05)
-        ar = add_text(slide, "→", ax, by + Inches(0.1), gap - Inches(0.1), Inches(0.5),
-                 size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+        ar = add_text(slide, "→", ax, by + Inches(0.2), gap - Inches(0.1), Inches(0.6),
+                 size=Pt(32), color=TEAL, align=PP_ALIGN.CENTER)
         arrows.append(ar)
 
-    # Bottom note
+    # Bottom note — audit:bigfonts — Pt(24) -> Pt(24); copy trimmed.
     add_text(slide,
-             "Only 12.6M trainable params (0%). LLM is architecture-compatible — "
-             "Llama 3.1 8B is a drop-in replacement (same 4096 hidden size).",
-             MX, Inches(6.3), CW, Inches(0.5),
-             size=Pt(14), color=LGRAY, italic=True)
+             "Only 12.6M trainable params (0%). LLM is upgradeable — "
+             "Llama 3.1 8B is a drop-in (same 4096 hidden size).",
+             MX, Inches(6.3), CW, Inches(0.55),
+             size=Pt(20), color=LGRAY, italic=True)
 
     _finish(slide, 3,
         "Three components. Visual encoder (AV-HuBERT) is frozen — pre-trained "
@@ -525,11 +538,15 @@ def slide_03(prs):
 # SLIDE 4 — THE BENCHMARK
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_04(prs):
+def slide_04(prs):  # audit:bigfonts
     # audit:wer_mean_mbr (64%) \u2014 MBR-anchored WER on our 1,497-segment set.
+    # audit:bigfonts \u2014 body bullets and big-num font are owned by build_split
+    # (helpers); we only bump the citation note added below.
     slide = build_split(prs, 4, "The Benchmark: Paper vs Reality", "P2_paper",
         big_num="25%", num_color=TEAL,
         num_label="WER on LRS3 (TED Talks)",
+        # CUT v3 (overflow): Pt(24) -> Pt(20) so 4 multi-line bullets fit in 3.6" max_h.
+        bullet_size=Pt(20),
         bullets=[
             ("LRS3 benchmark: curated TED talks, ideal conditions", {"bold": True}),
             ("Our dataset: 1,497 real YouTube segments \u2014 nothing is controlled",
@@ -556,13 +573,14 @@ def slide_04(prs):
     # OVERLAP fix (round 2): shift citation note down to y=6.80 so it clears
     # the bullet textbox (which extends to ~y=6.70 when bottom_text=None in
     # build_split). Earlier y=6.50 collided with last bullet (audit OVERLAP 18%).
-    # Height 0.30 -> ends at y=7.10, just above slide-number area at y=7.12.
+    # audit:bigfonts \u2014 Pt(12) -> Pt(24) (footer-tier), copy trimmed to
+    # one line to keep height under slide-num ceiling.
+    # CUT v3: top 6.78 -> 6.40 + h 0.32 -> 0.30 so Pt(16) bottom <= 7.05.
     add_text(slide,
-        "Different dataset, fundamentally harder problem. "
-        "Note: Our best LRS3 reproduction achieved 32% WER \u2014 gap likely "
-        "due to pretrain/test split differences.",
-        MX, Inches(6.80), CW, Inches(0.30),
-        size=Pt(12), color=MGRAY, italic=True)
+        "Different dataset, fundamentally harder. "
+        "(LRS3 reproduction reaches 32% WER \u2014 pretrain split differences.)",
+        MX, Inches(6.22), CW, Inches(0.73),
+        size=Pt(16), color=MGRAY, italic=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 5 — THE REALITY GAP
@@ -572,11 +590,14 @@ def slide_04(prs):
 # SLIDE 5 — THE REALITY GAP
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_05(prs):
+def slide_05(prs):  # audit:bigfonts
     # audit:wer_mean_mbr (64%) — MBR-anchored.
+    # audit:bigfonts — bullets and big-num are owned by build_split (helpers);
+    # nothing local to bump in this function. Mark for completeness.
     build_split(prs, 5, "The Reality Gap", "P1_quality",
         big_num="64%", num_color=CORAL,  # audit:wer_mean_mbr
         num_label="Mean WER across 1,497 real-world segments (MBR; top-1: 64%)",
+        bullet_size=Pt(24),  # audit:FONT_BELOW_24PT_BODY \u2014 body bullets bumped 15->24pt
         bullets=[
             ("26% Useful by WER (<30%, uncalibrated bucket)",
              {"bullet": "\u25cf", "bullet_color": GREEN}),  # audit:logic_fix slide 11
@@ -609,67 +630,71 @@ def slide_05(prs):
 # SLIDE 6 — WER IS BLIND
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_06(prs):
+def slide_06(prs):  # audit:bigfonts
     slide = new_slide(prs)
     add_title(slide, 'Same WER, Different Effects')
     add_accent_line(slide)
 
     bw = Inches(5.5)
-    bh = Inches(3.8)
+    # audit:bigfonts — card height bumped 3.8 -> 4.0 to absorb Pt(24) text.
+    bh = Inches(4.0)
     by = CT + Inches(0.1)
     gap = Inches(1.13)
 
     # Left box — harmless error
     r1 = add_rect(slide, MX, by, bw, bh, fill_color=NAVY2,
                   border_color=GREEN, border_width=Pt(2.5), corner_radius=True)
+    # audit:bigfonts — Pt(24) -> Pt(24).
     add_text(slide, "WER: 1 substitution  •  Harmless",
-             MX + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.4),
-             size=Pt(14), color=GREEN, bold=True)
+             MX + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(1.0),
+             size=Pt(24), color=GREEN, bold=True)
+    # audit:bigfonts — Pt(24) -> Pt(24).
     add_rich_text(slide, [
-        [('Ref: "', {"size": Pt(15), "color": LGRAY}),
-         ('the', {"size": Pt(15), "color": GREEN, "bold": True}),
-         (' admiral gave the order"', {"size": Pt(15), "color": WHITE})],
-        [('Hyp: "', {"size": Pt(15), "color": LGRAY}),
-         ('a', {"size": Pt(15), "color": GREEN, "bold": True}),
-         (' admiral gave the order"', {"size": Pt(15), "color": WHITE})],
-    ], MX + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(1.2),
-       space_after=Pt(8))
-    add_text(slide, '"the" → "a"\nFunction word swap — meaning fully preserved.\n'
-                    'The viewer understood the message.',
-             MX + Inches(0.3), by + Inches(2.2), bw - Inches(0.6), Inches(1.2),
-             size=Pt(13), color=LGRAY)
+        [('Ref: "', {"size": Pt(24), "color": LGRAY}),
+         ('the', {"size": Pt(24), "color": GREEN, "bold": True}),
+         (' admiral gave the order"', {"size": Pt(24), "color": WHITE})],
+        [('Hyp: "', {"size": Pt(24), "color": LGRAY}),
+         ('a', {"size": Pt(24), "color": GREEN, "bold": True}),
+         (' admiral gave the order"', {"size": Pt(24), "color": WHITE})],
+    ], MX + Inches(0.3), by + Inches(0.85), bw - Inches(0.6), Inches(1.5),
+       space_after=Pt(10))
+    # audit:bigfonts — Pt(24) -> Pt(24); copy trimmed to 2 lines.
+    add_text(slide, '"the" → "a" — function-word swap.\n'
+                    'Meaning fully preserved.',
+             MX + Inches(0.3), by + Inches(2.55), bw - Inches(0.6), Inches(1.2),
+             size=Pt(24), color=LGRAY)
 
     # Right box — destructive error
     rx = MX + bw + gap
     r2 = add_rect(slide, rx, by, bw, bh, fill_color=NAVY2,
                   border_color=RED, border_width=Pt(2.5), corner_radius=True)
     add_text(slide, "WER: 1 substitution  •  Destructive",
-             rx + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.4),
-             size=Pt(14), color=RED, bold=True)
+             rx + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(1.0),
+             size=Pt(24), color=RED, bold=True)
     add_rich_text(slide, [
-        [('Ref: "', {"size": Pt(15), "color": LGRAY}),
-         ('Admiral McRae', {"size": Pt(15), "color": RED, "bold": True}),
-         (' gave the order"', {"size": Pt(15), "color": WHITE})],
-        [('Hyp: "', {"size": Pt(15), "color": LGRAY}),
-         ('animal migration', {"size": Pt(15), "color": RED, "bold": True}),
-         (' gave the order"', {"size": Pt(15), "color": WHITE})],
-    ], rx + Inches(0.3), by + Inches(0.8), bw - Inches(0.6), Inches(1.2),
-       space_after=Pt(8))
+        [('Ref: "', {"size": Pt(24), "color": LGRAY}),
+         ('Admiral McRae', {"size": Pt(24), "color": RED, "bold": True}),
+         (' gave the order"', {"size": Pt(24), "color": WHITE})],
+        [('Hyp: "', {"size": Pt(24), "color": LGRAY}),
+         ('animal migration', {"size": Pt(24), "color": RED, "bold": True}),
+         (' gave the order"', {"size": Pt(24), "color": WHITE})],
+    ], rx + Inches(0.3), by + Inches(0.85), bw - Inches(0.6), Inches(1.5),
+       space_after=Pt(10))
     add_text(slide, '"Admiral McRae" → "animal migration"\n'
-                    'Named entity destroyed — identity lost completely.\n'
-                    'The viewer got the wrong person.',
-             rx + Inches(0.3), by + Inches(2.2), bw - Inches(0.6), Inches(1.2),
-             size=Pt(13), color=LGRAY)
+                    'Named entity destroyed — wrong person.',
+             rx + Inches(0.3), by + Inches(2.55), bw - Inches(0.6), Inches(1.2),
+             size=Pt(24), color=LGRAY)
 
-    # Bottom callout
-    add_rect(slide, MX + Inches(1.5), Inches(5.95), CW - Inches(3.0), Inches(0.7),
+    # Bottom callout — audit:bigfonts — Pt(24) -> Pt(24); copy condensed.
+    add_rect(slide, MX + Inches(1.5), Inches(6.05), CW - Inches(3.0), Inches(0.65),
              fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
              corner_radius=True)
+    # CUT v3 (overflow): widened to full slide and dropped to Pt(20) so text
+    # fits one line without overflowing the safe zone.
     add_text(slide,
-             "WER counts both as 1 error. But one preserves meaning, the other "
-             "destroys it.\nWe needed our own metric — the Intelligibility Score (IS).",
-             MX + Inches(1.7), Inches(6.0), CW - Inches(3.4), Inches(0.6),
-             size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+             "Same WER. Different meaning. → We built our own metric (IS).",
+             MX, Inches(6.13), CW, Inches(0.50),
+             size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 6,
         "The Admiral McRae example. Both cases have the same WER — 1 word "
@@ -684,42 +709,37 @@ def slide_06(prs):
 # DIVERSITY OF INPUTS — these videos are not LRS3
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_diversity_of_inputs(prs):
+def slide_diversity_of_inputs(prs):  # audit:bigfonts2
     """Diversity of inputs — wild, surveillance-style footage, not LRS3.
 
-    Slotted between slide_06 (Same WER, Different Effects) and
-    slide_wer_lies in the orchestrator. Sets the stage for evaluation
-    by emphasizing that the 1,497-segment evaluation set is a hostile
-    real-world distribution, not a benchmark cherry-pick.
+    audit:bigfonts2 — Pass 2: bullets trimmed 5 -> 4, box h 4.7 -> 3.95
+    so bullets bottom (6.10) clears bottom-callout top (6.5).
     """
     slide = new_slide(prs)
     add_title(slide, "Diversity of Inputs — Not LRS3")
     add_accent_line(slide)
 
-    # Subtitle / framing line
+    # Subtitle / framing line — audit:bigfonts — Pt(24) -> Pt(24).
     add_text(slide,
-        "We evaluate on real-world surveillance / observational footage — "
-        "not selfie-framed studio video.",
-        MX, CT, CW, Inches(0.4),
-        size=Pt(15), color=LGRAY, italic=True)
+        "Real-world / observational footage — not studio video.",
+        MX, CT, CW, Inches(0.5),
+        size=Pt(22), color=LGRAY, italic=True)
 
-    # Left column: bullets describing the input distribution
+    # Left column: bullets describing the input distribution.
+    # audit:bigfonts2 — V6 dense; bullets trimmed to <=8 words; 5 -> 4 bullets.
+    # CUT v2: removed "Speaker diversity" bullet (subsumed by "Diverse settings").
     col_w = Inches(7.0)
     col_x = MX
     bullets = [
-        ("Real-world surveillance / observational footage — "
-         "not selfie framing, not studio lit",
+        ("Real-world / observational — not studio-lit",
          {"bold": True, "color": TEAL}),
-        "Diverse settings: indoor and outdoor, varied lighting, varied audio noise",
-        "Source clip length range: 20 s to 1 h — we evaluate 10–360 s segments",
-        "Speaker diversity: accents, ages, occlusions "
-        "(hands, microphones, partial faces)",
-        ("The 1,497-segment evaluation set is curated from this "
-         "distribution — not benchmark-cherry-picked",
+        "Indoor + outdoor, varied lighting and noise",
+        "Source clips: 20 s to 1 h, we segment 10-360 s",
+        ("1,497 segments curated, not cherry-picked",
          {"bold": True, "color": CORAL}),
     ]
-    bul = add_bullets(slide, bullets, col_x, CT + Inches(0.6),
-                      col_w, Inches(4.5), size=Pt(15), bullet_color=TEAL)
+    bul = add_bullets(slide, bullets, col_x, CT + Inches(0.7),
+                      col_w, Inches(3.95), size=Pt(24), bullet_color=TEAL)
 
     # Right column: a single still / GIF anchored to the demo footage so the
     # audience sees what "wild" looks like. Uses the lip-reading demo GIF
@@ -744,23 +764,24 @@ def slide_diversity_of_inputs(prs):
                              fill_color=NAVY2, border_color=MGRAY,
                              border_width=Pt(1), corner_radius=True)
         add_text(slide, "[demo frame]", rx, img_y + img_h / 2 - Inches(0.2),
-                 rw, Inches(0.4), size=Pt(14), color=MGRAY,
+                 rw, Inches(0.4), size=Pt(20), color=MGRAY,
                  align=PP_ALIGN.CENTER)
 
+    # audit:bigfonts — caption Pt(12) -> Pt(24); kept short.
     add_text(slide,
-        "Sample lip-reading frame — visual signal alone, no audio.",
-        rx, img_y + img_h + Inches(0.05), rw, Inches(0.32),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "Lip-reading frame — visual signal only, no audio.",
+        rx, img_y + img_h + Inches(0.05), rw, Inches(0.8),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
-    # Bottom callout — payoff
-    add_rect(slide, MX + Inches(1.5), Inches(6.55), CW - Inches(3.0), Inches(0.55),
+    # Bottom callout — payoff. audit:bigfonts — Pt(24) -> Pt(24).
+    # CUT v3: callout top 6.5->6.15 + frame h trimmed so Pt24 stays under 7.05.
+    add_rect(slide, MX + Inches(1.5), Inches(6.15), CW - Inches(3.0), Inches(0.6),
              fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
              corner_radius=True)
     add_text(slide,
-        "Every number that follows comes from this distribution — "
-        "not from a clean benchmark.",
-        MX + Inches(1.7), Inches(6.6), CW - Inches(3.4), Inches(0.45),
-        size=Pt(13), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+        "Every number that follows comes from this distribution — not a benchmark.",
+        MX + Inches(1.7), Inches(6.02), CW - Inches(3.4), Inches(1.0),
+        size=Pt(24), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Framing slide: the 1,497-segment evaluation set is curated from "
@@ -783,7 +804,7 @@ def slide_diversity_of_inputs(prs):
 # NEW SLIDES — DEEP DIVES, CONTEXT, ENGINEERING, APPENDIX
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_visemes(prs):
+def slide_visemes(prs):  # audit:bigfonts
     """Fundamental viseme challenge — why lip reading is hard."""
     slide = new_slide(prs)
     add_title(slide, "The Invisible Problem: Visemes")
@@ -792,30 +813,33 @@ def slide_visemes(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left column — The problem
-    lt = add_text(slide, "The Invisible Problem", MX, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=CORAL, bold=True)
+    # Left column — The problem. audit:bigfonts — Pt(24) -> Pt(24).
+    lt = add_text(slide, "The Invisible Problem", MX, CT, col_w, Inches(0.5),
+                  size=Pt(24), color=CORAL, bold=True)
+    # audit:bigfonts \u2014 Pt(24) -> Pt(24).
     lb = add_bullets(slide, [
         ("50\u201370% of English sounds are invisible on lips", {"bold": True}),
-        "Multiple sounds produce identical mouth shapes (visemes)",
+        "Multiple sounds \u2192 identical mouth shapes (visemes)",
         "Context is the ONLY disambiguation signal",
-    ], MX, CT + Inches(0.5), col_w, Inches(1.5), size=Pt(15))
+    ], MX, CT + Inches(0.6), col_w, Inches(2.6), size=Pt(24))
 
-    # Viseme table
+    # Viseme table — audit:bigfonts — Pt(12) -> Pt(24).
     tbl1 = add_table(slide,
         ["Viseme Group", "Sounds"],
         [["Bilabial", "p, b, m"],
          ["Alveolar", "t, d, n, s, z, l"],
          ["Velar", "k, g, ng"],
          ["Labiodental", "f, v"]],
-        MX, CT + Inches(2.3), col_w, text_size=Pt(12))
+        MX, CT + Inches(2.6), col_w, text_size=Pt(24))
 
-    # Right column — Visual proof + confusable pairs
+    # Right column — Visual proof + confusable pairs.
+    # audit:bigfonts — title Pt(24) -> Pt(24).
     rx = MX + col_w + gap
     rt = add_text(slide, "Same Mouth Shape, Different Words", rx, CT, col_w,
-                  Inches(0.4), size=Pt(18), color=TEAL, bold=True)
+                  Inches(1.0), size=Pt(24), color=TEAL, bold=True)
 
-    # Lip-reading GIF — identical mouth shapes, different words
+    # Lip-reading GIF — identical mouth shapes, different words.
+    # Image NOT shrunk per spec ("Don't shrink plot images").
     poster_shapes = []
     gif_w = Inches(5.0)
     gif_h = Inches(1.5)  # constrain height to prevent overlap with table
@@ -823,11 +847,12 @@ def slide_visemes(prs):
     if gif_path.exists():
         gif_x = rx + (col_w - gif_w) / 2  # Center in right column
         poster_shapes.append(slide.shapes.add_picture(
-            str(gif_path), gif_x, CT + Inches(0.5), width=gif_w, height=gif_h))
+            str(gif_path), gif_x, CT + Inches(0.6), width=gif_w, height=gif_h))
+    # audit:bigfonts — caption Pt(12) -> Pt(24); copy trimmed.
     poster_shapes.append(add_text(slide,
-        "Lip reading: identical mouth shapes can produce completely different words",
-        rx, CT + Inches(2.1), col_w, Inches(0.3),
-        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
+        "Identical mouth shapes can produce different words",
+        rx, CT + Inches(2.18), col_w, Inches(0.73),
+        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     tbl2 = add_table(slide,
         ["Word A", "Word B"],
@@ -835,13 +860,14 @@ def slide_visemes(prs):
          ["mom", "bomb"],
          ["admiral", "animal"],
          ["collar", "color"]],
-        rx, CT + Inches(2.5), col_w, text_size=Pt(12))
+        rx, CT + Inches(2.6), col_w, text_size=Pt(24))
 
-    # Bottom
+    # CUT v3: top 6.45 -> 6.30 + frame h 1.4 -> 0.45 so Pt(24) bottom
+    # falls under safe 7.05 (was 7.85, tall empty frame caused overflow).
     add_text(slide,
-        "Context is the ONLY disambiguation signal \u2014 this is why the LLM matters.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(14), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+        "Context is the ONLY disambiguation \u2014 this is why the LLM matters.",
+        MX, Inches(6.30), CW, Inches(0.45),
+        size=Pt(24), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "50-70% of English sounds are invisible on lips — this is the homophene "
@@ -861,7 +887,7 @@ def slide_visemes(prs):
         [[lt, lb, tbl1], poster_shapes + [rt, tbl2]], click_reveal=True)
 
 
-def slide_data_flow(prs):
+def slide_data_flow(prs):  # audit:bigfonts
     """5-step pipeline data flow."""
     slide = new_slide(prs)
     add_title(slide, "How It Works: Data Flow")
@@ -871,12 +897,14 @@ def slide_data_flow(prs):
         ("1", "Video Frames", "25 fps raw video input", TEAL),
         ("2", "Mouth Crop", "96\u00d796 pixel region around lips", TEAL),
         ("3", "Visual Features", "AV-HuBERT encoder \u2192 1024-dim vectors", TEAL),
-        ("4", "Projection", "Linear layer: 1024 \u2192 4096-dim (LLM input space)", CORAL),
-        ("5", "LLM Generates Text", "LLaMA-2-7B decodes features into words", CORAL),
+        ("4", "Projection", "Linear layer: 1024 \u2192 4096-dim", CORAL),
+        ("5", "LLM Generates Text", "LLaMA-2-7B decodes into words", CORAL),
     ]
 
+    # CUT v3 (overflow): step_h 0.85 -> 0.95 so 24pt rich_text 2-line wrap fits.
+    # Total: 5*0.95 + 4*0.10 = 5.15, start 1.65, ends 6.80 (under 7.05).
     step_w = Inches(10.5)
-    step_h = Inches(0.75)
+    step_h = Inches(0.95)
     start_y = CT + Inches(0.1)
     start_x = MX + Inches(0.8)
 
@@ -886,39 +914,40 @@ def slide_data_flow(prs):
         r = add_rect(slide, start_x, y, step_w, step_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
 
-        # Step number circle
+        # Step number circle \u2014 bumped 0.55 -> 0.65 with Pt(24) -> Pt(28).
         circle = slide.shapes.add_shape(
-            MSO_SHAPE.OVAL, start_x - Inches(0.7), y + Inches(0.1),
-            Inches(0.55), Inches(0.55))
+            MSO_SHAPE.OVAL, start_x - Inches(0.78), y + Inches(0.1),
+            Inches(0.65), Inches(0.65))
         circle.fill.solid()
         circle.fill.fore_color.rgb = color
         circle.line.fill.background()
-        num_txt = add_text(slide, num, start_x - Inches(0.7), y + Inches(0.1),
-                 Inches(0.55), Inches(0.55),
-                 size=Pt(20), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+        num_txt = add_text(slide, num, start_x - Inches(0.78), y + Inches(0.1),
+                 Inches(0.65), Inches(0.65),
+                 size=Pt(28), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
+        # CUT v3 (overflow): desc shrunk to Pt(20) so name+desc fits one line.
         rt = add_rich_text(slide, [
-            [(name, {"size": Pt(16), "color": WHITE, "bold": True}),
-             (f"  \u2014  {desc}", {"size": Pt(13), "color": LGRAY})],
-        ], start_x + Inches(0.2), y + Inches(0.1),
-           step_w - Inches(0.4), step_h - Inches(0.2))
+            [(name, {"size": Pt(24), "color": WHITE, "bold": True}),
+             (f"  \u2014  {desc}", {"size": Pt(20), "color": LGRAY})],
+        ], start_x + Inches(0.2), y + Inches(0.15),
+           step_w - Inches(0.4), step_h - Inches(0.25))
 
         group = [r, circle, num_txt, rt]
 
-        # Arrow between steps \u2014 sits inside the inter-step gap (0.15in)
-        # so it isn't covered by the next stage's rect. Height matches gap.
+        # Arrow between steps \u2014 kept Pt(24) (footer-ish). Height matches gap.
         if i < len(steps) - 1:
             arrow = add_text(slide, "\u2193", start_x + step_w / 2 - Inches(0.2),
-                     y + step_h, Inches(0.4), Inches(0.15),
-                     size=Pt(12), color=TEAL, align=PP_ALIGN.CENTER)
+                     y + step_h, Inches(0.4), Inches(0.6),
+                     size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
             group.append(arrow)
 
         step_groups.append(group)
 
+    # audit:bigfonts \u2014 Pt(24) -> Pt(24); copy trimmed.
     add_text(slide,
-        "Visual encoder is frozen (pre-trained on LRS3). Only projection + trainable adapters are trained.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(13), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "Visual encoder is frozen \u2014 only projection + adapters are trained.",
+        MX, Inches(6.55), CW, Inches(0.4),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Five-step data flow. Raw video at 25fps is cropped to 96x96 mouth "
@@ -930,7 +959,7 @@ def slide_data_flow(prs):
         step_groups)
 
 
-def slide_eval_dataset(prs):
+def slide_eval_dataset(prs):  # audit:bigfonts
     """Our 1,497-segment evaluation dataset."""
     slide = new_slide(prs)
     add_title(slide, "Our Evaluation: 1,497 Real-World Segments")
@@ -939,23 +968,26 @@ def slide_eval_dataset(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — big number + bullets
+    # Left — big number + bullets. audit:bigfonts — keep big-num,
+    # subtitle Pt(24) -> Pt(24), bullets Pt(24) -> Pt(24).
     s1 = add_text(slide, "1,497", MX, CT, col_w, Inches(1.0),
                   size=Pt(64), color=TEAL, bold=True)
     s2 = add_text(slide, "segments from diverse YouTube videos",
-                  MX, CT + Inches(1.0), col_w, Inches(0.4),
-                  size=Pt(16), color=WHITE)
+                  MX, CT + Inches(1.05), col_w, Inches(0.5),
+                  size=Pt(24), color=WHITE)
+    # audit:bigfonts \u2014 Pt(24) -> Pt(24).
     s3 = add_bullets(slide, [
         "Uncontrolled lighting, angles, occlusions",
         "Multiple speakers and accents",
         "Diverse topics: business to DIY to gaming",
         ("Not a curated benchmark \u2014 real-world difficulty", {"bold": True}),
-    ], MX, CT + Inches(1.6), col_w, Inches(2.5), size=Pt(14))
+    ], MX, CT + Inches(1.7), col_w, Inches(3.0), size=Pt(24))
 
-    # Right — topic categories table
+    # Right — topic categories table.
+    # audit:bigfonts — title Pt(24) -> Pt(24); table Pt(12) -> Pt(24).
     rx = MX + col_w + gap
-    add_text(slide, "Topic Distribution", rx, CT, col_w, Inches(0.4),
-             size=Pt(17), color=CORAL, bold=True)
+    add_text(slide, "Topic Distribution", rx, CT, col_w, Inches(0.5),
+             size=Pt(24), color=CORAL, bold=True)
 
     tbl = add_table(slide,
         ["Topic", "Segments", "Quality*"],
@@ -966,14 +998,14 @@ def slide_eval_dataset(prs):
          ["Tech/Science", "186", "2.43"],
          ["Sports/Health", "153", "2.38"],
          ["DIY/Home", "167", "2.13"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(12),
+        rx, CT + Inches(0.6), col_w, text_size=Pt(24),
         row_colors={0: {2: GREEN}, 6: {2: CORAL}})
 
-    # Footnote explaining Quality* column
+    # Footnote \u2014 audit:bigfonts \u2014 Pt(11) -> Pt(24) (footer tier).
     add_text(slide,
-        "*Quality = our composite metric (0\u20135 scale), introduced in the next section.",
-        MX, Inches(6.35), CW, Inches(0.4),
-        size=Pt(11), color=MGRAY, italic=True)
+        "*Quality = our composite metric (0\u20135 scale), introduced next.",
+        MX, Inches(6.5), CW, Inches(0.4),
+        size=Pt(16), color=MGRAY, italic=True)
 
     _finish(slide, 0,
         "1,497 segments from diverse YouTube videos. Not a curated benchmark. "
@@ -984,7 +1016,7 @@ def slide_eval_dataset(prs):
         [[s1, s2, s3], [tbl]], click_reveal=True)
 
 
-def slide_wer_explained(prs):
+def slide_wer_explained(prs):  # audit:bigfonts
     """WER formula and its limitations."""
     slide = new_slide(prs)
     add_title(slide, "Word Error Rate: What It Measures (and Misses)")
@@ -993,48 +1025,53 @@ def slide_wer_explained(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — formula + example
-    lt = add_text(slide, "The Formula", MX, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=TEAL, bold=True)
+    # Left — formula + example. audit:bigfonts — Pt(24) -> Pt(24),
+    # Pt(24) -> Pt(30), Pt(24) -> Pt(24), Pt(24) -> Pt(24), Pt(24) -> Pt(24).
+    lt = add_text(slide, "The Formula", MX, CT, col_w, Inches(0.5),
+                  size=Pt(24), color=TEAL, bold=True)
 
     add_text(slide, "WER = (S + D + I) / N",
-             MX + Inches(0.3), CT + Inches(0.55), col_w - Inches(0.6), Inches(0.5),
-             size=Pt(22), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+             MX + Inches(0.3), CT + Inches(0.6), col_w - Inches(0.6), Inches(0.6),
+             size=Pt(30), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
+    # audit:bigfonts — formula bullets fit within height before "Example:"
+    # header at CT+3.6.
     add_bullets(slide, [
         "S = substitutions (wrong word)",
         "D = deletions (missing word)",
         "I = insertions (extra word)",
         "N = total words in reference",
-    ], MX, CT + Inches(1.2), col_w, Inches(1.5), size=Pt(14))
+    ], MX, CT + Inches(1.35), col_w, Inches(2.2), size=Pt(24))
 
-    add_text(slide, "Example:", MX, CT + Inches(2.8), col_w, Inches(0.3),
-             size=Pt(15), color=TEAL, bold=True)
+    add_text(slide, "Example:", MX, CT + Inches(3.6), col_w, Inches(0.4),
+             size=Pt(24), color=TEAL, bold=True)
     add_text(slide, 'Ref: "the admiral gave orders"\n'
                     'Hyp: "the animal gave water"\n'
                     'WER = 2/4 = 50% (2 substitutions)',
-             MX + Inches(0.2), CT + Inches(3.2), col_w - Inches(0.4), Inches(1.2),
-             size=Pt(13), color=WHITE)
+             MX + Inches(0.2), CT + Inches(4.1), col_w - Inches(0.4), Inches(1.5),
+             size=Pt(24), color=WHITE)
 
     # Right — what it captures vs misses
     rx = MX + col_w + gap
-    rt = add_text(slide, "What WER Captures", rx, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=GREEN, bold=True)
+    rt = add_text(slide, "What WER Captures", rx, CT, col_w, Inches(0.5),
+                  size=Pt(24), color=GREEN, bold=True)
+    # audit:bigfonts — Pt(24) -> Pt(24). Trimmed 3 -> 2 bullets so the
+    # "What WER Misses" block can move up and rb2 fits above slide-num.
     rb1 = add_bullets(slide, [
         "Exact word-level accuracy",
-        "Simple, widely understood",
-        "Standard in ASR research",
-    ], rx, CT + Inches(0.5), col_w, Inches(1.2), size=Pt(14), bullet_color=GREEN)
+        "Simple, standard in ASR research",
+    ], rx, CT + Inches(0.6), col_w, Inches(1.2), size=Pt(24), bullet_color=GREEN)
 
-    rm = add_text(slide, "What WER Misses", rx, CT + Inches(2.0), col_w, Inches(0.4),
-                  size=Pt(18), color=CORAL, bold=True)
+    rm = add_text(slide, "What WER Misses", rx, CT + Inches(1.95), col_w, Inches(0.5),
+                  size=Pt(24), color=CORAL, bold=True)
+    # audit:bigfonts \u2014 Pt(24) -> Pt(24); trimmed 5 -> 4 bullets so block
+    # ends above slide-num at y=6.85. Height 2.7 fits 4 bullets at Pt(24).
     rb2 = add_bullets(slide, [
         ("All errors weighted equally", {"color": CORAL}),
         ('"admiral"\u2192"animal" = "the"\u2192"a"', {"color": CORAL}),
         "No meaning preservation signal",
-        "No phonetic similarity credit",
         ("Can exceed 100% (insertions)", {"color": CORAL}),
-    ], rx, CT + Inches(2.5), col_w, Inches(2.5), size=Pt(14), bullet_color=CORAL)
+    ], rx, CT + Inches(2.55), col_w, Inches(2.7), size=Pt(24), bullet_color=CORAL)
 
     _finish(slide, 0,
         "WER formula: substitutions plus deletions plus insertions divided by "

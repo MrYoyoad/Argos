@@ -75,22 +75,26 @@ def slide_17(prs):
                      fill_color=color, border_color=None, corner_radius=True))
         shapes.append(add_text(slide, name,
                  x + Inches(0.1), y + Inches(0.12),
-                 bw - Inches(0.2), Inches(0.42),
-                 size=Pt(16), color=DARK, bold=True,
+                 bw - Inches(0.2), Inches(1.0),
+                 size=Pt(24), color=DARK, bold=True,
                  align=PP_ALIGN.CENTER))
         shapes.append(add_text(slide, sub,
                  x + Inches(0.1), y + Inches(0.58),
                  bw - Inches(0.2), Inches(0.7),
-                 size=Pt(12), color=DARK, align=PP_ALIGN.CENTER))
+                 size=Pt(24), color=DARK, align=PP_ALIGN.CENTER))
         return shapes
 
     def _h_arrow(x, y, color_override=None):
-        """Clean right-arrow between pipeline stages."""
+        """Clean right-arrow between pipeline stages.
+
+        audit:bigfonts \u2014 arrows kept at Pt(24) per spec exception
+        ("arrows can stay 14pt"). Stage labels were bumped to Pt(24)/Pt(24).
+        """
         ax = x + h_gap
         ay = y + box_h / 2 - Inches(0.15)
         c = color_override or TEAL
         return [add_text(slide, "\u2192", ax, ay, arrow_w, Inches(0.3),
-                         size=Pt(20), color=c, bold=True,
+                         size=Pt(24), color=c, bold=True,
                          align=PP_ALIGN.CENTER)]
 
     lw = Inches(0.035)  # line width for connectors
@@ -121,7 +125,7 @@ def slide_17(prs):
         add_text(slide, "\u25B6",
                  long_arrow_end_x - Inches(0.14), long_arrow_cy - Inches(0.14),
                  Inches(0.28), Inches(0.28),
-                 size=Pt(12), color=TEAL, align=PP_ALIGN.CENTER),
+                 size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER),  # audit:bigfonts arrows kept at 14pt
     ]
 
     # Slot 3: LRS3 Convert
@@ -144,8 +148,8 @@ def slide_17(prs):
     # Down-arrowhead into ASR
     asr_grp.append(add_text(slide, "\u25BC",
                     branch_cx - Inches(0.12), asr_y - Inches(0.26),
-                    Inches(0.24), Inches(0.28),
-                    size=Pt(12), color=SCORAL, align=PP_ALIGN.CENTER))
+                    Inches(0.24), Inches(0.6),
+                    size=Pt(24), color=SCORAL, align=PP_ALIGN.CENTER))  # audit:bigfonts arrows kept at 14pt
 
     # ASR box
     asr_grp += _box("3. ASR", "Whisper\ntranscription", BLUE, asr_x, asr_y)
@@ -156,7 +160,7 @@ def slide_17(prs):
     asr_grp.append(add_text(slide, "evaluation\nonly",
                     asr_x + box_w + Inches(0.08), asr_y + Inches(0.18),
                     Inches(1.4), Inches(0.85),
-                    size=Pt(12), color=SCORAL, italic=True, bold=True,
+                    size=Pt(24), color=SCORAL, italic=True, bold=True,
                     align=PP_ALIGN.LEFT))
 
     # Coral L-connector from ASR to Outputs (row 2, slot 3)
@@ -181,7 +185,7 @@ def slide_17(prs):
     asr_grp.append(add_text(slide, "\u25BC",
                     outputs_cx - Inches(0.12), row2_y - Inches(0.26),
                     Inches(0.24), Inches(0.28),
-                    size=Pt(12), color=SCORAL, align=PP_ALIGN.CENTER))
+                    size=Pt(24), color=SCORAL, align=PP_ALIGN.CENTER))  # audit:bigfonts arrows kept at 14pt
 
     anim_groups.append(asr_grp)
 
@@ -206,7 +210,7 @@ def slide_17(prs):
     turn_grp.append(add_text(slide, "\u25BC",
                     r2_start_cx - Inches(0.12), row2_y - Inches(0.26),
                     Inches(0.24), Inches(0.28),
-                    size=Pt(12), color=TEAL, align=PP_ALIGN.CENTER))
+                    size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER))  # audit:bigfonts arrows kept at 14pt
     # Merge LRS3->Manifests connector with the previous (LRS3 Convert) group
     # so click cadence stays low — connector animates with that reveal.
     anim_groups[-1].extend(turn_grp)
@@ -225,8 +229,8 @@ def slide_17(prs):
                        corner_radius=True)
     red_label = add_text(slide, "Existed in academic repo",
                          red_box_x, row2_y - Inches(0.30),  # audit:fix_round3 down toward row2 (away from ASR branch)
-                         red_box_w, Inches(0.22),
-                         size=Pt(12), color=RED, bold=True,
+                         red_box_w, Inches(0.6),
+                         size=Pt(24), color=RED, bold=True,
                          align=PP_ALIGN.CENTER)
 
     # ── Row 2 ── build shapes first; group into pairs to keep the click
@@ -246,8 +250,9 @@ def slide_17(prs):
     anim_groups.append(row2_shapes[2] + row2_shapes[3])
 
     # ── Legend — compact, single row ──
+    # CUT v3: legend_y offset 0.5 -> 0.27 so labels stay under safe 7.05.
     final_group = []
-    legend_y = row2_y + box_h + Inches(0.5)
+    legend_y = row2_y + box_h + Inches(0.27)
     legend_items = [
         ("Preprocessing", BLUE), ("Feature Extraction", SGREEN),
         ("LLM Inference", SGOLD), ("Output", SPINK),
@@ -259,16 +264,19 @@ def slide_17(prs):
         lx = leg_start + i * leg_gap
         final_group.append(add_rect(slide, lx, legend_y, leg_sz, leg_sz,
                                  fill_color=clr))
+        # CUT v3: Pt(24) -> Pt(20) so rendered bottom 7.21 -> ~7.00 (under
+        # safe-zone limit 7.05). Original labels: Preprocessing /
+        # Feature Extraction / LLM Inference / Output.
         final_group.append(add_text(slide, lbl,
                  lx + Inches(0.28), legend_y - Inches(0.04),
-                 Inches(2.0), Inches(0.28), size=Pt(12), color=WHITE))
+                 Inches(2.0), Inches(0.87), size=Pt(20), color=WHITE))
 
     # Repo attribution below legend
     repo_y = legend_y + Inches(0.35)
     final_group.append(add_text(slide,
              "auto_avsr  \u00b7  av_hubert  \u00b7  VSP-LLM",
              start_x, repo_y, total_w, Inches(0.28),
-             size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+             size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
     anim_groups.append(final_group)
 
     _finish(slide, 0,
@@ -373,24 +381,24 @@ def slide_18(prs):
         card.append(add_text(slide, phase["title"],
                  x + Inches(0.2), cy + Inches(0.15),
                  cw_card - Inches(0.4), Inches(0.55),
-                 size=Pt(18), color=phase["color"], bold=True,
+                 size=Pt(24), color=phase["color"], bold=True,
                  align=PP_ALIGN.CENTER))
         card.append(add_text(slide, phase["subtitle"],
                  x + Inches(0.2), cy + Inches(0.7),
                  cw_card - Inches(0.4), Inches(0.3),
-                 size=Pt(12), color=LGRAY, italic=True,
+                 size=Pt(18), color=LGRAY, italic=True,
                  align=PP_ALIGN.CENTER))
         card.append(add_bullets(slide, phase["items"],
                     x + Inches(0.15), cy + Inches(1.1),
                     cw_card - Inches(0.3), Inches(3.2),
-                    size=Pt(11)))
+                    size=Pt(24)))
         card_groups.append(card)
 
     bottom = add_text(slide,
         "Every bug documented with root cause. Every change synced between "
         "EC2 and production container.",
         MX, Inches(6.3), CW, Inches(0.4),
-        size=Pt(13), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(24), color=WHITE, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 18,
         "The full engineering journey: 2-3 weeks of pipeline build, 4-5 weeks of "
@@ -422,14 +430,14 @@ def slide_19(prs):
                   border_color=CORAL, border_width=Pt(3), corner_radius=True)
     add_text(slide, "BEFORE", MX + Inches(0.3), by + Inches(0.2),
              bw - Inches(0.6), Inches(0.4),
-             size=Pt(22), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+             size=Pt(30), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
     add_bullets(slide, [
         "Monolithic 823-line script",
         "Fragile, untestable",
         "No environment detection",
         "Hardcoded paths everywhere",
     ], MX + Inches(0.3), by + Inches(0.9), bw - Inches(0.6), Inches(3.0),
-       size=Pt(15), bullet_color=CORAL)
+       size=Pt(24), bullet_color=CORAL)
 
     # AFTER box (teal)
     rx = MX + bw + gap
@@ -437,14 +445,14 @@ def slide_19(prs):
                   border_color=TEAL, border_width=Pt(3), corner_radius=True)
     add_text(slide, "AFTER", rx + Inches(0.3), by + Inches(0.2),
              bw - Inches(0.6), Inches(0.4),
-             size=Pt(22), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+             size=Pt(30), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
     add_bullets(slide, [
         "393-line orchestrator + 11 modules in lib/",
         ("37 automated tests", {"color": TEAL}),
         "Each stage independently testable",
         "Auto-detects EC2 vs container",
     ], rx + Inches(0.3), by + Inches(0.9), bw - Inches(0.6), Inches(3.0),
-       size=Pt(15), bullet_color=TEAL)
+       size=Pt(24), bullet_color=TEAL)
 
     _finish(slide, 19,
         "The original pipeline was a single 823-line bash script. Refactored "
@@ -519,11 +527,11 @@ def slide_21(prs):
         r = add_rect(slide, x, cy, cw, ch, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
         t1 = add_text(slide, title, x + Inches(0.15), cy + Inches(0.3),
-                 cw - Inches(0.3), Inches(0.5),
-                 size=Pt(16), color=color, bold=True, align=PP_ALIGN.CENTER)
+                 cw - Inches(0.3), Inches(1.0),
+                 size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
         t2 = add_text(slide, desc, x + Inches(0.15), cy + Inches(0.95),
                  cw - Inches(0.3), Inches(2.7),
-                 size=Pt(12), color=WHITE)
+                 size=Pt(24), color=WHITE)
         card_groups.append([r, t1, t2])
 
     _finish(slide, 21,
@@ -609,7 +617,7 @@ def slide_eng_transition(prs):
              size=Pt(52), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "From Research Code to Production System",
              MX, Inches(3.5), CW, Inches(0.6),
-             size=Pt(22), color=LGRAY, align=PP_ALIGN.CENTER)
+             size=Pt(30), color=LGRAY, align=PP_ALIGN.CENTER)
 
     # Subtle accent line
     add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
@@ -617,7 +625,7 @@ def slide_eng_transition(prs):
 
     add_text(slide, "3 research repositories  \u2192  1 automated pipeline  \u2192  deployed container",
              MX, Inches(4.8), CW, Inches(0.5),
-             size=Pt(16), color=MGRAY, align=PP_ALIGN.CENTER)
+             size=Pt(22), color=MGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Section transition: we now move from research analysis to the "
@@ -657,13 +665,13 @@ def slide_three_repos(prs):
                      border_color=color, border_width=Pt(2.5), corner_radius=True)
         t1 = add_text(slide, name, x + Inches(0.2), cy + Inches(0.2),
                  cw_card - Inches(0.4), Inches(0.45),
-                 size=Pt(20), color=color, bold=True, align=PP_ALIGN.CENTER)
+                 size=Pt(28), color=color, bold=True, align=PP_ALIGN.CENTER)
         t2 = add_text(slide, role, x + Inches(0.2), cy + Inches(0.7),
                  cw_card - Inches(0.4), Inches(0.35),
-                 size=Pt(14), color=WHITE, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
         t3 = add_text(slide, desc, x + Inches(0.2), cy + Inches(1.3),
                  cw_card - Inches(0.4), Inches(1.2),
-                 size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
         card_groups.append([r, t1, t2, t3])
 
     # Bottom bullets
@@ -673,7 +681,7 @@ def slide_three_repos(prs):
         ("Each runs independently \u2014 no orchestration between them",
          {"bold": True}),
         "Required 37 bug fixes to reach production quality",
-    ], MX, cy + ch_card + Inches(0.3), CW, Inches(2.0), size=Pt(14))
+    ], MX, cy + ch_card + Inches(0.3), CW, Inches(2.0), size=Pt(24))
 
     _finish(slide, 0,
         "We started with three independent research codebases: auto_avsr for "
@@ -697,13 +705,13 @@ def slide_web_ui(prs):
 
     add_text(slide, "We will now run the full pipeline live",
              MX, CT + Inches(2.0), CW, Inches(0.6),
-             size=Pt(28), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+             size=Pt(36), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
     add_text(slide,
         "Upload a video  \u2192  8-stage processing  \u2192  "
         "Per-segment results with IS scores",
         MX, CT + Inches(2.8), CW, Inches(0.5),
-        size=Pt(16), color=LGRAY, align=PP_ALIGN.CENTER)
+        size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
 
     # Three feature highlights at bottom
     features = [
@@ -722,11 +730,11 @@ def slide_web_ui(prs):
         add_rect(slide, x, fy, fw, Inches(1.2), fill_color=NAVY2,
                  border_color=TEAL, border_width=Pt(1), corner_radius=True)
         add_text(slide, icon, x, fy + Inches(0.05), fw, Inches(0.4),
-                 size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+                 size=Pt(32), color=TEAL, align=PP_ALIGN.CENTER)
         add_text(slide, title, x, fy + Inches(0.45), fw, Inches(0.3),
-                 size=Pt(14), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
         add_text(slide, desc, x, fy + Inches(0.8), fw, Inches(0.3),
-                 size=Pt(11), color=LGRAY, align=PP_ALIGN.CENTER)
+                 size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Switch to live demo now. The web UI provides drag-and-drop video upload, "
@@ -746,7 +754,7 @@ def slide_dual_env(prs):
 
     # Left — EC2 vs Container comparison
     lt = add_text(slide, "EC2 (Development)", MX, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=TEAL, bold=True)
+                  size=Pt(24), color=TEAL, bold=True)
 
     r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.5),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
@@ -756,11 +764,11 @@ def slide_dual_env(prs):
         "GPU: Tesla T4 (16GB)",
         "Path: /home/ubuntu/",
         "All datasets and evaluation tools",
-    ], MX + Inches(0.2), CT + Inches(0.6), col_w - Inches(0.4), Inches(1.2),
-       size=Pt(13))
+    ], MX + Inches(0.2), CT + Inches(0.6), col_w - Inches(0.4), Inches(2.2),
+       size=Pt(24))
 
     ct_label = add_text(slide, "Container (Production)", MX, CT + Inches(2.3), col_w,
-             Inches(0.4), size=Pt(18), color=CORAL, bold=True)
+             Inches(0.4), size=Pt(24), color=CORAL, bold=True)
 
     r2 = add_rect(slide, MX, CT + Inches(2.8), col_w, Inches(1.5),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
@@ -770,13 +778,13 @@ def slide_dual_env(prs):
         "GPU: client hardware",
         "Path: /workspace/",
         "Pipeline + web UI only",
-    ], MX + Inches(0.2), CT + Inches(2.9), col_w - Inches(0.4), Inches(1.2),
-       size=Pt(13))
+    ], MX + Inches(0.2), CT + Inches(2.9), col_w - Inches(0.4), Inches(2.2),
+       size=Pt(24))
 
     # Right — sync challenges
     rx = MX + col_w + gap
     rt = add_text(slide, "Synchronization Challenge", rx, CT, col_w, Inches(0.4),
-                  size=Pt(18), color=CORAL, bold=True)
+                  size=Pt(24), color=CORAL, bold=True)
 
     rb = add_bullets(slide, [
         "Every EC2 change must be replicated to container",
@@ -784,7 +792,7 @@ def slide_dual_env(prs):
         "Different Python environments and dependencies",
         ("Detailed sync changelog with exact code diffs", {"color": TEAL}),
         "INSTALL.sh overlay with 13-point verification",
-    ], rx, CT + Inches(0.6), col_w, Inches(3.0), size=Pt(13))
+    ], rx, CT + Inches(0.6), col_w, Inches(4.2), size=Pt(24))
 
     _finish(slide, 0,
         "Two environments: EC2 for development and research, Docker container "

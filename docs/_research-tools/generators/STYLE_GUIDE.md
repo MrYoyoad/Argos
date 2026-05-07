@@ -155,11 +155,16 @@ CH   = Inches(5.55)      # Content height
 ## PPTX Typography
 
 - **Font**: Calibri throughout (matches docx)
-- **Slide title**: 32pt bold white
-- **Body text**: 16pt white
-- **Bullet text**: 15pt white
-- **Small text**: 9pt LGRAY (slide numbers, footnotes)
-- **Speaker notes**: plain text (not shown on slides)
+- **Slide title**: 32–40pt bold white (was 32pt; raised after May-2026 small-screen review)
+- **Body text floor**: **24pt** white (was 16pt). Body never goes below 24pt unless absolutely forced.
+- **Bullet text**: 24–28pt white
+- **Hero stat numbers**: 36–60pt
+- **Captions / sub-labels**: 20pt minimum (was 13pt)
+- **Footers / references**: 16–18pt LGRAY (was 9pt)
+- **Slide-number labels**: 12pt LGRAY in bottom-left (one explicit exception to the 24pt floor — short numeric strings only, not body text)
+- **Speaker notes**: plain text (not shown on slides — no minimum)
+
+**Why these are this big**: the deck is presented on small monitors / projectors with ~12 viewers in the room. Anything under 24pt body becomes unreadable past the first row. May-2026 small-screen review forced the floor up from 12pt → 24pt across the entire academic deck. The bbox-overlap audit can only catch geometric overlaps; readability needs the explicit floor.
 
 ## PPTX Helper Functions
 
@@ -419,13 +424,13 @@ When rebuilding slide content programmatically, clear existing shapes first. Nev
 
 ## 7.2 Density Limits (D1–D6)
 
-Overcrowded slides were the second most common remark category.
+Overcrowded slides were the second most common remark category. **Density rules tightened May-2026 small-screen review** — old D1/D2 numbers below are superseded by tighter caps:
 
-**D1 — Max 5 bullet points per slide (prefer 3–4).**
-Each bullet should be one line at the target font size. If you need more, split into two slides.
+**D1 — Max 4 bullet points per slide (prefer 2–3).**
+Each bullet should be one line at the 24pt body floor. If you need more bullets, the slide is doing too much — split into two slides or cut content. *(Old rule allowed 5; reduced May 2026.)*
 
-**D2 — Max 12 words per bullet point.**
-Bullets are signposts, not sentences. Move explanatory detail to speaker notes.
+**D2 — Max 8 words per bullet point.**
+Bullets are signposts, not sentences. At 24pt body, anything past 8 words wraps and breaks the rhythm. Move explanatory detail to speaker notes. *(Old rule allowed 12; reduced May 2026.)*
 
 **D3 — Max 1 primary table per slide.**
 If a slide needs two tables, the second goes to speaker notes or a separate slide. Exception: small key-value stat tables (≤3 rows) alongside a main table.
@@ -443,19 +448,22 @@ If information is already conveyed by a chart or card layout, do not also show i
 
 Projector distance reduces effective readability by ~50%.
 
-**T1 — Minimum font sizes by element type:**
+**T1 — Minimum font sizes by element type (May-2026 small-screen rule):**
 
 | Element | Minimum | Recommended |
 |---------|---------|-------------|
-| Slide title | 28pt | 32pt |
-| Body text / bullets | 14pt | 15–17pt |
-| Table cell text | 12pt | 13pt |
-| Card description text | 12pt | 13pt |
-| Callout box text | 11pt | 12pt |
-| Footnotes / references | 8pt | 9pt |
-| Annotations on slides | 11pt | 12pt |
-| Plot axis labels (matplotlib) | 12pt | 13pt |
-| Plot value labels (matplotlib) | 10pt | 11pt |
+| Slide title | 32pt | 36–40pt |
+| Body text / bullets | **24pt** | 24–28pt |
+| Table cell text | **20pt** | 22pt |
+| Card description text | **22pt** | 24pt |
+| Callout box text | **20pt** | 22pt |
+| Footnotes / references | **16pt** | 18pt |
+| Annotations on slides | **20pt** | 22pt |
+| Slide-number labels | 12pt | 12pt (explicit exception — bottom-left short numerics only) |
+| Plot axis labels (matplotlib) | 14pt | 16pt |
+| Plot value labels (matplotlib) | 14pt | 16pt |
+
+**The 24pt body floor is non-negotiable.** Slides with <24pt body text are illegible on a 13" laptop screen at the back of the room. If content doesn't fit at 24pt, cut content (per V1–V3 below); do **not** drop the font below the floor. Single explicit exception: bottom-left slide-number labels (short numerics, never body) which stay at 12pt and are exempted in `audit_pptx_visual_structure.py` by position+size+content pattern.
 
 **T2 — Never use LGRAY text smaller than 11pt.**
 Grey on dark navy has inherently low contrast. Below 11pt it becomes unreadable on projectors. Prefer WHITE for any text below 13pt.
@@ -567,6 +575,36 @@ Level 1 par: delay="indefinite"  (waits for click)
     Level 3 par: presetID="1", presetClass="entr", nodeType="clickEffect"
 ```
 Do not attempt to simplify or shortcut this XML. Even small deviations silently break in PowerPoint.
+
+## 7.7 Visual-First / Text Reduction (V1–V6)
+
+Added May 2026. Slides default to **visual-first**: a plot, diagram, video, or icon carries the meaning; text is the caption. The deck was previously bullet-heavy; this section enforces the reverse.
+
+**V1 — Default: visual is primary, text is the caption.**
+Every slide should pass the test: "if the visual were removed, would the slide still convey the point?" If yes, the visual isn't doing enough work. Reduce text and let the visual carry. If the slide has no visual, ask whether one should exist (a plot, diagram, photo, icon). If it genuinely doesn't need one (e.g. taxonomy explanation, list of takeaways, methodology block), proceed to V2.
+
+**V2 — Text-only slides: minimum text needed.**
+Even on slides where text is the primary content (roadmap, key takeaways, taxonomy explanation), keep text to the minimum needed to convey each point. Don't pad. Be terse. Strip filler words. "Started from a research paper with no working environment, no documentation, and no pipeline" → "Started from a paper with no working environment".
+
+**V3 — Hard ceiling: 4 bullets per slide.**
+Even on text-heavy slides. If you need more than 4, split the slide. The only reason to exceed 4 is a true list whose items cannot be grouped (a literal enumeration); document the exception in a code comment.
+
+**V4 — Replace bullet walls with cards / icons / mini-diagrams.**
+A 5-bullet list at 24pt overflows. Same content as 4 visual cards (icon + 3-word label + 1-line description) fits and is more memorable. Prefer cards.
+
+**V5 — Speaker notes carry the long form.**
+The slide shows the headline; speaker notes carry the full reasoning, citations, caveats, and the numbers that ground the headline. Notes have no length cap; bodies do.
+
+**V6 — Slides explicitly allowed to be text-dense:**
+- "What was done?" overview slides (1/2 and 2/2)
+- Executive Summary
+- Roadmap detail slides (Arabic, Five Phases, IS Improvement Roadmap)
+- Key Takeaways
+- LLM Judge × IS Tier cross-tabulation (analysis slide)
+- Methodology breakdowns (IS signals, weight rationale, v1-vs-v3 lesson)
+- LLM salvage explanation, failure taxonomy
+
+These slides may carry up to 8 short bullets, but each bullet still respects V2 (minimum text). If even 8 isn't enough, split.
 
 ---
 
