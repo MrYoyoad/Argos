@@ -3641,6 +3641,123 @@ def slide_live_example_intro(prs):
               "(050111_OsamaBinLadenStatement_HD_14_004195_004555).")
 
 
+def slide_failure_live_demo(prs):
+    """Two live failure mode examples side by side: Hallucination + Wrong Topic.
+
+    Placed after slide_failure_deep_2 (text-only taxonomy) to give the audience
+    actual video evidence of the two most severe failure categories.
+    Two-column layout: each column has embedded video + REF + HYP + tier badge.
+    Column width 5.85" triggers the narrow-column audit exemption (18pt floor).
+    """
+    slide = new_slide(prs)
+    add_title(slide, "Failure Modes — Live Examples")
+    add_accent_line(slide)
+
+    # Two columns filling CW exactly: 5.85 + 0.43 + 5.85 = 12.13"
+    col_w = Inches(5.85)
+    gap = Inches(0.43)
+    start_x = MX  # = 0.6"
+
+    vid_h = Inches(2.65)
+    vid_y = CT + Inches(0.05)   # = 1.50"
+
+    tiles = [
+        {
+            "key": "halluc",
+            "label": "Hallucination",
+            "color": RED,
+            "ref": "“…it doesn’t have a carry strap”",
+            "hyp": "“this is david irving he’s a holocaust denier "
+                   "and a computer hacker”",
+            "wer": "WER 100%  ·  IS 0.81 (Failed)  ·  STRIP",
+        },
+        {
+            "key": "topic_drift",
+            "label": "Wrong Topic",
+            "color": GOLD,
+            "ref": "“i’ve made lots of videos about weight loss…”",
+            "hyp": "“when i was a little girl i always wanted "
+                   "to be a princess”",
+            "wer": "WER 97%  ·  IS 0.37 (Failed)  ·  STRIP",
+        },
+    ]
+
+    # base offset below video
+    base_offsets = {
+        "lbl":      Inches(0.07),
+        "badge":    Inches(0.43),
+        "ref_lbl":  Inches(0.78),
+        "ref_t":    Inches(1.06),
+        "hyp_lbl":  Inches(1.66),
+        "hyp_t":    Inches(1.94),
+    }
+
+    anim_groups = []
+    for i, t in enumerate(tiles):
+        x = start_x + i * (col_w + gap)
+        base = vid_y + vid_h
+
+        add_video(slide, t["key"], x, vid_y, col_w, vid_h)
+
+        lbl = add_text(slide, t["label"],
+                x, base + base_offsets["lbl"], col_w, Inches(0.35),
+                size=Pt(24), bold=True, color=t["color"],
+                align=PP_ALIGN.CENTER)
+
+        badge = add_text(slide, t["wer"],
+                x, base + base_offsets["badge"], col_w, Inches(0.30),
+                size=Pt(18), color=WHITE, bold=True,
+                align=PP_ALIGN.CENTER)
+
+        ref_lbl = add_text(slide, "REFERENCE",
+                x, base + base_offsets["ref_lbl"], col_w, Inches(0.26),
+                size=Pt(18), bold=True, color=LGRAY)
+
+        ref_t = add_text(slide, t["ref"],
+                x, base + base_offsets["ref_t"], col_w, Inches(0.55),
+                size=Pt(18), color=LGRAY, italic=True)
+
+        hyp_lbl = add_text(slide, "HYPOTHESIS",
+                x, base + base_offsets["hyp_lbl"], col_w, Inches(0.26),
+                size=Pt(18), bold=True, color=WHITE)
+
+        hyp_t = add_text(slide, t["hyp"],
+                x, base + base_offsets["hyp_t"], col_w, Inches(0.70),
+                size=Pt(18), color=t["color"], italic=True)
+
+        anim_groups.append([lbl, badge, ref_lbl, ref_t, hyp_lbl, hyp_t])
+
+    _finish(slide, 0,
+        "Two live failure mode examples drawn from the 1,497-segment evaluation. "
+        "LEFT — Hallucination (carry strap): segment "
+        "00MUdHQ7GGY_8__b1480c7a_00_000000_000194. "
+        "Reference: 'it doesn't have a carry strap but you can put it on your "
+        "shoulder pretty easily or just carry it with your hand'. "
+        "Hypothesis: 'this is david irving he's a holocaust denier and a "
+        "computer hacker who broke into the nuremberg trials'. "
+        "WER 100%, IS 0.81 (Tier 1 Failed), mean_prob 0.468 (Strip band). "
+        "This is a hallucination: the LLM output is longer than the reference "
+        "(length ratio >> 1), completely unrelated topic, fluent. Strip auto-flags "
+        "it (mean_prob 0.468 < T_strip 0.65). "
+        "RIGHT — Wrong Topic (diet vs princess): segment "
+        "vBCnI4kf3-E_0__d2216cbf_00_000000_000300. "
+        "Reference: 'i've made lots of videos about weight loss however some "
+        "people don't want to lose any more weight than they you know compared "
+        "to what they've lost already they're actually looking to gain weight "
+        "so they're really concerned about'. "
+        "Hypothesis: 'when i was a little girl i always wanted to be a princess'. "
+        "WER 97%, IS 0.37 (Tier 1 Failed), mean_prob 0.442 (Strip band). "
+        "This is Wrong Topic: the hypothesis is much SHORTER than the reference "
+        "(length ratio << 1 — a truncation pattern), and the semantic similarity "
+        "is near zero (completely different subject). "
+        "Distinction from hallucination: hallucination produces MORE words "
+        "(length ratio >> 1); wrong topic usually produces FEWER (truncated). "
+        "IS separates them: hallucination at 0.81 (just above failed) vs "
+        "wrong topic at 0.37 (well into failed). Both end up in Strip band. "
+        "Sources: english_full_nbest_eval/report_v2/report.csv.",
+        anim_groups, click_reveal=True)
+
+
 def slide_demo_obama_trust(prs):
     """TRUST exemplar — non-trivial speaker, AI talk, full agreement-aware rule.
 

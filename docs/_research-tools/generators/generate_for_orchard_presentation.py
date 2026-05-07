@@ -69,6 +69,7 @@ from presentation.slides_evaluation import (
     slide_15,
     slide_metric_disagreement, slide_metric_disagreement_2,
     slide_live_example_intro,
+    slide_failure_live_demo,
 )
 from presentation.slides_engineering import (
     slide_17,           # programmatic (NOT slide_17_png)
@@ -253,7 +254,8 @@ def main():
         slide_failure_anatomy_transition,  # E1: visible §3a → §3b divider
         slide_08,                       # Failure-mode taxonomy bar (FAILURE)
         slide_failure_deep_1a,          # Failure deep (consolidated)
-        slide_failure_deep_2,           # Failure modes: examples
+        slide_failure_deep_2,           # Failure modes: examples (text)
+        slide_failure_live_demo,        # Failure modes: live video (halluc + topic_drift)
         slide_25d,                      # LLM salvage: three recoveries
         slide_25e,                      # LLM salvage: domain context
 

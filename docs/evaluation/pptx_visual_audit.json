@@ -1,0 +1,4450 @@
+{
+  "generated_by": "scripts/audit_pptx_visual_structure.py",
+  "decks": [
+    {
+      "deck_path": "presentation_materials_20260224/Argos_VSP_For_Orchard_May2026.pptx",
+      "deck_name": "Argos_VSP_For_Orchard_May2026.pptx",
+      "slide_count": 88,
+      "slide_size_in": [
+        13.33,
+        7.5
+      ],
+      "issue_totals": {
+        "BLOCKER": 0,
+        "MAJOR": 279,
+        "MINOR": 123,
+        "TOTAL": 402
+      },
+      "issues_by_category": {
+        "OVERLAP": 259,
+        "OCCLUSION": 139,
+        "NOTES": 4
+      },
+      "hidden_slides": [
+        [
+          80,
+          "A1: Homophenes \u2014 The Lip-Reading Problem"
+        ],
+        [
+          81,
+          "A3: IS Component Correlation"
+        ],
+        [
+          82,
+          "Appendix: PCA Loadings on the 6 IS Signals"
+        ],
+        [
+          83,
+          "Appendix: Human-IS Path B (Pre-Study Estimates)"
+        ],
+        [
+          84,
+          "A4: LLM Salvage \u2014 Recoverable Segments"
+        ],
+        [
+          85,
+          "A5: LLM Salvage \u2014 Curated Examples"
+        ],
+        [
+          86,
+          "A9: Context Evaluation \u2014 Transition Details"
+        ],
+        [
+          87,
+          "Appendix: McNemar Tests \u2014 N-Best Methods vs Baseline"
+        ],
+        [
+          88,
+          "Two Environments: Development and Production"
+        ]
+      ],
+      "section_divider_candidates": [],
+      "video_references": [
+        {
+          "slide": 5,
+          "title": "What is Visual Speech Processing?",
+          "partname": "/ppt/media/media1.mp4",
+          "embedded_filename": "media1.mp4",
+          "embedded_size": 1405050,
+          "matched_on_disk": [
+            "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4"
+          ],
+          "duration_s": 7.241
+        },
+        {
+          "slide": 5,
+          "title": "What is Visual Speech Processing?",
+          "partname": "/ppt/media/media1.mp4",
+          "embedded_filename": "media1.mp4",
+          "embedded_size": 1405050,
+          "matched_on_disk": [
+            "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4"
+          ],
+          "duration_s": 7.241
+        },
+        {
+          "slide": 6,
+          "title": "Live example \u2014 clean speech, perfect transcription",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 6,
+          "title": "Live example \u2014 clean speech, perfect transcription",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 20,
+          "title": "Judge Example 1: Named Entity Swap",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 20,
+          "title": "Judge Example 1: Named Entity Swap",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 21,
+          "title": "Judge Example 3: Technical Vocabulary Drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 21,
+          "title": "Judge Example 3: Technical Vocabulary Drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 22,
+          "title": "Judge Example 5: Cooking Domain Confusion",
+          "partname": "/ppt/media/media5.mp4",
+          "embedded_filename": "media5.mp4",
+          "embedded_size": 757888,
+          "matched_on_disk": [
+            "a2CS82VZyO4_7__a6316c95_with_hyp.mp4"
+          ],
+          "duration_s": 3.251
+        },
+        {
+          "slide": 22,
+          "title": "Judge Example 5: Cooking Domain Confusion",
+          "partname": "/ppt/media/media5.mp4",
+          "embedded_filename": "media5.mp4",
+          "embedded_size": 757888,
+          "matched_on_disk": [
+            "a2CS82VZyO4_7__a6316c95_with_hyp.mp4"
+          ],
+          "duration_s": 3.251
+        },
+        {
+          "slide": 23,
+          "title": "Judge Example 6: Topic Hijack",
+          "partname": "/ppt/media/media6.mp4",
+          "embedded_filename": "media6.mp4",
+          "embedded_size": 3240279,
+          "matched_on_disk": [
+            "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4"
+          ],
+          "duration_s": 7.083
+        },
+        {
+          "slide": 23,
+          "title": "Judge Example 6: Topic Hijack",
+          "partname": "/ppt/media/media6.mp4",
+          "embedded_filename": "media6.mp4",
+          "embedded_size": 3240279,
+          "matched_on_disk": [
+            "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4"
+          ],
+          "duration_s": 7.083
+        },
+        {
+          "slide": 42,
+          "title": "Failure Modes \u2014 Live Examples",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 1360453,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.479
+        },
+        {
+          "slide": 42,
+          "title": "Failure Modes \u2014 Live Examples",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 1360453,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.479
+        },
+        {
+          "slide": 42,
+          "title": "Failure Modes \u2014 Live Examples",
+          "partname": "/ppt/media/media8.mp4",
+          "embedded_filename": "media8.mp4",
+          "embedded_size": 1792897,
+          "matched_on_disk": [
+            "vBCnI4kf3-E_0__d2216cbf_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.08
+        },
+        {
+          "slide": 42,
+          "title": "Failure Modes \u2014 Live Examples",
+          "partname": "/ppt/media/media8.mp4",
+          "embedded_filename": "media8.mp4",
+          "embedded_size": 1792897,
+          "matched_on_disk": [
+            "vBCnI4kf3-E_0__d2216cbf_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.08
+        },
+        {
+          "slide": 62,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 62,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 62,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media9.mp4",
+          "embedded_filename": "media9.mp4",
+          "embedded_size": 460632,
+          "matched_on_disk": [
+            "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4"
+          ],
+          "duration_s": 3.019
+        },
+        {
+          "slide": 62,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media9.mp4",
+          "embedded_filename": "media9.mp4",
+          "embedded_size": 460632,
+          "matched_on_disk": [
+            "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4"
+          ],
+          "duration_s": 3.019
+        },
+        {
+          "slide": 62,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 1360453,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.479
+        },
+        {
+          "slide": 62,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 1360453,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.479
+        },
+        {
+          "slide": 63,
+          "title": "Demo \u2014 TRUST: AI talk, Indian-accent speaker (IS=5.00)",
+          "partname": "/ppt/media/media10.mp4",
+          "embedded_filename": "media10.mp4",
+          "embedded_size": 834415,
+          "matched_on_disk": [
+            "K0h33Ps7vz4_11__e66d3063_with_hyp.mp4"
+          ],
+          "duration_s": 4.134
+        },
+        {
+          "slide": 63,
+          "title": "Demo \u2014 TRUST: AI talk, Indian-accent speaker (IS=5.00)",
+          "partname": "/ppt/media/media10.mp4",
+          "embedded_filename": "media10.mp4",
+          "embedded_size": 834415,
+          "matched_on_disk": [
+            "K0h33Ps7vz4_11__e66d3063_with_hyp.mp4"
+          ],
+          "duration_s": 4.134
+        },
+        {
+          "slide": 64,
+          "title": "Demo \u2014 Obama: Trust Tier (conf-only fallback)",
+          "partname": "/ppt/media/media11.mp4",
+          "embedded_filename": "media11.mp4",
+          "embedded_size": 3128275,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 64,
+          "title": "Demo \u2014 Obama: Trust Tier (conf-only fallback)",
+          "partname": "/ppt/media/media11.mp4",
+          "embedded_filename": "media11.mp4",
+          "embedded_size": 3128275,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 65,
+          "title": "Demo \u2014 INSPECT: structure preserved, vocabulary lost",
+          "partname": "/ppt/media/media12.mp4",
+          "embedded_filename": "media12.mp4",
+          "embedded_size": 2307391,
+          "matched_on_disk": [
+            "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4"
+          ],
+          "duration_s": 8.731
+        },
+        {
+          "slide": 65,
+          "title": "Demo \u2014 INSPECT: structure preserved, vocabulary lost",
+          "partname": "/ppt/media/media12.mp4",
+          "embedded_filename": "media12.mp4",
+          "embedded_size": 2307391,
+          "matched_on_disk": [
+            "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4"
+          ],
+          "duration_s": 8.731
+        },
+        {
+          "slide": 66,
+          "title": "Demo - Strip: entity swap auto-flagged",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 66,
+          "title": "Demo - Strip: entity swap auto-flagged",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 67,
+          "title": "Demo - Salvage: technical vocabulary drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 67,
+          "title": "Demo - Salvage: technical vocabulary drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        }
+      ],
+      "slides": [
+        {
+          "slide_num": 1,
+          "slide_title": "Argos VSP",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": true,
+          "notes_word_count": 36,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 2,
+          "slide_title": "What was done? (1/2)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 53,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 11% of smaller bbox (textA: \"What was done? (1/2)\" / textB: \"Four months on visual speech p\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 3,
+          "slide_title": "What was done? (2/2)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 49,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 11% of smaller bbox (textA: \"What was done? (2/2)\" / textB: \"Key findings and outcomes:\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 4,
+          "slide_title": "Presentation Overview",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 19,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 69,
+          "animation_groups": 4,
+          "issues": []
+        },
+        {
+          "slide_num": 5,
+          "slide_title": "What is Visual Speech Processing?",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 160,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 4' overlap by 33% of smaller bbox (textA: \"What is Visual Speech Processi\" / textB: \"A system that reads lips from \")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 6,
+          "slide_title": "Live example \u2014 clean speech, perfect transcription",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 173,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 78% of smaller bbox (textA: \"\u2026the tireless and heroic work \" / textB: \"Reference and prediction are i\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"\u2026the tireless and heroic work of our cou\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 7,
+          "slide_title": "The Invisible Problem: Visemes",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 124,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"The Invisible Problem: Visemes\" / textB: \"The Invisible Problem\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 6' overlap by 5% of smaller bbox (textA: \"The Invisible Problem: Visemes\" / textB: \"Same Mouth Shape, Different Wo\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"Same Mouth Shape, Different Words\u2026\") is 36% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"Identical mouth shapes can produce diffe\u2026\") is 42% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 8,
+          "slide_title": "How It Works: Three Components",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 170,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 9,
+          "slide_title": "How It Works: Data Flow",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 29,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 54,
+          "animation_groups": 4,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 11' overlap by 50% of smaller bbox (textA: \"\u2193\" / textB: \"Mouth Crop  \u2014  96\u00d796 pixel reg\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 16' overlap by 50% of smaller bbox (textA: \"\u2193\" / textB: \"Visual Features  \u2014  AV-HuBERT \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 17' & 'TextBox 21' overlap by 50% of smaller bbox (textA: \"\u2193\" / textB: \"Projection  \u2014  Linear layer: 1\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 22' & 'TextBox 26' overlap by 50% of smaller bbox (textA: \"\u2193\" / textB: \"LLM Generates Text  \u2014  LLaMA-2\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 25' & 'TextBox 27' overlap by 23% of smaller bbox (textA: \"5\" / textB: \"Visual encoder is frozen \u2014 onl\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 26' & 'TextBox 27' overlap by 52% of smaller bbox (textA: \"LLM Generates Text  \u2014  LLaMA-2\" / textB: \"Visual encoder is frozen \u2014 onl\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"\u2193\u2026\") is 125% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"\u2193\u2026\") is 125% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 17' (\"\u2193\u2026\") is 125% covered by later shape(s).",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 22' (\"\u2193\u2026\") is 125% covered by later shape(s).",
+              "shape_id": "23",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 26' (\"LLM Generates Text  \u2014  LLaMA-2-7B decode\u2026\") is 36% covered by later shape(s).",
+              "shape_id": "27",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 10,
+          "slide_title": "8-Stage Automated Pipeline",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 56,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 84,
+          "animation_groups": 6,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 5' overlap by 77% of smaller bbox (textA: \"1. Normalize\" / textB: \"HDR/10-bit\u000bconversion\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 9' overlap by 77% of smaller bbox (textA: \"2. Mouth Crop\" / textB: \"Face detect\u000b& ROI\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 13' & 'TextBox 14' overlap by 77% of smaller bbox (textA: \"4. LRS3 Convert\" / textB: \"Flat \u2192 LRS3\u000bformat\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 16' & 'TextBox 18' overlap by 37% of smaller bbox (textA: \"\u25bc\" / textB: \"3. ASR\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 18' & 'TextBox 19' overlap by 77% of smaller bbox (textA: \"3. ASR\" / textB: \"Whisper\u000btranscription\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 30' & 'TextBox 35' overlap by 18% of smaller bbox (textA: \"Existed in academic repo\" / textB: \"6. K-means\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 30' & 'TextBox 39' overlap by 18% of smaller bbox (textA: \"Existed in academic repo\" / textB: \"7. LLM Decode\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 32' & 'TextBox 33' overlap by 77% of smaller bbox (textA: \"5. Manifests\" / textB: \"TSV + splits\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 35' & 'TextBox 36' overlap by 77% of smaller bbox (textA: \"6. K-means\" / textB: \"Feature\u000bclustering\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 39' & 'TextBox 40' overlap by 77% of smaller bbox (textA: \"7. LLM Decode\" / textB: \"AV-HuBERT +\u000bLLaMA-2\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 43' & 'TextBox 44' overlap by 77% of smaller bbox (textA: \"8. Outputs\" / textB: \"Reports &\u000bburned video\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 47' & 'TextBox 54' overlap by 32% of smaller bbox (textA: \"Preprocessing\" / textB: \"auto_avsr  \u00b7  av_hubert  \u00b7  VS\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 49' & 'TextBox 54' overlap by 32% of smaller bbox (textA: \"Feature Extraction\" / textB: \"auto_avsr  \u00b7  av_hubert  \u00b7  VS\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 51' & 'TextBox 54' overlap by 32% of smaller bbox (textA: \"LLM Inference\" / textB: \"auto_avsr  \u00b7  av_hubert  \u00b7  VS\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 53' & 'TextBox 54' overlap by 32% of smaller bbox (textA: \"Output\" / textB: \"auto_avsr  \u00b7  av_hubert  \u00b7  VS\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"1. Normalize\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"2. Mouth Crop\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 13' (\"4. LRS3 Convert\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "14",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 16' (\"\u25bc\u2026\") is 93% covered by later shape(s).",
+              "shape_id": "17",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 18' (\"3. ASR\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "19",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 30' (\"Existed in academic repo\u2026\") is 68% covered by later shape(s).",
+              "shape_id": "31",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 32' (\"5. Manifests\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "33",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 35' (\"6. K-means\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "36",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 39' (\"7. LLM Decode\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "40",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 43' (\"8. Outputs\u2026\") is 54% covered by later shape(s).",
+              "shape_id": "44",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 47' (\"Preprocessing\u2026\") is 32% covered by later shape(s).",
+              "shape_id": "48",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 49' (\"Feature Extraction\u2026\") is 32% covered by later shape(s).",
+              "shape_id": "50",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 51' (\"LLM Inference\u2026\") is 32% covered by later shape(s).",
+              "shape_id": "52",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 53' (\"Output\u2026\") is 32% covered by later shape(s).",
+              "shape_id": "54",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 11,
+          "slide_title": "The Benchmark: Paper vs Reality",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 123,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 9' overlap by 30% of smaller bbox (textA: \"\u2022 LRS3 benchmark: curated TED \" / textB: \"Different dataset, fundamental\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 12,
+          "slide_title": "The Reality Gap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 13,
+          "slide_title": "Same WER, Different Effects",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 55,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 5' overlap by 35% of smaller bbox (textA: \"WER: 1 substitution  \u2022  Harmle\" / textB: \"Ref: \"the admiral gave the ord\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 9' overlap by 35% of smaller bbox (textA: \"WER: 1 substitution  \u2022  Destru\" / textB: \"Ref: \"Admiral McRae gave the o\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"WER: 1 substitution  \u2022  Harmless\u2026\") is 35% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"WER: 1 substitution  \u2022  Destructive\u2026\") is 35% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 14,
+          "slide_title": "Diversity of Inputs \u2014 Not LRS3",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 109,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"Diversity of Inputs \u2014 Not LRS3\" / textB: \"Real-world / observational foo\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 38% of smaller bbox (textA: \"Lip-reading frame \u2014 visual sig\" / textB: \"Every number that follows come\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"Lip-reading frame \u2014 visual signal only, \u2026\") is 68% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 15,
+          "slide_title": "WER: The Metric That Lies",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 129,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 13' overlap by 25% of smaller bbox (textA: \"6 insertions, 1 deletion\u000b= nea\" / textB: \"\u25b6 Reference:  i want you to re\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"Intelligibility Score (Excellent)\u2026\") is 45% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 13' (\"\u25b6 Reference:  i want you to remember all\u2026\") is 43% covered by later shape(s).",
+              "shape_id": "14",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 16,
+          "slide_title": "RESEARCH FINDINGS",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 5,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 24,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 17,
+          "slide_title": "What the AVSR Literature Reports vs What Users Get",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 18,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"What the AVSR Literature Repor\" / textB: \"AVSR / VSP papers (LRS3, LRW, \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 10' overlap by 50% of smaller bbox (textA: \"WHAT END USERS ACTUALLY CONSUM\" / textB: \"Same WER ~50% - very different\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 11' overlap by 33% of smaller bbox (textA: \"WHAT END USERS ACTUALLY CONSUM\" / textB: \"Partial / useful\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 12' overlap by 30% of smaller bbox (textA: \"Same WER ~50% - very different\" / textB: \"REF: \"market research firm ber\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 14' overlap by 11% of smaller bbox (textA: \"REF: \"market research firm ber\" / textB: \"REF: \"the overhead lights are \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 15' overlap by 40% of smaller bbox (textA: \"REF: \"the overhead lights are \" / textB: \"Same WER, very different downs\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 16' overlap by 15% of smaller bbox (textA: \"Same WER, very different downs\" / textB: \"Therefore we built IS \u2014 the In\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 9' (\"WHAT END USERS ACTUALLY CONSUME\u2026\") is 60% covered by later shape(s).",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"Same WER ~50% - very different downstrea\u2026\") is 60% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"REF: \"market research firm bernreuter is\u2026\") is 32% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 18,
+          "slide_title": "LLM-as-a-Judge: Gold Standard (1,497 Pairs)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 230,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 13% of smaller bbox (textA: \"LLM-as-a-Judge: Gold Standard \" / textB: \"What Is LLM-as-a-Judge?\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 7' overlap by 13% of smaller bbox (textA: \"LLM-as-a-Judge: Gold Standard \" / textB: \"Methodology:\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"\u2022 Use a frontier LLM (Claude Opus) as an\u2026\") is 52% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 19,
+          "slide_title": "LLM Judge: Deep Dive",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 143,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"LLM Judge: Deep Dive\" / textB: \"30 Representative Segments\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 5' overlap by 14% of smaller bbox (textA: \"LLM Judge: Deep Dive\" / textB: \"What the Sample Reveals\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 20,
+          "slide_title": "Judge Example 1: Named Entity Swap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 109,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 4' overlap by 6% of smaller bbox (textA: \"Judge Example 1: Named Entity \" / textB: \"WER 18%   WWER 15%   IS 4.55 (\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 6' overlap by 12% of smaller bbox (textA: \"WER 18%   WWER 15%   IS 4.55 (\" / textB: \"\u201cmarket research firm bernreut\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 24% of smaller bbox (textA: \"\u201cmarket research firm bernreut\" / textB: \"\u201cmarket research firm rogers r\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 10' overlap by 90% of smaller bbox (textA: \"\u201cmarket research firm rogers r\" / textB: \"Named Entity Swap \u2014 meaning fu\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 11' overlap by 11% of smaller bbox (textA: \"\u201cmarket research firm rogers r\" / textB: \"Only company name changed (ber\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 39% of smaller bbox (textA: \"Named Entity Swap \u2014 meaning fu\" / textB: \"Only company name changed (ber\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"WER 18%   WWER 15%   IS 4.55 (Excellent)\u2026\") is 41% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"\u201cmarket research firm bernreuter researc\u2026\") is 38% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"\u201cmarket research firm rogers research is\u2026\") is 66% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"Named Entity Swap \u2014 meaning fully preser\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 21,
+          "slide_title": "Judge Example 3: Technical Vocabulary Drift",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 33,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 4' overlap by 6% of smaller bbox (textA: \"Judge Example 3: Technical Voc\" / textB: \"WER 52%   WWER 47%   IS 3.02 (\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 6' overlap by 12% of smaller bbox (textA: \"WER 52%   WWER 47%   IS 3.02 (\" / textB: \"\u201cwe need a radically different\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 24% of smaller bbox (textA: \"\u201cwe need a radically different\" / textB: \"\u201cwe need a radically different\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 10' overlap by 90% of smaller bbox (textA: \"\u201cwe need a radically different\" / textB: \"Domain Vocabulary Drift \u2014 stru\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 11' overlap by 11% of smaller bbox (textA: \"\u201cwe need a radically different\" / textB: \"Argument structure perfect: 'r\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 39% of smaller bbox (textA: \"Domain Vocabulary Drift \u2014 stru\" / textB: \"Argument structure perfect: 'r\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"WER 52%   WWER 47%   IS 3.02 (Good)   Ju\u2026\") is 41% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"\u201cwe need a radically different approach \u2026\") is 38% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"\u201cwe need a radically different approach \u2026\") is 66% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"Domain Vocabulary Drift \u2014 structure inta\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 22,
+          "slide_title": "Judge Example 5: Cooking Domain Confusion",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 122,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 4' overlap by 6% of smaller bbox (textA: \"Judge Example 5: Cooking Domai\" / textB: \"WER 89%   WWER 44%   IS 2.07 (\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 6' overlap by 12% of smaller bbox (textA: \"WER 89%   WWER 44%   IS 2.07 (\" / textB: \"\u201cand i have a tablespoon of ja\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 24% of smaller bbox (textA: \"\u201cand i have a tablespoon of ja\" / textB: \"\u201cand i have a dietary smoothie\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 10' overlap by 90% of smaller bbox (textA: \"\u201cand i have a dietary smoothie\" / textB: \"Domain Confusion \u2014 food contex\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 11' overlap by 11% of smaller bbox (textA: \"\u201cand i have a dietary smoothie\" / textB: \"Model knows it's a cooking vid\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 39% of smaller bbox (textA: \"Domain Confusion \u2014 food contex\" / textB: \"Model knows it's a cooking vid\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"WER 89%   WWER 44%   IS 2.07 (Fair)   Ju\u2026\") is 41% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"\u201cand i have a tablespoon of jalapeno fre\u2026\") is 38% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"\u201cand i have a dietary smoothie i've got \u2026\") is 66% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"Domain Confusion \u2014 food context right, i\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 23,
+          "slide_title": "Judge Example 6: Topic Hijack",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 45,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 4' overlap by 6% of smaller bbox (textA: \"Judge Example 6: Topic Hijack\" / textB: \"WER 74%   WWER 69%   IS 1.79 (\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 6' overlap by 12% of smaller bbox (textA: \"WER 74%   WWER 69%   IS 1.79 (\" / textB: \"\u201ci actually use the overhead l\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 24% of smaller bbox (textA: \"\u201ci actually use the overhead l\" / textB: \"\u201ci actually used the overheard\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 10' overlap by 90% of smaller bbox (textA: \"\u201ci actually used the overheard\" / textB: \"Topic Hijack \u2014 grammatically f\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 11' overlap by 11% of smaller bbox (textA: \"\u201ci actually used the overheard\" / textB: \"Phonetic cascade: 'overhead li\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 39% of smaller bbox (textA: \"Topic Hijack \u2014 grammatically f\" / textB: \"Phonetic cascade: 'overhead li\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"WER 74%   WWER 69%   IS 1.79 (Poor)   Ju\u2026\") is 41% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"\u201ci actually use the overhead lights whic\u2026\") is 38% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"\u201ci actually used the overheard ghost whi\u2026\") is 66% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"Topic Hijack \u2014 grammatically fluent, com\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 24,
+          "slide_title": "Where IS and the Judge Disagree",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 20,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 248,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"Where IS and the Judge Disagre\" / textB: \"22 of 1,497 segments (2%) \u2014 ra\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 60% of smaller bbox (textA: \"IS Too Harsh  \u2014  19 cases (1%)\" / textB: \"Judge says Y (meaning conveyed\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 51% of smaller bbox (textA: \"Judge says Y (meaning conveyed\" / textB: \"REF: \"one really nice thing ab\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 9' overlap by 67% of smaller bbox (textA: \"REF: \"one really nice thing ab\" / textB: \"Paraphrases and phonetic bridg\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 10' overlap by 26% of smaller bbox (textA: \"REF: \"one really nice thing ab\" / textB: \"\u2022 Harmless hallucination (extr\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 10' overlap by 64% of smaller bbox (textA: \"Paraphrases and phonetic bridg\" / textB: \"\u2022 Harmless hallucination (extr\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 18' overlap by 13% of smaller bbox (textA: \"Paraphrases and phonetic bridg\" / textB: \"98% agreement \u2014 disagreements \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 18' overlap by 56% of smaller bbox (textA: \"\u2022 Harmless hallucination (extr\" / textB: \"98% agreement \u2014 disagreements \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 13' overlap by 60% of smaller bbox (textA: \"IS Too Generous  \u2014  3 cases (0\" / textB: \"Judge says N (meaning lost)\u000bIS\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 13' & 'TextBox 15' overlap by 33% of smaller bbox (textA: \"Judge says N (meaning lost)\u000bIS\" / textB: \"REF: \"all you have to do is un\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 16' overlap by 67% of smaller bbox (textA: \"REF: \"all you have to do is un\" / textB: \"Structural match hides semanti\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 17' overlap by 34% of smaller bbox (textA: \"REF: \"all you have to do is un\" / textB: \"\u2022 Domain confusion (medical \u2192 \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 16' & 'TextBox 17' overlap by 64% of smaller bbox (textA: \"Structural match hides semanti\" / textB: \"\u2022 Domain confusion (medical \u2192 \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 16' & 'TextBox 18' overlap by 13% of smaller bbox (textA: \"Structural match hides semanti\" / textB: \"98% agreement \u2014 disagreements \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 17' & 'TextBox 18' overlap by 49% of smaller bbox (textA: \"\u2022 Domain confusion (medical \u2192 \" / textB: \"98% agreement \u2014 disagreements \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 5' (\"IS Too Harsh  \u2014  19 cases (1%)\u2026\") is 65% covered by later shape(s).",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"Judge says Y (meaning conveyed)\u000bIS says \u2026\") is 111% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"REF: \"one really nice thing about this i\u2026\") is 58% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 9' (\"Paraphrases and phonetic bridges preserv\u2026\") is 77% covered by later shape(s).",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"\u2022 Harmless hallucination (extra words, c\u2026\") is 56% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"IS Too Generous  \u2014  3 cases (0%)\u2026\") is 65% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 13' (\"Judge says N (meaning lost)\u000bIS says \u2265 3.\u2026\") is 78% covered by later shape(s).",
+              "shape_id": "14",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 15' (\"REF: \"all you have to do is unscrew\"\nHYP\u2026\") is 58% covered by later shape(s).",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 16' (\"Structural match hides semantic reversal\u2026\") is 77% covered by later shape(s).",
+              "shape_id": "17",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 17' (\"\u2022 Domain confusion (medical \u2192 wellness)\u000b\u2026\") is 49% covered by later shape(s).",
+              "shape_id": "18",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 25,
+          "slide_title": "Context Exposes Hidden Failures",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 195,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"Context Exposes Hidden Failure\" / textB: \"Blind \u2192 Context Transitions\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 7' overlap by 14% of smaller bbox (textA: \"Context Exposes Hidden Failure\" / textB: \"The IS = 4.75 False Positive\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 71% of smaller bbox (textA: \"230 downgrades vs 68 upgrades\n\" / textB: \"\u2022 80% stable across modes\n\u2022 Co\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 13' overlap by 16% of smaller bbox (textA: \"\u2022 80% stable across modes\n\u2022 Co\" / textB: \"Domain knowledge raises the ba\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 47% of smaller bbox (textA: \"REF: \"...because I'm a lover o\" / textB: \"One word reverses the meaning.\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 12' overlap by 75% of smaller bbox (textA: \"One word reverses the meaning.\" / textB: \"Full list of context false pos\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Blind \u2192 Context Transitions\u2026\") is 50% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 5' (\"230 downgrades vs 68 upgrades\nY\u2192P domina\u2026\") is 56% covered by later shape(s).",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"REF: \"...because I'm a lover of\"\nHYP: \".\u2026\") is 47% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 26,
+          "slide_title": "Why LLM as a Judge Is Not Enough",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 21,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 108,
+          "animation_groups": 6,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"Why LLM as a Judge Is Not Enou\" / textB: \"Five reasons we built the Inte\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 12' overlap by 35% of smaller bbox (textA: \"IS runs offline \u2014 no API, no G\" / textB: \"IS is 0.0\u20135.0 continuous from \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 15' overlap by 35% of smaller bbox (textA: \"IS produces identical scores e\" / textB: \"12+ documented systematic bias\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 17' overlap by 42% of smaller bbox (textA: \"IS is 0.0\u20135.0 continuous from \" / textB: \"\u2464 Decomposability\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 18' overlap by 15% of smaller bbox (textA: \"IS is 0.0\u20135.0 continuous from \" / textB: \"IS breaks into 6 named signals\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 17' overlap by 42% of smaller bbox (textA: \"12+ documented systematic bias\" / textB: \"\u2464 Decomposability\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 18' overlap by 15% of smaller bbox (textA: \"12+ documented systematic bias\" / textB: \"IS breaks into 6 named signals\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 18' & 'TextBox 19' overlap by 37% of smaller bbox (textA: \"IS breaks into 6 named signals\" / textB: \"IS runs in production; LLM-as-\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"IS runs offline \u2014 no API, no GPU, no int\u2026\") is 110% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 9' (\"IS produces identical scores every time.\u2026\") is 110% covered by later shape(s).",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"IS is 0.0\u20135.0 continuous from 6 signals.\u2026\") is 49% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 15' (\"12+ documented systematic biases in LLM \u2026\") is 49% covered by later shape(s).",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 18' (\"IS breaks into 6 named signals \u2192 diagnos\u2026\") is 37% covered by later shape(s).",
+              "shape_id": "19",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 3 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 27,
+          "slide_title": "IS Signals: Word Accuracy & Length",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 18,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 127,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 6' overlap by 88% of smaller bbox (textA: \"IS = 6 signals (0\u20135).  IS \u2265 2.\" / textB: \"Inverse WER  (15%)\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"IS = 6 signals (0\u20135).  IS \u2265 2.00 = \"Usef\u2026\") is 64% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 28,
+          "slide_title": "IS Signals: Semantic Similarity",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 141,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 6' overlap by 20% of smaller bbox (textA: \"Weight: 25% \u2014 the single large\" / textB: \"How It Works\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"Weight: 25% \u2014 the single largest signal\u2026\") is 44% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 29,
+          "slide_title": "IS Signals: Phonetic & Named Entities",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 153,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 30,
+          "slide_title": "Do 6 Signals Actually Measure 6 Things?",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 179,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Do 6 Signals Actually Measure \" / textB: \"PCA on 1,497 segments reveals \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 5' overlap by 5% of smaller bbox (textA: \"PCA on 1,497 segments reveals \" / textB: \"PC1: Signal Quality\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 35% of smaller bbox (textA: \"68%\" / textB: \"Semantic + Phonetic + WER + WW\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 49% of smaller bbox (textA: \"68%\" / textB: \"All 5 content signals load equ\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 11' overlap by 29% of smaller bbox (textA: \"68%\" / textB: \"20%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 12' overlap by 9% of smaller bbox (textA: \"68%\" / textB: \"Length Ratio dominates (loadin\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 60% of smaller bbox (textA: \"Semantic + Phonetic + WER + WW\" / textB: \"All 5 content signals load equ\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 11' overlap by 16% of smaller bbox (textA: \"All 5 content signals load equ\" / textB: \"20%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 12' overlap by 35% of smaller bbox (textA: \"20%\" / textB: \"Length Ratio dominates (loadin\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 13' overlap by 49% of smaller bbox (textA: \"20%\" / textB: \"Catches hallucination (too lon\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 14' overlap by 15% of smaller bbox (textA: \"20%\" / textB: \"Kaiser retains 2 PCs (88% of v\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 13' overlap by 60% of smaller bbox (textA: \"Length Ratio dominates (loadin\" / textB: \"Catches hallucination (too lon\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 13' & 'TextBox 14' overlap by 36% of smaller bbox (textA: \"Catches hallucination (too lon\" / textB: \"Kaiser retains 2 PCs (88% of v\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"68%\u2026\") is 157% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"Semantic + Phonetic + WER + WWER + Named\u2026\") is 60% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"All 5 content signals load equally (0.43\u2026\") is 58% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 11' (\"20%\u2026\") is 100% covered by later shape(s).",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"Length Ratio dominates (loading 0.91) \u2014 \u2026\") is 60% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 31,
+          "slide_title": "IS in Action: Two Real Segments",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 63,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 51,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 98% of smaller bbox (textA: \"Ref: \u201callow you to work with t\" / textB: \"Semantic Sim\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 11' overlap by 49% of smaller bbox (textA: \"Ref: \u201callow you to work with t\" / textB: \"Phonetic Sim\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 12' overlap by 50% of smaller bbox (textA: \"Ref: \u201callow you to work with t\" / textB: \"0.89\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 13' overlap by 50% of smaller bbox (textA: \"Ref: \u201callow you to work with t\" / textB: \"\u00d7 0.15\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 14' overlap by 50% of smaller bbox (textA: \"Ref: \u201callow you to work with t\" / textB: \"= 0.134\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 31' & 'TextBox 61' overlap by 14% of smaller bbox (textA: \"Sum \u00d7 5 = 4.22 \u2192 IS 4.2 (Good)\" / textB: \"IS = 5 \u00d7 (0.25\u00b7Sem + 0.15\u00b7(Pho\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 35' & 'TextBox 36' overlap by 98% of smaller bbox (textA: \"Ref: \u201ccarry strap\u201d\nHyp: \u201choloc\" / textB: \"Semantic Sim\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 35' & 'TextBox 40' overlap by 49% of smaller bbox (textA: \"Ref: \u201ccarry strap\u201d\nHyp: \u201choloc\" / textB: \"Phonetic Sim\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 35' & 'TextBox 41' overlap by 50% of smaller bbox (textA: \"Ref: \u201ccarry strap\u201d\nHyp: \u201choloc\" / textB: \"0.20\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 35' & 'TextBox 42' overlap by 50% of smaller bbox (textA: \"Ref: \u201ccarry strap\u201d\nHyp: \u201choloc\" / textB: \"\u00d7 0.15\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 35' & 'TextBox 43' overlap by 50% of smaller bbox (textA: \"Ref: \u201ccarry strap\u201d\nHyp: \u201choloc\" / textB: \"= 0.030\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 60' & 'TextBox 61' overlap by 14% of smaller bbox (textA: \"Sum \u00d7 5 = 0.81 \u2192 IS 0.8 (Faile\" / textB: \"IS = 5 \u00d7 (0.25\u00b7Sem + 0.15\u00b7(Pho\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"Ref: \u201callow you to work with the team in\u2026\") is 50% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 35' (\"Ref: \u201ccarry strap\u201d\nHyp: \u201cholocaust denie\u2026\") is 50% covered by later shape(s).",
+              "shape_id": "36",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 32,
+          "slide_title": "Two Dimensions of Quality (PCA)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 91,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"Two Dimensions of Quality (PCA\" / textB: \"PCA retains 2 principal compon\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 5' overlap by 42% of smaller bbox (textA: \"PCA retains 2 principal compon\" / textB: \"68%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 11' overlap by 42% of smaller bbox (textA: \"PCA retains 2 principal compon\" / textB: \"20%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"PCA retains 2 principal components (Kais\u2026\") is 61% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 33,
+          "slide_title": "Model Comparison: IS Profiles",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 7,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 161,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"Model Comparison: IS Profiles\" / textB: \"How different LLM backbones wo\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 34,
+          "slide_title": "The Gap: Where WER Lies Most",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 184,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 5' overlap by 61% of smaller bbox (textA: \"segments WER wrongly discards \" / textB: \"\u2022 NIV = Native Intelligibility\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"segments WER wrongly discards (NIV-calib\u2026\") is 61% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 35,
+          "slide_title": "A8: LLM Judge \u00d7 IS Tier Cross-Tabulation",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 134,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 13% of smaller bbox (textA: \"A8: LLM Judge \u00d7 IS Tier Cross-\" / textB: \"Judge verdict distribution acr\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 36,
+          "slide_title": "Where It Works \u2014 and How It Fails: Oracle vs Realistic",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 34,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 217,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 64% of smaller bbox (textA: \"What the model can produce on \" / textB: \"61.92%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 60% of smaller bbox (textA: \"NIV-Y+P  (IS \u2265 2.00, determini\" / textB: \"NIV-Y (clearly conveyed): 23.9\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 9' overlap by 15% of smaller bbox (textA: \"NIV-Y+P  (IS \u2265 2.00, determini\" / textB: \"LLM Judge v3 Y+P: 71.08% (base\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 9' overlap by 79% of smaller bbox (textA: \"NIV-Y (clearly conveyed): 23.9\" / textB: \"LLM Judge v3 Y+P: 71.08% (base\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 18' overlap by 41% of smaller bbox (textA: \"LLM Judge v3 Y+P: 71.08% (base\" / textB: \"Tier 5 Excellent \u22654.0\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 12' overlap by 75% of smaller bbox (textA: \"Realistic  (Trust-gate output)\" / textB: \"What the user can confidently \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 13' overlap by 36% of smaller bbox (textA: \"Realistic  (Trust-gate output)\" / textB: \"65.2%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 13' overlap by 64% of smaller bbox (textA: \"What the user can confidently \" / textB: \"65.2%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 15' overlap by 71% of smaller bbox (textA: \"Recall of useful content  (FPR\" / textB: \"630 trusted segments  /  602 T\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 16' overlap by 15% of smaller bbox (textA: \"Recall of useful content  (FPR\" / textB: \"Joint conf+beam-agreement band\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 16' overlap by 47% of smaller bbox (textA: \"630 trusted segments  /  602 T\" / textB: \"Joint conf+beam-agreement band\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 5' (\"What the model can produce on the 1,497-\u2026\") is 56% covered by later shape(s).",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"NIV-Y+P  (IS \u2265 2.00, deterministic)\u2026\") is 75% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"NIV-Y (clearly conveyed): 23.91%      Me\u2026\") is 68% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 11' (\"Realistic  (Trust-gate output)\u2026\") is 85% covered by later shape(s).",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"What the user can confidently rely on (\u2265\u2026\") is 56% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 14' (\"Recall of useful content  (FPR 5.6%)\u2026\") is 75% covered by later shape(s).",
+              "shape_id": "15",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 15' (\"630 trusted segments  /  602 TPs  /  28 \u2026\") is 47% covered by later shape(s).",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 16' (\"Joint conf+beam-agreement bands  \u2022  cali\u2026\") is 55% covered by later shape(s).",
+              "shape_id": "17",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 37,
+          "slide_title": "From Literature Metric to User-Trusted Output",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 19,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 196,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 38,
+          "slide_title": "FAILURE ANATOMY",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 58,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 39,
+          "slide_title": "Failure Mode Taxonomy",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 23,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 173,
+          "animation_groups": 5,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Failure Mode Taxonomy\" / textB: \"574 segments below useful thre\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 4' overlap by 49% of smaller bbox (textA: \"574 segments below useful thre\" / textB: \"Wrong Topic\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 6' overlap by 49% of smaller bbox (textA: \"574 segments below useful thre\" / textB: \"44.4% (255)\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"574 segments below useful threshold (IS \u2026\") is 34% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 40,
+          "slide_title": "Failure Mode Taxonomy (1/2): Highest Impact First",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 21,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Failure Mode Taxonomy (1/2): H\" / textB: \"574 below-threshold segments (\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 5' overlap by 24% of smaller bbox (textA: \"574 below-threshold segments (\" / textB: \"1. Wrong Topic  (44%)\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 7' overlap by 20% of smaller bbox (textA: \"574 below-threshold segments (\" / textB: \"Rule: Semantic < 0.2 (phonetic\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 26% of smaller bbox (textA: \"1. Wrong Topic  (44%)\" / textB: \"Mouth shapes decoded to wrong \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 40% of smaller bbox (textA: \"Rule: Semantic < 0.2 (phonetic\" / textB: \"\u25b8 Ref: \u201cweight loss and diet\u201d \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 26% of smaller bbox (textA: \"2. Hallucination  (19%)\" / textB: \"Model invented fake text  \u2014  1\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 13' overlap by 40% of smaller bbox (textA: \"Rule: WER \u2265 100% (output longe\" / textB: \"\u25b8 Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201ch\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 16' overlap by 26% of smaller bbox (textA: \"3. Right Topic, Wrong Details \" / textB: \"Roughly right but names/conten\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 16' & 'TextBox 19' overlap by 42% of smaller bbox (textA: \"Roughly right but names/conten\" / textB: \"Ordered by impact \u2014 highest to\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 17' & 'TextBox 18' overlap by 40% of smaller bbox (textA: \"Rule: NEA F1 < 20% OR key cont\" / textB: \"\u25b8 Ref: \u201c13th amendment is goin\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 18' & 'TextBox 19' overlap by 53% of smaller bbox (textA: \"\u25b8 Ref: \u201c13th amendment is goin\" / textB: \"Ordered by impact \u2014 highest to\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"574 below-threshold segments (IS < 2.0) \u2026\") is 52% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"Rule: Semantic < 0.2 (phonetic-matched o\u2026\") is 40% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"Rule: WER \u2265 100% (output longer than ref\u2026\") is 40% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 16' (\"Roughly right but names/content words lo\u2026\") is 40% covered by later shape(s).",
+              "shape_id": "17",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 17' (\"Rule: NEA F1 < 20% OR key content substi\u2026\") is 40% covered by later shape(s).",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 18' (\"\u25b8 Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u2026\") is 40% covered by later shape(s).",
+              "shape_id": "19",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 41,
+          "slide_title": "Failure Modes: Real Examples",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 31,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 188,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 5' overlap by 50% of smaller bbox (textA: \"Hallucination  (19%)\" / textB: \"Reference:\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 13' & 'TextBox 14' overlap by 50% of smaller bbox (textA: \"Wrong Topic  (44%)\" / textB: \"Reference:\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 22' & 'TextBox 23' overlap by 50% of smaller bbox (textA: \"Right Topic, Wrong Details  (1\" / textB: \"Reference:\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 42,
+          "slide_title": "Failure Modes \u2014 Live Examples",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 245,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 43,
+          "slide_title": "LLM Salvage: Three Real Recoveries",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 32,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 123,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"LLM Salvage: Three Real Recove\" / textB: \"These segments failed IS (< 3.\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 50% of smaller bbox (textA: \"\u201cin one sense it\u2019s rose\u000band ke\" / textB: \"How a viewer recovers this:\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 19' & 'TextBox 20' overlap by 50% of smaller bbox (textA: \"\u201cmoved the conceptual rules\u000bov\" / textB: \"How a viewer recovers this:\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 28' & 'TextBox 29' overlap by 50% of smaller bbox (textA: \"\u201cover the last 10 years we hav\" / textB: \"How a viewer recovers this:\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 44,
+          "slide_title": "LLM Salvage: Domain Context Fills the Gaps",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 32,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 119,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"LLM Salvage: Domain Context Fi\" / textB: \"A viewer who knows the topic r\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 62% of smaller bbox (textA: \"\u201cthe fear of the loss complete\" / textB: \"How a wise viewer recovers thi\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 19' & 'TextBox 20' overlap by 62% of smaller bbox (textA: \"\u201cmiddle east and afghanistan\u000ba\" / textB: \"How a wise viewer recovers thi\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 28' & 'TextBox 29' overlap by 62% of smaller bbox (textA: \"\u201ci have a dietary smoothie\u000bi\u2019v\" / textB: \"How a wise viewer recovers thi\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 45,
+          "slide_title": "Two Layers of Confidence (Per-Word + Per-Segment)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 41,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Two Layers of Confidence (Per-\" / textB: \"Both layers are derived from t\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 5' overlap by 12% of smaller bbox (textA: \"Both layers are derived from t\" / textB: \"1. PER-WORD\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 10' overlap by 12% of smaller bbox (textA: \"Both layers are derived from t\" / textB: \"2. PER-SEGMENT\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 55% of smaller bbox (textA: \"max softmax probability per to\" / textB: \"p_t  =  max_v  P(token = v | x\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 45% of smaller bbox (textA: \"p_t  =  max_v  P(token = v | x\" / textB: \"\u2022 Aggregate sub-tokens up to w\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 12' overlap by 55% of smaller bbox (textA: \"mean log-probability over the \" / textB: \"mean_prob  =  exp( (1/T) * sum\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 13' overlap by 45% of smaller bbox (textA: \"mean_prob  =  exp( (1/T) * sum\" / textB: \"\u2022 Length-anomaly check (too sh\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 13' & 'TextBox 14' overlap by 13% of smaller bbox (textA: \"\u2022 Length-anomaly check (too sh\" / textB: \"Both layers calibrated against\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Both layers are derived from the LLM's o\u2026\") is 36% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"max softmax probability per token\u2026\") is 55% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"p_t  =  max_v  P(token = v | x_<=t)\u2026\") is 45% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 11' (\"mean log-probability over the segment\u2026\") is 55% covered by later shape(s).",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"mean_prob  =  exp( (1/T) * sum_t log p_t\u2026\") is 45% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 46,
+          "slide_title": "Confidence Without Ground Truth",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 7,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 67,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"Confidence Without Ground Trut\" / textB: \"All the IS / WER / Judge analy\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 5' overlap by 13% of smaller bbox (textA: \"\u2022 Goal: a per-segment and per-\" / textB: \"Two layers of confidence (just\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes reference 'next/previous slide' \u2014 fragile if reordered.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 47,
+          "slide_title": "Confidence Scoring (shipped) \u2014 Surface the Good 65%",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 171,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"Confidence Scoring (shipped) \u2014\" / textB: \"How It Works\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 7' overlap by 14% of smaller bbox (textA: \"Confidence Scoring (shipped) \u2014\" / textB: \"What It Enables\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 48,
+          "slide_title": "Per-Word Confidence Bands - Distribution",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 122,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"Per-Word Confidence Bands - Di\" / textB: \"Total per-word judgments: 23,2\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 60% of smaller bbox (textA: \"JOINT RULE - STRICTER, MORE RE\" / textB: \"\u2022 Green drops 33% (11,309 \u2192 7,\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 10' overlap by 60% of smaller bbox (textA: \"LEGACY CONF-ONLY - PERMISSIVE\" / textB: \"\u2022 Almost half of words paint g\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"JOINT RULE - STRICTER, MORE RELIABLE\u2026\") is 60% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 9' (\"LEGACY CONF-ONLY - PERMISSIVE\u2026\") is 60% covered by later shape(s).",
+              "shape_id": "10",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 49,
+          "slide_title": "Band Reliability - Overall P(correct | band)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 141,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"Band Reliability - Overall P(c\" / textB: \"P(correct) of each band, compu\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 50,
+          "slide_title": "Green Reliability Depends on Segment Quality",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 145,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Green Reliability Depends on S\" / textB: \"P(correct | green) stratified \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 5' overlap by 30% of smaller bbox (textA: \"P(correct | green) stratified \" / textB: \"Stratified P(green | bin)\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 9' overlap by 45% of smaller bbox (textA: \"Joint-rule numbers above are f\" / textB: \"Green reliability is condition\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"P(correct | green) stratified by segment\u2026\") is 37% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 5' (\"Stratified P(green | bin)\u2026\") is 65% covered by later shape(s).",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"Joint-rule numbers above are filtered to\u2026\") is 45% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 51,
+          "slide_title": "Green Leakage - When High Confidence Misleads",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 25,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 56,
+          "animation_groups": 4,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Green Leakage - When High Conf\" / textB: \"2,192 wrong-and-green words ac\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 5' overlap by 33% of smaller bbox (textA: \"2,192 wrong-and-green words ac\" / textB: \"Numeric scale flip\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 11' overlap by 33% of smaller bbox (textA: \"2,192 wrong-and-green words ac\" / textB: \"Numeric digit drop\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 17' overlap by 33% of smaller bbox (textA: \"2,192 wrong-and-green words ac\" / textB: \"Year drift\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"2,192 wrong-and-green words across 23,26\u2026\") is 52% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 52,
+          "slide_title": "Three Calibrated Thresholds on Segment mean_prob",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 155,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Three Calibrated Thresholds on\" / textB: \"Each threshold corresponds to \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Each threshold corresponds to a target o\u2026\") is 30% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 53,
+          "slide_title": "Three-Tier Policy - Per-Tier Counts and Reliability",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 161,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Three-Tier Policy - Per-Tier C\" / textB: \"Tiers from segment mean_prob; \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Tiers from segment mean_prob; per-tier P\u2026\") is 31% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 54,
+          "slide_title": "Per-Word Bands Stratified by NIV Outcome",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 68,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Per-Word Bands Stratified by N\" / textB: \"Within useful content (Y+P), p\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 6% of smaller bbox (textA: \"\u2022 62.5pp green\u2192red spread in Y\" / textB: \"Per-word flag is genuine signa\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Within useful content (Y+P), per-word ba\u2026\") is 37% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 55,
+          "slide_title": "Joint Confidence + Beam-Agreement Band Rule",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 106,
+          "animation_groups": 5,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 6% of smaller bbox (textA: \"Joint Confidence + Beam-Agreem\" / textB: \"Production rule. Two axes: per\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 15' overlap by 38% of smaller bbox (textA: \"WHY ADD AGREEMENT?  Beam agree\" / textB: \"Llama-2-7b specific \u2014 LLM swap\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 56,
+          "slide_title": "Beam Agreement Adds Independent Signal",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 58,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"Beam Agreement Adds Independen\" / textB: \"At top1_conf >= 0.95 the softm\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 90% of smaller bbox (textA: \"\u2022 54pp P(correct) gap at SAME \" / textB: \"Diagnostic: diagnose_confidenc\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 57,
+          "slide_title": "Trust-Gate Operating Points (per-segment)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 102,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"Trust-Gate Operating Points (p\" / textB: \"Per-segment trust gate based o\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 45% of smaller bbox (textA: \"Recommended default: 30% green\" / textB: \"Calibrated under joint conf+ag\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 58,
+          "slide_title": "N-best Aggregation: From One to All 20 Hypotheses (Mission 6)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 94,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 6' overlap by 16% of smaller bbox (textA: \"Previously we displayed only t\" / textB: \"Recognizer Output Voting Error\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 10' overlap by 46% of smaller bbox (textA: \"Previously we displayed only t\" / textB: \"Minimum Bayes Risk Decoding\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 65% of smaller bbox (textA: \"Recognizer Output Voting Error\" / textB: \"\u2022 Align all 20 hypotheses word\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 12' overlap by 31% of smaller bbox (textA: \"\u2022 Align all 20 hypotheses word\" / textB: \"\u2022 v3 Judge: MBR Y+P 71% vs bas\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 12' overlap by 31% of smaller bbox (textA: \"\u2022 Score each hypothesis agains\" / textB: \"\u2022 v3 Judge: MBR Y+P 71% vs bas\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Previously we displayed only the top-1 h\u2026\") is 61% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"Recognizer Output Voting Error Reduction\u2026\") is 65% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"\u2022 Align all 20 hypotheses word-by-word\n\u2022\u2026\") is 31% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 11' (\"\u2022 Score each hypothesis against ALL othe\u2026\") is 31% covered by later shape(s).",
+              "shape_id": "12",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 59,
+          "slide_title": "N-best Aggregation: v3 Judge Paired Tests",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 284,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 10% of smaller bbox (textA: \"N-best Aggregation: v3 Judge P\" / textB: \"Opus 4.7 dual-conf prompt, bli\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 9' overlap by 54% of smaller bbox (textA: \"Below: IS distribution per met\" / textB: \"v3 dual-conf judge  /  Opus 4.\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"Below: IS distribution per method (top1 \u2026\") is 44% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 60,
+          "slide_title": "Why MBR Won the Default-Display Slot",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 98,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 11% of smaller bbox (textA: \"Why MBR Won the Default-Displa\" / textB: \"MBR wins on intra-rater reliab\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 61,
+          "slide_title": "v1 vs v3 Judge: A Prompt-Design Lesson",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 71,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 13% of smaller bbox (textA: \"v1 vs v3 Judge: A Prompt-Desig\" / textB: \"Same n-best methods. Same judg\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 11' overlap by 9% of smaller bbox (textA: \"\u2022 Method-conf only in prompt\n\u2022\" / textB: \"LESSON: provide BOTH sides' co\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 9' overlap by 55% of smaller bbox (textA: \"v3 - dual-conf prompt (current\" / textB: \"\u2022 Method-conf AND baseline_con\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 11' overlap by 9% of smaller bbox (textA: \"\u2022 Method-conf AND baseline_con\" / textB: \"LESSON: provide BOTH sides' co\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"v3 - dual-conf prompt (current)\u2026\") is 55% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 62,
+          "slide_title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 183,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 56% but notes only mention [0] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 63,
+          "slide_title": "Demo \u2014 TRUST: AI talk, Indian-accent speaker (IS=5.00)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 125,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 78% of smaller bbox (textA: \"to this wave of artificial int\" / textB: \"Every word GREEN under the joi\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"to this wave of artificial intelligence \u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 64,
+          "slide_title": "Demo \u2014 Obama: Trust Tier (conf-only fallback)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 144,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 78% of smaller bbox (textA: \"[per-word colors load from the\" / textB: \"Most words green. The 'preside\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"[per-word colors load from the conf-only\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 65,
+          "slide_title": "Demo \u2014 INSPECT: structure preserved, vocabulary lost",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 156,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 78% of smaller bbox (textA: \"tells us when to make stops \u2014 \" / textB: \"Repeating 'tells us when to X'\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"tells us when to make stops \u2014 vs ref's c\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 66,
+          "slide_title": "Demo - Strip: entity swap auto-flagged",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 127,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 78% of smaller bbox (textA: \"market research firm rogers re\" / textB: \"Entity-swap tokens 'rogers', '\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"market research firm rogers research is \u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 67,
+          "slide_title": "Demo - Salvage: technical vocabulary drift",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 135,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 78% of smaller bbox (textA: \"must indeed find a way we can \" / textB: \"Argument structure preserved (\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 10' (\"must indeed find a way we can design exi\u2026\") is 39% covered by later shape(s).",
+              "shape_id": "11",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 68,
+          "slide_title": "FUTURE DIRECTIONS",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 25,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 69,
+          "slide_title": "Starting from 62%, Not 25%",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 182,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 70,
+          "slide_title": "Five Phases \u2014 From IS 2.5 to Target IS 3.3\u20133.7",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 330,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 14' overlap by 25% of smaller bbox (textA: \"Phase 5  Error Correction (GER\" / textB: \"Target: IS 3.3-3.7 (~80-85% Y+\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 71,
+          "slide_title": "IS Improvement Roadmap \u2014 From 2.5 to 3.5",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 21,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 151,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"IS Improvement Roadmap \u2014 From \" / textB: \"Projected Intelligibility Scor\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 6% of smaller bbox (textA: \"Current\" / textB: \"IS 2.547  \u2022  62% useful\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 10' overlap by 6% of smaller bbox (textA: \"Phase 1\u20132\" / textB: \"IS ~2.65  \u2022  ~65% useful\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 13' & 'TextBox 14' overlap by 6% of smaller bbox (textA: \"+ Phase 3\" / textB: \"IS ~3.05  \u2022  ~73% useful\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 17' & 'TextBox 18' overlap by 6% of smaller bbox (textA: \"+ Phase 4\u20135\" / textB: \"IS ~3.50  \u2022  ~82% useful\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 72,
+          "slide_title": "Stronger LLM + Smart Prompts = Force Multiplier",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 262,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 5' overlap by 45% of smaller bbox (textA: \"LLM Upgrade (needs training)\" / textB: \"\u2022 Llama 3.1 8B: drop-in (hidde\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 45% of smaller bbox (textA: \"Smart Prompts (multiplier)\" / textB: \"\u2022 7 strategies: topic, count, \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"LLM Upgrade (needs training)\u2026\") is 45% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"Smart Prompts (multiplier)\u2026\") is 45% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 73,
+          "slide_title": "LLM Upgrade: Why It Matters",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 27,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 302,
+          "animation_groups": 8,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 14% of smaller bbox (textA: \"LLM Upgrade: Why It Matters\" / textB: \"Llama-2 7B \u2192 Llama 3.1 8B\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 8' overlap by 14% of smaller bbox (textA: \"LLM Upgrade: Why It Matters\" / textB: \"Projected Impact\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 86% of smaller bbox (textA: \"VALLR (ICCV 2025): Llama 3.2-3\" / textB: \"Same hidden dim (4096) \u2014 adapt\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 14' overlap by 35% of smaller bbox (textA: \"64%\" / textB: \"\u22123\u20138 pp\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 17' overlap by 35% of smaller bbox (textA: \"\u22123\u20138 pp\" / textB: \"\u22125\u201310 pp\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 17' & 'TextBox 20' overlap by 35% of smaller bbox (textA: \"\u22125\u201310 pp\" / textB: \"\u221210\u201315 pp\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 20' & 'TextBox 23' overlap by 35% of smaller bbox (textA: \"\u221210\u201315 pp\" / textB: \"35\u201340%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 23' & 'TextBox 25' overlap by 20% of smaller bbox (textA: \"35\u201340%\" / textB: \"Strongest LLM lift: entity dis\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"VALLR (ICCV 2025): Llama 3.2-3B achieved\u2026\") is 46% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 11' (\"64%\u2026\") is 80% covered by later shape(s).",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 14' (\"\u22123\u20138 pp\u2026\") is 80% covered by later shape(s).",
+              "shape_id": "15",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 17' (\"\u22125\u201310 pp\u2026\") is 80% covered by later shape(s).",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 20' (\"\u221210\u201315 pp\u2026\") is 80% covered by later shape(s).",
+              "shape_id": "21",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 23' (\"35\u201340%\u2026\") is 50% covered by later shape(s).",
+              "shape_id": "24",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 74,
+          "slide_title": "Fine-Tuning: Limited Data, Limited Gains",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 7,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 192,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 75,
+          "slide_title": "Arabic Pipeline: Replication Roadmap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 107,
+          "animation_groups": 7,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"Arabic Pipeline: Replication R\" / textB: \"What\u2019s Needed & How We\u2019ll Do I\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 9' overlap by 14% of smaller bbox (textA: \"Arabic Pipeline: Replication R\" / textB: \"Practical Timeline\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 4' overlap by 55% of smaller bbox (textA: \"What\u2019s Needed & How We\u2019ll Do I\" / textB: \"\u2022 AV-HuBERT encoder (BOTTLENEC\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 5' overlap by 54% of smaller bbox (textA: \"\u2022 AV-HuBERT encoder (BOTTLENEC\" / textB: \"\u2022 Arabic LLM backend\n\u2022 Swap Ll\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 4' & 'TextBox 6' overlap by 9% of smaller bbox (textA: \"\u2022 AV-HuBERT encoder (BOTTLENEC\" / textB: \"\u2022 Eval dataset (UNKNOWN)\n\u2022 No \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 54% of smaller bbox (textA: \"\u2022 Arabic LLM backend\n\u2022 Swap Ll\" / textB: \"\u2022 Eval dataset (UNKNOWN)\n\u2022 No \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 7' overlap by 9% of smaller bbox (textA: \"\u2022 Arabic LLM backend\n\u2022 Swap Ll\" / textB: \"\u2022 Training infrastructure\n\u2022 AW\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 54% of smaller bbox (textA: \"\u2022 Eval dataset (UNKNOWN)\n\u2022 No \" / textB: \"\u2022 Training infrastructure\n\u2022 AW\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 8' overlap by 9% of smaller bbox (textA: \"\u2022 Eval dataset (UNKNOWN)\n\u2022 No \" / textB: \"\u2022 RTL text & normalization\n\u2022 R\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 54% of smaller bbox (textA: \"\u2022 Training infrastructure\n\u2022 AW\" / textB: \"\u2022 RTL text & normalization\n\u2022 R\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 12' overlap by 15% of smaller bbox (textA: \"\u2022 Training infrastructure\n\u2022 AW\" / textB: \"Realistic estimate: 2\u20133 months\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 12' overlap by 58% of smaller bbox (textA: \"\u2022 RTL text & normalization\n\u2022 R\" / textB: \"Realistic estimate: 2\u20133 months\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 13' overlap by 42% of smaller bbox (textA: \"\u2022 RTL text & normalization\n\u2022 R\" / textB: \"Pipeline code is language-agno\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 13' overlap by 90% of smaller bbox (textA: \"Realistic estimate: 2\u20133 months\" / textB: \"Pipeline code is language-agno\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"What\u2019s Needed & How We\u2019ll Do It\u2026\") is 55% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 4' (\"\u2022 AV-HuBERT encoder (BOTTLENECK)\n\u2022 Arabi\u2026\") is 63% covered by later shape(s).",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 5' (\"\u2022 Arabic LLM backend\n\u2022 Swap Llama-2 for \u2026\") is 63% covered by later shape(s).",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 6' (\"\u2022 Eval dataset (UNKNOWN)\n\u2022 No Arabic lip\u2026\") is 63% covered by later shape(s).",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"\u2022 Training infrastructure\n\u2022 AWS GPU (exi\u2026\") is 79% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"\u2022 RTL text & normalization\n\u2022 RTL, spaCy \u2026\") is 127% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"Realistic estimate: 2\u20133 months (encoder \u2026\") is 67% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 76,
+          "slide_title": "AV-HuBERT: Why It\u2019s Not Language-Locked",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 161,
+          "animation_groups": 6,
+          "issues": []
+        },
+        {
+          "slide_num": 77,
+          "slide_title": "Arabic Adaptation: What Changes",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 150,
+          "animation_groups": 7,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes reference 'next/previous slide' \u2014 fragile if reordered.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 78,
+          "slide_title": "Key Takeaways",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 28,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 254,
+          "animation_groups": 5,
+          "issues": []
+        },
+        {
+          "slide_num": 79,
+          "slide_title": "Thank You",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 9,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 80,
+          "slide_title": "A1: Homophenes \u2014 The Lip-Reading Problem",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 102,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 5' overlap by 5% of smaller bbox (textA: \"A1: Homophenes \u2014 The Lip-Readi\" / textB: \"Confusable word pairs (identic\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"50\u201370% of English sounds are invisible o\u2026\") is 50% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 5' (\"Confusable word pairs (identical on lips\u2026\") is 40% covered by later shape(s).",
+              "shape_id": "6",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 81,
+          "slide_title": "A3: IS Component Correlation",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 131,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"A3: IS Component Correlation\" / textB: \"PCA: 6 IS signals collapse int\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 5' overlap by 5% of smaller bbox (textA: \"A3: IS Component Correlation\" / textB: \"Cross-Config Stability (16 con\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"PCA: 6 IS signals collapse into 2 princi\u2026\") is 50% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 5' (\"Cross-Config Stability (16 configs)\u2026\") is 60% covered by later shape(s).",
+              "shape_id": "6",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 82,
+          "slide_title": "Appendix: PCA Loadings on the 6 IS Signals",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 129,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"Appendix: PCA Loadings on the \" / textB: \"Kaiser criterion retains 2 com\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Kaiser criterion retains 2 components. T\u2026\") is 55% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 83,
+          "slide_title": "Appendix: Human-IS Path B (Pre-Study Estimates)",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 119,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 84,
+          "slide_title": "A4: LLM Salvage \u2014 Recoverable Segments",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 37,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 17% of smaller bbox (textA: \"A4: LLM Salvage \u2014 Recoverable \" / textB: \"Key Numbers\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 6' overlap by 14% of smaller bbox (textA: \"A4: LLM Salvage \u2014 Recoverable \" / textB: \"6 Recovery Categories\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 85,
+          "slide_title": "A5: LLM Salvage \u2014 Curated Examples",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 29,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"A5: LLM Salvage \u2014 Curated Exam\" / textB: \"One real example per recovery \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"One real example per recovery category \u2014\u2026\") is 40% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 86,
+          "slide_title": "A9: Context Evaluation \u2014 Transition Details",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 135,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 5% of smaller bbox (textA: \"A9: Context Evaluation \u2014 Trans\" / textB: \"Blind \u2192 Context Transition Mat\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 7' overlap by 5% of smaller bbox (textA: \"A9: Context Evaluation \u2014 Trans\" / textB: \"Per-Topic Y+P Delta (Blind \u2192 C\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 3' (\"Blind \u2192 Context Transition Matrix\u2026\") is 46% covered by later shape(s).",
+              "shape_id": "4",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"Per-Topic Y+P Delta (Blind \u2192 Context)\u2026\") is 50% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 87,
+          "slide_title": "Appendix: McNemar Tests \u2014 N-Best Methods vs Baseline",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 163,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 9% of smaller bbox (textA: \"Appendix: McNemar Tests \u2014 N-Be\" / textB: \"Paired McNemar tests on 5,988 \")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 88,
+          "slide_title": "Two Environments: Development and Production",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 38,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 3' overlap by 13% of smaller bbox (textA: \"Two Environments: Development \" / textB: \"EC2 (Development)\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 1' & 'TextBox 9' overlap by 13% of smaller bbox (textA: \"Two Environments: Development \" / textB: \"Synchronization Challenge\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 93% of smaller bbox (textA: \"\u2022 Full research environment\n\u2022 \" / textB: \"Container (Production)\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

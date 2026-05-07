@@ -501,6 +501,20 @@ User pasted competitive landscape research (Symphonic Labs / "Read Their Lips", 
 
 ---
 
+## 2026-05-07 — §3 failure-mode live video examples
+
+| # | Request | Status |
+|---|---------|--------|
+| 1 | Add 1-2 video examples to §3 failure modes (currently text-only) so the audience can see real hallucination + wrong-topic failures live in the deck | done |
+
+### Applied
+- New `slide_failure_live_demo` added to `slides_evaluation.py` — 2-column layout: LEFT = `halluc` (carry strap → holocaust denier, WER 100%, IS 0.81, STRIP badge), RIGHT = `topic_drift` (weight loss → princess, WER 97%, IS 0.37, STRIP badge).
+- Inserted in `generate_for_orchard_presentation.py` builders list between `slide_failure_deep_2` (text taxonomy) and `slide_25d` (LLM salvage).
+- Deep text-render audit: **0 issues** across 88 slides. New slide 42: **0 bbox issues**.
+- Pre-existing bbox audit MAJORs: 279 OVERLAP/OCCLUSION false positives from intentional card layouts and animation click-reveal groups (present since bigfonts pass, not caused by this change).
+
+---
+
 ## 2026-05-03 — Cheat sheet redo (one page)
 
 | # | Request | Status |
