@@ -1,0 +1,3377 @@
+{
+  "generated_by": "scripts/audit_pptx_visual_structure.py",
+  "decks": [
+    {
+      "deck_path": "/home/ubuntu/presentation_materials_20260224/Argos_VSP_AFTER_AMOSI_May2026.pptx",
+      "deck_name": "Argos_VSP_AFTER_AMOSI_May2026.pptx",
+      "slide_count": 89,
+      "slide_size_in": [
+        13.33,
+        7.5
+      ],
+      "issue_totals": {
+        "BLOCKER": 0,
+        "MAJOR": 163,
+        "MINOR": 87,
+        "TOTAL": 250
+      },
+      "issues_by_category": {
+        "OVERLAP": 45,
+        "NOTES": 57,
+        "OCCLUSION": 12,
+        "STYLE": 134,
+        "ANIMATION": 1,
+        "LAYOUT": 1
+      },
+      "hidden_slides": [
+        [
+          81,
+          "A1: Homophenes \u2014 The Lip-Reading Problem"
+        ],
+        [
+          82,
+          "A3: IS Component Correlation"
+        ],
+        [
+          83,
+          "Appendix: PCA Loadings on the 6 IS Signals"
+        ],
+        [
+          84,
+          "Appendix: Human-IS Path B (Pre-Study Estimates)"
+        ],
+        [
+          85,
+          "A4: LLM Salvage \u2014 Recoverable Segments"
+        ],
+        [
+          86,
+          "A5: LLM Salvage \u2014 Curated Examples"
+        ],
+        [
+          87,
+          "A9: Context Evaluation \u2014 Transition Details"
+        ],
+        [
+          88,
+          "Appendix: McNemar Tests \u2014 N-Best Methods vs Baseline"
+        ],
+        [
+          89,
+          "Two Environments: Development and Production"
+        ]
+      ],
+      "section_divider_candidates": [],
+      "video_references": [
+        {
+          "slide": 5,
+          "title": "What is Visual Speech Processing?",
+          "partname": "/ppt/media/media1.mp4",
+          "embedded_filename": "media1.mp4",
+          "embedded_size": 1553912,
+          "matched_on_disk": [
+            "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4"
+          ],
+          "duration_s": 7.24
+        },
+        {
+          "slide": 5,
+          "title": "What is Visual Speech Processing?",
+          "partname": "/ppt/media/media1.mp4",
+          "embedded_filename": "media1.mp4",
+          "embedded_size": 1553912,
+          "matched_on_disk": [
+            "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4"
+          ],
+          "duration_s": 7.24
+        },
+        {
+          "slide": 19,
+          "title": "Judge Example 1: Named Entity Swap",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 19,
+          "title": "Judge Example 1: Named Entity Swap",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 20,
+          "title": "Judge Example 2: Truncated but Core Preserved",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1045892,
+          "matched_on_disk": [
+            "VfJ-6nQAmtk_22__4a7cbfd1_with_hyp.mp4"
+          ],
+          "duration_s": 7.232
+        },
+        {
+          "slide": 20,
+          "title": "Judge Example 2: Truncated but Core Preserved",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1045892,
+          "matched_on_disk": [
+            "VfJ-6nQAmtk_22__4a7cbfd1_with_hyp.mp4"
+          ],
+          "duration_s": 7.232
+        },
+        {
+          "slide": 21,
+          "title": "Judge Example 3: Technical Vocabulary Drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 21,
+          "title": "Judge Example 3: Technical Vocabulary Drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 22,
+          "title": "Judge Example 4: Scientific Vocabulary Lost",
+          "partname": "/ppt/media/media5.mp4",
+          "embedded_filename": "media5.mp4",
+          "embedded_size": 2330286,
+          "matched_on_disk": [
+            "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4"
+          ],
+          "duration_s": 8.768
+        },
+        {
+          "slide": 22,
+          "title": "Judge Example 4: Scientific Vocabulary Lost",
+          "partname": "/ppt/media/media5.mp4",
+          "embedded_filename": "media5.mp4",
+          "embedded_size": 2330286,
+          "matched_on_disk": [
+            "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4"
+          ],
+          "duration_s": 8.768
+        },
+        {
+          "slide": 23,
+          "title": "Judge Example 5: Cooking Domain Confusion",
+          "partname": "/ppt/media/media6.mp4",
+          "embedded_filename": "media6.mp4",
+          "embedded_size": 751137,
+          "matched_on_disk": [
+            "a2CS82VZyO4_7__a6316c95_with_hyp.mp4"
+          ],
+          "duration_s": 3.264
+        },
+        {
+          "slide": 23,
+          "title": "Judge Example 5: Cooking Domain Confusion",
+          "partname": "/ppt/media/media6.mp4",
+          "embedded_filename": "media6.mp4",
+          "embedded_size": 751137,
+          "matched_on_disk": [
+            "a2CS82VZyO4_7__a6316c95_with_hyp.mp4"
+          ],
+          "duration_s": 3.264
+        },
+        {
+          "slide": 24,
+          "title": "Judge Example 6: Topic Hijack",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 3290665,
+          "matched_on_disk": [
+            "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4"
+          ],
+          "duration_s": 7.104
+        },
+        {
+          "slide": 24,
+          "title": "Judge Example 6: Topic Hijack",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 3290665,
+          "matched_on_disk": [
+            "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4"
+          ],
+          "duration_s": 7.104
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media8.mp4",
+          "embedded_filename": "media8.mp4",
+          "embedded_size": 2796612,
+          "matched_on_disk": [
+            "ktMebjnZiSE_3__ebdf1351_with_hyp.mp4"
+          ],
+          "duration_s": 13.491
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media8.mp4",
+          "embedded_filename": "media8.mp4",
+          "embedded_size": 2796612,
+          "matched_on_disk": [
+            "ktMebjnZiSE_3__ebdf1351_with_hyp.mp4"
+          ],
+          "duration_s": 13.491
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media9.mp4",
+          "embedded_filename": "media9.mp4",
+          "embedded_size": 463500,
+          "matched_on_disk": [
+            "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4"
+          ],
+          "duration_s": 3.019
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media9.mp4",
+          "embedded_filename": "media9.mp4",
+          "embedded_size": 463500,
+          "matched_on_disk": [
+            "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4"
+          ],
+          "duration_s": 3.019
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media10.mp4",
+          "embedded_filename": "media10.mp4",
+          "embedded_size": 1333853,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.528
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media10.mp4",
+          "embedded_filename": "media10.mp4",
+          "embedded_size": 1333853,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.528
+        },
+        {
+          "slide": 64,
+          "title": "Demo - Obama Trust Tier",
+          "partname": "/ppt/media/media11.mp4",
+          "embedded_filename": "media11.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 64,
+          "title": "Demo - Obama Trust Tier",
+          "partname": "/ppt/media/media11.mp4",
+          "embedded_filename": "media11.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 65,
+          "title": "Demo - Obama: TRUST under conf-only fallback (no n-best sidecar - partial recovery still narrated)",
+          "partname": "/ppt/media/media12.mp4",
+          "embedded_filename": "media12.mp4",
+          "embedded_size": 3128275,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 65,
+          "title": "Demo - Obama: TRUST under conf-only fallback (no n-best sidecar - partial recovery still narrated)",
+          "partname": "/ppt/media/media12.mp4",
+          "embedded_filename": "media12.mp4",
+          "embedded_size": 3128275,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 66,
+          "title": "Demo - INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)",
+          "partname": "/ppt/media/media13.mp4",
+          "embedded_filename": "media13.mp4",
+          "embedded_size": 2520000,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4"
+          ],
+          "duration_s": 12.04
+        },
+        {
+          "slide": 66,
+          "title": "Demo - INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)",
+          "partname": "/ppt/media/media13.mp4",
+          "embedded_filename": "media13.mp4",
+          "embedded_size": 2520000,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4"
+          ],
+          "duration_s": 12.04
+        },
+        {
+          "slide": 67,
+          "title": "Demo - Strip: entity swap auto-flagged",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 67,
+          "title": "Demo - Strip: entity swap auto-flagged",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 68,
+          "title": "Demo - Salvage: technical vocabulary drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 68,
+          "title": "Demo - Salvage: technical vocabulary drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        }
+      ],
+      "slides": [
+        {
+          "slide_num": 1,
+          "slide_title": "Argos VSP",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": true,
+          "notes_word_count": 36,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 2,
+          "slide_title": "What was done? (1/2)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 53,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 3,
+          "slide_title": "What was done? (2/2)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 49,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 4,
+          "slide_title": "Presentation Overview",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 19,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 69,
+          "animation_groups": 4,
+          "issues": []
+        },
+        {
+          "slide_num": 5,
+          "slide_title": "What is Visual Speech Processing?",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 113,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 7' overlap by 84% of smaller bbox (textA: \"System + human reader outperfo\" / textB: \"5\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 6,
+          "slide_title": "The Invisible Problem: Visemes",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 49,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 2 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 7,
+          "slide_title": "How It Works: Three Components",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 62,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 3 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 8,
+          "slide_title": "How It Works: Data Flow",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 29,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 44,
+          "animation_groups": 4,
+          "issues": [
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 7' (\"\u2193\u2026\") is 33% covered by later shape(s).",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 12' (\"\u2193\u2026\") is 33% covered by later shape(s).",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 17' (\"\u2193\u2026\") is 33% covered by later shape(s).",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 22' (\"\u2193\u2026\") is 33% covered by later shape(s).",
+              "shape_id": "23",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 4 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 9,
+          "slide_title": "8-Stage Automated Pipeline",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 56,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 84,
+          "animation_groups": 10,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 11', text \"\u25b6\u2026\")",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 16', text \"\u25bc\u2026\")",
+              "shape_id": "17",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 20', text \"evaluation only\u2026\")",
+              "shape_id": "21",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 24', text \"\u25bc\u2026\")",
+              "shape_id": "25",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 28', text \"\u25bc\u2026\")",
+              "shape_id": "29",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 45', text \"Preprocessing\u2026\")",
+              "shape_id": "46",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 47', text \"Feature Extraction\u2026\")",
+              "shape_id": "48",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 49', text \"LLM Inference\u2026\")",
+              "shape_id": "50",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 51', text \"Output\u2026\")",
+              "shape_id": "52",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 52', text \"auto_avsr  \u00b7  av_hubert  \u00b7  VSP-LLM\u2026\")",
+              "shape_id": "53",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 54', text \"Existed in academic repo\u2026\")",
+              "shape_id": "55",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 19' & 'TextBox 20' overlap by 25% of smaller bbox (textA: \"Whisper\u000btranscription\" / textB: \"evaluation only\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 19' & 'TextBox 54' overlap by 5% of smaller bbox (textA: \"Whisper\u000btranscription\" / textB: \"Existed in academic repo\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 20' & 'TextBox 54' overlap by 86% of smaller bbox (textA: \"evaluation only\" / textB: \"Existed in academic repo\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 20' (\"evaluation only\u2026\") is 86% covered by later shape(s).",
+              "shape_id": "21",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 33' (\"6. K-means\u2026\") is 100% covered by later shape(s).",
+              "shape_id": "34",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 34' (\"Feature\u000bclustering\u2026\") is 100% covered by later shape(s).",
+              "shape_id": "35",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 37' (\"7. LLM Decode\u2026\") is 100% covered by later shape(s).",
+              "shape_id": "38",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 38' (\"AV-HuBERT +\u000bLLaMA-2\u2026\") is 100% covered by later shape(s).",
+              "shape_id": "39",
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 39' (\"\u2192\u2026\") is 100% covered by later shape(s).",
+              "shape_id": "40",
+              "location": null
+            },
+            {
+              "category": "ANIMATION",
+              "severity": "MAJOR",
+              "description": "Slide has 10 click-step animation groups (>8 risks audience disengagement).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 10,
+          "slide_title": "The Benchmark: Paper vs Reality",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 76,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 10', text \"Note: Our best LRS3 reproduction achieve\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 10' overlap by 33% of smaller bbox (textA: \"Different dataset, fundamental\" / textB: \"Note: Our best LRS3 reproducti\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 10' overlap by 12% of smaller bbox (textA: \"10\" / textB: \"Note: Our best LRS3 reproducti\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 11,
+          "slide_title": "The Reality Gap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 73,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 17% but notes only mention [20, 25, 30, 34, 63, 64] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 12,
+          "slide_title": "Same WER, Different Effects",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 55,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 13,
+          "slide_title": "Diversity of Inputs \u2014 Not LRS3",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 80,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 6', text \"Sample lip-reading frame \u2014 visual signal\u2026\")",
+              "shape_id": "7",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 14,
+          "slide_title": "WER: The Metric That Lies",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 17,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 2 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 15,
+          "slide_title": "RESEARCH FINDINGS",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 5,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 24,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 16,
+          "slide_title": "What the AVSR Literature Reports vs What Users Get",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 18,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 69,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 36% of smaller bbox (textA: \"\u2022 WER (Word Error Rate) - prim\" / textB: \"All three failure modes (gibbe\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 15' overlap by 30% of smaller bbox (textA: \"REF: \"the overhead lights are \" / textB: \"Same WER. Same paper score. On\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 25% but notes only mention [50] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 17,
+          "slide_title": "LLM-as-a-Judge: Gold Standard (1,497 Pairs)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 93,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 9', text \"v1 blind judge   /   Opus 4.6   /   1,49\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 18 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 18,
+          "slide_title": "LLM Judge: Deep Dive",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 54,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 9 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 19,
+          "slide_title": "Judge Example 1: Named Entity Swap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 34,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 5', text \"Reference:\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"Prediction:\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Named Entity Swap \u2014 meaning fully preser\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 11', text \"Only the company name changed (bernreute\u2026\")",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 2 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 15% but notes only mention [18] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 20,
+          "slide_title": "Judge Example 2: Truncated but Core Preserved",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 33,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 5', text \"Reference:\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"Prediction:\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Truncation \u2014 beginning and end lost, cor\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 11', text \"The opening context ('home video market \u2026\")",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 3 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 41% but notes only mention [48] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 21,
+          "slide_title": "Judge Example 3: Technical Vocabulary Drift",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 33,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 5', text \"Reference:\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"Prediction:\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Domain Vocabulary Drift \u2014 structure inta\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 11', text \"The argument structure is perfect: 'radi\u2026\")",
+              "shape_id": "12",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 22,
+          "slide_title": "Judge Example 4: Scientific Vocabulary Lost",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 41,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 5', text \"Reference:\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"Prediction:\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Scientific Terms Lost \u2014 repetitive struc\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 11', text \"The 'tells us when to X' pattern is capt\u2026\")",
+              "shape_id": "12",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 23,
+          "slide_title": "Judge Example 5: Cooking Domain Confusion",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 40,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 5', text \"Reference:\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"Prediction:\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Domain Confusion \u2014 food context right, i\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 11', text \"The model knows it's a cooking video: 'd\u2026\")",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 2 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 43% but notes only mention [89] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 24,
+          "slide_title": "Judge Example 6: Topic Hijack",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 45,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 5', text \"Reference:\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"Prediction:\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Topic Hijack \u2014 grammatically fluent, com\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 11', text \"'Overhead lights' \u2192 'overheard ghost whi\u2026\")",
+              "shape_id": "12",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 25,
+          "slide_title": "Where IS and the Judge Disagree",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 20,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 135,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 8', text \"REF: \"one really nice thing about this i\u2026\")",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 10', text \"\u2022 Harmless hallucination (extra words, c\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 15', text \"REF: \"all you have to do is unscrew\"\nHYP\u2026\")",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 17', text \"\u2022 Domain confusion (medical \u2192 wellness)\u000b\u2026\")",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 10' overlap by 17% of smaller bbox (textA: \"Paraphrases and phonetic bridg\" / textB: \"\u2022 Harmless hallucination (extr\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 16' & 'TextBox 17' overlap by 17% of smaller bbox (textA: \"Structural match hides semanti\" / textB: \"\u2022 Domain confusion (medical \u2192 \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 14 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 71% but notes only mention [0, 1, 100, 111] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 26,
+          "slide_title": "Context Exposes Hidden Failures",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 137,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"REF: \"...because I'm a lover of\"\nHYP: \".\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 12', text \"More context false positives:\u000b\u2022 \"lazy na\u2026\")",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 13' overlap by 39% of smaller bbox (textA: \"\u2022 80.1% of judgments stable ac\" / textB: \"Domain knowledge raises the ba\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 13' overlap by 28% of smaller bbox (textA: \"More context false positives:\u000b\" / textB: \"Domain knowledge raises the ba\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 7 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 27,
+          "slide_title": "Why LLM as a Judge Is Not Enough",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 21,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 68,
+          "animation_groups": 6,
+          "issues": []
+        },
+        {
+          "slide_num": 28,
+          "slide_title": "IS Signals: Word Accuracy & Length",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 19,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 60,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 8', text \"\u25b8 Treats all words equally \u2014 every error\u2026\")",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 12', text \"\u25b8 Example: \"Admiral McRae\" wrong = 2\u00d7 pe\u2026\")",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 16', text \"\u25b8 Hallucinated segments average ratio 2.\u2026\")",
+              "shape_id": "17",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 17', text \"IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + In\u2026\")",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 3 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 29,
+          "slide_title": "IS Signals: Semantic Similarity",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 60,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 2 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 80% but notes only mention [25] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 30,
+          "slide_title": "IS Signals: Phonetic & Named Entities",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 85,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 6', text \"\u25b8 Example: \"Admiral McRae\" vs \"animal mi\u2026\")",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"\u25b8 Mean F1 = 38.9% \u2014 entities missed in 8\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 5 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 31,
+          "slide_title": "Do 6 Signals Actually Measure 6 Things?",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 112,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 32,
+          "slide_title": "IS in Action: Two Real Segments",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 62,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 51,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 33,
+          "slide_title": "Two Dimensions of Quality (PCA)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 91,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 34,
+          "slide_title": "Model Comparison: IS Profiles",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 83,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 14 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 35,
+          "slide_title": "The Gap: Where WER Lies Most",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 163,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 7', text \"WER correlates with IS (r\u2248\u22120.7) but not \u2026\")",
+              "shape_id": "8",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 36,
+          "slide_title": "A8: LLM Judge \u00d7 IS Tier Cross-Tabulation",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 70,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 10 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 37,
+          "slide_title": "Where the System Works: Oracle vs Realistic",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 34,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 133,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 5', text \"What the model can produce on the 1,497-\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 9', text \"LLM Judge v3 Y+P: 71.08%  (baseline 68.4\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 12', text \"What the user can confidently rely on (\u2265\u2026\")",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 16', text \"Joint conf+beam-agreement bands  \u2022  oper\u2026\")",
+              "shape_id": "17",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 17', text \"Oracle metrics evaluate all 1,497 segmen\u2026\")",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 18', text \"Tier 5 \u2014 Excellent (IS \u2265 4.0)\u2026\")",
+              "shape_id": "19",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 20', text \"291  (19.4%)\u2026\")",
+              "shape_id": "21",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 21', text \"Tier 4 \u2014 Good (3.0\u20133.99)\u2026\")",
+              "shape_id": "22",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 23', text \"324  (21.6%)\u2026\")",
+              "shape_id": "24",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 24', text \"Tier 3 \u2014 Fair (2.0\u20132.99)\u2026\")",
+              "shape_id": "25",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 26', text \"312  (20.8%)\u2026\")",
+              "shape_id": "27",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 27', text \"Tier 2 \u2014 Poor (1.0\u20131.99)\u2026\")",
+              "shape_id": "28",
+              "location": null
+            },
+            {
+              "category": "LAYOUT",
+              "severity": "MINOR",
+              "description": "Shape 'TextBox 29' within 0.1in of slide edge (left=11.30, top=5.90, right_gap=0.03, bot_gap=1.28)",
+              "shape_id": "30",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 29', text \"329  (22.0%)\u2026\")",
+              "shape_id": "30",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 30', text \"Tier 1 \u2014 Failed (< 1.0)\u2026\")",
+              "shape_id": "31",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 32', text \"241  (16.1%)\u2026\")",
+              "shape_id": "33",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 19% but notes only mention [5, 23, 30, 61, 65, 68, 71] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 38,
+          "slide_title": "From Literature Metric to User-Trusted Output",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 20,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 146,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 18', text \"Cards 1\u20133 are computed across all 1,497 \u2026\")",
+              "shape_id": "19",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 39,
+          "slide_title": "Failure Mode Taxonomy",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 21,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 67,
+          "animation_groups": 4,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 8 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 40,
+          "slide_title": "Failure Mode Taxonomy (1/2): Highest Impact First",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 22,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 48,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 4', text \"Grounded in ASR error taxonomy (Fosler-L\u2026\")",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 20', text \"Ordered by impact \u2014 highest to lowest (c\u2026\")",
+              "shape_id": "21",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 3 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 100% but notes only mention [13, 18, 44] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 41,
+          "slide_title": "Failure Mode Taxonomy (2/2): Accumulated \u2192 Signal Loss",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 36,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 4 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 42,
+          "slide_title": "Failure Modes: Real Examples",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 31,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 81,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 5', text \"Reference:\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 6', text \"\u201ccarry strap\u201d\u2026\")",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 7', text \"Prediction:\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 8', text \"\u201cholocaust denier explanation\u000bof the fin\u2026\")",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 9', text \"WER 100%  |  IS 0.1\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 10', text \"Why this category?\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 11', text \"The model generated 8 words from\u000ba 2-wor\u2026\")",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 14', text \"Reference:\u2026\")",
+              "shape_id": "15",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 15', text \"\u201ci\u2019ve made lots of videos\u000babout weight l\u2026\")",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 16', text \"Prediction:\u2026\")",
+              "shape_id": "17",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 17', text \"\u201cwhen i was a little girl i\u000balways wante\u2026\")",
+              "shape_id": "18",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 18', text \"WER 97%  |  IS 0.38\u2026\")",
+              "shape_id": "19",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 19', text \"Why this category?\u2026\")",
+              "shape_id": "20",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 20', text \"Output is similar LENGTH to\u000breference (n\u2026\")",
+              "shape_id": "21",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 23', text \"Reference:\u2026\")",
+              "shape_id": "24",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 24', text \"\u201cabout the 13th amendment\u000bthe 13th amend\u2026\")",
+              "shape_id": "25",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 25', text \"Prediction:\u2026\")",
+              "shape_id": "26",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 26', text \"\u201c13th may mean something to\u000bhim because \u2026\")",
+              "shape_id": "27",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 27', text \"WER 81%  |  IS 2.14\u2026\")",
+              "shape_id": "28",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 28', text \"Why this category?\u2026\")",
+              "shape_id": "29",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 29', text \"The word \u201c13th\u201d survived but\u000b\u201camendment\u201d\u2026\")",
+              "shape_id": "30",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 5' & 'TextBox 6' overlap by 9% of smaller bbox (textA: \"Reference:\" / textB: \"\u201ccarry strap\u201d\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 9% of smaller bbox (textA: \"Prediction:\" / textB: \"\u201cholocaust denier explanation\u000b\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 9% of smaller bbox (textA: \"Why this category?\" / textB: \"The model generated 8 words fr\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 15' overlap by 9% of smaller bbox (textA: \"Reference:\" / textB: \"\u201ci\u2019ve made lots of videos\u000babou\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 16' & 'TextBox 17' overlap by 9% of smaller bbox (textA: \"Prediction:\" / textB: \"\u201cwhen i was a little girl i\u000bal\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 19' & 'TextBox 20' overlap by 9% of smaller bbox (textA: \"Why this category?\" / textB: \"Output is similar LENGTH to\u000bre\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 23' & 'TextBox 24' overlap by 9% of smaller bbox (textA: \"Reference:\" / textB: \"\u201cabout the 13th amendment\u000bthe \")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 25' & 'TextBox 26' overlap by 9% of smaller bbox (textA: \"Prediction:\" / textB: \"\u201c13th may mean something to\u000bhi\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 28' & 'TextBox 29' overlap by 9% of smaller bbox (textA: \"Why this category?\" / textB: \"The word \u201c13th\u201d survived but\u000b\u201c\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 18% but notes only mention [100] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 43,
+          "slide_title": "LLM Salvage: Three Real Recoveries",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 32,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 47,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 32' overlap by 6% of smaller bbox (textA: \"A wise viewer watching a relig\" / textB: \"43\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 4 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 44,
+          "slide_title": "LLM Salvage: Domain Context Fills the Gaps",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 32,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 87,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 12' & 'TextBox 32' overlap by 6% of smaller bbox (textA: \"A viewer watching a religious \" / textB: \"44\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 3 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 45,
+          "slide_title": "A6: Failure Mode Examples",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 29,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 4 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 46,
+          "slide_title": "Confidence Without Ground Truth",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 7,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 64,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 47,
+          "slide_title": "Two Layers of Confidence (Per-Word + Per-Segment)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 41,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 48,
+          "slide_title": "Confidence Scoring (shipped April 30 2026) \u2014 Surface the Good 65%",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 45,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 2 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 65% but notes only mention [20, 60] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 49,
+          "slide_title": "Per-Word Confidence Bands - Distribution",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 42,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 33% but notes only mention [80, 89] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 50,
+          "slide_title": "Band Reliability - Overall P(correct | band)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 47,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 7', text \"All numbers from audit JSON keys perword\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 48% of smaller bbox (textA: \"Joint rule's biggest reliabili\" / textB: \"All numbers from audit JSON ke\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 6 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 51,
+          "slide_title": "Green Reliability Depends on Segment Quality",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 73,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 7', text \"Below 0.65 (legacy rule only):\u000b0.55-0.65\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 8', text \"Caveat: stratified P(correct|green) unde\u2026\")",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 9' overlap by 15% of smaller bbox (textA: \"Caveat: stratified P(correct|g\" / textB: \"Headline: green-band reliabili\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 96% but notes only mention [50] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 52,
+          "slide_title": "Green Leakage - When High Confidence Misleads",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 25,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 56,
+          "animation_groups": 4,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 9', text \"Off by 1000x. Confident, fluent, wrong.\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 15', text \"Token tokenisation mis-merge.\u2026\")",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 21', text \"Visually similar mouth shapes.\u2026\")",
+              "shape_id": "22",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 53,
+          "slide_title": "Three Calibrated Thresholds on Segment mean_prob",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 53,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 8', text \"Thresholds are Llama-2-7b specific. Any \u2026\")",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 24% of smaller bbox (textA: \"\u2022 Keeps 28% of segment volume\n\" / textB: \"Thresholds are Llama-2-7b spec\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 28% but notes only mention [50] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 54,
+          "slide_title": "Three-Tier Policy - Per-Tier Counts and Reliability",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 45,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 95% but notes only mention [60] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 55,
+          "slide_title": "Per-Word Bands Stratified by NIV Outcome",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 68,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 7', text \"\u2022 62.5pp green->red spread inside Y+P - \u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 8', text \"Per-word flag is genuine signal inside S\u2026\")",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 8' overlap by 27% of smaller bbox (textA: \"\u2022 62.5pp green->red spread ins\" / textB: \"Per-word flag is genuine signa\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 56,
+          "slide_title": "Joint Confidence + Beam-Agreement Band Rule",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 62,
+          "animation_groups": 5,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 15', text \"Llama-2-7b specific. Any LLM swap forces\u2026\")",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 14' & 'TextBox 15' overlap by 48% of smaller bbox (textA: \"WHY ADD AGREEMENT?  Beam agree\" / textB: \"Llama-2-7b specific. Any LLM s\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 57,
+          "slide_title": "Beam Agreement Adds Independent Signal",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 58,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 7', text \"Diagnostic script: diagnose_confidence_s\u2026\")",
+              "shape_id": "8",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 58,
+          "slide_title": "Trust-Gate Operating Points (per-segment)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 52,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 6', text \"Audit keys: trustgate_new_t{10,20,30,40,\u2026\")",
+              "shape_id": "7",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 59,
+          "slide_title": "N-best Aggregation: From One to All 20 Hypotheses (Mission 6)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 94,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 6', text \"Recognizer Output Voting Error Reduction\u2026\")",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Minimum Bayes Risk Decoding\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 8pt below 12pt readability floor (shape 'TextBox 13', text \"ROVER: Fiscus (1997), NIST  |  MBR Decod\u2026\")",
+              "shape_id": "14",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 60,
+          "slide_title": "N-best Aggregation: v3 Judge Paired Tests",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 96,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 6', text \"\u2022 Y verdict tied across all methods (no \u2026\")",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"v3 dual-conf judge   /   Opus 4.7   /   \u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 6' & 'TextBox 7' overlap by 45% of smaller bbox (textA: \"\u2022 Y verdict tied across all me\" / textB: \"v3 dual-conf judge   /   Opus \")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 61,
+          "slide_title": "Why MBR Won the Default-Display Slot",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 98,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 62,
+          "slide_title": "v1 vs v3 Judge: A Prompt-Design Lesson",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 71,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 63,
+          "slide_title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 119,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 3 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 64,
+          "slide_title": "Demo - Obama Trust Tier",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 73,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"REFERENCE\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 9', text \"HYPOTHESIS  (per-word band observation)\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 13' overlap by 72% of smaller bbox (textA: \"Research observation: 27/29 pe\" / textB: \"64\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 6 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 65,
+          "slide_title": "Demo - Obama: TRUST under conf-only fallback (no n-best sidecar - partial recovery still narrated)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 121,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"REFERENCE\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 9', text \"HYPOTHESIS  (per-word band observation)\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 13' overlap by 72% of smaller bbox (textA: \"Research observation: most wor\" / textB: \"65\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 8 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 66,
+          "slide_title": "Demo - INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 116,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"REFERENCE\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 9', text \"HYPOTHESIS  (per-word band observation)\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 13' overlap by 72% of smaller bbox (textA: \"Research observation: the mode\" / textB: \"66\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 7 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 45% but notes only mention [37] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 67,
+          "slide_title": "Demo - Strip: entity swap auto-flagged",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 127,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"REFERENCE\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 9', text \"HYPOTHESIS  (per-word band observation)\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 13' overlap by 72% of smaller bbox (textA: \"Research observation: the enti\" / textB: \"67\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 68,
+          "slide_title": "Demo - Salvage: technical vocabulary drift",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 104,
+          "animation_groups": 3,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 7', text \"REFERENCE\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 10pt below 12pt readability floor (shape 'TextBox 9', text \"HYPOTHESIS  (per-word band observation)\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 11' & 'TextBox 13' overlap by 72% of smaller bbox (textA: \"Research observation: argument\" / textB: \"68\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 4 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 69,
+          "slide_title": "FUTURE DIRECTIONS",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 25,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 70,
+          "slide_title": "Starting from 61.9%, Not 25%",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 93,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 41% but notes only mention [25, 30, 61, 64] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 71,
+          "slide_title": "Five Phases \u2014 From IS 2.5 to Target IS 3.3\u20133.7",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 160,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 4', text \"Phase 1 (shipped)  Surface the good 62%\n\u2026\")",
+              "shape_id": "5",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 6', text \"Phase 2 (shipped)  Fix small & content e\u2026\")",
+              "shape_id": "7",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 8', text \"Phase 3  Better world knowledge\nLlama 3.\u2026\")",
+              "shape_id": "9",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 10', text \"Phase 4  Scale data 20K\u201350K\nFine-tune vi\u2026\")",
+              "shape_id": "11",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 12', text \"Phase 5  Error Correction (GER)\nSecond L\u2026\")",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 8pt below 12pt readability floor (shape 'TextBox 15', text \"References: ROVER (Fiscus 1997)  |  GER \u2026\")",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 15' & 'TextBox 17' overlap by 20% of smaller bbox (textA: \"References: ROVER (Fiscus 1997\" / textB: \"71\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 62% but notes only mention [8, 26, 85] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 72,
+          "slide_title": "IS Improvement Roadmap \u2014 From 2.5 to 3.5",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 22,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 11', text \"+0.10  |  Fixes: Accum (52) + Details (7\u2026\")",
+              "shape_id": "12",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 15', text \"+0.50  |  Fixes: Halluc (108) + Wrong To\u2026\")",
+              "shape_id": "16",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 19', text \"+0.95  |  Fixes: all remaining via data \u2026\")",
+              "shape_id": "20",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 19' & 'TextBox 20' overlap by 86% of smaller bbox (textA: \"+0.95  |  Fixes: all remaining\" / textB: \"Conversion: ~0.033 IS per pp W\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 19' (\"+0.95  |  Fixes: all remaining via data \u2026\") is 86% covered by later shape(s).",
+              "shape_id": "20",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 73,
+          "slide_title": "Stronger LLM + Smart Prompts = Force Multiplier",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 211,
+          "animation_groups": 2,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 8pt below 12pt readability floor (shape 'TextBox 12', text \"GER: Chen et al. (2024), ICASSP  |  Scal\u2026\")",
+              "shape_id": "13",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 5 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 74,
+          "slide_title": "LLM Upgrade: Why It Matters",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 27,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 270,
+          "animation_groups": 8,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 10' & 'TextBox 11' overlap by 8% of smaller bbox (textA: \"Current WER\" / textB: \"64%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 13' & 'TextBox 14' overlap by 8% of smaller bbox (textA: \"LLM swap alone\" / textB: \"\u22123\u20138 pp\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 16' & 'TextBox 17' overlap by 8% of smaller bbox (textA: \"+ Smart prompts\" / textB: \"\u22125\u201310 pp\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 19' & 'TextBox 20' overlap by 8% of smaller bbox (textA: \"+ 20K segments\" / textB: \"\u221210\u201315 pp\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 22' & 'TextBox 23' overlap by 8% of smaller bbox (textA: \"Target WER\" / textB: \"35\u201340%\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 32 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 64% but notes only mention [5, 18, 20, 25, 30, 35, 40, 44, 61] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 75,
+          "slide_title": "Fine-Tuning: Limited Data, Limited Gains",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 7,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 53,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 9 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 76,
+          "slide_title": "Arabic Pipeline: Replication Roadmap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 107,
+          "animation_groups": 7,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 8' & 'TextBox 12' overlap by 28% of smaller bbox (textA: \"\u2022 RTL text & normalization\n\u2022 R\" / textB: \"Realistic estimate: 2\u20133 months\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "OCCLUSION",
+              "severity": "MAJOR",
+              "description": "Text shape 'TextBox 8' (\"\u2022 RTL text & normalization\n\u2022 RTL handlin\u2026\") is 63% covered by later shape(s).",
+              "shape_id": "9",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 77,
+          "slide_title": "AV-HuBERT: Why It\u2019s Not Language-Locked",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 86,
+          "animation_groups": 6,
+          "issues": []
+        },
+        {
+          "slide_num": 78,
+          "slide_title": "Arabic Adaptation: What Changes",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 7,
+          "issues": []
+        },
+        {
+          "slide_num": 79,
+          "slide_title": "Key Takeaways",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 24,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 102,
+          "animation_groups": 4,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 64% but notes only mention [61, 71] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 80,
+          "slide_title": "Thank You",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 9,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 81,
+          "slide_title": "A1: Homophenes \u2014 The Lip-Reading Problem",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 30,
+          "animation_groups": 1,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 9pt below 12pt readability floor (shape 'TextBox 9', text \"A1\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 2 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 82,
+          "slide_title": "A3: IS Component Correlation",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 43,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "OVERLAP",
+              "severity": "MINOR",
+              "description": "Shapes 'TextBox 3' & 'TextBox 5' overlap by 13% of smaller bbox (textA: \"PCA: 6 IS signals collapse int\" / textB: \"Cross-Config Stability (16 con\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 6 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 83,
+          "slide_title": "Appendix: PCA Loadings on the 6 IS Signals",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 129,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 7', text \"\u2022 PC1 (68.4%) = signal quality \u2014 all 5 c\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 9', text \"Source: docs/evaluation/is_pca_analysis.\u2026\")",
+              "shape_id": "10",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 9' & 'TextBox 11' overlap by 72% of smaller bbox (textA: \"Source: docs/evaluation/is_pca\" / textB: \"A3\")",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 84,
+          "slide_title": "Appendix: Human-IS Path B (Pre-Study Estimates)",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 119,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 9', text \"Caveat: Path B is pre-study. Reproducibl\u2026\")",
+              "shape_id": "10",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 85,
+          "slide_title": "A4: LLM Salvage \u2014 Recoverable Segments",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 37,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 5', text \"58% of salvageable have moderate WER (50\u2026\")",
+              "shape_id": "6",
+              "location": null
+            },
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 8', text \"Categories overlap \u2014 segments can exhibi\u2026\")",
+              "shape_id": "9",
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 86,
+          "slide_title": "A5: LLM Salvage \u2014 Curated Examples",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 29,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 87,
+          "slide_title": "A9: Context Evaluation \u2014 Transition Details",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 36,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 4 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Body shows 40% but notes only mention [80] \u2014 possible mismatch.",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 88,
+          "slide_title": "Appendix: McNemar Tests \u2014 N-Best Methods vs Baseline",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 157,
+          "animation_groups": 0,
+          "issues": [
+            {
+              "category": "STYLE",
+              "severity": "MAJOR",
+              "description": "Body font 11pt below 12pt readability floor (shape 'TextBox 7', text \"Caveat: identical-text drift varies (12.\u2026\")",
+              "shape_id": "8",
+              "location": null
+            },
+            {
+              "category": "OVERLAP",
+              "severity": "MAJOR",
+              "description": "Shapes 'TextBox 7' & 'TextBox 9' overlap by 92% of smaller bbox (textA: \"Caveat: identical-text drift v\" / textB: \"A8\")",
+              "shape_id": null,
+              "location": null
+            },
+            {
+              "category": "NOTES",
+              "severity": "MINOR",
+              "description": "Notes cite 15 numbers but lack any source reference (.md/.csv path).",
+              "shape_id": null,
+              "location": null
+            }
+          ]
+        },
+        {
+          "slide_num": 89,
+          "slide_title": "Two Environments: Development and Production",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 38,
+          "animation_groups": 1,
+          "issues": []
+        }
+      ]
+    }
+  ]
+}

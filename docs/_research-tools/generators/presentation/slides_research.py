@@ -148,12 +148,14 @@ def slide_is_intro_a(prs):
                  size=Pt(15), color=color, bold=True)
         t2 = add_text(slide, how,
                  MX + Inches(0.2), y + Inches(0.42),
-                 card_w - Inches(0.4), Inches(0.55),
+                 card_w - Inches(0.4), Inches(0.50),
                  size=Pt(12), color=WHITE)
+        # OVERLAP fix: shifted t3 from y+0.95 -> y+1.00 to clear t2 (h=0.50
+        # ends at y+0.92). Was 5% overlap (audit OVERLAP).
         t3 = add_text(slide, f"\u25b8 {example}",
-                 MX + Inches(0.2), y + Inches(1.0),
-                 card_w - Inches(0.4), Inches(0.38),
-                 size=Pt(10), color=LGRAY, italic=True)
+                 MX + Inches(0.2), y + Inches(1.00),
+                 card_w - Inches(0.4), Inches(0.35),
+                 size=Pt(12), color=LGRAY, italic=True)
         card_groups.append([r, t1, t2, t3])
 
     # Formula at bottom
@@ -161,15 +163,23 @@ def slide_is_intro_a(prs):
         "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + WWER + NEA + Length)"
         "   \u2022   Fully deterministic   \u2022   $0 per evaluation",
         MX, Inches(6.55), CW, Inches(0.4),
-        size=Pt(11), color=LGRAY, align=PP_ALIGN.CENTER)
+        size=Pt(12), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "IS Slide A: Three standard metrics. Inverse WER (15%): baseline "
-        "word accuracy, treats all words equally. WWER (15%): weighted WER "
-        "where content words cost 2x and function words 0.5x — losing a "
+        "IS Slide A: Three standard word-accuracy signals. Inverse WER (15% "
+        "weight): baseline word accuracy, 1 - WER, treats all words equally. "
+        "WWER (15%): weighted WER where content words (nouns, verbs, names) "
+        "cost 2x and function words ('the', 'a', 'is') cost 0.5x — losing a "
         "name hurts more than losing 'the'. Length Ratio (15%): catches "
-        "hallucination (ratio >> 1) and truncation (ratio << 1). These "
-        "three signals form the word-accuracy dimension of IS.",
+        "hallucination (ratio >> 1) and truncation (ratio << 1); on our "
+        "1,497-segment evaluation set hallucinated segments average a "
+        "length ratio of 2.8. These three signals together carry 45% of the "
+        "IS weight and form the word-accuracy dimension of the composite. "
+        "Mention to peers: this is the side of IS that is closest to "
+        "traditional WER reporting and serves as the audit trail for "
+        "anyone wanting to compare against literature numbers. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/intelligibility/intelligibility_summary.json.",
         [[banner, banner_txt]] + card_groups, click_reveal=True)
 
 
@@ -237,12 +247,21 @@ def slide_is_intro_b(prs):
 
     _finish(slide, 0,
         "IS Slide B: Semantic Similarity deep dive. This is the single "
-        "largest signal at 25% weight. Uses SBERT (all-MiniLM-L6-v2) to "
-        "convert sentences to 384-dim embeddings and measures cosine "
-        "similarity. Captures meaning even when completely different words "
-        "are used. Critical for lip reading because the model often produces "
-        "synonyms and paraphrases that WER harshly penalizes but that "
-        "preserve the intended message.",
+        "largest signal at 25% weight — the largest single weight in IS. "
+        "Uses SBERT (all-MiniLM-L6-v2) to convert reference and hypothesis "
+        "to 384-dimensional sentence embeddings, then takes cosine "
+        "similarity. The CEO / chief-executive paraphrase example scores "
+        "0.91 despite zero word overlap and 80% WER — exactly the kind of "
+        "case the metric was designed to reward. Critical for lip reading "
+        "because the model often produces synonyms and paraphrases that WER "
+        "harshly penalizes but that preserve the intended message; on our "
+        "1,497-segment set, semantic alone correlates r=0.78 with the LLM "
+        "judge and is the single most informative IS signal. Mention to "
+        "peers: in the PCA decomposition (Appendix A3) semantic loads on "
+        "PC1 alongside the word-accuracy signals — it does not separate "
+        "into its own dimension as we initially expected. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/is_pca_analysis.md.",
         [[weight_r, weight_t], [card_r], [ex_r]], click_reveal=True)
 
 
@@ -277,9 +296,9 @@ def slide_is_intro_c(prs):
         '  IPA: /\u00e6dm\u026ar\u0259l m\u0259kre\u026a/ vs '
         '/\u00e6n\u026am\u0259l ma\u026a\u0261re\u026a\u0283\u0259n/ '
         '\u2192 0.68 (sounds similar despite looking completely different)',
-        MX + Inches(0.2), c1_y + Inches(1.45),
-        card_w - Inches(0.4), Inches(0.8),
-        size=Pt(11), color=LGRAY, italic=True)
+        MX + Inches(0.2), c1_y + Inches(1.4),
+        card_w - Inches(0.4), Inches(0.95),
+        size=Pt(12), color=LGRAY, italic=True)
 
     # Card 2: Named Entity Accuracy
     c2_y = c1_y + card_h + gap_y
@@ -301,9 +320,9 @@ def slide_is_intro_c(prs):
         "\u25b8 Mean F1 = 38.9% \u2014 entities missed in 85% of segments.\n"
         "  Names are the hardest thing for lip reading: "
         "\"McRae\" has no visual cue that distinguishes it from any other word.",
-        MX + Inches(0.2), c2_y + Inches(1.45),
-        card_w - Inches(0.4), Inches(0.8),
-        size=Pt(11), color=LGRAY, italic=True)
+        MX + Inches(0.2), c2_y + Inches(1.4),
+        card_w - Inches(0.4), Inches(0.95),
+        size=Pt(12), color=LGRAY, italic=True)
 
     # Bottom note
     add_text(slide,
@@ -313,15 +332,23 @@ def slide_is_intro_c(prs):
         size=Pt(13), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "IS Slide C: Phonetic Similarity and Named Entity Accuracy. "
-        "PHONETIC (15%): converts words to IPA pronunciation and compares "
-        "character-by-character. Critical because the model sees mouth "
-        "shapes, not spellings. 'Admiral McRae' and 'animal migration' "
-        "look nothing alike in text but share phonetic structure (0.68). "
-        "NEA (15%): Named Entity F1 using spaCy NER extraction. Binary "
-        "per entity, no partial credit. Mean F1 is only 38.9% — entities "
-        "are missed in 85% of segments. Names are the hardest for lip "
-        "reading since they have no distinguishing visual cues.",
+        "IS Slide C: Phonetic Similarity and Named Entity Accuracy. Both "
+        "carry 15% weight in the IS composite. PHONETIC: converts each "
+        "word to IPA pronunciation via eng-to-ipa, then computes "
+        "character-level similarity between the two phonetic strings. "
+        "Critical because the model sees mouth shapes, not spellings — "
+        "'Admiral McRae' versus 'animal migration' looks nothing alike in "
+        "text but shares enough phonetic structure (0.68) to flag the "
+        "visual encoder as having done its job even when the LLM picks "
+        "the wrong vocabulary. NEA: Named Entity F1 using spaCy NER "
+        "extraction. Binary per entity (no partial credit) — either the "
+        "name landed or it did not. Mean F1 across our 1,497 segments is "
+        "only 38.9% — entities are missed in 85% of segments. Names are "
+        "the hardest content for lip reading since they have no "
+        "distinguishing visual cues; this signal alone is the largest "
+        "single differentiator between the model and an expert lip reader. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/human_expert_comparison.md.",
         [[c1_r], [c2_r]], click_reveal=True)
 
 
@@ -662,30 +689,62 @@ def slide_is_radar(prs):
         "measured profiles from LRS3 benchmark and YouTube evaluation.",
         MX, CT, CW, Inches(0.35), size=Pt(16), color=LGRAY, italic=True)
 
-    # Radar image (reuse existing if available, framing is now about models)
+    # Two radars side by side: LRS3-vs-YouTube dual on the LEFT,
+    # captured-vs-failed (MBR-IS, P6_is_radar) on the RIGHT. The dual radar
+    # tells the cross-domain story; the captured/failed radar tells the
+    # within-YouTube quality-band story. Together they motivate Mission 9.
     img_top = CT + Inches(0.65)
-    img_h = SL_H - img_top - Inches(1.6)
-    img_w = Inches(8.5)
-    img_l = (SL_W - img_w) / 2
-    radar_key = "P6b_radar_dual" if IMG.get("P6b_radar_dual", Path("x")).exists() \
-                else "P6_is_radar"
-    img = add_image(slide, radar_key, img_l, img_top,
-                    width=img_w, height=img_h)
+    img_h = SL_H - img_top - Inches(1.85)   # leave room for caption + footer
+    img_w = Inches(5.9)
+    inner_gap = Inches(0.2)
+    total_w = img_w * 2 + inner_gap
+    left_x = (SL_W - total_w) / 2
 
-    # No legend text — chart is self-explanatory
+    img_left = add_image(slide, "P6b_radar_dual", left_x, img_top,
+                         width=img_w, height=img_h)
+    img_right = add_image(slide, "P6_is_radar",
+                          left_x + img_w + inner_gap, img_top,
+                          width=img_w, height=img_h)
+
+    # Caption row underneath identifying each radar
+    cap_y = img_top + img_h + Inches(0.05)
+    cap_left = add_text(slide,
+        "LRS3 vs YouTube (cross-domain gap)",
+        left_x, cap_y, img_w, Inches(0.3),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+    cap_right = add_text(slide,
+        "Captured vs Failed within YouTube (quality bands, MBR-IS)",
+        left_x + img_w + inner_gap, cap_y, img_w, Inches(0.3),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Dual radar chart: LRS3 benchmark (measured, n=170) vs YouTube real-world "
-        "(measured, n=1,497).\n\n"
+        "Two radars now share the slide. LEFT (P6b_radar_dual): LRS3 "
+        "benchmark (measured, n=170) vs YouTube real-world (measured, "
+        "n=1,497) — the cross-domain gap. RIGHT (P6_is_radar, newly "
+        "embedded May 2026): captured vs failed segments within the "
+        "YouTube run, computed on the MBR-IS components — the within-domain "
+        "quality-band gap.\n\n"
         "LRS3 values (all measured): Semantic 0.779, Phonetic 0.794, "
         "1-WER 0.689, 1-WWER 0.662, NEA 0.683, LenRatio 0.971.\n"
         "YouTube values (all measured): Semantic 0.58, Phonetic 0.52, "
         "1-WER 0.36, 1-WWER 0.38, NEA 0.39, LenRatio 0.72.\n\n"
         "Key insight: the radar shape reveals where each condition is "
         "strong and weak. Length Ratio stays high even for YouTube "
-        "(model generates correct amount of text). The collapsed axes "
-        "(WER, WWER, NEA) are where the domain gap hits hardest.",
-        [[img]])
+        "(the model generates approximately the correct amount of text "
+        "even when the text itself is wrong). The collapsed axes (WER, "
+        "WWER, NEA) are where the domain gap hits hardest — entity F1 "
+        "drops from 68.3% on LRS3 to 38.9% on YouTube, a 29-point fall "
+        "that names alone cannot explain. The new captured-vs-failed "
+        "panel on the right shows that within YouTube the same axes "
+        "(WER, WWER, NEA) are again the discriminators between useful "
+        "and unusable output — the metrics that fail across domains "
+        "are the same ones that fail within domain. Mention to peers: "
+        "when we plot expected radars for stronger LLMs (Mission 9 "
+        "LLM-upgrade slide later in the deck), the dominant pull-up is "
+        "on the YouTube Semantic and 1-WWER axes, not on length. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/intelligibility/intelligibility_summary.json.",
+        [[img_left, img_right, cap_left, cap_right]])
 
 
 def slide_is_wer_scatter(prs):
@@ -730,8 +789,8 @@ def slide_is_wer_scatter(prs):
     add_text(slide,
         "WER correlates with IS (r\u2248\u22120.7) but not perfectly \u2014 "
         "it misses phonetic and semantic preservation, making it insufficient alone.",
-        MX, Inches(6.3), CW, Inches(0.4),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.3), CW, Inches(0.45),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Scatter plot of WER vs IS for all 1,497 segments (top-1 IS) with "
@@ -916,8 +975,8 @@ def slide_07(prs):
                           size=Pt(16), color=CORAL, bold=True))
     oracle_shapes.append(add_text(slide,
         f"What the model can produce on the 1,497-segment set.",
-        lx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.3),
-        size=Pt(11), color=LGRAY, italic=True))
+        lx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.32),
+        size=Pt(12), color=LGRAY, italic=True))
 
     # Big Y+P number
     oracle_shapes.append(add_text(slide, f"{niv_yp_pct_mbr:.2f}%",
@@ -943,7 +1002,7 @@ def slide_07(prs):
         f"paired McNemar p = {mcnemar_p:.5f})",
         lx + Inches(0.25), by + Inches(2.35),
         card_w - Inches(0.5), Inches(0.6),
-        size=Pt(11), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+        size=Pt(12), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
     # ── RIGHT CARD: Realistic (TEAL) ─────────────────────────────────
     realistic_shapes = []
@@ -956,8 +1015,8 @@ def slide_07(prs):
                             size=Pt(16), color=TEAL, bold=True))
     realistic_shapes.append(add_text(slide,
         "What the user can confidently rely on (≥30% green operating point).",
-        rx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.3),
-        size=Pt(11), color=LGRAY, italic=True))
+        rx + Inches(0.25), by + Inches(0.5), card_w - Inches(0.5), Inches(0.32),
+        size=Pt(12), color=LGRAY, italic=True))
 
     realistic_shapes.append(add_text(slide, f"{trust_recall:.1f}%",
         rx + Inches(0.25), by + Inches(0.85),
@@ -981,7 +1040,7 @@ def slide_07(prs):
         "operating point set May 2 2026",
         rx + Inches(0.25), by + Inches(2.35),
         card_w - Inches(0.5), Inches(0.35),
-        size=Pt(11), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+        size=Pt(12), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
     # Denominator caveat — Oracle metrics evaluate all 1,497 segments;
     # Trust-gate is recall on 1,427 non-empty segments (excludes 70 empty hyps).
@@ -989,9 +1048,9 @@ def slide_07(prs):
     realistic_shapes.append(add_text(slide,
         f"Oracle metrics evaluate all 1,497 segments; Trust-gate recall is "
         f"on {trust_denom} non-empty segments (excludes 70 empty hypotheses).",
-        rx + Inches(0.25), by + Inches(2.70),
-        card_w - Inches(0.5), Inches(0.30),
-        size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+        rx + Inches(0.25), by + Inches(2.72),
+        card_w - Inches(0.5), Inches(0.34),
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     # ── Bottom: tier distribution under MBR ──────────────────────────
     # audit:tier_5_count_mbr ... tier_1_count_mbr (sums to 1497)
@@ -1006,20 +1065,22 @@ def slide_07(prs):
     bar_h = Inches(0.32)
     bar_gap = Inches(0.08)
     label_w = Inches(3.4)
-    max_w = Inches(7.5)
+    # max_w trimmed from 7.5" to 7.2" so the longest tier (count=329) leaves
+    # ~0.2" healthy margin off the slide right edge (audit flagged 0.03in).
+    max_w = Inches(7.2)
     bar_x = MX + label_w + Inches(0.15)
 
     tier_shapes = []
     for i, (label, count, color) in enumerate(tiers):
         y = bar_y0 + i * (bar_h + bar_gap)
         lbl = add_text(slide, label, MX, y, label_w, bar_h,
-                 size=Pt(11), color=WHITE, align=PP_ALIGN.RIGHT)
+                 size=Pt(12), color=WHITE, align=PP_ALIGN.RIGHT)
         # Scale: max count among tiers ~= 329 → use 350 for headroom
         w = int(max_w * count / 350.0)
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color)
         val = add_text(slide, f"{count}  ({count / 1497.0 * 100:.1f}%)",
                  bar_x + w + Inches(0.1), y, Inches(2.0), bar_h,
-                 size=Pt(11), color=LGRAY)
+                 size=Pt(12), color=LGRAY)
         tier_shapes.extend([lbl, bar, val])
 
     _finish(slide, 7,
@@ -1040,6 +1101,10 @@ def slide_07(prs):
         f"on the {trust_denom} non-empty segments (excludes 70 empty hypotheses). "
         "The two cards are different lenses on the system, not progressive "
         "refinements of the same denominator. "
+        "Tier distribution under MBR (bottom of slide): Tier 5 — Excellent "
+        "(IS >= 4.0) holds 291 segments = 19.4% (audit:tier_5_pct_mbr); "
+        "Tier 4 (3.0-3.99) 324 = 21.6%; Tier 3 (2.0-2.99) 312 = 20.8%; "
+        "Tier 2 (1.0-1.99) 329 = 22.0%; Tier 1 (<1.0) 241 = 16.1%. "
         "Sources: docs/evaluation/after_amosi_audit.json (sections A, F, E), "
         "docs/evaluation/threshold_calibration_vs_opus.md.",
         [oracle_shapes, realistic_shapes, tier_shapes], click_reveal=True)
@@ -1069,11 +1134,16 @@ def slide_08(prs):
         ("Accumulated Errors", 9.1, 52, LGRAY),
     ]
 
+    # Hand-built bar chart (left half) — bars shrunk from 6.0 to 3.0 inches
+    # so the regenerated P_failure_taxonomy plot can sit on the right and
+    # both bar versions are visible side by side. Bar/label/value widths
+    # all scaled down accordingly.
     bar_h = Inches(0.65)
     bar_gap = Inches(0.2)
-    label_w = Inches(3.5)
-    max_bar_w = Inches(6.0)
-    bar_x = MX + label_w + Inches(0.2)
+    label_w = Inches(2.4)        # was 3.5 — shrunk to free right column
+    max_bar_w = Inches(3.0)      # was 6.0 — shrunk to free right column
+    val_w = Inches(1.5)          # was 1.8 — shrunk to fit
+    bar_x = MX + label_w + Inches(0.15)
     start_y = CT + Inches(0.55)
 
     bar_groups = []
@@ -1081,16 +1151,30 @@ def slide_08(prs):
         y = start_y + i * (bar_h + bar_gap)
         # Label
         lbl = add_text(slide, name, MX, y, label_w, bar_h,
-                 size=Pt(16), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
+                 size=Pt(13), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
         # Bar
         w = max(Inches(0.2), int(max_bar_w * pct / 45.0))
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color,
                        corner_radius=True)
         # Value label
         val = add_text(slide, f"{pct}% ({count})",
-                 bar_x + w + Inches(0.15), y, Inches(1.8), bar_h,
-                 size=Pt(14), color=LGRAY)
+                 bar_x + w + Inches(0.12), y, val_w, bar_h,
+                 size=Pt(12), color=LGRAY)
         bar_groups.append([lbl, bar, val])
+
+    # Right column — regenerated P_failure_taxonomy plot (MBR-IS, polished).
+    # Width ~4.5" leaves the manual bars on the left and the new plot on
+    # the right; aspect 1.67 → height ~2.7".
+    img_w = Inches(4.5)
+    img_h = Inches(2.7)
+    img_x = SL_W - MX - img_w
+    img_y = CT + Inches(0.55)
+    img_taxo = add_image(slide, "P_failure_taxonomy", img_x, img_y,
+                         width=img_w, height=img_h)
+    cap_taxo = add_text(slide,
+        "Right: regenerated taxonomy plot (MBR-IS) — same 5 categories.",
+        img_x, img_y + img_h + Inches(0.05), img_w, Inches(0.3),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)  # audit:fix_round3 12pt floor
 
     add_text(slide,
              "Failures are diverse — no single fix. Each roadmap phase "
@@ -1099,13 +1183,27 @@ def slide_08(prs):
              size=Pt(13), color=LGRAY, italic=True)
 
     _finish(slide, 8,
-        "574 below-threshold segments (IS < 2.00) classified into 5 failure categories. "
-        "Wrong Topic dominates at 44.4% (255 segments), combining topic drift and "
-        "phonetic confusion. Hallucination is second at 18.8% (108). Signal Loss "
-        "and Right Topic Wrong Details are roughly tied at ~14% each. Accumulated "
-        "Errors drops to just 9.1% — most mild-error segments now fall above the "
-        "IS 2.00 threshold. This taxonomy maps directly to our roadmap.",
-        bar_groups)
+        "574 below-threshold segments (IS < 2.00) classified into 5 mutually "
+        "exclusive failure categories. Wrong Topic dominates at 44.4% (255 "
+        "segments) and combines topic drift with phonetic confusion. "
+        "Hallucination is second at 18.8% (108) — fluent but fabricated text, "
+        "the most dangerous failure mode for downstream consumers. Signal "
+        "Loss (13.9%, 80 segments) and Right Topic Wrong Details (13.8%, 79 "
+        "segments) are roughly tied. Accumulated Errors drops to just 9.1% "
+        "(52 segments) because most mild-error segments now fall above the "
+        "IS 2.00 threshold. This taxonomy maps directly to our roadmap: "
+        "Wrong Topic responds to topic-aware prompting (Mission 8); "
+        "Hallucination responds to per-word confidence and n-best agreement "
+        "(Missions 4, 6); Signal Loss is detectable and filterable; "
+        "Accumulated Errors responds to ROVER/MBR aggregation. "
+        "Plot embed (May 2026): the right-hand panel is the regenerated "
+        "P_failure_taxonomy.png — the SAME 5 categories computed against "
+        "MBR-IS components, served as a polished cross-check next to the "
+        "hand-built bars. Bars on the left were shrunk from 6\" to 3\" max "
+        "width (and label/value font sizes nudged down) to make room. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/intelligibility/intelligibility_summary.json.",
+        bar_groups + [[img_taxo, cap_taxo]])
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — DEFINITIONS & CLASSIFICATION RULES
@@ -1129,8 +1227,8 @@ def slide_failure_deep_1a(prs):
     add_text(slide,
         "Grounded in ASR error taxonomy (Fosler-Lussier 2004) and "
         "LLM hallucination analysis (ACL 2025)",
-        MX, CT + Inches(0.28), CW, Inches(0.22),
-        size=Pt(10), color=MGRAY, italic=True)
+        MX, CT + Inches(0.30), CW, Inches(0.28),
+        size=Pt(12), color=MGRAY, italic=True)
 
     modes_1 = [
         ("1. Wrong Topic", "44.4%", "255 segments", ORANGE,
@@ -1179,15 +1277,24 @@ def slide_failure_deep_1a(prs):
 
     add_text(slide,
         "Ordered by impact \u2014 highest to lowest (continued in part 2/2)",
-        MX, Inches(6.65), CW, Inches(0.35),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.6), CW, Inches(0.4),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Failure taxonomy Part 1, ordered by impact. Wrong Topic (44.4%): the "
-        "LARGEST category — mouth shapes decoded to completely wrong domain. "
-        "Hallucination (18.8%): model invents fake text, deceptive but identifiable "
-        "by length. Right Topic Wrong Details (13.8%): clients lose trust when "
-        "output looks right but details are wrong.",
+        "Failure taxonomy Part 1, ordered by impact. Wrong Topic (44.4%, "
+        "255 of 574 below-threshold segments): the largest single category — "
+        "mouth shapes decoded to a completely wrong domain (semantic "
+        "similarity < 0.20, with or without phonetic match). Hallucination "
+        "(18.8%, 108 segments): the model invents fake text, deceptive but "
+        "identifiable by length (WER >= 100% and output longer than "
+        "reference). Right Topic, Wrong Details (13.8%, 79 segments): the "
+        "client-trust killer — output looks right (semantic >= 0.20) but "
+        "named-entity F1 < 20% or key content words substituted; the "
+        "audience can guess the topic but cannot extract the specific "
+        "claim. Categories are mutually exclusive and checked in order 1->5 "
+        "so each segment receives exactly one label. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/intelligibility/intelligibility_summary.json.",
         anim_groups, click_reveal=True)
 
 
@@ -1253,10 +1360,22 @@ def slide_failure_deep_1b(prs):
     anim_groups.append([sr])
 
     _finish(slide, 0,
-        "Failure taxonomy Part 2. Signal Loss (13.9%): empty or near-empty "
-        "output, 80 segments — detectable and filterable. Accumulated Errors "
-        "(9.1%): death by a thousand cuts, 52 segments — responds to N-best "
-        "aggregation. Together 23.0% of failures.",
+        "Failure taxonomy Part 2. Signal Loss (13.9%, 80 segments): empty or "
+        "near-empty output (length ratio < 0.3) — detectable, filterable, "
+        "and the lowest priority to fix because the failure self-reports. "
+        "Accumulated Errors (9.1%, 52 segments): death by a thousand cuts, "
+        "many small errors throughout the segment that compound to IS < "
+        "2.00 without falling into any of categories 1-3 — responds well "
+        "to N-best aggregation (ROVER, MBR), which is what Mission 6 "
+        "shipped on May 1 2026. Together categories 4 and 5 cover 23.0% "
+        "of below-threshold failures, but unlike Wrong Topic and "
+        "Hallucination they are mostly recoverable through engineering, "
+        "not modeling. Mention to peers: when we run the n-best paired "
+        "tests later in the deck, the Y+P gain we measure (+2.7 percentage "
+        "points for MBR over baseline) is concentrated in this Accumulated "
+        "Errors slice. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/beam-search/n_best_implementation.md.",
         anim_groups, click_reveal=True)
 
 
@@ -1275,9 +1394,9 @@ def slide_failure_deep_2(prs):
     add_accent_line(slide)
 
     # Three cards side by side
-    cw_card = Inches(3.8)
-    ch_card = Inches(4.9)
-    gap = Inches(0.27)
+    cw_card = Inches(3.95)
+    ch_card = Inches(5.7)
+    gap = Inches(0.21)
     total = 3 * cw_card + 2 * gap
     cx = (SL_W - total) / 2
     cy = CT + Inches(0.05)
@@ -1341,47 +1460,65 @@ def slide_failure_deep_2(prs):
 
         # Title + percentage
         card_shapes.append(add_text(slide, f'{ex["title"]}  ({ex["pct"]})',
-                 x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.35),
+                 x + Inches(0.15), cy + Inches(0.1), cw_card - Inches(0.3), Inches(0.4),
                  size=Pt(14), color=ex["color"], bold=True, align=PP_ALIGN.CENTER))
 
+        # OVERLAP fix: shrink labels to h=0.22 and push body text down by
+        # 0.05 so label bbox ends at cy+0.77 / cy+1.82 while body bboxes start
+        # at cy+0.90 / cy+1.95 \u2014 no inadvertent overlap.
         # Reference
-        card_shapes.append(add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.5),
-                 cw_card - Inches(0.3), Inches(0.22), size=Pt(9), color=LGRAY, bold=True))
+        card_shapes.append(add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.55),
+                 cw_card - Inches(0.3), Inches(0.22), size=Pt(12), color=LGRAY, bold=True))
         card_shapes.append(add_text(slide, f'\u201c{ex["ref"]}\u201d',
-                 x + Inches(0.15), cy + Inches(0.7), cw_card - Inches(0.3), Inches(0.6),
-                 size=Pt(10), color=WHITE, italic=True))
+                 x + Inches(0.15), cy + Inches(0.90), cw_card - Inches(0.3), Inches(0.65),
+                 size=Pt(12), color=WHITE, italic=True))
 
         # Hypothesis
-        card_shapes.append(add_text(slide, "Prediction:", x + Inches(0.15), cy + Inches(1.35),
-                 cw_card - Inches(0.3), Inches(0.22), size=Pt(9), color=LGRAY, bold=True))
+        card_shapes.append(add_text(slide, "Prediction:", x + Inches(0.15), cy + Inches(1.60),
+                 cw_card - Inches(0.3), Inches(0.22), size=Pt(12), color=LGRAY, bold=True))
         card_shapes.append(add_text(slide, f'\u201c{ex["hyp"]}\u201d',
-                 x + Inches(0.15), cy + Inches(1.55), cw_card - Inches(0.3), Inches(0.6),
-                 size=Pt(10), color=ex["color"], italic=True))
+                 x + Inches(0.15), cy + Inches(1.95), cw_card - Inches(0.3), Inches(0.65),
+                 size=Pt(12), color=ex["color"], italic=True))
 
         # Metrics badge
         card_shapes.append(add_text(slide, f'WER {ex["wer"]}  |  IS {ex["is_score"]}',
-                 x + Inches(0.15), cy + Inches(2.25), cw_card - Inches(0.3), Inches(0.3),
-                 size=Pt(11), color=WHITE, bold=True, align=PP_ALIGN.CENTER))
+                 x + Inches(0.15), cy + Inches(2.65), cw_card - Inches(0.3), Inches(0.32),
+                 size=Pt(12), color=WHITE, bold=True, align=PP_ALIGN.CENTER))
 
+        # OVERLAP fix: shrink the "Why this category?" label to h=0.22 and
+        # push the body text down to start at cy+3.40 (was 3.35) so the
+        # label bbox ends at cy+3.27 with a clean 0.13" gap.
         # Why explanation
         card_shapes.append(add_text(slide, ex["why_label"],
-                 x + Inches(0.15), cy + Inches(2.7),
-                 cw_card - Inches(0.3), Inches(0.22), size=Pt(9), color=TEAL, bold=True))
+                 x + Inches(0.15), cy + Inches(3.05),
+                 cw_card - Inches(0.3), Inches(0.22), size=Pt(12), color=TEAL, bold=True))
         card_shapes.append(add_text(slide, ex["why"],
-                 x + Inches(0.15), cy + Inches(2.9), cw_card - Inches(0.3), Inches(1.8),
-                 size=Pt(10), color=LGRAY))
+                 x + Inches(0.15), cy + Inches(3.40), cw_card - Inches(0.3), Inches(2.20),
+                 size=Pt(12), color=LGRAY))
 
         anim_groups.append(card_shapes)
 
     _finish(slide, 0,
-        "Three real examples for the three most confusing categories. "
-        "Hallucination vs Wrong Topic: hallucination generates MORE words than "
-        "the reference (WER >= 100%), while Wrong Topic substitutes at similar "
-        "length. Wrong Topic vs Right Topic Wrong Details: semantic similarity "
-        "threshold of 0.2 separates them — below 0.2 means completely different "
-        "subject, above 0.2 means topic preserved but details lost. "
-        "Right Topic Wrong Details is the 'frustrating near-miss' — you can tell "
-        "what the speaker was ABOUT but not what they SAID.",
+        "Three real examples drawn from our 1,497-segment evaluation, one per "
+        "category. Distribution numbers in the badges (18.8% / 44.4% / 13.8%) "
+        "are the within-failure-set shares from the taxonomy bar chart earlier "
+        "in this section, computed across the 574 below-threshold (IS<2.00) "
+        "segments. Per-card metrics: Hallucination card WER 100% / IS 0.1; "
+        "Wrong Topic card WER 97% / IS 0.38 (the highest WER on the slide "
+        "is actually Wrong Topic, not Hallucination — same length swap to "
+        "a different subject); Right Topic Wrong Details WER 81% / IS 2.14. "
+        "Hallucination vs Wrong Topic: hallucination generates MORE words "
+        "than the reference (WER >= 100%, length ratio >> 1), while Wrong "
+        "Topic substitutes at similar length (~97% WER). Wrong Topic vs "
+        "Right Topic Wrong Details: a semantic similarity threshold of "
+        "0.20 separates them — below 0.20 means completely different "
+        "subject, above 0.20 means topic preserved but details lost. "
+        "Right Topic Wrong Details is the 'frustrating near-miss' — you "
+        "can tell what the speaker was ABOUT but not what they SAID. "
+        "Mention to peers: this slide is the qualitative anchor for the "
+        "taxonomy bar chart shown earlier in this section. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/intelligibility/intelligibility_summary.json.",
         anim_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1597,8 +1734,8 @@ def slide_metric_transition(prs):
         "Card 4 (Trust gate) is recall on 1,427 non-empty segments "
         "(excludes 70 empty hypotheses). The funnel is four lenses, not four "
         "progressive refinements of the same denominator.",
-        card_x, foot_y, card_w, Inches(0.40),
-        size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+        card_x, foot_y, card_w, Inches(0.50),
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
         "Restaged May 6 2026 as Oracle -> Realistic flow under MBR. "

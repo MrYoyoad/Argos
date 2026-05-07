@@ -238,8 +238,20 @@ def slide_wer_lies(prs):
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
-        "Side-by-side: same segment scores 46.2% WER (failure) but IS 4.03 "
-        "(excellent). The prediction preserves the complete meaning.",
+        "Side-by-side: same segment scores 46.2% WER (literature would call "
+        "that a failure) but IS 4.03 out of 5 (Tier 5, Excellent). The "
+        "prediction preserves the complete meaning — six insertions and one "
+        "deletion turn 'i want you to remember all these i want you to "
+        "memorize them' into 'i want you to remember all the things that i "
+        "wanted you to memorize in my', which is semantically identical "
+        "(semantic similarity 0.90). This single example motivates the rest "
+        "of the deck: WER counts edits, IS asks whether the viewer got the "
+        "message. Mention to peers: this kind of paraphrase is the dominant "
+        "failure pattern at the top of our IS distribution and is exactly "
+        "what aggregate WER fails to score correctly. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/llm_judge/llm_judge_analysis.md (Y verdict 23.0% / "
+        "Y+P 64.9%).",
         [wer_shapes, is_shapes, bottom_shapes], click_reveal=True)
 
 
@@ -401,11 +413,14 @@ def slide_02(prs):
     # Bottom text — expert lip reader comparison
     # audit:logic_fix slide 5 — "near-zero" overstates; source says "<5%".
     # audit:hallu_pct_top1 (20.5%) — model-alone hallucination risk.
+    # OVERLAP fix: move up + shrink height so bottom edge sits above the
+    # slide-num shape (y=7.12). Original top=6.78 + height=0.6 ended at 7.38
+    # which collided with the slide-number textbox.
     bottom = add_text(slide,
         "System + human reader outperforms expert lip readers: "
         "55\u201370% vs 45\u201352% word accuracy; hallucination risk drops from "
         "20.5% (model alone) to under 5% with human filtering.",
-        MX + Inches(0.08), Inches(6.78), CW, Inches(0.6),
+        MX + Inches(1.2), Inches(6.62), CW - Inches(1.2), Inches(0.45),
         size=Pt(14), color=WHITE)
 
     # FIX (BLOCKER, docs/evaluation/pptx_fix_manifest.md, Slide 7):
@@ -487,11 +502,19 @@ def slide_03(prs):
 
     _finish(slide, 3,
         "Three components. Visual encoder (AV-HuBERT) is frozen — pre-trained "
-        "on LRS3 lip-reading data. It outputs 1024-dim features per frame. A "
-        "linear projection maps to 4096-dim (LLM input space). Then LLaMA-2-7B "
-        "generates text. Key: only the LoRA adapters and projection layer are "
-        "trained — 12.6M of 7B parameters. The LLM is upgradeable: Llama 3.1 "
-        "8B has the same hidden dimension (requires adapter retraining).",
+        "on LRS3 lip-reading data. It outputs 1024-dim features per video frame. "
+        "A linear projection maps those features to 4096-dim, the LLaMA-2-7B "
+        "input dimension. The LLM then generates text autoregressively in the "
+        "usual way. Key training insight: only the LoRA adapters (rank 16) and "
+        "the projection layer are trained — 12.6M trainable parameters, just "
+        "0.19% of the 7B total. This makes the architecture LLM-upgradeable: "
+        "Llama 3.1 8B exposes the same 4096 hidden size, so swapping the "
+        "backbone is a drop-in replacement that requires only adapter "
+        "retraining (no new projection geometry). Mention to peers: this is "
+        "the VSP-LLM design from Yeo et al. 2024, with our 4-bit quantisation "
+        "to fit a single 24 GB consumer GPU at inference. "
+        "Sources: docs/paper/VSP-LLM_paper.pdf, "
+        "docs/finetuning/training-research-notes.md (LoRA r=16 setup).",
         [[img], block_groups[0] + [arrows[0]] + block_groups[1] + [arrows[1]] + block_groups[2]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -516,7 +539,10 @@ def slide_04(prs):
             ("WER is the wrong metric \u2013 our new IS is the right one "
              "(or LLM as a judge)", {}),
         ],
-        bottom_text="Different dataset, fundamentally harder problem.",
+        bottom_text=None,  # OVERLAP fix: original "Different dataset" line at y=6.45
+                          # collided with the LRS3 reproduction note at y=6.85 and
+                          # with the slide-number shape at y=7.12. We drop the
+                          # redundant bottom_text and keep only the citation note.
         notes="The paper reports 25.4% WER on LRS3 \u2014 a curated TED talks dataset "
               "with ideal conditions. Our 1,497 YouTube segments are fundamentally "
               "harder: diverse speakers, topics, lighting, angles. Result: 63.84% "
@@ -527,12 +553,16 @@ def slide_04(prs):
               "due to pretrain/test split differences. "
               "See docs/evaluation/after_amosi_audit.md (Section F) and "
               "docs/beam-search/n_best_implementation.md.")
-    # Visible note at bottom (user added this to FINAL)
+    # OVERLAP fix (round 2): shift citation note down to y=6.80 so it clears
+    # the bullet textbox (which extends to ~y=6.70 when bottom_text=None in
+    # build_split). Earlier y=6.50 collided with last bullet (audit OVERLAP 18%).
+    # Height 0.30 -> ends at y=7.10, just above slide-number area at y=7.12.
     add_text(slide,
+        "Different dataset, fundamentally harder problem. "
         "Note: Our best LRS3 reproduction achieved 32% WER \u2014 gap likely "
         "due to pretrain/test split differences.",
-        MX, Inches(6.85), CW, Inches(0.3),
-        size=Pt(10), color=MGRAY, italic=True)
+        MX, Inches(6.80), CW, Inches(0.30),
+        size=Pt(12), color=MGRAY, italic=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 5 — THE REALITY GAP
@@ -559,14 +589,17 @@ def slide_05(prs):
         notes="1,497 diverse YouTube segments. 63.84% mean WER under MBR "
               "n-best (production default since May 2 2026; top-1 baseline "
               "64.05%) — 2.5x worse than "
-              "the paper's 25.4%. Only 25.5% useful by WER<30% (uncalibrated "
-              "bucket; the NIV-Y operating point is WER \u2264 34%, \u03ba=0.629). "
-              "And 20.6% "
+              "the paper's 25.4%. The five WER buckets together partition the "
+              "dataset: 25.5% Useful (WER<30%), 17.4% Marginal (30-50%), 17.8% "
+              "Poor (50-75%), 32.8% Unusable (75-100%), and 20.6% Hallucinated "
+              "(>100%). The 17.4% Marginal slice is the band where IS and LLM "
+              "Salvage do most of their lifting; the calibrated NIV-Y operating "
+              "point is WER \u2264 34% (\u03ba=0.629). 20.6% "
               "are hallucinations — fluent text that's completely fabricated. This "
-              "is the most dangerous failure mode. But WER is misleading — it "
-              "treats all errors equally. "
-              "See docs/evaluation/threshold_calibration_vs_opus.md and "
-              "docs/evaluation/after_amosi_audit.md.")
+              "is the most dangerous failure mode. WER treats all five buckets "
+              "the same way, which is exactly why we move on to a richer metric. "
+              "Sources: docs/evaluation/threshold_calibration_vs_opus.md, "
+              "docs/evaluation/after_amosi_audit.md (Section F).")
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 6 — WER IS BLIND
@@ -716,8 +749,8 @@ def slide_diversity_of_inputs(prs):
 
     add_text(slide,
         "Sample lip-reading frame — visual signal alone, no audio.",
-        rx, img_y + img_h + Inches(0.05), rw, Inches(0.3),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        rx, img_y + img_h + Inches(0.05), rw, Inches(0.32),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Bottom callout — payoff
     add_rect(slide, MX + Inches(1.5), Inches(6.55), CW - Inches(3.0), Inches(0.55),
@@ -811,11 +844,20 @@ def slide_visemes(prs):
         size=Pt(14), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "50-70% of English sounds are invisible on lips. Multiple sounds produce "
-        "identical mouth shapes called visemes. The poster frames show two "
-        "different speakers — their mouth shapes look nearly identical despite "
-        "saying completely different words. Context is the only disambiguation "
-        "signal, which is why the LLM component is critical.",
+        "50-70% of English sounds are invisible on lips — this is the homophene "
+        "(viseme) problem that makes lip reading fundamentally ambiguous. Multiple "
+        "phonemes such as /p, b, m/ or /t, d, n/ produce indistinguishable mouth "
+        "shapes, so any text-only lip reader has at least 30-50% irreducible "
+        "ambiguity per word. The poster frames show two different speakers whose "
+        "mouth shapes look nearly identical while saying completely different "
+        "words ('mom' vs 'bomb', 'pat' vs 'bat'). This is precisely why the "
+        "model alone hallucinates on 20.5% of segments — it has no way to "
+        "resolve homophenes without context. The LLM component supplies that "
+        "context, which is why the architecture is visual encoder + LLM rather "
+        "than visual encoder alone. "
+        "Sources: docs/evaluation/intelligibility_methodology.md (homophene "
+        "rate), docs/evaluation/llm_judge/llm_judge_analysis.md (hallucination "
+        "rate 20.5%).",
         [[lt, lb, tbl1], poster_shapes + [rt, tbl2]], click_reveal=True)
 
 
@@ -863,11 +905,12 @@ def slide_data_flow(prs):
 
         group = [r, circle, num_txt, rt]
 
-        # Arrow between steps
+        # Arrow between steps \u2014 sits inside the inter-step gap (0.15in)
+        # so it isn't covered by the next stage's rect. Height matches gap.
         if i < len(steps) - 1:
             arrow = add_text(slide, "\u2193", start_x + step_w / 2 - Inches(0.2),
-                     y + step_h - Inches(0.05), Inches(0.4), Inches(0.3),
-                     size=Pt(16), color=TEAL, align=PP_ALIGN.CENTER)
+                     y + step_h, Inches(0.4), Inches(0.15),
+                     size=Pt(12), color=TEAL, align=PP_ALIGN.CENTER)
             group.append(arrow)
 
         step_groups.append(group)
@@ -880,8 +923,10 @@ def slide_data_flow(prs):
     _finish(slide, 0,
         "Five-step data flow. Raw video at 25fps is cropped to 96x96 mouth "
         "region. AV-HuBERT extracts 1024-dim visual features. Linear projection "
-        "maps to 4096-dim LLM input space. LLaMA-2-7B generates text. The visual "
-        "encoder is frozen — only the projection layer and LoRA adapters are trained.",
+        "maps to 4096-dim LLM input space (1024 -> 4096). LLaMA-2-7B generates "
+        "text. The visual encoder is frozen — only the projection layer and "
+        "LoRA adapters are trained. "
+        "Source: docs/architecture.md (pipeline flow + data formats).",
         step_groups)
 
 

@@ -342,6 +342,67 @@ def find_picture_shapes(slide) -> list[Any]:
     return out
 
 
+def _has_corner_logo_picture(shapes_iter, sw_in: float, sh_in: float,
+                             edge_tol: float = 1.0) -> bool:
+    """Return True if any shape in `shapes_iter` is a small picture in a slide
+    corner (any of the four corners). ``edge_tol`` is the max distance in
+    inches from an edge that still counts as 'in the corner'.
+
+    Loosened from the original 0.5in threshold so legitimate corner logos
+    like the Argos brand mark at right_gap=0.66in are recognized.
+    """
+    try:
+        for shape in shapes_iter:
+            try:
+                if shape.shape_type != MSO_SHAPE_TYPE.PICTURE:
+                    continue
+                l = emu_to_in(shape.left)
+                t = emu_to_in(shape.top)
+                w = emu_to_in(shape.width)
+                h = emu_to_in(shape.height)
+                r = l + w
+                b = t + h
+                if w <= 0.7 and h <= 0.7:
+                    near_right = (sw_in - r) < edge_tol
+                    near_left = l < edge_tol
+                    near_top = t < edge_tol
+                    near_bot = (sh_in - b) < edge_tol
+                    if (near_right and (near_top or near_bot)) or \
+                       (near_left and (near_top or near_bot)):
+                        return True
+            except Exception:
+                continue
+    except Exception:
+        return False
+    return False
+
+
+def slide_has_corner_logo_anywhere(slide, sw_in: float, sh_in: float) -> bool:
+    """Look for a corner logo on the slide itself, then on its layout, then
+    on the slide master. Logos are commonly inherited from layout / master
+    rather than added per-slide; the per-slide loop in audit_slide() can also
+    miss legitimate logos when the corner threshold is too tight.
+    """
+    # Per-slide shapes (handles legitimate logos with slightly larger edge gap)
+    if _has_corner_logo_picture(slide.shapes, sw_in, sh_in):
+        return True
+    try:
+        layout = slide.slide_layout
+    except Exception:
+        layout = None
+    if layout is not None:
+        if _has_corner_logo_picture(layout.shapes, sw_in, sh_in):
+            return True
+        try:
+            master = layout.slide_master
+        except Exception:
+            master = None
+        if master is not None and _has_corner_logo_picture(
+                master.shapes, sw_in, sh_in):
+            return True
+    return False
+
+
 # ---------------------------------------------------------------------------
 # Per-slide audit
 # ---------------------------------------------------------------------------
@@ -451,12 +512,22 @@ def audit_slide(slide, slide_num: int, sw_in: float, sh_in: float,
                 text_shapes.append((shape, (l, t, r, b)))
 
         # Font-size violations.
-        # Skip the slide-number label (intentionally 9pt per add_slide_num).
+        # Skip the slide-number label (intentionally 7-9pt per add_slide_num).
+        # The renumbering loop in helpers/add_slide_num places these in the
+        # bottom-left corner with a tight bbox. Match by position+size+content
+        # so appendix-style labels ("A1", "A11b") and section markers
+        # ("S3.2") are exempted alongside plain numerics — convention is that
+        # slide-num labels are always short, ASCII, and live in the corner.
+        slide_num_text = shape_text(shape) if shape.has_text_frame else ""
         is_slide_num_label = (
             shape.has_text_frame
-            and re.fullmatch(r"\d{1,3}", shape_text(shape)) is not None
-            and emu_to_in(shape.width) <= 1.0
-            and l <= 1.5 and t >= 6.5
+            and slide_num_text
+            and len(slide_num_text) <= 6
+            # Allow numerics, appendix codes (A1, A11b), section codes (S3.2)
+            and re.fullmatch(r"[A-Za-z]?\d{0,3}[A-Za-z0-9.]{0,3}", slide_num_text)
+              is not None
+            and emu_to_in(shape.width) <= 0.6
+            and l <= 1.2 and t >= 6.8
         )
         if shape.has_text_frame and shape_text(shape) and not is_slide_num_label:
             try:
@@ -560,10 +631,19 @@ def audit_slide(slide, slide_num: int, sw_in: float, sh_in: float,
     if not logo_present and not hidden:
         # Title slides may legitimately omit logo
         if slide_num >= 2:
-            issues.append(Issue(
-                "BRAND", MINOR,
-                "No corner logo (~0.35in) detected; expected per add_logo helper.",
-            ))
+            # Logos are commonly inherited from the slide layout / master
+            # rather than added per-slide, AND the per-shape loop above uses
+            # a tight 0.5in edge threshold that misses logos at e.g. 0.66in
+            # right-gap. Re-check with a looser corner heuristic across
+            # slide / layout / master before flagging.
+            if not slide_has_corner_logo_anywhere(slide, sw_in, sh_in):
+                issues.append(Issue(
+                    "BRAND", MINOR,
+                    "No corner logo (~0.35in) detected on slide, layout, or "
+                    "master; expected per add_logo helper.",
+                ))
+            else:
+                audit.has_logo = True
 
     # Overlap detection (visible shapes, not anim triggers).
     # Only flag pairs where BOTH shapes have visible text and where neither
@@ -844,14 +924,35 @@ def audit_slide(slide, slide_num: int, sw_in: float, sh_in: float,
 # ---------------------------------------------------------------------------
 
 def list_video_files() -> dict[str, int]:
+    """Index video files in 06_demo_videos/.
+
+    IMPORTANT: only top-level files and recognized live subdirs (e.g. realtalk/).
+    Skip ``_archive_pre_*`` directories so archived duplicates with stale sizes
+    don't shadow the current files in this size-keyed dict.
+    """
     out = {}
     if not VIDEO_DIR.exists():
         return out
-    for p in VIDEO_DIR.rglob("*.mp4"):
+    # Top-level files
+    for p in VIDEO_DIR.glob("*.mp4"):
         try:
             out[p.name] = p.stat().st_size
         except OSError:
             pass
+    # Recognized live subdirs (non-archive)
+    for sub in VIDEO_DIR.iterdir():
+        if not sub.is_dir():
+            continue
+        if sub.name.startswith("_archive"):
+            continue
+        for p in sub.rglob("*.mp4"):
+            # Don't overwrite a top-level entry with a same-named subdir entry
+            if p.name in out:
+                continue
+            try:
+                out[p.name] = p.stat().st_size
+            except OSError:
+                pass
     return out
 
 

@@ -163,3 +163,78 @@ were overwritten in-place so the deck picks up the new renders automatically.
 - `/tmp/burn_workdir/run_burns.py` (driver — keep around in case we need to re-render)
 - `/tmp/burn_workdir/render_log.json` (machine-readable log)
 - `/tmp/burn_workdir/preview_*.png` (spot-check frames — not deck assets)
+
+---
+
+# Demo Video Re-Render Log — 2026-05-07 (Round 2)
+
+**Goal:** asset audit on `Argos_VSP_AFTER_AMOSI_May2026.pptx` flagged 8 of 15 video shapes as showing pre-May-6 plain captions (no tier badge, no per-word coloring). Slides 5, 20, 22, 23, 24, 63 (x3) play correctly but stylistically inconsistent with the badged renders on slides 19, 21, 64-68. This round re-renders those 8 clips with the same May-2 agreement-aware band rule and tier badge overlay used in the May-6 batch.
+
+**Renderer:** `VSP-LLM/scripts/make_burn.py --word_confidence` (same as round 1).
+**Driver:** `/tmp/burn_workdir/run_burns_round2.py` (imports helpers from `run_burns.py`).
+
+**Decode artifacts for all 8 clips:** `english_full_nbest_eval/word_confidence_v2.json` (full agreement-aware v2 sidecar — joint conf+agreement band rule applies to every clip; no fallback was needed) plus `english_full_nbest_eval/decode_output/hypo-172610.json` for ref/hyp text.
+
+**Source MP4s:** all 8 are AVSpeech segments under `datasets/english_data_2025_11_20/flat_all/`.
+
+**Slide → media → utt_id mapping** (recovered by md5-hashing embedded `ppt/media/mediaN.mp4` against `06_demo_videos/`):
+
+| Slide | media slot | IMG key (filename stem) | utt_id (segment ID) |
+|------:|---|---|---|
+| 5  | media1.mp4  | `IEa7qEkMvfQ_3__c5447488`  | `IEa7qEkMvfQ_3__c5447488_00_000000_000217` |
+| 20 | media3.mp4  | `VfJ-6nQAmtk_22__4a7cbfd1` | `VfJ-6nQAmtk_22__4a7cbfd1_00_000000_000173` |
+| 22 | media5.mp4  | `9HanJOCw2Sc_11__19c7ec4e` | `9HanJOCw2Sc_11__19c7ec4e_00_000000_000261` |
+| 23 | media6.mp4  | `a2CS82VZyO4_7__a6316c95`  | `a2CS82VZyO4_7__a6316c95_00_000000_000097` |
+| 24 | media7.mp4  | `tUcgHemnJiQ_0__2fc132c1`  | `tUcgHemnJiQ_0__2fc132c1_00_000000_000177` |
+| 63 | media8.mp4  | `ktMebjnZiSE_3__ebdf1351`  | `ktMebjnZiSE_3__ebdf1351_00_000000_000359` |
+| 63 | media9.mp4  | `2HddWQse8Mw_0__8ecb0409`  | `2HddWQse8Mw_0__8ecb0409_00_000000_000072` |
+| 63 | media10.mp4 | `00MUdHQ7GGY_8__b1480c7a`  | `00MUdHQ7GGY_8__b1480c7a_00_000000_000194` |
+
+## Result table (Round 2)
+
+| # | Slide | IMG key (stem) | Output filename | Badge | mean_prob | Size | Duration | Status |
+|---|---|---|---|---|---|---|---|---|
+| 1 |  5 | `IEa7qEkMvfQ_3__c5447488`  | `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4`  | **TRUST**         | 0.950 | 1.34 MB |  7.2 s | PASS |
+| 2 | 20 | `VfJ-6nQAmtk_22__4a7cbfd1` | `VfJ-6nQAmtk_22__4a7cbfd1_with_hyp.mp4` | **INSPECT**       | 0.746 | 0.99 MB |  7.2 s | PASS |
+| 3 | 22 | `9HanJOCw2Sc_11__19c7ec4e` | `9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4` | **INSPECT**       | 0.739 | 2.20 MB |  8.7 s | PASS |
+| 4 | 23 | `a2CS82VZyO4_7__a6316c95`  | `a2CS82VZyO4_7__a6316c95_with_hyp.mp4`  | **DON'T BELIEVE** | 0.643 | 0.72 MB |  3.3 s | PASS |
+| 5 | 24 | `tUcgHemnJiQ_0__2fc132c1`  | `tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4`  | **INSPECT**       | 0.679 | 3.09 MB |  7.1 s | PASS |
+| 6 | 63 | `ktMebjnZiSE_3__ebdf1351`  | `ktMebjnZiSE_3__ebdf1351_with_hyp.mp4`  | **TRUST**         | 0.822 | 2.53 MB | 13.5 s | PASS |
+| 7 | 63 | `2HddWQse8Mw_0__8ecb0409`  | `2HddWQse8Mw_0__8ecb0409_with_hyp.mp4`  | **DON'T BELIEVE** | 0.602 | 0.44 MB |  3.0 s | PASS |
+| 8 | 63 | `00MUdHQ7GGY_8__b1480c7a`  | `00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4`  | **DON'T BELIEVE** | 0.468 | 1.30 MB |  6.5 s | PASS |
+
+All 8 clips re-rendered successfully; no FALLBACK or SKIP. New durations match originals to within 0.05 s, confirming the same source segment was rendered.
+
+## Verification (Round 2)
+
+- All 8 outputs overwrite the originals in `06_demo_videos/` at the SAME filenames the deck's `IMG` dict references — no `presentation/config.py` or `slides_*.py` change required.
+- Spot-checked frames at t=3 s for one TRUST (slide 5), one INSPECT (slide 20) and one DON'T-BELIEVE (slide 23) clip — confirmed:
+    - Tier badge in top-right corner with correct color (blue / orange / purple)
+    - Per-word coloring active for TRUST/INSPECT clips
+    - For DON'T BELIEVE clip (slide 23, mean_prob=0.643 just below the 0.65 strip-coloring boundary): per-word coloring dropped, captions rendered white — the badge alone signals unreliability, matching `make_burn.py`'s documented strip-policy behavior.
+- Preview PNGs: `/tmp/burn_workdir/preview_round2_slide05_TRUST.png`, `/tmp/burn_workdir/preview_round2_slide20_INSPECT.png`, `/tmp/burn_workdir/preview_round2_slide23_DONTBELIEVE.png`.
+
+## Notes
+
+- **No re-decode was performed.** Every flagged segment was already covered by `english_full_nbest_eval/word_confidence_v2.json`, so the joint conf+agreement rule applied to all 8 — no conf-only fallback like the Obama clips needed in round 1.
+- ktMebjnZiSE has 2 segments in the v2 sidecar (`_00_000000_000359` and `_01_000299_000404`); the deck uses the longer one (~13.5 s duration matches `_00_000000_000359`). Verified by comparing pre-rebake duration (13.491 s) against the v2 segment lengths.
+- `presentation/config.py` IMG dict was NOT modified — every IMG key already pointed at the correct filename and the new burns overwrote the existing files in place. Next deck-render will pick up the new badged videos automatically.
+
+## Files touched (Round 2)
+
+**New / overwritten** (in `06_demo_videos/`):
+- `IEa7qEkMvfQ_3__c5447488_with_hyp.mp4`
+- `VfJ-6nQAmtk_22__4a7cbfd1_with_hyp.mp4`
+- `9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4`
+- `a2CS82VZyO4_7__a6316c95_with_hyp.mp4`
+- `tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4`
+- `ktMebjnZiSE_3__ebdf1351_with_hyp.mp4`
+- `2HddWQse8Mw_0__8ecb0409_with_hyp.mp4`
+- `00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4`
+
+**Backups** (in `06_demo_videos/_archive_pre_may6/`): same 8 filenames, copied 2026-05-07 prior to overwrite.
+
+**Driver / log:**
+- `/tmp/burn_workdir/run_burns_round2.py` (round-2 driver)
+- `/tmp/burn_workdir/render_log_round2.json` (machine-readable log)
+- `/tmp/burn_workdir/preview_round2_*.png` (spot-check frames)

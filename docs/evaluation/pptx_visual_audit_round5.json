@@ -1,0 +1,1551 @@
+{
+  "generated_by": "scripts/audit_pptx_visual_structure.py",
+  "decks": [
+    {
+      "deck_path": "/home/ubuntu/presentation_materials_20260224/Argos_VSP_AFTER_AMOSI_May2026.pptx",
+      "deck_name": "Argos_VSP_AFTER_AMOSI_May2026.pptx",
+      "slide_count": 89,
+      "slide_size_in": [
+        13.33,
+        7.5
+      ],
+      "issue_totals": {
+        "BLOCKER": 0,
+        "MAJOR": 0,
+        "MINOR": 0,
+        "TOTAL": 0
+      },
+      "issues_by_category": {},
+      "hidden_slides": [
+        [
+          81,
+          "A1: Homophenes \u2014 The Lip-Reading Problem"
+        ],
+        [
+          82,
+          "A3: IS Component Correlation"
+        ],
+        [
+          83,
+          "Appendix: PCA Loadings on the 6 IS Signals"
+        ],
+        [
+          84,
+          "Appendix: Human-IS Path B (Pre-Study Estimates)"
+        ],
+        [
+          85,
+          "A4: LLM Salvage \u2014 Recoverable Segments"
+        ],
+        [
+          86,
+          "A5: LLM Salvage \u2014 Curated Examples"
+        ],
+        [
+          87,
+          "A9: Context Evaluation \u2014 Transition Details"
+        ],
+        [
+          88,
+          "Appendix: McNemar Tests \u2014 N-Best Methods vs Baseline"
+        ],
+        [
+          89,
+          "Two Environments: Development and Production"
+        ]
+      ],
+      "section_divider_candidates": [],
+      "video_references": [
+        {
+          "slide": 5,
+          "title": "What is Visual Speech Processing?",
+          "partname": "/ppt/media/media1.mp4",
+          "embedded_filename": "media1.mp4",
+          "embedded_size": 1405050,
+          "matched_on_disk": [
+            "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4"
+          ],
+          "duration_s": 7.241
+        },
+        {
+          "slide": 5,
+          "title": "What is Visual Speech Processing?",
+          "partname": "/ppt/media/media1.mp4",
+          "embedded_filename": "media1.mp4",
+          "embedded_size": 1405050,
+          "matched_on_disk": [
+            "IEa7qEkMvfQ_3__c5447488_with_hyp.mp4"
+          ],
+          "duration_s": 7.241
+        },
+        {
+          "slide": 19,
+          "title": "Judge Example 1: Named Entity Swap",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 19,
+          "title": "Judge Example 1: Named Entity Swap",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 20,
+          "title": "Judge Example 2: Truncated but Core Preserved",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1037612,
+          "matched_on_disk": [
+            "VfJ-6nQAmtk_22__4a7cbfd1_with_hyp.mp4"
+          ],
+          "duration_s": 7.222
+        },
+        {
+          "slide": 20,
+          "title": "Judge Example 2: Truncated but Core Preserved",
+          "partname": "/ppt/media/media3.mp4",
+          "embedded_filename": "media3.mp4",
+          "embedded_size": 1037612,
+          "matched_on_disk": [
+            "VfJ-6nQAmtk_22__4a7cbfd1_with_hyp.mp4"
+          ],
+          "duration_s": 7.222
+        },
+        {
+          "slide": 21,
+          "title": "Judge Example 3: Technical Vocabulary Drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 21,
+          "title": "Judge Example 3: Technical Vocabulary Drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 22,
+          "title": "Judge Example 4: Scientific Vocabulary Lost",
+          "partname": "/ppt/media/media5.mp4",
+          "embedded_filename": "media5.mp4",
+          "embedded_size": 2307391,
+          "matched_on_disk": [
+            "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4"
+          ],
+          "duration_s": 8.731
+        },
+        {
+          "slide": 22,
+          "title": "Judge Example 4: Scientific Vocabulary Lost",
+          "partname": "/ppt/media/media5.mp4",
+          "embedded_filename": "media5.mp4",
+          "embedded_size": 2307391,
+          "matched_on_disk": [
+            "9HanJOCw2Sc_11__19c7ec4e_with_hyp.mp4"
+          ],
+          "duration_s": 8.731
+        },
+        {
+          "slide": 23,
+          "title": "Judge Example 5: Cooking Domain Confusion",
+          "partname": "/ppt/media/media6.mp4",
+          "embedded_filename": "media6.mp4",
+          "embedded_size": 757888,
+          "matched_on_disk": [
+            "a2CS82VZyO4_7__a6316c95_with_hyp.mp4"
+          ],
+          "duration_s": 3.251
+        },
+        {
+          "slide": 23,
+          "title": "Judge Example 5: Cooking Domain Confusion",
+          "partname": "/ppt/media/media6.mp4",
+          "embedded_filename": "media6.mp4",
+          "embedded_size": 757888,
+          "matched_on_disk": [
+            "a2CS82VZyO4_7__a6316c95_with_hyp.mp4"
+          ],
+          "duration_s": 3.251
+        },
+        {
+          "slide": 24,
+          "title": "Judge Example 6: Topic Hijack",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 3240279,
+          "matched_on_disk": [
+            "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4"
+          ],
+          "duration_s": 7.083
+        },
+        {
+          "slide": 24,
+          "title": "Judge Example 6: Topic Hijack",
+          "partname": "/ppt/media/media7.mp4",
+          "embedded_filename": "media7.mp4",
+          "embedded_size": 3240279,
+          "matched_on_disk": [
+            "tUcgHemnJiQ_0__2fc132c1_with_hyp.mp4"
+          ],
+          "duration_s": 7.083
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media8.mp4",
+          "embedded_filename": "media8.mp4",
+          "embedded_size": 2655020,
+          "matched_on_disk": [
+            "ktMebjnZiSE_3__ebdf1351_with_hyp.mp4"
+          ],
+          "duration_s": 13.491
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media8.mp4",
+          "embedded_filename": "media8.mp4",
+          "embedded_size": 2655020,
+          "matched_on_disk": [
+            "ktMebjnZiSE_3__ebdf1351_with_hyp.mp4"
+          ],
+          "duration_s": 13.491
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media9.mp4",
+          "embedded_filename": "media9.mp4",
+          "embedded_size": 460632,
+          "matched_on_disk": [
+            "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4"
+          ],
+          "duration_s": 3.019
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media9.mp4",
+          "embedded_filename": "media9.mp4",
+          "embedded_size": 460632,
+          "matched_on_disk": [
+            "2HddWQse8Mw_0__8ecb0409_with_hyp.mp4"
+          ],
+          "duration_s": 3.019
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media10.mp4",
+          "embedded_filename": "media10.mp4",
+          "embedded_size": 1360453,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.479
+        },
+        {
+          "slide": 63,
+          "title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "partname": "/ppt/media/media10.mp4",
+          "embedded_filename": "media10.mp4",
+          "embedded_size": 1360453,
+          "matched_on_disk": [
+            "00MUdHQ7GGY_8__b1480c7a_with_hyp.mp4"
+          ],
+          "duration_s": 6.479
+        },
+        {
+          "slide": 64,
+          "title": "Demo - Obama Trust Tier",
+          "partname": "/ppt/media/media11.mp4",
+          "embedded_filename": "media11.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 64,
+          "title": "Demo - Obama Trust Tier",
+          "partname": "/ppt/media/media11.mp4",
+          "embedded_filename": "media11.mp4",
+          "embedded_size": 3119635,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_14_004195_004555.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 65,
+          "title": "Demo - Obama: TRUST under conf-only fallback (no n-best sidecar - partial recovery still narrated)",
+          "partname": "/ppt/media/media12.mp4",
+          "embedded_filename": "media12.mp4",
+          "embedded_size": 3128275,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 65,
+          "title": "Demo - Obama: TRUST under conf-only fallback (no n-best sidecar - partial recovery still narrated)",
+          "partname": "/ppt/media/media12.mp4",
+          "embedded_filename": "media12.mp4",
+          "embedded_size": 3128275,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_31_009290_009650.mp4"
+          ],
+          "duration_s": 12.079
+        },
+        {
+          "slide": 66,
+          "title": "Demo - INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)",
+          "partname": "/ppt/media/media13.mp4",
+          "embedded_filename": "media13.mp4",
+          "embedded_size": 2520000,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4"
+          ],
+          "duration_s": 12.04
+        },
+        {
+          "slide": 66,
+          "title": "Demo - INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)",
+          "partname": "/ppt/media/media13.mp4",
+          "embedded_filename": "media13.mp4",
+          "embedded_size": 2520000,
+          "matched_on_disk": [
+            "050111_OsamaBinLadenStatement_HD_05_001498_001858.mp4"
+          ],
+          "duration_s": 12.04
+        },
+        {
+          "slide": 67,
+          "title": "Demo - Strip: entity swap auto-flagged",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 67,
+          "title": "Demo - Strip: entity swap auto-flagged",
+          "partname": "/ppt/media/media2.mp4",
+          "embedded_filename": "media2.mp4",
+          "embedded_size": 1375351,
+          "matched_on_disk": [
+            "4D634qUi2BI_0__93a9f2b4_with_hyp.mp4"
+          ],
+          "duration_s": 4.9
+        },
+        {
+          "slide": 68,
+          "title": "Demo - Salvage: technical vocabulary drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        },
+        {
+          "slide": 68,
+          "title": "Demo - Salvage: technical vocabulary drift",
+          "partname": "/ppt/media/media4.mp4",
+          "embedded_filename": "media4.mp4",
+          "embedded_size": 2540214,
+          "matched_on_disk": [
+            "c6eBrYor21I_10__70697c08_Part1_with_hyp.mp4"
+          ],
+          "duration_s": 12.748
+        }
+      ],
+      "slides": [
+        {
+          "slide_num": 1,
+          "slide_title": "Argos VSP",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": true,
+          "notes_word_count": 36,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 2,
+          "slide_title": "What was done? (1/2)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 53,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 3,
+          "slide_title": "What was done? (2/2)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 49,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 4,
+          "slide_title": "Presentation Overview",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 19,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 69,
+          "animation_groups": 4,
+          "issues": []
+        },
+        {
+          "slide_num": 5,
+          "slide_title": "What is Visual Speech Processing?",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 113,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 6,
+          "slide_title": "The Invisible Problem: Visemes",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 124,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 7,
+          "slide_title": "How It Works: Three Components",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 131,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 8,
+          "slide_title": "How It Works: Data Flow",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 29,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 54,
+          "animation_groups": 4,
+          "issues": []
+        },
+        {
+          "slide_num": 9,
+          "slide_title": "8-Stage Automated Pipeline",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 56,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 84,
+          "animation_groups": 6,
+          "issues": []
+        },
+        {
+          "slide_num": 10,
+          "slide_title": "The Benchmark: Paper vs Reality",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 76,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 11,
+          "slide_title": "The Reality Gap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 12,
+          "slide_title": "Same WER, Different Effects",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 55,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 13,
+          "slide_title": "Diversity of Inputs \u2014 Not LRS3",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 80,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 14,
+          "slide_title": "WER: The Metric That Lies",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 129,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 15,
+          "slide_title": "RESEARCH FINDINGS",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 5,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 24,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 16,
+          "slide_title": "What the AVSR Literature Reports vs What Users Get",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 18,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 17,
+          "slide_title": "LLM-as-a-Judge: Gold Standard (1,497 Pairs)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 159,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 18,
+          "slide_title": "LLM Judge: Deep Dive",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 143,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 19,
+          "slide_title": "Judge Example 1: Named Entity Swap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 109,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 20,
+          "slide_title": "Judge Example 2: Truncated but Core Preserved",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 113,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 21,
+          "slide_title": "Judge Example 3: Technical Vocabulary Drift",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 33,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 22,
+          "slide_title": "Judge Example 4: Scientific Vocabulary Lost",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 41,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 23,
+          "slide_title": "Judge Example 5: Cooking Domain Confusion",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 122,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 24,
+          "slide_title": "Judge Example 6: Topic Hijack",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 45,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 25,
+          "slide_title": "Where IS and the Judge Disagree",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 20,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 224,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 26,
+          "slide_title": "Context Exposes Hidden Failures",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 195,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 27,
+          "slide_title": "Why LLM as a Judge Is Not Enough",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 21,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 68,
+          "animation_groups": 6,
+          "issues": []
+        },
+        {
+          "slide_num": 28,
+          "slide_title": "IS Signals: Word Accuracy & Length",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 19,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 127,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 29,
+          "slide_title": "IS Signals: Semantic Similarity",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 141,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 30,
+          "slide_title": "IS Signals: Phonetic & Named Entities",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 153,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 31,
+          "slide_title": "Do 6 Signals Actually Measure 6 Things?",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 112,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 32,
+          "slide_title": "IS in Action: Two Real Segments",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 62,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 51,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 33,
+          "slide_title": "Two Dimensions of Quality (PCA)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 91,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 34,
+          "slide_title": "Model Comparison: IS Profiles",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 223,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 35,
+          "slide_title": "The Gap: Where WER Lies Most",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 163,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 36,
+          "slide_title": "A8: LLM Judge \u00d7 IS Tier Cross-Tabulation",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 134,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 37,
+          "slide_title": "Where the System Works: Oracle vs Realistic",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 34,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 177,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 38,
+          "slide_title": "From Literature Metric to User-Trusted Output",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 20,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 146,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 39,
+          "slide_title": "Failure Mode Taxonomy",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 23,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 173,
+          "animation_groups": 5,
+          "issues": []
+        },
+        {
+          "slide_num": 40,
+          "slide_title": "Failure Mode Taxonomy (1/2): Highest Impact First",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 22,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 41,
+          "slide_title": "Failure Mode Taxonomy (2/2): Accumulated \u2192 Signal Loss",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 137,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 42,
+          "slide_title": "Failure Modes: Real Examples",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 31,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 188,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 43,
+          "slide_title": "LLM Salvage: Three Real Recoveries",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 32,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 123,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 44,
+          "slide_title": "LLM Salvage: Domain Context Fills the Gaps",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 32,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 119,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 45,
+          "slide_title": "A6: Failure Mode Examples",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 112,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 46,
+          "slide_title": "Confidence Without Ground Truth",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 7,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 64,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 47,
+          "slide_title": "Two Layers of Confidence (Per-Word + Per-Segment)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 16,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 41,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 48,
+          "slide_title": "Confidence Scoring (shipped April 30 2026) \u2014 Surface the Good 65%",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 171,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 49,
+          "slide_title": "Per-Word Confidence Bands - Distribution",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 122,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 50,
+          "slide_title": "Band Reliability - Overall P(correct | band)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 141,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 51,
+          "slide_title": "Green Reliability Depends on Segment Quality",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 145,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 52,
+          "slide_title": "Green Leakage - When High Confidence Misleads",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 25,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 56,
+          "animation_groups": 4,
+          "issues": []
+        },
+        {
+          "slide_num": 53,
+          "slide_title": "Three Calibrated Thresholds on Segment mean_prob",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 121,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 54,
+          "slide_title": "Three-Tier Policy - Per-Tier Counts and Reliability",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 161,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 55,
+          "slide_title": "Per-Word Bands Stratified by NIV Outcome",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 68,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 56,
+          "slide_title": "Joint Confidence + Beam-Agreement Band Rule",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 62,
+          "animation_groups": 5,
+          "issues": []
+        },
+        {
+          "slide_num": 57,
+          "slide_title": "Beam Agreement Adds Independent Signal",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 58,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 58,
+          "slide_title": "Trust-Gate Operating Points (per-segment)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 8,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 52,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 59,
+          "slide_title": "N-best Aggregation: From One to All 20 Hypotheses (Mission 6)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 94,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 60,
+          "slide_title": "N-best Aggregation: v3 Judge Paired Tests",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 193,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 61,
+          "slide_title": "Why MBR Won the Default-Display Slot",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 98,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 62,
+          "slide_title": "v1 vs v3 Judge: A Prompt-Design Lesson",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 13,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 71,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 63,
+          "slide_title": "Demo: OK \u2192 Almost There \u2192 Hallucination",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 136,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 64,
+          "slide_title": "Demo - Obama Trust Tier",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 127,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 65,
+          "slide_title": "Demo - Obama: TRUST under conf-only fallback (no n-best sidecar - partial recovery still narrated)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 144,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 66,
+          "slide_title": "Demo - INSPECT (closest to STRIP in the Obama set; lowest mean_prob = 0.799)",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 149,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 67,
+          "slide_title": "Demo - Strip: entity swap auto-flagged",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 127,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 68,
+          "slide_title": "Demo - Salvage: technical vocabulary drift",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 135,
+          "animation_groups": 3,
+          "issues": []
+        },
+        {
+          "slide_num": 69,
+          "slide_title": "FUTURE DIRECTIONS",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 25,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 70,
+          "slide_title": "Starting from 61.9%, Not 25%",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 140,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 71,
+          "slide_title": "Five Phases \u2014 From IS 2.5 to Target IS 3.3\u20133.7",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 17,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 241,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 72,
+          "slide_title": "IS Improvement Roadmap \u2014 From 2.5 to 3.5",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 22,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 73,
+          "slide_title": "Stronger LLM + Smart Prompts = Force Multiplier",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 14,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 228,
+          "animation_groups": 2,
+          "issues": []
+        },
+        {
+          "slide_num": 74,
+          "slide_title": "LLM Upgrade: Why It Matters",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 27,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 302,
+          "animation_groups": 8,
+          "issues": []
+        },
+        {
+          "slide_num": 75,
+          "slide_title": "Fine-Tuning: Limited Data, Limited Gains",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 7,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 139,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 76,
+          "slide_title": "Arabic Pipeline: Replication Roadmap",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 15,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 107,
+          "animation_groups": 7,
+          "issues": []
+        },
+        {
+          "slide_num": 77,
+          "slide_title": "AV-HuBERT: Why It\u2019s Not Language-Locked",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 86,
+          "animation_groups": 6,
+          "issues": []
+        },
+        {
+          "slide_num": 78,
+          "slide_title": "Arabic Adaptation: What Changes",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 117,
+          "animation_groups": 7,
+          "issues": []
+        },
+        {
+          "slide_num": 79,
+          "slide_title": "Key Takeaways",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 24,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 170,
+          "animation_groups": 4,
+          "issues": []
+        },
+        {
+          "slide_num": 80,
+          "slide_title": "Thank You",
+          "hidden": false,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": true,
+          "has_slide_number": true,
+          "notes_word_count": 9,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 81,
+          "slide_title": "A1: Homophenes \u2014 The Lip-Reading Problem",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 102,
+          "animation_groups": 1,
+          "issues": []
+        },
+        {
+          "slide_num": 82,
+          "slide_title": "A3: IS Component Correlation",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 131,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 83,
+          "slide_title": "Appendix: PCA Loadings on the 6 IS Signals",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 129,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 84,
+          "slide_title": "Appendix: Human-IS Path B (Pre-Study Estimates)",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 119,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 85,
+          "slide_title": "A4: LLM Salvage \u2014 Recoverable Segments",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 10,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 37,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 86,
+          "slide_title": "A5: LLM Salvage \u2014 Curated Examples",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 6,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 29,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 87,
+          "slide_title": "A9: Context Evaluation \u2014 Transition Details",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 11,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 135,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 88,
+          "slide_title": "Appendix: McNemar Tests \u2014 N-Best Methods vs Baseline",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 9,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 163,
+          "animation_groups": 0,
+          "issues": []
+        },
+        {
+          "slide_num": 89,
+          "slide_title": "Two Environments: Development and Production",
+          "hidden": true,
+          "layout_name": "Blank",
+          "shape_count": 12,
+          "has_video": false,
+          "has_logo": false,
+          "has_slide_number": false,
+          "notes_word_count": 38,
+          "animation_groups": 1,
+          "issues": []
+        }
+      ]
+    }
+  ]
+}

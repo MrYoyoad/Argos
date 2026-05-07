@@ -119,9 +119,9 @@ def slide_17(prs):
                  long_arrow_w, lw, fill_color=TEAL, border_color=None),
         # Arrowhead at right end
         add_text(slide, "\u25B6",
-                 long_arrow_end_x - Inches(0.12), long_arrow_cy - Inches(0.12),
-                 Inches(0.24), Inches(0.24),
-                 size=Pt(10), color=TEAL, align=PP_ALIGN.CENTER),
+                 long_arrow_end_x - Inches(0.14), long_arrow_cy - Inches(0.14),
+                 Inches(0.28), Inches(0.28),
+                 size=Pt(12), color=TEAL, align=PP_ALIGN.CENTER),
     ]
 
     # Slot 3: LRS3 Convert
@@ -143,19 +143,21 @@ def slide_17(prs):
                              fill_color=SCORAL, border_color=None))
     # Down-arrowhead into ASR
     asr_grp.append(add_text(slide, "\u25BC",
-                    branch_cx - Inches(0.1), asr_y - Inches(0.24),
-                    Inches(0.2), Inches(0.24),
-                    size=Pt(10), color=SCORAL, align=PP_ALIGN.CENTER))
+                    branch_cx - Inches(0.12), asr_y - Inches(0.26),
+                    Inches(0.24), Inches(0.28),
+                    size=Pt(12), color=SCORAL, align=PP_ALIGN.CENTER))
 
     # ASR box
     asr_grp += _box("3. ASR", "Whisper\ntranscription", BLUE, asr_x, asr_y)
 
-    # "evaluation only" annotation below ASR box
-    asr_grp.append(add_text(slide, "evaluation only",
-                    asr_x, asr_y + box_h + Inches(0.02),
-                    box_w, Inches(0.22),
-                    size=Pt(9), color=SCORAL, italic=True, bold=True,
-                    align=PP_ALIGN.CENTER))
+    # "evaluation only" annotation \u2014 placed to the RIGHT of the ASR box rather
+    # than below it, because the red "Existed in academic repo" outline label
+    # occupies the band immediately below ASR (audit OVERLAP/OCCLUSION 86%).
+    asr_grp.append(add_text(slide, "evaluation\nonly",
+                    asr_x + box_w + Inches(0.08), asr_y + Inches(0.18),
+                    Inches(1.4), Inches(0.85),
+                    size=Pt(12), color=SCORAL, italic=True, bold=True,
+                    align=PP_ALIGN.LEFT))
 
     # Coral L-connector from ASR to Outputs (row 2, slot 3)
     outputs_x = start_x + 3 * step
@@ -177,9 +179,9 @@ def slide_17(prs):
                              fill_color=SCORAL, border_color=None))
     # Down-arrowhead into Outputs
     asr_grp.append(add_text(slide, "\u25BC",
-                    outputs_cx - Inches(0.1), row2_y - Inches(0.24),
-                    Inches(0.2), Inches(0.24),
-                    size=Pt(10), color=SCORAL, align=PP_ALIGN.CENTER))
+                    outputs_cx - Inches(0.12), row2_y - Inches(0.26),
+                    Inches(0.24), Inches(0.28),
+                    size=Pt(12), color=SCORAL, align=PP_ALIGN.CENTER))
 
     anim_groups.append(asr_grp)
 
@@ -202,19 +204,46 @@ def slide_17(prs):
                              fill_color=TEAL, border_color=None))
     # Arrowhead pointing into Manifests
     turn_grp.append(add_text(slide, "\u25BC",
-                    r2_start_cx - Inches(0.1), row2_y - Inches(0.24),
-                    Inches(0.2), Inches(0.24),
-                    size=Pt(10), color=TEAL, align=PP_ALIGN.CENTER))
-    anim_groups.append(turn_grp)
+                    r2_start_cx - Inches(0.12), row2_y - Inches(0.26),
+                    Inches(0.24), Inches(0.28),
+                    size=Pt(12), color=TEAL, align=PP_ALIGN.CENTER))
+    # Merge LRS3->Manifests connector with the previous (LRS3 Convert) group
+    # so click cadence stays low — connector animates with that reveal.
+    anim_groups[-1].extend(turn_grp)
 
-    # ── Row 2 ──
+    # Red outline highlighting stages 6-7 (existed in academic repo).
+    # Drawn BEFORE row 2 boxes so the K-means / LLM Decode labels remain on
+    # top in z-order. Audit flagged the labels as "100% covered" otherwise;
+    # the red box has transparent fill so visually it never occluded them.
+    s6_x = start_x + 1 * step
+    s7_x = start_x + 2 * step
+    red_box_x = s6_x - Inches(0.1)
+    red_box_w = (s7_x + box_w) - s6_x + Inches(0.2)
+    red_box = add_rect(slide, red_box_x, row2_y - Inches(0.1),
+                       red_box_w, box_h + Inches(0.2),
+                       fill_color=None, border_color=RED, border_width=Pt(2.5),
+                       corner_radius=True)
+    red_label = add_text(slide, "Existed in academic repo",
+                         red_box_x, row2_y - Inches(0.30),  # audit:fix_round3 down toward row2 (away from ASR branch)
+                         red_box_w, Inches(0.22),
+                         size=Pt(12), color=RED, bold=True,
+                         align=PP_ALIGN.CENTER)
+
+    # ── Row 2 ── build shapes first; group into pairs to keep the click
+    # cadence at <=8 (audit flagged 10 click-step groups).
+    row2_shapes = []
     for i, (name, sub, color) in enumerate(row2):
         x = start_x + i * step
         grp = _box(name, sub, color, x, row2_y)
         if i > 0:
             ax = start_x + (i - 1) * step + box_w
             grp = _h_arrow(ax, row2_y) + grp
-        anim_groups.append(grp)
+        row2_shapes.append(grp)
+
+    # Group: Manifests + K-means + red highlight reveal (one click).
+    anim_groups.append(row2_shapes[0] + row2_shapes[1] + [red_box, red_label])
+    # Group: LLM Decode + Outputs (one click).
+    anim_groups.append(row2_shapes[2] + row2_shapes[3])
 
     # ── Legend — compact, single row ──
     final_group = []
@@ -231,32 +260,16 @@ def slide_17(prs):
         final_group.append(add_rect(slide, lx, legend_y, leg_sz, leg_sz,
                                  fill_color=clr))
         final_group.append(add_text(slide, lbl,
-                 lx + Inches(0.28), legend_y - Inches(0.02),
-                 Inches(2.0), Inches(0.25), size=Pt(11), color=WHITE))
+                 lx + Inches(0.28), legend_y - Inches(0.04),
+                 Inches(2.0), Inches(0.28), size=Pt(12), color=WHITE))
 
     # Repo attribution below legend
     repo_y = legend_y + Inches(0.35)
     final_group.append(add_text(slide,
              "auto_avsr  \u00b7  av_hubert  \u00b7  VSP-LLM",
-             start_x, repo_y, total_w, Inches(0.22),
-             size=Pt(9), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+             start_x, repo_y, total_w, Inches(0.28),
+             size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
     anim_groups.append(final_group)
-
-    # Red outline highlighting stages 6-7 (existed in academic repo)
-    s6_x = start_x + 1 * step
-    s7_x = start_x + 2 * step
-    red_box_x = s6_x - Inches(0.1)
-    red_box_w = (s7_x + box_w) - s6_x + Inches(0.2)
-    red_box = add_rect(slide, red_box_x, row2_y - Inches(0.1),
-                       red_box_w, box_h + Inches(0.2),
-                       fill_color=None, border_color=RED, border_width=Pt(2.5),
-                       corner_radius=True)
-    red_label = add_text(slide, "Existed in academic repo",
-                         red_box_x, row2_y - Inches(0.35),
-                         red_box_w, Inches(0.22),
-                         size=Pt(10), color=RED, bold=True,
-                         align=PP_ALIGN.CENTER)
-    anim_groups.append([red_box, red_label])
 
     _finish(slide, 0,
         "8-stage automated pipeline built from 3 research repos (auto_avsr, "

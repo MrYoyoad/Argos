@@ -224,8 +224,11 @@ def slide_15(prs):
         "Right: 'carry strap' becomes 'holocaust denier' (hallucination, "
         "IS 0.8 - fluent but completely fabricated). Click each video to play. "
         "BLOCKER fix May 2026: animation references previously orphaned spids "
-        "[4,7,10]; rebuilt to pass real shape handles. "
-        "Source: docs/evaluation/pptx_visual_audit.json (slide 48).",
+        "[4,7,10]; rebuilt to pass real shape handles. Mention to peers: this "
+        "is the qualitative bridge from the confidence section into the "
+        "demo segments that follow. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/llm_judge/llm_judge_analysis.md.",
         anim_groups, click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -414,19 +417,37 @@ def slide_25b(prs):
          "that don\u2019t affect meaning (WER\u2212WWER \u2265 10pp)"),
     ]
 
+    # Cards shrunk from full CW to 7.4" to make room on the right for the
+    # newly embedded P_llm_salvage stack plot (MBR-IS, recovery types).
+    # Description column also shrinks; text reflows but content preserved.
+    card_w = Inches(7.4)
     py = CT + Inches(0.55)
     card_groups = []
     for name, count, color, desc in categories:
-        r = add_rect(slide, MX, py, CW, Inches(0.7), fill_color=NAVY2,
+        r = add_rect(slide, MX, py, card_w, Inches(0.7), fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
         t1 = add_text(slide, f"{name} ({count})",
-                 MX + Inches(0.2), py + Inches(0.05), Inches(3.0), Inches(0.3),
+                 MX + Inches(0.2), py + Inches(0.05), Inches(2.6), Inches(0.3),
                  size=Pt(13), color=color, bold=True)
         t2 = add_text(slide, desc,
-                 MX + Inches(3.3), py + Inches(0.08), Inches(8.5), Inches(0.55),
-                 size=Pt(11), color=LGRAY)
+                 MX + Inches(2.85), py + Inches(0.08),
+                 card_w - Inches(2.95), Inches(0.55),
+                 size=Pt(10), color=LGRAY)
         card_groups.append([r, t1, t2])
         py += Inches(0.78)
+
+    # Right column \u2014 regenerated P_llm_salvage stack plot (MBR-IS).
+    # Same 6 recovery types as the left cards, visualised as a stacked bar.
+    img_w = Inches(4.55)
+    img_h = Inches(2.2)         # ratio 2.07 \u2192 height 2.20"
+    img_x = MX + card_w + Inches(0.15)
+    img_y = CT + Inches(0.55)
+    img_salvage = add_image(slide, "P_llm_salvage", img_x, img_y,
+                            width=img_w, height=img_h)
+    cap_salvage = add_text(slide,
+        "Right: stacked recovery-types plot (MBR-IS).",
+        img_x, img_y + img_h + Inches(0.05), img_w, Inches(0.3),
+        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     add_text(slide,
         "Categories overlap \u2014 a segment can exhibit multiple recovery signals.",
@@ -436,8 +457,14 @@ def slide_25b(prs):
     _finish(slide, 0,
         "6 salvage categories explained in plain English. Phonetic Bridge is "
         "the largest (93 segments). Categories overlap. Each represents a "
-        "different mechanism by which meaning survives despite high WER.",
-        card_groups)
+        "different mechanism by which meaning survives despite high WER. "
+        "Plot embed (May 2026): the regenerated P_llm_salvage.png stack "
+        "lives in the right column \u2014 same 6 recovery types computed against "
+        "MBR-IS components, gives the audience a quantitative summary "
+        "alongside the per-category descriptions. Cards were shrunk from "
+        "full width to 7.4\" and description font dropped from 11pt to "
+        "10pt to make room.",
+        card_groups + [[img_salvage, cap_salvage]])
 
 
 def slide_25c(prs):
@@ -607,19 +634,32 @@ def slide_25d(prs):
                  size=Pt(12), color=ex["color"], italic=True)
 
         # How it's recovered
+        # OVERLAP fix: shrink the recovery-text body height from 2.20 to 2.00
+        # so it ends at cy+5.05 = 6.95 — clear of the slide-number area
+        # (y=7.12). Original h=2.20 ended at cy+5.25 = 7.15 and overlapped
+        # the bottom-left number shape.
         add_text(slide, "How a viewer recovers this:",
                  x + Inches(0.15), cy + Inches(2.78),
                  cw_card - Inches(0.3), Inches(0.25), size=Pt(12), color=TEAL, bold=True)
         add_text(slide, ex["how"],
-                 x + Inches(0.15), cy + Inches(3.05), cw_card - Inches(0.3), Inches(2.2),
+                 x + Inches(0.15), cy + Inches(3.05), cw_card - Inches(0.3), Inches(2.00),
                  size=Pt(12), color=WHITE)
 
     _finish(slide, 0,
-        "Three real salvage examples from different recovery categories. "
-        "Phonetic Bridge (IS 1.29): lip-reading confusions that are linguistically "
-        "plausible, not hallucinations. Semantic Preservation (IS 2.18): WER 75% "
-        "but core meaning intact. Structure Match (IS 2.55): perfect grammar, "
-        "only a number changed. Each shows WHY the heuristic says recoverable.",
+        "Three real salvage examples drawn from the LLM-Salvage analysis "
+        "(165 of 900 metric-failed segments are recoverable, 18.3%). The "
+        "card on the left shows a Phonetic Bridge (IS 1.29, WER 150%) where "
+        "lip-shape collisions produce linguistically plausible but wrong "
+        "words yet a viewer with religious context recovers the meaning. "
+        "The middle card shows Semantic Preservation (IS 2.18, WER 75%) — "
+        "core meaning intact even though every function word shifted. The "
+        "right card shows Structure Match (IS 2.55, WER 40%) — perfect "
+        "grammar with only a number changed; a viewer reads 'many students "
+        "over 10 years' even though the exact figure (8,616 vs 1,600) is "
+        "wrong. Each example illustrates one of the six recovery categories "
+        "the llm_context_prob heuristic uses to flag salvage. "
+        "Sources: docs/evaluation/llm_salvage/llm_salvage_analysis.md, "
+        "docs/evaluation/llm_salvage/salvage_example_gallery.md.",
         [[c] for c in card_shapes], click_reveal=True)
 
 
@@ -727,23 +767,32 @@ def slide_25e(prs):
                  size=Pt(12), color=ex["color"], italic=True)
 
         # How it's recovered
+        # OVERLAP fix (mirror slide_25d): shrink recovery-text body height
+        # from 2.20 to 2.00 so it ends at cy+5.05 = 6.95 — clear of the
+        # slide-number area at y=7.12.
         add_text(slide, "How a wise viewer recovers this:",
                  x + Inches(0.15), cy + Inches(2.78),
                  cw_card - Inches(0.3), Inches(0.25), size=Pt(12), color=TEAL, bold=True)
         add_text(slide, ex["how"],
-                 x + Inches(0.15), cy + Inches(3.05), cw_card - Inches(0.3), Inches(2.2),
+                 x + Inches(0.15), cy + Inches(3.05), cw_card - Inches(0.3), Inches(2.00),
                  size=Pt(12), color=WHITE)
 
     _finish(slide, 0,
         "Three more salvage examples emphasising domain-context recovery. "
-        "Religious Context (IS 2.75): 'fear of allah' becomes 'fear of the loss' "
-        "-- a sermon viewer recognizes the spiritual theme despite name garbling. "
-        "Geopolitical Context (IS 2.86): country names swap but the argument "
-        "(foreign places, both sides benefit) is intact. Cooking Context (IS 2.07): "
-        "'jalapeno' becomes 'banana' -- absurd in text, but a viewer SEES the "
-        "pepper on screen and corrects automatically. This is the strongest argument "
-        "for multimodal context: the visual channel fills gaps that audio-only metrics "
-        "cannot measure.",
+        "Religious Context (IS 2.75, WER 43%): 'fear of allah' becomes 'fear "
+        "of the loss' — a sermon viewer recognizes the spiritual theme "
+        "despite name garbling. Geopolitical Context (IS 2.86, WER 72%): "
+        "country names swap but the argument (foreign places, both sides "
+        "benefit) is intact. Cooking Context (IS 2.07, WER 89%): 'jalapeno' "
+        "becomes 'banana' — absurd in text, but a viewer SEES the pepper on "
+        "screen and corrects automatically. This is the strongest argument "
+        "for multimodal context: the visual channel fills gaps that "
+        "audio-only metrics cannot measure. Mention to peers: this is one of "
+        "two slides motivating Mission 8 (topic-aware prompting) and the "
+        "broader argument for an end-to-end visual-context-aware "
+        "evaluation. "
+        "Sources: docs/evaluation/llm_salvage/llm_salvage_analysis.md, "
+        "docs/evaluation/llm_salvage/salvage_example_gallery.md.",
         [[c] for c in card_shapes], click_reveal=True)
 
 
@@ -1172,19 +1221,27 @@ def slide_llm_judge(prs):
     judge_label = add_text(slide,
         "v1 blind judge   /   Opus 4.6   /   1,497 pairs",
         MX, Inches(6.6), CW, Inches(0.3),
-        size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "LLM-as-a-Judge gold standard - v1 BLIND run (Claude Opus 4.6, "
         "1,497 pairs). Distinct from the v3 dual-conf judge run on the "
         "n-best paired-test slide later in this section, which uses "
         "Opus 4.7 with the dual-conf prompt across 5,988 verdicts. "
-        "Y=23.0% (345), P=41.8% (626), N=35.1% (526). Y+P=64.9%. "
-        "Intra-rater 86.7%. Pearson r=0.85 with IS. "
-        "Threshold sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 91.5% agreement), "
-        "not IS>=3.0 (kappa=0.521). IS tier cross-tab: Excellent tier 57% Y, "
-        "Failed tier 81% N, Fair tier is the split point (8% Y, 51% P, 41% N). "
-        "Full cross-tab in appendix slide A16.",
+        "Headline: Y=23.0% (345 of 1,497), P=41.8% (626), N=35.1% (526), "
+        "Y+P=64.9%. Intra-rater agreement 86.7% on the 30-pair duplicate "
+        "subset. Pearson r=0.85 between IS and the judge verdict, which is "
+        "what justifies using IS as a deterministic surrogate. Threshold "
+        "sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 91.5% agreement); the "
+        "older IS>=3.0 cutoff under-counts (kappa=0.521) and is now retired. "
+        "IS-tier cross-tab: Excellent tier 57% Y, Failed tier 81% N, the "
+        "Fair tier is the split point (8% Y, 51% P, 41% N). Mention to "
+        "peers: this is the calibration anchor for everything downstream — "
+        "the IS thresholds, the NIV-Y / NIV-Y+P operating points, and the "
+        "n-best v3 paired tests later in the deck. Full cross-tab in "
+        "appendix slide A8 (a16 builder). "
+        "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
+        "docs/evaluation/threshold_calibration_vs_opus.md.",
         [[lt, lb],
          [res_t, tbl],
          [rt, rb, judge_label]],
@@ -1421,12 +1478,22 @@ def slide_llm_judge_30(prs):
         size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "30-sample overview: stratified sample from the 1,497-segment dataset. "
-        "Distribution matches full dataset closely: Y=23%, P=40%, N=37%. "
-        "Mean WER 61.4% vs 64.1% full. The interesting middle zone (IS 2-4) "
-        "is where partial captures, phonetic bridges, and domain confusion live. "
-        "Six judge-example slides in this section show one video each, "
-        "spanning IS 4.55 down to 1.79.",
+        "30-sample overview: stratified sample drawn from the 1,497-segment "
+        "evaluation set. The 30-pair sample distribution matches the full "
+        "dataset closely (Y=23.3% vs 23.0%, P=40.0% vs 41.8%, N=36.7% vs "
+        "35.1%) and confirms the smaller deep-dive sample is representative. "
+        "Mean WER 61.4% versus 64.1% on the full 1,497 segments; mean IS "
+        "2.67 versus 2.547 on full. The interesting middle zone (IS 2.0-4.0) "
+        "is where partial captures, phonetic bridges, and domain confusion "
+        "live — these are the segments LLM Salvage and the Y+P NIV "
+        "operating point are designed to catch. Six judge-example slides in "
+        "this section show one video each, spanning IS 4.55 down to 1.79; "
+        "burn-in subtitles render reference on top and hypothesis below so "
+        "the audience can read along with the lip movements. Mention to "
+        "peers: this is the qualitative bridge between the aggregate "
+        "numbers and the specific failure modes shown later. "
+        "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
+        "docs/evaluation/llm_judge/.",
         [[lt, tbl], [rt, rb, bk]], click_reveal=True)
 
 
@@ -1473,13 +1540,13 @@ def _judge_video_slide(prs, *, vid_key, title, ref, hyp, wer, wwer, is_score,
 
     # Reference
     rl = add_text(slide, "Reference:", rx, CT + Inches(0.5), rw, Inches(0.25),
-                  size=Pt(10), color=LGRAY, bold=True)
+                  size=Pt(12), color=LGRAY, bold=True)
     rt = add_text(slide, f"\u201c{ref}\u201d", rx, CT + Inches(0.75), rw, Inches(1.0),
                   size=Pt(12), color=WHITE, italic=True)
 
     # Hypothesis
     hl = add_text(slide, "Prediction:", rx, CT + Inches(1.85), rw, Inches(0.25),
-                  size=Pt(10), color=LGRAY, bold=True)
+                  size=Pt(12), color=LGRAY, bold=True)
     ht = add_text(slide, f"\u201c{hyp}\u201d", rx, CT + Inches(2.1), rw, Inches(1.0),
                   size=Pt(12), color=CORAL, italic=True)
 
@@ -1488,11 +1555,11 @@ def _judge_video_slide(prs, *, vid_key, title, ref, hyp, wer, wwer, is_score,
                   fill_color=NAVY3, corner_radius=True)
     add_text(slide, category, rx + Inches(0.15), CT + Inches(3.22),
              rw - Inches(0.3), Inches(0.3),
-             size=Pt(11), color=TEAL, bold=True)
+             size=Pt(12), color=TEAL, bold=True)
 
     # Annotation
     at = add_text(slide, annotation, rx, CT + Inches(3.7), rw, Inches(1.5),
-                  size=Pt(11), color=WHITE)
+                  size=Pt(12), color=WHITE)
 
     _finish(slide, 0, notes,
             [[vid, mt], [rl, rt, hl, ht, cb, at]], click_reveal=True)
@@ -1515,9 +1582,18 @@ def slide_judge_ex1(prs):
                    "is perfectly captured. WER penalizes the name error equally "
                    "to any other word, but a viewer gets the full message.",
         notes="Named entity swap: 'bernreuter' becomes 'rogers' — visually "
-              "similar lip patterns for proper nouns. Despite 18% WER, the "
-              "core message about PV installation forecasts is fully preserved. "
-              "LLM judge rates Y. IS 4.55 (Excellent).")
+              "similar lip patterns for proper nouns. WER is 18.2% on this "
+              "segment, WWER 15.0% (the entity drops out at the same rate "
+              "common words do here, so weighting barely moves WER). Despite "
+              "18.2% WER, the core message about PV installation forecasts "
+              "is fully preserved — only the company name is wrong, and the "
+              "verb 'could' becomes 'will'. The LLM judge rates Y; IS is "
+              "4.55, which sits in the Excellent tier. Mention to peers: "
+              "this is the prototypical case where Named Entity Accuracy as "
+              "a separate signal would have caught the entity error that "
+              "WER hides. "
+              "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
+              "docs/evaluation/intelligibility_methodology.md (NEA signal).")
 
 
 def slide_judge_ex2(prs):
@@ -1539,10 +1615,19 @@ def slide_judge_ex2(prs):
                    "\u2014 1980s film companies bypassing theatrical distribution "
                    "\u2014 is captured verbatim. WER is 48% because of the "
                    "missing words, but meaning is substantially there.",
-        notes="Truncation example: opening and trailing clauses lost, but "
-              "the core argument about 1980s film companies bypassing "
-              "theatrical distribution is captured verbatim. 48% WER "
-              "overstates the damage. LLM judge rates P. IS 3.69 (Good).")
+        notes="Truncation example. WER is 48.1%, WWER 41.7% — both numbers "
+              "look like a clear failure if you stop at WER alone. But the "
+              "actual content is dominated by a clean middle stretch: 'in "
+              "the 1980s when film companies decided they could bypass the "
+              "theatrical distribution system altogether' is verbatim. The "
+              "opening clause about the home-video market maturing and the "
+              "trailing market clause are both dropped. The LLM judge rates "
+              "P (partial), and IS lands at 3.69 in the Good tier; an "
+              "audience reading the hypothesis still walks away with the "
+              "core argument. Mention to peers: this is the sort of segment "
+              "the IS aggregation rescues that WER would write off. "
+              "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
+              "docs/evaluation/intelligibility_methodology.md.")
 
 
 def slide_judge_ex3(prs):
@@ -1613,11 +1698,20 @@ def slide_judge_ex5(prs):
                    "ingredient is completely wrong: jalapeno \u2192 banana. A viewer "
                    "watching the video would see a pepper and immediately "
                    "override the garbled text \u2014 multimodal context helps.",
-        notes="Cooking domain confusion: model correctly identifies food "
-              "context (smoothie, banana, fresh) but wrong ingredient — "
-              "jalapeno becomes banana. 89% WER but the domain is right. "
-              "A viewer watching would see the pepper and recover. "
-              "LLM judge: P. IS 2.07 (Fair).")
+        notes="Cooking domain confusion. WER is 88.9%, WWER drops to 43.8% "
+              "because the rare entity 'jalapeno' is the dominant high-value "
+              "token; once it is wrong, low-value words barely matter. The "
+              "model correctly infers the food domain (smoothie, banana, "
+              "fresh) but picks the wrong specific ingredient — jalapeno "
+              "becomes banana. A viewer who can see the pepper on screen "
+              "would override the garbled text immediately, which is exactly "
+              "the visual-context recovery loop our IS framework is meant to "
+              "anticipate. The LLM judge rates P; IS is 2.07, in the Fair "
+              "tier. Mention to peers: this slide motivates topic-aware "
+              "prompting in Mission 8 — domain priors at decode time would "
+              "narrow the candidate vocabulary to peppers vs. fruits. "
+              "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
+              "docs/prompts/ (Mission 8 design notes).")
 
 
 def slide_judge_ex6(prs):
@@ -1716,22 +1810,24 @@ def slide_disagreement_blind(prs):
         fill_color=NAVY3, corner_radius=True))
 
     left_shapes.append(add_rich_text(slide, [
-        [("REF: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+        [("REF: ", {"size": Pt(12), "color": TEAL, "bold": True}),
          ("\"one really nice thing about this is\"",
-          {"size": Pt(11), "color": WHITE, "italic": True})],
-        [("HYP: ", {"size": Pt(11), "color": GOLD, "bold": True}),
+          {"size": Pt(12), "color": WHITE, "italic": True})],
+        [("HYP: ", {"size": Pt(12), "color": GOLD, "bold": True}),
          ("\"what a brilliant idea this is\"",
-          {"size": Pt(11), "color": WHITE, "italic": True})],
+          {"size": Pt(12), "color": WHITE, "italic": True})],
         [("IS = 1.84  |  WER = 71%  |  Judge: Y",
-          {"size": Pt(10), "color": LGRAY})],
+          {"size": Pt(12), "color": LGRAY})],
     ], MX + Inches(0.4), card_y + Inches(1.2),
-       card_w - Inches(0.8), Inches(1.2)))
+       card_w - Inches(0.8), Inches(1.4)))
 
+    # OVERLAP fix: shrink italic textbox to h=0.45 (ends y=card_y+3.25),
+    # leaving clean gap before the bullet list at y=card_y+3.3.
     left_shapes.append(add_text(slide,
         "Paraphrases and phonetic bridges preserve\n"
         "meaning that word-level metrics punish.",
         MX + Inches(0.25), card_y + Inches(2.8),
-        card_w - Inches(0.5), Inches(0.6),
+        card_w - Inches(0.5), Inches(0.45),
         size=Pt(12), color=GREEN, italic=True))
 
     # Also add remaining root causes
@@ -1739,8 +1835,8 @@ def slide_disagreement_blind(prs):
         "\u2022 Harmless hallucination (extra words, core intact)\n"
         "\u2022 Short segments amplify WER disproportionately",
         MX + Inches(0.25), card_y + Inches(3.3),
-        card_w - Inches(0.5), Inches(0.6),
-        size=Pt(10), color=LGRAY))
+        card_w - Inches(0.5), Inches(0.7),
+        size=Pt(12), color=LGRAY))
 
     # RIGHT CARD — IS Too Generous (red border)
     right_shapes = []
@@ -1768,30 +1864,31 @@ def slide_disagreement_blind(prs):
         fill_color=NAVY3, corner_radius=True))
 
     right_shapes.append(add_rich_text(slide, [
-        [("REF: ", {"size": Pt(11), "color": TEAL, "bold": True}),
+        [("REF: ", {"size": Pt(12), "color": TEAL, "bold": True}),
          ("\"all you have to do is unscrew\"",
-          {"size": Pt(11), "color": WHITE, "italic": True})],
-        [("HYP: ", {"size": Pt(11), "color": GOLD, "bold": True}),
+          {"size": Pt(12), "color": WHITE, "italic": True})],
+        [("HYP: ", {"size": Pt(12), "color": GOLD, "bold": True}),
          ("\"all you have to do is not to\"",
-          {"size": Pt(11), "color": WHITE, "italic": True})],
+          {"size": Pt(12), "color": WHITE, "italic": True})],
         [("IS = 3.42  |  WER = 29%  |  Judge: N",
-          {"size": Pt(10), "color": LGRAY})],
+          {"size": Pt(12), "color": LGRAY})],
     ], rx + Inches(0.4), card_y + Inches(1.2),
-       card_w - Inches(0.8), Inches(1.2)))
+       card_w - Inches(0.8), Inches(1.4)))
 
+    # OVERLAP fix (mirror of left card): shrink italic textbox to h=0.45.
     right_shapes.append(add_text(slide,
         "Structural match hides semantic reversal \u2014\n"
         "IS cannot detect that meaning is inverted.",
         rx + Inches(0.25), card_y + Inches(2.8),
-        card_w - Inches(0.5), Inches(0.6),
+        card_w - Inches(0.5), Inches(0.45),
         size=Pt(12), color=CORAL, italic=True))
 
     right_shapes.append(add_text(slide,
         "\u2022 Domain confusion (medical \u2192 wellness)\n"
         "\u2022 Word salad with scattered correct words",
         rx + Inches(0.25), card_y + Inches(3.3),
-        card_w - Inches(0.5), Inches(0.6),
-        size=Pt(10), color=LGRAY))
+        card_w - Inches(0.5), Inches(0.7),
+        size=Pt(12), color=LGRAY))
 
     # Bottom strip
     bot = add_text(slide,
@@ -1800,18 +1897,32 @@ def slide_disagreement_blind(prs):
         size=Pt(14), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "IS vs Opus Judge disagreement analysis (blind evaluation).\n\n"
-        "LEFT — IS False Negatives (19 cases, 1.3%): Judge says Y, IS < 2.00. "
-        "Paraphrases, phonetic bridges, harmless hallucinations that preserve "
-        "core meaning but score poorly on word-level metrics.\n"
-        "Other examples: 'living in space' topic preserved (IS 1.98, WER 111%); "
-        "'human implications' captures 'human application' (IS 2.06, WER 100%); "
-        "'to the next level' intact but trailing words added (IS 2.32, WER 100%).\n\n"
-        "RIGHT — IS False Positives (3 cases, 0.2%): Judge says N, IS >= 2.00. "
-        "Semantic reversal ('unscrew' -> 'not to', IS 3.42); domain swap "
-        "('blood extraction, x-ray' -> 'cut hair, ashram', IS 3.14); "
-        "phonetic garbage ('one twitch is all you do' -> 'one to rich is all the', IS 3.01).\n\n"
-        "NIV thresholds (IS >= 3.80 for Y, >= 2.00 for Y+P) define the operating points.",
+        "IS vs Opus Judge disagreement analysis (blind evaluation, all 1,497 "
+        "pairs). Headline: 22 segments (1.5% of the corpus) sit in the "
+        "disagreement region; 98.5% of the dataset agrees. The 22 "
+        "split into 19 IS-too-harsh cases (judge Y, IS<2.00) and 3 "
+        "IS-too-generous cases (judge N, IS>=2.00).\n\n"
+        "LEFT — IS False Negatives (19 cases, 1.3%): paraphrases, phonetic "
+        "bridges, and harmless hallucinations that preserve core meaning but "
+        "score poorly on word-level signals. The headline left-card example "
+        "('one really nice thing about this is' -> 'what a brilliant idea "
+        "this is') sits at WER 71% / IS 1.84 / Judge Y — every content word "
+        "is substituted yet the affirmative-praise meaning survives, which "
+        "is exactly the case WER over-punishes. Additional examples: "
+        "'living in space' topic preserved (IS 1.98, WER 111%); 'human "
+        "implications' captures 'human application' (IS 2.06, WER 100%); "
+        "'to the next level' intact with trailing words added (IS 2.32, "
+        "WER 100%).\n\n"
+        "RIGHT — IS False Positives (3 cases, 0.2%): semantic reversal "
+        "('unscrew' -> 'not to', IS 3.42, WER 29% — structural match hides "
+        "the meaning inversion); domain swap ('blood extraction, "
+        "x-ray' -> 'cut hair, ashram', IS 3.14); phonetic garbage ('one "
+        "twitch is all you do' -> 'one to rich is all the', IS 3.01). The "
+        "operating thresholds in this slide are NIV-Y (IS>=3.80, kappa=0.690) "
+        "and NIV-Y+P (IS>=2.00, kappa=0.818) calibrated against the same "
+        "Opus judge.\n\n"
+        "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
+        "docs/evaluation/threshold_calibration_vs_opus.md.",
         [left_shapes, right_shapes, [bot]], click_reveal=True)
 
 
@@ -1847,13 +1958,14 @@ def slide_disagreement_context(prs):
           {"size": Pt(12), "color": LGRAY})],
     ], MX, CT + Inches(2.6), left_w, Inches(0.8))
 
-    # Additional stats
+    # OVERLAP fix: cap bullet height to 1.4 (was 1.8) so block ends at
+    # CT+4.8 = 6.25 \u2014 leaves clean gap above bottom strip at y=6.35.
     add_bullets(slide, [
         "80.1% of judgments stable across both modes",
         "Only 1 N\u2192Y rescue in 1,497 pairs",
         ("Context is a quality tool, not a rescue tool",
          {"color": TEAL, "bold": True}),
-    ], MX, CT + Inches(3.4), left_w, Inches(1.8), size=Pt(12))
+    ], MX, CT + Inches(3.4), left_w, Inches(1.4), size=Pt(12))
 
     # --- Right side: killer example ---
     rx = MX + left_w + Inches(0.6)
@@ -1876,32 +1988,36 @@ def slide_disagreement_context(prs):
     ], rx + Inches(0.2), CT + Inches(0.6), rw - Inches(0.4), Inches(0.4)))
 
     ex_card.append(add_rich_text(slide, [
-        [("REF: ", {"size": Pt(11), "color": TEAL, "bold": True}),
-         ("\"...because I'm ", {"size": Pt(11), "color": WHITE, "italic": True}),
-         ("a lover of", {"size": Pt(11), "color": GREEN, "bold": True, "italic": True}),
-         ("\"", {"size": Pt(11), "color": WHITE, "italic": True})],
-        [("HYP: ", {"size": Pt(11), "color": GOLD, "bold": True}),
-         ("\"...because I'm ", {"size": Pt(11), "color": WHITE, "italic": True}),
-         ("not a lover of", {"size": Pt(11), "color": CORAL, "bold": True, "italic": True}),
-         ("\"", {"size": Pt(11), "color": WHITE, "italic": True})],
-    ], rx + Inches(0.2), CT + Inches(1.15), rw - Inches(0.4), Inches(0.8)))
+        [("REF: ", {"size": Pt(12), "color": TEAL, "bold": True}),
+         ("\"...because I'm ", {"size": Pt(12), "color": WHITE, "italic": True}),
+         ("a lover of", {"size": Pt(12), "color": GREEN, "bold": True, "italic": True}),
+         ("\"", {"size": Pt(12), "color": WHITE, "italic": True})],
+        [("HYP: ", {"size": Pt(12), "color": GOLD, "bold": True}),
+         ("\"...because I'm ", {"size": Pt(12), "color": WHITE, "italic": True}),
+         ("not a lover of", {"size": Pt(12), "color": CORAL, "bold": True, "italic": True}),
+         ("\"", {"size": Pt(12), "color": WHITE, "italic": True})],
+    ], rx + Inches(0.2), CT + Inches(1.15), rw - Inches(0.4), Inches(0.9)))
 
+    # OVERLAP fix: shifted from CT+2.0 to CT+2.10 so it clears the REF/HYP
+    # rich_text block above which ends at CT+2.05 (audit OVERLAP 6%).
     ex_card.append(add_text(slide,
         "One word reverses the meaning.\n"
         "IS rated this near-perfect \u2014 only 10% WER.\n"
         "Context-aware judge caught the negation.",
-        rx + Inches(0.2), CT + Inches(2.0),
-        rw - Inches(0.4), Inches(0.8),
+        rx + Inches(0.2), CT + Inches(2.10),
+        rw - Inches(0.4), Inches(0.7),
         size=Pt(12), color=LGRAY))
 
-    # More context examples below
+    # OVERLAP fix: cap height at 1.4 so block ends at CT+4.9 = 6.35,
+    # exactly meeting the bottom-strip top edge with no overlap (was h=1.8
+    # ending at CT+5.3 = 6.75, which crashed into the bottom strip).
     more = add_text(slide,
         "More context false positives:\n"
         "\u2022 \"lazy natural\" \u2192 \"lazy astronaut\" (hair \u2192 space, IS 3.6)\n"
         "\u2022 \"stitches on my needle\" \u2192 \"stitches on my neck\" (knitting \u2192 medical, IS 3.3)\n"
         "\u2022 \"student loan debt\" \u2192 \"south korea\" (US policy \u2192 intl, IS 3.2)",
-        rx, CT + Inches(3.5), rw, Inches(1.6),
-        size=Pt(11), color=LGRAY)
+        rx, CT + Inches(3.5), rw, Inches(1.4),
+        size=Pt(12), color=LGRAY)
 
     # Bottom strip
     bot = add_text(slide,
@@ -1916,15 +2032,23 @@ def slide_disagreement_context(prs):
         "Context never rescues failures (only 1 N->Y in 1,497 pairs).\n\n"
         "RIGHT: The most striking false positive — IS = 4.75 (near perfect) "
         "for a segment where one word ('not') reversed the meaning entirely. "
-        "Blind judge rated it P, context judge caught the negation reversal.\n\n"
+        "WER on this segment is just 10% (single inserted word) and IS is "
+        "4.75, yet meaning is fully inverted — context-aware judge caught "
+        "the negation while blind judge rated it P.\n\n"
         "Additional context false positives show domain vocabulary swaps: "
         "hair care -> space (lazy natural -> lazy astronaut); "
         "knitting -> medical (needle -> neck, decreases -> skin grafting); "
         "US education -> international (student loan debt -> south korea, "
         "US marshals -> US marketers).\n\n"
-        "These 11 context false positives (IS \u2265 3.80 but context N) are the "
+        "These 11 context false positives (IS >= 3.80 but context N) are the "
         "strongest argument for domain-aware fine-tuning: the model resolves "
-        "lip movements to the wrong vocabulary domain.",
+        "lip movements to the wrong vocabulary domain. Mention to peers: this "
+        "is the empirical hook for Mission 8 (topic-aware prompting) and "
+        "Mission 9 (domain-targeted fine-tuning). 80.1% of the 1,497 "
+        "judgments are stable across both modes; the disagreement region is "
+        "narrow but interpretable. "
+        "Sources: docs/evaluation/llm_judge/context_eval/context_eval_analysis.md, "
+        "docs/evaluation/llm_judge/llm_judge_analysis.md.",
         [[lt, tbl, stat], ex_card, [more, bot]], click_reveal=True)
 
 
@@ -1972,12 +2096,14 @@ def slide_literature_metrics_problem(prs):
         ("Implicit assumption: WER is monotone in usefulness", {"color": CORAL}),
         "Reported WERs on LRS3: AV-HuBERT 25.4%, AutoAVSR 19.1%, etc.",
     ], MX + Inches(0.25), card_y + Inches(0.65),
-       card_w - Inches(0.5), Inches(3.0), size=Pt(13)))
+       card_w - Inches(0.5), Inches(2.55), size=Pt(13)))
+    # OVERLAP fix: bullets shrunk from h=3.0 to 2.55 (end y=card_y+3.20);
+    # callout moved up from y=card_y+3.40 to 3.30 with h=0.65 (was 0.7).
     L.append(add_text(slide,
         "All three failure modes (gibberish, partial, hallucination) "
         "score the same WER if their edit distance matches.",
-        MX + Inches(0.25), card_y + Inches(3.4),
-        card_w - Inches(0.5), Inches(0.7),
+        MX + Inches(0.25), card_y + Inches(3.30),
+        card_w - Inches(0.5), Inches(0.65),
         size=Pt(12), color=CORAL, italic=True))
 
     # RIGHT - what users see
@@ -2006,6 +2132,10 @@ def slide_literature_metrics_problem(prs):
          "HYP: \"the overheard ghost whisperer music for that scene\"",
          CORAL),
     ]
+    # OVERLAP fix: shrink each pair's body height from 1.05 to 0.85 and
+    # tighten py stride from 1.4 to 1.25 so the second pair ends at
+    # card_y + 1.05 + 1.25 + 0.30 + 0.85 = card_y + 3.45, well above the
+    # bottom-row callout at card_y + card_h - 0.55 = card_y + 3.65.
     py = card_y + Inches(1.05)
     for label, body, color in pairs:
         R.append(add_text(slide, label,
@@ -2013,9 +2143,9 @@ def slide_literature_metrics_problem(prs):
                  Inches(0.3), size=Pt(12), color=color, bold=True))
         R.append(add_text(slide, body,
                  rx + Inches(0.25), py + Inches(0.3),
-                 card_w - Inches(0.5), Inches(1.05),
+                 card_w - Inches(0.5), Inches(0.85),
                  size=Pt(12), color=LGRAY))
-        py += Inches(1.4)
+        py += Inches(1.25)
 
     R.append(add_text(slide,
         "Same WER. Same paper score. One is downstream-usable; "
@@ -2033,14 +2163,20 @@ def slide_literature_metrics_problem(prs):
         size=Pt(13), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Source: docs/evaluation/after_amosi_audit.json + audit-md:section_C "
-        "(LLM judge examples) + recurring callback to slide_wer_lies. "
-        "The point of this slide is to frame WHY we needed IS at all - the "
-        "AVSR literature reports WER almost exclusively, and WER conflates "
-        "three downstream-distinct failure modes (gibberish, partial, "
-        "hallucination). The bernreuter/rogers swap and the overhead-lights/"
-        "ghost-whisperer hijack both score ~50% WER but a downstream "
-        "consumer treats them very differently. Bridges to the IS intro slide.",
+        "Sources: docs/evaluation/after_amosi_audit.md (Section C, LLM-judge "
+        "examples) and docs/evaluation/intelligibility_methodology.md "
+        "(WER-IS dissociation). The point of this slide is to frame why we "
+        "needed IS at all: the AVSR / VSP literature (LRS3, LRW, AVSpeech) "
+        "reports WER almost exclusively (AV-HuBERT 25.4%, AutoAVSR 19.1% on "
+        "LRS3), and WER conflates three downstream-distinct failure modes — "
+        "gibberish, partial-but-useful, and fluent-hallucination. The "
+        "bernreuter/rogers entity swap and the overhead-lights/"
+        "ghost-whisperer topic hijack both score ~50% WER yet a downstream "
+        "consumer treats them very differently — one is partially usable, the "
+        "other actively misroutes every downstream tag. About 25% of "
+        "segments in our 1,497-segment evaluation set fall into a band where "
+        "WER and intelligibility actively disagree, which directly motivates "
+        "the Intelligibility Score introduced in the next subsection.",
         [[sub], L, R, [bot]], click_reveal=True)
 
 
@@ -2254,13 +2390,22 @@ def slide_per_word_confidence_distribution(prs):
        card_w - Inches(0.5), Inches(2.0), size=Pt(13)))
 
     _finish(slide, 0,
-        "Source: docs/evaluation/after_amosi_audit.json (Section D, "
-        "overall_new_rule and overall_old_rule). 23,261 total words "
-        "(audit:perword_new_total_words). Joint rule = top1_conf>=0.95 "
-        "AND beam_agreement>=0.80; legacy = conf-only at 0.85. The joint "
-        "rule reclassifies ~3,700 words from green to red+yellow, "
-        "tightening green reliability from 80.6% to 89.8%. See also "
-        "docs/confidence/lessons_learned_band_rule_v2.md.",
+        "Distribution of per-word band assignments under the joint rule "
+        "(top1_conf >= 0.95 AND beam_agreement >= 0.80) versus the legacy "
+        "conf-only rule. Total 23,261 words across 1,427 segments. Under "
+        "the joint rule: Green 32.6% (7,591), Yellow 28.2% (6,571), Red "
+        "39.1% (9,099). Under legacy conf-only at 0.85: Green 48.6% "
+        "(11,309), Yellow 32.1% (7,470), Red 19.3% (4,482). The joint "
+        "rule reclassifies roughly 3,700 words from green to red+yellow, "
+        "tightening green reliability from 80.6% to 89.8% (quantified "
+        "later in this section). Mention to peers: this is the "
+        "headline argument for adding beam_agreement as an independent "
+        "axis on top of softmax probability — many of those reclassified "
+        "greens are model-confident-but-beam-disagreed tokens hiding "
+        "genuine ambiguity behind a sharp softmax peak. "
+        "Sources: docs/evaluation/after_amosi_audit.json (Section D, "
+        "overall_new_rule / overall_old_rule), "
+        "docs/confidence/band_reliability_by_niv.md.",
         [[sub, tbl], L, R], click_reveal=True)
 
 
@@ -2295,7 +2440,10 @@ def slide_band_reliability_overall(prs):
                                 Inches(2.6)],
                     text_size=Pt(15), row_colors=row_colors)
 
-    take = add_rect(slide, MX, CT + Inches(3.4), CW, Inches(2.0),
+    # OVERLAP fix: shrink take rect from h=2.0 to h=1.5 (ends y=CT+4.9 = 6.35)
+    # and take_t text from h=1.7 to h=1.25 so the takeaway ends well above
+    # the bottom audit-source line at y=6.5.
+    take = add_rect(slide, MX, CT + Inches(3.4), CW, Inches(1.5),
                     fill_color=NAVY2, border_color=BLUE, border_width=Pt(2),
                     corner_radius=True)
     take_t = add_text(slide,
@@ -2304,21 +2452,32 @@ def slide_band_reliability_overall(prs):
         "(+20.7pp) because the legacy yellow band collected the high-conf-"
         "but-disagreed tokens that the joint rule reclassifies as red.",
         MX + Inches(0.3), CT + Inches(3.55), CW - Inches(0.6),
-        Inches(1.7), size=Pt(14), color=WHITE)
+        Inches(1.25), size=Pt(14), color=WHITE)
 
     bot = add_text(slide,
         "All numbers from audit JSON keys perword_{new,old}_{green,yellow,red}_p_correct. "
         "Total 23,261 words.",
-        MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.55), CW, Inches(0.4),
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Source: docs/evaluation/after_amosi_audit.json Section D. Overall "
-        "band reliability across the full 23,261-word corpus. Joint rule's "
-        "GREEN goes 80.6% -> 89.8% reliable (+9.2pp); the bigger absolute "
-        "shift in YELLOW (+20.7pp) reflects band relocations. The Strip "
-        "policy below seg mean_prob 0.65 is independent of these overall "
-        "numbers - see slide_band_reliability_stratified.",
+        "Overall per-word band reliability across the full 23,261-word "
+        "corpus (1,427 segments). Computed by Levenshtein-aligning each "
+        "hypothesis token to the reference and asking whether the colored "
+        "band predicts that match. Under the joint rule: P(correct|green) "
+        "= 89.8%, P(correct|yellow) = 59.0%, P(correct|red) = 21.7%. Under "
+        "the legacy conf-only rule: 80.6% / 38.3% / 15.4%. The joint "
+        "rule's headline win is GREEN going from 80.6% to 89.8% reliable "
+        "(+9.2 pp); the larger absolute shift in YELLOW (+20.7 pp) "
+        "reflects band relocations rather than a true reliability gain — "
+        "the legacy yellow band was collecting high-conf-but-disagreed "
+        "tokens that the joint rule reroutes to red. Mention to peers: "
+        "the Strip policy below segment mean_prob 0.65 (covered later in "
+        "this section) is computed independently of these overall numbers, "
+        "and its purpose is to handle segments where even the green band "
+        "is unreliable. "
+        "Sources: docs/evaluation/after_amosi_audit.json (Section D), "
+        "docs/confidence/band_reliability_by_niv.md.",
         [[sub, tbl], [take, take_t], [bot]], click_reveal=True)
 
 
@@ -2360,34 +2519,44 @@ def slide_band_reliability_stratified(prs):
         "0.40-0.55: 21.8%\n"
         "<0.40:    18.2%",
         rx, CT + Inches(2.5), rw, Inches(1.6),
-        size=Pt(11), color=LGRAY)
+        size=Pt(12), color=LGRAY)
 
+    # OVERLAP fix: shrink caveat from h=1.4 (ended at y=CT+5.6 = 7.05)
+    # to h=0.85 so it ends at CT+5.05 = 6.50, exactly at the top of the
+    # full-width bottom takeaway and clear of any horizontal overlap.
     caveat = add_text(slide,
         "Caveat: stratified P(correct|green) under JOINT rule is only "
         "computable for >=0.65 bins (filtered diagnostic CSV). Below-0.65 "
-        "values are from the legacy CONF-ONLY rule on the B3 sidecar.",
-        rx, CT + Inches(4.2), rw, Inches(1.0),
-        size=Pt(9), color=CORAL, italic=True)
+        "values are from legacy CONF-ONLY rule on the B3 sidecar.",
+        rx, CT + Inches(4.2), rw, Inches(0.85),
+        size=Pt(12), color=CORAL, italic=True)
 
     bot = add_text(slide,
         "Headline: green-band reliability is conditional on segment "
         "quality. Peaks at 96% in clean segments; falls below 50% in "
         "noisy ones - which is why the strip-coloring boundary is set at 0.65.",
-        MX, Inches(6.5), CW, Inches(0.4),
+        MX, Inches(6.55), CW, Inches(0.4),
         size=Pt(13), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Source: docs/evaluation/after_amosi_audit.json Section D, "
-        "stratified_by_seg_mean_conf + anomalies/Caveats. Plot: "
-        "P_band_reliability_stratified.png. Joint-rule values for very_high"
-        "/high/mid bins (>=0.65) come directly from "
-        "trust_diagnostic/per_word_diagnostic.csv. The <0.65 bins "
-        "(mid_low/low/very_low at 41.3/21.8/18.2) are from the legacy "
-        "CONF-ONLY rule on the B3 sidecar - the JOINT-rule diagnostic "
-        "CSV is filtered to seg_mean_conf>=0.65, so JOINT-rule values "
-        "for those bins are not currently recomputable. This is why "
-        "the strip-coloring boundary lives at mean_prob 0.65 - below "
-        "that, even green words are <50% reliable.",
+        "Per-word green-band reliability stratified by segment mean_prob. "
+        "Headline numbers: 96.4% reliable in the cleanest segments "
+        "(mean_prob >= 0.85), 91.7% in 0.75-0.85, 86.1% in 0.65-0.75. The "
+        "joint-rule diagnostic CSV is filtered at seg_mean_conf >= 0.65, "
+        "so values below 0.65 must be recomputed from the legacy "
+        "conf-only rule on the B3 sidecar: 41.3% in 0.55-0.65, 21.8% in "
+        "0.40-0.55, 18.2% below 0.40. The bottom-strip 50% callout "
+        "marks the half-reliable line: every bin below mean_prob 0.65 "
+        "sits under 50% (41.3% / 21.8% / 18.2%), so colouring those "
+        "words green would actively mislead a viewer. The 47-percentage-"
+        "point drop from the cleanest bin to the noisiest one is "
+        "exactly why we set the strip-coloring boundary at mean_prob "
+        "0.65. Mention to peers: this slide "
+        "is what motivates the three-tier Trust / Salvage / Strip policy "
+        "on later slides — green coloring is conditional, not universal. "
+        "Plot: P_band_reliability_stratified.png. "
+        "Sources: docs/evaluation/after_amosi_audit.json (Section D), "
+        "docs/confidence/band_reliability_by_niv.md.",
         [[sub, img], [rt, tbl, leg_t, caveat], [bot]], click_reveal=True)
 
 
@@ -2456,7 +2625,7 @@ def slide_green_leakage_examples(prs):
                  align=PP_ALIGN.CENTER))
         c.append(add_text(slide, ex["note"],
                  x + Inches(0.2), cy + Inches(1.95), card_w - Inches(0.4),
-                 Inches(0.45), size=Pt(11), color=LGRAY, italic=True))
+                 Inches(0.5), size=Pt(12), color=LGRAY, italic=True))
         cards.append(c)
 
     bot_card = []
@@ -2521,8 +2690,11 @@ def slide_three_thresholds(prs):
                                 Inches(4.6)],
                     text_size=Pt(13), row_colors=row_colors)
 
+    # OVERLAP fix: shrink op rect from h=2.0 to h=1.65 (ends at CT+4.85 = 6.30)
+    # and bullets from h=1.4 to h=1.05 so the operational-default block ends
+    # cleanly above the bottom Llama-caveat strip at y=6.55 (was y=6.50).
     op = []
-    op.append(add_rect(slide, MX, CT + Inches(3.2), CW, Inches(2.0),
+    op.append(add_rect(slide, MX, CT + Inches(3.2), CW, Inches(1.65),
                        fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                        corner_radius=True))
     op.append(add_text(slide, "T_safe (mean_prob >= 0.82) - the operational default",
@@ -2534,23 +2706,30 @@ def slide_three_thresholds(prs):
         "WER_kept = 27.5%",
         "Precision 71%   /   Recall 79%   for NIV-Y",
     ], MX + Inches(0.3), CT + Inches(3.75),
-       CW - Inches(0.6), Inches(1.4), size=Pt(13)))
+       CW - Inches(0.6), Inches(1.05), size=Pt(13)))
 
     bot = add_text(slide,
         "Thresholds are Llama-2-7b specific. Any LLM swap forces "
         "re-running diagnose_confidence_signals.py.",
-        MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(11), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.55), CW, Inches(0.4),
+        size=Pt(12), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
-        "Source: MEMORY auto memory (Confidence - three thresholds entry) "
-        "+ docs/confidence/threshold_design.md + "
-        "docs/confidence/confidence_full_analysis.md. T_safe (0.82) is "
-        "the operational default chosen at F1-max for NIV-Y class on "
-        "mean_prob. Strip boundary at 0.65 comes from "
-        "slide_band_reliability_stratified - below that, even green words "
-        "are <50% reliable. All thresholds are Llama-2-7b specific; an "
-        "LLM swap forces re-calibration.",
+        "Three calibrated thresholds on segment mean_prob, plus a "
+        "strip-coloring boundary. T_trust at >= 0.89 (green is at least "
+        "90% reliable; highest precision, lowest recall). T_safe at >= "
+        "0.82 (green is at least 85% reliable; F1-max for NIV-Y class on "
+        "mean_prob — this is the operational default in the production UI: "
+        "keeps 28% of segment volume, IS_kept = 4.01, WER_kept = 27.5%, "
+        "precision 71% and recall 79% on NIV-Y). T_salvage at >= 0.74 "
+        "(green is at least 75% reliable; review zone). Below mean_prob "
+        "0.65, even the green band is <50% reliable, so the production "
+        "UI strips word colouring entirely on those segments. All four "
+        "thresholds are Llama-2-7b specific; an LLM swap forces "
+        "re-running diagnose_confidence_signals.py and re-fitting the "
+        "operating points. "
+        "Sources: docs/confidence/band_reliability_by_niv.md, "
+        "docs/confidence/three_thresholds.md.",
         [[sub, tbl], op, [bot]], click_reveal=True)
 
 
@@ -2612,13 +2791,23 @@ def slide_three_tier_policy_research(prs):
        size=Pt(13)))
 
     _finish(slide, 0,
-        "Source: docs/evaluation/after_amosi_audit.json Section D by_tier "
-        "block. Lifted from slides_client.py::slide_client_trust_dashboard "
-        "and re-rendered as a research-style table with raw counts. Trust "
-        "tier auto-approve threshold; Salvage tier pair-with-reviewer; "
-        "Strip tier drops word colouring entirely (green <60% reliable). "
-        "All P(band correct) values are joint-rule from "
-        "per_word_by_tier.csv (audit Section D).",
+        "Three-tier policy table — Trust / Salvage / Strip — with raw "
+        "counts and per-band reliability values from the joint-rule "
+        "diagnostic. Trust tier (segment mean_prob >= 0.82): green = "
+        "95.3% reliable on 3,923 words, yellow 76.1% on 1,719, red 42.0% "
+        "on 951 — auto-approve threshold. Salvage tier (0.65 - 0.82): "
+        "green 89.1% on 3,091, yellow 60.5% on 3,241, red 27.7% on 3,442 "
+        "— pair with a human reviewer. Strip tier (< 0.65): green is "
+        "only 56.2% on 577 words, yellow 37.5% on 1,611, red 13.1% on "
+        "4,706 — at this quality the green flag actively misleads, so "
+        "the UI drops word colouring entirely. The three tiers are "
+        "applied post-hoc: no re-decode is required to upgrade an old "
+        "video, just a re-run of stage 8 (outputs.sh::run_outputs). "
+        "Mention to peers: this is what we expose to clients via the UI "
+        "threshold knob and is the operational form of all the "
+        "calibration work earlier in this section. "
+        "Sources: docs/evaluation/after_amosi_audit.json (Section D, "
+        "by_tier block), docs/confidence/band_reliability_by_niv.md.",
         [[sub, tbl], L, R], click_reveal=True)
 
 
@@ -2656,6 +2845,8 @@ def slide_band_reliability_by_niv(prs):
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.85), rw,
                     text_size=Pt(10), row_height=Inches(0.4))
 
+    # OVERLAP fix: shrink take height from 2.7 to 2.05 so bullets end at
+    # CT+4.90 = 6.35 — clear of the bottom-row source caption at y=6.55.
     take = add_bullets(slide, [
         ("62.5pp green->red spread inside Y+P - flag is real signal, "
          "not decoration", {"bold": True, "color": GREEN}),
@@ -2663,13 +2854,13 @@ def slide_band_reliability_by_niv(prs):
          "lifting in Salvage tier", {"color": ORANGE}),
         ("NIV-N: green misleads at 37% - confirms Strip policy: drop "
          "colour rendering entirely", {"color": PURPLE}),
-    ], rx, CT + Inches(2.85), rw, Inches(2.5), size=Pt(11))
+    ], rx, CT + Inches(2.85), rw, Inches(2.05), size=Pt(12))
 
     bot = add_text(slide,
         "Per-word flag is genuine signal inside Salvage tier, not decoration. "
         "Source: docs/confidence/band_reliability_by_niv.md.",
-        MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(11), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.55), CW, Inches(0.4),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Source: docs/confidence/band_reliability_by_niv.md "
@@ -2725,8 +2916,11 @@ def slide_agreement_aware_bands(prs):
                  Inches(1.4), size=Pt(13), color=WHITE, align=PP_ALIGN.CENTER))
         band_groups.append(g)
 
+    # OVERLAP fix: shrink why-rect from h=2.0 to h=1.5 (ends y=CT+4.9 = 6.35)
+    # and inner text from h=1.7 to h=1.25 so the "why agreement" block ends
+    # cleanly above the bottom Llama-caveat strip at y=6.55 (was y=6.50).
     why = []
-    why.append(add_rect(slide, MX, CT + Inches(3.4), CW, Inches(2.0),
+    why.append(add_rect(slide, MX, CT + Inches(3.4), CW, Inches(1.5),
                         fill_color=NAVY3, border_color=GOLD,
                         border_width=Pt(1.5), corner_radius=True))
     why.append(add_text(slide,
@@ -2741,13 +2935,13 @@ def slide_agreement_aware_bands(prs):
         "0.94 (a 54pp gap). Single-axis conf misses the wide spread in "
         "this regime; the joint rule recovers it.",
         MX + Inches(0.3), CT + Inches(3.55), CW - Inches(0.6),
-        Inches(1.7), size=Pt(13), color=WHITE))
+        Inches(1.25), size=Pt(13), color=WHITE))
 
     bot = add_text(slide,
         "Llama-2-7b specific. Any LLM swap forces re-running "
         "diagnose_confidence_signals.py and re-fitting the cuts.",
-        MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(11), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.55), CW, Inches(0.4),
+        size=Pt(12), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         # audit:after_amosi_narrative_actions.md fix #14 - "next slide"
@@ -2816,7 +3010,7 @@ def slide_agreement_vs_conf_information(prs):
         "Diagnostic script: diagnose_confidence_signals.py. "
         "Llama-2-7b specific - re-run on any LLM swap.",
         MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(11), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(12), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         # audit:after_amosi_logic_fixes.md fix #6 - corrected 32pp/0.62
@@ -2880,7 +3074,7 @@ def slide_client_trust_calibration(prs):
         "Audit keys: trustgate_new_t{10,20,30,40,50,60,70,80,90}_*. "
         "Calibrated under joint conf+agreement rule.",
         MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(11), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Source: docs/evaluation/after_amosi_audit.json Section E "
@@ -2909,9 +3103,20 @@ def slide_nbest_v3_judge_paired_tests(prs):
         MX, CT, CW, Inches(0.5),
         size=Pt(12), color=LGRAY, italic=True)
 
+    # Left column — paired-test plot stacked above the regenerated
+    # P_method_comparison plot (IS distribution per method). The original
+    # paired plot was 6.5" x 4.5" (filled the column); shrunk to 6.5" x
+    # 2.4" so the new comparison plot fits below at 6.5" x 2.0".
     img = add_image(slide, "P_v3_judge_paired",
                     MX, CT + Inches(0.6),
-                    width=Inches(6.5), height=Inches(4.5))
+                    width=Inches(6.5), height=Inches(2.3))
+    img_methods = add_image(slide, "P_method_comparison",
+                            MX, CT + Inches(3.0),
+                            width=Inches(6.5), height=Inches(1.7))
+    cap_methods = add_text(slide,
+        "Below: IS distribution per method (top1 / MBR / vote_score / vote_conf).",
+        MX, CT + Inches(4.75), Inches(6.5), Inches(0.25),
+        size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)  # audit:fix_round3 footer-overlap
 
     rx = MX + Inches(6.7)
     rw = CW - Inches(6.7)
@@ -2942,6 +3147,10 @@ def slide_nbest_v3_judge_paired_tests(prs):
                                 Inches(1.6)],
                     row_colors=row_colors)
 
+    # OVERLAP fix: shrink take height from 3.0 to 1.85 so bullets end at
+    # CT+4.85 = 6.30, well above the bottom v3-judge label at y=6.55. The
+    # original h=3.0 ended at CT+6.0 = 7.45 and crashed into the slide-num
+    # area as well as the bottom strip.
     take = add_bullets(slide, [
         ("Y verdict tied across all methods (no significant change)",
          {"color": LGRAY}),
@@ -2954,18 +3163,19 @@ def slide_nbest_v3_judge_paired_tests(prs):
         ("Identical-text drift v3: 12.6 / 10.4 / 14.2% per method "
          "(down from v1's 27%) - dual-conf prompt removed bias",
          {"color": TEAL}),
-    ], rx, CT + Inches(3.0), rw, Inches(2.7), size=Pt(11))
+    ], rx, CT + Inches(3.0), rw, Inches(1.85), size=Pt(12))
 
     # audit:after_amosi_narrative_actions.md fix #8 - explicit run-label
     # footer so this v3 dual-conf judge run (Opus 4.7, 5,988 verdicts on
     # n-best methods) is not conflated with the v1 blind judge slide
-    # earlier in the section (Opus 4.6, 1,497 pairs).
+    # earlier in the section (Opus 4.6, 1,497 pairs). Bumped to 12pt for
+    # readability floor; "audit keys: judge_v3_*, mcnemar_yp_p_{mbr,
+    # vote_score,vote_conf}, section_F_llm_judge_v3" tail moved to speaker
+    # notes (kept verbatim there).
     bot = add_text(slide,
-        "v3 dual-conf judge   /   Opus 4.7   /   5,988 verdicts on "
-        "n-best methods   //   audit keys: judge_v3_*, "
-        "mcnemar_yp_p_{mbr,vote_score,vote_conf}, section_F_llm_judge_v3.",
-        MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(10), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "v3 dual-conf judge  /  Opus 4.7  /  5,988 verdicts on n-best methods",
+        MX, Inches(6.50), CW, Inches(0.36),
+        size=Pt(12), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Source: docs/evaluation/after_amosi_audit.json Section F + "
@@ -2980,8 +3190,20 @@ def slide_nbest_v3_judge_paired_tests(prs):
         "not significant (p=0.149). Y verdict tied across all methods. "
         "Identical-text drift dropped from v1's 27% to 12.6-14.2% in v3 "
         "(audit:_note_drift) thanks to the dual-conf prompt anchor. "
-        "5,988 total verdicts.",
-        [[sub, img], [tbl, take], [bot]], click_reveal=True)
+        "5,988 total verdicts. "
+        "Plot embed (May 2026): below the paired-test plot the slide now "
+        "shows P_method_comparison.png — IS distribution per method "
+        "(top1 / MBR / vote_score / vote_conf). It complements the McNemar "
+        "table on the right by giving the audience a visual feel for how "
+        "each method's IS distribution overlaps the others (mean IS within "
+        "0.015 across all 4 methods on the deterministic IS scale; the "
+        "judge improvements live in the marginal-quality zone IS misses). "
+        "The original paired plot was shrunk from 6.5\"x4.5\" to "
+        "6.5\"x2.4\" to make room. "
+        "Audit keys (moved off-slide May 7 2026 STYLE pass): judge_v3_*, "
+        "mcnemar_yp_p_{mbr,vote_score,vote_conf}, section_F_llm_judge_v3.",
+        [[sub, img, img_methods, cap_methods], [tbl, take], [bot]],
+        click_reveal=True)
 
 
 def slide_mbr_decision(prs):
@@ -3183,20 +3405,28 @@ def _demo_research_slide(prs, *, title, video_key, ref, hyp_runs,
     vid = add_video(slide, video_key, vid_x, vid_y, vid_w, vid_h)
 
     add_text(slide, "REFERENCE",
-             MX, Inches(5.5), CW, Inches(0.25),
-             size=Pt(10), bold=True, color=LGRAY)
+             MX, Inches(5.5), CW, Inches(0.28),
+             size=Pt(12), bold=True, color=LGRAY)
+    # OVERLAP fix: tightened h from 0.4 -> 0.34 so ref_t ends at 6.14, leaving
+    # an 0.08" gap to the HYPOTHESIS label below (was overlapping by 0.02").
     ref_t = add_text(slide, ref,
-             MX, Inches(5.75), CW, Inches(0.4),
+             MX, Inches(5.8), CW, Inches(0.34),
              size=Pt(13), color=LGRAY, italic=True)
 
+    # OVERLAP fix (round 2): HYP label was at y=6.18 but ref_t ends at 6.20
+    # (8% overlap, audit). Tightened ref_t to h=0.36 ending at 6.16, then
+    # bumped HYP label to 6.22 (clearance 0.06"), hyp_t to 6.48, body_t to
+    # 6.88 (ends 7.18). Body_t left-offset preserved to clear slide-num.
+    # Earlier round-1 comment retained for context: hyp_t at 6.52/0.50 and
+    # body_t at 6.95/0.35 collided with each other AND the slide-num shape.
     add_text(slide, "HYPOTHESIS  (per-word band observation)",
-             MX, Inches(6.18), CW, Inches(0.25),
-             size=Pt(10), bold=True, color=WHITE)
+             MX, Inches(6.22), CW, Inches(0.24),
+             size=Pt(12), bold=True, color=WHITE)
     hyp_t = add_rich_text(slide, [hyp_runs],
-             MX, Inches(6.42), CW, Inches(0.5))
+             MX, Inches(6.48), CW, Inches(0.36))
 
     body_t = add_text(slide, body,
-             MX, Inches(6.95), CW, Inches(0.35),
+             MX + Inches(0.65), Inches(6.88), CW - Inches(0.65), Inches(0.30),
              size=Pt(12), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0, notes,
@@ -3222,16 +3452,23 @@ def slide_demo_obama_trust(prs):
         badge_color=BLUE,
         body="Research observation: 27/29 per-word bands are GREEN; the joint "
              "rule keeps them green because beam_agreement is also high.",
-        notes="Source: slides_client.py::slide_client_example_perfect "
-              "(reframed for research). Obama bin Laden announcement, "
-              "segment #14, 41.95-45.55 s. Clean speech, WER=0%, IS=5.0. "
-              "Per-word colors render from the conf-only sidecar - this "
-              "Obama decode predates VSP_NBEST=1 (April 30 2026), so the "
-              "agreement-aware joint rule is not applied; per-word bands "
-              "are conf-only. Re-running outputs.sh on a VSP_NBEST=1 "
-              "decode would upgrade the painting to the joint rule. "
-              "audit-md:band_reliability_by_niv puts NIV-Y green at 94%; "
-              "this clean segment is well inside that population.")
+        notes="Obama bin Laden announcement, segment #14 (41.95-45.55 s). "
+              "Clean speech: WER=0.0%, IS=5.00 (Excellent), mean_prob ~0.93. "
+              "27 of 29 per-word bands are GREEN; this is exactly the "
+              "population the Trust tier (mean_prob >= 0.82) is calibrated "
+              "for. Per-word colours render from the conf-only sidecar — "
+              "this Obama decode predates VSP_NBEST=1 (shipped April 30 "
+              "2026), so the agreement-aware joint rule is not applied "
+              "and per-word bands are top1_conf only. Re-running stage 8 "
+              "(outputs.sh::run_outputs) on a VSP_NBEST=1 decode would "
+              "upgrade the painting to the joint rule with no re-decode "
+              "needed. The NIV-Y green-band reliability for this "
+              "population is 94% per the band-reliability stratification "
+              "earlier in this section. Mention to peers: this slide is "
+              "the clean reference point for the Trust / Salvage / Strip "
+              "tour that follows. "
+              "Sources: docs/confidence/band_reliability_by_niv.md, "
+              "docs/features/per-word-confidence-user-guide.md.")
 
 
 def slide_demo_obama_salvage(prs):
@@ -3264,23 +3501,25 @@ def slide_demo_obama_salvage(prs):
              "conf-only rule. The TRUST badge (mean_prob>=0.82) reflects "
              "the conf-only fallback because this Obama decode predates "
              "VSP_NBEST=1; the joint rule would likely demote the segment.",
-        notes="Source: slides_client.py::slide_client_example_partial "
-              "(reframed for research). Obama bin Laden announcement, "
-              "segment #31, 92.90-96.50 s. WER ~22%, mean_prob=0.920 - "
-              "ABOVE T_safe (0.82), so the production tier under conf-only "
-              "is TRUST not Salvage. The original slide title called this "
-              "'Salvage' for narrative continuity but the badge mismatch "
-              "is real: the Obama decode predates VSP_NBEST=1 (April 30 "
-              "2026) so no agreement sidecar exists; the per-word band "
-              "rule silently falls back to conf-only. Re-running outputs.sh "
-              "on a VSP_NBEST=1 decode would likely push this segment to "
-              "Salvage under the joint rule (the substituted 'said' "
-              "almost certainly has low beam_agreement). Reviewer still "
-              "triages from the orange word; the slide demonstrates the "
-              "narrative-vs-production-tier gap that the joint rule "
-              "closes. audit:section_D_per_word_conf.by_tier.Salvage.new "
-              "supplies the per-tier reliability for the joint-rule "
-              "Salvage band.")
+        notes="Obama bin Laden announcement, segment #31 (92.90-96.50 s). "
+              "WER ~22%, IS ~3.5, mean_prob = 0.920 — above T_safe (0.82), "
+              "so the production tier under the conf-only fallback is "
+              "TRUST not Salvage. The original slide title called this "
+              "'Salvage' for narrative continuity, but the badge mismatch "
+              "is real: this Obama decode predates VSP_NBEST=1 (shipped "
+              "April 30 2026) so no agreement sidecar exists, and the "
+              "per-word band rule silently falls back to top1_conf only. "
+              "Re-running stage 8 (outputs.sh::run_outputs) on a "
+              "VSP_NBEST=1 decode would likely push this segment to "
+              "Salvage under the joint rule because the substituted "
+              "'said' almost certainly has low beam_agreement. The "
+              "reviewer still triages off the orange word; this slide "
+              "demonstrates the narrative-vs-production-tier gap that "
+              "the joint rule closes. Mention to peers: this is the "
+              "clearest worked example of why the agreement axis pulls "
+              "high-conf-but-disagreed words out of green into yellow. "
+              "Sources: docs/confidence/band_reliability_by_niv.md, "
+              "docs/beam-search/n_best_implementation.md.")
 
 
 def slide_demo_obama_strip(prs):
@@ -3313,22 +3552,26 @@ def slide_demo_obama_strip(prs):
              "ever saw it.   "
              "(INSPECT badge = production label for the 'Salvage' tier "
              "used elsewhere in this section.)",
-        notes="Source: slides_client.py::slide_client_example_flagged "
-              "(reframed for research). Obama bin Laden announcement, "
-              "segment #5, 14.98-18.58 s. REF: 'heroic citizens saved "
-              "even more heartbreak and destruction'. HYP: 'rwanda's "
-              "genocide even more heartbreaking is russia'. The original "
-              "client framing called this 'STRIP' but mean_prob=0.799 "
-              "puts it in the Salvage band (above the 0.65 strip-coloring "
-              "boundary), so the production badge is INSPECT - the "
-              "closest-to-STRIP example available in the Obama set. "
-              "The min per-word probability (0.02) is the headline: "
-              "the LLM was uncertain about the fabricated tokens even "
-              "while emitting them fluently. Per-word colours render "
-              "from the conf-only sidecar (Obama decode predates "
-              "VSP_NBEST=1). audit-md:band_reliability_by_niv shows "
-              "NIV-N green words are only 37% reliable - confirms why "
-              "the Strip tier (mean_prob<0.65) drops colours entirely.")
+        notes="Obama bin Laden announcement, segment #5 (14.98-18.58 s). "
+              "Reference: 'heroic citizens saved even more heartbreak and "
+              "destruction'. Hypothesis: 'rwanda's genocide even more "
+              "heartbreaking is russia'. WER ~45%, IS ~1.5, mean_prob = "
+              "0.799 — that places the segment in the Salvage band "
+              "(above the 0.65 strip-coloring boundary), so the "
+              "production badge is INSPECT and not STRIP. This is the "
+              "closest-to-STRIP example available in the Obama set; the "
+              "client deck called it 'STRIP' for narrative simplicity. "
+              "The headline number is the minimum per-word probability "
+              "of 0.02 — the LLM was uncertain about the fabricated "
+              "tokens ('rwanda's genocide') even while emitting them "
+              "fluently, so the system flagged the segment before any "
+              "reviewer saw it. Per-word colours render from the "
+              "conf-only sidecar because this decode predates "
+              "VSP_NBEST=1. NIV-N green-band reliability is only 37% per "
+              "the band-by-NIV stratification slide, which confirms why "
+              "the Strip tier (mean_prob < 0.65) drops colours entirely. "
+              "Sources: docs/confidence/band_reliability_by_niv.md, "
+              "docs/evaluation/llm_judge/llm_judge_analysis.md.")
 
 
 def slide_demo_judge_entity(prs):
@@ -3433,19 +3676,21 @@ def slide_demo_judge_vocab(prs):
              "spine). Domain terms 'routers / switches / links' drift "
              "to 'roads / structures / reuse' - per-word reds isolate "
              "the swaps; reviewer can patch the vocab.",
-        notes="Source: slides_client.py::slide_client_judge_ex6 "
-              "(spirit) + slides_evaluation.py::slide_judge_ex3 (data). "
-              "Networking research segment where the model preserved the "
-              "argument structure but swapped domain vocabulary "
-              "(routers->roads, switches->structures, links->reuse). "
-              "WER 51.5%, IS 3.02 (Good), LLM judge P. DECODE MODE: "
-              "this clip was decoded with VSP_NBEST=1 so the "
-              "agreement-aware sidecar is present and the full joint "
-              "rule (top1_conf>=0.95 AND beam_agreement>=0.80) is "
-              "applied (unlike the Obama clips earlier in this section, "
-              "which fall back to conf-only band painting). Per-word "
-              "colours show the green argument spine and the red "
-              "domain-vocab swaps. Demonstrates: per-word band isolates "
-              "the exact tokens that need a domain-aware re-decode pass. "
-              "audit:section_D_per_word_conf.by_tier.Salvage.new "
-              "supplies the per-tier reliability for this band overlay.")
+        notes="Networking-research segment where the model preserved the "
+              "argument structure but swapped the domain vocabulary "
+              "(routers -> roads, switches -> structures, links -> reuse). "
+              "WER 51.5%, IS 3.02 (Good tier), LLM judge P, mean_prob "
+              "~0.78 (Salvage tier). DECODE MODE: this clip was decoded "
+              "with VSP_NBEST=1 enabled so the agreement-aware sidecar is "
+              "present and the full joint rule (top1_conf >= 0.95 AND "
+              "beam_agreement >= 0.80) is applied — unlike the Obama "
+              "clips earlier in this section, which fall back to "
+              "conf-only band painting. Per-word colours show a green "
+              "argument spine and red domain-vocabulary swaps. The "
+              "per-word band isolates the exact tokens that need a "
+              "domain-aware re-decode pass — exactly the case Mission 8 "
+              "(topic-aware prompting) is designed to address. Mention "
+              "to peers: this is the cleanest demonstration of "
+              "per-tier reliability paying off in production. "
+              "Sources: docs/confidence/band_reliability_by_niv.md, "
+              "docs/evaluation/llm_judge/llm_judge_analysis.md.")
