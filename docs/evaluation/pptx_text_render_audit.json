@@ -1,9 +1,142 @@
 {
-  "pptx": "presentation_materials_20260224/Argos_VSP_For_Orchard_May2026.pptx",
+  "pptx": "/home/ubuntu/presentation_materials_20260224/Argos_VSP_For_Orchard_May2026.pptx",
   "totals": {
     "slides": 88,
-    "issues": 0,
-    "by_kind": {}
+    "issues": 13,
+    "by_kind": {
+      "TEXT_OVERFLOW_FRAME": 12,
+      "TEXT_BELOW_SAFE_ZONE": 1
+    }
   },
-  "issues": []
+  "issues": [
+    {
+      "slide": 26,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 6",
+      "frame_h": 0.57,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "No API, no GPU, no internet needed."
+    },
+    {
+      "slide": 26,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 9",
+      "frame_h": 0.57,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "Same score every time, guaranteed."
+    },
+    {
+      "slide": 26,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 12",
+      "frame_h": 0.57,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "0\u20135.0 continuous from 6 signals."
+    },
+    {
+      "slide": 26,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 15",
+      "frame_h": 0.57,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "12+ documented biases. IS has none."
+    },
+    {
+      "slide": 26,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 18",
+      "frame_h": 0.57,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "6 named signals \u2192 diagnose exactly."
+    },
+    {
+      "slide": 36,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 7",
+      "frame_h": 0.45,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "NIV-Y+P  (IS \u2265 2.00, deterministic)"
+    },
+    {
+      "slide": 36,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 8",
+      "frame_h": 0.45,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "NIV-Y 23.9%  |  Mean IS 2.547 (MBR)"
+    },
+    {
+      "slide": 36,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 14",
+      "frame_h": 0.45,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "Recall of useful content  (FPR 5.6%)"
+    },
+    {
+      "slide": 36,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 16",
+      "frame_h": 0.45,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "Agreement-aware bands \u2014 calibrated"
+    },
+    {
+      "slide": 36,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 17",
+      "frame_h": 0.32,
+      "est_h": 0.53,
+      "font_pt": 16.0,
+      "lines": 1,
+      "text_preview": "Trust-gate: 1427 non-empty segs (70 empty excluded)"
+    },
+    {
+      "slide": 50,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 5",
+      "frame_h": 0.35,
+      "est_h": 0.8,
+      "font_pt": 24.0,
+      "lines": 1,
+      "text_preview": "Stratified P(green | bin)"
+    },
+    {
+      "slide": 53,
+      "kind": "TEXT_OVERFLOW_FRAME",
+      "shape": "TextBox 6",
+      "frame_h": 1.55,
+      "est_h": 2.4,
+      "font_pt": 24.0,
+      "lines": 3,
+      "text_preview": "\u2022 Trust (>=0.82): green 95% reliable. \u2022 Salvage .65-.82: green 89%, re"
+    },
+    {
+      "slide": 53,
+      "kind": "TEXT_BELOW_SAFE_ZONE",
+      "shape": "TextBox 6",
+      "bottom": 7.35,
+      "limit": 7.05,
+      "font_pt": 24.0,
+      "text_preview": "\u2022 Trust (>=0.82): green 95% reliable. \u2022 Salvage .65-.82: green 89%, re"
+    }
+  ]
 }

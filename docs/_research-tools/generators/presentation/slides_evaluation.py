@@ -2884,10 +2884,10 @@ def slide_three_tier_policy_research(prs):
              MX, CT + Inches(3.10), Inches(6.0), Inches(0.35),
              size=Pt(24), color=TEAL, bold=True))
     L.append(add_bullets(slide, [
-        ("Trust: green is 95% reliable. Auto-approve.", {"color": BLUE, "bold": True}),
-        ("Salvage: green is 89%. Pair with reviewer.", {"color": ORANGE}),
-        ("Strip: green is 56% - misleading. Drop colours.",
-         {"color": PURPLE, "bold": True}),
+        # <=35 chars each so 24pt text fits in 6.0" col (38-char limit) single-line.
+        ("Trust (>=0.82): green 95% reliable.", {"color": BLUE, "bold": True}),
+        ("Salvage .65-.82: green 89%, review.", {"color": ORANGE}),
+        ("Strip (<0.65): green 56%, misleads.", {"color": PURPLE, "bold": True}),
     ], MX, CT + Inches(3.50), Inches(6.0), Inches(1.55), size=Pt(24)))
 
     R = []
@@ -3305,8 +3305,7 @@ def slide_nbest_v3_judge_paired_tests(prs):  # audit:bigfonts2
          {"color": GREEN, "bold": True}),
         ("vote_conf +31 Y+P wins, p=0.00257",
          {"color": GREEN}),
-        ("Drift v3: 12-14% (was 27%) — dual-conf fixed bias",
-         {"color": TEAL}),
+        ("v3 drift 12-14% (v1: 27%)", {"color": TEAL}),
     ], rx, CT + Inches(3.40), rw, Inches(1.60), size=Pt(24))
 
     # audit:after_amosi_narrative_actions.md fix #8 - explicit run-label
