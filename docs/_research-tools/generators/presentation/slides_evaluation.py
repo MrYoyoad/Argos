@@ -1221,6 +1221,7 @@ def slide_llm_judge(prs):
          ["Y+P (any useful)", "971", "65%"]],
         MX, CT + Inches(2.8), col_w, text_size=Pt(24),
         row_height=Inches(0.5),
+        col_widths=[Inches(3.0), Inches(1.2), Inches(1.3)],
         row_colors={0: {2: GREEN}, 2: {2: CORAL}, 3: {2: TEAL}})
 
     # Right — Methodology
@@ -1493,6 +1494,7 @@ def slide_llm_judge_30(prs):
          ["Y + P", "19  (63%)"]],
         MX, CT + Inches(0.5), col_w, text_size=Pt(24),
         row_height=Inches(0.55),
+        col_widths=[Inches(2.0), Inches(3.5)],
         row_colors={3: {1: GREEN}, 5: {1: CORAL}, 6: {1: TEAL}})
 
     # Right — what this sample shows
@@ -1511,7 +1513,7 @@ def slide_llm_judge_30(prs):
     bk = add_text(slide,
         "Each video has burned-in subtitles showing reference (top) and "
         "hypothesis (bottom) \u2014 watch the lip movements and compare.",
-        MX, Inches(6.2), CW, Inches(0.8),
+        MX, Inches(6.40), CW, Inches(0.45),
         size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -2460,9 +2462,9 @@ def slide_per_word_confidence_distribution(prs):
     L = []
     L.append(add_rect(slide, MX, cy, card_w, Inches(2.7), fill_color=NAVY2,
                      border_color=BLUE, border_width=Pt(2), corner_radius=True))
-    L.append(add_text(slide, "JOINT RULE - STRICTER, MORE RELIABLE",
+    L.append(add_text(slide, "JOINT RULE — STRICTER, RELIABLE",
              MX + Inches(0.25), cy + Inches(0.15), card_w - Inches(0.5),
-             Inches(1.0), size=Pt(24), color=BLUE, bold=True))
+             Inches(0.45), size=Pt(24), color=BLUE, bold=True))
     # CUT v3: bullets trimmed + Pt(24)->Pt(20) so 3 bullets fit in
     # 2.0" frame (was rendering bottom 8.60). Long-form retained in notes.
     L.append(add_bullets(slide, [
@@ -2470,7 +2472,7 @@ def slide_per_word_confidence_distribution(prs):
         "Reds 2× (4,482 → 9,099): ambiguous → red",
         ("Each green more reliable (90% vs 81%)",
          {"color": GREEN, "bold": True}),
-    ], MX + Inches(0.25), cy + Inches(0.55),
+    ], MX + Inches(0.25), cy + Inches(0.65),
        card_w - Inches(0.5), Inches(2.0), size=Pt(20)))
 
     R = []
@@ -2487,7 +2489,7 @@ def slide_per_word_confidence_distribution(prs):
         "Many greens hide beam disagreement",
         ("Superseded by joint rule",
          {"color": LGRAY, "italic": True}),
-    ], rx + Inches(0.25), cy + Inches(0.55),
+    ], rx + Inches(0.25), cy + Inches(0.65),
        card_w - Inches(0.5), Inches(2.0), size=Pt(20)))
 
     _finish(slide, 0,
@@ -2770,9 +2772,8 @@ def slide_three_thresholds(prs):
     # once for the audience: "NIV = Native Intelligibility Verdict (the
     # LLM-as-Judge calibration label, NIV-Y / NIV-P / NIV-N)".
     sub = add_text(slide,
-        "Each threshold corresponds to a target on green-band reliability. "
-        "NIV = Native Intelligibility Verdict (LLM-as-Judge calibration label).",
-        MX, CT, CW, Inches(0.8),
+        "NIV = Native Intelligibility Verdict (LLM-as-Judge label).",
+        MX, CT, CW, Inches(0.45),
         size=Pt(18), color=LGRAY, italic=True)
 
     headers = ["Threshold", "mean_prob", "Green reliability target", "Notes"]
@@ -2780,7 +2781,7 @@ def slide_three_thresholds(prs):
         ["T_trust",   ">= 0.89", ">= 90% reliable", "highest precision, lowest recall"],
         ["T_safe",    ">= 0.82", ">= 85% reliable", "F1-max for NIV-Y on mean_prob"],
         ["T_salvage", ">= 0.74", ">= 75% reliable", "review zone"],
-        ["Strip-coloring", "< 0.65", "< 50%",        "below this, drop word colour entirely"],
+        ["Strip-coloring", "< 0.65", "< 50%",        "below this: drop word colour"],
     ]
     row_colors = {
         0: {0: BLUE,   2: BLUE},
@@ -2788,28 +2789,27 @@ def slide_three_thresholds(prs):
         2: {0: ORANGE, 2: ORANGE},
         3: {0: PURPLE, 2: PURPLE},
     }
-    # audit:pptx_visual_audit_after_amosi.md slide 53 BLOCKER -
-    # Table 4 extended past canvas (right=13.70 vs canvas 13.33). Sum was
-    # 2.4+2.0+3.6+5.1=13.1" > CW(12.13"). Trimmed to fit within CW.
+    # col_widths sum exactly to CW=12.13" so LibreOffice doesn't rescale.
+    # col2 at 1.90" (eff 1.60") fits "mean_prob" (9 chars, 24pt bold) in 1 line.
     tbl = add_table(slide, headers, rows,
                     MX, CT + Inches(0.55), CW, row_height=Inches(0.55),
-                    col_widths=[Inches(2.2), Inches(1.8), Inches(3.1),
-                                Inches(4.6)],
+                    col_widths=[Inches(2.30), Inches(1.90), Inches(3.20),
+                                Inches(4.73)],
                     text_size=Pt(24), row_colors=row_colors)
 
     # audit:bigfonts2 — op rect h shrunk 1.95 -> 1.65, bullets h 1.30 -> 1.05
     # to clear bot footer + slide-num zone.
     op = []
-    op.append(add_rect(slide, MX, CT + Inches(3.2), CW, Inches(1.65),
+    op.append(add_rect(slide, MX, CT + Inches(3.45), CW, Inches(1.65),
                        fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                        corner_radius=True))
     op.append(add_text(slide, "T_safe (mean_prob >= 0.82) - operational default",
-             MX + Inches(0.3), CT + Inches(3.30), CW - Inches(0.6),
+             MX + Inches(0.3), CT + Inches(3.55), CW - Inches(0.6),
              Inches(0.40), size=Pt(24), color=GREEN, bold=True))
     op.append(add_bullets(slide, [
         "Keeps 28% volume; IS_kept = 4.01",
         "WER_kept = 28%; Precision 71%; Recall 79% (NIV-Y)",
-    ], MX + Inches(0.3), CT + Inches(3.75),
+    ], MX + Inches(0.3), CT + Inches(4.00),
        CW - Inches(0.6), Inches(1.00), size=Pt(24)))
 
     # audit:bigfonts2 — bot pushed back to 6.55 (was 6.75 → bottom 7.15
@@ -2817,7 +2817,7 @@ def slide_three_thresholds(prs):
     # = 6.95 ≤ 7.05. CUT v2: shortened text to fit smaller box.
     bot = add_text(slide,
         "Thresholds are Llama-2-7b specific; LLM swap = re-fit needed.",
-        MX, Inches(6.37), CW, Inches(0.40),
+        MX, Inches(6.60), CW, Inches(0.40),
         size=Pt(20), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -3119,10 +3119,10 @@ def slide_agreement_vs_conf_information(prs):
 
     why = []
     why.append(add_text(slide, "WHY THIS MATTERS",
-             MX, CT + Inches(2.5), CW, Inches(0.35),
+             MX, CT + Inches(2.95), CW, Inches(0.35),
              size=Pt(24), color=TEAL, bold=True))
-    # CUT v3: bullets compressed so 4 bullets fit in 2.5" frame at Pt(24)
-    # (was rendering bottom 7.60). Long-form retained in notes.
+    # CUT v3: bullets compressed so 4 bullets fit in 1.60" frame at Pt(24).
+    # WHY heading shifted to CT+2.95 (table OOXML end CT+2.8 + 0.15 margin).
     why.append(add_bullets(slide, [
         ("54pp P(correct) gap at SAME top-1 conf (0.40 vs 0.94)",
          {"bold": True}),
@@ -3131,12 +3131,12 @@ def slide_agreement_vs_conf_information(prs):
          {"color": TEAL}),
         ("Green: 11,309 → 7,591 words, P(correct) 81% → 90%",
          {"color": GREEN}),
-    ], MX, CT + Inches(2.95), CW, Inches(2.5), size=Pt(24)))
+    ], MX, CT + Inches(3.35), CW, Inches(1.80), size=Pt(24)))
 
-    # CUT v4: one-line caveat so bottom = 6.45 + 0.50 = 6.95 <= 7.05.
+    # h increased 1.60->1.80 to hold 4 bullets; footer shifted down accordingly.
     bot = add_text(slide,
         "Diagnostic: diagnose_confidence_signals.py — Llama-2-7b specific.",
-        MX, Inches(6.45), CW, Inches(0.50),
+        MX, Inches(6.65), CW, Inches(0.40),
         size=Pt(24), color=CORAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -3164,19 +3164,22 @@ def slide_client_trust_calibration(prs):
     sub = add_text(slide,
         "Per-segment trust gate based on fraction-of-green-words. n=1,427 "
         "(70 empty-output segments excluded; see audit anomaly note).",
-        MX, CT, CW, Inches(0.5),
+        MX, CT, CW, Inches(0.7),
         size=Pt(18), color=LGRAY, italic=True)
 
     # All from audit Section E new_rule_joint_conf_agreement
+    # sub h increased 0.5->0.7 to hold 2 lines; table shifted to CT+0.75.
+    # Col6 header shortened from "% clearly conveyed in trust" (wraps in 2.7")
+    # to "% Y+P in trust" (fits in 2.7" eff=2.4" at 24pt bold).
     headers = ["Threshold", "n trusted", "Recall", "Precision", "FPR",
-               "% clearly conveyed in trust"]
+               "% Y+P in trust"]
     rows = [
         # audit:trustgate_new_t10_*
         ["fraction-green >= 10%", "1,041", "92%", "82%", "37%", "34%"],
         # audit:trustgate_new_t20_*
         ["fraction-green >= 20%",   "818", "81%", "91%", "14%", "43%"],
         # audit:trustgate_new_t30_*
-        ["fraction-green >= 30%  (default)", "630", "65%", "96%",  "6%", "52%"],
+        ["fraction-green >= 30%",            "630", "65%", "96%",  "6%", "52%"],
         # audit:trustgate_new_t50_*
         ["fraction-green >= 50%",   "321", "34%", "97%",  "2%", "72%"],
         # audit:trustgate_new_t70_*
@@ -3185,24 +3188,26 @@ def slide_client_trust_calibration(prs):
     row_colors = {
         2: {0: BLUE, 1: BLUE, 2: GREEN, 3: GREEN, 4: GREEN, 5: GREEN},
     }
+    # col2 widened 1.4->1.6 so "n trusted" (bold 24pt ≈ 1.16") fits in
+    # eff=1.3" without wrapping and expanding the header row.
     tbl = add_table(slide, headers, rows,
-                    MX, CT + Inches(0.6), CW, row_height=Inches(0.5),
-                    col_widths=[Inches(3.5), Inches(1.4), Inches(1.4),
-                                Inches(1.7), Inches(1.4), Inches(2.7)],
+                    MX, CT + Inches(0.75), CW, row_height=Inches(0.5),
+                    col_widths=[Inches(3.5), Inches(1.6), Inches(1.4),
+                                Inches(1.7), Inches(1.4), Inches(2.5)],
                     text_size=Pt(24), row_colors=row_colors)
 
     pick = add_text(slide,
         "Recommended default: 30% green words -> 65% recall, 6% FPR. "
         "Pick higher thresholds for mission-critical workflows; lower for "
         "high-recall research workflows.",
-        MX, CT + Inches(3.7), CW, Inches(1.4),
+        MX, CT + Inches(3.85), CW, Inches(1.1),
         size=Pt(24), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     # CUT v3: top 6.5 -> 6.30 + h 0.8 -> 0.55 + trimmed so Pt(18) bottom
     # stays under safe 7.05 (was 7.30). Audit-key list moved to notes.
     bot = add_text(slide,
         "Calibrated under joint conf+agreement rule.",
-        MX, Inches(6.30), CW, Inches(0.55),
+        MX, Inches(6.45), CW, Inches(0.55),
         size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -3380,11 +3385,11 @@ def slide_mbr_decision(prs):  # audit:bigfonts2
     headers = ["Criterion", "hyp_mbr", "hyp_vote_conf", "Winner"]
     rows = [
         # audit:mcnemar_yp_p_*
-        ["Y+P paired McNemar p",   "0.00017",     "0.00257",      "tie  (both significant)"],
+        ["Y+P paired McNemar p",   "0.00017",     "0.00257",      "both significant"],
         # audit:mcnemar_yp_method_only_*
         ["Y+P win delta",          "+40",         "+31",          "MBR"],
         # audit:judge_v3_intrarater_exact_*
-        ["Intra-rater (exact)",    "87%",       "80%",        "MBR  (matches gold std 83%)"],
+        ["Intra-rater (exact)",    "87%",       "80%",        "MBR (gold std 83%)"],
         ["Per-word posterior",     "calibrated",  "agreement [0.4-0.8]", "MBR"],
         ["Compatible with bands",  "yes",         "narrow range",  "MBR"],
     ]
@@ -3418,7 +3423,7 @@ def slide_mbr_decision(prs):  # audit:bigfonts2
         ("Vote methods emit narrow agreement [0.4, 0.8] — not band-compatible",
          {"color": WHITE}),
     ], MX + Inches(0.3), CT + Inches(3.85),
-       CW - Inches(0.6), Inches(1.8), size=Pt(24)))
+       CW - Inches(0.6), Inches(1.10), size=Pt(24)))
 
     _finish(slide, 0,
         "Source: docs/evaluation/after_amosi_audit.json Section F "

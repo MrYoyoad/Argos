@@ -911,19 +911,18 @@ def slide_arabic_roadmap(prs):  # audit:bigfonts
     timeline_box = add_rect(slide, MX, Inches(6.00), CW, Inches(0.50),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
-    # CUT v3: frame h 1.13 -> 0.40 so Pt(28) bottom stays under safe 7.05
-    # (was rendering 7.18).
+    # timeline_txt y moved 5.87->6.05 so text sits inside timeline_box (6.00).
+    # (was 0.13" above box top causing partial render outside dark rect).
     timeline_txt = add_text(slide,
              "Realistic estimate: 2\u20133 months (encoder pre-training is the bottleneck)",
-             MX + Inches(0.3), Inches(5.87), CW - Inches(0.6), Inches(1.13),
+             MX + Inches(0.3), Inches(6.05), CW - Inches(0.6), Inches(0.42),
              size=Pt(28), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
 
-    # Bottom note (below callout box, above slide-number)
-    # CUT v3: top 6.60 -> 6.42 so Pt(18) two-line wrap stays under safe 7.05.
+    # Bottom note \u2014 placed below callout box (box ends y=6.50) to avoid
+    # rendering inside the dark NAVY2 rect (audit:svr_full pass 2).
     note = add_text(slide,
-        "Pipeline code is language-agnostic. Main bottlenecks: encoder pre-training "
-        "data and eval dataset collection. No Arabic lip-reading benchmark exists.",
-        MX, Inches(6.24), CW, Inches(0.8),
+        "Pipeline code is language-agnostic; bottleneck: encoder pre-training and eval data.",
+        MX, Inches(6.54), CW, Inches(0.48),
         size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Animation: title → each topic one by one → right column → callout
@@ -1254,13 +1253,18 @@ def slide_a8(prs):  # audit:bigfonts
              MX, CT, SRL - MX - Inches(0.1), Inches(1.0),
              size=Pt(24), color=WHITE)
 
+    # tbl1 y moved CT+0.5->CT+0.85 so it starts after subtitle second line
+    # (~CT+0.78 at 24pt). col_widths corrected to sum exactly to 5.8".
+    # row_height bumped 0.35->0.50->0.80 so 2-line cell wraps (PC1 Quality,
+    # All 5 content signals, 0.43-0.47 each) fully show at 24pt.
+    # "Variance"->Var." to fit in col3=1.1" (eff=0.8"; "Variance" 0.87" clips).
     tbl1 = add_table(slide,
-        ["Component", "Signals", "Variance", "Loadings"],
+        ["Component", "Signals", "Var.", "Load."],
         [["PC1: Signal Quality", "All 5 content signals", "68%", "0.43\u20130.47 each"],
          ["PC2: Output Length", "Length Ratio", "20%", "0.91"]],
-        MX, CT + Inches(0.5), SRL - MX - Inches(0.1), text_size=Pt(24),
-        row_height=Inches(0.35),
-        col_widths=[Inches(1.6), Inches(1.8), Inches(1.1), Inches(1.4)])
+        MX, CT + Inches(0.85), SRL - MX - Inches(0.1), text_size=Pt(24),
+        row_height=Inches(0.80),
+        col_widths=[Inches(1.6), Inches(1.8), Inches(1.1), Inches(1.3)])
 
     # Cross-config stability
     add_text(slide, "Cross-Config Stability (16 configs)",
@@ -1279,21 +1283,23 @@ def slide_a8(prs):  # audit:bigfonts
         row_colors={3: {1: CORAL}, 4: {1: CORAL},
                     0: {1: GREEN}, 1: {1: GREEN}, 2: {1: GREEN}})
 
-    # Heuristic validation — y shifted 2.35 -> 2.85 for bumped tbl2 (audit:bigfonts).
+    # Heuristic validation — heading moved CT+2.95 -> CT+3.05 (+0.37" from
+    # tbl2 end). tbl3 now uses full SRW width + explicit col_widths so long
+    # "Agreement (IS >= X.XX)" labels fit on one line without wrapping.
+    # "Config range" row dropped so tbl3 stays within safe zone.
     add_text(slide, "Heuristic Validation (no runtime LLM)",
-             SRL, CT + Inches(2.95), SRW, Inches(1.0),
+             SRL, CT + Inches(3.05), SRW, Inches(1.0),
              size=Pt(24), color=TEAL, bold=True)
 
-    # tbl3 y shifted, row_h bumped 0.30 -> 0.38 (audit:bigfonts).
     tbl3 = add_table(slide,
         ["Metric", "Value"],
         [["Mean r", "0.925 (std 0.015)"],
          ["Agreement (IS ≥ 2.00)", "κ = 0.818"],
          ["Agreement (IS ≥ 3.80)", "κ = 0.690"],
-         ["Recall (IS ≥ 2.00)", "97.6–100%"],
-         ["Config range", "κ 0.62–0.86"]],
-        SRL, CT + Inches(3.35), SRW * 0.7, text_size=Pt(24),
-        row_height=Inches(0.38))
+         ["Recall (IS ≥ 2.00)", "97.6–100%"]],
+        SRL, CT + Inches(3.50), SRW, text_size=Pt(24),
+        row_height=Inches(0.40),
+        col_widths=[Inches(3.1), Inches(2.83)])
 
     _finish(slide, "A3",
         "PCA retains exactly 2 principal components under the Kaiser "
@@ -1330,6 +1336,7 @@ def slide_a11(prs):  # audit:bigfonts
     # (heuristic was tuned on top-1; salvage analysis predates MBR shipping).
     # Judge 65% is the v1 blind gold-standard (audit:llm_judge_v1).
     # tbl1: row_h set 0.42 for Pt(24); long row labels shortened (audit:bigfonts).
+    # col_widths added so "Useful (IS ≥ 2.00, top-1)" (24 chars) fits in col1.
     tbl1 = add_table(slide,
         ["Metric", "Value"],
         [["Metric-failed segs", "900"],
@@ -1339,6 +1346,7 @@ def slide_a11(prs):  # audit:bigfonts
          ["IS vs Judge κ", "0.818"]],
         MX, CT + Inches(0.4), SLW, text_size=Pt(24),
         row_height=Inches(0.42),
+        col_widths=[Inches(3.5), Inches(2.1)],
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
 
     add_text(slide, "58% salvageable have WER 50–70%.\n"
@@ -1350,6 +1358,8 @@ def slide_a11(prs):  # audit:bigfonts
     add_text(slide, "6 Recovery Categories", SRL, CT, SRW, Inches(0.35),
              size=Pt(24), color=TEAL, bold=True)
 
+    # col1=2.6" so "Entity-Preserved"/"WER Over-Punish." have eff=2.3" (0.2" margin).
+    # Non-breaking hyphen (U+2011) in "WER Over‑Punish." prevents line break at hyphen.
     tbl2 = add_table(slide,
         ["Category", "N", "Key Signal"],
         [["Hidden Gems", "54", "LLM prob ≥ 0.8"],
@@ -1357,13 +1367,15 @@ def slide_a11(prs):  # audit:bigfonts
          ["Phonetic Bridge", "93", "Phonetic ≥ 0.6"],
          ["Entity-Preserved", "44", "NEA F1 ≥ 50%"],
          ["Structure Match", "74", "Word order intact"],
-         ["WER Over-Punish.", "27", "WER−WWER ≥ 10pp"]],
+         ["WER Over‑Punish.", "27", "WER−WWER ≥ 10pp"]],
         SRL, CT + Inches(0.4), SRW, text_size=Pt(24),
-        row_height=Inches(0.42))
+        row_height=Inches(0.42),
+        col_widths=[Inches(2.6), Inches(0.7), Inches(2.63)])
 
+    # y moved CT+3.45->CT+3.60 for more clearance after tbl2 end at ~4.79".
     add_text(slide, "Categories overlap — system delivers useful output "
              "for 1 in 2 segments.",
-             SRL, CT + Inches(3.45), SRW, Inches(0.7),
+             SRL, CT + Inches(3.60), SRW, Inches(0.55),
              size=Pt(18), color=LGRAY, italic=True)
 
     _finish(slide, "A4",
@@ -1813,14 +1825,15 @@ def slide_a16(prs):  # audit:bigfonts2
 
     # Key observations \u2014 V6 dense; bullets <=8 words, h 2.5 -> 1.85.
     # CUT v2: combined NIV + Pearson into single line via separate font color.
-    add_text(slide, "Key Observations:", MX, CT + Inches(3.10), CW, Inches(0.4),
+    # Heading moved CT+3.10 -> CT+3.30 (table OOXML end CT+3.02 + 0.28 margin).
+    add_text(slide, "Key Observations:", MX, CT + Inches(3.30), CW, Inches(0.4),
              size=Pt(24), color=TEAL, bold=True)
     add_bullets(slide, [
         "Tier 5: 57% Y \u2014 strong excellent agreement",
         "Tiers 2-3: majority P \u2014 partial value",
         "Tier 1: 81% N \u2014 strong failure agreement",
         ("Pearson r=0.85; NIV kappa 0.82 (Y+P), 0.69 (Y)", {"color": GOLD}),
-    ], MX, CT + Inches(3.55), CW, Inches(1.85), size=Pt(24))
+    ], MX, CT + Inches(3.75), CW, Inches(1.80), size=Pt(24))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers across all 1,497 segments "
@@ -1854,39 +1867,45 @@ def slide_a17(prs):  # audit:bigfonts
     lt = add_text(slide, "Blind \u2192 Context Transition Matrix", MX, CT,
                   col_w, Inches(1.0), size=Pt(24), color=TEAL, bold=True)
 
+    # tbl1 col5 widened to 1.25" so "Total" (5 chars bold 24pt \u2248 0.81")
+    # fits in eff=0.95" without wrapping. Col1 reduced to 2.2" to compensate.
     tbl1 = add_table(slide,
         ["Blind \u2193 / Ctx \u2192", "Y", "P", "N", "Total"],
         [["Y", "207", "138", "0", "345"],
          ["P", "17", "519", "90", "626"],
          ["N", "1", "48", "477", "526"]],
         MX, CT + Inches(0.5), col_w, text_size=Pt(24),
-        col_widths=[Inches(1.5), Inches(0.9), Inches(0.9),
-                    Inches(0.9), Inches(0.9)],
+        col_widths=[Inches(2.2), Inches(0.75), Inches(0.65),
+                    Inches(0.65), Inches(1.25)],
         row_colors={0: {2: CORAL}, 1: {3: CORAL}})
 
+    # Moved CT+2.2 -> CT+2.40 for 0.38" gap after tbl1 OOXML end.
     add_text(slide, "Dominant transition: Y\u2192P (138 cases, 40% of all Y)\n"
              "Only 1 N\u2192Y rescue across all 1,497 pairs",
-             MX, CT + Inches(2.2), col_w, Inches(1.8),
+             MX, CT + Inches(2.40), col_w, Inches(1.8),
              size=Pt(24), color=LGRAY)
 
-    # Summary stats
+    # tbl2 y moved CT+3.0->CT+3.40 so it clears the "Dominant transition"
+    # text content which ends at ~CT+3.30 (3.85"\u21924.70" without expansion).
     tbl2 = add_table(slide,
         ["Metric", "Value"],
         [["Total downgrades", "230 (15%)"],
          ["Total upgrades", "68 (4%)"],
          ["Unchanged", "1,199 (80%)"],
          ["Cross-condition agree.", "80%"]],
-        MX, CT + Inches(3.0), col_w * 0.7, text_size=Pt(24))
+        MX, CT + Inches(3.40), col_w, text_size=Pt(24),
+        col_widths=[Inches(3.2), Inches(2.3)])
 
     # Right — per-topic deltas
     rx = MX + col_w + gap
     rt = add_text(slide, "Per-Topic Y+P Delta (Blind \u2192 Context)", rx, CT,
                   col_w, Inches(1.0), size=Pt(24), color=CORAL, bold=True)
 
-    # tbl3 row_height set explicitly to 0.45 for Pt(24); footnote moved
-     # below table (audit:bigfonts).
+    # tbl3 headers shortened: "Blind Y+P"->"Blind", "Ctx Y+P"->"Ctx" so they
+    # fit in the data columns. Col_widths adjusted: col1=2.6" for topic names
+    # (Education/Lecture 17 chars eff=2.3" \u2713), col2=1.0" for "Blind", col3=0.9".
     tbl3 = add_table(slide,
-        ["Topic", "Blind Y+P", "Ctx Y+P", "\u0394"],
+        ["Topic", "Blind", "Ctx", "\u0394"],
         [["Business/Finance", "72%", "70%", "\u22122pp"],
          ["Education/Lecture", "67%", "64%", "\u22123pp"],
          ["Entertainment", "64%", "61%", "\u22123pp"],
@@ -1896,6 +1915,7 @@ def slide_a17(prs):  # audit:bigfonts
          ["DIY/Home", "48%", "44%", "\u22124pp"]],
         rx, CT + Inches(0.5), col_w, text_size=Pt(24),
         row_height=Inches(0.40),
+        col_widths=[Inches(2.6), Inches(1.0), Inches(0.9), Inches(1.0)],
         row_colors={6: {3: CORAL}})
 
     add_text(slide,
@@ -1951,7 +1971,7 @@ def slide_human_is_path_b(prs):  # audit:bigfonts2
          ["Deaf (no context)", "2.33", "2.74", "3.07", "Fair"],
          ["Expert (no context)", "2.60", "3.03", "3.33", "Fair"],
          ["Lay + ctx + model", "3.36", "3.83", "4.19", "Good"],
-         ["Model alone (MBR, measured)", "—", "2.547", "—", "measured"]],
+         ["Model alone (MBR)", "—", "2.547", "—", "measured"]],
         MX, CT + Inches(0.7), CW * 0.78, text_size=Pt(24),
         row_height=Inches(0.46),
         col_widths=[Inches(3.4), Inches(1.1), Inches(1.1),
@@ -1964,26 +1984,27 @@ def slide_human_is_path_b(prs):  # audit:bigfonts2
     # Comparison call-outs — V6 bullets <=8 words; h 1.4 -> 1.0 (audit:bigfonts2).
     # CUT v3: header up 3.95->3.50, bullets up 4.40->3.95 + Pt(24)->Pt(20)
     # so 4 bullets fit under safe 7.05 (was rendering bottom 8.65).
+    # Headings moved to CT+3.65 (table OOXML end CT+3.46 + 0.19 margin)
+    # to prevent overlap when last row "Model alone (MBR, measured)" was
+    # wrapping. Row text shortened to "Model alone (MBR)" — fits single-line.
     add_text(slide, "Where the model sits",
-             MX, CT + Inches(3.50), SLW, Inches(0.4),
+             MX, CT + Inches(3.65), SLW, Inches(0.4),
              size=Pt(24), color=TEAL, bold=True)
     add_bullets(slide, [
         ("2.547 ~ deaf no-context (2.74)", {"color": LGRAY}),
         ("Loses to expert by ~0.5", {"color": CORAL}),
         ("Loses to lay+ctx+model by ~1.3", {"color": CORAL, "bold": True}),
         ("Beats lay no-context by ~1.6", {"color": GREEN}),
-    ], MX, CT + Inches(3.95), SLW, Inches(1.53), size=Pt(20))
+    ], MX, CT + Inches(4.10), SLW, Inches(1.45), size=Pt(20))
 
-    # CUT v3: header up 3.95->3.50, body up 4.40->3.95 + frame h 1.4->1.20
-    # so Pt(24) text 3 lines stay under safe 7.05 (was 7.25).
     add_text(slide, "LR isolation experiment",
-             SRL, CT + Inches(3.50), SRW, Inches(0.4),
+             SRL, CT + Inches(3.65), SRW, Inches(0.4),
              size=Pt(24), color=GOLD, bold=True)
     add_text(slide,
         "Skip-uncertain LR cost:\n"
         "  Lay +0.41  Deaf +0.21\n"
         "  Expert +0.15  Lay+ctx+model +0.06",
-        SRL, CT + Inches(3.95), SRW, Inches(1.20),
+        SRL, CT + Inches(4.10), SRW, Inches(1.20),
         size=Pt(24), color=LGRAY)
 
     # Caveat strip — relocated to speaker notes; on-slide caveat removed
