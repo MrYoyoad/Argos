@@ -616,3 +616,51 @@ Slide-by-slide LibreOffice PNG review of all 88 slides in `Argos_VSP_For_Orchard
 | 280 | 81 (A3) | `slide_a8` (`slides_future.py`) | tbl1 y=CT+0.5 started inside 2-line subtitle (ends ~CT+0.78). Moved to CT+0.85. Col widths [1.6,1.8,1.1,1.4]=5.9"≠5.8"; corrected to [1.6,1.8,1.1,1.3]=5.8". row_height 0.35→0.50→0.80" so 2-line cell wraps ("PC1: Signal Quality", "All 5 content signals", "0.43–0.47 each") show fully at 24pt. Header "Variance"→"Var." (0.87">eff=0.80" in col3=1.1"). | done |
 | 281 | 84 (A5) | `slide_a11` (`slides_future.py`) | tbl2 col_widths unset (default equal-width, ~1.98") too narrow for "Entity-Preserved" (15 chars). Set col_widths=[2.6,0.7,2.63]=5.93". Non-breaking hyphen U+2011 in "WER Over‑Punish." to prevent LO wrap at hyphen. "Categories overlap" note moved y→CT+3.60 for 0.21" gap after tbl2 end. | done |
 | 282 | 86 (A9) | `slide_a17` (`slides_future.py`) | tbl1 col5 "Total" (0.81") clipped in 0.8" (eff=0.5"); widened to 1.25", col1 reduced to 2.2". tbl2 y moved CT+3.0→CT+3.40 to clear "Dominant transitions" text ending ~CT+3.30. tbl3 headers "Blind Y+P"/"Ctx Y+P" wrapped in narrow cols; shortened to "Blind"/"Ctx". | done |
+
+---
+
+## Batch 13 — 2026-05-08 (Full-deck audit, For_Orchard)
+
+Full visual audit of all 79 non-hidden slides in `Argos_VSP_For_Orchard_May2026.pptx` via LibreOffice PNGs at `/tmp/svr_full/`. Slide numbers below are rendered positions (1–79). Builder→slide mapping confirmed by counting builders list in `generate_for_orchard_presentation.py`.
+
+### Critical: font-floor violations (24pt STYLE_GUIDE minimum)
+
+| # | Slide | Builder | Issue | Status |
+|---|-------|---------|-------|--------|
+| 283 | 17 | `slide_literature_metrics_problem` (`slides_evaluation.py`) | ~10–12pt throughout. Two-column "Literature Reports vs Users Get" layout with tiny bullet text and inline REF/HYP examples. Unreadable at presentation distance. Must bump all text ≥24pt or split into two slides. | pending |
+| 284 | 24 | `slide_disagreement_blind` (`slides_evaluation.py`) | ~12–14pt throughout. Two-card layout ("IS Too Harsh" / "IS Too Generous") with sub-examples at near-illegible size. Must bump ≥24pt or split. | pending |
+| 285 | 75 | `slide_arabic_roadmap` (`slides_future.py`) | ~10–12pt. Dense 3-column table (step / effort / risks) is entirely unreadable beyond the front row. Must bump ≥24pt or cut to a 4-row summary table. | pending |
+
+### Layout bugs: text overlaps in PowerPoint (OOXML position conflicts)
+
+| # | Slide | Builder | Issue | Status |
+|---|-------|---------|-------|--------|
+| 286 | 7 | `slide_visemes` (`slides_opening.py`) | Third bullet "Context is the ONLY disambiguation…" fully hidden behind the viseme table. Fix: lower table Y or raise bullet block. | pending |
+| 287 | 15 | `slide_wer_lies` (`slides_opening.py`) | 46% / 4.03 score cards sit too low, visually colliding with Reference/Prediction lines below; last word of Prediction text cut off. Fix: raise card Y or lower Ref/Pred block. | pending |
+| 288 | 18 | `slide_llm_judge` (`slides_evaluation.py`) | Third left-column bullet ("3-level verdict: Y / P") overlapped by "Results (Blind: 1,497 Pairs)" header and table. Fix: lower table Y so all 3 bullets are visible. | pending |
+| 289 | 25 | `slide_disagreement_context` (`slides_evaluation.py`) | "80% stable across modes" bullet overlaps "knowledge reveals vocabulary failures" text; bottom banner overlaps right card content. Fix: adjust card and banner Y positions. | pending |
+| 290 | 27 | `slide_is_intro` sub-1 (`slides_research.py`) | Top banner text wraps to "and length" on line 2, hidden behind first content card. Fix: shorten banner text or lower card Y. | pending |
+| 291 | 28 | `slide_is_intro` sub-2 (`slides_research.py`) | "signal" wrap-line in top box partially hidden behind the "How It Works" card. Fix: shorten top-box text or raise card Y. | pending |
+| 292 | 30 | `slide_is_weight_rationale` (`slides_research.py`) | PC1 card description overflows into PC2 card header area. Fix: reduce PC1 card text or add gap between cards. | pending |
+| 293 | 34 | `slide_is_wer_scatter` (`slides_research.py`) | Subtitle text (NIV-calibrated description) overlaps with the large "75 + 68" headline numbers. Fix: raise subtitle Y or lower headline. | pending |
+| 294 | 40 | `slide_failure_deep_1a` (`slides_research.py`) | Subtitle text hidden behind first content card; "Ordered by impact" footer overlaps card 3 bottom. Fix: lower first card Y so subtitle is visible; adjust footer Y. | pending |
+| 295 | 45 | `slide_two_layer_confidence_research` (`slides_evaluation.py`) | In the PER-SEGMENT card, "mean log-probability over the segment" label overlaps the formula text. Fix: separate label and formula vertically. | pending |
+| 296 | 58 | `slide_28` (`slides_future.py`) | Subtitle sentence cut off mid-word; yellow "MBR beats base 68%" banner overlaps card boundary. Fix: shorten subtitle text box / reduce font; adjust banner position. | pending |
+| 297 | 73 | `slide_30b` (`slides_future.py`) | VALLR green evidence box overlaps the italic footer ("Same hidden dim (4096) — adapter retraining required"). Fix: raise evidence box or lower footer. | pending |
+
+### Accuracy issues
+
+| # | Slide | Builder | Issue | Status |
+|---|-------|---------|-------|--------|
+| 298 | 47 | `slide_confidence_scoring` (`slides_future.py`) | Shows stale pre-calibration thresholds `≥0.8 trust / <0.4 flag`. Shipped values: T_trust=0.89, T_safe=0.82, strip<0.65. "Effort: 2–4 hours" bullet is stale roadmap text — feature shipped Apr 30. "Reduces perceived error rate from 60% to ~20%" based on old thresholds; at T_safe=0.82 the green P(correct)=90% → ~10% error. Fix: update thresholds, remove "Effort" bullet, update error-rate stat. | pending |
+| 299 | 35 | `slide_a16` (→ main §2, `slides_future.py`) | "Pearson r=0.85 (IS vs Opus)" — value not found in any source doc. MEMORY has r=0.934 (expert heuristic) and r=0.925 (cross-config). Verify from `docs/evaluation/is_correlation_analysis.md` or remove. | pending |
+| 300 | 69 | `slide_24` (`slides_future.py`) | Same "r=0.85 (IS vs Opus)" stat repeated from slide 35. Same fix needed. | pending |
+| 301 | 78 | `slide_31` (`slides_future.py`) | "IS–judge κ=0.818 at NIV-Y+P" — exact MBR value is 0.796; top-1 is 0.816. 0.818 was the historical approximate. Low priority cosmetic fix. | pending |
+
+### Story / narrative issues
+
+| # | Slide | Builder | Issue | Status |
+|---|-------|---------|-------|--------|
+| 302 | 45→46 order | `slide_two_layer_confidence_research` / `slide_confidence_problem` (`slides_evaluation.py`) | Problem setup (slide 46: "Confidence Without Ground Truth") arrives *after* the solution (slide 45: "Two Layers of Confidence"). Consider swapping to problem-first ordering. | pending |
+| 303 | 76 | `slide_arabic_avhubert` (`slides_future.py`) | 7 bullets per slide — exceeds 4-bullet STYLE_GUIDE cap. Content reads as a technical spec, not a story. Reduce to 4 key bullets. | pending |
+| 304 | 77 | `slide_arabic_changes` (`slides_future.py`) | 7 bullets per slide — exceeds 4-bullet STYLE_GUIDE cap. Reduce to 4 key bullets. | pending |
