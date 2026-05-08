@@ -68,7 +68,6 @@ def slide_24(prs):  # audit:bigfonts
         ("62% useful (IS\u22652.00, MBR)", {"bold": True}),
         ("65% by Opus Judge (Y+P 971/1,497)", {"color": GREEN}),
         ("16 configs validated (r=0.925)", {}),
-        "Pearson r=0.85 (IS vs Opus)",
     ], mx2 + Inches(0.2), CT + Inches(0.55), col_w - Inches(0.4),
        Inches(2.6), size=Pt(18), bullet_color=TEAL)
 
@@ -396,7 +395,7 @@ def slide_28(prs):  # audit:bigfonts2
     # Two technique cards side by side
     cw = Inches(5.5)
     gap = Inches(1.13)
-    cy = CT + Inches(0.85)
+    cy = CT + Inches(1.50)
     ch = Inches(2.2)
 
     r1 = add_rect(slide, MX, cy, cw, ch, fill_color=NAVY2,
@@ -656,11 +655,11 @@ def slide_30b(prs):  # audit:bigfonts
         "VALLR (ICCV 2025): Llama 3.2-3B achieved 19% WER\n"
         "on LRS3 \u2014 beats our 7B Llama-2 (25%) with half the params",
         MX + Inches(0.25), vy + Inches(0.12),
-        left_w - Inches(0.5), Inches(1.8),
+        left_w - Inches(0.5), Inches(1.10),
         size=Pt(24), color=WHITE)
 
     # Drop-in callout (audit:bigfonts — shortened for Pt(24) single line).
-    drop_y = CT + Inches(3.85)
+    drop_y = CT + Inches(4.10)
     drop_text = add_text(slide,
         "Same hidden dim (4096) — adapter retraining required",
         MX, drop_y, left_w, Inches(0.87),
@@ -952,12 +951,9 @@ def slide_arabic_avhubert(prs):  # audit:bigfonts
     add_accent_line(slide)
 
     bullets_data = [
-        "AV-HuBERT is a self-supervised visual feature extractor",
-        "Pretrained on LRS3 (English TED talks) \u2014 but not language-encoded",
+        "AV-HuBERT is self-supervised on visual features \u2014 not language tokens",
         "Training loop: MFCC \u2192 K-means \u2192 pseudo-labels \u2192 masked prediction \u2192 iterate",
-        'The "English-ness" is in which visual distinctions the model learned to care about',
         "Low-level features are mostly universal: lip shape, mouth opening, jaw movement",
-        "Visual features are ~80% language-agnostic (mouth geometry is universal)",
         "Language specificity lives in downstream components, not the visual encoder",
     ]
 
@@ -999,13 +995,9 @@ def slide_arabic_changes(prs):  # audit:bigfonts
     add_accent_line(slide)
 
     bullets_data = [
-        "K-means clustering \u2014 retrain on Arabic audio features (already retrains per-dataset)",
-        "LLM backbone \u2014 replace with Arabic-capable LLM (Jais, AceGPT, or multilingual Llama 3)",
-        "Q-Former bridge + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
-        "AV-HuBERT encoder \u2014 can reuse frozen; fine-tune later as optimization step",
-        "Phase 1: Frozen AV-HuBERT + Arabic K-means + Arabic LLM + retrained Q-Former",
-        "Phase 2: Fine-tune AV-HuBERT on Arabic video for language-specific distinctions",
-        "Phase 3: Scale with more Arabic training data",
+        "K-means clustering \u2014 retrain on Arabic audio features (retrains per-dataset already)",
+        "LLM backbone \u2014 replace with Arabic-capable LLM (Jais, AceGPT, multilingual Llama 3)",
+        "Q-Former + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
         "Biggest bottleneck: training data (no Arabic LRS3 equivalent at scale)",
     ]
 
@@ -1058,7 +1050,7 @@ def slide_31(prs):  # audit:bigfonts
         ("2", "Production system shipped: standalone container, UI, "
               "37 bugs fixed, 8-stage pipeline, 37 tests, 8 reports."),
         ("3", "Model strong after MBR: 71% useful per Judge v3 (paired). "
-              "IS\u2014judge \u03ba=0.818 at NIV-Y+P; runs on-prem, no cloud."),
+              "IS\u2014judge \u03ba=0.816 at NIV-Y+P; runs on-prem, no cloud."),
         ("4", "MBR shipped as production default (Mission 6): Judge v3 "
               "Y+P 71% vs 68% baseline, p = 0.00017 paired McNemar."),
         ("5", "Clear path forward: stronger LLM + prompts + 20K+ data. "
@@ -1108,12 +1100,11 @@ def slide_31(prs):  # audit:bigfonts
         "(1) Rigorous assessment with the **novel** IS metric — first "
         "decomposition of intelligibility for AVSR — and full failure "
         "analysis: 62% useful Y+P with MBR n-best, 65% confirmed by "
-        "LLM judge v1 blind on the same 1,497 pairs (Pearson r=0.85 "
-        "between IS and judge). "
+        "LLM judge v1 blind on the same 1,497 pairs. "
         "(2) Production system built from scratch — standalone container, "
         "UI, 8-stage pipeline, 37 tests, 8 research reports. "
         "(3) Model performs well after MBR: 71% Y+P per LLM Judge v3 "
-        "paired test (Opus 4.7, 5,988 verdicts). IS shows kappa=0.818 "
+        "paired test (Opus 4.7, 5,988 verdicts). IS shows kappa=0.816 "
         "agreement with judge at NIV-Y+P. "
         "(4) MBR shipped May 2 2026 as production default — Judge v3 "
         "Y+P 71% vs baseline 68% (+2.68 pp absolute, p = 0.00017 "
@@ -1309,7 +1300,7 @@ def slide_a8(prs):  # audit:bigfonts
         "Cross-config stability across 16 decode-parameter sweeps: "
         "Semantic, Phonetic, NEA are stable (std 0.017-0.059), while WER "
         "and Length Ratio are volatile (std 0.142-0.165) — exactly the "
-        "axes WER alone would penalise. IS vs Opus judge: kappa=0.818 at "
+        "axes WER alone would penalise. IS vs Opus judge: kappa=0.816 at "
         "Y+P (IS>=2.00), kappa=0.690 at Y (IS>=3.80). Mean r between IS "
         "and the LLM-context-prob heuristic is 0.925 (std 0.015) across "
         "configs. Mention to peers: this slide is the empirical proof "
@@ -1832,7 +1823,7 @@ def slide_a16(prs):  # audit:bigfonts2
         "Tier 5: 57% Y \u2014 strong excellent agreement",
         "Tiers 2-3: majority P \u2014 partial value",
         "Tier 1: 81% N \u2014 strong failure agreement",
-        ("Pearson r=0.85; NIV kappa 0.82 (Y+P), 0.69 (Y)", {"color": GOLD}),
+        ("NIV kappa 0.816 (Y+P), 0.707 (Y)", {"color": GOLD}),
     ], MX, CT + Inches(3.75), CW, Inches(1.80), size=Pt(24))
 
     _finish(slide, "A8",
@@ -1841,11 +1832,10 @@ def slide_a16(prs):  # audit:bigfonts2
         "Tier 5 (Excellent), 81% N for Tier 1 (Failed). The interesting "
         "middle: Tiers 2-3 get majority P verdicts (51% / 34%) — the "
         "LLM sees partial meaning preservation that strict word-level "
-        "metrics miss. Pearson r=0.85 between IS and the judge ordinal "
-        "(Y=3, P=2, N=1). Threshold sweep: Y+P aligns best with IS>=2.00 "
-        "(kappa=0.818, 92% agreement); the legacy IS>=3.00 cutoff under-"
+        "metrics miss. Threshold sweep: Y+P aligns best with IS>=2.00 "
+        "(kappa=0.816); the legacy IS>=3.00 cutoff under-"
         "counts (kappa=0.521). NIV thresholds adopted in March 2026: "
-        "IS>=3.80 for Y (kappa=0.690), IS>=2.00 for Y+P (kappa=0.818). IS "
+        "IS>=3.80 for Y (kappa=0.707), IS>=2.00 for Y+P (kappa=0.816). IS "
         "beats WER at both operating points (+0.061 for Y, +0.041 for Y+P). "
         "Mention to peers: this cross-tab is the primary calibration "
         "evidence for using IS as a deterministic surrogate for the LLM "
@@ -2241,16 +2231,15 @@ def slide_confidence_scoring(prs):  # audit:bigfonts
         ("Beam search computes prob scores \u2014 just expose",
          {"bold": True}),
         "Attach beam score + token entropy",
-        "\u22650.8 trust  |  <0.4 flag",
+        "T_safe=0.82, T_trust=0.89 (shipped Apr 30)",
         ("No extra inference \u2014 free byproduct", {"color": TEAL}),
-        ("Effort: 2\u20134 hours", {"color": GREEN, "bold": True}),
     ], MX, CT + Inches(0.45), col_w, Inches(2.85), size=Pt(20))
 
     # Effort callout
     r1 = add_rect(slide, MX, CT + Inches(3.5), col_w, Inches(0.5),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "Reduces perceived error rate from 60% to ~20%",
+    add_text(slide, "At T_safe=0.82: green segments 90% accurate (~10% error)",
              MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(1.0),
              size=Pt(24), color=GREEN, bold=True)
 

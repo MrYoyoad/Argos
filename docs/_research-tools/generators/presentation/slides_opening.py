@@ -215,8 +215,10 @@ def slide_wer_lies(prs):  # audit:bigfonts
         size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
 
     # Bottom: ref/hyp comparison + callout
+    # OVERLAP fix: gap 0.15" -> 0.30" so cards at CT+3.2 don't visually
+    # collide with Reference/Prediction lines starting at CT+3.50.
     bottom_shapes = []
-    by = CT + card_h + Inches(0.15)
+    by = CT + card_h + Inches(0.30)
     # audit:bigfonts \u2014 ref/hyp lines bumped Pt(12) -> Pt(24); height tightened
     # so callout still fits above slide-num.
     bottom_shapes.append(add_rich_text(slide, [
@@ -837,11 +839,14 @@ def slide_visemes(prs):  # audit:bigfonts
     lt = add_text(slide, "The Invisible Problem", MX, CT, col_w, Inches(0.5),
                   size=Pt(24), color=CORAL, bold=True)
     # audit:bigfonts \u2014 Pt(24) -> Pt(24).
+    # OVERLAP fix: lb h 2.6 -> 1.50 so it ends at CT+2.10, clearing tbl1
+    # which starts at CT+2.6. Previous 2.6" frame overlapped viseme table
+    # causing third bullet to render behind the table.
     lb = add_bullets(slide, [
         ("50\u201370% of English sounds are invisible on lips", {"bold": True}),
         "Multiple sounds \u2192 identical mouth shapes (visemes)",
         "Context is the ONLY disambiguation signal",
-    ], MX, CT + Inches(0.6), col_w, Inches(2.6), size=Pt(24))
+    ], MX, CT + Inches(0.6), col_w, Inches(1.50), size=Pt(24))
 
     # Viseme table — audit:bigfonts — Pt(12) -> Pt(24).
     tbl1 = add_table(slide,

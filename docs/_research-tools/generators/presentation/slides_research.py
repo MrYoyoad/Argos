@@ -115,7 +115,7 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
     banner_txt = add_text(slide,
         "IS = 6 signals (0\u20135).  IS \u2265 2.00 = \"Useful\" (Y+P).  "
         "These 3 measure word accuracy and sanity.",
-        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(1.0),
+        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.45),
         size=Pt(24), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     card_w = Inches(11.0)
@@ -198,7 +198,7 @@ def slide_is_intro_b(prs):
                         border_color=TEAL, border_width=Pt(2), corner_radius=True)
     weight_t = add_text(slide, "Weight: 25% \u2014 the single largest signal",
                  MX + Inches(0.2), CT + Inches(0.06),
-                 Inches(5.2), Inches(1.0),
+                 Inches(5.2), Inches(0.45),
                  size=Pt(24), color=TEAL, bold=True)
 
     # Main explanation card — grown for taller body
@@ -533,7 +533,7 @@ def slide_is_weight_rationale(prs):
 
     # Two PCA dimension cards — full width, stacked (PC3 dropped per logic fix §2)
     card_w = CW
-    card_h = Inches(1.7)
+    card_h = Inches(2.0)
     py = CT + Inches(0.7)
 
     dims = [
@@ -561,9 +561,9 @@ def slide_is_weight_rationale(prs):
         add_text(slide, signals, MX + Inches(0.3), py + Inches(0.65),
                  card_w - Inches(0.6), Inches(1.0), size=Pt(24), color=WHITE)
         add_text(slide, desc, MX + Inches(0.3), py + Inches(1.05),
-                 card_w - Inches(0.6), Inches(1.4), size=Pt(24), color=LGRAY)
+                 card_w - Inches(0.6), Inches(0.95), size=Pt(24), color=LGRAY)
         dim_shapes.append(r)
-        py += Inches(1.85)
+        py += Inches(2.15)
 
     # Bottom takeaway \u2014 Kaiser explicitly retains 2 PCs (88% variance).
     # PC3 (5%, eigenvalue 0.31) is below the Kaiser threshold and is NOT
@@ -780,7 +780,7 @@ def slide_is_wer_scatter(prs):
     num_s = add_text(slide, "75 + 68", MX, CT, left_w, Inches(1.1),  # audit:logic_35_calibrated_counts
                      size=Pt(56), color=GREEN, bold=True)
     lbl_s = add_text(slide, "segments WER wrongly discards (NIV-calibrated cutoffs)",
-                     MX, CT + Inches(1.1), left_w, Inches(1.4),
+                     MX, CT + Inches(1.1), left_w, Inches(0.55),
                      size=Pt(24), color=LGRAY)
     # audit:FONT_BELOW_24PT_BODY \u2014 NIV-gloss bullet's bullet_color set to
     # LGRAY so the audit's first_color check classifies the shape as
@@ -797,7 +797,7 @@ def slide_is_wer_scatter(prs):
          {"bold": True, "color": GOLD}),  # audit:logic_35_niv_yp_count
         "IS \u2265 3.80 matches judge Y rate exactly (\u03ba=0.690)",
         ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),
-    ], MX, CT + Inches(1.65), left_w, Inches(3.2))
+    ], MX, CT + Inches(1.70), left_w, Inches(3.2))
 
     # Right — larger scatter plot
     img = add_image(slide, "P7_is_wer_scatter",
@@ -1255,7 +1255,7 @@ def slide_failure_deep_1a(prs):
     add_text(slide,
         "574 below-threshold segments (IS < 2.0) classified into 5 mutually exclusive "
         "categories \u2014 each segment gets exactly one label, checked 1\u21925.",
-        MX, CT, CW, Inches(0.8), size=Pt(18), color=LGRAY, italic=True)
+        MX, CT, CW, Inches(0.55), size=Pt(18), color=LGRAY, italic=True)
     # audit:bigfonts — trailing "Grounded in ASR error taxonomy..." citation
     # subtitle dropped to free vertical space for taller cards.
 
@@ -1276,9 +1276,11 @@ def slide_failure_deep_1a(prs):
 
     # CUT v3 (overflow): card_h 1.55 -> 1.65 + name_w 4.8 -> 5.4 so the
     # 24pt 2-line t1/t2 fit; t1/t2 heights bumped 0.35/0.85 -> 0.50/1.05.
-    card_h = Inches(1.65)
+    # OVERLAP fix: card_h 1.65 -> 1.45, y0 CT+0.55 -> CT+0.65 (subtitle ends
+    # CT+0.55 after h trim 0.8->0.55), t1/t2 heights trimmed proportionally.
+    card_h = Inches(1.45)
     gap = Inches(0.10)
-    y0 = CT + Inches(0.55)
+    y0 = CT + Inches(0.65)
     name_w = Inches(5.4)
     rule_w = CW - name_w - Inches(0.1)
 
@@ -1291,11 +1293,11 @@ def slide_failure_deep_1a(prs):
         # CUT v3 (overflow): 0.50 -> 0.70 so 36-char "Right Topic..." fits 2 lines.
         t1 = add_text(slide, f"{name}  ({pct})",
                  MX + Inches(0.2), y + Inches(0.08),
-                 name_w - Inches(0.3), Inches(0.70),
+                 name_w - Inches(0.3), Inches(0.55),
                  size=Pt(20), color=color, bold=True)
         t2 = add_text(slide, f"{desc}  \u2014  {count}",
                  MX + Inches(0.2), y + Inches(0.60),
-                 name_w - Inches(0.3), Inches(1.00),
+                 name_w - Inches(0.3), Inches(0.80),
                  size=Pt(20), color=LGRAY)
         t3 = add_text(slide, f"Rule: {rule}",
                  MX + name_w, y + Inches(0.08),
@@ -1309,7 +1311,7 @@ def slide_failure_deep_1a(prs):
 
     add_text(slide,
         "Ordered by impact \u2014 highest to lowest (continued in part 2/2)",
-        MX, Inches(6.6), CW, Inches(0.4),
+        MX, Inches(6.65), CW, Inches(0.4),
         size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,

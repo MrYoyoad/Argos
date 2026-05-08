@@ -1202,12 +1202,14 @@ def slide_llm_judge(prs):
     # Left — question/setup then methodology
     lt = add_text(slide, "What Is LLM-as-a-Judge?", MX, CT, col_w, Inches(0.4),
                   size=Pt(24), color=TEAL, bold=True)
+    # OVERLAP fix: lb h 4.2" -> 1.9" so frame ends CT+2.4 and no longer
+    # overlaps res_t (starts CT+2.4) and tbl (starts CT+2.8).
     lb = add_bullets(slide, [
         "Use a frontier LLM (Claude Opus) as an independent evaluator",
         "Evaluate every reference+hypothesis pair holistically",
         "3-level verdict: Y (preserved) / P (partial) / N (not preserved)",
         ("30 duplicate pairs \u2192 87% intra-rater reliability", {"bold": True}),
-    ], MX, CT + Inches(0.5), col_w, Inches(4.2), size=Pt(24))
+    ], MX, CT + Inches(0.5), col_w, Inches(1.9), size=Pt(24))
 
     # Results table
     res_t = add_text(slide, "Results (Blind, 1,497 Pairs)", MX, CT + Inches(2.4), col_w, Inches(0.3),
@@ -2021,27 +2023,25 @@ def slide_disagreement_context(prs):
         row_colors={0: {2: CORAL}, 1: {3: CORAL}})
 
     # Key stat below matrix
+    # OVERLAP fix: stat h 1.8" -> 0.95" so frame ends CT+3.55, no longer
+    # overlapping bullets which start at CT+3.65 (was CT+3.4 overlapping
+    # stat's 1.8" frame).
     stat = add_rich_text(slide, [
         [("230 downgrades", {"size": Pt(24), "color": CORAL, "bold": True}),
          (" vs ", {"size": Pt(24), "color": WHITE}),
          ("68 upgrades", {"size": Pt(24), "color": GREEN, "bold": True})],
         [("Y\u2192P dominant (138): domain knowledge reveals vocabulary failures",
           {"size": Pt(24), "color": LGRAY})],
-    ], MX, CT + Inches(2.6), left_w, Inches(1.8))
+    ], MX, CT + Inches(2.6), left_w, Inches(0.95))
 
-    # OVERLAP fix: cap bullet height to 1.4 (was 1.8) so block ends at
-    # CT+4.8 = 6.25 \u2014 leaves clean gap above bottom strip at y=6.35.
-    # CUT v3: trimmed bullets to 2 short lines + Pt 24->22 so the
-    # rendered wrap stays within 1.4" frame (audit bottom 7.25 -> 6.65).
-    # Original third bullet ("Context is a quality tool\u2026") now in notes.
-    # audit:FONT_BELOW_24PT_BODY \u2014 restored Pt(24) body floor; 2 short
-    # bullets fit 1.4" frame at 5.5" width (max 3 wrapped lines @ 0.40" =
-    # 1.20" content height).
+    # bullets moved to CT+3.65 (was CT+3.4) so they start below stat frame.
+    # h trimmed to 0.95" so bullets end at CT+4.60 = 6.05" (bot at 6.20").
+    # Bullet 2 shortened so it fits one line at 24pt in left_w=5.5".
     add_bullets(slide, [
         "80% stable across modes",
-        ("Context tightens, never rescues (1 N\u2192Y in 1,497)",
+        ("Context tightens. 1 N\u2192Y rescue in all 1,497.",
          {"color": TEAL, "bold": True}),
-    ], MX, CT + Inches(3.4), left_w, Inches(1.4), size=Pt(24))
+    ], MX, CT + Inches(3.65), left_w, Inches(0.95), size=Pt(24))
 
     # --- Right side: killer example ---
     rx = MX + left_w + Inches(0.6)
@@ -2081,7 +2081,7 @@ def slide_disagreement_context(prs):
         "IS rated this near-perfect \u2014 only 10% WER.\n"
         "Context-aware judge caught the negation.",
         rx + Inches(0.2), CT + Inches(2.10),
-        rw - Inches(0.4), Inches(1.8),
+        rw - Inches(0.4), Inches(1.40),
         size=Pt(24), color=LGRAY))
 
     # C2 (research-overview pacing): "more context false positives" inline
@@ -2089,7 +2089,7 @@ def slide_disagreement_context(prs):
     # A9 (Context Transition Matrix) shows the full structure.
     more = add_text(slide,
         "Full list of context false positives \u2014 see Appendix A9.",
-        rx, CT + Inches(3.5), rw, Inches(0.5),
+        rx, CT + Inches(3.55), rw, Inches(0.5),
         size=Pt(18), color=LGRAY, italic=True)
 
     # Bottom strip
@@ -2097,7 +2097,7 @@ def slide_disagreement_context(prs):
     # stays under safe 7.05.
     bot = add_text(slide,
         "Domain knowledge raises the bar \u2192 strongest case for domain-aware fine-tuning",
-        MX, Inches(6.02), CW, Inches(1.0),
+        MX, Inches(6.20), CW, Inches(0.55),
         size=Pt(24), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -2381,7 +2381,7 @@ def slide_two_layer_confidence_research(prs):
              size=Pt(24), bold=True, color=TEAL))
     R.append(add_text(slide, "mean log-probability over the segment",
              x2 + Inches(0.3), top + Inches(0.6),
-             card_w - Inches(0.6), Inches(1.0),
+             card_w - Inches(0.6), Inches(0.42),
              size=Pt(24), bold=True, color=WHITE))
     R.append(add_text(slide,
              "mean_prob  =  exp( (1/T) * sum_t log p_t )",

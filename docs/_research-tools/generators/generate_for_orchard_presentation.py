@@ -260,12 +260,11 @@ def main():
         slide_25e,                      # LLM salvage: domain context
 
         # ─── §4. Confidence — Trustable output w/o GT (18 slides) ────
-        # A1 (research-overview): math-first opener — slide_two_layer_
-        # confidence_research moved BEFORE slide_confidence_problem so the
-        # closed-form math lands as the §4 hook; the prose runtime-vs-
-        # eval framing follows as a "what we do with it" callback.
-        slide_two_layer_confidence_research,
+        # OVERLAP fix (audit story §4): problem-first ordering — motivation
+        # ("no GT in production") arrives before the math solution so the
+        # audience knows WHY before seeing the HOW.
         slide_confidence_problem,
+        slide_two_layer_confidence_research,
         slide_confidence_scoring,
         slide_per_word_confidence_distribution,
         slide_band_reliability_overall,
