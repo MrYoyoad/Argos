@@ -38,20 +38,15 @@ def slide_is_motivation(prs):
 
     reasons = [
         ("\u2460 Deployment Constraint",
-         "IS runs offline \u2014 no API, no GPU, no internet.\n"
-         "Essential for air-gapped container deployment."),
+         "No API, no GPU, no internet needed."),
         ("\u2461 Determinism",
-         "IS produces identical scores every time.\n"
-         "LLM judges vary ~13% on re-evaluation."),
+         "Same score every time, guaranteed."),
         ("\u2462 Continuous Signal",
-         "IS is 0.0\u20135.0 continuous from 6 signals.\n"
-         "LLM judge outputs coarse Y/P/N categories."),
+         "0\u20135.0 continuous from 6 signals."),
         ("\u2463 Known Biases",
-         "12+ documented systematic biases in LLM judges.\n"
-         "IS is a fixed formula with none."),
+         "12+ documented biases. IS has none."),
         ("\u2464 Decomposability",
-         "IS breaks into 6 named signals \u2192 diagnose\n"
-         "exactly what failed. LLM returns verdict only."),
+         "6 named signals \u2192 diagnose exactly."),
     ]
 
     col_w = Inches(5.85)
@@ -78,7 +73,7 @@ def slide_is_motivation(prs):
                       size=Pt(24), color=TEAL, bold=True)
         t2 = add_text(slide, body,
                       x + Inches(0.20), y + Inches(0.42),
-                      col_w - Inches(0.40), Inches(1.8),
+                      col_w - Inches(0.40), Inches(0.57),
                       size=Pt(24), color=LGRAY)
         card_groups.append([r, t1, t2])
 
@@ -1017,24 +1012,21 @@ def slide_07(prs):
     oracle_shapes.append(add_text(slide,
         "NIV-Y+P  (IS ≥ 2.00, deterministic)",
         lx + Inches(0.25), by + Inches(1.55),
-        card_w - Inches(0.5), Inches(1.0),
+        card_w - Inches(0.5), Inches(0.45),
         size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
 
-    # Sub-numbers
+    # Sub-numbers — 1-line each; y staggered to avoid overlap
     oracle_shapes.append(add_text(slide,
-        f"NIV-Y (clearly conveyed): {niv_y_pct_mbr:.2f}%      "  # audit:niv_y_pct_mbr
-        f"Mean IS: {is_mean_mbr:.3f}  (top-1: {is_mean_top1:.3f})",
-        lx + Inches(0.25), by + Inches(1.95),
-        card_w - Inches(0.5), Inches(1.4),
+        f"NIV-Y {niv_y_pct_mbr:.1f}%  |  Mean IS {is_mean_mbr:.3f} (MBR)",  # audit:niv_y_pct_mbr
+        lx + Inches(0.25), by + Inches(2.10),
+        card_w - Inches(0.5), Inches(0.45),
         size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER))
-    # CUT v3 (overflow): Pt(24)->Pt(20) so 2-line judge line fits 1.20" frame.
+    # LLM Judge v3 — 1 line at Pt(18); moved down to clear sub-numbers
     oracle_shapes.append(add_text(slide,
-        f"LLM Judge v3 Y+P: {judge_yp_mbr:.2f}% "
-        f"(baseline {judge_yp_base:.2f}%, +{judge_yp_mbr - judge_yp_base:.2f} pp)\n"
-        f"paired McNemar p = {mcnemar_p:.5f}",
-        lx + Inches(0.25), by + Inches(2.40),
-        card_w - Inches(0.5), Inches(1.20),
-        size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
+        f"LLM Judge Y+P: {judge_yp_mbr:.1f}% (vs {judge_yp_base:.1f}%, p=0.0002)",
+        lx + Inches(0.25), by + Inches(2.60),
+        card_w - Inches(0.5), Inches(0.45),
+        size=Pt(18), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
     # ── RIGHT CARD: Realistic (TEAL) ─────────────────────────────────
     realistic_shapes = []
@@ -1057,29 +1049,26 @@ def slide_07(prs):
     realistic_shapes.append(add_text(slide,
         "Recall of useful content  (FPR " + f"{trust_fpr:.1f}%)",
         rx + Inches(0.25), by + Inches(1.55),
-        card_w - Inches(0.5), Inches(1.0),
+        card_w - Inches(0.5), Inches(0.45),
         size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER))
 
-    # CUT v3 (overflow): Pt(24) -> Pt(20) so 60-char line fits in 5.5" at 2 lines.
+    # Sub-numbers — 1-line; moved to y+2.10 to clear label (text ends ~+2.00)
     realistic_shapes.append(add_text(slide,
-        f"{trust_n_trusted} trusted segments  /  "
-        f"{trust_tp} TPs  /  {trust_fp} FPs    "
-        f"(of {trust_denom} non-empty)",
-        rx + Inches(0.25), by + Inches(1.95),
-        card_w - Inches(0.5), Inches(0.85),
+        f"{trust_n_trusted} trusted  (TP {trust_tp} | FP {trust_fp})",
+        rx + Inches(0.25), by + Inches(2.10),
+        card_w - Inches(0.5), Inches(0.45),
         size=Pt(20), color=WHITE, align=PP_ALIGN.CENTER))
     realistic_shapes.append(add_text(slide,
-        "Joint conf+beam-agreement bands  \u2022  calibrated operating point",
-        rx + Inches(0.25), by + Inches(2.40),
-        card_w - Inches(0.5), Inches(1.4),
+        "Agreement-aware bands \u2014 calibrated",
+        rx + Inches(0.25), by + Inches(2.60),
+        card_w - Inches(0.5), Inches(0.45),
         size=Pt(24), color=TEAL, bold=True, align=PP_ALIGN.CENTER))
 
-    # audit:bigfonts — denominator caveat trimmed; relocated to fit Pt(18) row
+    # Caveat — shortened 1 line, moved to y+3.08 to clear joint conf+beam
     realistic_shapes.append(add_text(slide,
-        f"Oracle = all 1,497;  Trust-gate recall = "
-        f"{trust_denom} non-empty (70 empty excluded).",
-        rx + Inches(0.25), by + Inches(2.85),
-        card_w - Inches(0.5), Inches(0.45),
+        f"Trust-gate: {trust_denom} non-empty segs (70 empty excluded)",
+        rx + Inches(0.25), by + Inches(3.08),
+        card_w - Inches(0.5), Inches(0.32),
         size=Pt(16), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     # ── Bottom: tier distribution under MBR ──────────────────────────

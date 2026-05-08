@@ -541,3 +541,70 @@ User pasted competitive landscape research (Symphonic Labs / "Read Their Lips", 
 - User feedback: drop Whisper/Google STT and AV-HuBERT/VSP-LLM rows (not needed); expand Read Their Lips / LipReadPro with more concrete detail; keep 121 Captions row.
 - Split combined Read Their Lips/LipReadPro row into two detailed rows. Pulled details from `competitive_landscape.md`: Symphonic Labs 2-person 2024 origin, MAMO Mac app pivot, HN test failures (token loops on HAL 9000 / two-person YouTube), founder's "telepathic interface" framing. LipReadPro: no Crunchbase/PitchBook, refused dang.ai verification, 95% claim vs LRS3 SOTA 27% WER, web upload (not on-prem).
 - PDF still single page after expansion.
+
+---
+
+## 2026-05-07 — Full 88-slide visual review (all slides 1–88, PNG by PNG)
+
+User: "all slides are wrong go through each slide 1 by 1 and you will see."
+All 88 slides exported as individual PNGs via split-and-convert (python-pptx + LibreOffice headless).
+Complete issue catalog below.
+
+### CRITICAL overlapping / broken layout — fix in generator source
+
+| Slide | Builder | Issue |
+|-------|---------|-------|
+| 10 | `slide_17` (`slides_engineering.py`) | Pipeline shapes overlap; text extends off slide |
+| 26 | `slide_is_motivation` (`slides_research.py`) | ⑤ box overlaps ③/④ in static render |
+| 34 | `slide_is_wer_scatter` (`slides_research.py`) | `lbl_s` and `bul` text boxes overlap left column |
+| 36 | `slide_07` (`slides_research.py`) | Oracle/Realistic cards overlap each other AND bar chart below |
+| 50 | `slide_band_reliability_stratified` (`slides_evaluation.py`) | Annotation text over table rows |
+| 53 | `slide_three_tier_policy_research` (`slides_evaluation.py`) | Section headers over table data cells |
+| 54 | `slide_band_reliability_by_niv` (`slides_evaluation.py`) | Bullet text over table rows |
+| 59 | `slide_nbest_v3_judge_paired_tests` (`slides_evaluation.py`) | Interpretation bullets over table cells |
+| 81 (A2) | `slide_a8` (`slides_future.py`) | Right table header overlaps last row of left table; right table bottom cut off |
+| 83 (A4) | `slide_human_is_path_b` (`slides_future.py`) | "Where the model sits" header overlaps bottom table row; annotation blocks overlap |
+| 84 (A5) | `slide_a11` (`slides_future.py`) | Two text annotations overlap table rows; right table bottom cut off |
+| 86 (A7) | `slide_a17` (`slides_future.py`) | Dominant-transition text over matrix row; floating summary table over matrix; caption over right table |
+| 87 (A8) | `slide_appendix_mcnemar_full` (`slides_future.py`) | Interpretation bullets overlap table rows |
+
+### Animation-hidden slides (static render shows only empty bullet dots)
+Slides 2, 3, 7, 11, 12, 18, 25, 27, 28, 34, 35, 46, 47, 56, 69, 88 (A9)
+These are animation click-reveal groups — content is hidden until clicked.
+Decision: acceptable for live presentation; static PNGs are misleading but the deck is not for print.
+
+### Text/content overflow (content exceeds text box height)
+Slides 13, 14, 15, 18, 19, 21, 23, 30, 40, 45, 52, 57, 60, 62, 69, 73, 75
+
+### Content bugs — fix in generator source
+
+| Slide | Builder | Issue |
+|-------|---------|-------|
+| 1 | `slide_01` (`slides_opening.py`) | "Picture 1" broken placeholder image in top-right corner |
+| 39 | `slide_08` (`slides_research.py`) | Failure taxonomy bar chart has NO axis labels (bars with no category names) |
+| 64 | `slide_demo_obama_salvage` (`slides_evaluation.py`) | Developer note text shown instead of actual reference text |
+| 76 | `slide_arabic_avhubert` (`slides_future.py`) | Nearly blank — all content animated/hidden |
+| 77 | `slide_arabic_changes` (`slides_future.py`) | Nearly blank — all content animated/hidden |
+| 82 (A3) | `slide_appendix_pca_loadings` (`slides_future.py`) | Callout box occludes right column of PCA table |
+
+### Structurally clean slides (no issues)
+4, 9, 16, 29, 32, 38, 41, 43, 49, 51, 55, 61, 63, 65, 66, 67, 68, 71, 72, 74, 78, 79, 80
+
+### Status
+All issues above queued for fix pass in generator source files.
+
+---
+
+## Batch 22 — 2026-05-08 (For-Orchard deck — table overlap fix pass)
+
+Slide-by-slide LibreOffice PNG review of all 88 slides in `Argos_VSP_For_Orchard_May2026.pptx`. Root cause identified: LibreOffice expands table row heights when 24pt text word-wraps inside a narrow cell; text boxes placed at the OOXML-computed table end then overlap the expanded visual row.
+
+**Empirical calibration**: character width ≈ 0.15"/char at 24pt; cell padding ≈ 0.30" total; minimum safe gap between OOXML table end and next shape = 0.20".
+
+| # | Slide | Builder | Fix | Status |
+|---|-------|---------|-----|--------|
+| 270 | 50 | `slide_band_reliability_stratified` (`slides_evaluation.py`) | Header `"seg mean_prob"` had a space → word-wrapped to 2 lines expanding header row. Changed to `"mean_prob"`. Header `"P(grn correct)"` had a space → changed to `"P(green)"`. Moved `leg_t` y to CT+2.65 (0.20" gap) and increased h to 1.85". Removed overlapping caveat text box. | done |
+| 271 | 53 | `slide_three_tier_policy_research` (`slides_evaluation.py`) | Row labels truncated to ≤15 chars to fit 2.6" Method col at 24pt. "WHAT THE NUMBERS SAY" and L/R bullet blocks moved down to CT+3.10/3.50. | done |
+| 272 | 54 | `slide_band_reliability_by_niv` (`slides_evaluation.py`) | Row labels shortened to ≤5 chars ("Y+P", "NIV-Y", "NIV-P", "NIV-N") so default equal-width cols fit. Take bullets moved to CT+3.15. | done |
+| 273 | 59 | `slide_nbest_v3_judge_paired_tests` (`slides_evaluation.py`) | Headers `"Y+P%"→"YP%"` and `"YP McNemar"→"McNemar-p"` (no spaces, no word-break opportunities). P-value data had spaces removed: `"0.00017 ***"→"0.00017***"` etc. Col widths `[1.83, 0.75, 0.75, 2.10]→[1.83, 0.85, 0.85, 1.90]`. | done |
+| 274 | 87 (A8) | `slide_appendix_mcnemar_full` (`slides_future.py`) | Method names shortened (hyp_mbr→mbr, hyp_vote_score→vote_score). Headers shortened to 7-char max. Col widths redistributed. Interpretation section moved below table. | done |

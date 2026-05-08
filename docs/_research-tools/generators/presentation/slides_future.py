@@ -2124,37 +2124,42 @@ def slide_appendix_mcnemar_full(prs):  # audit:bigfonts2
 
     # Full McNemar table — dropped Y χ² and Y+P χ² cols to fit Pt(24)
     # cells; p-values carry the significance signal directly (audit:bigfonts).
+    # Short method names (no hyp_ prefix) and short header labels so all 24pt
+    # text fits on 1 line. "Y meth-only" (11 chars) wrapped in 1.4" col;
+    # replaced with "Y meth" (6 chars). "Y+P meth-only"→"YP meth" etc.
+    # Col widths redistributed to fit headers: Y/YP meth/base cols widened to
+    # 1.25"/"1.4" respectively.
     tbl = add_table(slide,
-        ["Method", "Y meth-only", "Y base-only", "Y p",
-         "Y+P meth-only", "Y+P base-only", "Y+P p"],
-        [["hyp_mbr",        "59", "47", "0.2853",
+        ["Method", "Y meth", "Y base", "Y p",
+         "YP meth", "YP base", "YP p"],
+        [["mbr",        "59", "47", "0.2853",
           "74", "34", "0.00017"],
-         ["hyp_vote_score", "59", "46", "0.2416",
+         ["vote_score", "59", "46", "0.2416",
           "41", "28", "0.14856"],
-         ["hyp_vote_conf",  "60", "69", "0.4812",
+         ["vote_conf",  "60", "69", "0.4812",
           "65", "34", "0.00257"]],
         MX, CT + Inches(0.7), CW, text_size=Pt(24),
         row_height=Inches(0.55),
-        col_widths=[Inches(1.7), Inches(1.5), Inches(1.5),
-                    Inches(1.3), Inches(1.7), Inches(1.7), Inches(1.6)],
+        col_widths=[Inches(2.2), Inches(1.25), Inches(1.25),
+                    Inches(1.3), Inches(1.4), Inches(1.4), Inches(1.53)],
         # Bold (via color highlight) the significant Y+P p-values
-        row_colors={0: {6: GREEN},  # hyp_mbr Y+P p=0.00017 SIGNIFICANT
-                    2: {6: GREEN}}) # hyp_vote_conf Y+P p=0.00257 SIGNIFICANT
+        row_colors={0: {6: GREEN},  # mbr Y+P p=0.00017 SIGNIFICANT
+                    2: {6: GREEN}}) # vote_conf Y+P p=0.00257 SIGNIFICANT
 
-    # Interpretation section. Shifted y=3.10 -> 3.20 (was 2.60) to clear
-    # bumped table ending at ~4.25; bullets shortened to 4 (dropped subset
-    # restatement, kept in notes) (audit:bigfonts).
+    # Interpretation section. Moved y 2.95->3.15 (0.25" gap from table end
+    # CT+2.90=4.35) so no visual overlap after method-name wrap fix.
+    # Bullets moved accordingly 3.40->3.55.
     add_text(slide, "Interpretation",
-             MX, CT + Inches(2.55), CW, Inches(0.4),
+             MX, CT + Inches(3.15), CW, Inches(0.4),
              size=Pt(24), color=TEAL, bold=True)
     # CUT v2: dropped "Y verdict tied" (already in table p column).
     add_bullets(slide, [
-        ("hyp_mbr: +40 Y+P, p=0.00017 (highly significant)",
+        ("mbr: +40 Y+P, p=0.00017 (highly significant)",
          {"color": GREEN, "bold": True}),
-        ("hyp_vote_conf: +31 Y+P, p=0.00257 (significant)",
+        ("vote_conf: +31 Y+P, p=0.00257 (significant)",
          {"color": GREEN}),
-        "hyp_vote_score: +13 Y+P, p=0.149 (n.s.)",
-    ], MX, CT + Inches(3.05), CW, Inches(1.45), size=Pt(24))
+        "vote_score: +13 Y+P, p=0.149 (n.s.)",
+    ], MX, CT + Inches(3.55), CW, Inches(1.45), size=Pt(24))
 
     # Caveat — shortened; "text-differing subset" detail moved to notes
     # CUT v3: top 6.55 -> 6.40 so Pt(18) two-line wrap stays under 7.05.

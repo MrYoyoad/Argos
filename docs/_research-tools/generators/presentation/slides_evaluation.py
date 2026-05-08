@@ -2606,34 +2606,28 @@ def slide_band_reliability_stratified(prs):
     rx = MX + Inches(7.8)
     rw = CW - Inches(7.8)
     rt = add_text(slide, "Stratified P(green | bin)",
-                  rx, CT + Inches(0.5), rw, Inches(1.0),
+                  rx, CT + Inches(0.5), rw, Inches(0.35),
                   size=Pt(24), color=BLUE, bold=True)
 
     # Joint-rule bins (>=0.65 only) - per audit:section_D...stratified_by_seg_mean_conf
-    headers = ["seg mean_prob", "P(grn correct)"]
+    # Short labels (≤9 chars) so 24pt text fits in rw/2 ≈ 2.2" col without wrapping.
+    headers = ["mean_prob", "P(green)"]
     rows = [
-        ["0.85+ (very_high)", "96%"],   # audit:section_D...very_high.green_p_correct
-        ["0.75-0.85 (high)",  "92%"],   # audit:section_D...high.green_p_correct
-        ["0.65-0.75 (mid)",   "86%"],   # audit:section_D...mid.green_p_correct
+        ["≥0.85",     "96%"],   # audit:section_D...very_high.green_p_correct
+        ["0.75-0.85", "92%"],   # audit:section_D...high.green_p_correct
+        ["0.65-0.75", "86%"],   # audit:section_D...mid.green_p_correct
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.85), rw,
                     text_size=Pt(24), row_height=Inches(0.4))
 
+    # leg_t moved CT+2.5->CT+2.65 (0.20" gap after table end CT+2.45).
     leg_t = add_text(slide,
         "Below 0.65 (legacy rule only):\n"
         "0.55-0.65: 41%\n"
         "0.40-0.55: 22%\n"
         "<0.40:    18%",
-        rx, CT + Inches(2.5), rw, Inches(1.6),
+        rx, CT + Inches(2.65), rw, Inches(1.85),
         size=Pt(24), color=LGRAY)
-
-    # CUT v3: shrunk 24pt -> 18pt italic-caption + tightened wording.
-    # Full caveat preserved in speaker notes.
-    caveat = add_text(slide,
-        "Joint-rule numbers above are filtered to >=0.65 bins; "
-        "below-0.65 are legacy conf-only.",
-        rx, CT + Inches(4.2), rw, Inches(0.85),
-        size=Pt(18), color=CORAL, italic=True)
 
     # CUT v3: top 6.55 -> 6.30 + frame h 0.4 -> 0.35 so Pt(20) wrap stays
     # under safe 7.05 (was 7.12).
@@ -2662,7 +2656,7 @@ def slide_band_reliability_stratified(prs):
         "Plot: P_band_reliability_stratified.png. "
         "Sources: docs/evaluation/after_amosi_audit.json (Section D), "
         "docs/confidence/band_reliability_by_niv.md.",
-        [[sub, img], [rt, tbl, leg_t, caveat], [bot]], click_reveal=True)
+        [[sub, img], [rt, tbl, leg_t], [bot]], click_reveal=True)
 
 
 def slide_green_leakage_examples(prs):
@@ -2866,10 +2860,12 @@ def slide_three_tier_policy_research(prs):
     # All numbers from audit:section_D_per_word_conf.by_tier.{Trust,Salvage,Strip}.new
     headers = ["Tier", "Green n", "P(grn corr)", "Yellow n", "P(yel corr)",
                "Red n", "P(red corr)"]
+    # Labels ≤15 chars so 24pt text fits in 2.6" Tier col without wrapping.
+    # "Salvage (0.65-0.82)" = 19 chars wraps; "Salvage .65-.82" = 15 fits.
     rows = [
-        ["Trust    (>=0.82)",   "3,923", "95%", "1,719", "76%", "  951", "42%"],
-        ["Salvage (0.65-0.82)","3,091", "89%", "3,241", "60%", "3,442", "28%"],
-        ["Strip   (<0.65)",     "  577", "56%", "1,611", "38%", "4,706", "13%"],
+        ["Trust (>=0.82)",  "3,923", "95%", "1,719", "76%", "  951", "42%"],
+        ["Salvage .65-.82", "3,091", "89%", "3,241", "60%", "3,442", "28%"],
+        ["Strip (<0.65)",     "  577", "56%", "1,611", "38%", "4,706", "13%"],
     ]
     row_colors = {
         0: {0: BLUE,   2: GREEN},
@@ -2885,28 +2881,28 @@ def slide_three_tier_policy_research(prs):
 
     L = []
     L.append(add_text(slide, "WHAT THE NUMBERS SAY",
-             MX, CT + Inches(2.6), Inches(6.0), Inches(0.35),
+             MX, CT + Inches(3.10), Inches(6.0), Inches(0.35),
              size=Pt(24), color=TEAL, bold=True))
     L.append(add_bullets(slide, [
         ("Trust: green is 95% reliable. Auto-approve.", {"color": BLUE, "bold": True}),
         ("Salvage: green is 89%. Pair with reviewer.", {"color": ORANGE}),
         ("Strip: green is 56% - misleading. Drop colours.",
          {"color": PURPLE, "bold": True}),
-    ], MX, CT + Inches(3.0), Inches(6.0), Inches(2.5), size=Pt(24)))
+    ], MX, CT + Inches(3.50), Inches(6.0), Inches(1.55), size=Pt(24)))
 
     R = []
     R.append(add_text(slide, "HOW THE TIERS ARE USED",
-             MX + Inches(6.3), CT + Inches(2.6), Inches(5.83), Inches(0.35),
+             MX + Inches(6.3), CT + Inches(3.10), Inches(5.83), Inches(0.35),
              size=Pt(24), color=GOLD, bold=True))
-    # CUT v3: bullets compressed + Pt(24)->Pt(20) so 4 bullets fit in 2.5"
-    # frame (was rendering bottom 9.25). Long-form retained in notes.
+    # CUT v3: bullets compressed + Pt(24)->Pt(20) so 4 bullets fit in 1.55"
+    # frame. Long-form retained in notes.
     R.append(add_bullets(slide, [
         "Post-hoc: no re-decode required",
         "Feeds client UI threshold knob",
         "Red P(correct) stays low across tiers (42/28/13%)",
         ("Audit: by_tier.*.new.*.p_correct",
          {"color": LGRAY, "italic": True}),
-    ], MX + Inches(6.3), CT + Inches(3.0), Inches(5.83), Inches(2.5),
+    ], MX + Inches(6.3), CT + Inches(3.50), Inches(5.83), Inches(1.55),
        size=Pt(20)))
 
     _finish(slide, 0,
@@ -2956,26 +2952,26 @@ def slide_band_reliability_by_niv(prs):
                   size=Pt(24), color=TEAL, bold=True)
 
     # audit-md:band_reliability_by_niv (no flat key in audit JSON)
+    # Short labels prevent 24pt text wrapping in narrow col (rw/4 ~1.08"):
+    # "Y+P combined" (12 chars) wraps; "Y+P" (3 chars) does not.
     headers = ["Tier", "GRN", "YEL", "RED"]
     rows = [
-        ["Y+P combined", "87%", "49%", "25%"],
-        ["NIV-Y only",   "94%", "65%", "39%"],
-        ["NIV-P only",   "80%", "41%", "20%"],
-        ["NIV-N only",   "37%", "17%",  "7%"],
+        ["Y+P",   "87%", "49%", "25%"],
+        ["NIV-Y", "94%", "65%", "39%"],
+        ["NIV-P", "80%", "41%", "20%"],
+        ["NIV-N", "37%", "17%",  "7%"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.85), rw,
                     text_size=Pt(24), row_height=Inches(0.4))
 
-    # OVERLAP fix: shrink take height from 2.7 to 2.05 so bullets end at
-    # CT+4.90 = 6.35 — clear of the bottom-row source caption at y=6.55.
-    # CUT v3: bullets compressed + Pt(24)->Pt(18) so 3 bullets fit in
-    # 2.05" frame at narrow 4.93" width (was rendering bottom 9.10).
+    # OVERLAP fix: table end CT+2.85; take moved to CT+3.15 (0.30" gap).
+    # CUT v3: bullets compressed + Pt(24)->Pt(18) so 3 bullets fit.
     # Long-form retained in notes.
     take = add_bullets(slide, [
         ("62.5pp green→red spread in Y+P", {"bold": True, "color": GREEN}),
         ("NIV-P: steepest (80/41/20%)", {"color": ORANGE}),
         ("NIV-N: green misleads (37%)", {"color": PURPLE}),
-    ], rx, CT + Inches(2.85), rw, Inches(2.05), size=Pt(18))
+    ], rx, CT + Inches(3.15), rw, Inches(1.65), size=Pt(18))
 
     # CUT v3: top 6.55 -> 6.40 so Pt(18) wrap stays under safe 7.05.
     bot = add_text(slide,
@@ -3264,16 +3260,19 @@ def slide_nbest_v3_judge_paired_tests(prs):  # audit:bigfonts2
     rx = MX + Inches(6.7)
     rw = CW - Inches(6.7)
 
-    headers = ["Method", "Y%", "Y+P%", "YP McNemar p"]
+    # "YP McNemar" (10 chars) fits in 2.10" col; "p" dropped (implied by McNemar).
+    # "0.149 n.s." (10 chars) fits; "(n.s.)" paren form was borderline in 2.10".
+    headers = ["Method", "Y%", "YP%", "McNemar-p"]
     rows = [
         # audit:judge_v3_y_pct_baseline / _yp_pct_baseline
-        ["baseline",       "13%", "68%", "-"],
+        ["baseline",    "13%", "68%", "-"],
         # audit:judge_v3_y_pct_mbr / _yp_pct_mbr / mcnemar_yp_p_mbr
-        ["hyp_mbr",        "14%", "71%", "0.00017 ***"],
+        ["hyp_mbr",     "14%", "71%", "0.00017***"],
         # audit:judge_v3_y_pct_vote_score / _yp_pct_vote_score
-        ["hyp_vote_score", "14%", "69%", "0.149 (n.s.)"],
+        # Short name (no hyp_) so 10 chars fit in 1.83" col at 24pt without wrapping.
+        ["vote_score",  "14%", "69%", "0.149(ns)"],
         # audit:judge_v3_y_pct_vote_conf / _yp_pct_vote_conf / mcnemar_yp_p_vote_conf
-        ["hyp_vote_conf",  "12%", "70%", "0.00257 **"],
+        ["vote_conf",   "12%", "70%", "0.00257**"],
     ]
     row_colors = {
         1: {2: GREEN, 3: GREEN},
@@ -3284,13 +3283,22 @@ def slide_nbest_v3_judge_paired_tests(prs):  # audit:bigfonts2
     # Table 5 extended past canvas (right=13.70 vs 13.33). Cols
     # 2.4+1.0+1.2+1.8=6.4" placed at rx=7.30" overflowed by 0.37".
     # Trimmed to <=5.4" so right edge stays inside CW.
+    # OVERLAP fix v4: Y% and Y+P% cols were 0.75" (effective 0.45") — exactly at
+    # the 3-char limit for "13%"/"14%"/"12%" at 24pt, causing LibreOffice to wrap
+    # and expand rows. Widened to 0.85" (effective 0.55") for comfortable fit.
+    # Last col trimmed 2.10"→1.90" (effective 1.60") — "YP McNemar" (10 chars,
+    # 1.50") fits. P-value strings had spaces removed (e.g. "0.00017 ***" →
+    # "0.00017***") so they can't word-wrap regardless of col width.
+    # Total cols: 1.83+0.85+0.85+1.90 = 5.43" = rw ✓
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.6), rw,
                     text_size=Pt(24), row_height=Inches(0.5),
-                    col_widths=[Inches(1.9), Inches(0.9), Inches(1.0),
-                                Inches(1.6)],
+                    col_widths=[Inches(1.83), Inches(0.85), Inches(0.85),
+                                Inches(1.90)],
                     row_colors=row_colors)
 
-    # audit:bigfonts2 — V6: 4 -> 3 bullets, each <=8 words, h 2.85 -> 1.85.
+    # audit:bigfonts2 — V6: 4 -> 3 bullets, each <=8 words, h 1.60.
+    # OVERLAP fix v2: moved y 3.15->3.40 (0.30" gap from table end CT+3.10);
+    # method names shortened to vote_score/vote_conf so rows don't wrap at 24pt.
     # CUT v2: dropped "Y verdict tied" (already in the McNemar table).
     take = add_bullets(slide, [
         ("MBR +40 Y+P wins, p=0.00017",
@@ -3299,7 +3307,7 @@ def slide_nbest_v3_judge_paired_tests(prs):  # audit:bigfonts2
          {"color": GREEN}),
         ("Drift v3: 12-14% (was 27%) — dual-conf fixed bias",
          {"color": TEAL}),
-    ], rx, CT + Inches(3.0), rw, Inches(1.85), size=Pt(24))
+    ], rx, CT + Inches(3.40), rw, Inches(1.60), size=Pt(24))
 
     # audit:after_amosi_narrative_actions.md fix #8 - explicit run-label
     # footer so this v3 dual-conf judge run (Opus 4.7, 5,988 verdicts on
@@ -3819,9 +3827,10 @@ def slide_demo_obama_salvage(prs):
     # to conf-only band painting. Title now discloses the badge mismatch
     # and the metrics_line reports the correct mean_prob.
     runs = [
-        ("[per-word colors load from the conf-only sidecar; ", {"size": Pt(24), "color": LGRAY}),
-        ("'said' substitution is the visible orange word]",
-         {"size": Pt(24), "color": LGRAY, "italic": True}),
+        ("...as president bush ", {"size": Pt(22), "color": BLUE}),
+        ("said", {"size": Pt(22), "color": ORANGE, "bold": True}),
+        (" america will never seek permission... (conf-only fallback)",
+         {"size": Pt(22), "color": BLUE}),
     ]
     _demo_research_slide(prs,
         title="Demo — Obama: Trust Tier (conf-only fallback)",
