@@ -789,13 +789,12 @@ def slide_is_wer_scatter(prs):
     # losing content. Pt(15) preserved per STYLE_GUIDE T1 caption guidance.
     bul = add_bullets(slide, [
         # NIV gloss \u2014 FIRST mention in slides_research.py (per fix #5)
-        ("NIV = Native Intelligibility Verdict (calibrated against the Opus-as-a-Judge blind eval)",
+        ("NIV = Native Intelligibility Verdict (calibrated against Opus-as-a-Judge blind eval)",
          {"color": LGRAY, "bullet_color": LGRAY}),
         ("75 clearly conveyed (IS \u2265 3.80) but WER > 34%  (NIV-Y WER cutoff)",
          {"bold": True, "color": GREEN}),  # audit:logic_35_niv_y_count
         ("68 useful meaning (IS \u2265 2.00) but WER > 77%  (NIV-Y+P WER cutoff)",
          {"bold": True, "color": GOLD}),  # audit:logic_35_niv_yp_count
-        "IS \u2265 3.80 matches judge Y rate exactly (\u03ba=0.690)",
         ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),
     ], MX, CT + Inches(1.70), left_w, Inches(3.2))
 
@@ -1305,7 +1304,7 @@ def slide_failure_deep_1a(prs):
                  size=Pt(20), color=WHITE)
         t4 = add_text(slide, f"\u25b8 {example}",
                  MX + name_w, y + Inches(0.60),
-                 rule_w - Inches(0.15), Inches(1.00),
+                 rule_w - Inches(0.15), Inches(0.80),
                  size=Pt(18), color=LGRAY, italic=True)
         anim_groups.append([r, t1, t2, t3, t4])
 

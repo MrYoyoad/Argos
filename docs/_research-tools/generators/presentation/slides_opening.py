@@ -49,9 +49,7 @@ def slide_what_was_done_1(prs):  # audit:bigfonts2
     # CUT v2: dropped "preprocessing, decode, post-processing" parenthetical;
     # condensed phrasing on every bullet.
     bullets = [
-        "Started from a paper with no working environment",
         "Built end-to-end pipeline (preprocess, decode, post)",
-        "Migrated to standalone container with UI",
         "Designed IS metric — measures meaning preserved",
         "Shipped per-word confidence + beam-agreement bands",
         "Built roadmap for performance and Arabic",
@@ -91,10 +89,8 @@ def slide_what_was_done_2(prs):  # audit:bigfonts2
     # CUT v2: dropped wordy framing on every bullet; numbers preserved.
     bullets = [
         "Model is useful \u2014 65% pass LLM-judge",
-        "Semantic, phonetic, NEA \u2014 the key signals",
         "Mission 6 shipped: MBR n-best is default",
         "v3 Judge MBR Y+P 71% vs base 68%, p=0.00017",
-        "Improvable via confidence + aggregation + LLM",
         "Plan to replicate for Arabic in 2-3 months",
     ]
 

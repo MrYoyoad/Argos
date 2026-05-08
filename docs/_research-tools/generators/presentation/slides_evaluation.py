@@ -1234,7 +1234,7 @@ def slide_llm_judge(prs):
     rb = add_bullets(slide, [
         "Claude Opus received each ref+hyp pair blind (no metrics visible)",
         "3-level holistic judgment: Y (fully conveyed), P (partial), N (lost)",
-        ("\u03ba = 0.690 (Y threshold) and \u03ba = 0.818 (Y+P threshold)",
+        ("\u03ba = 0.690 (Y threshold) and \u03ba = 0.816 (Y+P threshold)",
          {"color": TEAL}),
         ("Used as gold standard to calibrate IS thresholds",
          {"bold": True}),
@@ -1257,9 +1257,9 @@ def slide_llm_judge(prs):
         "Opus 4.7 with the dual-conf prompt across 5,988 verdicts. "
         "Headline: Y=23% (345 of 1,497), P=42% (626), N=35% (526), "
         "Y+P=65%. Intra-rater agreement 87% on the 30-pair duplicate "
-        "subset. Pearson r=0.85 between IS and the judge verdict, which is "
+        "subset. "
         "what justifies using IS as a deterministic surrogate. Threshold "
-        "sweep: Y+P peaks at IS>=2.0 (kappa=0.818, 92% agreement); the "
+        "sweep: Y+P peaks at IS>=2.0 (kappa=0.816, 92% agreement); the "
         "older IS>=3.0 cutoff under-counts (kappa=0.521) and is now retired. "
         "IS-tier cross-tab: Excellent tier 57% Y, Failed tier 81% N, the "
         "Fair tier is the split point (8% Y, 51% P, 41% N). Mention to "
@@ -1275,7 +1275,7 @@ def slide_llm_judge(prs):
         "PEER DETAIL — IS thresholds were calibrated by sweeping IS in "
         "0.05 steps and picking the value that maximizes kappa vs "
         "judge-{Y, not-Y}: NIV-Y at IS>=3.80 (kappa=0.690), NIV-Y+P at "
-        "IS>=2.00 (kappa=0.818). "
+        "IS>=2.00 (kappa=0.816). "
         "Sources: docs/evaluation/llm_judge/llm_judge_analysis.md, "
         "docs/evaluation/threshold_calibration_vs_opus.md.",
         [[lt, lb],
@@ -1988,7 +1988,7 @@ def slide_disagreement_blind(prs):
         "x-ray' -> 'cut hair, ashram', IS 3.14); phonetic garbage ('one "
         "twitch is all you do' -> 'one to rich is all the', IS 3.01). The "
         "operating thresholds in this slide are NIV-Y (IS>=3.80, kappa=0.690) "
-        "and NIV-Y+P (IS>=2.00, kappa=0.818) calibrated against the same "
+        "and NIV-Y+P (IS>=2.00, kappa=0.816) calibrated against the same "
         "Opus judge.\n\n"
         "PEER DETAIL — 98% agreement = 1,466/1,497 segments fall in the "
         "same Y+P-vs-N bucket. The 22-segment disagreement region splits "
@@ -2177,7 +2177,7 @@ def slide_literature_metrics_problem(prs):
         ("Implicit: WER is monotone in usefulness", {"color": CORAL}),
         "Reported on LRS3: AV-HuBERT 25%, AutoAVSR 19%",
     ], MX + Inches(0.25), card_y + Inches(0.65),
-       card_w - Inches(0.5), Inches(3.4), size=Pt(24)))
+       card_w - Inches(0.5), Inches(2.55), size=Pt(24)))
     # OVERLAP fix: bullets shrunk from h=3.0 to 2.55 (end y=card_y+3.20);
     # callout moved up from y=card_y+3.40 to 3.30 with h=0.65 (was 0.7).
     # CUT v3: shrunk callout to 20pt + tightened wording; full text
@@ -3473,7 +3473,6 @@ def slide_v1_vs_v3_judge_lesson(prs):
     # retained in notes.
     L.append(add_bullets(slide, [
         ("Method-conf only in prompt", {"bold": True}),
-        "Judge read high method-conf as reliable",
         ("Y+P: vote_conf loses (p < 0.05)", {"color": CORAL}),
         ("Identical-text drift: 27%", {"color": CORAL}),
         ("Bias: against n-best variants", {"color": CORAL, "bold": True}),
@@ -3490,7 +3489,6 @@ def slide_v1_vs_v3_judge_lesson(prs):
     # CUT v3: bullets compressed + Pt(24)->Pt(20). Long-form in notes.
     R.append(add_bullets(slide, [
         ("Method-conf AND baseline_conf shown", {"bold": True}),
-        "Judge anchors method to baseline",
         ("Y+P: vote_conf wins (p = 0.00257)", {"color": GREEN}),
         ("Identical-text drift: 12.6/10.4/14%", {"color": GREEN}),
         ("Bias: balanced", {"color": GREEN, "bold": True}),

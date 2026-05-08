@@ -409,7 +409,7 @@ def slide_28(prs):  # audit:bigfonts2
         "Align all 20 hypotheses word-by-word",
         "Vote at each position \u2014 most common word wins",
         "Reduces random substitution errors",
-    ], MX + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(2.6),
+    ], MX + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.4),
        size=Pt(24))
 
     rx = MX + cw + gap
@@ -424,7 +424,7 @@ def slide_28(prs):  # audit:bigfonts2
         "Score each hypothesis against ALL others",
         "Pick the one most similar to the consensus",
         "Best single hypothesis, no alignment needed",
-    ], rx + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(2.6),
+    ], rx + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.4),
        size=Pt(24))
 
     # Impact summary \u2014 bullets <=8 words (audit:bigfonts2).
@@ -564,7 +564,7 @@ def slide_30(prs):  # audit:bigfonts
         r = add_rect(slide, x, CT, cw, Inches(4.8), fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
         t = add_text(slide, title, x + Inches(0.2), CT + Inches(0.15),
-                 cw - Inches(0.4), Inches(1.0),
+                 cw - Inches(0.4), Inches(0.45),
                  size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
         # B1: column widened 3.6"->5.5" — bullets bumped Pt(18)->Pt(22).
         b = add_bullets(slide, items, x + Inches(0.2), CT + Inches(0.7),
@@ -883,7 +883,7 @@ def slide_arabic_roadmap(prs):  # audit:bigfonts
         grp.append(add_bullets(slide, [
             (heading, {"bold": True, "color": clr}),
             detail,
-        ], MX, by, col_w, Inches(1.8), size=Pt(24)))
+        ], MX, by, col_w, Inches(0.82), size=Pt(24)))
         topic_groups.append(grp)
         by += Inches(0.82)
 
