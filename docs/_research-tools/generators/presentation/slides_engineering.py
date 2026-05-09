@@ -202,30 +202,37 @@ def slide_17_a(prs):
 
 
 def slide_17_b(prs):
-    """8-Stage Pipeline — Part 2 of 2: Decoding + Output (stages 5-8)."""
+    """8-Stage Pipeline — Part 2 of 2: Decoding + Output + Post-decode (5-8 + 7a/7b)."""
     slide = new_slide(prs)
-    add_title(slide, "8-Stage Pipeline (2/2): Decoding + Output")
+    add_title(slide, "Pipeline (2/2): Decoding + Aggregation + Confidence + Output")
     add_accent_line(slide)
 
     SGREEN = _PIPE_SGREEN
     SGOLD  = _PIPE_SGOLD
     SPINK  = _PIPE_SPINK
+    # Post-decode stages (May 2026 additions) get distinct teal palette.
+    SPOST  = RGBColor(0x4D, 0xD0, 0xE1)  # cyan/teal — same as preprocessing BLUE
 
+    # 6 stages now: existing 5,6,7 + 7a (Aggregation, Mission 6 May 1) +
+    # 7b (Confidence, Mission 4 Apr 30) + 8.
     stages = [
-        ("5. Manifests",  "TSV + splits",            SGREEN),
-        ("6. K-means",    "Feature\nclustering",     SGREEN),
-        ("7. LLM Decode", "AV-HuBERT +\nLLaMA-2",    SGOLD),
-        ("8. Outputs",    "Reports &\nburned video", SPINK),
+        ("5. Manifests",   "TSV + splits",           SGREEN),
+        ("6. K-means",     "Feature\nclustering",    SGREEN),
+        ("7. LLM Decode",  "AV-HuBERT +\nLLaMA-2",   SGOLD),
+        ("7a. Aggregate",  "MBR n-best\n(May 1)",    SPOST),
+        ("7b. Confidence", "Per-word\np₁ + α (Apr 30)", SPOST),
+        ("8. Outputs",     "Reports +\nburned video", SPINK),
     ]
 
-    box_w = Inches(2.6)
-    box_h = Inches(1.8)
-    h_gap = Inches(0.18)
-    arrow_w = Inches(0.22)
+    # Tighter layout to fit 6 boxes on one row.
+    box_w = Inches(1.95)
+    box_h = Inches(1.7)
+    h_gap = Inches(0.08)
+    arrow_w = Inches(0.18)
     step = box_w + h_gap + arrow_w + h_gap
-    total_w = 4 * box_w + 3 * (h_gap + arrow_w + h_gap)
+    total_w = 6 * box_w + 5 * (h_gap + arrow_w + h_gap)
     start_x = int((SL_W - total_w) / 2)
-    row_y = CT + Inches(0.50)
+    row_y = CT + Inches(0.55)
 
     anim_groups = []
 
@@ -233,7 +240,7 @@ def slide_17_b(prs):
     stage_groups = []
     for i, (name, sub, color) in enumerate(stages):
         x = start_x + i * step
-        grp = _pipe_box(slide, name, sub, color, x, row_y, box_w, box_h)
+        grp = _pipe_box_compact(slide, name, sub, color, x, row_y, box_w, box_h)
         if i > 0:
             ax = start_x + (i - 1) * step + box_w
             grp = _pipe_arrow(slide, ax, row_y, h_gap, arrow_w, box_h) + grp
@@ -242,45 +249,93 @@ def slide_17_b(prs):
     # Red outline highlighting stages 6-7 (existed in academic repo).
     s6_x = start_x + 1 * step
     s7_x = start_x + 2 * step
-    red_box_x = s6_x - Inches(0.1)
-    red_box_w = (s7_x + box_w) - s6_x + Inches(0.2)
-    red_box = add_rect(slide, red_box_x, row_y - Inches(0.12),
-                       red_box_w, box_h + Inches(0.24),
+    red_box_x = s6_x - Inches(0.08)
+    red_box_w = (s7_x + box_w) - s6_x + Inches(0.16)
+    red_box = add_rect(slide, red_box_x, row_y - Inches(0.10),
+                       red_box_w, box_h + Inches(0.20),
                        fill_color=None, border_color=RED, border_width=Pt(2.5),
                        corner_radius=True)
     red_label = add_text(slide, "Existed in academic repo",
-                         red_box_x, row_y - Inches(0.55),
-                         red_box_w, Inches(0.42),
-                         size=Pt(22), color=RED, bold=True,
+                         red_box_x, row_y - Inches(0.50),
+                         red_box_w, Inches(0.40),
+                         size=Pt(20), color=RED, bold=True,
                          align=PP_ALIGN.CENTER)
 
-    # Group reveals: stages 5+6+red highlight, then 7+8.
+    # Teal outline highlighting stages 7a-7b (engineered May 2026).
+    s7a_x = start_x + 3 * step
+    s7b_x = start_x + 4 * step
+    teal_box_x = s7a_x - Inches(0.08)
+    teal_box_w = (s7b_x + box_w) - s7a_x + Inches(0.16)
+    teal_box = add_rect(slide, teal_box_x, row_y + box_h + Inches(0.05),
+                        teal_box_w, Inches(0.45),
+                        fill_color=None, border_color=SPOST, border_width=Pt(2.5),
+                        corner_radius=True)
+    teal_label = add_text(slide, "Engineered May 2026",
+                          teal_box_x, row_y + box_h + Inches(0.07),
+                          teal_box_w, Inches(0.40),
+                          size=Pt(18), color=SPOST, bold=True,
+                          align=PP_ALIGN.CENTER)
+
+    # Group reveals: stages 5+6+red highlight, 7+7a+7b+teal highlight, then 8.
     anim_groups.append(stage_groups[0] + stage_groups[1] + [red_box, red_label])
-    anim_groups.append(stage_groups[2] + stage_groups[3])
+    anim_groups.append(stage_groups[2] + stage_groups[3] + stage_groups[4]
+                       + [teal_box, teal_label])
+    anim_groups.append(stage_groups[5])
 
     # ── Legend ──
     final_group = []
-    legend_y = row_y + box_h + Inches(0.55)
+    legend_y = row_y + box_h + Inches(0.85)
     final_group += _pipe_legend(slide, [
         ("Feature Extraction", SGREEN),
         ("LLM Inference", SGOLD),
+        ("Post-decode (NEW)", SPOST),
         ("Output", SPINK),
     ], legend_y)
 
     # Repo attribution
     final_group.append(add_text(slide,
-             "auto_avsr  ·  av_hubert  ·  VSP-LLM",
+             "auto_avsr  ·  av_hubert  ·  VSP-LLM  ·  lib/outputs.sh (May 2026)",
              start_x, legend_y + Inches(0.42), total_w, Inches(0.32),
-             size=Pt(20), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+             size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
     anim_groups.append(final_group)
 
     _finish(slide, 0,
-        "Pipeline part 2/2: stages 5-8. Manifests build TSV + splits, K-means "
-        "clusters AV-HuBERT features, LLM decode runs AV-HuBERT + LLaMA-2 to "
-        "produce hypotheses, outputs generate reports and burned videos. "
+        "Pipeline part 2/2: stages 5-8 plus the May-2026 post-decode "
+        "additions (7a, 7b). Manifests build TSV + splits, K-means clusters "
+        "AV-HuBERT features, LLM decode runs AV-HuBERT + LLaMA-2 to produce "
+        "20 n-best hypotheses. NEW: 7a Aggregate (Mission 6, shipped May 1 "
+        "2026) — combines the 20 hypotheses into a single MBR-best hypothesis "
+        "with per-word posterior probabilities. NEW: 7b Confidence (Mission "
+        "4, shipped April 30 2026) — emits per-word p₁ (top-1 softmax) and α "
+        "(beam agreement) joint band labels (green/yellow/red). Stage 8 "
+        "Outputs consumes both signals to render reports.csv + report.html "
+        "with confidence colors and burned MP4 with per-word tier badges. "
         "Stages 6-7 (K-means and LLM Decode) existed in the academic repo; "
-        "all other stages were engineered from scratch.",
+        "all other stages — including the new 7a/7b post-decode pair — were "
+        "engineered from scratch.",
         anim_groups, click_reveal=True)
+
+
+def _pipe_box_compact(slide, name, sub, color, x, y, w, h):
+    """Compact pipeline-stage box for the 6-box slide_17_b layout.
+
+    Same vertical structure as _pipe_box but smaller fonts (Pt(20) name /
+    Pt(18) sub) so labels fit in the narrower 1.95" box width without
+    wrapping.
+    """
+    shapes = []
+    shapes.append(add_rect(slide, x, y, w, h,
+                 fill_color=color, border_color=None, corner_radius=True))
+    shapes.append(add_text(slide, name,
+             x + Inches(0.08), y + Inches(0.12),
+             w - Inches(0.16), Inches(0.45),
+             size=Pt(20), color=_PIPE_DARK, bold=True,
+             align=PP_ALIGN.CENTER))
+    shapes.append(add_text(slide, sub,
+             x + Inches(0.08), y + Inches(0.62),
+             w - Inches(0.16), h - Inches(0.72),
+             size=Pt(18), color=_PIPE_DARK, align=PP_ALIGN.CENTER))
+    return shapes
 
 
 # SLIDE 17b — PIPELINE ARCHITECTURE (PNG version)
