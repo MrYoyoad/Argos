@@ -137,13 +137,15 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
          '"Admiral McRae" 2\u00d7;  "the" 0.5\u00d7.'),
         ("Length Ratio", "15%", LGRAY,
          "len(hyp)/len(ref). Catches hallucination + truncation.",
-         "Hallucinated segments average 2.8\u00d7."),
+         None),  # remark #322 \u2014 replaced by worked-example strip below
     ]
 
     card_groups = []
     for i, (name, weight, color, how, example) in enumerate(signals):
+        # remark #322 — grow card 3 slightly to fit worked-example strip.
+        this_h = card_h if i < 2 else Inches(1.55)
         y = start_y + i * (card_h + gap_y)
-        r = add_rect(slide, MX, y, card_w, card_h, fill_color=NAVY2,
+        r = add_rect(slide, MX, y, card_w, this_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
         t1 = add_text(slide, f"{name}  ({weight})",
                  MX + Inches(0.2), y + Inches(0.06),
@@ -154,11 +156,46 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
                  card_w - Inches(0.4), Inches(0.55),
                  size=Pt(24), color=WHITE)
         # audit:bigfonts2 — t3 italic example moved to y+1.00 within tighter card
-        t3 = add_text(slide, f"\u25b8 {example}",
-                 MX + Inches(0.2), y + Inches(1.00),
-                 card_w - Inches(0.4), Inches(0.40),
-                 size=Pt(20), color=LGRAY, italic=True)
-        card_groups.append([r, t1, t2, t3])
+        if i < 2:
+            t3 = add_text(slide, f"\u25b8 {example}",
+                     MX + Inches(0.2), y + Inches(1.00),
+                     card_w - Inches(0.4), Inches(0.40),
+                     size=Pt(20), color=LGRAY, italic=True)
+            card_groups.append([r, t1, t2, t3])
+        else:
+            # remark #322 \u2014 worked example with confidence badge so the
+            # audience sees "would I be fooled?" in context.
+            ex_y = y + Inches(0.95)
+            ex = add_text(slide,
+                "\u25b8 ref: \u201cjames and will talk about street photography\u201d  \u2192  "
+                "hyp: \u201ci'm here to talk about street photography\u201d",
+                MX + Inches(0.2), ex_y,
+                card_w - Inches(0.4), Inches(0.30),
+                size=Pt(18), color=LGRAY, italic=True)
+            badge_y = y + Inches(1.22)
+            badge_h = Inches(0.30)
+            gap_x = Inches(0.10)
+            badge_specs = [
+                ("WER 56%", Inches(1.55), CORAL),
+                ("WWER 53%", Inches(1.70), CORAL),
+                ("LR 1.05", Inches(1.45), LGRAY),
+                ("conf 0.70", Inches(1.65), GOLD),
+                ("Salvage \u2014 inspect, don't trust blindly", Inches(3.95), GOLD),
+            ]
+            badges = []
+            bx = MX + Inches(0.2)
+            for label, bw, bcolor in badge_specs:
+                br = add_rect(slide, bx, badge_y, bw, badge_h, fill_color=NAVY3,
+                              border_color=bcolor, border_width=Pt(1.0),
+                              corner_radius=True)
+                bt = add_text(slide, label,
+                         bx, badge_y + Inches(0.02),
+                         bw, badge_h - Inches(0.04),
+                         size=Pt(18), color=bcolor, bold=True,
+                         align=PP_ALIGN.CENTER)
+                badges.extend([br, bt])
+                bx += bw + gap_x
+            card_groups.append([r, t1, t2, ex] + badges)
 
     # CUT v2: removed bottom IS formula — overlapped card 3 after bumps.
     # Visual-first per V1: the 3 cards carry meaning. audit:bigfonts2.

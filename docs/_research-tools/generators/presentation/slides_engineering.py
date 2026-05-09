@@ -224,11 +224,12 @@ def slide_17_b(prs):
         ("8. Outputs",     "Reports +\nburned video", SPINK),
     ]
 
-    # Tighter layout to fit 6 boxes on one row.
-    box_w = Inches(1.95)
+    # Tighter layout to fit 6 boxes on one row (total_w must stay ≤ 13.33").
+    # 6×1.80 + 5×(0.06+0.14+0.06) = 10.80 + 1.30 = 12.10" → start_x = 0.62".
+    box_w = Inches(1.80)
     box_h = Inches(1.7)
-    h_gap = Inches(0.08)
-    arrow_w = Inches(0.18)
+    h_gap = Inches(0.06)
+    arrow_w = Inches(0.14)
     step = box_w + h_gap + arrow_w + h_gap
     total_w = 6 * box_w + 5 * (h_gap + arrow_w + h_gap)
     start_x = int((SL_W - total_w) / 2)

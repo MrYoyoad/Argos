@@ -697,12 +697,15 @@ def slide_band_reliability_by_niv(prs):
     sub = add_text(slide,
         "Within useful content (Y+P), per-word band carries strong "
         "information about correctness - 62.5pp green->red spread.",
-        MX, CT, CW, Inches(0.8),
+        MX, CT, CW, Inches(0.45),
         size=Pt(18), color=LGRAY, italic=True)
 
+    # OVERLAP fix (#334): img h 4.60 -> 4.25 so img bottom = 6.20, leaving
+    # 0.02" gap before bot strip top=6.22; previously bot strip overlapped
+    # img by 0.33". Sub h 0.80 -> 0.45 so sub bottom 1.90 < img top 1.95.
     img = add_image(slide, "P_band_reliability_by_niv",
                     MX, CT + Inches(0.5),
-                    width=Inches(9.0), height=Inches(4.6))
+                    width=Inches(9.0), height=Inches(4.25))
     rx = MX + Inches(9.2)
     rw = CW - Inches(9.2)
     rt = add_text(slide, "P(correct | band)",
@@ -762,7 +765,7 @@ def slide_agreement_aware_bands(prs):
     sub = add_text(slide,
         "Production rule. Two axes: p₁ (per-token softmax max) "
         "AND α (beam-agreement fraction across n-best).",
-        MX, CT, CW, Inches(0.8),
+        MX, CT, CW, Inches(0.55),
         size=Pt(18), color=LGRAY, italic=True)
 
     card_w = (CW - Inches(0.6)) / 3
@@ -807,13 +810,13 @@ def slide_agreement_aware_bands(prs):
         # bin. At top1_conf>=0.95 (the green-band threshold), the actual
         # P(correct) range is 0.40 -> 0.94 = 54pp. Source:
         # english_full_nbest_eval/trust_diagnostic/TRUST_DIAGNOSTIC.md Test C.
-        # CUT v3: trimmed text + frame h 2.2 -> 1.65 so Pt(24) wrap stays
-        # under safe 7.05 (was rendering bottom 7.20). Long-form in notes.
+        # OVERLAP fix (#336): inner-text h 1.65 -> 1.20 so bot=5.00+1.20=6.20
+        # ≤ rect bot 6.35, no longer overlapping bot strip at y=6.45.
         "WHY ADD AGREEMENT?  Beam agreement is ~2× more informative than "
         "top-1 conf at high conf — at conf ≥ 0.95, agreement spread takes "
         "P(correct) from 0.40 → 0.94 (54pp gap).",
         MX + Inches(0.3), CT + Inches(3.55), CW - Inches(0.6),
-        Inches(1.65), size=Pt(24), color=WHITE))
+        Inches(1.20), size=Pt(24), color=WHITE))
 
     # CUT v4: shorten to one line at Pt(24) so bottom = 6.45 + 0.50 = 6.95 <= 7.05.
     bot = add_text(slide,
@@ -1015,10 +1018,14 @@ def slide_nbest_v3_judge_paired_tests(prs):  # audit:bigfonts2
     img_methods = add_image(slide, "P_method_comparison",
                             MX, CT + Inches(3.0),
                             width=Inches(6.5), height=Inches(1.7))
+    # audit:remark_326 — caption at T=6.20 H=0.80 BOT=7.00 was overlapping
+    # the run-label footer at T=6.55 (0.45" overlap, "text misplaced").
+    # Caption is one line of 18pt italic text -> height 0.30 sufficient.
+    # New: T=6.20 H=0.30 BOT=6.50, 0.05" gap before footer at T=6.55.
     cap_methods = add_text(slide,
         "Below: IS distribution per method (top1 / MBR / vote_score / vote_conf).",
-        MX, CT + Inches(4.75), Inches(6.5), Inches(0.8),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)  # audit:fix_round3 footer-overlap
+        MX, CT + Inches(4.75), Inches(6.5), Inches(0.30),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     rx = MX + Inches(6.7)
     rw = CW - Inches(6.7)

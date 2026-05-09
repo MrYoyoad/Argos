@@ -1105,11 +1105,15 @@ def slide_llm_judge(prs):
                   size=Pt(24), color=TEAL, bold=True)
     # Bullets in 2.1" \u2014 enough for 4 lines at 24pt; res_t starts at CT+2.7
     # (0.3" gap after bullet frame) so the 4th bullet never crowds the header.
+    # audit:remark_317 \u2014 bullets at 24pt in 5.5" col wrap at ~42 chars/line.
+    # Original 4 bullets (50-66 chars each) wrapped to 8 lines (~3.0-3.4") and
+    # overflowed the 2.1" frame, visually colliding with the results table
+    # below ("table hides text"). Trimmed to 3 short bullets that fit
+    # single-line at 24pt -> total ~1.5" of rendered text inside the 2.1" box.
     lb = add_bullets(slide, [
-        "Use a frontier LLM (Claude Opus) as an independent evaluator",
-        "Evaluate every reference+hypothesis pair holistically",
-        "3-level verdict: Y (preserved) / P (partial) / N (not preserved)",
-        ("30 duplicate pairs \u2192 87% intra-rater reliability", {"bold": True}),
+        "Frontier LLM (Claude Opus) as judge",
+        "Holistic Y/P/N verdict on each pair",
+        ("87% intra-rater reliability (30 dups)", {"bold": True}),
     ], MX, CT + Inches(0.5), col_w, Inches(2.1), size=Pt(24))
 
     # Results table \u2014 pushed down to CT+2.7 / CT+3.1 to clear bullet overflow
