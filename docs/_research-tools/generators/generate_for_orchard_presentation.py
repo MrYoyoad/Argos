@@ -240,10 +240,11 @@ def main():
         slide_research_transition,      # Section divider
         slide_literature_metrics_problem,
         slide_llm_judge,                # LLM-as-a-Judge intro
-        slide_judge_ex1,                # Judge example 1: named entity swap
-        slide_judge_ex3,                # Judge example 2: technical vocab drift
-        slide_judge_ex5,                # Judge example 3: cooking domain confusion
-        slide_judge_ex6,                # Judge example 4: topic hijack
+        # slide_judge_ex1 deferred to appendix per user review #318 (named-entity
+        # swap was redundant with the others; only 3 examples in main flow now).
+        slide_judge_ex3,                # Judge example 1: technical vocab drift
+        slide_judge_ex5,                # Judge example 2: cooking domain confusion
+        slide_judge_ex6,                # Judge example 3: topic hijack
         # slide_disagreement_blind moved to appendix (per user review: not
         # important for main flow — accessible during Q&A).
         slide_disagreement_context,
@@ -320,6 +321,7 @@ def main():
         slide_thank_you,                # Thank you
 
         # ─── Appendix (hidden by default) ────────────────────────────
+        slide_judge_ex1,                # Judge example: named-entity swap (deferred from main #318)
         slide_disagreement_blind,       # IS vs Judge disagreement (Q&A)
         slide_a1,                       # Homophenes
         slide_a8,                       # IS component correlation
@@ -339,6 +341,7 @@ def main():
     # estimates) are hidden by default. The deck-builder retains them
     # so a presenter can choose to reveal them on the fly.
     hidden_builders = {
+        slide_judge_ex1,
         slide_disagreement_blind,
         slide_a1,
         slide_a8,

@@ -686,9 +686,9 @@ User reviewed screenshots of all slides. 43 items covering content framing, layo
 | 315 | 15 | layout | Text overflows red box | done — slide_is_intro_b body text shortened |
 | 316 | 17 | layout | Slide looks bad — split into 2 slides if needed | done — split into slide_17_a (Preprocessing, stages 1-4 + ASR side-branch) and slide_17_b (Decoding+Output, stages 5-8); bigger boxes (1.8" tall), cleanly separated 24pt label / 22pt caption frames |
 | 317 | 18 | layout | Table hides text | pending |
-| 318 | 19 | content | Not important, not appearing in AMOSI slide — remove or defer to appendix | pending |
+| 318 | 19 | content | Not important, not appearing in AMOSI slide — remove or defer to appendix | done — slide_judge_ex1 (named entity swap) moved to appendix; main flow now 3 examples (Tech Vocab Drift, Cooking Domain, Topic Hijack); titles renumbered 1-3 |
 | 319 | 20, 21, 22 | layout | Text covered on all three slides | done — _judge_video_slide: category rect h 0.35→0.70, annotation repositioned |
-| 320 | judge examples | content | Numbering/title on judge examples is inconsistent | pending |
+| 320 | judge examples | content | Numbering/title on judge examples is inconsistent | done — verified consistent after #318 move: Examples 1-3 in main, "Appendix: Judge Example — Named Entity Swap" in appendix |
 | 321 | 24 | layout | Slide looks horrible | done — slide_is_motivation: takeaway wrapped in NAVY2 rect with GOLD border |
 | 322 | 25 | content | Not important — only the example matters. Needs confidence score so user understands whether they would be fooled | pending |
 | 323 | 28, 30 | layout | Text bad on both. PCA (slide 30) needs one more dimension — user wants 3 PCs shown | done — slide_is_dimensions updated to 3 PCs; card text raised to Pt(24) |

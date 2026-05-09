@@ -1531,7 +1531,7 @@ def slide_judge_ex1(prs):
     """Judge example 1: Named entity swap — bernreuter → rogers (IS 4.55)."""
     _judge_video_slide(prs,
         vid_key="judge_entity",
-        title="Example 1: Named Entity Swap",
+        title="Appendix: Judge Example — Named Entity Swap",
         ref="market research firm bernreuter research is "
             "forecasting pv installations could reach",
         hyp="market research firm rogers research is "
@@ -1597,7 +1597,7 @@ def slide_judge_ex3(prs):
     """Judge example 3: Tech vocabulary drift — routers → roads (IS 3.02)."""
     _judge_video_slide(prs,
         vid_key="judge_router",
-        title="Example 2: Technical Vocabulary Drift",
+        title="Example 1: Technical Vocabulary Drift",
         ref="we need a radically different approach we basically "
             "need to find a way how we can take existing routers "
             "existing switches existing links and enable them for research",
@@ -1651,7 +1651,7 @@ def slide_judge_ex5(prs):
     """Judge example 5: Cooking domain confusion — jalapeno → banana (IS 2.07)."""
     _judge_video_slide(prs,
         vid_key="judge_jalapeno",
-        title="Example 3: Cooking Domain Confusion",
+        title="Example 2: Cooking Domain Confusion",
         ref="and i have a tablespoon of jalapeno fresh jalapeno",
         hyp="and i have a dietary smoothie i've got the "
             "banana called fresh banana",
@@ -1683,7 +1683,7 @@ def slide_judge_ex6(prs):
     """Judge example 6: Topic hijack — overhead lights → ghost whisperer (IS 1.79)."""
     _judge_video_slide(prs,
         vid_key="judge_lights",
-        title="Example 4: Topic Hijack",
+        title="Example 3: Topic Hijack",
         ref="i actually use the overhead lights which are "
             "mostly fluorescent which i know is a big no no "
             "but this camera",
