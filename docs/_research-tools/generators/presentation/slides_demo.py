@@ -544,8 +544,9 @@ def slide_demo_obama_salvage(prs):
         video_key="obama_partial",
         ref="(see speaker notes; Obama bin Laden announcement, segment #31, 92.90-96.50 s)",
         hyp_runs=runs,
-        metrics_line="WER ~ 22%   /   IS ~ 3.5   /   sequence_conf mixed   "
-                     "/   mean_prob = 0.920  (TRUST under T_safe=0.82)",
+        # OVERLAP fix (May 2026): metrics shortened to fit one 18pt line.
+        metrics_line="WER ~22%  /  IS ~3.5  /  mean_prob 0.920  "
+                     "(TRUST under T_safe=0.82)",
         badge_text="TIER: TRUST",
         badge_color=BLUE,
         # audit:bigfonts — body trimmed from 5 sentences to 2 to fit 16pt.
@@ -603,9 +604,10 @@ def slide_demo_obama_strip(prs):
             "to sleep tells us when to make cortisol tells us when to "
             "make testosterone basically switches on",
         hyp_runs=runs,
-        metrics_line="WER 43%   /   IS 2.66 (Salvage)   /   "
-                     "mean_prob = 0.739   /   min word conf 0.12  "
-                     "(VSP_NBEST=1, joint band rule)",
+        # OVERLAP fix (May 2026): metrics line shortened so it fits one
+        # 18pt line in 9.53"-wide box (was wrapping into the video below).
+        metrics_line="WER 43%  /  IS 2.66 (Salvage)  /  "
+                     "mean_prob 0.739  /  joint rule",
         badge_text="TIER: INSPECT",
         badge_color=ORANGE,
         body="Repeating 'tells us when to X' structure preserved, but "
@@ -666,9 +668,8 @@ def slide_demo_judge_entity(prs):
         ref="market research firm bernreuter research is forecasting "
             "pv installations could reach",
         hyp_runs=runs,
-        metrics_line="WER 18%   /   IS 4.55   /   sequence_conf mixed   "
-                     "/   mean_prob = 0.624  (Strip; full agreement-aware "
-                     "rule applied, VSP_NBEST=1)",
+        # OVERLAP fix (May 2026): metrics shortened to fit one 18pt line.
+        metrics_line="WER 18%  /  IS 4.55  /  mean_prob 0.624  (Strip)",
         badge_text="TIER: STRIP",
         badge_color=PURPLE,
         # audit:bigfonts — body trimmed (was: "Research observation: the
@@ -726,9 +727,8 @@ def slide_demo_judge_vocab(prs):
             "to find a way how we can take existing routers existing "
             "switches existing links and enable them for research",
         hyp_runs=runs,
-        metrics_line="WER 52%   /   IS 3.02   /   sequence_conf mixed   "
-                     "/   mean_prob ~ 0.78  (Salvage; full agreement-aware "
-                     "rule applied, VSP_NBEST=1)",
+        # OVERLAP fix (May 2026): metrics shortened to fit one 18pt line.
+        metrics_line="WER 52%  /  IS 3.02  /  mean_prob ~0.78  (Salvage)",
         badge_text="TIER: SALVAGE",
         badge_color=ORANGE,
         # audit:bigfonts — body trimmed from 4 clauses to 2. Cut: "per-word

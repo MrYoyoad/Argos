@@ -153,10 +153,11 @@ def slide_26(prs):  # audit:bigfonts2
          "IS +0.10", LGRAY),
     ]
 
-    # CUT v4: step_h 1.10 + gap 0.00 → 5 steps fit in 5.50 vertical (start CT-0.10
-    # = 1.35, end 6.85). Inner frame 1.00" comfortably holds 2-line rich_text at Pt(18).
+    # Pass 3 (audit:opus_phase5_overlap): steps ended at 6.85, overlapping
+    # bottom subtitle at 6.55. Tighten step_h 1.10 -> 1.00 so 5 steps end at
+    # 1.35 + 5*1.00 = 6.35 with 0.20" gap before subtitle.
     step_w = Inches(5.8)
-    step_h = Inches(1.10)
+    step_h = Inches(1.00)
     step_indent = Inches(0.30)
     start_y = CT - Inches(0.10)
     start_x = MX
@@ -389,52 +390,55 @@ def slide_28(prs):  # audit:bigfonts2
     add_text(slide,
              "Multi-hypothesis decoding now ships as production default "
              "(20 hypotheses → MBR consensus).",
-             MX, CT, CW, Inches(0.5), size=Pt(24), color=WHITE, bold=True)
+             MX, CT, CW, Inches(0.85), size=Pt(22), color=WHITE, bold=True)
 
     # Two technique cards side by side
+    # Pass 3: cy 0.65 -> 0.95 to clear taller subtitle (h 0.5 -> 0.85)
     cw = Inches(5.5)
     gap = Inches(1.13)
-    cy = CT + Inches(0.65)
-    ch = Inches(2.2)
+    cy = CT + Inches(0.95)
+    ch = Inches(2.0)
 
     r1 = add_rect(slide, MX, cy, cw, ch, fill_color=NAVY2,
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
     add_text(slide, "ROVER (alternative)", MX + Inches(0.2), cy + Inches(0.1),
-             cw - Inches(0.4), Inches(0.3), size=Pt(24), color=TEAL, bold=True)
+             cw - Inches(0.4), Inches(0.3), size=Pt(22), color=TEAL, bold=True)
     add_text(slide, "Recognizer Output Voting Error Reduction",
-             MX + Inches(0.2), cy + Inches(0.42), cw - Inches(0.4), Inches(0.8),
-             size=Pt(18), color=LGRAY, italic=True)
+             MX + Inches(0.2), cy + Inches(0.40), cw - Inches(0.4), Inches(0.30),
+             size=Pt(14), color=LGRAY, italic=True)
+    # Pass 3: bullets at cy+0.70 with h=1.20 (fits Pt(18) 3 lines).
     add_bullets(slide, [
-        "Align all 20 hypotheses word-by-word",
-        "Vote at each position \u2014 most common word wins",
+        "Align 20 hypotheses word-by-word",
+        "Vote at each position \u2014 most common",
         "Reduces random substitution errors",
-    ], MX + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.4),
-       size=Pt(24))
+    ], MX + Inches(0.2), cy + Inches(0.70), cw - Inches(0.4), Inches(1.20),
+       size=Pt(18))
 
     rx = MX + cw + gap
     r2 = add_rect(slide, rx, cy, cw, ch, fill_color=NAVY2,
                   border_color=GREEN, border_width=Pt(2), corner_radius=True)
     add_text(slide, "MBR (shipped, default)", rx + Inches(0.2), cy + Inches(0.1),
-             cw - Inches(0.4), Inches(0.3), size=Pt(24), color=GREEN, bold=True)
+             cw - Inches(0.4), Inches(0.3), size=Pt(22), color=GREEN, bold=True)
     add_text(slide, "Minimum Bayes Risk Decoding",
-             rx + Inches(0.2), cy + Inches(0.42), cw - Inches(0.4), Inches(0.28),
-             size=Pt(18), color=LGRAY, italic=True)
+             rx + Inches(0.2), cy + Inches(0.40), cw - Inches(0.4), Inches(0.30),
+             size=Pt(14), color=LGRAY, italic=True)
     add_bullets(slide, [
         "Score each hypothesis against ALL others",
-        "Pick the one most similar to the consensus",
-        "Best single hypothesis, no alignment needed",
-    ], rx + Inches(0.2), cy + Inches(0.7), cw - Inches(0.4), Inches(1.4),
-       size=Pt(24))
+        "Pick the one most similar to consensus",
+        "Best single hypothesis, no alignment",
+    ], rx + Inches(0.2), cy + Inches(0.70), cw - Inches(0.4), Inches(1.20),
+       size=Pt(18))
 
-    # Impact summary \u2014 bullets <=8 words (audit:bigfonts2).
-    # Anchors: judge_v3_yp_pct_mbr / baseline / mcnemar.
+    # Pass 3 (audit:opus_nbest_overflow): impact bullets at Pt(24) wrapped
+    # to ~5 lines, overlapping refs at 6.55. Drop to Pt(20) so 3 single-line
+    # bullets fit cleanly in 1.40".
     iy = cy + ch + Inches(0.3)
     impact = add_bullets(slide, [
-        ("v3 Judge: MBR Y+P 71% vs base 68% (p=0.00017)",
+        ("v3 Judge: MBR Y+P 71% vs 68% (p=0.00017)",
          {"color": GREEN, "bold": True}),  # audit:judge_v3_yp_pct_mbr
         "Targets Accumulated Errors (9% of failures)",
-        "WER -1.56 pp on hyp_vote_conf; MBR posterior calibrated",
-    ], MX, iy, CW, Inches(1.40), size=Pt(24))
+        "WER -1.56 pp on hyp_vote_conf; MBR calibrated",
+    ], MX, iy, CW, Inches(1.40), size=Pt(20))
 
     # Refs (audit:bigfonts \u2014 shifted to y=6.55 below bumped impact band).
     add_text(slide,
@@ -933,68 +937,72 @@ def slide_arabic_roadmap(prs):  # audit:bigfonts
                   MX, CT, col_w, Inches(1.0),
                   size=Pt(24), color=TEAL, bold=True)
 
-    # Details shortened to fit Pt(24) (audit:bigfonts).
+    # Pass 3 (audit:opus_arabic_overflow): each topic at Pt(24) needs
+    # ~1.0" for heading + detail; bumped per-topic h to 1.05 and shortened
+    # detail strings to one line. Total: 5 * 1.05 = 5.25, start CT+0.45 = 1.90,
+    # end 7.15 \u2192 over safe. Reduce to 4 topics: collapse "Training
+    # infrastructure" into the AV-HuBERT entry (existing AWS GPU is implicit
+    # since it ships in current pipeline).
     topics = [
-        (TEAL,  "AV-HuBERT encoder (BOTTLENECK)",
-         "Arabic phonemes need fine-tuning"),
+        (TEAL,  "AV-HuBERT (BOTTLENECK)",
+         "Arabic phonemes \u2014 fine-tune on AWS GPU"),
         (TEAL,  "Arabic LLM backend",
-         "Swap Llama-2 for Jais / AceGPT / Arabic Llama 3"),
+         "Swap Llama-2 for Jais / AceGPT / Llama 3"),
         (CORAL, "Eval dataset (UNKNOWN)",
-         "No Arabic lip-read benchmark; need native speakers"),
-        (GREEN, "Training infrastructure",
-         "AWS GPU (existing) for fine-tune + reclustering"),
+         "No benchmark \u2014 need native speakers"),
         (CORAL, "RTL text & normalization",
-         "RTL, spaCy Arabic, diacritics, NER \u2014 maturity unknown"),
+         "spaCy Arabic, diacritics, NER unknown"),
     ]
 
     topic_groups = []
     by = CT + Inches(0.45)
-    # Per-topic h bumped 0.78 -> 0.82 for Pt(24) heading + detail (audit:bigfonts).
+    # Pass 3 final: Pt(24) wrapped both heading and detail, overlapping with
+    # next topic. Drop to Pt(20) so heading + detail each fit one line in
+    # 1.00" frame.
     for clr, heading, detail in topics:
         grp = []
         grp.append(add_bullets(slide, [
             (heading, {"bold": True, "color": clr}),
             detail,
-        ], MX, by, col_w, Inches(0.82), size=Pt(24)))
+        ], MX, by, col_w, Inches(1.00), size=Pt(20)))
         topic_groups.append(grp)
-        by += Inches(0.82)
+        by += Inches(1.05)
 
     # Right — timeline with practical details
     rx = MX + col_w + gap
     rt = add_text(slide, "Practical Timeline", rx, CT, col_w, Inches(0.35),
                   size=Pt(24), color=GREEN, bold=True)
 
+    # Pass 3 (audit:opus_arabic_table_overlap): cells with `\n` at Pt(24)
+    # rendered to 3+ lines; row_height=0.55 was way too small. Drop font to
+    # Pt(18) (narrow-col exemption: rw=5.5" / 3 cols = ~1.83"/col, narrow OK)
+    # and remove most `\n` so cells fit in 1 line where possible.
     headers = ["Step", "Effort", "Risks / Unknowns"]
     rows = [
-        ["AV-HuBERT fine-tune\n+ K-means", "5\u201310 weeks", "Arabic visual data\nquality unknown"],
-        ["Arabic LLM\nswap", "1\u20132 weeks", "Tokenizer quality\nvaries by model"],
-        ["Eval dataset", "4\u20138 weeks", "No benchmark exists;\nneeds native speakers"],
-        ["RTL normalization\n+ testing", "3\u20136 weeks", "RTL handling +\nend-to-end validation"],
+        ["AV-HuBERT FT", "5\u201310 wk", "Visual data quality unknown"],
+        ["Arabic LLM swap", "1\u20132 wk", "Tokenizer quality varies"],
+        ["Eval dataset", "4\u20138 wk", "No benchmark; native speakers"],
+        ["RTL normalization", "3\u20136 wk", "RTL + E2E validation"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.45), col_w,
-                    row_height=Inches(0.55),
-                    col_widths=[Inches(1.5), Inches(1.3), Inches(2.7)],
-                    text_size=Pt(24))
+                    row_height=Inches(0.50),
+                    col_widths=[Inches(1.7), Inches(1.1), Inches(2.7)],
+                    text_size=Pt(18))
 
-    # Timeline summary callout \u2014 moved down (5.85\u21926.00) so it sits below the
-    # tightened topic block (last bullet now ends ~5.80"). Audit flagged 63%
-    # occlusion of the RTL topic by this callout.
-    timeline_box = add_rect(slide, MX, Inches(6.00), CW, Inches(0.50),
+    # Pass 3: timeline pushed to 6.20 (clears bullets ending CT+0.45+4.20=6.10)
+    # and shrunk to 0.45" with Pt(22). Bottom note moved to 6.70 with Pt(14).
+    timeline_box = add_rect(slide, MX, Inches(6.20), CW, Inches(0.45),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
-    # timeline_txt y moved 5.87->6.05 so text sits inside timeline_box (6.00).
-    # (was 0.13" above box top causing partial render outside dark rect).
     timeline_txt = add_text(slide,
              "Realistic estimate: 2\u20133 months (encoder pre-training is the bottleneck)",
-             MX + Inches(0.3), Inches(6.05), CW - Inches(0.6), Inches(0.42),
-             size=Pt(28), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
+             MX + Inches(0.3), Inches(6.23), CW - Inches(0.6), Inches(0.40),
+             size=Pt(22), color=CORAL, bold=True, align=PP_ALIGN.CENTER)
 
-    # Bottom note \u2014 placed below callout box (box ends y=6.50) to avoid
-    # rendering inside the dark NAVY2 rect (audit:svr_full pass 2).
     note = add_text(slide,
         "Pipeline code is language-agnostic; bottleneck: encoder pre-training and eval data.",
-        MX, Inches(6.54), CW, Inches(0.48),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.70), CW, Inches(0.35),
+        size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     # Animation: title → each topic one by one → right column → callout
     anim = [[lt]] + topic_groups + [[rt, tbl], [timeline_box, timeline_txt, note]]
@@ -1161,11 +1169,13 @@ def slide_31(prs):  # audit:bigfonts
                  circle_d, circle_d,
                  size=Pt(24), color=WHITE, bold=True, align=PP_ALIGN.CENTER)
 
-        # Text — left-aligned next to circle
+        # Pass 3 (audit:opus_takeaways_clip): 6 cards × 0.92 fit, but
+        # Pt(24) 2-line wrap (~0.90") exceeded inner h=0.72 → text clipped.
+        # Drop to Pt(20) so 2 lines = 0.75" fits comfortably.
         tb = add_text(slide, text,
                       MX + Inches(1.0), y + Inches(0.08),
                       CW - Inches(1.2), card_h - Inches(0.16),
-                      size=Pt(24), color=WHITE)
+                      size=Pt(20), color=WHITE)
         card_groups.append([r, circle, nt, tb])
 
     _finish(slide, 31,
@@ -1884,6 +1894,10 @@ def slide_a16(prs):  # audit:bigfonts2
         "Judge verdict distribution across IS tiers (blind):",
         MX, CT, CW, Inches(0.4), size=Pt(24), color=LGRAY)
 
+    # Pass 3 final fix (audit:opus_a16_clip): table rendered at ~3.15"
+    # actual (rows hold Pt(24) text). Move heading to CT+3.30 below table;
+    # bullets at CT+3.70, h=2.00 with Pt(22). bot = CT+3.70+2.00 = CT+5.70 = 7.15
+    # which exceeds safe \u2014 shrink to Pt(20) so 4 bullets need only 1.65".
     tbl = add_table(slide,
         ["IS Tier", "Y", "Y%", "P", "P%", "N%"],
         [["5 \u2014 Excellent", "157", "57%", "105", "38%", "5%"],
@@ -1891,21 +1905,22 @@ def slide_a16(prs):  # audit:bigfonts2
          ["3 \u2014 Fair",      "25",  "8%",  "167", "51%", "41%"],
          ["2 \u2014 Poor",      "14",  "4%",  "115", "34%", "62%"],
          ["1 \u2014 Failed",    "5",   "2%",  "41",  "17%", "81%"]],
-        MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(24),
-        row_height=Inches(0.52),
+        MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(22),
+        row_height=Inches(0.42),
         col_widths=[Inches(2.6), Inches(1.4), Inches(1.4),
                     Inches(1.4), Inches(1.4), Inches(1.8)],
         row_colors={0: {2: GREEN}, 4: {5: CORAL}})
 
-    # Bullets h 1.50\u21921.30 (was bot=7.15 > safe 7.05; now bot=6.95).
-    add_text(slide, "Key Observations:", MX, CT + Inches(3.75), CW, Inches(0.4),
-             size=Pt(24), color=TEAL, bold=True)
+    # Pt(22) reduces row-text demand so table fits in 6\u00d70.42=2.52 starting
+    # at CT+0.5 = 1.95 \u2192 ends 4.47. Heading at CT+3.20 = 4.65.
+    add_text(slide, "Key Observations:", MX, CT + Inches(3.20), CW, Inches(0.4),
+             size=Pt(22), color=TEAL, bold=True)
     add_bullets(slide, [
         "Tier 5: 57% Y \u2014 strong excellent agreement",
         "Tiers 2-3: majority P \u2014 partial value",
         "Tier 1: 81% N \u2014 strong failure agreement",
         ("NIV \u03ba 0.816 (Y+P), 0.707 (Y)", {"color": GOLD}),
-    ], MX, CT + Inches(4.20), CW, Inches(1.30), size=Pt(24))
+    ], MX, CT + Inches(3.65), CW, Inches(1.80), size=Pt(20))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers across all 1,497 segments "
@@ -2331,13 +2346,15 @@ def slide_confidence_scoring(prs):  # audit:bigfonts
         ("No extra inference \u2014 free byproduct", {"color": TEAL}),
     ], MX, CT + Inches(0.45), col_w, Inches(2.85), size=Pt(20))
 
-    # Effort callout — rect tall enough to contain the single-line text
-    r1 = add_rect(slide, MX, CT + Inches(3.5), col_w, Inches(0.65),
+    # Pass 3 (audit:opus_conf_scoring_overflow): callout text wrapped to 2
+    # lines at Pt(24) but rect h=0.65 only fits 1 line. Bump rect h to 1.10
+    # and inner h to 1.00 so 2-line text fits inside.
+    r1 = add_rect(slide, MX, CT + Inches(3.5), col_w, Inches(1.10),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
     add_text(slide, "At T_safe=0.82: green band ≥ 85% reliable (∼15% error)",
-             MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(0.55),
-             size=Pt(24), color=GREEN, bold=True)
+             MX + Inches(0.3), CT + Inches(3.60), col_w - Inches(0.6), Inches(1.00),
+             size=Pt(22), color=GREEN, bold=True)
 
     # Right — What It Enables
     rx = MX + col_w + gap

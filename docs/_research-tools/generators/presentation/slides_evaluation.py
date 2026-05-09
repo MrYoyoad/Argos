@@ -1126,10 +1126,12 @@ def slide_llm_judge(prs):
          ["P (partially)", "626", "42%"],
          ["N (not preserved)", "526", "35%"],
          ["Y+P (any useful)", "971", "65%"]],
-        MX, CT + Inches(3.1), col_w, text_size=Pt(24),
-        # row_height 0.5→0.40: 5×0.40=2.0, table ends at 4.55+2.0=6.55, judge_label
-        # at 6.6 has 0.05" gap (was 5×0.5=2.5 ending 7.05, fully consuming footer).
-        row_height=Inches(0.40),
+        MX, CT + Inches(3.1), col_w, text_size=Pt(20),
+        # OVERLAP fix (May 2026): font 24->20pt + row_height 0.40->0.36 so
+        # PowerPoint's auto-grow on 24pt cells (which forced the table past
+        # 6.55 and into the v1-judge footer label at 6.6) no longer fires.
+        # 5x0.36=1.80, table now ends at 4.55+1.80=6.35, leaving 0.25" gap.
+        row_height=Inches(0.36),
         col_widths=[Inches(3.0), Inches(1.2), Inches(1.3)],
         row_colors={0: {2: GREEN}, 2: {2: CORAL}, 3: {2: TEAL}})
 
@@ -2103,10 +2105,12 @@ def slide_literature_metrics_problem(prs):
 
     # Three example pairs - same WER ~50%, very different downstream value.
     # audit-md:section_C examples (judge_entity / judge_lights examples).
+    # OVERLAP fix (May 2026): header h shrunk 1.0->0.40 so pair-1 label at
+    # card_y+1.05 no longer overlaps the header (header bottom now card_y+1.05).
     R.append(add_text(slide, "Same WER ~50% - very different downstream value:",
              rx + Inches(0.25), card_y + Inches(0.65),
-             card_w - Inches(0.5), Inches(1.0),
-             size=Pt(24), color=WHITE, bold=True))
+             card_w - Inches(0.5), Inches(0.40),
+             size=Pt(20), color=WHITE, bold=True))
 
     pairs = [
         ("Partial / useful",
@@ -2120,7 +2124,7 @@ def slide_literature_metrics_problem(prs):
     ]
     # Each pair: label (h=0.3) + body (h=0.85) + stride 1.25.
     # Pair 2 starts card_y+2.30, pair 1 body ends card_y+2.20 — no overlap.
-    py = card_y + Inches(1.05)
+    py = card_y + Inches(1.15)
     for label, body, color in pairs:
         R.append(add_text(slide, label,
                  rx + Inches(0.25), py, card_w - Inches(0.5),

@@ -111,27 +111,23 @@ def slide_two_layer_confidence_research(prs):
              x1 + Inches(0.3), top + Inches(0.2),
              card_w - Inches(0.6), Inches(0.4),
              size=Pt(24), bold=True, color=BLUE))
+    # Pass 3: mirror right card layout for visual consistency.
     L.append(add_text(slide, "max softmax probability per token",
              x1 + Inches(0.3), top + Inches(0.6),
-             card_w - Inches(0.6), Inches(1.0),
-             size=Pt(24), bold=True, color=WHITE))
+             card_w - Inches(0.6), Inches(0.85),
+             size=Pt(22), bold=True, color=WHITE))
     L.append(add_text(slide,
              "p(t)  =  maxᵥ  P( v | tokens ≤ t )",
-             x1 + Inches(0.3), top + Inches(1.05),
-             card_w - Inches(0.6), Inches(0.6),
-             size=Pt(24), color=GOLD, italic=True, align=PP_ALIGN.CENTER))
-    # CUT v3: bullets shrunk to short fragments + Pt(24)->Pt(20)
-    # so wraps fit inside 1.8" frame (was rendering bottom 7.20).
-    # Original: "Aggregate sub-token probabilities up to whole-word level",
-    # "Render colour-coded inline in the report (BLUE / ORANGE / PURPLE)",
-    # "23,261 words across 1,427 segments # audit:perword_new_total_words"
+             x1 + Inches(0.3), top + Inches(1.45),
+             card_w - Inches(0.6), Inches(0.55),
+             size=Pt(22), color=GOLD, italic=True, align=PP_ALIGN.CENTER))
     L.append(add_bullets(slide, [
         "Aggregate sub-tokens up to whole word",
         "Render inline (BLUE / ORANGE / PURPLE)",
         ("23,261 words / 1,427 segments",
          {"color": LGRAY}),
-    ], x1 + Inches(0.3), top + Inches(1.75),
-       card_w - Inches(0.6), Inches(1.65), size=Pt(20)))
+    ], x1 + Inches(0.3), top + Inches(2.10),
+       card_w - Inches(0.6), Inches(1.45), size=Pt(18)))
 
     # Layer 2 - per-segment (sequence-level)
     R = []
@@ -142,20 +138,21 @@ def slide_two_layer_confidence_research(prs):
              x2 + Inches(0.3), top + Inches(0.2),
              card_w - Inches(0.6), Inches(0.4),
              size=Pt(24), bold=True, color=TEAL))
+    # Pass 3 (audit:opus_two_layer_overflow): right card heading at h=0.42
+    # caused "segment" to overlap formula on next line. Bump to h=0.85 so
+    # 2-line wrap fits, push formula to top+1.45 and bullets to top+2.10
+    # with h=1.45 (4 bullets at Pt(18) need ~1.40").
     R.append(add_text(slide, "mean log-probability over the segment",
              x2 + Inches(0.3), top + Inches(0.6),
-             card_w - Inches(0.6), Inches(0.42),
-             size=Pt(24), bold=True, color=WHITE))
+             card_w - Inches(0.6), Inches(0.85),
+             size=Pt(22), bold=True, color=WHITE))
     R.append(add_text(slide,
              "m  =  exp( (1/T) · Σ log p(t) )",
-             x2 + Inches(0.3), top + Inches(1.05),
-             card_w - Inches(0.6), Inches(0.6),
-             size=Pt(24), color=GOLD, italic=True, align=PP_ALIGN.CENTER))
-    # audit:after_amosi_narrative_actions.md fix #13 - the demo cards
-    # later in the deck use the term "sequence_conf"; add an alias bullet
-    # here so the audience can match the demo cards back to mean_prob.
-    # CUT v3: 4 bullets at Pt(24) wrapped to ~12 lines, bottom 8.40.
-    # Trimmed text + Pt(24)->Pt(20). Full long-form retained in notes.
+             x2 + Inches(0.3), top + Inches(1.45),
+             card_w - Inches(0.6), Inches(0.55),
+             size=Pt(22), color=GOLD, italic=True, align=PP_ALIGN.CENTER))
+    # Pass 3: 4 bullets at Pt(18) in 1.45" frame. Card ends at top+3.6 = 5.6;
+    # bullets end at top+2.10+1.45 = top+3.55 = 5.55, fits inside card.
     R.append(add_bullets(slide, [
         "Length-anomaly check (too short / too long)",
         ("τ_trust 0.89, τ_safe 0.82, τ_salvage 0.74",
@@ -164,8 +161,8 @@ def slide_two_layer_confidence_research(prs):
          {"color": CORAL}),
         ("Demo cards label this sequence_conf",
          {"color": LGRAY, "italic": True}),
-    ], x2 + Inches(0.3), top + Inches(1.75),
-       card_w - Inches(0.6), Inches(2.72), size=Pt(20)))
+    ], x2 + Inches(0.3), top + Inches(2.10),
+       card_w - Inches(0.6), Inches(1.45), size=Pt(18)))
 
     # CUT v3: top 6.45 -> 6.30 + frame h 0.8 -> 0.55 + trimmed text so
     # Pt(18) bottom stays under safe 7.05.
@@ -230,13 +227,16 @@ def slide_per_word_confidence_distribution(prs):
              Inches(0.45), size=Pt(24), color=BLUE, bold=True))
     # CUT v3: bullets trimmed + Pt(24)->Pt(20) so 3 bullets fit in
     # 2.0" frame (was rendering bottom 8.60). Long-form retained in notes.
+    # Pass 3 (audit:opus_perword_card_clip): "Reds 2× (4,482 → 9,099):
+    # ambiguous → red" wrapped 2 lines, pushing 3rd bullet outside the
+    # 2.7" card. Reduced to Pt(20) so 3 bullets each at ~1 line fit in 2.0".
     L.append(add_bullets(slide, [
         "Green drops 33% (11,309 → 7,591)",
         "Reds 2× (4,482 → 9,099): ambiguous → red",
         ("Each green more reliable (90% vs 81%)",
          {"color": GREEN, "bold": True}),
     ], MX + Inches(0.25), cy + Inches(0.65),
-       card_w - Inches(0.5), Inches(2.0), size=Pt(24)))
+       card_w - Inches(0.5), Inches(2.0), size=Pt(20)))
 
     R = []
     rx = MX + card_w + gap
@@ -247,13 +247,14 @@ def slide_per_word_confidence_distribution(prs):
              Inches(1.0), size=Pt(24), color=PURPLE, bold=True))
     # CUT v3: bullets trimmed + Pt(24)->Pt(20) so 3 bullets fit in
     # 2.0" frame (was rendering bottom 8.20). Long-form retained in notes.
+    # Pass 3: matched left card font (Pt(20)) for visual consistency.
     R.append(add_bullets(slide, [
         "Almost half of words paint green",
         "Many greens hide beam disagreement",
         ("Superseded by joint rule",
          {"color": LGRAY, "italic": True}),
     ], rx + Inches(0.25), cy + Inches(0.65),
-       card_w - Inches(0.5), Inches(2.0), size=Pt(24)))
+       card_w - Inches(0.5), Inches(2.0), size=Pt(20)))
 
     _finish(slide, 0,
         "Distribution of per-word band assignments under the joint rule "
@@ -323,12 +324,14 @@ def slide_band_reliability_overall(prs):
         MX + Inches(0.3), CT + Inches(3.55), CW - Inches(0.6),
         Inches(1.25), size=Pt(24), color=WHITE)
 
-    # CUT v3: top 6.55 -> 6.40 to keep Pt(18) wrap under safe 7.05.
+    # Pass 3 (audit:opus_overall_footer_overlap): rect ended at y=6.35
+    # but bot text started at y=6.22, overlapping the bottom rect border.
+    # Pushed bot down to 6.45 (rect ends 6.35) and reduced h to 0.55.
     bot = add_text(slide,
         "All numbers from audit JSON keys perword_{new,old}_{green,yellow,red}_p_correct. "
         "Total 23,261 words.",
-        MX, Inches(6.22), CW, Inches(0.8),
-        size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.45), CW, Inches(0.55),
+        size=Pt(16), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Overall per-word band reliability across the full 23,261-word "
@@ -370,14 +373,17 @@ def slide_band_reliability_stratified(prs):
                     MX, CT + Inches(0.5),
                     width=Inches(7.6), height=Inches(4.25))
 
+    # Pass 3 (audit:opus_stratified_overlap): right column at rw=4.33"
+    # was wrapping "Stratified P(green | bin)" heading and the legacy
+    # text (30 chars at Pt(24) wraps). Drop heading/legacy to Pt(20) and
+    # tighten leg_t starting position so spacing is consistent.
     rx = MX + Inches(7.8)
     rw = CW - Inches(7.8)
     rt = add_text(slide, "Stratified P(green | bin)",
                   rx, CT + Inches(0.5), rw, Inches(0.35),
-                  size=Pt(24), color=BLUE, bold=True)
+                  size=Pt(20), color=BLUE, bold=True)
 
     # Stratification bins - joint-rule >= 0.65 only.
-    # Short labels so 24pt fits in narrow rw col without wrapping.
     headers = ["m", "P(green correct)"]
     rows = [
         ["≥0.85",     "96%"],   # very_high bin
@@ -385,16 +391,17 @@ def slide_band_reliability_stratified(prs):
         ["0.65–0.75", "86%"],   # mid bin
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.85), rw,
-                    text_size=Pt(24), row_height=Inches(0.4))
+                    text_size=Pt(20), row_height=Inches(0.4))
 
-    # leg_t moved CT+2.5->CT+2.65 (0.20" gap after table end CT+2.45).
+    # Pass 3 fixup: table renders ~CT+2.85 (4 rows × 0.4 + header).
+    # Move legacy down to CT+3.00 with clean gap.
     leg_t = add_text(slide,
         "Below 0.65 (legacy rule only):\n"
         "0.55-0.65: 41%\n"
         "0.40-0.55: 22%\n"
         "<0.40:    18%",
-        rx, CT + Inches(2.65), rw, Inches(1.85),
-        size=Pt(24), color=LGRAY)
+        rx, CT + Inches(3.00), rw, Inches(1.85),
+        size=Pt(18), color=LGRAY)
 
     # CUT v3: top 6.55 -> 6.30 + frame h 0.4 -> 0.35 so Pt(20) wrap stays
     # under safe 7.05 (was 7.12).
@@ -639,35 +646,39 @@ def slide_three_tier_policy_research(prs):
         1: {0: ORANGE, 2: GOLD},
         2: {0: PURPLE, 2: CORAL},
     }
+    # Pass 3 (audit:opus_three_tier_overlap): table row_height 0.60 caused
+    # header to wrap ("P(grn corr)" 2 lines) so table effective height bloated
+    # to ~2.85, overlapping bullets at CT+3.10. Tighten row_height to 0.50
+    # (header still wraps but cleanly) and push bullet block to CT+3.55.
     tbl = add_table(slide, headers, rows,
-                    MX, CT + Inches(0.55), CW, row_height=Inches(0.60),
+                    MX, CT + Inches(0.55), CW, row_height=Inches(0.50),
                     col_widths=[Inches(2.6), Inches(1.5), Inches(1.6),
                                 Inches(1.5), Inches(1.6),
                                 Inches(1.5), Inches(1.6)],
-                    text_size=Pt(24), row_colors=row_colors)
+                    text_size=Pt(22), row_colors=row_colors)
 
     L = []
     L.append(add_text(slide, "WHAT THE NUMBERS SAY",
-             MX, CT + Inches(3.10), Inches(6.0), Inches(0.35),
-             size=Pt(24), color=TEAL, bold=True))
+             MX, CT + Inches(3.20), Inches(6.0), Inches(0.35),
+             size=Pt(22), color=TEAL, bold=True))
     L.append(add_bullets(slide, [
-        # <=35 chars each so 24pt text fits in 6.0" col (38-char limit) single-line.
+        # <=35 chars each so 22pt text fits in 6.0" col single-line.
         ("Trust (>=0.82): green 95% reliable.", {"color": BLUE, "bold": True}),
         ("Salvage .65-.82: green 89%, review.", {"color": ORANGE}),
         ("Strip (<0.65): green 56%, misleads.", {"color": PURPLE, "bold": True}),
-    ], MX, CT + Inches(3.50), Inches(6.0), Inches(1.55), size=Pt(24)))
+    ], MX, CT + Inches(3.60), Inches(6.0), Inches(1.85), size=Pt(22)))
 
     R = []
     R.append(add_text(slide, "HOW THE TIERS ARE USED",
-             MX + Inches(6.3), CT + Inches(3.10), Inches(5.83), Inches(0.35),
-             size=Pt(24), color=GOLD, bold=True))
+             MX + Inches(6.3), CT + Inches(3.20), Inches(5.83), Inches(0.35),
+             size=Pt(22), color=GOLD, bold=True))
     R.append(add_bullets(slide, [
         "Post-hoc: no re-decode required",
         "Feeds client UI threshold knob",
         ("Red P(correct) stays low across tiers (42/28/13%)",
          {"bold": True}),
-    ], MX + Inches(6.3), CT + Inches(3.50), Inches(5.83), Inches(1.55),
-       size=Pt(24)))
+    ], MX + Inches(6.3), CT + Inches(3.60), Inches(5.83), Inches(1.85),
+       size=Pt(22)))
 
     _finish(slide, 0,
         "Three-tier policy table — Trust / Salvage / Strip — with raw "
@@ -707,36 +718,38 @@ def slide_band_reliability_by_niv(prs):
     # OVERLAP fix (#334): img h 4.60 -> 4.25 so img bottom = 6.20, leaving
     # 0.02" gap before bot strip top=6.22; previously bot strip overlapped
     # img by 0.33". Sub h 0.80 -> 0.45 so sub bottom 1.90 < img top 1.95.
+    # Pass 3 (audit:opus_niv_overlap): right column at rw=2.93" was
+    # cramped at Pt(24); table cells wrapped (rw/4 ~0.73"). Reduce
+    # img w 9.0->8.5 to free 0.5" for right column (rw 2.93->3.43");
+    # narrow-col exemption ≤4" allows Pt(20) here.
     img = add_image(slide, "P_band_reliability_by_niv",
                     MX, CT + Inches(0.5),
-                    width=Inches(9.0), height=Inches(4.25))
-    rx = MX + Inches(9.2)
-    rw = CW - Inches(9.2)
+                    width=Inches(8.5), height=Inches(4.25))
+    rx = MX + Inches(8.7)
+    rw = CW - Inches(8.7)
     rt = add_text(slide, "P(correct | band)",
                   rx, CT + Inches(0.5), rw, Inches(0.3),
-                  size=Pt(24), color=TEAL, bold=True)
+                  size=Pt(20), color=TEAL, bold=True)
 
-    # audit-md:band_reliability_by_niv (no flat key in audit JSON)
-    # Short labels prevent 24pt text wrapping in narrow col (rw/4 ~1.08"):
-    # "Y+P combined" (12 chars) wraps; "Y+P" (3 chars) does not.
+    # Pass 3 final: "NIV-N" 5 chars at Pt(20) wrapped in 0.86" tier col.
+    # Drop to Pt(16) and shorten tier col content.
     headers = ["Tier", "GRN", "YEL", "RED"]
     rows = [
-        ["Y+P",   "87%", "49%", "25%"],
-        ["NIV-Y", "94%", "65%", "39%"],
-        ["NIV-P", "80%", "41%", "20%"],
-        ["NIV-N", "37%", "17%",  "7%"],
+        ["Y+P",  "87%", "49%", "25%"],
+        ["Y",    "94%", "65%", "39%"],
+        ["P",    "80%", "41%", "20%"],
+        ["N",    "37%", "17%",  "7%"],
     ]
     tbl = add_table(slide, headers, rows, rx, CT + Inches(0.85), rw,
-                    text_size=Pt(24), row_height=Inches(0.4))
+                    text_size=Pt(16), row_height=Inches(0.4))
 
-    # OVERLAP fix: table end CT+2.85; take moved to CT+3.15 (0.30" gap).
-    # CUT v3: bullets compressed + Pt(24)->Pt(18) so 3 bullets fit.
-    # Long-form retained in notes.
+    # Pass 3 fixup: rendered table ends ~CT+3.0 (header rows wrap).
+    # Push bullets to CT+3.20.
     take = add_bullets(slide, [
         ("62.5pp green→red spread in Y+P", {"bold": True, "color": GREEN}),
         ("NIV-P: steepest (80/41/20%)", {"color": ORANGE}),
         ("NIV-N: green misleads (37%)", {"color": PURPLE}),
-    ], rx, CT + Inches(3.15), rw, Inches(1.65), size=Pt(18))
+    ], rx, CT + Inches(3.20), rw, Inches(1.80), size=Pt(16))
 
     # CUT v3: top 6.55 -> 6.40 so Pt(18) wrap stays under safe 7.05.
     bot = add_text(slide,
@@ -1226,10 +1239,12 @@ def slide_v1_vs_v3_judge_lesson(prs):
         MX, CT, CW, Inches(0.4),
         size=Pt(18), color=LGRAY, italic=True)
 
+    # Pass 3: ch 3.9 -> 3.75 so cards end at cy+ch = 2.05+3.75 = 5.80,
+    # leaving 0.15" gap before lesson rect at 5.95.
     card_w = Inches(5.85)
     gap = Inches(0.4)
     cy = CT + Inches(0.6)
-    ch = Inches(3.9)
+    ch = Inches(3.75)
 
     L = []
     L.append(add_rect(slide, MX, cy, card_w, ch, fill_color=NAVY2,
@@ -1260,14 +1275,18 @@ def slide_v1_vs_v3_judge_lesson(prs):
     ], rx + Inches(0.25), cy + Inches(0.6),
        card_w - Inches(0.5), Inches(3.2), size=Pt(24)))
 
+    # Pass 3 (audit:opus_lesson_overflow): Pt(24) text wrapped 2 lines but
+    # rect h=0.65 only fit 1 line. Bump rect h to 1.05 so 2-line wrap fits;
+    # also shrink card height ch (4.20->3.85) so cards end above lesson rect.
     lesson = []
-    lesson.append(add_rect(slide, MX, Inches(6.10), CW, Inches(0.65),
+    lesson.append(add_rect(slide, MX, Inches(5.95), CW, Inches(1.05),
                            fill_color=NAVY3, border_color=GOLD,
                            border_width=Pt(1.5), corner_radius=True))
     lesson.append(add_text(slide,
         "LESSON: provide BOTH sides' confidence — single-sided injection biases the judge.",
-        MX + Inches(0.3), Inches(6.15), CW - Inches(0.6),
-        Inches(0.50), size=Pt(24), color=GOLD, bold=True))
+        MX + Inches(0.3), Inches(6.05), CW - Inches(0.6),
+        Inches(0.85), size=Pt(22), color=GOLD, bold=True,
+        align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
         "Source: docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md "
@@ -1302,8 +1321,11 @@ def slide_is_conf_correlation(prs):
         MX, CT, CW, Inches(0.55),
         size=Pt(18), color=LGRAY, italic=True)
 
+    # Pass 3 (audit:opus_correlation_footer_clip): cards ended at 6.60,
+    # overlapping bot footer at 6.45. Trimmed card_h 4.40 -> 4.10 so cards
+    # end at cy+card_h = 2.20+4.10 = 6.30; bot now has clean 0.15" gap.
     card_w = Inches(5.85)
-    card_h = Inches(4.40)
+    card_h = Inches(4.10)
     gap = Inches(0.43)
     cy = CT + Inches(0.75)
 
@@ -1334,12 +1356,13 @@ def slide_is_conf_correlation(prs):
                           align=PP_ALIGN.RIGHT))
         ry += Inches(0.65)
 
+    # Pass 3: shrunk h 1.40 -> 1.10 + Pt(20) -> Pt(18) to fit card_h=4.10.
     L.append(add_text(slide,
         "IS and confidence rank segments nearly identically — rank "
         "correlation (ρ=0.854) is robust to IS-tier saturation at the ends.",
         MX + Inches(0.25), cy + Inches(2.85),
-        card_w - Inches(0.5), Inches(1.40),
-        size=Pt(20), color=LGRAY, italic=True))
+        card_w - Inches(0.5), Inches(1.10),
+        size=Pt(18), color=LGRAY, italic=True))
 
     # RIGHT — tier-level agreement
     R = []
@@ -1356,32 +1379,33 @@ def slide_is_conf_correlation(prs):
                       size=Pt(20), color=LGRAY, italic=True,
                       align=PP_ALIGN.CENTER))
 
+    # Pass 3: tightened content positions to fit reduced card_h=4.10.
     R.append(add_text(slide, "κ = 0.498",
-                      rx + Inches(0.25), cy + Inches(1.10),
-                      card_w - Inches(0.5), Inches(0.80),
-                      size=Pt(48), color=GOLD, bold=True,
+                      rx + Inches(0.25), cy + Inches(1.05),
+                      card_w - Inches(0.5), Inches(0.75),
+                      size=Pt(44), color=GOLD, bold=True,
                       align=PP_ALIGN.CENTER))
     R.append(add_text(slide, "moderate agreement (Landis–Koch)",
-                      rx + Inches(0.25), cy + Inches(1.95),
-                      card_w - Inches(0.5), Inches(0.40),
+                      rx + Inches(0.25), cy + Inches(1.85),
+                      card_w - Inches(0.5), Inches(0.35),
                       size=Pt(20), color=LGRAY, italic=True,
                       align=PP_ALIGN.CENTER))
 
     R.append(add_text(slide, "Raw agreement (diagonal): 66%",
-                      rx + Inches(0.25), cy + Inches(2.55),
+                      rx + Inches(0.25), cy + Inches(2.35),
                       card_w - Inches(0.5), Inches(0.40),
-                      size=Pt(24), color=WHITE, bold=True,
+                      size=Pt(22), color=WHITE, bold=True,
                       align=PP_ALIGN.CENTER))
     R.append(add_text(slide, "Adjacent (within ±1 tier): 98%",
-                      rx + Inches(0.25), cy + Inches(3.05),
+                      rx + Inches(0.25), cy + Inches(2.85),
                       card_w - Inches(0.5), Inches(0.40),
-                      size=Pt(24), color=GREEN, bold=True,
+                      size=Pt(22), color=GREEN, bold=True,
                       align=PP_ALIGN.CENTER))
     R.append(add_text(slide,
         "Off-diagonal cases are almost all adjacent — Trust↔Salvage, not Trust↔Strip.",
-        rx + Inches(0.25), cy + Inches(3.55),
-        card_w - Inches(0.5), Inches(0.70),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
+        rx + Inches(0.25), cy + Inches(3.40),
+        card_w - Inches(0.5), Inches(0.65),
+        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     bot = add_text(slide,
         "n = 1,427 (1,497 minus 70 empty-output segments). "
@@ -1454,19 +1478,21 @@ def slide_is_conf_contingency(prs):
         ("126 false-strip (8.8%)", {"color": ORANGE}),
     ], rx, CT + Inches(1.20), rw, Inches(2.80), size=Pt(24))
 
-    head = add_rect(slide, MX, CT + Inches(3.95), CW, Inches(1.05),
+    # Pass 3 fixup: actual rendered table extends to ~CT+3.85 due to
+    # header wrap. head rect at CT+3.95, h=0.75; bot at 6.45 with Pt(14).
+    head = add_rect(slide, MX, CT + Inches(3.95), CW, Inches(0.75),
                     fill_color=NAVY2, border_color=GREEN,
                     border_width=Pt(2), corner_radius=True)
     head_t = add_text(slide,
         "86% raw binary agreement   /   κ_binary = 0.71 (substantial)",
-        MX + Inches(0.3), CT + Inches(4.10), CW - Inches(0.6), Inches(0.75),
-        size=Pt(28), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+        MX + Inches(0.3), CT + Inches(4.05), CW - Inches(0.6), Inches(0.55),
+        size=Pt(22), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
 
     bot = add_text(slide,
         "Threshold rationale: IS ≥ 2.00 = NIV-Y+P (judge-calibrated, κ=0.82). "
         "mean_prob ≥ 0.65 = strip-coloring boundary (below: green <50% reliable).",
-        MX, Inches(6.20), CW, Inches(0.80),
-        size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+        MX, Inches(6.45), CW, Inches(0.55),
+        size=Pt(14), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Binary 2×2 contingency: IS-useful (Y+P, IS ≥ 2.00) × "

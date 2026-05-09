@@ -206,13 +206,15 @@ def slide_wer_lies(prs):  # audit:bigfonts
     by = CT + card_h + Inches(0.30)
     # audit:bigfonts \u2014 ref/hyp lines bumped Pt(12) -> Pt(24); height tightened
     # so callout still fits above slide-num.
+    # Pt(24) caused "Prediction:" line to wrap "in my" with zero indent on
+    # the next line. Drop to Pt(20) so each line fits within CW=12.33".
     bottom_shapes.append(add_rich_text(slide, [
-        [("\u25b6 Reference:  ", {"size": Pt(24), "color": LGRAY, "bold": True}),
+        [("\u25b6 Reference:  ", {"size": Pt(20), "color": LGRAY, "bold": True}),
          ("i want you to remember all these i want you to memorize them",
-          {"size": Pt(24), "color": WHITE})],
-        [("\u25b6 Prediction: ", {"size": Pt(24), "color": LGRAY, "bold": True}),
+          {"size": Pt(20), "color": WHITE})],
+        [("\u25b6 Prediction: ", {"size": Pt(20), "color": LGRAY, "bold": True}),
          ("i want you to remember all the things that i wanted you to memorize in my",
-          {"size": Pt(24), "color": TEAL})],
+          {"size": Pt(20), "color": TEAL})],
     ], MX, by, CW, Inches(1.8), space_after=Pt(6)))
     cb_y = by + Inches(1.3)
     bottom_shapes.append(add_rect(slide, MX + Inches(1.5), cb_y,
@@ -640,8 +642,9 @@ def slide_06(prs):  # audit:bigfonts
     add_accent_line(slide)
 
     bw = Inches(5.5)
-    # audit:bigfonts — card height bumped 3.8 -> 4.0 to absorb Pt(24) text.
-    bh = Inches(4.0)
+    # Card height bumped to 4.4 to absorb 2-line WER-title + ref/hyp wrap +
+    # bottom description without overflowing card border (slide-14 audit).
+    bh = Inches(4.4)
     by = CT + Inches(0.1)
     gap = Inches(1.13)
 
@@ -665,7 +668,7 @@ def slide_06(prs):  # audit:bigfonts
     # audit:bigfonts — Pt(24) -> Pt(24); copy trimmed to 2 lines.
     add_text(slide, '"the" → "a" — function-word swap.\n'
                     'Meaning fully preserved.',
-             MX + Inches(0.3), by + Inches(2.55), bw - Inches(0.6), Inches(1.2),
+             MX + Inches(0.3), by + Inches(2.85), bw - Inches(0.6), Inches(1.4),
              size=Pt(24), color=LGRAY)
 
     # Right box — destructive error
@@ -686,18 +689,19 @@ def slide_06(prs):  # audit:bigfonts
        space_after=Pt(10))
     add_text(slide, '"Admiral McRae" → "animal migration"\n'
                     'Named entity destroyed — wrong person.',
-             rx + Inches(0.3), by + Inches(2.55), bw - Inches(0.6), Inches(1.2),
+             rx + Inches(0.3), by + Inches(2.85), bw - Inches(0.6), Inches(1.4),
              size=Pt(24), color=LGRAY)
 
     # Bottom callout — audit:bigfonts — Pt(24) -> Pt(24); copy condensed.
-    add_rect(slide, MX + Inches(1.5), Inches(6.05), CW - Inches(3.0), Inches(0.65),
+    # Pushed to y=6.20 to clear taller cards (bh 4.0 -> 4.4 in audit fix).
+    add_rect(slide, MX + Inches(1.5), Inches(6.20), CW - Inches(3.0), Inches(0.65),
              fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
              corner_radius=True)
     # CUT v3 (overflow): widened to full slide and dropped to Pt(20) so text
     # fits one line without overflowing the safe zone.
     add_text(slide,
              "Same WER. Different meaning. → We built our own metric (IS).",
-             MX, Inches(6.13), CW, Inches(0.50),
+             MX, Inches(6.28), CW, Inches(0.50),
              size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 6,
@@ -905,29 +909,34 @@ def slide_visemes(prs):  # audit:bigfonts
 
 
 def slide_data_flow(prs):  # audit:bigfonts
-    """5-step pipeline data flow."""
+    """7-step pipeline data flow (May 2026: + n-best aggregation + per-word confidence)."""
     slide = new_slide(prs)
     add_title(slide, "How It Works: Data Flow")
     add_accent_line(slide)
 
+    # 7 steps now: original 5 + n-best aggregation (May 1) + confidence (Apr 30).
+    # GREEN = post-decode May-2026 additions; TEAL = preprocessing; CORAL = LLM core.
     steps = [
         ("1", "Video Frames", "25 fps raw video input", TEAL),
         ("2", "Mouth Crop", "96\u00d796 pixel region around lips", TEAL),
         ("3", "Visual Features", "AV-HuBERT encoder \u2192 1024-dim vectors", TEAL),
         ("4", "Projection", "Linear layer: 1024 \u2192 4096-dim", CORAL),
-        ("5", "LLM Generates Text", "LLaMA-2-7B decodes into words", CORAL),
+        ("5", "LLM Decodes", "LLaMA-2-7B emits 20 n-best hypotheses", CORAL),
+        ("6", "Aggregate (NEW)", "MBR over 20 n-best \u2192 1 hypothesis", GREEN),
+        ("7", "Confidence (NEW)", "Per-word p\u2081 + \u03b1 \u2192 green/yellow/red", GREEN),
     ]
 
-    # CUT v3 (overflow): step_h 0.85 -> 0.95 so 24pt rich_text 2-line wrap fits.
-    # Total: 5*0.95 + 4*0.10 = 5.15, start 1.65, ends 6.80 (under 7.05).
+    # 7 steps \u00d7 0.65 + 6 \u00d7 0.10 = 4.55 + 0.60 = 5.15", starting at CT+0.10=1.55
+    # \u2192 ends at 6.70. Bottom caption at 6.85.
     step_w = Inches(10.5)
-    step_h = Inches(0.95)
-    start_y = CT + Inches(0.1)
+    step_h = Inches(0.65)
+    start_y = CT + Inches(0.10)
     start_x = MX + Inches(0.8)
 
     step_groups = []
+    gap = Inches(0.08)  # tighter — 7 steps fit better
     for i, (num, name, desc, color) in enumerate(steps):
-        y = start_y + i * (step_h + Inches(0.15))
+        y = start_y + i * (step_h + gap)
         r = add_rect(slide, start_x, y, step_w, step_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
 
@@ -951,19 +960,20 @@ def slide_data_flow(prs):  # audit:bigfonts
 
         group = [r, circle, num_txt, rt]
 
-        # Arrow between steps \u2014 kept Pt(24) (footer-ish). Height matches gap.
+        # Arrow between steps \u2014 kept Pt(20) (footer-ish). Height matches gap.
         if i < len(steps) - 1:
             arrow = add_text(slide, "\u2193", start_x + step_w / 2 - Inches(0.2),
-                     y + step_h, Inches(0.4), Inches(0.6),
-                     size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER)
+                     y + step_h - Inches(0.05), Inches(0.4), gap + Inches(0.05),
+                     size=Pt(20), color=TEAL, align=PP_ALIGN.CENTER)
             group.append(arrow)
 
         step_groups.append(group)
 
-    # audit:bigfonts \u2014 Pt(24) -> Pt(24); copy trimmed.
+    # Bottom caption \u2014 moved down. 7 steps \u00d7 0.65 + 6 \u00d7 0.08 = 4.55+0.48=5.03,
+    # start 1.55 \u2192 ends 6.58. Caption at 6.65, h=0.35, end 7.00 \u2713
     add_text(slide,
-        "Visual encoder is frozen \u2014 only projection + adapters are trained.",
-        MX, Inches(6.55), CW, Inches(0.4),
+        "Stages 6\u20137 (Aggregate + Confidence) shipped May 2026 \u2014 visual encoder frozen, only projection+adapters trained.",
+        MX, Inches(6.65), CW, Inches(0.35),
         size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,

@@ -202,7 +202,12 @@ def slide_17_a(prs):
 
 
 def slide_17_b(prs):
-    """8-Stage Pipeline — Part 2 of 2: Decoding + Output + Post-decode (5-8 + 7a/7b)."""
+    """8-Stage Pipeline — Part 2 of 2: Decoding + Output + Post-decode (5-8 + 7a/7b).
+
+    Layout: 2 rows x 3 cols (refactored May 2026 — single-row 6-box layout
+    forced 1.80" width which couldn't fit Pt(20) bold titles without wrapping).
+    Now boxes are wider (~3.5") so titles render on one line.
+    """
     slide = new_slide(prs)
     add_title(slide, "Pipeline (2/2): Decoding + Aggregation + Confidence + Output")
     add_accent_line(slide)
@@ -213,43 +218,106 @@ def slide_17_b(prs):
     # Post-decode stages (May 2026 additions) get distinct teal palette.
     SPOST  = RGBColor(0x4D, 0xD0, 0xE1)  # cyan/teal — same as preprocessing BLUE
 
-    # 6 stages now: existing 5,6,7 + 7a (Aggregation, Mission 6 May 1) +
-    # 7b (Confidence, Mission 4 Apr 30) + 8.
+    # 6 stages: top row 5 -> 6 -> 7; bottom row 7a -> 7b -> 8.
     stages = [
         ("5. Manifests",   "TSV + splits",           SGREEN),
-        ("6. K-means",     "Feature\nclustering",    SGREEN),
-        ("7. LLM Decode",  "AV-HuBERT +\nLLaMA-2",   SGOLD),
-        ("7a. Aggregate",  "MBR n-best\n(May 1)",    SPOST),
-        ("7b. Confidence", "Per-word\np₁ + α (Apr 30)", SPOST),
-        ("8. Outputs",     "Reports +\nburned video", SPINK),
+        ("6. K-means",     "Feature clustering",     SGREEN),
+        ("7. LLM Decode",  "AV-HuBERT + LLaMA-2",    SGOLD),
+        ("7a. Aggregate",  "MBR n-best (May 1)",     SPOST),
+        ("7b. Confidence", "Per-word p₁ + α (Apr 30)", SPOST),
+        ("8. Outputs",     "Reports + burned video", SPINK),
     ]
 
-    # Tighter layout to fit 6 boxes on one row (total_w must stay ≤ 13.33").
-    # 6×1.80 + 5×(0.06+0.14+0.06) = 10.80 + 1.30 = 12.10" → start_x = 0.62".
-    box_w = Inches(1.80)
-    box_h = Inches(1.7)
-    h_gap = Inches(0.06)
-    arrow_w = Inches(0.14)
-    step = box_w + h_gap + arrow_w + h_gap
-    total_w = 6 * box_w + 5 * (h_gap + arrow_w + h_gap)
+    # 2x3 grid layout: wider boxes give Pt(24) bold titles room to render
+    # on a single line. 3*3.5 + 2*(0.10+0.30+0.10) = 10.50 + 1.00 = 11.50".
+    box_w = Inches(3.50)
+    box_h = Inches(1.45)
+    h_gap = Inches(0.10)
+    arrow_w = Inches(0.30)
+    v_gap = Inches(0.40)  # vertical room for the down arrow between rows
+    step_x = box_w + h_gap + arrow_w + h_gap
+    total_w = 3 * box_w + 2 * (h_gap + arrow_w + h_gap)
     start_x = int((SL_W - total_w) / 2)
-    row_y = CT + Inches(0.55)
+    row_y = CT + Inches(0.40)
+    row2_y = row_y + box_h + v_gap
 
     anim_groups = []
-
-    # Build stage boxes + connecting arrows.
     stage_groups = []
-    for i, (name, sub, color) in enumerate(stages):
-        x = start_x + i * step
-        grp = _pipe_box_compact(slide, name, sub, color, x, row_y, box_w, box_h)
+
+    def _pipe_box_2row(slide, name, sub, color, x, y, w, h):
+        """Wider 2-row variant: Pt(24) title fits on one line in 3.5" box."""
+        shapes = []
+        shapes.append(add_rect(slide, x, y, w, h,
+                     fill_color=color, border_color=None, corner_radius=True))
+        shapes.append(add_text(slide, name,
+                 x + Inches(0.12), y + Inches(0.16),
+                 w - Inches(0.24), Inches(0.50),
+                 size=Pt(24), color=_PIPE_DARK, bold=True,
+                 align=PP_ALIGN.CENTER))
+        shapes.append(add_text(slide, sub,
+                 x + Inches(0.12), y + Inches(0.72),
+                 w - Inches(0.24), h - Inches(0.84),
+                 size=Pt(20), color=_PIPE_DARK, align=PP_ALIGN.CENTER))
+        return shapes
+
+    # Build top row (stages 5, 6, 7) with arrows between.
+    for i in range(3):
+        x = start_x + i * step_x
+        name, sub, color = stages[i]
+        grp = _pipe_box_2row(slide, name, sub, color, x, row_y, box_w, box_h)
         if i > 0:
-            ax = start_x + (i - 1) * step + box_w
+            ax = start_x + (i - 1) * step_x + box_w
             grp = _pipe_arrow(slide, ax, row_y, h_gap, arrow_w, box_h) + grp
         stage_groups.append(grp)
 
+    # Down arrow from top-right (stage 7) to bottom-right (stage 7a, the
+    # logical first of bottom row in left-to-right reading) — actually we
+    # want top-row to wrap around to bottom-LEFT, then proceed left-to-right.
+    # For simpler reading order: arrow drops from stage-7 (top-right) down to
+    # stage-7a (bottom-left), which mirrors a "snake" left-to-right then
+    # right-to-left. Cleaner: just connect 7 -> 7a with a curve via the
+    # leftmost down-arrow on the bottom row's start. Use an L-shaped path:
+    # down from stage-7 then a left-pointing rail along the gap.
+    s7_cx = start_x + 2 * step_x + box_w / 2
+    s7a_cx = start_x + 0 * step_x + box_w / 2
+    rail_y = row_y + box_h + Inches(0.13)
+    lw = Inches(0.04)
+    # Down stub from stage 7
+    down1 = add_rect(slide, s7_cx - lw / 2, row_y + box_h,
+                     lw, rail_y - (row_y + box_h),
+                     fill_color=TEAL, border_color=None)
+    # Horizontal rail right-to-left from below stage 7 to above stage 7a
+    rail_x_start = s7a_cx
+    rail_x_end = s7_cx
+    rail = add_rect(slide, rail_x_start, rail_y - lw / 2,
+                    rail_x_end - rail_x_start, lw,
+                    fill_color=TEAL, border_color=None)
+    # Down stub into stage 7a
+    down2 = add_rect(slide, s7a_cx - lw / 2, rail_y,
+                     lw, row2_y - rail_y - Inches(0.12),
+                     fill_color=TEAL, border_color=None)
+    arrow_tip = add_text(slide, "▼",
+                 s7a_cx - Inches(0.16), row2_y - Inches(0.30),
+                 Inches(0.32), Inches(0.32),
+                 size=Pt(22), color=TEAL, align=PP_ALIGN.CENTER)
+    wrap_arrow = [down1, rail, down2, arrow_tip]
+
+    # Build bottom row (stages 7a, 7b, 8) with arrows between.
+    bottom_groups = []
+    for j in range(3):
+        i = 3 + j
+        x = start_x + j * step_x
+        name, sub, color = stages[i]
+        grp = _pipe_box_2row(slide, name, sub, color, x, row2_y, box_w, box_h)
+        if j > 0:
+            ax = start_x + (j - 1) * step_x + box_w
+            grp = _pipe_arrow(slide, ax, row2_y, h_gap, arrow_w, box_h) + grp
+        bottom_groups.append(grp)
+        stage_groups.append(grp)
+
     # Red outline highlighting stages 6-7 (existed in academic repo).
-    s6_x = start_x + 1 * step
-    s7_x = start_x + 2 * step
+    s6_x = start_x + 1 * step_x
+    s7_x = start_x + 2 * step_x
     red_box_x = s6_x - Inches(0.08)
     red_box_w = (s7_x + box_w) - s6_x + Inches(0.16)
     red_box = add_rect(slide, red_box_x, row_y - Inches(0.10),
@@ -257,39 +325,40 @@ def slide_17_b(prs):
                        fill_color=None, border_color=RED, border_width=Pt(2.5),
                        corner_radius=True)
     red_label = add_text(slide, "Existed in academic repo",
-                         red_box_x, row_y - Inches(0.50),
-                         red_box_w, Inches(0.40),
-                         size=Pt(20), color=RED, bold=True,
+                         red_box_x, row_y - Inches(0.45),
+                         red_box_w, Inches(0.34),
+                         size=Pt(18), color=RED, bold=True,
                          align=PP_ALIGN.CENTER)
 
     # Teal outline highlighting stages 7a-7b (engineered May 2026).
-    s7a_x = start_x + 3 * step
-    s7b_x = start_x + 4 * step
+    s7a_x = start_x + 0 * step_x
+    s7b_x = start_x + 1 * step_x
     teal_box_x = s7a_x - Inches(0.08)
     teal_box_w = (s7b_x + box_w) - s7a_x + Inches(0.16)
-    teal_box = add_rect(slide, teal_box_x, row_y + box_h + Inches(0.05),
-                        teal_box_w, Inches(0.45),
+    teal_box = add_rect(slide, teal_box_x, row2_y - Inches(0.10),
+                        teal_box_w, box_h + Inches(0.20),
                         fill_color=None, border_color=SPOST, border_width=Pt(2.5),
                         corner_radius=True)
     teal_label = add_text(slide, "Engineered May 2026",
-                          teal_box_x, row_y + box_h + Inches(0.07),
-                          teal_box_w, Inches(0.40),
+                          teal_box_x, row2_y + box_h + Inches(0.12),
+                          teal_box_w, Inches(0.34),
                           size=Pt(18), color=SPOST, bold=True,
                           align=PP_ALIGN.CENTER)
 
-    # Group reveals: stages 5+6+red highlight, 7+7a+7b+teal highlight, then 8.
-    anim_groups.append(stage_groups[0] + stage_groups[1] + [red_box, red_label])
-    anim_groups.append(stage_groups[2] + stage_groups[3] + stage_groups[4]
+    # Group reveals: top row + red highlight, then wrap-arrow + bottom row + teal.
+    anim_groups.append(stage_groups[0] + stage_groups[1] + stage_groups[2]
+                       + [red_box, red_label])
+    anim_groups.append(wrap_arrow + bottom_groups[0] + bottom_groups[1]
                        + [teal_box, teal_label])
-    anim_groups.append(stage_groups[5])
+    anim_groups.append(bottom_groups[2])
 
-    # ── Legend ──
+    # ── Legend ── (compact, single-row, abbreviated label to avoid wrap)
     final_group = []
-    legend_y = row_y + box_h + Inches(0.85)
+    legend_y = row2_y + box_h + Inches(0.55)
     final_group += _pipe_legend(slide, [
         ("Feature Extraction", SGREEN),
         ("LLM Inference", SGOLD),
-        ("Post-decode (NEW)", SPOST),
+        ("Post-decode", SPOST),
         ("Output", SPINK),
     ], legend_y)
 
@@ -297,7 +366,7 @@ def slide_17_b(prs):
     final_group.append(add_text(slide,
              "auto_avsr  ·  av_hubert  ·  VSP-LLM  ·  lib/outputs.sh (May 2026)",
              start_x, legend_y + Inches(0.42), total_w, Inches(0.32),
-             size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+             size=Pt(16), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
     anim_groups.append(final_group)
 
     _finish(slide, 0,
@@ -873,7 +942,7 @@ def slide_engineering_summary(prs):
         ("Single-Image Docker",
          "One tar.zst, one tag.\nNo layered patches.\nOffline-ready.",
          CORAL),
-        ("EC2 ↔ Container Sync",
+        ("EC2 ↔ Container",
          "26-item changelog.\nPath translation,\ndual-env testing.",
          GOLD),
         ("Confidence + N-best",
@@ -945,18 +1014,21 @@ def slide_engineering_pipeline_modules(prs):
     add_accent_line(slide)
 
     # 4 rows x 3 cols = 12 cells, last cell empty (only 11 modules).
+    # Descriptions are single-line so they fit in ch_card=1.10 (Pt(18) italic
+    # 2-line caption was previously overflowing — visible as horizontal
+    # strikethrough lines crossing every card).
     modules = [
-        ("common.sh",        "Logging\n& validation",       TEAL),
-        ("config.sh",        "Env detect\n& path config",   TEAL),
-        ("archive.sh",       "Run archival\n+ transcripts", TEAL),
-        ("normalization.sh", "HDR / 10-bit\nconversion",    BLUE),
-        ("asr.sh",           "Whisper +\nreuse logic",      BLUE),
-        ("lrs3_prep.sh",     "Flat → LRS3\nformat",     BLUE),
-        ("manifests.sh",     "TSV + splits\n+ timing",      GOLD),
-        ("clustering.sh",    "K-means +\ncluster counts",   GOLD),
-        ("decode.sh",        "VSP-LLM +\nCython check",     CORAL),
-        ("outputs.sh",       "Reports +\nburned video",     CORAL),
-        ("venv_utils.sh",    "venv activate\n/ deactivate", GREEN),
+        ("common.sh",        "Logging + validation",   TEAL),
+        ("config.sh",        "Env + path config",      TEAL),
+        ("archive.sh",       "Archive + transcripts",  TEAL),
+        ("normalization.sh", "HDR/10-bit conversion",  BLUE),
+        ("asr.sh",           "Whisper + reuse",        BLUE),
+        ("lrs3_prep.sh",     "Flat → LRS3",            BLUE),
+        ("manifests.sh",     "TSV + splits + timing",  GOLD),
+        ("clustering.sh",    "K-means + counts",       GOLD),
+        ("decode.sh",        "VSP-LLM + Cython",       CORAL),
+        ("outputs.sh",       "Reports + burned MP4",   CORAL),
+        ("venv_utils.sh",    "venv activate/deact.",   GREEN),
         # 12th cell intentionally empty.
     ]
 

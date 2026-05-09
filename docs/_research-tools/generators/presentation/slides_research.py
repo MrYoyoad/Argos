@@ -165,22 +165,25 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
         else:
             # remark #322 \u2014 worked example with confidence badge so the
             # audience sees "would I be fooled?" in context.
-            ex_y = y + Inches(0.95)
+            # CUT v4: trimmed ref+hyp so italic stays on one line; shortened
+            # Salvage badge label so it doesn't wrap "blindly" off the card.
+            # CUT v4 (overlap): tightened ex_y 0.95 -> 0.85, badge_y 1.22 -> 1.17
+            # to keep badge row inside card (h=1.55, prior 1.52 was too tight).
+            ex_y = y + Inches(0.85)
             ex = add_text(slide,
-                "\u25b8 ref: \u201cjames and will talk about street photography\u201d  \u2192  "
-                "hyp: \u201ci'm here to talk about street photography\u201d",
+                "\u25b8 ref/hyp: \u201ctalk about street photography\u201d (LR\u22481)",
                 MX + Inches(0.2), ex_y,
-                card_w - Inches(0.4), Inches(0.30),
+                card_w - Inches(0.4), Inches(0.24),
                 size=Pt(18), color=LGRAY, italic=True)
-            badge_y = y + Inches(1.22)
+            badge_y = y + Inches(1.17)
             badge_h = Inches(0.30)
             gap_x = Inches(0.10)
             badge_specs = [
-                ("WER 56%", Inches(1.55), CORAL),
-                ("WWER 53%", Inches(1.70), CORAL),
-                ("LR 1.05", Inches(1.45), LGRAY),
-                ("conf 0.70", Inches(1.65), GOLD),
-                ("Salvage \u2014 inspect, don't trust blindly", Inches(3.95), GOLD),
+                ("WER 56%", Inches(1.40), CORAL),
+                ("WWER 53%", Inches(1.55), CORAL),
+                ("LR 1.05", Inches(1.30), LGRAY),
+                ("conf 0.70", Inches(1.50), GOLD),
+                ("Salvage \u2014 don't trust blindly", Inches(3.30), GOLD),
             ]
             badges = []
             bx = MX + Inches(0.2)
@@ -234,11 +237,11 @@ def slide_is_intro_b(prs):
     add_accent_line(slide)
 
     # Weight callout — widened for Pt(24) bold (audit:bigfonts)
-    weight_r = add_rect(slide, MX, CT, Inches(5.6), Inches(0.55), fill_color=NAVY2,
+    weight_r = add_rect(slide, MX, CT, Inches(7.2), Inches(0.55), fill_color=NAVY2,
                         border_color=TEAL, border_width=Pt(2), corner_radius=True)
     weight_t = add_text(slide, "Weight: 25% \u2014 the single largest signal",
                  MX + Inches(0.2), CT + Inches(0.06),
-                 Inches(5.2), Inches(0.45),
+                 Inches(6.8), Inches(0.45),
                  size=Pt(24), color=TEAL, bold=True)
 
     # Main explanation card — grown for taller body
@@ -681,6 +684,9 @@ def slide_is_calc_examples(prs):
         # Calculation rows (increased font size)
         # CUT v3 (overflow): widened name col 1.8 -> 2.4 so "Semantic Sim" fits
         # one line at 20pt; row height bumped to 0.50.
+        # CUT v4 (overlap): merged `mult` + `result` into single right-anchored
+        # text frame so "= 0.205" cannot wrap onto two visual lines (was
+        # appearing between rows when 1.0" frame clipped Calibri-bold).
         cy = CT + Inches(1.35)
         for name, val, mult, result, clr in lines:
             shapes.append(add_text(slide, name, x + Inches(0.2), cy, Inches(2.4), Inches(0.50),
@@ -689,7 +695,7 @@ def slide_is_calc_examples(prs):
                      size=Pt(20), color=clr, bold=True))
             shapes.append(add_text(slide, mult, x + Inches(3.3), cy, Inches(0.9), Inches(0.50),
                      size=Pt(20), color=LGRAY))
-            shapes.append(add_text(slide, result, x + Inches(4.2), cy, Inches(1.0), Inches(0.50),
+            shapes.append(add_text(slide, result, x + Inches(4.25), cy, Inches(1.30), Inches(0.50),
                      size=Pt(20), color=WHITE, bold=True))
             cy += Inches(0.50)
 
@@ -726,7 +732,7 @@ def slide_is_calc_examples(prs):
     r2 = _draw_calc_card(slide, MX + col_w + gap,
         "Bad Segment", "0.8", CORAL,
         "carry strap",
-        "holocaust denier explanation of the final act",
+        "holocaust denier of the final act",  # CUT v4: shortened so 18pt fits 1 line in 5.3" col
         bad_lines, "Sum \u00d7 5 = 0.81 \u2192 IS 0.8 (Failed)")
 
     # Closed-form IS formula footer (italic LGRAY Pt(16)). Card_h shrunk
@@ -808,13 +814,16 @@ def slide_is_wer_scatter(prs):
     add_title(slide, "The Gap: Where WER Lies Most")
     add_accent_line(slide)
 
-    # Left column — two gap numbers + bullets (narrower to give plot more room)
+    # Left column — two gap numbers + bullets (narrower to give plot more room).
+    # CUT v4 (overlap): label was wrapping into 3 lines at 24pt within 4.2"
+    # and bleeding into the bullets below. Hardened with explicit \n,
+    # frame h 0.55 -> 1.10, font 24 -> 22, bullets pushed 1.70 -> 2.30.
     left_w = Inches(4.2)
     num_s = add_text(slide, "75 + 68", MX, CT, left_w, Inches(1.1),  # audit:logic_35_calibrated_counts
                      size=Pt(56), color=GREEN, bold=True)
-    lbl_s = add_text(slide, "segments WER wrongly discards (NIV-calibrated cutoffs)",
-                     MX, CT + Inches(1.1), left_w, Inches(0.55),
-                     size=Pt(24), color=LGRAY)
+    lbl_s = add_text(slide, "segments WER wrongly\ndiscards (NIV-calibrated)",
+                     MX, CT + Inches(1.1), left_w, Inches(1.10),
+                     size=Pt(22), color=LGRAY)
     # audit:FONT_BELOW_24PT_BODY \u2014 NIV-gloss bullet's bullet_color set to
     # LGRAY so the audit's first_color check classifies the shape as
     # caption-role (chart-companion annotation), which it semantically is:
@@ -829,7 +838,7 @@ def slide_is_wer_scatter(prs):
         ("68 useful meaning (IS \u2265 2.00) but WER > 77%  (NIV-Y+P WER cutoff)",
          {"bold": True, "color": GOLD}),  # audit:logic_35_niv_yp_count
         ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),
-    ], MX, CT + Inches(1.70), left_w, Inches(3.2))
+    ], MX, CT + Inches(2.30), left_w, Inches(2.6))
 
     # Right — scatter plot. Was placed at CT-0.2=1.25 with auto-height (5.39"),
     # extending to bot=6.64 — overlapped title (frame to 1.50) AND bottom text
@@ -1285,7 +1294,7 @@ def slide_failure_deep_1a(prs):
          "Ref: \u201ccarry strap\u201d \u2192 Hyp: \u201cholocaust denier...\u201d"),
         ("3. Right Topic, Wrong Details", "14%", "79 segments", RED,
          "Roughly right but names/content words lost",
-         "NEA F1 < 20% OR key content substituted (Semantic \u2265 0.2)",
+         "NEA F1 < 20% AND Semantic \u2265 0.2",
          "Ref: \u201c13th amendment is going\u201d \u2192 Hyp: \u201c13th may mean something to him\u201d"),
     ]
 
@@ -2084,16 +2093,18 @@ def slide_is_dimensions(prs):
              MX, CT, CW, Inches(0.55), size=Pt(24), color=LGRAY)
 
     # Three cards (PC1=68%, PC2=20%, PC3=6%; PC1+PC2=88% Kaiser; PC3 shown per user request)
+    # CUT v4 (overlap): shortened `signals` strings to single short line each
+    # so 24pt centered text doesn't wrap and crash into the t5 italic insight.
     dims = [
         ("PC1: Signal Quality", "68%", "of total variance",
-         "All 5 content signals load equally\n(0.43\u20130.47 each)",
+         "All 5 content signals load\nequally (0.43\u20130.47)",
          "One general quality factor\ndriven by visual encoder", TEAL),
         ("PC2: Output Length", "20%", "of total variance",
          "Length Ratio dominates\n(loading 0.91)",
-         "Independent of content quality\nCatches hallucination & truncation", LGRAY),
+         "Independent of quality;\ncatches hallucination", LGRAY),
         ("PC3: Entity Swing", "6%", "of total variance",
-         "Named entity accuracy\nanti-correlates with phonetics",
-         "Below Kaiser threshold \u2014 latent\nentity-specific signal", GOLD),
+         "NEA anti-correlates\nwith phonetics",
+         "Below Kaiser threshold \u2014\nlatent entity signal", GOLD),
     ]
 
     cw_card = Inches(3.80)
@@ -2122,14 +2133,14 @@ def slide_is_dimensions(prs):
                  cw_card - Inches(0.3), Inches(0.4),
                  size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
 
-        # Signals
+        # Signals — h grown 0.8 -> 1.05 so 2-line 24pt centered fits cleanly.
         t4 = add_text(slide, signals, x + Inches(0.15), cy + Inches(1.75),
-                 cw_card - Inches(0.3), Inches(0.8),
-                 size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
+                 cw_card - Inches(0.3), Inches(1.05),
+                 size=Pt(22), color=WHITE, align=PP_ALIGN.CENTER)
 
-        # Insight
-        t5 = add_text(slide, insight, x + Inches(0.15), cy + Inches(2.70),
-                 cw_card - Inches(0.3), Inches(0.9),
+        # Insight — moved down 2.70 -> 2.90 to clear taller t4.
+        t5 = add_text(slide, insight, x + Inches(0.15), cy + Inches(2.90),
+                 cw_card - Inches(0.3), Inches(0.95),
                  size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
         card_groups.append([r, t1, t2, t3, t4, t5])
