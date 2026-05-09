@@ -74,14 +74,15 @@ from presentation.slides_demo import (
     slide_failure_live_demo,
 )
 from presentation.slides_engineering import (
-    slide_17,           # programmatic (NOT slide_17_png)
+    slide_17_a,         # 8-stage pipeline part 1/2 (programmatic)
+    slide_17_b,         # 8-stage pipeline part 2/2 (programmatic)
     slide_dual_env,
 )
 from presentation.slides_future import (
     slide_future_transition,
     slide_24, slide_26, slide_26b,
     slide_30, slide_30b,
-    slide_29,
+    slide_29_phases, slide_29_lift,
     slide_arabic_roadmap, slide_arabic_avhubert, slide_arabic_changes,
     slide_31, slide_thank_you,
     slide_28, slide_confidence_scoring,
@@ -216,7 +217,8 @@ def main():
         slide_visemes,                  # Visemes
         slide_data_flow,                # Data flow  ← switched with slide_03
         slide_03,                       # Three components ← switched with data_flow
-        slide_17,                       # 8-stage pipeline (programmatic)
+        slide_17_a,                     # 8-stage pipeline 1/2: preprocessing
+        slide_17_b,                     # 8-stage pipeline 2/2: decoding + output
         slide_04,                       # Benchmark / IS results
         slide_05,                       # Reality gap
         slide_06,                       # Same WER, different effects
@@ -297,7 +299,8 @@ def main():
         slide_26b,                      # IS improvement roadmap
         slide_30,                       # Stronger LLM + smart prompts
         # slide_30b removed per user request (item #344)
-        slide_29,                       # Fine-tuning
+        slide_29_phases,                # Fine-tuning roadmap (phases) -- per #343
+        slide_29_lift,                  # Fine-tuning evidence plots -- per #343
         slide_arabic_roadmap,
         slide_arabic_avhubert,
         slide_arabic_changes,

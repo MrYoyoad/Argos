@@ -463,59 +463,131 @@ def slide_28(prs):  # audit:bigfonts2
 # SLIDE 29 — FINE-TUNING + DATA SCALING
 # ═══════════════════════════════════════════════════════════════════════
 
-def slide_29(prs):  # audit:bigfonts
+def slide_29_phases(prs):  # audit:bigfonts
+    """Fine-tuning phases / data-scaling roadmap (text-heavy).
+
+    Slide A of B — split per user remark #343. Three-column phase layout:
+    today's 1.3K floor -> 20K target -> expected lift.
+    """
     slide = new_slide(prs)
-    add_title(slide, "Fine-Tuning: Limited Data, Limited Gains")
+    add_title(slide, "Fine-Tuning: From 1.3K Floor to 20K Target")
     add_accent_line(slide)
 
-    # Two plots side by side — reduced height to leave room for text.
-    # D1 (research-overview): plot_h shrunk 3.8 -> 3.0 to fit a third
-    # ablation bullet at Pt(24); findings frame extends 1.6 -> 2.4.
-    col_w = Inches(5.9)
-    gap = Inches(0.33)
-    plot_h = Inches(3.0)
-    rx = MX + col_w + gap
+    cols = [
+        ("Today: 1.3K Floor", [
+            ("LoRA on 1,273 AVSpeech segs",
+             {"bold": True, "color": CORAL}),
+            "Train ~95%, val ~60% (overfit)",
+            ("r=16 IS 2.31; r=64 IS 2.02",
+             {"color": LGRAY}),
+            "Empty rate rose 7% to 27%",
+        ], CORAL),
+        ("Target: 20K+ Segments", [
+            ("Need 15-40x more data",
+             {"bold": True, "color": GOLD}),
+            "AVSpeech curation: 50K reachable",
+            ("Above LoRA generalization floor",
+             {"color": LGRAY}),
+            "Pair with stronger LLM backbone",
+        ], GOLD),
+        ("Expected Lift", [
+            ("Visual encoder + LLM swap",
+             {"bold": True, "color": GREEN}),
+            "Llama 3.1 8B: -3 to -8pp WER",
+            ("Smart prompts: +5 to 20pp",
+             {"color": LGRAY}),
+            "Bottleneck: DATA, not arch.",
+        ], GREEN),
+    ]
 
-    img_l = add_image(slide, "ft_loss", MX, CT, width=col_w, height=plot_h)
-    img_r = add_image(slide, "ft_impact", rx, CT, width=col_w, height=plot_h)
+    cw = Inches(3.85)
+    gap = Inches(0.27)
+    total = 3 * cw + 2 * gap
+    cx = (SL_W - total) / 2
 
-    # Key findings below plots — h bumped 1.6 -> 2.4 for 3rd bullet at Pt(24).
-    find_y = CT + plot_h + Inches(0.15)
-    # D1 (research-overview): promote 1-line ablation summary to body.
-    # Bullets trimmed for Pt(24) one-line wraps where possible.
-    lb = add_bullets(slide, [
-        ("LoRA 1,273 segs: IS 2.49 \u2192 2.31 (r=16) \u2192 2.02 (r=64).",
-         {"bold": True, "color": CORAL}),
-        ("Ablations: r=16 + r=64 LoRA \u2014 both data-limited at 1.3K segs",
-         {"color": LGRAY}),
-        ("Bottleneck is DATA QUANTITY (need 20K+), not tuning.",
-         {"bold": True, "color": GREEN}),
-    ], MX, find_y, CW, Inches(2.4), size=Pt(24))
+    col_groups = []
+    for i, (title, items, color) in enumerate(cols):
+        x = cx + i * (cw + gap)
+        r = add_rect(slide, x, CT, cw, Inches(4.8), fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2), corner_radius=True)
+        t = add_text(slide, title, x + Inches(0.15), CT + Inches(0.15),
+                     cw - Inches(0.3), Inches(0.5),
+                     size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
+        b = add_bullets(slide, items, x + Inches(0.2), CT + Inches(0.75),
+                        cw - Inches(0.4), Inches(3.9), size=Pt(20))
+        col_groups.append([r, t, b])
+
+    # Footer takeaway -- kept above safe-zone (7.05").
+    add_text(slide,
+        "Bottleneck is DATA QUANTITY (need 20K+), not parameter tuning.",
+        MX, Inches(6.45), CW, Inches(0.45),
+        size=Pt(22), color=GREEN, bold=True, align=PP_ALIGN.CENTER, italic=True)
 
     _finish(slide, 29,
-        "Fine-tuning experiments with LoRA on 1,273 AVSpeech segments — "
-        "the limit of what we could prepare in our window. Graphs are "
-        "enlarged for visibility. Exp A (rank 16): best validation at "
-        "epoch 2, then overfitting (~95% train, ~60% val accuracy). Exp B "
-        "(rank 64): 3.1 percentage points worse on validation than Exp A. "
-        "Claude-as-Judge evaluation on 224 validation segments: baseline "
-        "IS 2.487, Exp A IS 2.312, Exp B IS 2.023. Empty-output rate rose "
-        "from 7% (baseline) to 12% (Exp A) to 27% (Exp B). LLM "
-        "Y+P stayed in the 51-54% band across all three configs — "
-        "fine-tuning did not improve outcomes. The bottleneck is data "
-        "quantity (need 20K+ segments, not 1.3K), not parameter tuning. "
-        "Mention to peers: this is a data-limited result; a stronger LLM "
-        "backbone with 20K-50K segments is expected to produce "
-        "substantially better numbers.\n\n"
-        "ABLATION DETAIL (peer Q&A): We ran 2 LoRA configurations: "
-        "rank-16 and rank-64, both fine-tuned on the AVSpeech 1,273-segment "
-        "subset. Both showed severe overfitting — train accuracy ~95% "
-        "vs val ~60%. r=64 was 3.1pp WER worse than r=16 (more capacity "
-        "overfits faster on tiny data). Conclusion: dataset is the "
-        "bottleneck, not architecture or recipe. "
+        "Fine-tuning roadmap (slide A of B per user remark #343). "
+        "Three phases: TODAY -- LoRA on 1,273 AVSpeech segments shows severe "
+        "overfitting (train ~95%, val ~60%) and IS regression (baseline 2.49 "
+        "\u2192 r=16 2.31 \u2192 r=64 2.02). Empty-output rate rose 7% \u2192 27%. "
+        "TARGET -- need 20K+ segments to clear the LoRA generalization floor; "
+        "AVSpeech curation can reach 50K. EXPECTED LIFT -- combine visual "
+        "encoder adaptation with Llama 3.1 8B (\u22123 to \u22128pp WER from "
+        "the LLM swap alone, projection from VALLR-style benchmarks); smart "
+        "prompts add +5\u201320pp on top. "
+        "Bottom line: dataset size is the bottleneck, not parameter tuning "
+        "or architecture choice. The plot on the next slide shows the "
+        "data-limited evidence visually. "
         "Sources: docs/finetuning/training-research-notes.md, "
         "docs/evaluation/llm_upgrade_analysis.md.",
-        [[img_l, img_r], [lb]], click_reveal=True)
+        col_groups, click_reveal=True)
+
+
+def slide_29_lift(prs):  # audit:bigfonts
+    """Fine-tuning evidence plots -- full-width for readable labels.
+
+    Slide B of B -- split per user remark #343. Plots enlarged so axis tick
+    labels and legend text are visible from the back of the room.
+    """
+    slide = new_slide(prs)
+    add_title(slide, "Fine-Tuning Evidence: Data-Limited Curves")
+    add_accent_line(slide)
+
+    # Two plots side by side, BIG -- full content width split 50/50 with a
+    # small gap so axis tick labels are readable from the back row.
+    gap = Inches(0.20)
+    img_w = (CW - gap) / 2
+    img_h = Inches(5.0)
+    rx = MX + img_w + gap
+
+    img_l = add_image(slide, "ft_loss", MX, CT, width=img_w, height=img_h)
+    img_r = add_image(slide, "ft_impact", rx, CT, width=img_w, height=img_h)
+
+    # Single-line caption beneath the plots -- italic 18pt floor.
+    cap_y = CT + img_h + Inches(0.15)
+    cap = add_text(slide,
+        "Left: training vs validation loss (overfit gap widens after epoch 2).   "
+        "Right: IS regresses with LoRA rank -- baseline 2.49 \u2192 r=16 2.31 "
+        "\u2192 r=64 2.02.",
+        MX, cap_y, CW, Inches(0.55),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 29,
+        "Fine-tuning evidence (slide B of B per user remark #343). "
+        "Plots are enlarged to full content width so axis labels and tick "
+        "values are readable. LEFT (FT_11a): training-loss curves for Exp A "
+        "(rank 16) and Exp B (rank 64) on AVSpeech 1,273 -- both show "
+        "best validation around epoch 2, then divergence (train ~95%, "
+        "val ~60%). RIGHT (FT_11b): Claude-as-Judge IS scores on 224 "
+        "validation segments: baseline 2.487, Exp A 2.312, Exp B 2.023; "
+        "empty-output rate 7% \u2192 12% \u2192 27%; LLM Y+P stayed in the "
+        "51\u201354% band across all three configs (no improvement). "
+        "ABLATION DETAIL (peer Q&A): r=64 was 3.1pp WER worse than r=16 "
+        "(more capacity overfits faster on tiny data). The bottleneck is "
+        "data quantity (need 20K+), not architecture or recipe. With "
+        "20K\u201350K segments and a stronger LLM backbone (e.g., Llama 3.1 "
+        "8B), substantially better results are expected. "
+        "Sources: docs/finetuning/training-research-notes.md, "
+        "docs/evaluation/llm_upgrade_analysis.md.",
+        [[img_l, img_r], [cap]], click_reveal=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 30 — LLM UPGRADE + ADVANCED CAPABILITIES
@@ -1239,8 +1311,10 @@ def slide_a8(prs):  # audit:bigfonts
     # OVERLAP fix: shrink the PCA caption width so it ends at SRL-0.1 rather
     # than reaching CW*0.55 = 6.67 (right edge x=7.27, which collided with
     # the right-column "Cross-Config" caption starting at SRL=6.5).
+    # OVERLAP fix (audit:appendix_round6): h 1.0 -> 0.65 — 1.0" frame extended
+    # to y=2.45 while tbl1 starts at y=2.30 (0.15" overlap). Single-line at 24pt.
     add_text(slide, "PCA: 6 IS signals collapse into 2 principal components:",
-             MX, CT, SRL - MX - Inches(0.1), Inches(1.0),
+             MX, CT, SRL - MX - Inches(0.1), Inches(0.65),
              size=Pt(24), color=WHITE)
 
     # tbl1 y moved CT+0.5->CT+0.85 so it starts after subtitle second line
@@ -1257,8 +1331,10 @@ def slide_a8(prs):  # audit:bigfonts
         col_widths=[Inches(1.6), Inches(1.8), Inches(1.1), Inches(1.3)])
 
     # Cross-config stability
+    # OVERLAP fix (audit:appendix_round6): h 1.0 -> 0.4 — was extending to
+    # y=2.45 while tbl2 starts at y=1.85 (0.60" overlap).
     add_text(slide, "Cross-Config Stability (16 configs)",
-             SRL, CT, SRW, Inches(1.0), size=Pt(24), color=TEAL, bold=True)
+             SRL, CT, SRW, Inches(0.4), size=Pt(24), color=TEAL, bold=True)
 
     # tbl2 row_h bumped 0.30 -> 0.38 for Pt(24) (audit:bigfonts).
     tbl2 = add_table(slide,
@@ -1277,8 +1353,10 @@ def slide_a8(prs):  # audit:bigfonts
     # tbl2 end). tbl3 now uses full SRW width + explicit col_widths so long
     # "Agreement (IS >= X.XX)" labels fit on one line without wrapping.
     # "Config range" row dropped so tbl3 stays within safe zone.
+    # OVERLAP fix (audit:appendix_round6): h 1.0 -> 0.4 — was extending to
+    # y=5.50 while tbl3 starts at y=4.95 (0.55" overlap).
     add_text(slide, "Heuristic Validation (no runtime LLM)",
-             SRL, CT + Inches(3.05), SRW, Inches(1.0),
+             SRL, CT + Inches(3.05), SRW, Inches(0.4),
              size=Pt(24), color=TEAL, bold=True)
 
     tbl3 = add_table(slide,
@@ -1383,9 +1461,12 @@ def slide_a11b(prs):  # audit:bigfonts
     add_title(slide, "A5: LLM Salvage — Curated Examples")
     add_accent_line(slide)
 
+    # OVERLAP fix (audit:appendix_round6): caption h 1.0 -> 0.45 + table y 0.6
+    # -> 0.45 + row_h 0.75 -> 0.72 so 7 rows × 0.72 = 5.04 ends at
+    # 1.45+0.45+5.04 = 6.94, under safe 7.05. Previously ended at 7.30.
     add_text(slide, "One real example per recovery category — all IS < 2.0 "
              '(metrics say "failed") but heuristic says recoverable:',
-             MX, CT, CW, Inches(1.0), size=Pt(24), color=LGRAY)
+             MX, CT, CW, Inches(0.45), size=Pt(24), color=LGRAY)
 
     tbl = add_table(slide,
         ["Category", "Reference (excerpt)", "Hypothesis (excerpt)",
@@ -1414,8 +1495,8 @@ def slide_a11b(prs):  # audit:bigfonts
           "so um",
           "so i kind of",
           "150%", "2.06", "0.65"]],
-        MX, CT + Inches(0.6), CW, text_size=Pt(24),
-        row_height=Inches(0.75))  # row_height 0.45 -> 0.75 for Pt(24) wrap (audit:bigfonts)
+        MX, CT + Inches(0.45), CW, text_size=Pt(24),
+        row_height=Inches(0.72))  # row_height 0.45 -> 0.75 -> 0.72 (audit:appendix_round6 — fits under 7.05)
 
     _finish(slide, "A5",
         "Curated examples showing each of the 6 recovery categories. "
@@ -1850,8 +1931,10 @@ def slide_a17(prs):  # audit:bigfonts
     gap = Inches(1.13)
 
     # Left — full transition matrix
+    # OVERLAP fix (audit:appendix_round6): heading h 1.0 -> 0.4 \u2014 1.0" frame
+    # extended to y=2.45 while tbl1 starts at y=1.95 (0.50" overlap).
     lt = add_text(slide, "Blind \u2192 Context Transition Matrix", MX, CT,
-                  col_w, Inches(1.0), size=Pt(24), color=TEAL, bold=True)
+                  col_w, Inches(0.4), size=Pt(24), color=TEAL, bold=True)
 
     # tbl1 col5 widened to 1.25" so "Total" (5 chars bold 24pt \u2248 0.81")
     # fits in eff=0.95" without wrapping. Col1 reduced to 2.2" to compensate.
@@ -1866,9 +1949,12 @@ def slide_a17(prs):  # audit:bigfonts
         row_colors={0: {2: CORAL}, 1: {3: CORAL}})
 
     # Moved CT+2.2 -> CT+2.40 for 0.38" gap after tbl1 OOXML end.
+    # OVERLAP fix (audit:appendix_round6): h 1.8 -> 0.85 \u2014 1.8" frame extended
+    # to y=5.65 while tbl2 starts at y=4.85 (0.80" overlap). 0.85" fits the
+    # 2-line content at 24pt.
     add_text(slide, "Dominant transition: Y\u2192P (138 cases, 40% of all Y)\n"
              "Only 1 N\u2192Y rescue across all 1,497 pairs",
-             MX, CT + Inches(2.40), col_w, Inches(1.8),
+             MX, CT + Inches(2.40), col_w, Inches(0.85),
              size=Pt(24), color=LGRAY)
 
     # tbl2 y moved CT+3.0->CT+3.40 so it clears the "Dominant transition"
@@ -1884,8 +1970,10 @@ def slide_a17(prs):  # audit:bigfonts
 
     # Right — per-topic deltas
     rx = MX + col_w + gap
+    # OVERLAP fix (audit:appendix_round6): heading h 1.0 -> 0.4 \u2014 was extending
+    # to y=2.45 while tbl3 starts at y=1.95 (0.50" overlap).
     rt = add_text(slide, "Per-Topic Y+P Delta (Blind \u2192 Context)", rx, CT,
-                  col_w, Inches(1.0), size=Pt(24), color=CORAL, bold=True)
+                  col_w, Inches(0.4), size=Pt(24), color=CORAL, bold=True)
 
     # tbl3 headers shortened: "Blind Y+P"->"Blind", "Ctx Y+P"->"Ctx" so they
     # fit in the data columns. Col_widths adjusted: col1=2.6" for topic names
@@ -1943,11 +2031,14 @@ def slide_human_is_path_b(prs):  # audit:bigfonts2
     add_accent_line(slide)
 
     # Sub-header / framing
+    # OVERLAP fix (audit:appendix_round6): h 1.2 -> 0.65 — was extending to
+    # y=2.65 while table starts at y=2.15 (0.50" overlap). Italic 20pt
+    # 2-line content fits in 0.65".
     add_text(slide,
         "Path B: bin model 1,497 segments by WER, plug literature WER + "
         "component shifts into the same IS formula. Estimates, not "
         "measurements — needs Path A pilot to confirm.",
-        MX, CT, CW, Inches(1.2),
+        MX, CT, CW, Inches(0.65),
         size=Pt(20), color=LGRAY, italic=True)
 
     # Main table — row_height bumped 0.4 -> 0.46 for Pt(24) (audit:bigfonts)
@@ -2028,10 +2119,12 @@ def slide_appendix_pca_loadings(prs):  # audit:bigfonts
     add_title(slide, "Appendix: PCA Loadings on the 6 IS Signals")
     add_accent_line(slide)
 
+    # OVERLAP fix (audit:appendix_round6): header h 1.0 -> 0.5 — was extending
+    # to y=2.45 while both table and right rect start at y=2.00 (0.45" overlap).
     add_text(slide,
         "Kaiser criterion retains 2 components. Together they explain "
         "88% of variance.",
-        MX, CT, CW, Inches(1.0),
+        MX, CT, CW, Inches(0.5),
         size=Pt(24), color=LGRAY)
 
     # Loadings table (PC1, PC2 only — PC3 dropped by Kaiser).
@@ -2160,13 +2253,16 @@ def slide_appendix_mcnemar_full(prs):  # audit:bigfonts2
              MX, CT + Inches(3.15), CW, Inches(0.4),
              size=Pt(24), color=TEAL, bold=True)
     # CUT v2: dropped "Y verdict tied" (already in table p column).
+    # OVERLAP fix (audit:appendix_round6): bullets h 1.45 -> 1.15 — 1.45" frame
+    # ended at y=6.45 while caveat starts at y=6.40 (0.05" overlap). 3 bullets
+    # at 24pt fit comfortably in 1.15".
     add_bullets(slide, [
         ("mbr: +40 Y+P, p=0.00017 (highly significant)",
          {"color": GREEN, "bold": True}),
         ("vote_conf: +31 Y+P, p=0.00257 (significant)",
          {"color": GREEN}),
         "vote_score: +13 Y+P, p=0.149 (n.s.)",
-    ], MX, CT + Inches(3.55), CW, Inches(1.45), size=Pt(24))
+    ], MX, CT + Inches(3.55), CW, Inches(1.15), size=Pt(24))
 
     # Caveat — shortened; "text-differing subset" detail moved to notes
     # CUT v3: top 6.55 -> 6.40 so Pt(18) two-line wrap stays under 7.05.

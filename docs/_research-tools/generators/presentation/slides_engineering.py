@@ -27,270 +27,261 @@ from .helpers import (
 )
 
 # ═══════════════════════════════════════════════════════════════════════
-# SLIDE 17 — PIPELINE ARCHITECTURE
+# SLIDE 17 — PIPELINE ARCHITECTURE (split into two slides, May 2026)
 # ═══════════════════════════════════════════════════════════════════════
+# audit:layout_round5 — original single-slide 8-stage diagram was cramped
+# (boxes 2.6×1.2" with overlapping name/sub text frames at 24pt). Split into
+# 17_a (Preprocessing, stages 1-4 + ASR side-branch) and 17_b (Decoding +
+# Output, stages 5-8) so each row has 4× the vertical room. Boxes now
+# 2.6×1.8" with cleanly separated 24pt label and 22pt caption frames.
 
-def slide_17(prs):
-    """8-Stage Pipeline — ASR as side-branch (evaluation only), not in main flow."""
+# Shared palette for both halves of the pipeline diagram.
+_PIPE_BLUE   = RGBColor(0x4D, 0xD0, 0xE1)
+_PIPE_SGREEN = RGBColor(0x66, 0xBB, 0x6A)
+_PIPE_SGOLD  = RGBColor(0xFF, 0xCA, 0x28)
+_PIPE_SPINK  = RGBColor(0xEF, 0x9A, 0x9A)
+_PIPE_DARK   = RGBColor(0x0D, 0x1B, 0x2A)
+_PIPE_SCORAL = RGBColor(0xE0, 0x6C, 0x75)
+
+
+def _pipe_box(slide, name, sub, color, x, y, w, h):
+    """Pipeline-stage box: bold stage label on top, caption below.
+
+    Frames are vertically separated (no overlap) — name occupies the top
+    third, sub occupies the bottom two-thirds.
+    """
+    shapes = []
+    shapes.append(add_rect(slide, x, y, w, h,
+                 fill_color=color, border_color=None, corner_radius=True))
+    shapes.append(add_text(slide, name,
+             x + Inches(0.1), y + Inches(0.18),
+             w - Inches(0.2), Inches(0.55),
+             size=Pt(24), color=_PIPE_DARK, bold=True,
+             align=PP_ALIGN.CENTER))
+    shapes.append(add_text(slide, sub,
+             x + Inches(0.1), y + Inches(0.82),
+             w - Inches(0.2), h - Inches(0.92),
+             size=Pt(22), color=_PIPE_DARK, align=PP_ALIGN.CENTER))
+    return shapes
+
+
+def _pipe_arrow(slide, x, y, h_gap, arrow_w, box_h, color=None):
+    """Right-arrow connector between pipeline stages."""
+    ax = x + h_gap
+    ay = y + box_h / 2 - Inches(0.2)
+    c = color or TEAL
+    return [add_text(slide, "→", ax, ay, arrow_w, Inches(0.4),
+                     size=Pt(28), color=c, bold=True,
+                     align=PP_ALIGN.CENTER)]
+
+
+def _pipe_legend(slide, items, y):
+    """Compact single-row legend used by both halves of the pipeline."""
+    shapes = []
+    leg_sz = Inches(0.22)
+    leg_gap = Inches(2.9)
+    leg_start = int((SL_W - len(items) * leg_gap) / 2) + Inches(0.3)
+    for i, (lbl, clr) in enumerate(items):
+        lx = leg_start + i * leg_gap
+        shapes.append(add_rect(slide, lx, y, leg_sz, leg_sz, fill_color=clr))
+        shapes.append(add_text(slide, lbl,
+                 lx + Inches(0.32), y - Inches(0.04),
+                 Inches(2.2), Inches(0.4), size=Pt(20), color=WHITE))
+    return shapes
+
+
+def slide_17_a(prs):
+    """8-Stage Pipeline — Part 1 of 2: Preprocessing (stages 1-4 + ASR side-branch)."""
     slide = new_slide(prs)
-    add_title(slide, "8-Stage Automated Pipeline")
+    add_title(slide, "8-Stage Pipeline (1/2): Preprocessing")
     add_accent_line(slide)
 
-    BLUE   = RGBColor(0x4D, 0xD0, 0xE1)
-    SGREEN = RGBColor(0x66, 0xBB, 0x6A)
-    SGOLD  = RGBColor(0xFF, 0xCA, 0x28)
-    SPINK  = RGBColor(0xEF, 0x9A, 0x9A)
-    DARK   = RGBColor(0x0D, 0x1B, 0x2A)
-    SCORAL = RGBColor(0xE0, 0x6C, 0x75)
+    BLUE   = _PIPE_BLUE
+    SCORAL = _PIPE_SCORAL
 
-    # Main pipeline flow (ASR removed from row 1 — it's a side-branch)
-    row1_main = [
-        ("1. Normalize", "HDR/10-bit\nconversion", BLUE),
+    # Stages 1, 2, 4 in the main flow (slot 2 is reserved for the vertical
+    # drop into the ASR side-branch box below).
+    main = [
+        ("1. Normalize", "HDR / 10-bit\nconversion", BLUE),
         ("2. Mouth Crop", "Face detect\n& ROI", BLUE),
-        # slot 2 is empty — long arrow spans this gap
-        ("4. LRS3 Convert", "Flat \u2192 LRS3\nformat", BLUE),
-    ]
-    row2 = [
-        ("5. Manifests", "TSV + splits", SGREEN),
-        ("6. K-means", "Feature\nclustering", SGREEN),
-        ("7. LLM Decode", "AV-HuBERT +\nLLaMA-2", SGOLD),
-        ("8. Outputs", "Reports &\nburned video", SPINK),
+        ("4. LRS3 Convert", "Flat → LRS3\nformat", BLUE),
     ]
 
-    # Layout — 4 slots per row with arrows between
+    # Layout — 4 slots wide with arrows between (slot 2 is reserved for the
+    # vertical drop to the ASR side-branch below).
     box_w = Inches(2.6)
-    box_h = Inches(1.2)
+    box_h = Inches(1.8)
     h_gap = Inches(0.18)
     arrow_w = Inches(0.22)
     step = box_w + h_gap + arrow_w + h_gap
     total_w = 4 * box_w + 3 * (h_gap + arrow_w + h_gap)
     start_x = int((SL_W - total_w) / 2)
-    row1_y = CT + Inches(0.05)
-    row2_y = row1_y + box_h + Inches(2.05)
-
-    def _box(name, sub, color, x, y, w=None):
-        bw = w or box_w
-        shapes = []
-        shapes.append(add_rect(slide, x, y, bw, box_h,
-                     fill_color=color, border_color=None, corner_radius=True))
-        shapes.append(add_text(slide, name,
-                 x + Inches(0.1), y + Inches(0.12),
-                 bw - Inches(0.2), Inches(1.0),
-                 size=Pt(24), color=DARK, bold=True,
-                 align=PP_ALIGN.CENTER))
-        shapes.append(add_text(slide, sub,
-                 x + Inches(0.1), y + Inches(0.58),
-                 bw - Inches(0.2), Inches(0.7),
-                 size=Pt(24), color=DARK, align=PP_ALIGN.CENTER))
-        return shapes
-
-    def _h_arrow(x, y, color_override=None):
-        """Clean right-arrow between pipeline stages.
-
-        audit:bigfonts \u2014 arrows kept at Pt(24) per spec exception
-        ("arrows can stay 14pt"). Stage labels were bumped to Pt(24)/Pt(24).
-        """
-        ax = x + h_gap
-        ay = y + box_h / 2 - Inches(0.15)
-        c = color_override or TEAL
-        return [add_text(slide, "\u2192", ax, ay, arrow_w, Inches(0.3),
-                         size=Pt(24), color=c, bold=True,
-                         align=PP_ALIGN.CENTER)]
-
-    lw = Inches(0.035)  # line width for connectors
+    row_y = CT + Inches(0.25)
+    lw = Inches(0.04)
 
     anim_groups = []
 
-    # ── Row 1: slots 0, 1, (2=empty), 3 ──
-    # Slot 0: Normalize
+    # ── Slot 0: Normalize ──
     x0 = start_x
-    anim_groups.append(_box(*row1_main[0], x0, row1_y))
+    anim_groups.append(_pipe_box(slide, *main[0], x0, row_y, box_w, box_h))
 
-    # Arrow 0→1 + Slot 1: Mouth Crop
+    # ── Arrow 0→1 + Slot 1: Mouth Crop ──
     x1 = start_x + 1 * step
-    grp1 = _h_arrow(x0 + box_w, row1_y) + _box(*row1_main[1], x1, row1_y)
+    grp1 = (_pipe_arrow(slide, x0 + box_w, row_y, h_gap, arrow_w, box_h)
+            + _pipe_box(slide, *main[1], x1, row_y, box_w, box_h))
     anim_groups.append(grp1)
 
-    # Long arrow from Mouth Crop (slot 1) to LRS3 Convert (slot 3), spanning empty slot 2
+    # ── Long arrow Mouth Crop → LRS3 Convert (skipping ASR slot) ──
     x3 = start_x + 3 * step
     long_arrow_start_x = x1 + box_w + h_gap
     long_arrow_end_x = x3 - h_gap
     long_arrow_w = long_arrow_end_x - long_arrow_start_x
-    long_arrow_cy = row1_y + box_h / 2
+    long_arrow_cy = row_y + box_h / 2
     long_arrow_grp = [
-        # Horizontal line spanning the gap
         add_rect(slide, long_arrow_start_x, long_arrow_cy - lw / 2,
                  long_arrow_w, lw, fill_color=TEAL, border_color=None),
-        # Arrowhead at right end
-        add_text(slide, "\u25B6",
-                 long_arrow_end_x - Inches(0.14), long_arrow_cy - Inches(0.14),
-                 Inches(0.28), Inches(0.28),
-                 size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER),  # audit:bigfonts arrows kept at 14pt
+        add_text(slide, "▶",
+                 long_arrow_end_x - Inches(0.16), long_arrow_cy - Inches(0.16),
+                 Inches(0.32), Inches(0.32),
+                 size=Pt(28), color=TEAL, align=PP_ALIGN.CENTER),
     ]
 
     # Slot 3: LRS3 Convert
-    grp3 = long_arrow_grp + _box(*row1_main[2], x3, row1_y)
+    grp3 = long_arrow_grp + _pipe_box(slide, *main[2], x3, row_y, box_w, box_h)
     anim_groups.append(grp3)
 
-    # ── ASR side-branch: drops down from branch point between slots 1 and 3 ──
-    # Position ASR box centered below the empty slot 2
+    # ── ASR side-branch: drops from main flow into a box below slot 2 ──
     asr_x = start_x + 2 * step
-    asr_y = row1_y + box_h + Inches(0.45)
+    asr_y = row_y + box_h + Inches(0.6)
     asr_grp = []
 
-    # Branch connector: vertical drop from main flow down to ASR box
-    branch_cx = asr_x + box_w / 2  # center of ASR box
-    branch_top_y = long_arrow_cy + lw / 2  # bottom of the long arrow line
-    # Vertical line from main flow down to ASR
+    branch_cx = asr_x + box_w / 2
+    branch_top_y = long_arrow_cy + lw / 2
     asr_grp.append(add_rect(slide, branch_cx - lw / 2, branch_top_y,
-                             lw, asr_y - branch_top_y - Inches(0.18),
+                             lw, asr_y - branch_top_y - Inches(0.20),
                              fill_color=SCORAL, border_color=None))
-    # Down-arrowhead into ASR
-    asr_grp.append(add_text(slide, "\u25BC",
-                    branch_cx - Inches(0.12), asr_y - Inches(0.26),
-                    Inches(0.24), Inches(0.6),
-                    size=Pt(24), color=SCORAL, align=PP_ALIGN.CENTER))  # audit:bigfonts arrows kept at 14pt
+    asr_grp.append(add_text(slide, "▼",
+                    branch_cx - Inches(0.16), asr_y - Inches(0.32),
+                    Inches(0.32), Inches(0.4),
+                    size=Pt(28), color=SCORAL, align=PP_ALIGN.CENTER))
 
     # ASR box
-    asr_grp += _box("3. ASR", "Whisper\ntranscription", BLUE, asr_x, asr_y)
+    asr_grp += _pipe_box(slide, "3. ASR", "Whisper\ntranscription",
+                         BLUE, asr_x, asr_y, box_w, box_h)
 
-    # "evaluation only" annotation \u2014 placed to the RIGHT of the ASR box rather
-    # than below it, because the red "Existed in academic repo" outline label
-    # occupies the band immediately below ASR (audit OVERLAP/OCCLUSION 86%).
-    asr_grp.append(add_text(slide, "evaluation\nonly",
-                    asr_x + box_w + Inches(0.08), asr_y + Inches(0.18),
-                    Inches(1.4), Inches(0.85),
-                    size=Pt(24), color=SCORAL, italic=True, bold=True,
+    # "evaluation only — feeds stage 8 outputs" annotation to the right.
+    asr_grp.append(add_text(slide, "evaluation only —\nfeeds stage 8 outputs",
+                    asr_x + box_w + Inches(0.18), asr_y + Inches(0.55),
+                    Inches(2.4), Inches(0.9),
+                    size=Pt(20), color=SCORAL, italic=True, bold=True,
                     align=PP_ALIGN.LEFT))
-
-    # Coral L-connector from ASR to Outputs (row 2, slot 3)
-    outputs_x = start_x + 3 * step
-    outputs_cx = outputs_x + box_w / 2
-    asr_bottom_cx = asr_x + box_w / 2
-    asr_bottom_y = asr_y + box_h
-    coral_elbow_y = asr_bottom_y + Inches(0.15)
-    # Vertical from ASR bottom down to elbow
-    asr_grp.append(add_rect(slide, asr_bottom_cx - lw / 2, asr_bottom_y,
-                             lw, coral_elbow_y - asr_bottom_y,
-                             fill_color=SCORAL, border_color=None))
-    # Horizontal from ASR center-x right to Outputs center-x
-    asr_grp.append(add_rect(slide, asr_bottom_cx, coral_elbow_y - lw / 2,
-                             outputs_cx - asr_bottom_cx, lw,
-                             fill_color=SCORAL, border_color=None))
-    # Vertical from elbow down to Outputs top
-    asr_grp.append(add_rect(slide, outputs_cx - lw / 2, coral_elbow_y,
-                             lw, row2_y - coral_elbow_y - Inches(0.18),
-                             fill_color=SCORAL, border_color=None))
-    # Down-arrowhead into Outputs
-    asr_grp.append(add_text(slide, "\u25BC",
-                    outputs_cx - Inches(0.12), row2_y - Inches(0.26),
-                    Inches(0.24), Inches(0.28),
-                    size=Pt(24), color=SCORAL, align=PP_ALIGN.CENTER))  # audit:bigfonts arrows kept at 14pt
 
     anim_groups.append(asr_grp)
 
-    # ── Connector: LRS3 Convert (row 1 slot 3) → Manifests (row 2 slot 0) ──
-    r1_end_cx = x3 + box_w / 2        # center-x of LRS3 Convert
-    r2_start_cx = start_x + box_w / 2  # center-x of Manifests
-    elbow_y = row1_y + box_h + Inches(0.2)
-    turn_grp = []
-    # Vertical: bottom of LRS3 Convert down to elbow
-    turn_grp.append(add_rect(slide, r1_end_cx - lw / 2, row1_y + box_h,
-                             lw, elbow_y - (row1_y + box_h),
-                             fill_color=TEAL, border_color=None))
-    # Horizontal: LRS3 Convert center-x left to Manifests center-x
-    turn_grp.append(add_rect(slide, r2_start_cx - lw / 2, elbow_y - lw / 2,
-                             r1_end_cx - r2_start_cx + lw, lw,
-                             fill_color=TEAL, border_color=None))
-    # Vertical: elbow down toward Manifests
-    turn_grp.append(add_rect(slide, r2_start_cx - lw / 2, elbow_y,
-                             lw, row2_y - elbow_y - Inches(0.18),
-                             fill_color=TEAL, border_color=None))
-    # Arrowhead pointing into Manifests
-    turn_grp.append(add_text(slide, "\u25BC",
-                    r2_start_cx - Inches(0.12), row2_y - Inches(0.26),
-                    Inches(0.24), Inches(0.28),
-                    size=Pt(24), color=TEAL, align=PP_ALIGN.CENTER))  # audit:bigfonts arrows kept at 14pt
-    # Merge LRS3->Manifests connector with the previous (LRS3 Convert) group
-    # so click cadence stays low — connector animates with that reveal.
-    anim_groups[-1].extend(turn_grp)
+    # ── Legend (single category for this slide) ──
+    final_group = []
+    legend_y = asr_y + box_h + Inches(0.30)
+    final_group += _pipe_legend(slide, [("Preprocessing", BLUE)], legend_y)
+
+    # Continuation hint
+    final_group.append(add_text(slide,
+             "Continued on next slide → stages 5–8 (Decoding & Output)",
+             start_x, legend_y + Inches(0.42), total_w, Inches(0.32),
+             size=Pt(20), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+    anim_groups.append(final_group)
+
+    _finish(slide, 0,
+        "Pipeline part 1/2: preprocessing stages 1-4. Main flow: normalize "
+        "(HDR/10-bit conversion), mouth crop (face detect & ROI), LRS3 convert "
+        "(flat → LRS3 format). ASR (Whisper) sits as a side-branch — "
+        "it provides reference text for evaluation (WER/IS scoring) only, "
+        "not part of the core lip-reading inference path. Stages 5-8 "
+        "(decoding and output) on the next slide.",
+        anim_groups, click_reveal=True)
+
+
+def slide_17_b(prs):
+    """8-Stage Pipeline — Part 2 of 2: Decoding + Output (stages 5-8)."""
+    slide = new_slide(prs)
+    add_title(slide, "8-Stage Pipeline (2/2): Decoding + Output")
+    add_accent_line(slide)
+
+    SGREEN = _PIPE_SGREEN
+    SGOLD  = _PIPE_SGOLD
+    SPINK  = _PIPE_SPINK
+
+    stages = [
+        ("5. Manifests",  "TSV + splits",            SGREEN),
+        ("6. K-means",    "Feature\nclustering",     SGREEN),
+        ("7. LLM Decode", "AV-HuBERT +\nLLaMA-2",    SGOLD),
+        ("8. Outputs",    "Reports &\nburned video", SPINK),
+    ]
+
+    box_w = Inches(2.6)
+    box_h = Inches(1.8)
+    h_gap = Inches(0.18)
+    arrow_w = Inches(0.22)
+    step = box_w + h_gap + arrow_w + h_gap
+    total_w = 4 * box_w + 3 * (h_gap + arrow_w + h_gap)
+    start_x = int((SL_W - total_w) / 2)
+    row_y = CT + Inches(0.50)
+
+    anim_groups = []
+
+    # Build stage boxes + connecting arrows.
+    stage_groups = []
+    for i, (name, sub, color) in enumerate(stages):
+        x = start_x + i * step
+        grp = _pipe_box(slide, name, sub, color, x, row_y, box_w, box_h)
+        if i > 0:
+            ax = start_x + (i - 1) * step + box_w
+            grp = _pipe_arrow(slide, ax, row_y, h_gap, arrow_w, box_h) + grp
+        stage_groups.append(grp)
 
     # Red outline highlighting stages 6-7 (existed in academic repo).
-    # Drawn BEFORE row 2 boxes so the K-means / LLM Decode labels remain on
-    # top in z-order. Audit flagged the labels as "100% covered" otherwise;
-    # the red box has transparent fill so visually it never occluded them.
     s6_x = start_x + 1 * step
     s7_x = start_x + 2 * step
     red_box_x = s6_x - Inches(0.1)
     red_box_w = (s7_x + box_w) - s6_x + Inches(0.2)
-    red_box = add_rect(slide, red_box_x, row2_y - Inches(0.1),
-                       red_box_w, box_h + Inches(0.2),
+    red_box = add_rect(slide, red_box_x, row_y - Inches(0.12),
+                       red_box_w, box_h + Inches(0.24),
                        fill_color=None, border_color=RED, border_width=Pt(2.5),
                        corner_radius=True)
     red_label = add_text(slide, "Existed in academic repo",
-                         red_box_x, row2_y - Inches(0.30),  # audit:fix_round3 down toward row2 (away from ASR branch)
-                         red_box_w, Inches(0.6),
-                         size=Pt(24), color=RED, bold=True,
+                         red_box_x, row_y - Inches(0.55),
+                         red_box_w, Inches(0.42),
+                         size=Pt(22), color=RED, bold=True,
                          align=PP_ALIGN.CENTER)
 
-    # ── Row 2 ── build shapes first; group into pairs to keep the click
-    # cadence at <=8 (audit flagged 10 click-step groups).
-    row2_shapes = []
-    for i, (name, sub, color) in enumerate(row2):
-        x = start_x + i * step
-        grp = _box(name, sub, color, x, row2_y)
-        if i > 0:
-            ax = start_x + (i - 1) * step + box_w
-            grp = _h_arrow(ax, row2_y) + grp
-        row2_shapes.append(grp)
+    # Group reveals: stages 5+6+red highlight, then 7+8.
+    anim_groups.append(stage_groups[0] + stage_groups[1] + [red_box, red_label])
+    anim_groups.append(stage_groups[2] + stage_groups[3])
 
-    # Group: Manifests + K-means + red highlight reveal (one click).
-    anim_groups.append(row2_shapes[0] + row2_shapes[1] + [red_box, red_label])
-    # Group: LLM Decode + Outputs (one click).
-    anim_groups.append(row2_shapes[2] + row2_shapes[3])
-
-    # ── Legend — compact, single row ──
-    # CUT v3: legend_y offset 0.5 -> 0.27 so labels stay under safe 7.05.
+    # ── Legend ──
     final_group = []
-    legend_y = row2_y + box_h + Inches(0.27)
-    legend_items = [
-        ("Preprocessing", BLUE), ("Feature Extraction", SGREEN),
-        ("LLM Inference", SGOLD), ("Output", SPINK),
-    ]
-    leg_sz = Inches(0.2)
-    leg_gap = Inches(2.9)
-    leg_start = int((SL_W - 4 * leg_gap) / 2) + Inches(0.3)
-    for i, (lbl, clr) in enumerate(legend_items):
-        lx = leg_start + i * leg_gap
-        final_group.append(add_rect(slide, lx, legend_y, leg_sz, leg_sz,
-                                 fill_color=clr))
-        # CUT v3: Pt(24) -> Pt(20) so rendered bottom 7.21 -> ~7.00 (under
-        # safe-zone limit 7.05). Original labels: Preprocessing /
-        # Feature Extraction / LLM Inference / Output.
-        final_group.append(add_text(slide, lbl,
-                 lx + Inches(0.28), legend_y - Inches(0.04),
-                 Inches(2.0), Inches(0.87), size=Pt(20), color=WHITE))
+    legend_y = row_y + box_h + Inches(0.55)
+    final_group += _pipe_legend(slide, [
+        ("Feature Extraction", SGREEN),
+        ("LLM Inference", SGOLD),
+        ("Output", SPINK),
+    ], legend_y)
 
-    # Repo attribution below legend
-    repo_y = legend_y + Inches(0.35)
+    # Repo attribution
     final_group.append(add_text(slide,
-             "auto_avsr  \u00b7  av_hubert  \u00b7  VSP-LLM",
-             start_x, repo_y, total_w, Inches(0.28),
-             size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
+             "auto_avsr  ·  av_hubert  ·  VSP-LLM",
+             start_x, legend_y + Inches(0.42), total_w, Inches(0.32),
+             size=Pt(20), color=MGRAY, italic=True, align=PP_ALIGN.CENTER))
     anim_groups.append(final_group)
 
     _finish(slide, 0,
-        "8-stage automated pipeline built from 3 research repos (auto_avsr, "
-        "av_hubert, VSP-LLM). Row 1 main flow: normalize, mouth crop, LRS3 convert. "
-        "ASR (Whisper) is a side-branch — it provides reference text for evaluation "
-        "(WER/IS scoring) only, not part of the core lip-reading inference path. "
-        "Coral connector links ASR output to the Outputs stage for scoring. "
-        "Row 2: feature processing and inference (manifests, K-means clustering, "
-        "LLM decode, outputs). Stages 6-7 (K-means and LLM Decode) existed in the "
-        "academic repo; all other stages were engineered from scratch.",
+        "Pipeline part 2/2: stages 5-8. Manifests build TSV + splits, K-means "
+        "clusters AV-HuBERT features, LLM decode runs AV-HuBERT + LLaMA-2 to "
+        "produce hypotheses, outputs generate reports and burned videos. "
+        "Stages 6-7 (K-means and LLM Decode) existed in the academic repo; "
+        "all other stages were engineered from scratch.",
         anim_groups, click_reveal=True)
 
-# ═══════════════════════════════════════════════════════════════════════
+
 # SLIDE 17b — PIPELINE ARCHITECTURE (PNG version)
 # ═══════════════════════════════════════════════════════════════════════
 

@@ -679,12 +679,12 @@ User reviewed screenshots of all slides. 43 items covering content framing, layo
 | 308 | 7 | layout | Table hides text, many occlusions | pending (slide number mapping unclear after reorder) |
 | 309 | 6 | accuracy | "0%" is bad/strange — leave 2 significant figures | done — WER 0% → WER <1% in slide_live_example_intro |
 | 310 | — | order | Switch slides 8 and 9 | done — data_flow and slide_03 order switched in builders |
-| 311 | pipeline | layout | Pipeline figure text looks horrible and occluded + cut in the middle | pending |
+| 311 | pipeline | layout | Pipeline figure text looks horrible and occluded + cut in the middle | done — slide_17 split (see #316) |
 | 312 | 11 | content | Don't say "MBR" — explain "aggregated method". Keep top-1 numbers clearly separate. Don't mention the difference in slide 11 | done — slide_04 reframed to hide MBR mention |
 | 313 | 13 | layout | Text overflows red box | done — slide_is_intro_b body text shortened |
 | 314 | 14 | layout | Text overflows blue box | done — slide_is_intro_b body text shortened |
 | 315 | 15 | layout | Text overflows red box | done — slide_is_intro_b body text shortened |
-| 316 | 17 | layout | Slide looks bad — split into 2 slides if needed | pending |
+| 316 | 17 | layout | Slide looks bad — split into 2 slides if needed | done — split into slide_17_a (Preprocessing, stages 1-4 + ASR side-branch) and slide_17_b (Decoding+Output, stages 5-8); bigger boxes (1.8" tall), cleanly separated 24pt label / 22pt caption frames |
 | 317 | 18 | layout | Table hides text | pending |
 | 318 | 19 | content | Not important, not appearing in AMOSI slide — remove or defer to appendix | pending |
 | 319 | 20, 21, 22 | layout | Text covered on all three slides | done — _judge_video_slide: category rect h 0.35→0.70, annotation repositioned |
@@ -711,9 +711,9 @@ User reviewed screenshots of all slides. 43 items covering content framing, layo
 | 340 | 61 | content+layout | Add quick note: using LLM as a judge. Focus on what failed and what saved it. Text overflows yellow box | done — slide_demo_obama_salvage: body text updated to mention LLM-judge note; body_t moved up in helper |
 | 341 | 69 | layout | Text overflow | done — slide_30: text and rect heights fixed |
 | 342 | 62–67 | content+layout | Redo ALL examples with clear HYP and REF, no occlusions, no hiding. Redo burn text into colors. Make sure videos not repeated from the beginning of deck | pending |
-| 343 | 70 | layout | Split into phases + make plot labels much larger (next slide) | pending |
+| 343 | 70 | layout | Split into phases + make plot labels much larger (next slide) | done — slide_29 split into slide_29_phases (3-col scaling roadmap, 24pt headers / 20pt body) + slide_29_lift (full-width plots ft_loss + ft_impact, ~5.97" each) |
 | 344 | 71 | content | Remove slide 71 entirely | done — slide_30b removed from builders |
 | 345 | 73 | layout | Text + occlusions — fix, split to 2 if needed | done — slide_arabic_changes: line_h 0.68→0.95, start_y adjusted, long bullets shortened |
-| 346 | appendix | layout | Fix occlusions in appendix slides too | pending |
+| 346 | appendix | layout | Fix occlusions in appendix slides too | done — fixed 6 occlusions: slide_a8 (3 caption frames), slide_a11b (table y), slide_a17 (3 frames), slide_human_is_path_b (subheader), slide_appendix_pca_loadings (header), slide_appendix_mcnemar_full (bullets) |
 | 347 | — | content | More slides needed from new client PPTX and original AMOSI. Missing focus: engineering done, lot of work, etc. | pending |
-| 348 | — | content | Add 2-3 slides "How IS and Confidence Correlate" near §4 (after band reliability, before agreement-aware bands). Statistical agreement card (Pearson r(IS, mean_prob)=+0.837, Spearman ρ=+0.854, Pearson r(IS, ⟨log p⟩)=+0.760, n=1,427). Tier agreement card (Cohen's κ(IS-tier × Conf-tier)=0.498 moderate, raw 66%, 98% adjacent). 2×2 contingency: IS-useful (Y+P, IS≥2.0) × Conf-above-strip (mean_prob≥0.65) → 797/126/78/426, 86% raw agreement on binary verdict. Use actual computed numbers, not the user-supplied approximations (which were ~10pp off). | pending |
+| 348 | — | content | Add 2-3 slides "How IS and Confidence Correlate" near §4 (after band reliability, before agreement-aware bands). Statistical agreement card (Pearson r(IS, mean_prob)=+0.837, Spearman ρ=+0.854, Pearson r(IS, ⟨log p⟩)=+0.760, n=1,427). Tier agreement card (Cohen's κ(IS-tier × Conf-tier)=0.498 moderate, raw 66%, 98% adjacent). 2×2 contingency: IS-useful (Y+P, IS≥2.0) × Conf-above-strip (mean_prob≥0.65) → 797/126/78/426, 86% raw agreement on binary verdict. Use actual computed numbers, not the user-supplied approximations (which were ~10pp off). | done — added slide_is_conf_correlation (slide 53) and slide_is_conf_contingency (slide 54) in slides_confidence.py with computed numbers (Pearson 0.837 / Spearman 0.854 / κ_3x3 0.498 / κ_binary 0.71 / 86% raw agreement); inserted in §4 between slide_a16 and slide_agreement_aware_bands |
