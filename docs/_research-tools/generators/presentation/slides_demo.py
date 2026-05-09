@@ -146,10 +146,11 @@ def slide_15_perfect(prs):
         MX, vid_y + vid_h + Inches(0.15), CW, Inches(0.55),
         size=Pt(28), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
-    # Per-word breakdown caption
+    # Per-word breakdown caption — y trimmed 0.75→0.55 + h 0.50→0.40 to stay
+    # under safe zone (was bot=7.30, now bot=6.95). vid_y+vid_h=6.05.
     caption = add_text(slide,
         '"…the tireless and heroic work of our military and our counterterrorism…"',
-        MX, vid_y + vid_h + Inches(0.75), CW, Inches(0.50),
+        MX, vid_y + vid_h + Inches(0.55), CW, Inches(0.40),
         size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     foot = add_text(slide,
@@ -206,8 +207,10 @@ def slide_15_failures(prs):
                          vid_w, Inches(0.45),
                          size=Pt(20), color=color, bold=True,
                          align=PP_ALIGN.CENTER)
+        # desc h 1.40→0.85: was overflowing slide bottom (bot=7.55 > 7.5).
+        # Now bot = 5.55+0.60+0.85 = 7.00, within safe zone.
         desc_t = add_text(slide, desc, x, vid_y + vid_h + Inches(0.60),
-                          vid_w, Inches(1.40),
+                          vid_w, Inches(0.85),
                           size=Pt(18), color=LGRAY, italic=True,
                           align=PP_ALIGN.CENTER)
         anim_groups.append([wer_t, desc_t])
@@ -252,9 +255,10 @@ def _demo_research_slide(prs, *, title, video_key, ref, hyp_runs,
     add_accent_line(slide)
 
     badge_w = Inches(2.4)
+    # Metrics-line caption: Pt(16)→Pt(18) to clear the italic-caption floor.
     sub = add_text(slide, metrics_line,
              MX, Inches(1.5), CW - badge_w - Inches(0.2), Inches(0.4),
-             size=Pt(16), color=LGRAY, italic=True)
+             size=Pt(18), color=LGRAY, italic=True)
     badge_x = MX + CW - badge_w
     badge_box = add_rect(slide, badge_x, Inches(1.5), badge_w, Inches(0.4),
              fill_color=NAVY3, border_color=badge_color, border_width=Pt(1.0))

@@ -963,9 +963,12 @@ def slide_engineering_pipeline_modules(prs):
     cols = 3
     rows = 4
     cw_card = Inches(3.6)
-    ch_card = Inches(1.25)
+    # ch_card 1.25→1.10 + gap_y 0.18→0.12: was overflowing slide bottom (caption
+    # at y=7.22 → bot=7.62, past slide_h=7.5). Now boxes end at 1.55+4*1.10+
+    # 3*0.12 = 6.31; caption at 6.49 → bot=6.89 within safe zone.
+    ch_card = Inches(1.10)
     gap_x = Inches(0.25)
-    gap_y = Inches(0.18)
+    gap_y = Inches(0.12)
     total_w = cols * cw_card + (cols - 1) * gap_x
     cx = (SL_W - total_w) / 2
     cy = CT + Inches(0.05)

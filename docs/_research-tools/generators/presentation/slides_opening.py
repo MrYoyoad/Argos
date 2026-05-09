@@ -579,11 +579,12 @@ def slide_04(prs):  # audit:bigfonts
     # audit:bigfonts \u2014 Pt(12) -> Pt(24) (footer-tier), copy trimmed to
     # one line to keep height under slide-num ceiling.
     # CUT v3: top 6.78 -> 6.40 + h 0.32 -> 0.30 so Pt(16) bottom <= 7.05.
+    # Bottom caption: Pt(16)\u2192Pt(18) italic to clear the caption-floor.
     add_text(slide,
         "Different dataset, fundamentally harder. "
         "(LRS3 reproduction reaches 32% WER \u2014 pretrain split differences.)",
         MX, Inches(6.22), CW, Inches(0.73),
-        size=Pt(16), color=MGRAY, italic=True)
+        size=Pt(18), color=MGRAY, italic=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 5 — THE REALITY GAP
@@ -1018,10 +1019,11 @@ def slide_eval_dataset(prs):  # audit:bigfonts
         row_colors={0: {2: GREEN}, 6: {2: CORAL}})
 
     # Footnote \u2014 audit:bigfonts \u2014 Pt(11) -> Pt(24) (footer tier).
+    # Footnote: Pt(16)\u2192Pt(18) italic to clear the caption-floor.
     add_text(slide,
         "*Quality = our composite metric (0\u20135 scale), introduced next.",
         MX, Inches(6.5), CW, Inches(0.4),
-        size=Pt(16), color=MGRAY, italic=True)
+        size=Pt(18), color=MGRAY, italic=True)
 
     _finish(slide, 0,
         "1,497 segments from diverse YouTube videos. Not a curated benchmark. "

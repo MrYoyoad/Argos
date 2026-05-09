@@ -911,8 +911,9 @@ def build_split(prs, num, title, image_key, notes, big_num=None,
         left_shapes.append(s)
 
     if bottom_text:
+        # Pt(13)→Pt(18) italic to clear caption floor.
         s = add_text(slide, bottom_text, MX, Inches(6.45), CW, Inches(0.5),
-                     size=Pt(13), color=LGRAY, italic=True)
+                     size=Pt(18), color=LGRAY, italic=True)
         left_shapes.append(s)
 
     img = add_image(slide, image_key, SRL, CT, width=SRW)

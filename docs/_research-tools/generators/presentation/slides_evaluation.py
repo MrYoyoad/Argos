@@ -1127,7 +1127,9 @@ def slide_llm_judge(prs):
          ["N (not preserved)", "526", "35%"],
          ["Y+P (any useful)", "971", "65%"]],
         MX, CT + Inches(3.1), col_w, text_size=Pt(24),
-        row_height=Inches(0.5),
+        # row_height 0.5→0.40: 5×0.40=2.0, table ends at 4.55+2.0=6.55, judge_label
+        # at 6.6 has 0.05" gap (was 5×0.5=2.5 ending 7.05, fully consuming footer).
+        row_height=Inches(0.40),
         col_widths=[Inches(3.0), Inches(1.2), Inches(1.3)],
         row_colors={0: {2: GREEN}, 2: {2: CORAL}, 3: {2: TEAL}})
 

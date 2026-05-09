@@ -364,9 +364,11 @@ def slide_band_reliability_stratified(prs):
         " Strip boundary at m < 0.65.",
         MX, CT + Inches(0.05), CW, Inches(0.40),
         size=Pt(18), color=LGRAY, italic=True)
+    # Image height 4.6→4.25: was overlapping bottom text at y=6.12 (image bot
+    # was 6.55, 0.43" overlap). Now bot=6.20, 0.08" gap (sub to image top 0.05).
     img = add_image(slide, "P_band_reliability_stratified",
                     MX, CT + Inches(0.5),
-                    width=Inches(7.6), height=Inches(4.6))
+                    width=Inches(7.6), height=Inches(4.25))
 
     rx = MX + Inches(7.8)
     rw = CW - Inches(7.8)
@@ -614,10 +616,12 @@ def slide_three_tier_policy_research(prs):
     add_title(slide, "Three-Tier Policy - Per-Tier Counts and Reliability")
     add_accent_line(slide)
 
+    # sub h 0.80→0.45: was overflowing into table top by 0.25" (sub bot=2.25
+    # vs table top=2.00). Pt(18) italic single-line fits in 0.45.
     sub = add_text(slide,
         "Tiers from segment confidence score (m); per-tier P(green correct) under "
         "joint rule. Volumes from per_word_by_tier.csv.",
-        MX, CT, CW, Inches(0.8),
+        MX, CT, CW, Inches(0.45),
         size=Pt(18), color=LGRAY, italic=True)
 
     # All numbers from audit:section_D_per_word_conf.by_tier.{Trust,Salvage,Strip}.new

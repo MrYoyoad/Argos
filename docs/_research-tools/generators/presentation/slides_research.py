@@ -831,10 +831,14 @@ def slide_is_wer_scatter(prs):
         ("IS beats WER by +0.06 \u03ba at every operating point", {"color": TEAL}),
     ], MX, CT + Inches(1.70), left_w, Inches(3.2))
 
-    # Right — larger scatter plot
+    # Right — scatter plot. Was placed at CT-0.2=1.25 with auto-height (5.39"),
+    # extending to bot=6.64 — overlapped title (frame to 1.50) AND bottom text
+    # (starts 6.45). Now anchored at CT (1.45) with explicit height 4.95 → bot
+    # = 6.40, 0.05" gap to bottom text and clear of title.
     img = add_image(slide, "P7_is_wer_scatter",
-                    MX + left_w + Inches(0.2), CT - Inches(0.2),
-                    width=CW - left_w - Inches(0.2))
+                    MX + left_w + Inches(0.2), CT,
+                    width=CW - left_w - Inches(0.2),
+                    height=Inches(4.95))
 
     # Combined bottom caption (was 2 \u00d7 Pt(16) lines; merged at Pt(18)).
     add_text(slide,

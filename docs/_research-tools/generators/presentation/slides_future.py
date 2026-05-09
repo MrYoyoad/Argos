@@ -562,12 +562,13 @@ def slide_29_lift(prs):  # audit:bigfonts
     img_r = add_image(slide, "ft_impact", rx, CT, width=img_w, height=img_h)
 
     # Single-line caption beneath the plots -- italic 18pt floor.
+    # Caption h 0.55\u21920.40 was overflowing safe zone (bot=7.15 > 7.05).
     cap_y = CT + img_h + Inches(0.15)
     cap = add_text(slide,
         "Left: training vs validation loss (overfit gap widens after epoch 2).   "
         "Right: IS regresses with LoRA rank -- baseline 2.49 \u2192 r=16 2.31 "
         "\u2192 r=64 2.02.",
-        MX, cap_y, CW, Inches(0.55),
+        MX, cap_y, CW, Inches(0.40),
         size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 29,
@@ -1215,10 +1216,11 @@ def slide_a1(prs):  # audit:bigfonts
     add_title(slide, "A1: Homophenes — The Lip-Reading Problem")
     add_accent_line(slide)
 
-    # Left: viseme table
+    # Left: viseme table — caption frame trimmed h 1.8→0.85 (was overflowing into
+    # tbl1 at top=2.35 by 0.90"; now bot=2.30 with 0.05" gap to table).
     add_text(slide, "50–70% of English sounds are invisible on lips.\n"
              "Multiple sounds produce identical mouth shapes:",
-             MX, CT, SLW, Inches(1.8), size=Pt(24), color=LGRAY)
+             MX, CT, SLW, Inches(0.85), size=Pt(24), color=LGRAY)
 
     tbl1 = add_table(slide,
         ["Viseme Group", "Sounds"],
@@ -1228,9 +1230,9 @@ def slide_a1(prs):  # audit:bigfonts
          ["Labiodental", "f, v"]],
         MX, CT + Inches(0.9), SLW, text_size=Pt(24))
 
-    # Right: confusable pairs
+    # Right: confusable pairs — caption h 1.0→0.55 (was overflowing tbl2 by 0.40").
     add_text(slide, "Confusable word pairs (identical on lips):",
-             SRL, CT, SRW, Inches(1.0), size=Pt(24), color=LGRAY)
+             SRL, CT, SRW, Inches(0.55), size=Pt(24), color=LGRAY)
 
     # tbl2 row_h set 0.40 for Pt(24); footer y shifted to 5.10 to clear
     # 7-row table ending ~4.85 (audit:bigfonts).
@@ -1895,6 +1897,7 @@ def slide_a16(prs):  # audit:bigfonts2
                     Inches(1.4), Inches(1.4), Inches(1.8)],
         row_colors={0: {2: GREEN}, 4: {5: CORAL}})
 
+    # Bullets h 1.50\u21921.30 (was bot=7.15 > safe 7.05; now bot=6.95).
     add_text(slide, "Key Observations:", MX, CT + Inches(3.75), CW, Inches(0.4),
              size=Pt(24), color=TEAL, bold=True)
     add_bullets(slide, [
@@ -1902,7 +1905,7 @@ def slide_a16(prs):  # audit:bigfonts2
         "Tiers 2-3: majority P \u2014 partial value",
         "Tier 1: 81% N \u2014 strong failure agreement",
         ("NIV \u03ba 0.816 (Y+P), 0.707 (Y)", {"color": GOLD}),
-    ], MX, CT + Inches(4.20), CW, Inches(1.50), size=Pt(24))
+    ], MX, CT + Inches(4.20), CW, Inches(1.30), size=Pt(24))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers across all 1,497 segments "
