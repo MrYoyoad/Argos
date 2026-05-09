@@ -361,7 +361,7 @@ def slide_failure_live_demo(prs):
     Column width 5.85" triggers the narrow-column audit exemption (18pt floor).
     """
     slide = new_slide(prs)
-    add_title(slide, "Failure Modes — Live Examples")
+    add_title(slide, "Failure Modes — Live: Right-Topic-Names-Lost & Hallucination")
     add_accent_line(slide)
 
     # Two columns filling CW exactly: 5.85 + 0.43 + 5.85 = 12.13"

@@ -1260,7 +1260,7 @@ def slide_failure_deep_1a(prs):
     spec; card_h grown 1.35 -> 1.55 for Pt(24)/Pt(24) body content.
     """
     slide = new_slide(prs)
-    add_title(slide, "Failure Mode Taxonomy (1/2): Highest Impact First")
+    add_title(slide, "Failure Mode Taxonomy: Top 3 by Impact")
     add_accent_line(slide)
 
     add_text(slide,
@@ -1321,9 +1321,9 @@ def slide_failure_deep_1a(prs):
         anim_groups.append([r, t1, t2, t3, t4])
 
     add_text(slide,
-        "Ordered by impact \u2014 highest to lowest (continued in part 2/2)",
+        "\u2192 Live video examples of Right-Topic and Hallucination on the next slide",
         MX, Inches(6.65), CW, Inches(0.4),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        size=Pt(18), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Failure taxonomy Part 1, ordered by impact. Wrong Topic (44%, "

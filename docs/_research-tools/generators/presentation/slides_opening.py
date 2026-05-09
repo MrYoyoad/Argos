@@ -833,14 +833,16 @@ def slide_visemes(prs):  # audit:bigfonts
         "Context is the ONLY disambiguation signal",
     ], MX, CT + Inches(0.6), col_w, Inches(1.50), size=Pt(24))
 
-    # Viseme table — audit:bigfonts — Pt(12) -> Pt(24).
+    # Viseme table — Pt(24) text, row_height 0.32 keeps total table height
+    # to 1.60 so it ends at 5.65, well clear of the 6.30 bottom-callout.
     tbl1 = add_table(slide,
         ["Viseme Group", "Sounds"],
         [["Bilabial", "p, b, m"],
          ["Alveolar", "t, d, n, s, z, l"],
          ["Velar", "k, g, ng"],
          ["Labiodental", "f, v"]],
-        MX, CT + Inches(2.6), col_w, text_size=Pt(24))
+        MX, CT + Inches(2.6), col_w, text_size=Pt(24),
+        row_height=Inches(0.32))
 
     # Right column — Visual proof + confusable pairs.
     # audit:bigfonts — title Pt(24) -> Pt(24).
@@ -864,13 +866,17 @@ def slide_visemes(prs):  # audit:bigfonts
         rx, CT + Inches(2.18), col_w, Inches(0.73),
         size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 
+    # Word-pair table — was overlapping bottom callout (#308 fix).
+    # Default row_height 0.38 gave 5×0.38=1.90 ending at 6.40 (callout @6.30,
+    # 0.10" overlap). row_height=0.32 → 5×0.32=1.60, ends at 6.10, 0.20" gap.
     tbl2 = add_table(slide,
         ["Word A", "Word B"],
         [["pat", "bat"],
          ["mom", "bomb"],
          ["admiral", "animal"],
          ["collar", "color"]],
-        rx, CT + Inches(3.05), col_w, text_size=Pt(24))
+        rx, CT + Inches(3.05), col_w, text_size=Pt(24),
+        row_height=Inches(0.32))
 
     # CUT v3: top 6.45 -> 6.30 + frame h 1.4 -> 0.45 so Pt(24) bottom
     # falls under safe 7.05 (was 7.85, tall empty frame caused overflow).
