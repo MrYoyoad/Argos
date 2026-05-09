@@ -247,6 +247,33 @@ echo ">>> [0.5] FLAT_VID_DIR mp4 count:"
 find "$FLAT_VID_DIR" -maxdepth 1 -type f -iname "*.mp4" | wc -l
 echo
 
+############################################
+# STEP 0.6: Enhance video quality for lip-reading
+# CLAHE (adaptive local contrast) + brightness normalization + sharpening
+# Recommended by VSR literature for in-the-wild / poorly-lit videos
+############################################
+VSP_ENHANCE="${VSP_ENHANCE:-1}"
+if [ "$VSP_ENHANCE" = "1" ]; then
+  echo ">>> [0.6] Enhancing video quality (CLAHE + brightness normalization + sharpening)"
+  ENHANCE_SCRIPT="${HOME}/scripts/pipeline/enhance_videos.py"
+  if [ -f "$ENHANCE_SCRIPT" ] && python3 -c "import cv2, numpy" 2>/dev/null; then
+    ENHANCED_DIR="${AUTO_AVSR}/${DATA_NAME}_enhanced"
+    rm -rf "$ENHANCED_DIR"
+    if python3 "$ENHANCE_SCRIPT" "$FLAT_VID_DIR" "$ENHANCED_DIR"; then
+      # Replace FLAT_VID_DIR with enhanced versions
+      cp -a "${ENHANCED_DIR}/." "${FLAT_VID_DIR}/"
+      echo ">>> [0.6] Enhancement complete — enhanced videos in FLAT_VID_DIR"
+    else
+      echo ">>> [0.6] Enhancement failed — continuing with unenhanced videos"
+    fi
+  else
+    echo ">>> [0.6] Skipping enhancement (script or cv2 not available)"
+  fi
+else
+  echo ">>> [0.6] Video enhancement disabled (VSP_ENHANCE=0)"
+fi
+echo
+
 ########################
 # STEP 1: Preprocessing/Segmentation (MOVED BEFORE ASR)
 ########################

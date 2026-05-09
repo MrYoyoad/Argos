@@ -214,7 +214,13 @@ run_normalization() {
         fallback_copy=$((fallback_copy+1))
       fi
     fi
-  done 3< <(find "$raw_dir" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.MP4" \) -print0)
+  done 3< <(find "$raw_dir" -maxdepth 1 -type f \( \
+    -iname "*.mp4" -o -iname "*.MP4" -o \
+    -iname "*.mov" -o -iname "*.MOV" -o \
+    -iname "*.mkv" -o -iname "*.MKV" -o \
+    -iname "*.avi" -o -iname "*.AVI" -o \
+    -iname "*.webm" -o -iname "*.WEBM" \
+    \) -print0)
 
   log_info "Summary: ok=${norm_ok}, failed=${norm_fail}, timeout=${norm_timeout}, fallback_copy=${fallback_copy}"
 

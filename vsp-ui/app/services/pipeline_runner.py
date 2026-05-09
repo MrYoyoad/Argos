@@ -290,6 +290,12 @@ class PipelineRunner:
         # Pass segment-only option (fast segmentation, then show transcription screen)
         env["SEGMENT_ONLY"] = "1" if self._segment_only else "0"
 
+        # Always produce burned videos and lip crops
+        env["VSP_FULL_OUTPUTS"] = "1"
+
+        # CLAHE + brightness normalization for better lip-reading on dark/low-contrast videos
+        env["VSP_ENHANCE"] = "1"
+
         return env
 
     def _terminate_process(self):
