@@ -14,6 +14,7 @@ from .config import (
     IMG, VID, POSTER_DIR,
     SL_W, SL_H, BG, WHITE, TEAL, CORAL, LGRAY, MGRAY, DGRAY,
     GREEN, YELLOW, GOLD, ORANGE, RED, DRED, NAVY2, NAVY3,
+    BLUE, PURPLE,
     FONT, _auto_num,
     MX, MY, CT, CW, CH, SLW, SRG, SRL, SRW,
 )
@@ -796,3 +797,244 @@ def slide_dual_env(prs):
         click_reveal=True, para_build=False)
 
 
+# ═══════════════════════════════════════════════════════════════════════
+# ENGINEERING SUMMARY — "What We Engineered" overview (May 2026)
+# ═══════════════════════════════════════════════════════════════════════
+# Caps the §5 demo block before the future-roadmap transition: a
+# mid-research recap of the production engineering effort that
+# turned the VSP-LLM paper into a deployable system.
+
+def slide_engineering_summary(prs):
+    """Six-card overview of the engineering effort behind the system."""
+    slide = new_slide(prs)
+    add_title(slide, "What We Engineered")
+    add_accent_line(slide)
+
+    cards = [
+        ("Modular Pipeline",
+         "823-line monolith →\n11 lib/ modules\n(52% reduction, 37 tests)",
+         TEAL),
+        ("Single-Image Docker",
+         "One tar.zst, one tag.\nNo layered patches.\nOffline-ready.",
+         CORAL),
+        ("EC2 ↔ Container Sync",
+         "26-item changelog.\nPath translation,\ndual-env testing.",
+         GOLD),
+        ("Confidence + N-best",
+         "Per-word colors (Apr 30).\nMBR default (May 1–2).\nAgreement-aware bands.",
+         GREEN),
+        ("UI + Reports",
+         "Drag-drop web UI.\nCSV / HTML / burned\nMP4 outputs per run.",
+         BLUE),
+        ("Re-run on Past Videos",
+         "Stage-8 re-paint.\nNo re-decode needed\nfor band upgrades.",
+         PURPLE),
+    ]
+
+    cw_card = Inches(3.9)
+    ch_card = Inches(2.45)
+    gap_x = Inches(0.25)
+    gap_y = Inches(0.25)
+    total_w = 3 * cw_card + 2 * gap_x
+    cx = (SL_W - total_w) / 2
+    cy = CT + Inches(0.15)
+
+    card_groups = []
+    for i, (title, desc, color) in enumerate(cards):
+        col = i % 3
+        row = i // 3
+        x = cx + col * (cw_card + gap_x)
+        y = cy + row * (ch_card + gap_y)
+        r = add_rect(slide, x, y, cw_card, ch_card, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2.5),
+                     corner_radius=True)
+        t1 = add_text(slide, title, x + Inches(0.15), y + Inches(0.18),
+                 cw_card - Inches(0.3), Inches(0.5),
+                 size=Pt(26), color=color, bold=True, align=PP_ALIGN.CENTER)
+        t2 = add_text(slide, desc, x + Inches(0.15), y + Inches(0.78),
+                 cw_card - Inches(0.3), ch_card - Inches(0.9),
+                 size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
+        card_groups.append([r, t1, t2])
+
+    _finish(slide, 0,
+        "Recap of the engineering effort behind the system. Six cards: "
+        "(1) modular pipeline refactor — 823-line bash monolith broken into "
+        "11 reusable lib/ modules with a 37-test suite. "
+        "(2) Single-image Docker deployment — one tag, one tar.zst, no "
+        "layered patches, fully offline-ready (per single-docker-image "
+        "decision). "
+        "(3) EC2 ↔ container sync protocol — 26 tracked items in a "
+        "detailed changelog, path translation, dual-environment testing "
+        "before every deploy. "
+        "(4) Per-word confidence shipped April 30 2026, N-best aggregation "
+        "shipped May 1, MBR-as-default plus agreement-aware bands May 2. "
+        "(5) UI + report stack — drag-drop web upload, automatic CSV/HTML/"
+        "burned-video outputs per run. "
+        "(6) Past-video re-run path — stage-8 re-paint upgrades existing "
+        "outputs to current band/MBR policy without re-decoding. "
+        "Speaker note: emphasize 'we shipped this from a paper, not a "
+        "product' — the original three repos had no orchestration, no "
+        "tests, no docs.",
+        card_groups, click_reveal=True, para_build=False)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# ENGINEERING — 11 PIPELINE MODULES (lib/ grid)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_engineering_pipeline_modules(prs):
+    """Grid of the 11 modular shell modules under lib/."""
+    slide = new_slide(prs)
+    add_title(slide, "11 Modules: lib/ Architecture")
+    add_accent_line(slide)
+
+    # 4 rows x 3 cols = 12 cells, last cell empty (only 11 modules).
+    modules = [
+        ("common.sh",        "Logging\n& validation",       TEAL),
+        ("config.sh",        "Env detect\n& path config",   TEAL),
+        ("archive.sh",       "Run archival\n+ transcripts", TEAL),
+        ("normalization.sh", "HDR / 10-bit\nconversion",    BLUE),
+        ("asr.sh",           "Whisper +\nreuse logic",      BLUE),
+        ("lrs3_prep.sh",     "Flat → LRS3\nformat",     BLUE),
+        ("manifests.sh",     "TSV + splits\n+ timing",      GOLD),
+        ("clustering.sh",    "K-means +\ncluster counts",   GOLD),
+        ("decode.sh",        "VSP-LLM +\nCython check",     CORAL),
+        ("outputs.sh",       "Reports +\nburned video",     CORAL),
+        ("venv_utils.sh",    "venv activate\n/ deactivate", GREEN),
+        # 12th cell intentionally empty.
+    ]
+
+    cols = 3
+    rows = 4
+    cw_card = Inches(3.6)
+    ch_card = Inches(1.25)
+    gap_x = Inches(0.25)
+    gap_y = Inches(0.18)
+    total_w = cols * cw_card + (cols - 1) * gap_x
+    cx = (SL_W - total_w) / 2
+    cy = CT + Inches(0.05)
+
+    card_groups = []
+    for i, (name, desc, color) in enumerate(modules):
+        col = i % cols
+        row = i // cols
+        x = cx + col * (cw_card + gap_x)
+        y = cy + row * (ch_card + gap_y)
+        r = add_rect(slide, x, y, cw_card, ch_card, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2),
+                     corner_radius=True)
+        t1 = add_text(slide, name, x + Inches(0.15), y + Inches(0.10),
+                 cw_card - Inches(0.3), Inches(0.45),
+                 size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
+        t2 = add_text(slide, desc, x + Inches(0.15), y + Inches(0.58),
+                 cw_card - Inches(0.3), ch_card - Inches(0.65),
+                 size=Pt(18), color=WHITE, align=PP_ALIGN.CENTER, italic=True)
+        card_groups.append([r, t1, t2])
+
+    # Caption line at the bottom — italic 18pt floor.
+    cap_y = cy + rows * ch_card + (rows - 1) * gap_y + Inches(0.18)
+    cap = add_text(slide,
+        "393-line orchestrator drives the 11 modules; 37 tests cover them.",
+        MX, cap_y, CW, Inches(0.4),
+        size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "The lib/ directory holds 11 shell modules, grouped by phase: "
+        "infrastructure (common, config, archive), normalization, "
+        "processing stages (asr, lrs3_prep, manifests, clustering), "
+        "decode + outputs, and venv utilities. "
+        "Each module exports functions consumable by the orchestrator OR "
+        "by external scripts; each is independently testable. "
+        "Color groups in the grid: teal = infrastructure, blue = "
+        "preprocessing, gold = manifests/clustering, coral = decode/outputs, "
+        "green = venv. "
+        "decode.sh has a critical Cython auto-build check — fairseq's "
+        "data_utils_fast must compile against the container's Python+CPU; "
+        "this step prevents silent decode failure on first container run. "
+        "asr.sh activates its own venv (ASR_VENV); the rest share VSP_VENV "
+        "for efficiency. "
+        "outputs.sh on EC2 also computes IS scores; the container version "
+        "skips IS by design (no sentence-transformers dependency).",
+        card_groups + [[cap]], click_reveal=True, para_build=False)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# ENGINEERING — WHAT SHIPPED THIS QUARTER (timeline)
+# ═══════════════════════════════════════════════════════════════════════
+
+def slide_engineering_what_shipped(prs):
+    """Timeline of features shipped April-May 2026."""
+    slide = new_slide(prs)
+    add_title(slide, "What Shipped This Quarter")
+    add_accent_line(slide)
+
+    events = [
+        ("Apr 30",  "Per-word\nconfidence",
+         "Colored words in\nreport.html + CSV", TEAL),
+        ("May 1",   "N-best\naggregation",
+         "5 methods:\nMBR, vote, safe...", CORAL),
+        ("May 2",   "MBR\nas default",
+         "+40 Y+P wins\n(p=0.0002)",          GOLD),
+        ("May 2",   "Agreement-aware\nbands",
+         "Joint conf +\nbeam-agreement",      GREEN),
+        ("May 3",   "Burned-video\ncolors",
+         "Per-word tier\n+ IS badge",         PURPLE),
+    ]
+
+    n = len(events)
+    cw_card = Inches(2.35)
+    ch_card = Inches(3.6)
+    gap = Inches(0.18)
+    total_w = n * cw_card + (n - 1) * gap
+    cx = (SL_W - total_w) / 2
+    cy = CT + Inches(0.35)
+
+    # Timeline rail under the row of cards.
+    rail_y = cy + ch_card + Inches(0.30)
+    rail = add_rect(slide, cx, rail_y, total_w, Inches(0.06),
+                    fill_color=TEAL, border_color=None)
+
+    card_groups = []
+    for i, (date, title, desc, color) in enumerate(events):
+        x = cx + i * (cw_card + gap)
+        r = add_rect(slide, x, cy, cw_card, ch_card, fill_color=NAVY2,
+                     border_color=color, border_width=Pt(2.5),
+                     corner_radius=True)
+        d = add_text(slide, date, x + Inches(0.15), cy + Inches(0.18),
+                 cw_card - Inches(0.3), Inches(0.5),
+                 size=Pt(24), color=LGRAY, bold=True, align=PP_ALIGN.CENTER)
+        t1 = add_text(slide, title, x + Inches(0.15), cy + Inches(0.85),
+                 cw_card - Inches(0.3), Inches(1.1),
+                 size=Pt(26), color=color, bold=True, align=PP_ALIGN.CENTER)
+        t2 = add_text(slide, desc, x + Inches(0.15), cy + Inches(2.10),
+                 cw_card - Inches(0.3), ch_card - Inches(2.25),
+                 size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
+        # Tick mark on the rail under each card.
+        tick_x = x + cw_card / 2 - Inches(0.06)
+        tick = add_rect(slide, tick_x, rail_y - Inches(0.10),
+                        Inches(0.12), Inches(0.26),
+                        fill_color=color, border_color=None)
+        card_groups.append([r, d, t1, t2, tick])
+
+    cap = add_text(slide,
+        "Five production-ready features, six work-days. All synced to container.",
+        MX, rail_y + Inches(0.30), CW, Inches(0.4),
+        size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Timeline of features shipped between April 30 and May 3, 2026. "
+        "Apr 30: per-word confidence shipped to production — report.csv "
+        "gains sentence_confidence + 2 cols, report.html colors each word "
+        "blue/orange/purple beside the existing accuracy line. "
+        "May 1: Mission 6 N-best aggregation lands — 5 offline methods "
+        "(MBR, score-vote, conf-vote, safe, xseg-merge), gated by "
+        "VSP_NBEST=1; tuning-set validated with hyp_vote_conf -2.15pp WER. "
+        "May 2: MBR adopted as the production default displayed output "
+        "(judge p=0.0002 on Y+P, +40 paired wins); agreement-aware bands "
+        "land same day — joint top1_conf >= 0.95 AND beam_agreement >= 0.80 "
+        "for green. "
+        "May 3: burned-video colors ship — per-word tier coloring + IS "
+        "tier badge baked into the MP4 output. "
+        "Container overlay synced for every item; vsp_docker/ rebuild "
+        "deferred per single-image policy.",
+        card_groups + [[cap, rail]], click_reveal=True, para_build=False)

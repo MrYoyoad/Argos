@@ -222,7 +222,6 @@ def slide_is_intro_b(prs):
         "3. Captures overall meaning even if word choice differs.",
         MX + Inches(0.3), card_y + Inches(0.55),
         card_w - Inches(0.6), Inches(2.30),
-        card_w - Inches(0.6), Inches(2.30),
         size=Pt(24), color=WHITE)
 
     # Example card — audit:bigfonts2 — h shrunk 1.55 -> 1.20 + caption shortened
@@ -721,8 +720,8 @@ def slide_is_radar(prs):
     # Subtitle ends at CT+0.40; image starts at CT+0.55 — 0.15" gap.
     img_top = CT + Inches(0.55)
     img_h = SL_H - img_top - Inches(1.65)   # leave room for caption + footer
-    img_w = Inches(7.0)
     img_w = Inches(9.5)
+    img_x = MX + (CW - img_w) // 2          # center horizontally
 
     img_main = add_image(slide, "P6_is_radar", img_x, img_top,
                          width=img_w, height=img_h)

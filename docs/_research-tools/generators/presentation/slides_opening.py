@@ -41,10 +41,12 @@ def slide_what_was_done_1(prs):  # audit:bigfonts2
     add_accent_line(slide)
 
     bullets = [
-        ("Paper to working system — Docker container, web UI, one command", {"bold": True}),
-        "8-stage pipeline: face detect, AV-HuBERT encode, LLM decode",
-        "Full web UI: upload video, instant transcription with quality signals",
-        ("Multi-hypothesis decoding — meaningfully better output than single-pass", {"color": TEAL}),
+        ("Paper → production: Docker container, web UI, one-command run",
+         {"bold": True, "color": TEAL}),
+        "8-stage pipeline: face detect → AV-HuBERT → LLM decode",
+        "Full web UI: upload video, instant transcription, quality flags",
+        ("Beam aggregation: 20 hypotheses combined — better than single-pass",
+         {"color": TEAL}),
     ]
 
     add_bullets(slide, bullets, MX, CT + Inches(0.35), CW, Inches(4.85),
@@ -56,7 +58,10 @@ def slide_what_was_done_1(prs):  # audit:bigfonts2
         "container with full web UI, 8-stage pipeline (face detection "
         "through LLM decode), beam aggregation shipped as default (MBR "
         "May 2 2026). This is an engineering achievement — every component "
-        "had to be made to work together, debug, containerise, and ship. "
+        "had to be made to work together, debugged, containerised, shipped. "
+        "Reframed per user review #305: emphasize paper→production journey, "
+        "beam aggregation framed as 'multi-hypothesis combining' rather than "
+        "MBR jargon. "
         "See docs/beam-search/n_best_implementation.md.")
 
 
@@ -70,10 +75,13 @@ def slide_what_was_done_2(prs):  # audit:bigfonts2
     add_accent_line(slide)
 
     bullets = [
-        ("Model works: 62% of output genuinely useful (blind LLM judge)", {"bold": True, "color": TEAL}),
-        "System knows when it’s wrong: per-word confidence colour-coded",
-        "New metric (IS) built from scratch — captures ‘useful but not perfect’",
-        ("Arabic: 2–3 months away with the same infrastructure", {"color": LGRAY}),
+        ("Model works amazingly — 62% of output is useful (blind LLM judge)",
+         {"bold": True, "color": TEAL}),
+        ("System tells you when to trust it — per-word confidence colour-coded",
+         {"bold": True}),
+        "New metric (IS) built from scratch — captures useful-but-not-perfect",
+        ("Arabic: 2–3 months away with the same infrastructure",
+         {"color": LGRAY}),
     ]
 
     add_bullets(slide, bullets, MX, CT + Inches(0.35), CW, Inches(4.85),

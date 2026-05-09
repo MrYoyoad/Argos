@@ -1076,6 +1076,7 @@ def slide_arabic_changes(prs):  # audit:bigfonts
     # line_h bumped 0.68 -> 0.95 for Pt(24) 2-line wrap safety (#345).
     by = CT + Inches(0.10)
     line_h = Inches(0.95)
+    anim_groups = []
     for bullet in bullets_data:
         t = add_text(slide, "\u25b8  " + bullet,
                      MX, by, CW, line_h,

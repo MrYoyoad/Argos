@@ -187,6 +187,14 @@ slide_demo_judge_entity         = _try_import(
     "presentation.slides_demo", "slide_demo_judge_entity")
 slide_demo_judge_vocab          = _try_import(
     "presentation.slides_demo", "slide_demo_judge_vocab")
+# Engineering recap slides (May 2026 — added before slide_future_transition
+# to cap §5 with a "what we engineered" summary before the roadmap).
+slide_engineering_summary       = _try_import(
+    "presentation.slides_engineering", "slide_engineering_summary")
+slide_engineering_pipeline_modules = _try_import(
+    "presentation.slides_engineering", "slide_engineering_pipeline_modules")
+slide_engineering_what_shipped  = _try_import(
+    "presentation.slides_engineering", "slide_engineering_what_shipped")
 
 
 def main():
@@ -293,6 +301,10 @@ def main():
         slide_demo_obama_strip,
         slide_demo_judge_entity,
         slide_demo_judge_vocab,
+        # Engineering recap caps §5 before the future-roadmap divider.
+        slide_engineering_summary,      # 6-card "What We Engineered" overview
+        slide_engineering_pipeline_modules,  # 11 lib/ module grid (3x4)
+        slide_engineering_what_shipped, # Apr 30 / May 1-3 timeline
         slide_future_transition,        # Section divider
         slide_24,                       # Reframing the starting point
         slide_26,                       # Five phases

@@ -175,13 +175,16 @@ def _demo_research_slide(prs, *, title, video_key, ref, hyp_runs,
     add_text(slide, "HYPOTHESIS  (per-word confidence)",
              MX, Inches(5.52), CW, Inches(0.28),
              size=Pt(20), bold=True, color=WHITE)
+    # remark #342 fix: shrunk hyp_t h from 1.20 to 0.95 so bottom (5.80+0.95=6.75)
+    # no longer overlaps body_t (was at 6.85). body_t moved to 6.78 with h=0.27
+    # so its bottom (7.05) lands exactly on the safe-zone floor.
     hyp_t = add_rich_text(slide, [hyp_runs],
-             MX, Inches(5.80), CW, Inches(1.20))
+             MX, Inches(5.80), CW, Inches(0.95))
 
 
-    # Body observation (caption, below HYP at 5.80+1.20=7.00; pulled up to 6.85).
+    # Body observation (caption, sits below HYP at 6.75; ends at 7.05 safe-zone).
     body_t = add_text(slide, body,
-             MX, Inches(6.85), CW, Inches(0.40),
+             MX, Inches(6.78), CW, Inches(0.27),
              size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
     _finish(slide, 0, notes,
             [[sub, badge_box, badge_t], [ref_t], [hyp_t], [body_t]],
