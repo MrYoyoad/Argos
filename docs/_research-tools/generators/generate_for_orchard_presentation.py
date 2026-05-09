@@ -70,6 +70,7 @@ from presentation.slides_evaluation import (
 )
 from presentation.slides_demo import (
     slide_15,
+    slide_15_perfect, slide_15_failures,
     slide_live_example_intro,
     slide_failure_live_demo,
 )
@@ -296,7 +297,8 @@ def main():
         slide_v1_vs_v3_judge_lesson,    # Judge v1 vs v3 lesson
 
         # ─── §5. Demo + Future ───────────────────────────────────────
-        slide_15,                       # Demo intro
+        slide_15_perfect,               # Demo intro 1/2: success case (Obama 29-word) — split #339
+        slide_15_failures,              # Demo intro 2/2: failure spectrum (street_photo + halluc)
         slide_demo_obama_trust,
         slide_demo_obama_salvage,
         slide_demo_obama_strip,

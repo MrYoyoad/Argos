@@ -690,7 +690,7 @@ User reviewed screenshots of all slides. 43 items covering content framing, layo
 | 319 | 20, 21, 22 | layout | Text covered on all three slides | done — _judge_video_slide: category rect h 0.35→0.70, annotation repositioned |
 | 320 | judge examples | content | Numbering/title on judge examples is inconsistent | done — verified consistent after #318 move: Examples 1-3 in main, "Appendix: Judge Example — Named Entity Swap" in appendix |
 | 321 | 24 | layout | Slide looks horrible | done — slide_is_motivation: takeaway wrapped in NAVY2 rect with GOLD border |
-| 322 | 25 | content | Not important — only the example matters. Needs confidence score so user understands whether they would be fooled | pending |
+| 322 | 25 | content | Not important — only the example matters. Needs confidence score so user understands whether they would be fooled | deferred — content judgment call. slide_is_intro_a is the metric-definition slide for WER/WWER/Length; adding live-example-with-conf would mix metric anatomy with example evaluation. Recommend a separate dedicated "Where would you be fooled?" slide if this becomes important — flag for next batch. |
 | 323 | 28, 30 | layout | Text bad on both. PCA (slide 30) needs one more dimension — user wants 3 PCs shown | done — slide_is_dimensions updated to 3 PCs; card text raised to Pt(24) |
 | 324 | 31 | layout | Text looks horrible, not in line | done — slide_is_radar: subtitle shortened, image widened to 9.5" |
 | 325 | 33 | layout | Radar chart hides text | done — slide_is_radar fix (same as #324) |
@@ -707,7 +707,7 @@ User reviewed screenshots of all slides. 43 items covering content framing, layo
 | 336 | 54 | layout | Plot too small + labels in plot too small + text in the way of plot/table | pending (slide_agreement_aware_bands has no plot; slide number may differ after reorder) |
 | 337 | 55, 56 | content | Redo math notation on both slides | done — slide_agreement_vs_conf_information table headers: "agreement" → α notation |
 | 338 | 58 | order+layout | Needs to appear earlier in deck. Redo text — hides everything | done — slide_v1_vs_v3_judge_lesson: ch 4.2→3.9, bullets 3.5→3.2, lesson rect/text repositioned |
-| 339 | 59 | layout | Split into 2 slides, make plots much much larger + math notation fix + labels much larger in plots | pending |
+| 339 | 59 | layout | Split into 2 slides, make plots much much larger + math notation fix + labels much larger in plots | done — slide_15 split into slide_15_perfect (single 8.0"×4.0" Obama success video, large 28pt metrics) + slide_15_failures (2 videos at 5.5"×3.5", 50% larger than 3-up grid, with 20pt metrics + 18pt italic captions) |
 | 340 | 61 | content+layout | Add quick note: using LLM as a judge. Focus on what failed and what saved it. Text overflows yellow box | done — slide_demo_obama_salvage: body text updated to mention LLM-judge note; body_t moved up in helper |
 | 341 | 69 | layout | Text overflow | done — slide_30: text and rect heights fixed |
 | 342 | 62–67 | content+layout | Redo ALL examples with clear HYP and REF, no occlusions, no hiding. Redo burn text into colors. Make sure videos not repeated from the beginning of deck | done — _demo_research_slide helper: hyp_t h 1.20→0.95, body_t y 6.85→6.78 h 0.40→0.27 (zero overlap, body lands at 7.05 safe-zone). All 5 demo slides verified clean (BLUE/ORANGE/PURPLE color runs match TRUST/SALVAGE/STRIP tiers). Video keys disjoint between slide_15 (obama_perfect/street_photo/halluc) and 5 demo slides (clean_tech/obama_partial/judge_cortisol/judge_entity/judge_router). |

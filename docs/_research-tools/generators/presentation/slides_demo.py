@@ -121,9 +121,116 @@ def slide_15(prs):
         "docs/evaluation/llm_judge/llm_judge_analysis.md.",
         anim_groups, click_reveal=True)
 
-# ═══════════════════════════════════════════════════════════════════════
-# SLIDE 16 — IS VALIDATION: CLAUDE-AS-JUDGE
-# ═══════════════════════════════════════════════════════════════════════
+
+def slide_15_perfect(prs):
+    """Demo intro 1/2: the success case — Obama 29-word perfect transcription."""
+    slide = new_slide(prs)
+    add_title(slide, "Demo: When It Works (1/2)")
+    add_accent_line(slide)
+
+    sub = add_text(slide,
+        "Clean speech, model nails 29/29 words — the upper-bound demo.",
+        MX, CT, CW, Inches(0.45),
+        size=Pt(22), color=LGRAY, italic=True)
+
+    # Single video, much larger
+    vid_w = Inches(8.0)
+    vid_h = Inches(4.0)
+    vid_x = (SL_W - vid_w) // 2
+    vid_y = CT + Inches(0.6)
+    add_video(slide, "obama_perfect", vid_x, vid_y, vid_w, vid_h)
+
+    # Big metrics under video
+    metrics = add_text(slide,
+        "WER 0%   /   IS 5.00   /   27 of 29 words green",
+        MX, vid_y + vid_h + Inches(0.15), CW, Inches(0.55),
+        size=Pt(28), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+
+    # Per-word breakdown caption
+    caption = add_text(slide,
+        '"…the tireless and heroic work of our military and our counterterrorism…"',
+        MX, vid_y + vid_h + Inches(0.75), CW, Inches(0.50),
+        size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    foot = add_text(slide,
+        "Click video to play.",
+        MX, Inches(6.65), CW, Inches(0.30),
+        size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+
+    _finish(slide, 0,
+        "Demo intro 1/2 (#339 split): the success case. Obama segment 14, "
+        "29 words, the most convincing per-word coloring in the deck. "
+        "WER 0%, IS 5.00 — REF and HYP identical: '…and our allies over the "
+        "last 10 years thanks to the tireless and heroic work of our "
+        "military and our counterterrorism professionals we've made great "
+        "strides in that effort'. 27 of 29 per-word bands GREEN at conf-high; "
+        "the remaining 2 yellow. Sentence_conf 0.72 (Salvage band) — the "
+        "*segment-level* confidence is conservative because of two yellow "
+        "words, but WER says zero, IS says perfect. This motivates the joint "
+        "conf+agreement rule explained in §4. "
+        "Sources: docs/evaluation/intelligibility_methodology.md.",
+        [[sub], [metrics, caption], [foot]], click_reveal=True)
+
+
+def slide_15_failures(prs):
+    """Demo intro 2/2: the failure spectrum — partial vs hallucination."""
+    slide = new_slide(prs)
+    add_title(slide, "Demo: When It Fails (2/2)")
+    add_accent_line(slide)
+
+    sub = add_text(slide,
+        "Topic captured (CENTER) vs total fabrication (RIGHT) — the failure spectrum.",
+        MX, CT, CW, Inches(0.45),
+        size=Pt(22), color=LGRAY, italic=True)
+
+    # Two videos side by side, much larger than the 3-video version
+    vid_w = Inches(5.5)
+    vid_h = Inches(3.5)
+    gap = Inches(0.4)
+    total = 2 * vid_w + gap
+    start_x = (SL_W - total) // 2
+    vid_y = CT + Inches(0.6)
+
+    vids = [
+        ("street_photo", '"james and will talk about street photography"\n→ "i\'m here to talk about street photography"',
+         "WER 56%  /  IS 2.9  /  topic right, names lost", CORAL),
+        ("halluc", '"carry strap"\n→ "holocaust denier and a computer hacker"',
+         "WER 100%  /  IS 0.8  /  fluent fabrication", RED),
+    ]
+
+    anim_groups = []
+    for i, (key, desc, wer, color) in enumerate(vids):
+        x = start_x + i * (vid_w + gap)
+        add_video(slide, key, x, vid_y, vid_w, vid_h)
+        wer_t = add_text(slide, wer, x, vid_y + vid_h + Inches(0.10),
+                         vid_w, Inches(0.45),
+                         size=Pt(20), color=color, bold=True,
+                         align=PP_ALIGN.CENTER)
+        desc_t = add_text(slide, desc, x, vid_y + vid_h + Inches(0.60),
+                          vid_w, Inches(1.40),
+                          size=Pt(18), color=LGRAY, italic=True,
+                          align=PP_ALIGN.CENTER)
+        anim_groups.append([wer_t, desc_t])
+
+    foot = add_text(slide,
+        "Click each video to play.",
+        MX, Inches(6.65), CW, Inches(0.30),
+        size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+    anim_groups.append([foot])
+
+    _finish(slide, 0,
+        "Demo intro 2/2 (#339 split): the failure spectrum. "
+        "LEFT ('james and will talk about street photography' → "
+        "'i'm here to talk about street photography', IS 2.9): topic captured "
+        "perfectly but speaker names lost — the near-miss zone. "
+        "RIGHT ('carry strap' → 'holocaust denier', IS 0.8): hallucination, "
+        "fluent but completely fabricated — the worst-case failure mode. "
+        "Together the two clips bracket the IS scale around the production "
+        "Salvage tier (1.0–2.99). Click each video to play. "
+        "Sources: docs/evaluation/intelligibility_methodology.md, "
+        "docs/evaluation/llm_judge/llm_judge_analysis.md.",
+        [[sub]] + anim_groups, click_reveal=True)
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 16 — IS VALIDATION: CLAUDE-AS-JUDGE
