@@ -293,8 +293,8 @@ class PipelineRunner:
         # Always produce burned videos and lip crops
         env["VSP_FULL_OUTPUTS"] = "1"
 
-        # CLAHE + brightness normalization for better lip-reading on dark/low-contrast videos
-        env["VSP_ENHANCE"] = "1"
+        # Video enhancement disabled (CLAHE didn't help — face detection already works)
+        env["VSP_ENHANCE"] = "0"
 
         return env
 

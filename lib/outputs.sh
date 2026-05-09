@@ -240,12 +240,15 @@ run_client_outputs() {
     # Optional: burned videos with per-word coloring + tier badge.
     local burn_conf_arg=""
     [ -n "$word_conf_json" ] && [ -f "$word_conf_json" ] && burn_conf_arg="--word_confidence $word_conf_json"
+    local fast_seg_dir="${prep_root}/fast_segments"
+    local fallback_arg=""
+    [ -d "$fast_seg_dir" ] && fallback_arg="--fallback_video_dir $fast_seg_dir"
     python3 "$vsp_dir/scripts/make_burn.py" \
       --jsonl "$decode_json" \
       --video_dir "$flat_vid_dir" \
       --segment_metadata "$segment_metadata" \
       --out_dir "$burn_dir" \
-      $burn_conf_arg \
+      $burn_conf_arg $fallback_arg \
       || log_warn "make_burn.py failed (non-critical)"
 
     # Optional: copy lip crops to client output.

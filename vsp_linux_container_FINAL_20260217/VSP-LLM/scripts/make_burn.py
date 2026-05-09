@@ -566,9 +566,9 @@ def main() -> None:
     ap.add_argument("--out_dir", required=True)
 
     ap.add_argument("--fontsize", type=int, default=24)
-    ap.add_argument("--box_h", type=int, default=140)
+    ap.add_argument("--box_h", type=int, default=320)
     ap.add_argument("--wrap_width", type=int, default=48)
-    ap.add_argument("--max_lines", type=int, default=3)
+    ap.add_argument("--max_lines", type=int, default=12)
     ap.add_argument("--crf", type=int, default=18)
     ap.add_argument("--preset", default="veryfast")
 
@@ -582,6 +582,9 @@ def main() -> None:
                          "are rendered with per-word green/yellow/red coloring "
                          "via libass. When absent or missing a segment, a synthetic "
                          "fallback colors words by REF vs HYP alignment.")
+    ap.add_argument("--fallback_video_dir", default=None,
+                    help="secondary folder to search for source videos when "
+                         "video_dir lookup fails (e.g. fast_segments/ directory)")
 
     args = ap.parse_args()
 
@@ -700,11 +703,25 @@ def main() -> None:
                     src = hits[0]
                     print(f"[OK] Using pre-segmented full-frame video for {uid}: {src.name}")
 
+        # Strategy 1.6: fallback_video_dir (e.g. fast_segments/) for segments
+        # that are missing or corrupt in the primary video_dir.
+        if src is None and args.fallback_video_dir:
+            fdir = Path(args.fallback_video_dir)
+            fallback = fdir / f"{uid}.mp4"
+            if fallback.exists():
+                src = fallback
+                print(f"[OK] Using fallback source for {uid}: {fallback.name}")
+            else:
+                hits = sorted(fdir.glob(f"{uid}*.mp4"))
+                if hits:
+                    src = hits[0]
+                    print(f"[OK] Using fallback source for {uid}: {src.name}")
+
         # NOTE: We deliberately do NOT fall back to the mouth-cropped (88x88
         # grayscale) preprocessed segment dir. Burned videos are a client-facing
         # artifact and must always show the speaker's full face. If neither the
         # original-extracted segment (Strategy 1) nor the post-split full-frame
-        # segment (Strategy 1.5) is available, skip the segment rather than
+        # segment (Strategy 1.5/1.6) is available, skip the segment rather than
         # silently degrade to a mouth crop.
         if src is None or not src.exists():
             print(f"[SKIP] no full-frame source for {uid} (refusing to burn on mouth crop)")
@@ -735,8 +752,8 @@ def main() -> None:
 
         line_h = fs + args.line_spacing
         needed = pad_y * 2 + (eff_max_lines * line_h)
-        # Cap box_h at 25% of the frame so the speaker stays visible.
-        box_h = max(int(needed), min(args.box_h, int(h * 0.25)))
+        # Cap box_h at 45% of the frame so the full transcript is visible.
+        box_h = max(int(needed), min(args.box_h, int(h * 0.45)))
         box_h = min(box_h, h - 2)
 
         dst = out_dir / _file_names.get(uid, f"{uid}_with_hyp.mp4")

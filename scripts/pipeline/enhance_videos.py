@@ -18,7 +18,9 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-TARGET_LUMA = 128.0          # target mean Y luma after normalization
+TARGET_LUMA = 107.0          # target mean Y luma — matches model training distribution
+                             # (0.421 × 255 = 107.4, from Normalize(mean=0.421, std=0.165)
+                             # calibrated on LRS3 studio-quality mouth crops)
 CLAHE_CLIP = 2.5             # CLAHE clip limit (2-3 typical for faces)
 CLAHE_GRID = 8               # tile grid size (smaller = more local)
 SHARP_SIGMA = 2.0            # unsharp mask Gaussian sigma
