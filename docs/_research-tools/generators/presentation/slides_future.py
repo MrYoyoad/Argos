@@ -387,15 +387,14 @@ def slide_28(prs):  # audit:bigfonts2
     # Main point \u2014 past tense, MBR is shipped (audit:logic_fix #1, slide 59).
     # audit:narrative \u2014 generic cross-reference (no hard slide number).
     add_text(slide,
-             "Previously we displayed only the top-1 hypothesis. "
-             "Mission 6 shipped MBR aggregation as the production default \u2014 "
-             "the v3 paired Judge test below quantifies the lift.",
-             MX, CT, CW, Inches(1.4), size=Pt(24), color=WHITE, bold=True)
+             "Multi-hypothesis decoding now ships as production default "
+             "(20 hypotheses → MBR consensus).",
+             MX, CT, CW, Inches(0.5), size=Pt(24), color=WHITE, bold=True)
 
     # Two technique cards side by side
     cw = Inches(5.5)
     gap = Inches(1.13)
-    cy = CT + Inches(1.50)
+    cy = CT + Inches(0.65)
     ch = Inches(2.2)
 
     r1 = add_rect(slide, MX, cy, cw, ch, fill_color=NAVY2,
@@ -995,16 +994,16 @@ def slide_arabic_changes(prs):  # audit:bigfonts
     add_accent_line(slide)
 
     bullets_data = [
-        "K-means clustering \u2014 retrain on Arabic audio features (retrains per-dataset already)",
-        "LLM backbone \u2014 replace with Arabic-capable LLM (Jais, AceGPT, multilingual Llama 3)",
+        "K-means: retrain on Arabic audio features (pipeline already supports this)",
+        "LLM backbone: swap to Arabic-capable model (Jais, AceGPT, Llama 3)",
         "Q-Former + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
         "Biggest bottleneck: training data (no Arabic LRS3 equivalent at scale)",
     ]
 
     # line_h bumped 0.55 -> 0.68 for Pt(24) wrap-safety (audit:bigfonts).
-    by = CT + Inches(0.05)
-    line_h = Inches(0.68)
-    anim_groups = []
+    # line_h bumped 0.68 -> 0.95 for Pt(24) 2-line wrap safety (#345).
+    by = CT + Inches(0.10)
+    line_h = Inches(0.95)
     for bullet in bullets_data:
         t = add_text(slide, "\u25b8  " + bullet,
                      MX, by, CW, line_h,
@@ -1809,22 +1808,19 @@ def slide_a16(prs):  # audit:bigfonts2
          ["2 \u2014 Poor",      "14",  "4%",  "115", "34%", "62%"],
          ["1 \u2014 Failed",    "5",   "2%",  "41",  "17%", "81%"]],
         MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(24),
-        row_height=Inches(0.42),
+        row_height=Inches(0.52),
         col_widths=[Inches(2.6), Inches(1.4), Inches(1.4),
                     Inches(1.4), Inches(1.4), Inches(1.8)],
         row_colors={0: {2: GREEN}, 4: {5: CORAL}})
 
-    # Key observations \u2014 V6 dense; bullets <=8 words, h 2.5 -> 1.85.
-    # CUT v2: combined NIV + Pearson into single line via separate font color.
-    # Heading moved CT+3.10 -> CT+3.30 (table OOXML end CT+3.02 + 0.28 margin).
-    add_text(slide, "Key Observations:", MX, CT + Inches(3.30), CW, Inches(0.4),
+    add_text(slide, "Key Observations:", MX, CT + Inches(3.75), CW, Inches(0.4),
              size=Pt(24), color=TEAL, bold=True)
     add_bullets(slide, [
         "Tier 5: 57% Y \u2014 strong excellent agreement",
         "Tiers 2-3: majority P \u2014 partial value",
         "Tier 1: 81% N \u2014 strong failure agreement",
-        ("NIV kappa 0.816 (Y+P), 0.707 (Y)", {"color": GOLD}),
-    ], MX, CT + Inches(3.75), CW, Inches(1.80), size=Pt(24))
+        ("NIV \u03ba 0.816 (Y+P), 0.707 (Y)", {"color": GOLD}),
+    ], MX, CT + Inches(4.20), CW, Inches(1.50), size=Pt(24))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers across all 1,497 segments "
@@ -2235,12 +2231,12 @@ def slide_confidence_scoring(prs):  # audit:bigfonts
         ("No extra inference \u2014 free byproduct", {"color": TEAL}),
     ], MX, CT + Inches(0.45), col_w, Inches(2.85), size=Pt(20))
 
-    # Effort callout
-    r1 = add_rect(slide, MX, CT + Inches(3.5), col_w, Inches(0.5),
+    # Effort callout — rect tall enough to contain the single-line text
+    r1 = add_rect(slide, MX, CT + Inches(3.5), col_w, Inches(0.65),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "At T_safe=0.82: green segments 90% accurate (~10% error)",
-             MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(1.0),
+    add_text(slide, "At T_safe=0.82: green band ≥ 85% reliable (∼15% error)",
+             MX + Inches(0.3), CT + Inches(3.55), col_w - Inches(0.6), Inches(0.55),
              size=Pt(24), color=GREEN, bold=True)
 
     # Right — What It Enables

@@ -207,62 +207,55 @@ def main():
         slide_02,                       # What is VSP?
         slide_live_example_intro,       # Live taste — Obama 29-word perfect
         slide_visemes,                  # Visemes
-        slide_03,                       # Three components
-        slide_data_flow,                # Data flow
+        slide_data_flow,                # Data flow  ← switched with slide_03
+        slide_03,                       # Three components ← switched with data_flow
         slide_17,                       # 8-stage pipeline (programmatic)
-        slide_04,                       # Benchmark
+        slide_04,                       # Benchmark / IS results
         slide_05,                       # Reality gap
         slide_06,                       # Same WER, different effects
         slide_diversity_of_inputs,      # Diversity of inputs
         slide_wer_lies,                 # WER: the metric that lies
 
         # ─── §2. Evaluation — How do you evaluate lip-reading? ──────
-        # Cut: trimmed judge examples 6 → 4 (kept ex1, ex3, ex5, ex6 — the
-        # most distinct failure modes). Examples 2, 4 collapse into ex5 in
-        # speaker notes (same "core preserved despite WER" pattern).
+        # Judge examples renumbered 1-4 (ex1, ex3, ex5, ex6 → labels 1-4).
+        # slide_llm_judge_30 (deep methodology) moved to appendix — too much
+        # detail for main flow; accessible during Q&A.
         slide_research_transition,      # Section divider
         slide_literature_metrics_problem,
         slide_llm_judge,                # LLM-as-a-Judge intro
-        slide_llm_judge_30,             # LLM judge deep dive
-        slide_judge_ex1,                # Named entity swap
-        slide_judge_ex3,                # Technical vocab drift
-        slide_judge_ex5,                # Cooking domain confusion
-        slide_judge_ex6,                # Topic hijack
-        slide_disagreement_blind,
+        slide_judge_ex1,                # Judge example 1: named entity swap
+        slide_judge_ex3,                # Judge example 2: technical vocab drift
+        slide_judge_ex5,                # Judge example 3: cooking domain confusion
+        slide_judge_ex6,                # Judge example 4: topic hijack
+        # slide_disagreement_blind moved to appendix (per user review: not
+        # important for main flow — accessible during Q&A).
         slide_disagreement_context,
-        slide_is_motivation,            # Why LLM Judge isn't enough
+        slide_is_motivation,            # Why LLM Judge alone isn't enough
         slide_is_intro,                 # IS signals
         slide_is_weight_rationale,      # Do 6 signals measure 6 things?
         slide_is_calc_examples,         # IS in action
-        slide_is_dimensions,            # IS dimensions
+        slide_is_dimensions,            # IS dimensions (3 PCs)
         slide_is_radar,                 # IS radar
         slide_is_wer_scatter,           # IS vs WER scatter
-        slide_a16,                      # IS x judge tier (cross-tab)
 
-        # ─── §3. Where It Works — and How It Fails ───────────────────
-        # SECTION SPLIT v5 (per research-overview review):
-        # §3a Capture (where it works) = slide_07 + slide_metric_transition
-        # §3b Failure Anatomy = visible divider + slide_08 + deep_1a + 2 + salvage
-        # Cut: slide_failure_deep_1b (overlapping content with 1a — taxonomy
-        # categories now fit in one slide). slide_a13 cut (overlaps with
-        # slide_failure_deep_2 — same "real failure examples" framing).
-        # E1 (research-overview): visible section divider added between the
-        # capture half and the failure-anatomy half so the audience sees the
-        # split, not just the orchestrator comment.
-        slide_07,                       # IS results: useful output (CAPTURE)
-        slide_metric_transition,        # Three numbers transition (CAPTURE)
-        slide_failure_anatomy_transition,  # E1: visible §3a → §3b divider
-        slide_08,                       # Failure-mode taxonomy bar (FAILURE)
-        slide_failure_deep_1a,          # Failure deep (consolidated)
-        slide_failure_deep_2,           # Failure modes: examples (text)
-        slide_failure_live_demo,        # Failure modes: live video (halluc + street_photo)
+        # ─── §3. Proof — Where It Works and How It Fails ─────────────
+        # slide_07 (Oracle vs Realistic headline) moved to end of §4 so the
+        # audience understands confidence/trust-gate BEFORE seeing the
+        # Realistic operating-point numbers (per user review remark #327).
+        # The n-best methodology block stays here to introduce aggregation
+        # before the confidence deep-dive.
+        slide_28,                       # N-best aggregation — what is MBR?
+        slide_nbest_v3_judge_paired_tests,  # Judge comparison MBR vs baseline
+        slide_mbr_decision,             # Why MBR: calibrated posterior
+        slide_metric_transition,        # Three numbers transition
+        slide_failure_anatomy_transition,   # §3b divider
+        slide_08,                       # Failure-mode taxonomy bar
+        slide_failure_deep_1a,          # Failure deep dive (consolidated)
+        slide_failure_live_demo,        # Failure modes: live video
         slide_25d,                      # LLM salvage: three recoveries
         slide_25e,                      # LLM salvage: domain context
 
-        # ─── §4. Confidence — Trustable output w/o GT (18 slides) ────
-        # OVERLAP fix (audit story §4): problem-first ordering — motivation
-        # ("no GT in production") arrives before the math solution so the
-        # audience knows WHY before seeing the HOW.
+        # ─── §4. Confidence — Trustable output w/o GT ────────────────
         slide_confidence_problem,
         slide_two_layer_confidence_research,
         slide_confidence_scoring,
@@ -273,15 +266,16 @@ def main():
         slide_three_thresholds,
         slide_three_tier_policy_research,
         slide_band_reliability_by_niv,
+        slide_a16,                      # IS × judge cross-tab (moved here: after conf intro)
         slide_agreement_aware_bands,
         slide_agreement_vs_conf_information,
         slide_client_trust_calibration,
-        slide_28,                       # Phase 2: N-best (intro)
-        slide_nbest_v3_judge_paired_tests,
-        slide_mbr_decision,
-        slide_v1_vs_v3_judge_lesson,
+        # slide_07 moved here from §3 so Trust-gate (above) is introduced
+        # before the Oracle vs Realistic headline numbers.
+        slide_07,                       # IS results: Oracle vs Realistic headline
+        slide_v1_vs_v3_judge_lesson,    # Judge v1 vs v3 lesson
 
-        # ─── §5. Demo + Future (12+ slides) ──────────────────────────
+        # ─── §5. Demo + Future ───────────────────────────────────────
         slide_15,                       # Demo intro
         slide_demo_obama_trust,
         slide_demo_obama_salvage,
@@ -293,7 +287,7 @@ def main():
         slide_26,                       # Five phases
         slide_26b,                      # IS improvement roadmap
         slide_30,                       # Stronger LLM + smart prompts
-        slide_30b,                      # LLM upgrade: why it matters
+        # slide_30b removed per user request (item #344)
         slide_29,                       # Fine-tuning
         slide_arabic_roadmap,
         slide_arabic_avhubert,
@@ -301,15 +295,17 @@ def main():
         slide_31,                       # Key takeaways
         slide_thank_you,                # Thank you
 
-        # ─── Appendix (~9, hidden by default) ────────────────────────
+        # ─── Appendix (hidden by default) ────────────────────────────
+        slide_disagreement_blind,       # IS vs Judge disagreement (Q&A)
         slide_a1,                       # Homophenes
         slide_a8,                       # IS component correlation
-        slide_appendix_pca_loadings,    # PCA loadings (NEW)
-        slide_human_is_path_b,          # Human-IS Path B (NEW, hidden)
+        slide_appendix_pca_loadings,    # PCA loadings
+        slide_human_is_path_b,          # Human-IS Path B (estimates, not measurements)
+        slide_llm_judge_30,             # LLM judge methodology deep-dive
         slide_a11,                      # LLM salvage: recoverable
         slide_a11b,                     # LLM salvage: examples
         slide_a17,                      # Context transition matrix
-        slide_appendix_mcnemar_full,    # Full McNemar table (NEW)
+        slide_appendix_mcnemar_full,    # Full McNemar table
         slide_dual_env,                 # Two environments
     ]
     total = len(builders)
@@ -319,10 +315,12 @@ def main():
     # estimates) are hidden by default. The deck-builder retains them
     # so a presenter can choose to reveal them on the fly.
     hidden_builders = {
+        slide_disagreement_blind,
         slide_a1,
         slide_a8,
         slide_appendix_pca_loadings,
         slide_human_is_path_b,
+        slide_llm_judge_30,
         slide_a11,
         slide_a11b,
         slide_a17,

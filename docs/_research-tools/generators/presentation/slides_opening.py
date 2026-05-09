@@ -37,35 +37,27 @@ def slide_what_was_done_1(prs):  # audit:bigfonts2
     ceiling; bullets box height shrunk 5.2 -> 4.85 so bottom is 6.95 (≤7.05).
     """
     slide = new_slide(prs)
-    add_title(slide, "What was done? (1/2)")
+    add_title(slide, "What Was Built")
     add_accent_line(slide)
 
-    # CUT v2: subtitle shortened from 11 words -> 8.
-    add_text(slide,
-        "Four months on visual speech processing:",
-        MX, CT, CW, Inches(0.45), size=Pt(22), color=LGRAY, italic=True)
-
-    # audit:bigfonts2 — V6 dense slide; bullets trimmed to <=8 words each.
-    # CUT v2: dropped "preprocessing, decode, post-processing" parenthetical;
-    # condensed phrasing on every bullet.
     bullets = [
-        "Built end-to-end pipeline (preprocess, decode, post)",
-        "Designed IS metric — measures meaning preserved",
-        "Shipped per-word confidence + beam-agreement bands",
-        "Built roadmap for performance and Arabic",
+        ("Paper to working system — Docker container, web UI, one command", {"bold": True}),
+        "8-stage pipeline: face detect, AV-HuBERT encode, LLM decode",
+        "Full web UI: upload video, instant transcription with quality signals",
+        ("Multi-hypothesis decoding — meaningfully better output than single-pass", {"color": TEAL}),
     ]
 
-    # audit:bigfonts2 — bullets box h 5.2 -> 4.85, bottom 6.95 ≤ 7.05.
-    add_bullets(slide, bullets, MX, CT + Inches(0.65), CW, Inches(4.85),
+    add_bullets(slide, bullets, MX, CT + Inches(0.35), CW, Inches(4.85),
                 size=Pt(24), bullet_color=TEAL)
 
     _finish(slide, 0,
-        "Overview slide 1/2. Four months of work: went from a research paper "
-        "with no environment to a full pipeline, standalone container with UI, "
-        "new evaluation metric (IS), per-word confidence + agreement-aware "
-        "trust bands (May 2 2026), fine-tuning experiments, and Arabic roadmap. "
-        "See docs/confidence/band_reliability_by_niv.md for the band rule and "
-        "docs/features/per-word-confidence-user-guide.md for the user view.")
+        "What Was Built. Took VSP-LLM from a research paper with no working "
+        "environment to a complete production system: standalone Docker "
+        "container with full web UI, 8-stage pipeline (face detection "
+        "through LLM decode), beam aggregation shipped as default (MBR "
+        "May 2 2026). This is an engineering achievement — every component "
+        "had to be made to work together, debug, containerise, and ship. "
+        "See docs/beam-search/n_best_implementation.md.")
 
 
 def slide_what_was_done_2(prs):  # audit:bigfonts2
@@ -74,38 +66,27 @@ def slide_what_was_done_2(prs):  # audit:bigfonts2
     audit:bigfonts2 — Pass 2 V6: bullets trimmed to <=8 words; box h 5.2 -> 4.85.
     """
     slide = new_slide(prs)
-    add_title(slide, "What was done? (2/2)")
+    add_title(slide, "What We Found \u2014 It Works")
     add_accent_line(slide)
 
-    add_text(slide,
-        "Key findings and outcomes:",
-        MX, CT, CW, Inches(0.45), size=Pt(22), color=LGRAY, italic=True)
-
-    # audit:bigfonts \u2014 trimmed 9 -> 6 bullets to fit Pt(24) body floor.
-    # Dropped: "IS computable on standalone" (engineering detail), "full
-    # failure analysis" (covered by report deck), "reproducible container
-    # build" (covered in eng deck). Numbers preserved per audit comments.
-    # audit:bigfonts2 \u2014 V6 dense slide; bullets trimmed to <=8 words.
-    # CUT v2: dropped wordy framing on every bullet; numbers preserved.
     bullets = [
-        "Model is useful \u2014 65% pass LLM-judge",
-        "Mission 6 shipped: MBR n-best is default",
-        "v3 Judge MBR Y+P 71% vs base 68%, p=0.00017",
-        "Plan to replicate for Arabic in 2-3 months",
+        ("Model works: 62% of output genuinely useful (blind LLM judge)", {"bold": True, "color": TEAL}),
+        "System knows when it’s wrong: per-word confidence colour-coded",
+        "New metric (IS) built from scratch — captures ‘useful but not perfect’",
+        ("Arabic: 2–3 months away with the same infrastructure", {"color": LGRAY}),
     ]
 
-    # audit:bigfonts2 \u2014 bullets box h 5.2 -> 4.85, bottom 6.95 \u2264 7.05.
-    add_bullets(slide, bullets, MX, CT + Inches(0.65), CW, Inches(4.85),
+    add_bullets(slide, bullets, MX, CT + Inches(0.35), CW, Inches(4.85),
                 size=Pt(24), bullet_color=TEAL)
 
     _finish(slide, 0,
-        "Overview slide 2/2. Key findings: 65% useful output by LLM judge, "
-        "IS metric validated, MBR n-best aggregation promoted to production "
-        "default (Y+P 71% vs 68% baseline, paired p=0.00017), failure "
-        "analysis complete, reproducible deployment, and clear path forward "
-        "for model improvement and Arabic adaptation. "
-        "See docs/beam-search/n_best_implementation.md and "
-        "docs/evaluation/after_amosi_audit.md (Section F).")
+        "What We Found. Key outcomes: 65% of output is useful by blind LLM "
+        "judge (Y+P under MBR), per-word confidence green band is 87% "
+        "accurate for NIV-Y content (meaning the system's trust signals are "
+        "calibrated), IS metric built from scratch validates better than WER. "
+        "Arabic roadmap is concrete: 2-3 months with existing infrastructure. "
+        "See docs/evaluation/after_amosi_audit.md (Section F) and "
+        "docs/confidence/band_reliability_by_niv.md.")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -404,7 +385,7 @@ def slide_02(prs):  # audit:bigfonts
     # audit:bigfonts — shrink video slightly so larger subtitle / bottom
     # text fit; keep aspect by trimming height only.
     vid_w = Inches(8.5)
-    vid_h = Inches(4.4)
+    vid_h = Inches(3.9)
     vid_x = (SL_W - vid_w) // 2
     vid_shape = add_video(slide, "perfect", vid_x, Inches(1.95), vid_w, vid_h)
 
@@ -427,7 +408,7 @@ def slide_02(prs):  # audit:bigfonts
     bottom = add_text(slide,
         "System + human outperforms expert lip readers \u2014 "
         "hallucination risk 20% \u2192 under 5% with human filtering.",
-        MX + Inches(0.6), Inches(6.02), CW - Inches(0.6), Inches(1.0),
+        MX + Inches(0.6), Inches(5.95), CW - Inches(0.6), Inches(0.65),
         size=Pt(24), color=WHITE)
 
     # FIX (BLOCKER, docs/evaluation/pptx_fix_manifest.md, Slide 7):
@@ -559,7 +540,7 @@ def slide_04(prs):  # audit:bigfonts
             ("LRS3 benchmark: curated TED talks, ideal conditions", {"bold": True}),
             ("Our dataset: 1,497 real YouTube segments \u2014 nothing is controlled",
              {"color": CORAL, "bold": True}),
-            ("Result: 64% WER \u2014 2.5\u00d7 worse (MBR; top-1 baseline 64%)",
+            ("Result: 64% WER on our dataset — 2.5× worse than the benchmark",
              {"color": CORAL, "bold": True}),  # audit:wer_mean_mbr / wer_mean_top1
             ("WER is the wrong metric \u2013 our new IS is the right one "
              "(or LLM as a judge)", {}),
@@ -873,7 +854,7 @@ def slide_visemes(prs):  # audit:bigfonts
     poster_shapes.append(add_text(slide,
         "Identical mouth shapes can produce different words",
         rx, CT + Inches(2.18), col_w, Inches(0.73),
-        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 
     tbl2 = add_table(slide,
         ["Word A", "Word B"],
@@ -881,7 +862,7 @@ def slide_visemes(prs):  # audit:bigfonts
          ["mom", "bomb"],
          ["admiral", "animal"],
          ["collar", "color"]],
-        rx, CT + Inches(2.6), col_w, text_size=Pt(24))
+        rx, CT + Inches(3.05), col_w, text_size=Pt(24))
 
     # CUT v3: top 6.45 -> 6.30 + frame h 1.4 -> 0.45 so Pt(24) bottom
     # falls under safe 7.05 (was 7.85, tall empty frame caused overflow).

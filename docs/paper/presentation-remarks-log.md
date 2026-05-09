@@ -664,3 +664,55 @@ Full visual audit of all 79 non-hidden slides in `Argos_VSP_For_Orchard_May2026.
 | 302 | 45→46 order | `slide_two_layer_confidence_research` / `slide_confidence_problem` (`slides_evaluation.py`) | Problem setup (slide 46: "Confidence Without Ground Truth") arrives *after* the solution (slide 45: "Two Layers of Confidence"). Consider swapping to problem-first ordering. | pending |
 | 303 | 76 | `slide_arabic_avhubert` (`slides_future.py`) | 7 bullets per slide — exceeds 4-bullet STYLE_GUIDE cap. Content reads as a technical spec, not a story. Reduce to 4 key bullets. | pending |
 | 304 | 77 | `slide_arabic_changes` (`slides_future.py`) | 7 bullets per slide — exceeds 4-bullet STYLE_GUIDE cap. Reduce to 4 key bullets. | pending |
+
+---
+
+## Batch 23 — 2026-05-08 (For-Orchard deck — user full-deck visual review)
+
+User reviewed screenshots of all slides. 43 items covering content framing, layout overlaps, math notation, slide ordering, removals, and missing content.
+
+| # | Slide(s) | Category | Remark | Status |
+|---|----------|----------|--------|--------|
+| 305 | 2, 3 (what_was_done) | content | MBR framing unclear, "p" framing bad. Rewrite: beam aggregation used + worth it. Positive: model works amazingly, can be trusted. Emphasize Docker build, made it work perfectly from paper/idea/UI. More like original what_was_done tone. | pending |
+| 306 | 5 | layout | Occlusion in frame | done — slide_02 video height reduced, text repositioned |
+| 307 | 6 | layout | Text overlap in frame + HYP text not full — fix | done — _demo_research_slide: hyp_t h 0.90→1.20, body_t moved to 6.85, font 16→18pt |
+| 308 | 7 | layout | Table hides text, many occlusions | pending (slide number mapping unclear after reorder) |
+| 309 | 6 | accuracy | "0%" is bad/strange — leave 2 significant figures | done — WER 0% → WER <1% in slide_live_example_intro |
+| 310 | — | order | Switch slides 8 and 9 | done — data_flow and slide_03 order switched in builders |
+| 311 | pipeline | layout | Pipeline figure text looks horrible and occluded + cut in the middle | pending |
+| 312 | 11 | content | Don't say "MBR" — explain "aggregated method". Keep top-1 numbers clearly separate. Don't mention the difference in slide 11 | done — slide_04 reframed to hide MBR mention |
+| 313 | 13 | layout | Text overflows red box | done — slide_is_intro_b body text shortened |
+| 314 | 14 | layout | Text overflows blue box | done — slide_is_intro_b body text shortened |
+| 315 | 15 | layout | Text overflows red box | done — slide_is_intro_b body text shortened |
+| 316 | 17 | layout | Slide looks bad — split into 2 slides if needed | pending |
+| 317 | 18 | layout | Table hides text | pending |
+| 318 | 19 | content | Not important, not appearing in AMOSI slide — remove or defer to appendix | pending |
+| 319 | 20, 21, 22 | layout | Text covered on all three slides | done — _judge_video_slide: category rect h 0.35→0.70, annotation repositioned |
+| 320 | judge examples | content | Numbering/title on judge examples is inconsistent | pending |
+| 321 | 24 | layout | Slide looks horrible | done — slide_is_motivation: takeaway wrapped in NAVY2 rect with GOLD border |
+| 322 | 25 | content | Not important — only the example matters. Needs confidence score so user understands whether they would be fooled | pending |
+| 323 | 28, 30 | layout | Text bad on both. PCA (slide 30) needs one more dimension — user wants 3 PCs shown | done — slide_is_dimensions updated to 3 PCs; card text raised to Pt(24) |
+| 324 | 31 | layout | Text looks horrible, not in line | done — slide_is_radar: subtitle shortened, image widened to 9.5" |
+| 325 | 33 | layout | Radar chart hides text | done — slide_is_radar fix (same as #324) |
+| 326 | 34, 35 | layout | Text misplaced on both | pending (geometry checks out in current code; may have been pre-fix deck) |
+| 327 | 36 | content+order | Text bad, needs to be split into 2 slides and recalibrated. Must appear AFTER introducing confidence (currently too early) | done — slide_07 moved to end of §4 in builders |
+| 328 | 37 | accuracy | WER percent needs to show WER SUCCESS percent, not failure level of WER | done — failure_anatomy_transition WER reframed |
+| 329 | 39 | content | Extra figure not needed — remove it | pending (no image found in slide_failure_deep_1a; may refer to slide_40) |
+| 330 | 39, 40 | content | Why 39 AND 40? Slide 40 not written properly together with 39 | pending |
+| 331 | 46 | content+layout | Confidence definition needs to appear earlier. Rewrite with proper math lines instead of mean_prob notation. Text hides other text | done — slide_per_word_confidence_distribution: top1_conf→p₁, beam_agreement→α; bullets Pt(20)→Pt(24) |
+| 332 | 47 | content+layout | Same math notation comment. Text overflows green box | partially done — geometry verified OK; math notation is clean in slide_band_reliability_overall |
+| 333 | 50 | layout | Text hides other stuff | pending (geometry verified OK in slide_three_thresholds) |
+| 334 | 52 | layout | Math hiding of boxes/tables | pending |
+| 335 | 53 | layout | Redo prettier — especially math terms + thicker table rows so no split terms | done — slide_a16: row_height 0.42→0.52; kappa uses κ symbol; key obs repositioned |
+| 336 | 54 | layout | Plot too small + labels in plot too small + text in the way of plot/table | pending (slide_agreement_aware_bands has no plot; slide number may differ after reorder) |
+| 337 | 55, 56 | content | Redo math notation on both slides | done — slide_agreement_vs_conf_information table headers: "agreement" → α notation |
+| 338 | 58 | order+layout | Needs to appear earlier in deck. Redo text — hides everything | done — slide_v1_vs_v3_judge_lesson: ch 4.2→3.9, bullets 3.5→3.2, lesson rect/text repositioned |
+| 339 | 59 | layout | Split into 2 slides, make plots much much larger + math notation fix + labels much larger in plots | pending |
+| 340 | 61 | content+layout | Add quick note: using LLM as a judge. Focus on what failed and what saved it. Text overflows yellow box | done — slide_demo_obama_salvage: body text updated to mention LLM-judge note; body_t moved up in helper |
+| 341 | 69 | layout | Text overflow | done — slide_30: text and rect heights fixed |
+| 342 | 62–67 | content+layout | Redo ALL examples with clear HYP and REF, no occlusions, no hiding. Redo burn text into colors. Make sure videos not repeated from the beginning of deck | pending |
+| 343 | 70 | layout | Split into phases + make plot labels much larger (next slide) | pending |
+| 344 | 71 | content | Remove slide 71 entirely | done — slide_30b removed from builders |
+| 345 | 73 | layout | Text + occlusions — fix, split to 2 if needed | done — slide_arabic_changes: line_h 0.68→0.95, start_y adjusted, long bullets shortened |
+| 346 | appendix | layout | Fix occlusions in appendix slides too | pending |
+| 347 | — | content | More slides needed from new client PPTX and original AMOSI. Missing focus: engineering done, lot of work, etc. | pending |

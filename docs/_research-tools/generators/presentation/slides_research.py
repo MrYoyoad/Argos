@@ -77,9 +77,12 @@ def slide_is_motivation(prs):
                       size=Pt(24), color=LGRAY)
         card_groups.append([r, t1, t2])
 
+    takeaway_rect = add_rect(slide, MX, Inches(5.50), CW, Inches(0.90),
+                             fill_color=NAVY2, border_color=GOLD,
+                             border_width=Pt(2), corner_radius=True)
     takeaway = add_text(slide,
         "IS runs in production; LLM-as-a-Judge audits the IS framework. You need both.",
-        MX, Inches(5.85), CW, Inches(1.0),
+        MX + Inches(0.3), Inches(5.60), CW - Inches(0.6), Inches(0.70),
         size=Pt(24), color=GOLD, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
@@ -95,7 +98,7 @@ def slide_is_motivation(prs):
         "verbosity bias, self-enhancement bias, mood bias. Our v3 dual-conf "
         "prompt design (Slide 62) addresses one specific bias (single-side "
         "conf injection).",
-        [[sub]] + card_groups + [[takeaway]], click_reveal=True)
+        [[sub]] + card_groups + [[takeaway_rect, takeaway]], click_reveal=True)
 
 
 def slide_is_intro_a(prs):  # audit:bigfonts2
@@ -110,18 +113,18 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
     add_accent_line(slide)
 
     # Top banner — shortened so Pt(24) fits on one line (audit:bigfonts)
-    banner = add_rect(slide, MX, CT, CW, Inches(0.55), fill_color=NAVY2,
+    banner = add_rect(slide, MX, CT, CW, Inches(0.80), fill_color=NAVY2,  # tall enough for 2-line 24pt text
                       border_color=TEAL, border_width=Pt(2), corner_radius=True)
     banner_txt = add_text(slide,
         "IS = 6 signals (0\u20135).  IS \u2265 2.00 = \"Useful\" (Y+P).  "
         "These 3 measure word accuracy and sanity.",
-        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.45),
+        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.70),
         size=Pt(24), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     card_w = Inches(11.0)
-    card_h = Inches(1.55)   # audit:bigfonts2 — shrunk 1.65 -> 1.55 to fit canvas
+    card_h = Inches(1.45)   # audit:bigfonts2 — shrunk 1.65 -> 1.55 to fit canvas
     gap_y = Inches(0.06)    # audit:bigfonts2 — tighter 0.08 -> 0.06
-    start_y = CT + Inches(0.70)
+    start_y = CT + Inches(0.95)   # banner ends ~CT+0.80; gap then cards
 
     # audit:bigfonts2 — example bullets shortened to one line.
     # CUT v2: dropped redundant "Like WER, but" framing on WWER.
@@ -214,11 +217,11 @@ def slide_is_intro_b(prs):
              size=Pt(24), color=TEAL, bold=True)
 
     add_text(slide,
-        "1. Reference and hypothesis become 384-dim sentence embeddings "
-        "via SBERT (all-MiniLM-L6-v2).\n\n"
-        "2. Cosine similarity is computed between the two vectors.\n\n"
+        "1. Ref + hyp \u2192 384-dim sentence vectors via SBERT.\n\n"
+        "2. Cosine similarity of the two vectors.\n\n"
         "3. Captures overall meaning even if word choice differs.",
         MX + Inches(0.3), card_y + Inches(0.55),
+        card_w - Inches(0.6), Inches(2.30),
         card_w - Inches(0.6), Inches(2.30),
         size=Pt(24), color=WHITE)
 
@@ -234,8 +237,8 @@ def slide_is_intro_b(prs):
              size=Pt(24), color=LGRAY, bold=True)
     # CUT v2: reduced example to 2 lines to fit ex_h=1.20.
     add_text(slide,
-        '"the CEO resigned" vs "the chief executive stepped down" '
-        '-> cosine 0.91 (meaning preserved, zero word overlap).',
+        '"CEO resigned" vs "chief exec stepped down" '
+        '\u2192 cosine\ 0.91 (meaning preserved, zero word overlap).',
         MX + Inches(0.3), ex_y + Inches(0.42),
         card_w - Inches(0.6), Inches(0.75),
         size=Pt(20), color=LGRAY, italic=True)
@@ -539,9 +542,7 @@ def slide_is_weight_rationale(prs):
     dims = [
         ("PC1: Signal Quality", "68%", TEAL,
          "Semantic + Phonetic + WER + WWER + Named Entity Accuracy",
-         "All 5 content signals load equally (0.43\u20130.47). Semantic is NOT "
-         "independent \u2014 it loads on PC1 alongside the word-accuracy signals, "
-         "measuring the same underlying quality factor."),
+         "All 5 load equally (0.43–0.47); semantic is not an independent axis."),
         ("PC2: Output Length", "20%", GREEN,
          "Length Ratio dominates (loading 0.91) \u2014 independent of content quality",
          "Catches hallucination (too long) and truncation (too short). "
@@ -713,19 +714,15 @@ def slide_is_radar(prs):
     add_title(slide, "Model Comparison: IS Profiles")
     add_accent_line(slide)
     sub = add_text(slide,
-        "How different LLM backbones would reshape the IS radar \u2014 "
-        "measured profiles from LRS3 benchmark and YouTube evaluation.",
-        MX, CT, CW, Inches(0.93), size=Pt(22), color=LGRAY, italic=True)
+        "Captured vs failed IS profiles — LRS3 benchmark and YouTube evaluation.",
+        MX, CT, CW, Inches(0.40), size=Pt(22), color=LGRAY, italic=True)
 
-    # C3 (research-overview pacing): single radar on slide — the
-    # captured-vs-failed (MBR-IS) radar carries the within-domain quality-
-    # band story, which is the deck's headline. The cross-domain LRS3-vs-
-    # YouTube radar is moved to speaker notes (the "why YouTube is harder"
-    # framing was already covered on slide 11).
+
+    # Subtitle ends at CT+0.40; image starts at CT+0.55 — 0.15" gap.
     img_top = CT + Inches(0.55)
     img_h = SL_H - img_top - Inches(1.65)   # leave room for caption + footer
     img_w = Inches(7.0)
-    img_x = (SL_W - img_w) / 2
+    img_w = Inches(9.5)
 
     img_main = add_image(slide, "P6_is_radar", img_x, img_top,
                          width=img_w, height=img_h)
@@ -803,16 +800,12 @@ def slide_is_wer_scatter(prs):
                     MX + left_w + Inches(0.2), CT - Inches(0.2),
                     width=CW - left_w - Inches(0.2))
 
-    # Bottom note about IS-WER correlation (single line at Pt(16)).
+    # Combined bottom caption (was 2 \u00d7 Pt(16) lines; merged at Pt(18)).
     add_text(slide,
-        "WER correlates with IS (r\u2248\u22120.7) but misses phonetic and semantic preservation.",
-        MX, Inches(6.45), CW, Inches(0.30),
-        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
-    # Caveat footer: distinguish IS-failure bucket from the WER-unusable bucket.
-    add_text(slide,
-        "(IS<2.00 \u2260 WER unusable bucket \u2014 different metrics)",
-        MX, Inches(6.78), CW, Inches(0.25),
-        size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "WER correlates with IS (r\u2248\u22120.7) but misses phonetic/semantic preservation.  "
+        "(IS<2.00 \u2260 WER unusable bucket \u2014 different metrics.)",
+        MX, Inches(6.45), CW, Inches(0.55),
+        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Scatter plot of WER vs IS for all 1,497 segments (top-1 IS) with "
@@ -994,7 +987,7 @@ def slide_07(prs):
     oracle_shapes.append(add_rect(slide, lx, by, card_w, card_h,
                           fill_color=NAVY2, border_color=CORAL,
                           border_width=Pt(2.5), corner_radius=True))
-    oracle_shapes.append(add_text(slide, "Oracle  (MBR best-case)",
+    oracle_shapes.append(add_text(slide, "Best-case  (Aggregated output)",
                           lx + Inches(0.25), by + Inches(0.1),
                           card_w - Inches(0.5), Inches(0.4),
                           size=Pt(24), color=CORAL, bold=True))
@@ -1016,7 +1009,7 @@ def slide_07(prs):
 
     # Sub-numbers — 1-line each; y staggered to avoid overlap
     oracle_shapes.append(add_text(slide,
-        f"NIV-Y {niv_y_pct_mbr:.1f}%  |  Mean IS {is_mean_mbr:.3f} (MBR)",  # audit:niv_y_pct_mbr
+        f"NIV-Y {niv_y_pct_mbr:.1f}%  |  Mean IS {is_mean_mbr:.3f}",  # audit:niv_y_pct_mbr
         lx + Inches(0.25), by + Inches(2.10),
         card_w - Inches(0.5), Inches(0.45),
         size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER))
@@ -1150,29 +1143,25 @@ def slide_08(prs):
     add_accent_line(slide)
 
     add_text(slide,
-        "574 segments below useful threshold (IS < 2.00) \u2014 how often does each mode occur?",
+        "5 failure modes — share of ALL 1,497 segments each mode affects",
         MX, CT, CW, Inches(0.87), size=Pt(20), color=LGRAY, italic=True)
 
     modes = [
-        ("Wrong Topic", 44.4, 255, GOLD),
-        ("Hallucination", 18.8, 108, CORAL),
-        ("Signal Loss", 13.9, 80, MGRAY),
-        ("Right Topic, Wrong Details", 13.8, 79, TEAL),
-        ("Accumulated Errors", 9.1, 52, LGRAY),
+        ("Wrong Topic",              17.0, 255, GOLD),
+        ("Hallucination",              7.2, 108, CORAL),
+        ("Signal Loss",                5.3,  80, MGRAY),
+        ("Right Topic, Wrong Details", 5.3,  79, TEAL),
+        ("Accumulated Errors",          3.5,  52, LGRAY),
     ]
 
-    # Hand-built bar chart (left half) — bars shrunk from 6.0 to 3.0 inches
-    # so the regenerated P_failure_taxonomy plot can sit on the right and
-    # both bar versions are visible side by side. Bar/label/value widths
-    # all scaled down accordingly.
+    # Full-width bar chart (right image removed per #329).
     bar_h = Inches(0.65)
     bar_gap = Inches(0.2)
-    label_w = Inches(2.4)        # was 3.5 — shrunk to free right column
-    max_bar_w = Inches(3.0)      # was 6.0 — shrunk to free right column
-    val_w = Inches(1.5)          # was 1.8 — shrunk to fit
+    label_w = Inches(3.2)
+    max_bar_w = Inches(6.0)
+    val_w = Inches(1.8)
     bar_x = MX + label_w + Inches(0.15)
     start_y = CT + Inches(0.55)
-
     bar_groups = []
     for i, (name, pct, count, color) in enumerate(modes):
         y = start_y + i * (bar_h + bar_gap)
@@ -1181,7 +1170,7 @@ def slide_08(prs):
         lbl = add_text(slide, name, MX, y, label_w, bar_h,
                  size=Pt(18), color=WHITE, bold=True, align=PP_ALIGN.RIGHT)
         # Bar
-        w = max(Inches(0.2), int(max_bar_w * pct / 45.0))
+        w = max(Inches(0.2), int(max_bar_w * pct / 20.0))
         bar = add_rect(slide, bar_x, y, w, bar_h, fill_color=color,
                        corner_radius=True)
         # Value label
@@ -1190,20 +1179,7 @@ def slide_08(prs):
                  size=Pt(18), color=LGRAY)
         bar_groups.append([lbl, bar, val])
 
-    # Right column — regenerated P_failure_taxonomy plot (MBR-IS, polished).
-    # Width ~4.5" leaves the manual bars on the left and the new plot on
-    # the right; aspect 1.67 → height ~2.7".
-    img_w = Inches(4.5)
-    img_h = Inches(2.7)
-    img_x = SL_W - MX - img_w
-    img_y = CT + Inches(0.55)
-    img_taxo = add_image(slide, "P_failure_taxonomy", img_x, img_y,
-                         width=img_w, height=img_h)
-    cap_taxo = add_text(slide,
-        "Right: regenerated taxonomy plot (MBR-IS) — same 5 categories.",
-        img_x, img_y + img_h + Inches(0.05), img_w, Inches(0.8),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)  # audit:fix_round3 12pt floor
-
+    # Right image removed per user review (#329 extra figure)
     add_text(slide,
              "Failures are diverse — no single fix. Each roadmap phase "
              "targets specific modes.",
@@ -1231,7 +1207,7 @@ def slide_08(prs):
         "width (and label/value font sizes nudged down) to make room. "
         "Sources: docs/evaluation/intelligibility_methodology.md, "
         "docs/evaluation/intelligibility/intelligibility_summary.json.",
-        bar_groups + [[img_taxo, cap_taxo]])
+        bar_groups)
 
 # ═══════════════════════════════════════════════════════════════════════
 # FAILURE MODE DEEP-DIVE — DEFINITIONS & CLASSIFICATION RULES
@@ -1680,7 +1656,7 @@ def slide_metric_transition(prs):  # audit:bigfonts2
                         size=Pt(38), color=CORAL, bold=True))
     # audit:bigfonts — copy trimmed for Pt(24)
     g1.append(add_text(slide,
-        f"WER (MBR; top-1 {wer_top1:.2f}%)\n"
+        f"WER (aggregated: {wer_mbr:.2f}%; single-pass: {wer_top1:.2f}%)\n"
         "Literature metric \u2014 pessimistic on wild data.",
         card_x + Inches(3.0), c1_y + Inches(0.1),
         card_w - Inches(3.3), card_h - Inches(0.2),
@@ -1706,7 +1682,7 @@ def slide_metric_transition(prs):  # audit:bigfonts2
     # audit:bigfonts — copy trimmed for Pt(24)
     # CUT v3: tightened second-line wording to fit one line at 24pt.
     g2.append(add_text(slide,
-        "NIV-Y+P  (IS \u2265 2.00, MBR)\n"
+        "NIV-Y+P  (IS \u2265 2.00, aggregated output)\n"
         "Deterministic agrees: 927 / 1,497.",
         card_x + Inches(3.0), c2_y + Inches(0.1),
         card_w - Inches(3.3), card_h - Inches(0.2),
@@ -2055,23 +2031,19 @@ def slide_design_philosophy(prs):
 
 
 def slide_is_dimensions(prs):
-    """Two quality dimensions from PCA analysis.
+    """Three quality dimensions from PCA analysis (PC3 shown at user request).
 
-    Verified May 6 2026: framing is correct (2 PCs, Kaiser, 88% total).
-    The legacy "3 dimensions" claim is fully purged from this slide.
+    PC1+PC2 = 88% (Kaiser). PC3 = ~6% (entity swing, below Kaiser threshold).
     Source: docs/evaluation/is_pca_analysis.md.
     """
     slide = new_slide(prs)
-    add_title(slide, "Two Dimensions of Quality (PCA)")
+    add_title(slide, "Quality Dimensions from PCA (6 IS Signals)")
     add_accent_line(slide)
 
-    # PCA result is independent of decode method (computed on top-1 IS components,
-    # but PC structure is a property of the IS formula itself, so it carries over
-    # to MBR). No audit:KEY required \u2014 the values are stable across the audit.
-    add_text(slide, "PCA retains 2 principal components (Kaiser criterion: eigenvalue > 1):",
-             MX, CT, CW, Inches(1.0), size=Pt(24), color=LGRAY)
+    add_text(slide, "PC1+PC2 explain 88% of variance \u2014 PC3 adds 6% more (entity swing):",
+             MX, CT, CW, Inches(0.55), size=Pt(24), color=LGRAY)
 
-    # Two cards (PC1 = 68%, PC2 = 20%, total = 88%)
+    # Three cards (PC1=68%, PC2=20%, PC3=6%; PC1+PC2=88% Kaiser; PC3 shown per user request)
     dims = [
         ("PC1: Signal Quality", "68%", "of total variance",
          "All 5 content signals load equally\n(0.43\u20130.47 each)",
@@ -2079,14 +2051,17 @@ def slide_is_dimensions(prs):
         ("PC2: Output Length", "20%", "of total variance",
          "Length Ratio dominates\n(loading 0.91)",
          "Independent of content quality\nCatches hallucination & truncation", LGRAY),
+        ("PC3: Entity Swing", "6%", "of total variance",
+         "Named entity accuracy\nanti-correlates with phonetics",
+         "Below Kaiser threshold \u2014 latent\nentity-specific signal", GOLD),
     ]
 
-    cw_card = Inches(5.4)
+    cw_card = Inches(3.80)
     ch_card = Inches(4.0)
-    gap = Inches(0.5)
-    total = 2 * cw_card + gap
+    gap = Inches(0.37)
+    total = 3 * cw_card + 2 * gap
     cx = (SL_W - total) / 2
-    cy = CT + Inches(0.55)
+    cy = CT + Inches(0.72)
 
     card_groups = []
     for i, (name, pct, label, signals, insight, color) in enumerate(dims):
@@ -2095,40 +2070,39 @@ def slide_is_dimensions(prs):
                      border_color=color, border_width=Pt(2.5), corner_radius=True)
 
         # Big percentage
-        t1 = add_text(slide, pct, x + Inches(0.2), cy + Inches(0.2),
-                 cw_card - Inches(0.4), Inches(0.6),
-                 size=Pt(44), color=color, bold=True, align=PP_ALIGN.CENTER)
-        t2 = add_text(slide, label, x + Inches(0.2), cy + Inches(0.8),
-                 cw_card - Inches(0.4), Inches(0.35),
+        t1 = add_text(slide, pct, x + Inches(0.15), cy + Inches(0.2),
+                 cw_card - Inches(0.3), Inches(0.6),
+                 size=Pt(40), color=color, bold=True, align=PP_ALIGN.CENTER)
+        t2 = add_text(slide, label, x + Inches(0.15), cy + Inches(0.8),
+                 cw_card - Inches(0.3), Inches(0.35),
                  size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
 
         # Name
-        t3 = add_text(slide, name, x + Inches(0.2), cy + Inches(1.3),
-                 cw_card - Inches(0.4), Inches(0.35),
+        t3 = add_text(slide, name, x + Inches(0.15), cy + Inches(1.25),
+                 cw_card - Inches(0.3), Inches(0.4),
                  size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
 
         # Signals
-        t4 = add_text(slide, signals, x + Inches(0.2), cy + Inches(1.8),
-                 cw_card - Inches(0.4), Inches(0.8),
+        t4 = add_text(slide, signals, x + Inches(0.15), cy + Inches(1.75),
+                 cw_card - Inches(0.3), Inches(0.8),
                  size=Pt(24), color=WHITE, align=PP_ALIGN.CENTER)
 
         # Insight
-        t5 = add_text(slide, insight, x + Inches(0.2), cy + Inches(2.8),
-                 cw_card - Inches(0.4), Inches(0.8),
+        t5 = add_text(slide, insight, x + Inches(0.15), cy + Inches(2.70),
+                 cw_card - Inches(0.3), Inches(0.9),
                  size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
         card_groups.append([r, t1, t2, t3, t4, t5])
 
     _finish(slide, 0,
-        "PCA retains 2 principal components (Kaiser, eigenvalue > 1). "
-        "PC1 (68%): all 5 content signals load equally (0.43-0.47) \u2014 one "
-        "general quality factor driven by the visual encoder. Semantic is NOT "
-        "independent; it loads on PC1 just like word-accuracy signals. "
+        "PCA on 6 IS signals. PC1 (68%): all 5 content signals load equally "
+        "(0.43-0.47) \u2014 one general quality factor driven by the visual encoder. "
+        "Semantic is NOT independent; it loads on PC1 just like word-accuracy signals. "
         "PC2 (20%): Length Ratio dominates (0.91), truly independent of "
-        "content quality. Together: 88% of variance. PC3 (entity swing, "
-        "5%) is below Kaiser threshold and is not used. "
-        "The legacy 3-dimensions framing is fully retired \u2014 this slide and "
-        "downstream narrative use 2 PCs only. "
+        "content quality. PC1+PC2 = 88% total. "
+        "PC3 (6%, entity swing): named entity accuracy anti-correlates with "
+        "phonetics \u2014 below Kaiser threshold (eigenvalue < 1) but shown here "
+        "as a latent signal the IS does not yet fully capture. "
         "See docs/evaluation/is_pca_analysis.md for the full PCA table.",
         card_groups, click_reveal=True)
 
