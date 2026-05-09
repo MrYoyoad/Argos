@@ -66,8 +66,10 @@ from presentation.slides_evaluation import (
     slide_judge_ex4, slide_judge_ex5, slide_judge_ex6,
     slide_disagreement_blind, slide_disagreement_context,
     slide_25d, slide_25e,
-    slide_15,
     slide_metric_disagreement, slide_metric_disagreement_2,
+)
+from presentation.slides_demo import (
+    slide_15,
     slide_live_example_intro,
     slide_failure_live_demo,
 )
@@ -136,49 +138,54 @@ slide_diversity_of_inputs       = _try_import(
 # Evaluation section additions
 slide_literature_metrics_problem = _try_import(
     "presentation.slides_evaluation", "slide_literature_metrics_problem")
-# Confidence section (new — confidence-research slides, all in slides_evaluation per Agent E's scope)
+# Confidence section — split into slides_confidence.py (May 2026 refactor)
 slide_confidence_problem        = _try_import(
-    "presentation.slides_evaluation", "slide_confidence_problem")
+    "presentation.slides_confidence", "slide_confidence_problem")
 slide_two_layer_confidence_research = _try_import(
-    "presentation.slides_evaluation", "slide_two_layer_confidence_research")
+    "presentation.slides_confidence", "slide_two_layer_confidence_research")
 slide_per_word_confidence_distribution = _try_import(
-    "presentation.slides_evaluation", "slide_per_word_confidence_distribution")
+    "presentation.slides_confidence", "slide_per_word_confidence_distribution")
 slide_band_reliability_overall  = _try_import(
-    "presentation.slides_evaluation", "slide_band_reliability_overall")
+    "presentation.slides_confidence", "slide_band_reliability_overall")
 slide_band_reliability_stratified = _try_import(
-    "presentation.slides_evaluation", "slide_band_reliability_stratified")
+    "presentation.slides_confidence", "slide_band_reliability_stratified")
 slide_green_leakage_examples    = _try_import(
-    "presentation.slides_evaluation", "slide_green_leakage_examples")
+    "presentation.slides_confidence", "slide_green_leakage_examples")
 slide_three_thresholds          = _try_import(
-    "presentation.slides_evaluation", "slide_three_thresholds")
+    "presentation.slides_confidence", "slide_three_thresholds")
 slide_three_tier_policy_research = _try_import(
-    "presentation.slides_evaluation", "slide_three_tier_policy_research")
+    "presentation.slides_confidence", "slide_three_tier_policy_research")
 slide_band_reliability_by_niv   = _try_import(
-    "presentation.slides_evaluation", "slide_band_reliability_by_niv")
+    "presentation.slides_confidence", "slide_band_reliability_by_niv")
 slide_agreement_aware_bands     = _try_import(
-    "presentation.slides_evaluation", "slide_agreement_aware_bands")
+    "presentation.slides_confidence", "slide_agreement_aware_bands")
 slide_agreement_vs_conf_information = _try_import(
-    "presentation.slides_evaluation", "slide_agreement_vs_conf_information")
+    "presentation.slides_confidence", "slide_agreement_vs_conf_information")
 slide_client_trust_calibration  = _try_import(
-    "presentation.slides_evaluation", "slide_client_trust_calibration")
+    "presentation.slides_confidence", "slide_client_trust_calibration")
+# IS × Confidence correlation (new May 2026 — batch 23 #348)
+slide_is_conf_correlation       = _try_import(
+    "presentation.slides_confidence", "slide_is_conf_correlation")
+slide_is_conf_contingency       = _try_import(
+    "presentation.slides_confidence", "slide_is_conf_contingency")
 # N-best (judge) slides
 slide_nbest_v3_judge_paired_tests = _try_import(
-    "presentation.slides_evaluation", "slide_nbest_v3_judge_paired_tests")
+    "presentation.slides_confidence", "slide_nbest_v3_judge_paired_tests")
 slide_mbr_decision              = _try_import(
-    "presentation.slides_evaluation", "slide_mbr_decision")
+    "presentation.slides_confidence", "slide_mbr_decision")
 slide_v1_vs_v3_judge_lesson     = _try_import(
-    "presentation.slides_evaluation", "slide_v1_vs_v3_judge_lesson")
+    "presentation.slides_confidence", "slide_v1_vs_v3_judge_lesson")
 # Demo (Obama trust/salvage/strip) and judge example videos
 slide_demo_obama_trust          = _try_import(
-    "presentation.slides_evaluation", "slide_demo_obama_trust")
+    "presentation.slides_demo", "slide_demo_obama_trust")
 slide_demo_obama_salvage        = _try_import(
-    "presentation.slides_evaluation", "slide_demo_obama_salvage")
+    "presentation.slides_demo", "slide_demo_obama_salvage")
 slide_demo_obama_strip          = _try_import(
-    "presentation.slides_evaluation", "slide_demo_obama_strip")
+    "presentation.slides_demo", "slide_demo_obama_strip")
 slide_demo_judge_entity         = _try_import(
-    "presentation.slides_evaluation", "slide_demo_judge_entity")
+    "presentation.slides_demo", "slide_demo_judge_entity")
 slide_demo_judge_vocab          = _try_import(
-    "presentation.slides_evaluation", "slide_demo_judge_vocab")
+    "presentation.slides_demo", "slide_demo_judge_vocab")
 
 
 def main():
@@ -267,6 +274,8 @@ def main():
         slide_three_tier_policy_research,
         slide_band_reliability_by_niv,
         slide_a16,                      # IS × judge cross-tab (moved here: after conf intro)
+        slide_is_conf_correlation,      # IS × confidence: scalar + tier κ (batch-23 #348)
+        slide_is_conf_contingency,      # IS × confidence: 2×2 binary verdict
         slide_agreement_aware_bands,
         slide_agreement_vs_conf_information,
         slide_client_trust_calibration,
