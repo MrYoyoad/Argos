@@ -36,7 +36,7 @@ from presentation.helpers import _fix_pptx_video_compat, _strip_orphan_animation
 # academic variant to live alongside it, not overwrite it.)
 OUTPUT = Path(
     "/home/ubuntu/presentation_materials_20260224/"
-    "Argos_VSP_For_Orchard_May2026.pptx"
+    "HAPARDES_AWS_V1.pptx"
 )
 
 # ─── Slide imports ───────────────────────────────────────────────────────
