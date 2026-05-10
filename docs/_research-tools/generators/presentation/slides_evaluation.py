@@ -1020,65 +1020,63 @@ def slide_two_eval_systems(prs):
                   size=Pt(24), color=TEAL, bold=True)
 
     # IS card
-    r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.6),
+    r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.85),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                   corner_radius=True)
     r1_t = add_text(slide, "Intelligibility Score (IS)", MX + Inches(0.2),
-             CT + Inches(0.6), col_w - Inches(0.4), Inches(1.0),
-             size=Pt(24), color=TEAL, bold=True)
+             CT + Inches(0.55), col_w - Inches(0.4), Inches(0.4),
+             size=Pt(18), color=TEAL, bold=True)
     r1_b = add_bullets(slide, [
         "Strict metric: composite 0\u20135 score, two operating points",
-        ("IS \u2265 3.80 = Clearly conveyed: 23% (346/1,497)", {"bold": True}),
-        ("IS \u2265 2.00 = Any useful meaning: 62% (922/1,497)", {"bold": True}),
-    ], MX + Inches(0.2), CT + Inches(1.0), col_w - Inches(0.4), Inches(0.8),
-       size=Pt(24))
+        ("IS \u2265 3.80 = Clearly conveyed: 23.1% (346/1,497)", {"bold": True}),
+        ("IS \u2265 2.00 = Any useful meaning: 61.6% (922/1,497)", {"bold": True}),
+    ], MX + Inches(0.2), CT + Inches(0.95), col_w - Inches(0.4), Inches(1.0),
+       size=Pt(15))
 
     # Opus-as-Judge card
-    r2 = add_rect(slide, MX, CT + Inches(2.3), col_w, Inches(1.6),
+    r2 = add_rect(slide, MX, CT + Inches(2.55), col_w, Inches(1.40),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
     r2_t = add_text(slide, "Opus-as-a-Judge (LLM Gold Standard)", MX + Inches(0.2),
-             CT + Inches(2.4), col_w - Inches(0.4), Inches(0.3),
-             size=Pt(24), color=GREEN, bold=True)
+             CT + Inches(2.60), col_w - Inches(0.4), Inches(0.4),
+             size=Pt(18), color=GREEN, bold=True)
     r2_b = add_bullets(slide, [
         "Holistic: Y/P/N per ref+hyp pair (1,497 pairs)",
-        ("Y = 23% clearly conveyed, Y+P = 65% useful", {"bold": True}),
-    ], MX + Inches(0.2), CT + Inches(2.8), col_w - Inches(0.4), Inches(0.8),
-       size=Pt(24))
+        ("Y = 23.0% clearly conveyed, Y+P = 64.9% useful", {"bold": True}),
+    ], MX + Inches(0.2), CT + Inches(3.00), col_w - Inches(0.4), Inches(0.8),
+       size=Pt(15))
 
     # Right — agreement + worked example
     rx = MX + col_w + gap
     rt = add_text(slide, "Agreement Between Systems", rx, CT, col_w, Inches(0.4),
-                  size=Pt(24), color=CORAL, bold=True)
+                  size=Pt(18), color=CORAL, bold=True)
 
     agree_txt = add_text(slide,
-        "\u03ba = 0.818 (good agreement)\n"
-        "IS undercounts: 62% vs judge 65%.",
-        rx, CT + Inches(0.5), col_w, Inches(0.6),
-        size=Pt(24), color=WHITE, bold=True)
+        "\u03ba = 0.818 (judge agreement, Y+P)\n"
+        "IS undercounts: 61.6% vs judge 64.9%.",
+        rx, CT + Inches(0.40), col_w, Inches(0.65),
+        size=Pt(15), color=WHITE, bold=True)
 
-    # NIV Y+P agreement matrix (IS >= 2.00 vs Opus Y+P)
     tbl = add_table(slide,
         ["", "Opus: Y or P", "Opus: N"],
         [["IS \u2265 2.00", "883", "39"],
          ["IS < 2.00", "88", "487"]],
-        rx, CT + Inches(1.3), col_w, text_size=Pt(24),
-        row_height=Inches(0.5),
+        rx, CT + Inches(1.15), col_w, text_size=Pt(15),
+        row_height=Inches(0.40),
         row_colors={0: {1: GREEN}, 1: {2: CORAL}})
 
-    # Worked examples
-    we_t = add_text(slide, "Worked Examples:", rx, CT + Inches(2.6), col_w, Inches(0.3),
-             size=Pt(24), color=TEAL, bold=True)
+    we_t = add_text(slide, "Worked Examples:", rx, CT + Inches(2.75), col_w, Inches(0.3),
+             size=Pt(18), color=TEAL, bold=True)
     we_b = add_text(slide,
         'Ref: "what does this chord sound like to you"\n'
         'Hyp: "what does this court sound like to you"\n'
-        'WER: 12% \u2022 IS: 3.84 \u2022 IS Y \u2714 \u2022 Opus: Y\n\n'
+        'WER: 12% \u2022 IS: 3.84 \u2022 IS Y \u2022 Opus: Y\n\n'
         'Ref: "opinions about reason and logic"\n'
         'Hyp: "our opinion is about reasoning and logic"\n'
-        'WER: 74% \u2022 IS: 2.94 \u2022 IS Y+P \u2714 \u2022 Opus: P\n'
+        'WER: 74% \u2022 IS: 2.94 \u2022 IS Y+P \u2022 Opus: P\n'
         'Old IS \u2265 3.0 wrongly rejected this segment.',
-        rx, CT + Inches(2.95), col_w, Inches(1.7),
-        size=Pt(24), color=WHITE)
+        rx, CT + Inches(3.15), col_w, Inches(2.70),
+        size=Pt(13), color=WHITE)
 
     _finish(slide, 0,
         "Two evaluation systems with NIV thresholds. "
@@ -1111,10 +1109,11 @@ def slide_llm_judge(prs):
     # below ("table hides text"). Trimmed to 3 short bullets that fit
     # single-line at 24pt -> total ~1.5" of rendered text inside the 2.1" box.
     lb = add_bullets(slide, [
-        "Frontier LLM (Claude Opus) as judge",
-        "Holistic Y/P/N verdict on each pair",
-        ("87% intra-rater reliability (30 dups)", {"bold": True}),
-    ], MX, CT + Inches(0.5), col_w, Inches(2.1), size=Pt(24))
+        "Use a frontier LLM (Claude Opus) as an independent evaluator",
+        "Evaluate every reference+hypothesis pair holistically",
+        "3-level verdict: Y (preserved) / P (partial) / N (not preserved)",
+        ("30 duplicate pairs → 86.7% intra-rater reliability", {"bold": True}),
+    ], MX, CT + Inches(0.5), col_w, Inches(2.1), size=Pt(18))
 
     # Results table \u2014 pushed down to CT+2.7 / CT+3.1 to clear bullet overflow
     res_t = add_text(slide, "Results (Blind, 1,497 Pairs)", MX, CT + Inches(2.7), col_w, Inches(0.3),
@@ -1122,10 +1121,10 @@ def slide_llm_judge(prs):
 
     tbl = add_table(slide,
         ["Verdict", "Count", "%"],
-        [["Y (fully preserved)", "345", "23%"],
-         ["P (partially)", "626", "42%"],
-         ["N (not preserved)", "526", "35%"],
-         ["Y+P (any useful)", "971", "65%"]],
+        [["Y (fully preserved)", "345", "23.0%"],
+         ["P (partially)", "626", "41.8%"],
+         ["N (not preserved)", "526", "35.1%"],
+         ["Y+P (any useful)", "971", "64.9%"]],
         MX, CT + Inches(3.1), col_w, text_size=Pt(20),
         # OVERLAP fix (May 2026): font 24->20pt + row_height 0.40->0.36 so
         # PowerPoint's auto-grow on 24pt cells (which forced the table past
@@ -1143,21 +1142,13 @@ def slide_llm_judge(prs):
     rb = add_bullets(slide, [
         "Claude Opus received each ref+hyp pair blind (no metrics visible)",
         "3-level holistic judgment: Y (fully conveyed), P (partial), N (lost)",
-        ("\u03ba = 0.690 (Y threshold) and \u03ba = 0.816 (Y+P threshold)",
+        ("\u03ba = 0.690 (Y threshold) and \u03ba = 0.818 (Y+P threshold)",
          {"color": TEAL}),
         ("Used as gold standard to calibrate IS thresholds",
          {"bold": True}),
-    ], rx, CT + Inches(0.5), col_w, Inches(4.2), size=Pt(24))
+    ], rx, CT + Inches(0.5), col_w, Inches(4.2), size=Pt(18))
 
-    # audit:after_amosi_narrative_actions.md fix #7 - this is the v1
-    # blind judge run (Opus 4.6, 1,497 pairs). The n-best paired-test
-    # slide elsewhere in this section uses v3 (dual-conf, Opus 4.7,
-    # 5,988 verdicts). Footer label disambiguates the two runs so the
-    # audience does not conflate them.
-    judge_label = add_text(slide,
-        "v1 blind judge   /   Opus 4.6   /   1,497 pairs",
-        MX, Inches(6.6), CW, Inches(0.3),
-        size=Pt(18), color=MGRAY, italic=True, align=PP_ALIGN.CENTER)
+    judge_label = None
 
     _finish(slide, 0,
         "LLM-as-a-Judge gold standard - v1 BLIND run (Claude Opus 4.6, "
@@ -1189,7 +1180,7 @@ def slide_llm_judge(prs):
         "docs/evaluation/threshold_calibration_vs_opus.md.",
         [[lt, lb],
          [res_t, tbl],
-         [rt, rb, judge_label]],
+         [rt, rb]],
         click_reveal=True)
 
 
@@ -1206,7 +1197,7 @@ def slide_context_eval(prs):
                   border_color=TEAL, border_width=Pt(2), corner_radius=True)
 
     # IS metric
-    add_text(slide, "IS says 62%", MX + Inches(0.3), CT + Inches(0.2),
+    add_text(slide, "IS says 61.6%", MX + Inches(0.3), CT + Inches(0.2),
              CW - Inches(0.6), Inches(0.7),
              size=Pt(40), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "of segments deliver useful output (IS \u2265 2.00)",
@@ -1215,7 +1206,7 @@ def slide_context_eval(prs):
              size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
 
     # LLM Judge
-    add_text(slide, "LLM Judge says 65%", MX + Inches(0.3), CT + Inches(1.5),
+    add_text(slide, "LLM Judge says 64.9%", MX + Inches(0.3), CT + Inches(1.5),
              CW - Inches(0.6), Inches(0.7),
              size=Pt(40), color=GREEN, bold=True, align=PP_ALIGN.CENTER)
     add_text(slide, "deliver useful output (Y + P)",
@@ -1227,14 +1218,16 @@ def slide_context_eval(prs):
     # audit:bigfonts — cut bullet "LLM-as-a-Judge (blind, 1,497 pairs)
     # confirms: nearly 2 in 3 segments carry useful meaning" (in notes).
     bul = add_bullets(slide, [
-        ("IS closely tracks LLM judge \u2014 62% vs 65% "
-         "(\u03ba = 0.818)", {"bold": True, "color": WHITE}),
-        ("3pp gap (62% \u2192 65%) = IS is a calibrated surrogate",
-         {}),
+        ("IS closely tracks LLM judge \u2014 61.6% vs 64.9% "
+         "(\u03ba = 0.818, judge agreement at Y+P)", {"bold": True, "color": WHITE}),
+        ("LLM-as-a-Judge (blind, 1,497 pairs) confirms: "
+         "nearly 2 in 3 segments carry useful meaning", {}),
+        ("The 3pp gap (61.6% \u2192 64.9%) = IS is a calibrated surrogate, "
+         "not an overcount", {}),
         ("IS is a floor, not a ceiling \u2014 designed to be cautious",
          {"color": TEAL}),
-    ], MX + Inches(0.3), CT + Inches(2.8), CW - Inches(0.6),
-       Inches(2.1), size=Pt(24))
+    ], MX + Inches(0.3), CT + Inches(2.80), CW - Inches(0.6),
+       Inches(2.1), size=Pt(15))
 
     # Bottom text
     add_text(slide,
@@ -1542,9 +1535,9 @@ def slide_judge_ex1(prs):
         title="Appendix: Judge Example — Named Entity Swap",
         ref="market research firm bernreuter research is "
             "forecasting pv installations could reach",
-        hyp="market research firm rogers research is "
+        hyp="market research from rogers research is "
             "forecasting pv installations will reach",
-        wer="18%", wwer="15%", is_score="4.55",
+        wer="15.0%", wwer="15.0%", is_score="4.55",
         is_tier="Excellent", judge="Y",
         category="Named Entity Swap — meaning fully preserved",
         # CUT v3: long narrative ("WER penalizes the name error equally
@@ -1612,7 +1605,7 @@ def slide_judge_ex3(prs):
         hyp="we need a radically different approach we must indeed "
             "find a way we can design existing roads to exist with "
             "existing structures and enable them for reuse",
-        wer="52%", wwer="47%", is_score="3.02",
+        wer="51.5%", wwer="47.1%", is_score="3.02",
         is_tier="Good", judge="P",
         category="Domain Vocabulary Drift \u2014 structure intact, terms swapped",
         # audit:bigfonts — annotation trimmed (cut "Without domain context,
@@ -1698,7 +1691,7 @@ def slide_judge_ex6(prs):
         hyp="i actually used the overheard ghost whisperer "
             "music for that scene which i know is about to "
             "go on but the scene runs",
-        wer="74%", wwer="69%", is_score="1.79",
+        wer="73.9%", wwer="68.8%", is_score="1.79",
         is_tier="Poor", judge="P",
         category="Topic Hijack \u2014 grammatically fluent, completely wrong topic",
         # audit:bigfonts — annotation trimmed (cut "this is what makes

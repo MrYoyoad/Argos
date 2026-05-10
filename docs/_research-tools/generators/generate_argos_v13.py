@@ -55,6 +55,7 @@ from presentation.slides_evaluation import (
     slide_is_deep_dive,
     slide_llm_context_engine,
     slide_25, slide_25b, slide_25c,
+    slide_14b,
 )
 from presentation.slides_demo import (
     slide_15,
@@ -66,6 +67,7 @@ from presentation.slides_engineering import (
     slide_dual_env,
     slide_18, slide_19, slide_20, slide_21,
     slide_three_repos, slide_web_ui,
+    slide_eng_transition,
 )
 from presentation.slides_future import (
     slide_future_transition,
@@ -241,14 +243,14 @@ def main():
         hide(slide_08),                                         # 48: HIDDEN
         slide_failure_deep_1a,                                  # 49
         slide_failure_deep_1b,                                  # 50
-        with_title(slide_failure_live_demo, "Failure Modes: Real Examples"),  # 51
+        slide_failure_deep_2,                                   # 51: Failure Modes: Real Examples (3-card)
         hide(slide_is_deep_dive),                               # 52: HIDDEN
         hide(slide_metric_disagreement),                        # 53: HIDDEN
         hide(slide_metric_disagreement_2),                      # 54: HIDDEN
         hide(with_title(slide_25, "IS: A Calibrated Surrogate for LLM Judgment")),  # 55: HIDDEN
         slide_25d,                                              # 56
         hide(slide_25e),                                        # 57: HIDDEN
-        with_title(slide_a15, "Curated Examples — Video Gallery"),  # 58
+        slide_14b,                                              # 58: Curated Examples — Video Gallery (6-thumbnail)
 
         # ── §5: Demo (3 slides) ───────────────────────────────────────
         slide_demo_obama_trust,                                 # 59
@@ -256,8 +258,7 @@ def main():
         with_title(slide_failure_live_demo, "Demo: Where Word Accuracy and Meaning Diverge"),  # 61
 
         # ── §6: Engineering (10 slides) ───────────────────────────────
-        # Note: this section is titled "ENGINEERING" in v13. Using a divider style transition.
-        slide_research_transition,                              # 62: ENGINEERING divider (override label)
+        slide_eng_transition,                                   # 62: ENGINEERING divider
         slide_three_repos,                                      # 63
         slide_pipeline_10stage,                                 # 64: merged 17_a/b NEW
         hide(slide_17_png),                                     # 65: HIDDEN

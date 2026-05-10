@@ -631,9 +631,9 @@ def slide_21(prs):
          "\u03ba=0.77 across 16 configs.", GREEN),
     ]
 
-    cw = Inches(2.7)
-    ch = Inches(4.0)
-    gap = Inches(0.35)
+    cw = Inches(2.92)
+    ch = Inches(4.5)
+    gap = Inches(0.28)
     total = 4 * cw + 3 * gap
     cx = (SL_W - total) / 2
     cy = CT + Inches(0.2)
@@ -644,11 +644,11 @@ def slide_21(prs):
         r = add_rect(slide, x, cy, cw, ch, fill_color=NAVY2,
                      border_color=color, border_width=Pt(2), corner_radius=True)
         t1 = add_text(slide, title, x + Inches(0.15), cy + Inches(0.3),
-                 cw - Inches(0.3), Inches(1.0),
-                 size=Pt(24), color=color, bold=True, align=PP_ALIGN.CENTER)
-        t2 = add_text(slide, desc, x + Inches(0.15), cy + Inches(0.95),
-                 cw - Inches(0.3), Inches(2.7),
-                 size=Pt(24), color=WHITE)
+                 cw - Inches(0.3), Inches(0.7),
+                 size=Pt(22), color=color, bold=True, align=PP_ALIGN.CENTER)
+        t2 = add_text(slide, desc, x + Inches(0.20), cy + Inches(1.10),
+                 cw - Inches(0.4), Inches(3.2),
+                 size=Pt(18), color=WHITE)
         card_groups.append([r, t1, t2])
 
     _finish(slide, 21,
@@ -873,7 +873,7 @@ def slide_dual_env(prs):
     lt = add_text(slide, "EC2 (Development)", MX, CT, col_w, Inches(0.4),
                   size=Pt(24), color=TEAL, bold=True)
 
-    r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(1.5),
+    r1 = add_rect(slide, MX, CT + Inches(0.5), col_w, Inches(2.05),
                   fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
                   corner_radius=True)
     b1 = add_bullets(slide, [
@@ -881,13 +881,13 @@ def slide_dual_env(prs):
         "GPU: Tesla T4 (16GB)",
         "Path: /home/ubuntu/",
         "All datasets and evaluation tools",
-    ], MX + Inches(0.2), CT + Inches(0.6), col_w - Inches(0.4), Inches(2.2),
-       size=Pt(24))
+    ], MX + Inches(0.2), CT + Inches(0.62), col_w - Inches(0.4), Inches(1.95),
+       size=Pt(20))
 
-    ct_label = add_text(slide, "Container (Production)", MX, CT + Inches(2.3), col_w,
+    ct_label = add_text(slide, "Container (Production)", MX, CT + Inches(2.85), col_w,
              Inches(0.4), size=Pt(24), color=CORAL, bold=True)
 
-    r2 = add_rect(slide, MX, CT + Inches(2.8), col_w, Inches(1.5),
+    r2 = add_rect(slide, MX, CT + Inches(3.35), col_w, Inches(2.05),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
     b2 = add_bullets(slide, [
@@ -895,8 +895,8 @@ def slide_dual_env(prs):
         "GPU: client hardware",
         "Path: /workspace/",
         "Pipeline + web UI only",
-    ], MX + Inches(0.2), CT + Inches(2.9), col_w - Inches(0.4), Inches(2.2),
-       size=Pt(24))
+    ], MX + Inches(0.2), CT + Inches(3.47), col_w - Inches(0.4), Inches(1.95),
+       size=Pt(20))
 
     # Right — sync challenges
     rx = MX + col_w + gap
@@ -909,7 +909,7 @@ def slide_dual_env(prs):
         "Different Python environments and dependencies",
         ("Detailed sync changelog with exact code diffs", {"color": TEAL}),
         "INSTALL.sh overlay with 13-point verification",
-    ], rx, CT + Inches(0.6), col_w, Inches(4.2), size=Pt(24))
+    ], rx, CT + Inches(0.6), col_w, Inches(4.6), size=Pt(20))
 
     _finish(slide, 0,
         "Two environments: EC2 for development and research, Docker container "

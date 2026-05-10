@@ -33,24 +33,30 @@ from .helpers import (
 def slide_what_was_done_1(prs):  # audit:bigfonts2
     """What was done? (1/2) — four months of research and engineering.
 
-    audit:bigfonts2 — Pass 2 V6: bullets trimmed to <=8 words each per V2
-    ceiling; bullets box height shrunk 5.2 -> 4.85 so bottom is 6.95 (≤7.05).
+    v13 update: aligned to Amosi v13 source — subtitle + 7 detailed bullets.
     """
     slide = new_slide(prs)
     add_title(slide, "What Was Built")
     add_accent_line(slide)
 
+    # Subtitle (italic gray)
+    add_text(slide,
+        "Engineering: from research paper to deployable product",
+        MX, CT, CW, Inches(0.45),
+        size=Pt(18), color=LGRAY, italic=True)
+
     bullets = [
-        ("Paper → production: Docker container, web UI, one-command run",
-         {"bold": True, "color": TEAL}),
-        "8-stage pipeline: face detect → AV-HuBERT → LLM decode",
-        "Full web UI: upload video, instant transcription, quality flags",
-        ("Beam aggregation: 20 hypotheses combined — better than single-pass",
-         {"color": TEAL}),
+        "From research paper to working product: no codebase, no docs, no pipeline → fully deployable system in four months",
+        "Built complete 10-stage pipeline: video → face detect → mouth crop → AV-HuBERT → projection → Llama decode → confidence → aggregate → report",
+        "Shipped standalone Docker container: runs anywhere with a GPU, on-prem or cloud, no external dependencies",
+        "Built professional UI: drag-and-drop video, live progress, color-coded confidence report, no command line required",
+        "Reproducible deployment: same container runs on AWS or standalone hardware — same outputs, same behavior",
+        "Full evaluation infrastructure: 1,497 segments scored against blind LLM judge, reproducible from raw video to confidence report",
+        "Fine-tuning environment and data pipeline ready: container build, training infrastructure, evaluation loop all in place",
     ]
 
-    add_bullets(slide, bullets, MX, CT + Inches(0.35), CW, Inches(4.85),
-                size=Pt(24), bullet_color=TEAL)
+    add_bullets(slide, bullets, MX, CT + Inches(0.55), CW, Inches(5.5),
+                size=Pt(15), bullet_color=TEAL, spacing=Pt(6))
 
     _finish(slide, 0,
         "What Was Built. Took VSP-LLM from a research paper with no working "
@@ -68,24 +74,36 @@ def slide_what_was_done_1(prs):  # audit:bigfonts2
 def slide_what_was_done_2(prs):  # audit:bigfonts2
     """What was done? (2/2) — key findings and outcomes.
 
-    audit:bigfonts2 — Pass 2 V6: bullets trimmed to <=8 words; box h 5.2 -> 4.85.
+    v13 update: aligned to Amosi v13 source — subtitle + 7 detailed bullets + footnote.
     """
     slide = new_slide(prs)
     add_title(slide, "What We Found \u2014 It Works")
     add_accent_line(slide)
 
+    # Subtitle (italic gray)
+    add_text(slide,
+        "Research findings and clear roadmap forward",
+        MX, CT, CW, Inches(0.45),
+        size=Pt(18), color=LGRAY, italic=True)
+
     bullets = [
-        ("Model works amazingly — 62% of output is useful (blind LLM judge)",
-         {"bold": True, "color": TEAL}),
-        ("System tells you when to trust it — per-word confidence colour-coded",
-         {"bold": True}),
-        "New metric (IS) built from scratch — captures useful-but-not-perfect",
-        ("Arabic: 2–3 months away with the same infrastructure",
-         {"color": LGRAY}),
+        "Model works on real-world video: 65%* of segments produce useful output, validated against blind LLM judge on 1,497 segments",
+        "New evaluation metric (IS) — designed because WER misleads on meaning; agrees with blind human evaluator 82% of the time",
+        "Confidence layer shipped: per-word and per-segment trust signals — 62% of segments shown with full coloring (TRUST + SALVAGE), 39% stripped",
+        "Beam aggregation evaluated and adopted: 20-hypothesis voting beats top-1 by a measurable margin — shipping as default",
+        "Failure modes mapped and categorized: every failure type has an identified fix path, prioritized by impact",
+        "Clear path to IS 3.5–4.0: stronger LLM (Llama-3.1-8B) + smart prompts + 20K-segment fine-tune — all components scoped and ready",
+        "Arabic replication mapped end-to-end: encoder fine-tune + Arabic LLM swap + RTL/diacritics — realistic 2–3 month timeline",
     ]
 
-    add_bullets(slide, bullets, MX, CT + Inches(0.35), CW, Inches(4.85),
-                size=Pt(24), bullet_color=TEAL)
+    add_bullets(slide, bullets, MX, CT + Inches(0.55), CW, Inches(5.3),
+                size=Pt(15), bullet_color=TEAL, spacing=Pt(6))
+
+    # Footnote
+    add_text(slide,
+        "*  Splits across trust tiers: ~24% TRUST (transcript-grade), ~38% SALVAGE (signal preserved, review needed), ~39% STRIP (not preserved). Headline aggregates Y+P at IS ≥ 2.0.",
+        MX, Inches(6.55), CW, Inches(0.4),
+        size=Pt(10), color=MGRAY, italic=True)
 
     _finish(slide, 0,
         "What We Found. Key outcomes: 65% of output is useful by blind LLM "
@@ -256,21 +274,19 @@ def slide_toc(prs):  # audit:bigfonts
     # Proof / Confidence / Demo+Future) \u2014 see task spec.
     # audit:trustgate_t30_recall (~65%) / audit:trustgate_t30_fpr (6%) cited in §4.
     # CUT v3 (overflow): trimmed each desc to ~60 chars so 20pt fits one line.
+    # v13 Amosi: 4 sections (Context / Research / Engineering / Future)
     sections = [
-        ("1. The Problem",
-         "Visemes \u2022 WER lies \u2014 same edit, different meaning",
+        ("1. Context",
+         "What is lip reading? \u2022 How does the system work? \u2022 What's the benchmark?",
          TEAL),
-        ("2. How Do You Evaluate Lip-Reading?",
-         "1,497 wild segments \u2022 IS \u2022 LLM-as-a-Judge",
+        ("2. Research Findings",
+         "Real-world evaluation \u2022 Intelligibility Score metric \u2022 Failure analysis \u2022 Tuning experiments",
          TEAL),
-        ("3. Where It Works \u2014 and How It Fails",
-         "Oracle vs Realistic \u2022 Failure modes \u2022 MBR n-best",
+        ("3. Engineering",
+         "10-stage pipeline \u2022 Modular refactoring \u2022 Standalone container \u2022 Evaluation infrastructure",
          TEAL),
-        ("4. Confidence Without Ground Truth",
-         "Per-word + beam-agreement bands \u2022 65% recall at 6% FPR",
-         TEAL),
-        ("5. Demo + Future Directions",
-         "Live UI demo \u2022 Roadmap \u2022 LLM upgrade \u2022 Arabic",
+        ("4. Future Directions",
+         "Improvement roadmap \u2022 Data scaling \u2022 LLM upgrade \u2022 Arabic pipeline \u2022 Target: IS 3.5\u20134.0",
          TEAL),
     ]
     card_groups = []
@@ -280,8 +296,10 @@ def slide_toc(prs):  # audit:bigfonts
     # if we tighten gap. Use gap=0.10 -> total = 5.65 (slight overflow ok).
     # CUT v3: shrink card_h 1.05->1.00 + gap 0.10->0.06 so last card
     # bottom <= 6.69 (Pt24 desc ascender fits below safe zone 7.05)
-    card_h = Inches(1.00)
-    gap = Inches(0.06)
+    # v13: 4 cards instead of 5 — taller cards with more gap
+    card_h = Inches(1.15)
+    gap = Inches(0.25)
+    y = CT + Inches(0.30)
     for sec_title, desc, color in sections:
         r = add_rect(slide, MX, y, CW, card_h, fill_color=NAVY2,
                      border_color=color, border_width=Pt(1.5), corner_radius=True)
@@ -416,10 +434,9 @@ def slide_02(prs):  # audit:bigfonts
     # CUT v3: top 6.55 -> 6.20 + h 0.5 -> 0.45 so Pt(24) wrap stays
     # under safe 7.05.
     bottom = add_text(slide,
-        "System + human outperforms expert lip readers \u2014 "
-        "hallucination risk 20% \u2192 under 5% with human filtering.",
+        "System + human reader outperforms expert lip readers: 55\u201370% vs 45\u201352% word accuracy, with near-zero hallucination risk",
         MX + Inches(0.6), Inches(5.95), CW - Inches(0.6), Inches(0.65),
-        size=Pt(24), color=WHITE)
+        size=Pt(17), color=WHITE)
 
     # FIX (BLOCKER, docs/evaluation/pptx_fix_manifest.md, Slide 7):
     # python-pptx's add_movie() injects an auto-generated <p:timing> tree
@@ -500,12 +517,12 @@ def slide_03(prs):  # audit:bigfonts
                  size=Pt(32), color=TEAL, align=PP_ALIGN.CENTER)
         arrows.append(ar)
 
-    # Bottom note — audit:bigfonts — Pt(24) -> Pt(24); copy trimmed.
+    # v13 Amosi: source-accurate copy (12.6M = 0.19%, "architecture-compatible", "drop-in replacement")
     add_text(slide,
-             "Only 12.6M trainable params (0%). LLM is upgradeable — "
-             "Llama 3.1 8B is a drop-in (same 4096 hidden size).",
+             "Only 12.6M trainable params (0.19%). LLM is architecture-compatible — "
+             "Llama 3.1 8B is a drop-in replacement (same 4096 hidden size).",
              MX, Inches(6.3), CW, Inches(0.55),
-             size=Pt(20), color=LGRAY, italic=True)
+             size=Pt(18), color=LGRAY, italic=True)
 
     _finish(slide, 3,
         "Three components. Visual encoder (AV-HuBERT) is frozen — pre-trained "
@@ -542,17 +559,18 @@ def slide_04(prs):  # audit:bigfonts
     # audit:bigfonts \u2014 body bullets and big-num font are owned by build_split
     # (helpers); we only bump the citation note added below.
     slide = build_split(prs, 4, "The Benchmark: Paper vs Reality", "P2_paper",
-        big_num="25%", num_color=TEAL,
-        num_label="WER on LRS3 (TED Talks)",
-        # CUT v3 (overflow): Pt(24) -> Pt(20) so 4 multi-line bullets fit in 3.6" max_h.
-        bullet_size=Pt(20),
+        big_num="25.4%", num_color=TEAL,
+        num_label="AV-HuBERT on LRS3 — TED talks, ideal conditions",
+        # v13 Amosi: 25.4% paper number; 4 bullets per source.
+        bullet_size=Pt(17),
         bullets=[
-            ("LRS3 benchmark: curated TED talks, ideal conditions", {"bold": True}),
-            ("Our dataset: 1,497 real YouTube segments \u2014 nothing is controlled",
+            ("LRS3 = AVSR field's standard benchmark — TED talks, ideal conditions",
+             {"bold": True}),
+            ("Our dataset: 1,497 real YouTube segments — nothing is controlled",
              {"color": CORAL, "bold": True}),
-            ("Result: 64% WER on our dataset — 2.5× worse than the benchmark",
-             {"color": CORAL, "bold": True}),  # audit:wer_mean_mbr / wer_mean_top1
-            ("WER is the wrong metric \u2013 our new IS is the right one "
+            ("Result: 64.1% WER — 2.5× worse",
+             {"color": CORAL, "bold": True}),
+            ("WER is the wrong metric – our new IS is the right one "
              "(or LLM as a judge)", {}),
         ],
         bottom_text=None,  # OVERLAP fix: original "Different dataset" line at y=6.45
@@ -601,18 +619,18 @@ def slide_05(prs):  # audit:bigfonts
     # audit:bigfonts — bullets and big-num are owned by build_split (helpers);
     # nothing local to bump in this function. Mark for completeness.
     build_split(prs, 5, "The Reality Gap", "P1_quality",
-        big_num="64%", num_color=CORAL,  # audit:wer_mean_mbr
-        num_label="Mean WER across 1,497 real-world segments (MBR; top-1: 64%)",
-        bullet_size=Pt(24),  # audit:FONT_BELOW_24PT_BODY \u2014 body bullets bumped 15->24pt
+        big_num="64.1%", num_color=CORAL,  # v13 Amosi: 64.1% exact
+        num_label="Mean WER across 1,497 real-world segments",
+        bullet_size=Pt(20),  # v13: 5 bullets, source layout
         bullets=[
-            ("26% Useful by WER (<30%, uncalibrated bucket)",
-             {"bullet": "\u25cf", "bullet_color": GREEN}),  # audit:logic_fix slide 11
-            ("17% Marginal (30-50%)", {"bullet": "\u25cf", "bullet_color": YELLOW}),
-            ("18% Poor (50-75%)", {"bullet": "\u25cf", "bullet_color": ORANGE}),
-            ("33% Unusable (75-100%)", {"bullet": "\u25cf", "bullet_color": RED}),
-            ("21% Hallucinated (>100%)", {"bullet": "\u25cf", "bullet_color": DRED}),
+            ("25.5% Useful by WER (<30%)",
+             {"bullet": "●", "bullet_color": GREEN}),
+            ("17.4% Marginal (30-50%)", {"bullet": "●", "bullet_color": YELLOW}),
+            ("17.8% Poor (50-75%)", {"bullet": "●", "bullet_color": ORANGE}),
+            ("32.8% Unusable (75-100%)", {"bullet": "●", "bullet_color": RED}),
+            ("20.6% Hallucinated (>100%)", {"bullet": "●", "bullet_color": DRED}),
         ],
-        bottom_text="But WER overstates failure — see below.",  # audit:narrative — robust to reorder
+        bottom_text="But WER overstates failure — see next slide.",  # v13 Amosi exact
         notes="1,497 diverse YouTube segments. 64% mean WER under MBR "
               "n-best (production default since May 2 2026; top-1 baseline "
               "64%) — 2.5x worse than "
@@ -653,56 +671,58 @@ def slide_06(prs):  # audit:bigfonts
                   border_color=GREEN, border_width=Pt(2.5), corner_radius=True)
     # audit:bigfonts — Pt(24) -> Pt(24).
     add_text(slide, "WER: 1 substitution  •  Harmless",
-             MX + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(1.0),
-             size=Pt(24), color=GREEN, bold=True)
-    # audit:bigfonts — Pt(24) -> Pt(24).
+             MX + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.5),
+             size=Pt(20), color=GREEN, bold=True)
     add_rich_text(slide, [
-        [('Ref: "', {"size": Pt(24), "color": LGRAY}),
-         ('the', {"size": Pt(24), "color": GREEN, "bold": True}),
-         (' admiral gave the order"', {"size": Pt(24), "color": WHITE})],
-        [('Hyp: "', {"size": Pt(24), "color": LGRAY}),
-         ('a', {"size": Pt(24), "color": GREEN, "bold": True}),
-         (' admiral gave the order"', {"size": Pt(24), "color": WHITE})],
+        [('Ref: "', {"size": Pt(20), "color": LGRAY}),
+         ('the', {"size": Pt(20), "color": GREEN, "bold": True}),
+         (' admiral gave the order"', {"size": Pt(20), "color": WHITE})],
+        [('Hyp: "', {"size": Pt(20), "color": LGRAY}),
+         ('a', {"size": Pt(20), "color": GREEN, "bold": True}),
+         (' admiral gave the order"', {"size": Pt(20), "color": WHITE})],
     ], MX + Inches(0.3), by + Inches(0.85), bw - Inches(0.6), Inches(1.5),
        space_after=Pt(10))
-    # audit:bigfonts — Pt(24) -> Pt(24); copy trimmed to 2 lines.
-    add_text(slide, '"the" → "a" — function-word swap.\n'
-                    'Meaning fully preserved.',
+    # v13 Amosi: 3-line caption matching source
+    add_text(slide, '"the" → "a"\n'
+                    'Function word swap — meaning fully preserved.\n'
+                    'The viewer understood the message.',
              MX + Inches(0.3), by + Inches(2.85), bw - Inches(0.6), Inches(1.4),
-             size=Pt(24), color=LGRAY)
+             size=Pt(18), color=LGRAY)
 
     # Right box — destructive error
     rx = MX + bw + gap
     r2 = add_rect(slide, rx, by, bw, bh, fill_color=NAVY2,
                   border_color=RED, border_width=Pt(2.5), corner_radius=True)
     add_text(slide, "WER: 1 substitution  •  Destructive",
-             rx + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(1.0),
-             size=Pt(24), color=RED, bold=True)
+             rx + Inches(0.3), by + Inches(0.2), bw - Inches(0.6), Inches(0.5),
+             size=Pt(20), color=RED, bold=True)
     add_rich_text(slide, [
-        [('Ref: "', {"size": Pt(24), "color": LGRAY}),
-         ('Admiral McRae', {"size": Pt(24), "color": RED, "bold": True}),
-         (' gave the order"', {"size": Pt(24), "color": WHITE})],
-        [('Hyp: "', {"size": Pt(24), "color": LGRAY}),
-         ('animal migration', {"size": Pt(24), "color": RED, "bold": True}),
-         (' gave the order"', {"size": Pt(24), "color": WHITE})],
+        [('Ref: "', {"size": Pt(20), "color": LGRAY}),
+         ('Admiral McRae', {"size": Pt(20), "color": RED, "bold": True}),
+         (' gave the order"', {"size": Pt(20), "color": WHITE})],
+        [('Hyp: "', {"size": Pt(20), "color": LGRAY}),
+         ('animal migration', {"size": Pt(20), "color": RED, "bold": True}),
+         (' gave the order"', {"size": Pt(20), "color": WHITE})],
     ], rx + Inches(0.3), by + Inches(0.85), bw - Inches(0.6), Inches(1.5),
        space_after=Pt(10))
+    # v13 Amosi: 3-line caption matching source
     add_text(slide, '"Admiral McRae" → "animal migration"\n'
-                    'Named entity destroyed — wrong person.',
+                    'Named entity destroyed — identity lost completely.\n'
+                    'The viewer got the wrong person.',
              rx + Inches(0.3), by + Inches(2.85), bw - Inches(0.6), Inches(1.4),
-             size=Pt(24), color=LGRAY)
+             size=Pt(18), color=LGRAY)
 
     # Bottom callout — audit:bigfonts — Pt(24) -> Pt(24); copy condensed.
     # Pushed to y=6.20 to clear taller cards (bh 4.0 -> 4.4 in audit fix).
     add_rect(slide, MX + Inches(1.5), Inches(6.20), CW - Inches(3.0), Inches(0.65),
              fill_color=NAVY2, border_color=TEAL, border_width=Pt(2),
              corner_radius=True)
-    # CUT v3 (overflow): widened to full slide and dropped to Pt(20) so text
-    # fits one line without overflowing the safe zone.
+    # v13 Amosi: 2-line callout matching source
     add_text(slide,
-             "Same WER. Different meaning. → We built our own metric (IS).",
-             MX, Inches(6.28), CW, Inches(0.50),
-             size=Pt(20), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+             "WER counts both as 1 error. But one preserves meaning, the other destroys it.\n"
+             "We needed our own metric — the Intelligibility Score (IS).",
+             MX, Inches(6.20), CW, Inches(0.66),
+             size=Pt(16), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 6,
         "The Admiral McRae example. Both cases have the same WER — 1 word "
@@ -834,19 +854,18 @@ def slide_visemes(prs):  # audit:bigfonts
     # causing third bullet to render behind the table.
     lb = add_bullets(slide, [
         ("50\u201370% of English sounds are invisible on lips", {"bold": True}),
-        "Multiple sounds \u2192 identical mouth shapes (visemes)",
+        "Multiple sounds produce identical mouth shapes (visemes)",
         "Context is the ONLY disambiguation signal",
-    ], MX, CT + Inches(0.6), col_w, Inches(1.50), size=Pt(24))
+    ], MX, CT + Inches(0.6), col_w, Inches(1.50), size=Pt(18))
 
-    # Viseme table — Pt(24) text, row_height 0.32 keeps total table height
-    # to 1.60 so it ends at 5.65, well clear of the 6.30 bottom-callout.
+    # Viseme table — v13: smaller text to match source compact layout
     tbl1 = add_table(slide,
         ["Viseme Group", "Sounds"],
         [["Bilabial", "p, b, m"],
          ["Alveolar", "t, d, n, s, z, l"],
          ["Velar", "k, g, ng"],
          ["Labiodental", "f, v"]],
-        MX, CT + Inches(2.6), col_w, text_size=Pt(24),
+        MX, CT + Inches(2.4), col_w, text_size=Pt(16),
         row_height=Inches(0.32))
 
     # Right column — Visual proof + confusable pairs.
@@ -880,15 +899,14 @@ def slide_visemes(prs):  # audit:bigfonts
          ["mom", "bomb"],
          ["admiral", "animal"],
          ["collar", "color"]],
-        rx, CT + Inches(3.05), col_w, text_size=Pt(24),
+        rx, CT + Inches(2.8), col_w, text_size=Pt(16),
         row_height=Inches(0.32))
 
-    # CUT v3: top 6.45 -> 6.30 + frame h 1.4 -> 0.45 so Pt(24) bottom
-    # falls under safe 7.05 (was 7.85, tall empty frame caused overflow).
+    # v13 Amosi: bottom callout in source
     add_text(slide,
-        "Context is the ONLY disambiguation \u2014 this is why the LLM matters.",
-        MX, Inches(6.30), CW, Inches(0.45),
-        size=Pt(24), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
+        "Context is the ONLY disambiguation signal \u2014 this is why the LLM matters.",
+        MX, Inches(6.60), CW, Inches(0.40),
+        size=Pt(16), color=TEAL, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "50-70% of English sounds are invisible on lips — this is the homophene "
@@ -914,27 +932,24 @@ def slide_data_flow(prs):  # audit:bigfonts
     add_title(slide, "How It Works: Data Flow")
     add_accent_line(slide)
 
-    # 7 steps now: original 5 + n-best aggregation (May 1) + confidence (Apr 30).
-    # GREEN = post-decode May-2026 additions; TEAL = preprocessing; CORAL = LLM core.
+    # v13 Amosi: 5-step source data-flow (Video → Mouth → Features → Projection → LLM)
     steps = [
         ("1", "Video Frames", "25 fps raw video input", TEAL),
-        ("2", "Mouth Crop", "96\u00d796 pixel region around lips", TEAL),
-        ("3", "Visual Features", "AV-HuBERT encoder \u2192 1024-dim vectors", TEAL),
-        ("4", "Projection", "Linear layer: 1024 \u2192 4096-dim", CORAL),
-        ("5", "LLM Decodes", "LLaMA-2-7B emits 20 n-best hypotheses", CORAL),
-        ("6", "Aggregate (NEW)", "MBR over 20 n-best \u2192 1 hypothesis", GREEN),
-        ("7", "Confidence (NEW)", "Per-word p\u2081 + \u03b1 \u2192 green/yellow/red", GREEN),
+        ("2", "Mouth Crop", "96×96 pixel region around lips", TEAL),
+        ("3", "Visual Features", "AV-HuBERT encoder → 1024-dim vectors", TEAL),
+        ("4", "Projection", "Linear layer: 1024 → 4096-dim (LLM input space)", CORAL),
+        ("5", "LLM Generates Text", "LLaMA-2-7B decodes features into words", CORAL),
     ]
 
     # 7 steps \u00d7 0.65 + 6 \u00d7 0.10 = 4.55 + 0.60 = 5.15", starting at CT+0.10=1.55
     # \u2192 ends at 6.70. Bottom caption at 6.85.
     step_w = Inches(10.5)
-    step_h = Inches(0.65)
-    start_y = CT + Inches(0.10)
+    step_h = Inches(0.82)
+    start_y = CT + Inches(0.30)
     start_x = MX + Inches(0.8)
 
     step_groups = []
-    gap = Inches(0.08)  # tighter — 7 steps fit better
+    gap = Inches(0.20)  # v13: 5 steps, more spacing
     for i, (num, name, desc, color) in enumerate(steps):
         y = start_y + i * (step_h + gap)
         r = add_rect(slide, start_x, y, step_w, step_h, fill_color=NAVY2,
@@ -972,9 +987,9 @@ def slide_data_flow(prs):  # audit:bigfonts
     # Bottom caption \u2014 moved down. 7 steps \u00d7 0.65 + 6 \u00d7 0.08 = 4.55+0.48=5.03,
     # start 1.55 \u2192 ends 6.58. Caption at 6.65, h=0.35, end 7.00 \u2713
     add_text(slide,
-        "Stages 6\u20137 (Aggregate + Confidence) shipped May 2026 \u2014 visual encoder frozen, only projection+adapters trained.",
-        MX, Inches(6.65), CW, Inches(0.35),
-        size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "Visual encoder is frozen (pre-trained on LRS3). Only projection + LoRA adapters are trained.",
+        MX, Inches(6.60), CW, Inches(0.40),
+        size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Five-step data flow. Raw video at 25fps is cropped to 96x96 mouth "
