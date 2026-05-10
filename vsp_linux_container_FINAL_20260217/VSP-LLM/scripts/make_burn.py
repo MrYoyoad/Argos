@@ -383,14 +383,17 @@ def load_predictions(path: Path) -> Dict[str, str]:
         if any(k in obj for k in ("utt_id", "ref", "hypo", "instruction")):
             return {}
 
-        # mapping dict {uid: hyp}
+        # mapping dict {uid: hyp}  — handles aggregated.json (hyp_mbr/hyp_top1) too
         out: Dict[str, str] = {}
         for k, v in obj.items():
             uid = str(k)
             if isinstance(v, str):
                 hyp = v
             elif isinstance(v, dict):
-                hyp = v.get("merged_hypo") or v.get("hypo") or v.get("hyp") or v.get("text") or ""
+                # hyp_mbr from nbest_aggregate.py is itself a dict {text, rank_chosen, ...}
+                raw = (v.get("hyp_mbr") or v.get("hyp_top1") or
+                       v.get("merged_hypo") or v.get("hypo") or v.get("hyp") or v.get("text") or "")
+                hyp = raw.get("text", "") if isinstance(raw, dict) else raw
             else:
                 hyp = str(v)
             out[uid] = str(hyp).strip()

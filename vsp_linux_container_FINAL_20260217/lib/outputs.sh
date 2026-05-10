@@ -243,8 +243,12 @@ run_client_outputs() {
     local fast_seg_dir="${prep_root}/fast_segments"
     local fallback_arg=""
     [ -d "$fast_seg_dir" ] && fallback_arg="--fallback_video_dir $fast_seg_dir"
+    # Use aggregated.json (hyp_mbr) for burned subtitles when available — matches
+    # what the HTML report displays. Falls back to raw hypo JSON if not present.
+    local burn_jsonl="$decode_json"
+    [ -n "$agg_json" ] && [ -f "$agg_json" ] && burn_jsonl="$agg_json"
     python3 "$vsp_dir/scripts/make_burn.py" \
-      --jsonl "$decode_json" \
+      --jsonl "$burn_jsonl" \
       --video_dir "$flat_vid_dir" \
       --segment_metadata "$segment_metadata" \
       --out_dir "$burn_dir" \
