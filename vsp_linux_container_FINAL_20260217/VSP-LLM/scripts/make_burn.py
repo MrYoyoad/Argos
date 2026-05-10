@@ -754,7 +754,10 @@ def main() -> None:
         txt = wrap_text(hyp, width=wrap, max_lines=eff_max_lines)
 
         line_h = fs + args.line_spacing
-        needed = pad_y * 2 + (eff_max_lines * line_h)
+        # Size the box to the ACTUAL number of wrapped lines, not the max.
+        # This avoids covering more of the frame than the text needs.
+        actual_lines = max(1, len(txt.splitlines())) if txt.strip() else 1
+        needed = pad_y * 2 + (actual_lines * line_h)
         # Cap box_h at 45% of the frame so the full transcript is visible.
         box_h = max(int(needed), min(args.box_h, int(h * 0.45)))
         box_h = min(box_h, h - 2)
@@ -784,10 +787,12 @@ def main() -> None:
         finally:
             tf.close()
 
-        # IMPORTANT: ffmpeg-4.4 friendly expressions: no parentheses
-        # use h/iw/ih variables safely
-        y_box = f"h-{box_h}"
-        y_text = f"h-{box_h}+{pad_y}"
+        # Pre-compute y as a plain integer. Using "h-N" as an ffmpeg expression
+        # is wrong: in the drawbox filter, "h" refers to the filter's own box
+        # height parameter (= box_h), so "h-box_h" always evaluates to 0 and
+        # places the box at the top of the video instead of the bottom.
+        y_box = h - box_h
+        y_text = h - box_h + pad_y
 
         # Build filter graph. Two paths:
         #   (a) per-word colored ASS subtitle via libass (when seg_words is non-empty)
