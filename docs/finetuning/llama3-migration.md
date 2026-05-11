@@ -50,9 +50,10 @@ Two-commit pattern: submodule first, then parent submodule-pointer bump.
 | HF token swapped on EC2 | ✅ | `~/.cache/huggingface/token` now holds `MrYoyoad`'s read token. Old `RonKanto` token backed up to `~/.cache/huggingface/token.RonKanto.bak` |
 | Fine-grained token gated-repo permission | ✅ | Initial token failed with "Please enable access to public gated repositories" — user enabled the toggle in HF settings, retest passed |
 | Instruct download to `/home/ubuntu/Llama-3.1-8B-Instruct/` | ✅ done | 30 GB on disk (16 GB safetensors + 16 GB Meta-format `consolidated.00.pth`). Kept as backup for future chat-mode experiments |
-| Base download to `/home/ubuntu/Llama-3.1-8B/` | 🟡 in progress | Background task `b0iwmeinz`, 16 GB, ~5-10 min. This is the model that will actually be trained against |
+| Base download to `/home/ubuntu/Llama-3.1-8B/` | ✅ done | 15 GB (safetensors only; the redundant 16 GB Meta-format `consolidated.00.pth` deleted post-download to recover disk) |
 | Sanity-check Instruct config | ✅ (preflight) | `hidden_size=4096`, `vocab_size=128256`, `eos_token_id=[128001,128008,128009]` |
-| Sanity-check Base config | pending | Will run once base download completes; expect scalar `eos_token_id=128001` |
+| Sanity-check Base config | ✅ | `hidden_size=4096` ✓, `vocab_size=128256` ✓, `eos_token_id=128001` (scalar int) ✓, `pad_token_id=None` (guard required) |
+| Python load test ([scripts/tests/llama31_load_test.py](../../scripts/tests/llama31_load_test.py)) | ✅ PASSED | Tokenizer guard, model 4-bit BnB load (27s, 5.70 GB VRAM), LoRA wrap (9.4M trainable / 0.117%), mock forward with projected visual features. Loss ≈ ln(128256) as expected for random projector. Peak VRAM 6.85 GB on T4 — comfortable. |
 
 ---
 
