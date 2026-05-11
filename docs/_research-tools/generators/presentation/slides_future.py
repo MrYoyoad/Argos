@@ -958,30 +958,32 @@ def slide_arabic_roadmap(prs):  # audit:bigfonts
     # end 7.15 \u2192 over safe. Reduce to 4 topics: collapse "Training
     # infrastructure" into the AV-HuBERT entry (existing AWS GPU is implicit
     # since it ships in current pipeline).
+    # Pass 4 (visual-match-to-source v13): add back 5th topic
+    # "Training infrastructure" to match source layout. Drop font size
+    # so 5 topics fit in the column.
     topics = [
         (TEAL,  "AV-HuBERT (BOTTLENECK)",
-         "Arabic phonemes \u2014 fine-tune on AWS GPU"),
-        (TEAL,  "Arabic LLM backend",
-         "Swap Llama-2 for Jais / AceGPT / Llama 3"),
-        (CORAL, "Eval dataset (UNKNOWN)",
-         "No benchmark \u2014 need native speakers"),
+         "Arabic phonemes (pharyngeals, emphatics) \u2014 without fine-tuning, Arabic lips map to wrong clusters"),
+        (TEAL,  "Arabic Lexicon Sweep",
+         "Sweep Llama-2 for Arabic-capable LLM (Jais, AceGPT, Llama 3)"),
+        (CORAL, "Arabic evaluation dataset (UNKNOWN)",
+         "No Arabic lip-reading benchmark \u2014 needs native speakers for MSA + dialects"),
+        (TEAL,  "Training infrastructure",
+         "AWS GPU instance (existing) for AV-HuBERT fine-tuning and K-means recluster"),
         (CORAL, "RTL text & normalization",
-         "spaCy Arabic, diacritics, NER unknown"),
+         "spaCy Arabic, diacritic handling, Arabic NER \u2014 maturity unknown"),
     ]
 
     topic_groups = []
-    by = CT + Inches(0.45)
-    # Pass 3 final: Pt(24) wrapped both heading and detail, overlapping with
-    # next topic. Drop to Pt(20) so heading + detail each fit one line in
-    # 1.00" frame.
+    by = CT + Inches(0.42)
     for clr, heading, detail in topics:
         grp = []
         grp.append(add_bullets(slide, [
             (heading, {"bold": True, "color": clr}),
             detail,
-        ], MX, by, col_w, Inches(1.00), size=Pt(20)))
+        ], MX, by, col_w, Inches(0.90), size=Pt(14)))
         topic_groups.append(grp)
-        by += Inches(1.05)
+        by += Inches(0.90)
 
     # Right — timeline with practical details
     rx = MX + col_w + gap
@@ -1045,21 +1047,25 @@ def slide_arabic_avhubert(prs):  # audit:bigfonts
     add_title(slide, "AV-HuBERT: Why It\u2019s Not Language-Locked")
     add_accent_line(slide)
 
+    # Pass 4 (visual-match-to-source v13): expand from 4->7 bullets and
+    # drop Pt(24)->Pt(20) so all 7 fit within the safe content height.
     bullets_data = [
-        "AV-HuBERT is self-supervised on visual features \u2014 not language tokens",
+        "AV-HuBERT is a self-supervised visual feature extractor",
+        "Pretrained on LRS3 (English TED talks) \u2014 but not language-encoded",
         "Training loop: MFCC \u2192 K-means \u2192 pseudo-labels \u2192 masked prediction \u2192 iterate",
+        "The \"English-ness\" is in which visual distinctions the model learned to care about",
         "Low-level features are mostly universal: lip shape, mouth opening, jaw movement",
+        "Visual features are ~80% language-agnostic (mouth geometry is universal)",
         "Language specificity lives in downstream components, not the visual encoder",
     ]
 
-    # line_h bumped 0.60 -> 0.75 for Pt(24) wrap-safety (audit:bigfonts).
     by = CT + Inches(0.05)
-    line_h = Inches(0.75)
+    line_h = Inches(0.65)
     anim_groups = []
     for bullet in bullets_data:
         t = add_text(slide, "\u25b8  " + bullet,
                      MX, by, CW, line_h,
-                     size=Pt(24), color=WHITE)
+                     size=Pt(20), color=WHITE)
         anim_groups.append([t])
         by += line_h
 
@@ -1089,22 +1095,26 @@ def slide_arabic_changes(prs):  # audit:bigfonts
     add_title(slide, "Arabic Adaptation: What Changes")
     add_accent_line(slide)
 
+    # Pass 4 (visual-match-to-source v13): expand from 4->8 bullets and
+    # drop Pt(24)->Pt(20) so all 8 fit within the safe content height.
     bullets_data = [
-        "K-means: retrain on Arabic audio features (pipeline already supports this)",
-        "LLM backbone: swap to Arabic-capable model (Jais, AceGPT, Llama 3)",
-        "Q-Former + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
+        "K-means clustering \u2014 retrain on Arabic audio features (already retrains per-dataset)",
+        "LLM backbone \u2014 replace with Arabic-capable LLM (Jais, AceGPT, or multilingual Llama 3)",
+        "Q-Former bridge + LoRA adapters \u2014 retrain on Arabic video-transcript pairs",
+        "AV-HuBERT encoder \u2014 can reuse frozen; fine-tune later as optimization step",
+        "Step 1: Frozen AV-HuBERT + Arabic K-means + Arabic LLM + retrained Q-Former",
+        "Step 2: Fine-tune AV-HuBERT on Arabic video for language-specific distinctions",
+        "Step 3: Scale with more Arabic training data",
         "Biggest bottleneck: training data (no Arabic LRS3 equivalent at scale)",
     ]
 
-    # line_h bumped 0.55 -> 0.68 for Pt(24) wrap-safety (audit:bigfonts).
-    # line_h bumped 0.68 -> 0.95 for Pt(24) 2-line wrap safety (#345).
-    by = CT + Inches(0.10)
-    line_h = Inches(0.95)
+    by = CT + Inches(0.05)
+    line_h = Inches(0.58)
     anim_groups = []
     for bullet in bullets_data:
         t = add_text(slide, "\u25b8  " + bullet,
                      MX, by, CW, line_h,
-                     size=Pt(24), color=WHITE)
+                     size=Pt(18), color=WHITE)
         anim_groups.append([t])
         by += line_h
 
@@ -1266,20 +1276,22 @@ def slide_a1(prs):  # audit:bigfonts
     add_text(slide, "Confusable word pairs (identical on lips):",
              SRL, CT, SRW, Inches(0.55), size=Pt(24), color=LGRAY)
 
-    # tbl2 row_h set 0.40 for Pt(24); footer y shifted to 5.10 to clear
-    # 7-row table ending ~4.85 (audit:bigfonts).
+    # tbl2 row_h set 0.40 for Pt(24); footer y shifted to 5.30 to clear
+    # 7-row table ending ~4.85 (audit:bigfonts). Pass 4: increase clearance
+    # to 5.55 — LO renders "probiotics permafrost" cells with extra padding,
+    # so a 0.25" gap was eaten. Also widen columns so cells stay 1-line.
     tbl2 = add_table(slide,
         ["Word A", "Word B"],
         [["mom", "bomb"], ["pat", "bat"], ["collar", "color"],
          ["pads", "pants"], ["admiral", "animal"],
          ["probiotics", "permafrost"]],
-        SRL, CT + Inches(0.6), SRW, text_size=Pt(24),
-        row_height=Inches(0.40))
+        SRL, CT + Inches(0.6), SRW, text_size=Pt(22),
+        row_height=Inches(0.36))
 
     add_text(slide, 'Context is the ONLY disambiguation signal.\n'
              'This is why the LLM matters.',
-             SRL, CT + Inches(3.65), SRW, Inches(1.4),
-             size=Pt(24), color=TEAL, italic=True)
+             SRL, CT + Inches(3.85), SRW, Inches(1.4),
+             size=Pt(22), color=TEAL, italic=True)
 
     _finish(slide, "A1",
         "Homophenes: visually identical mouth shapes for different sounds. "
@@ -1348,30 +1360,26 @@ def slide_a8(prs):  # audit:bigfonts
     # the right-column "Cross-Config" caption starting at SRL=6.5).
     # OVERLAP fix (audit:appendix_round6): h 1.0 -> 0.65 — 1.0" frame extended
     # to y=2.45 while tbl1 starts at y=2.30 (0.15" overlap). Single-line at 24pt.
+    # Pass 4 (visual-match-to-source v13): drop Pt(24)->Pt(15-16) so cell
+    # text stays on one line; source layout has PCA caption + table on left
+    # taking ~5.8" width.
     add_text(slide, "PCA: 6 IS signals collapse into 2 principal components:",
-             MX, CT, SRL - MX - Inches(0.1), Inches(0.65),
-             size=Pt(24), color=WHITE)
+             MX, CT, SRL - MX - Inches(0.1), Inches(0.45),
+             size=Pt(16), color=LGRAY)
 
-    # tbl1 y moved CT+0.5->CT+0.85 so it starts after subtitle second line
-    # (~CT+0.78 at 24pt). col_widths corrected to sum exactly to 5.8".
-    # row_height bumped 0.35->0.50->0.80 so 2-line cell wraps (PC1 Quality,
-    # All 5 content signals, 0.43-0.47 each) fully show at 24pt.
-    # "Variance"->Var." to fit in col3=1.1" (eff=0.8"; "Variance" 0.87" clips).
     tbl1 = add_table(slide,
-        ["Component", "Signals", "Var.", "Load."],
-        [["PC1: Signal Quality", "All 5 content signals", "68%", "0.43\u20130.47 each"],
-         ["PC2: Output Length", "Length Ratio", "20%", "0.91"]],
-        MX, CT + Inches(0.85), SRL - MX - Inches(0.1), text_size=Pt(24),
-        row_height=Inches(0.80),
-        col_widths=[Inches(1.6), Inches(1.8), Inches(1.1), Inches(1.3)])
+        ["Component", "Signals", "Variance", "Loadings"],
+        [["PC1: Signal Quality", "All 5 content signals", "68.4%",
+          "0.43\u20130.47 each"],
+         ["PC2: Output Length", "Length Ratio", "19.5%", "0.91"]],
+        MX, CT + Inches(0.55), SRL - MX - Inches(0.1), text_size=Pt(15),
+        row_height=Inches(0.38),
+        col_widths=[Inches(1.55), Inches(1.95), Inches(0.95), Inches(1.35)])
 
-    # Cross-config stability
-    # OVERLAP fix (audit:appendix_round6): h 1.0 -> 0.4 — was extending to
-    # y=2.45 while tbl2 starts at y=1.85 (0.60" overlap).
+    # Cross-config stability — right column, top half
     add_text(slide, "Cross-Config Stability (16 configs)",
-             SRL, CT, SRW, Inches(0.4), size=Pt(24), color=TEAL, bold=True)
+             SRL, CT, SRW, Inches(0.4), size=Pt(18), color=TEAL, bold=True)
 
-    # tbl2 row_h bumped 0.30 -> 0.38 for Pt(24) (audit:bigfonts).
     tbl2 = add_table(slide,
         ["Signal", "Stability", "Std"],
         [["Semantic", "Stable", "0.017"],
@@ -1379,29 +1387,25 @@ def slide_a8(prs):  # audit:bigfonts
          ["NEA", "Stable", "0.023"],
          ["WER", "Volatile", "0.165"],
          ["Length", "Volatile", "0.142"]],
-        SRL, CT + Inches(0.4), SRW, text_size=Pt(24),
-        row_height=Inches(0.38),
+        SRL, CT + Inches(0.45), SRW, text_size=Pt(15),
+        row_height=Inches(0.34),
         row_colors={3: {1: CORAL}, 4: {1: CORAL},
                     0: {1: GREEN}, 1: {1: GREEN}, 2: {1: GREEN}})
 
-    # Heuristic validation — heading moved CT+2.95 -> CT+3.05 (+0.37" from
-    # tbl2 end). tbl3 now uses full SRW width + explicit col_widths so long
-    # "Agreement (IS >= X.XX)" labels fit on one line without wrapping.
-    # "Config range" row dropped so tbl3 stays within safe zone.
-    # OVERLAP fix (audit:appendix_round6): h 1.0 -> 0.4 — was extending to
-    # y=5.50 while tbl3 starts at y=4.95 (0.55" overlap).
+    # Heuristic validation — right column, bottom half
     add_text(slide, "Heuristic Validation (no runtime LLM)",
-             SRL, CT + Inches(3.05), SRW, Inches(0.4),
-             size=Pt(24), color=TEAL, bold=True)
+             SRL, CT + Inches(2.55), SRW, Inches(0.4),
+             size=Pt(18), color=TEAL, bold=True)
 
     tbl3 = add_table(slide,
         ["Metric", "Value"],
         [["Mean r", "0.925 (std 0.015)"],
          ["Agreement (IS ≥ 2.00)", "κ = 0.818"],
          ["Agreement (IS ≥ 3.80)", "κ = 0.690"],
-         ["Recall (IS ≥ 2.00)", "97.6–100%"]],
-        SRL, CT + Inches(3.50), SRW, text_size=Pt(24),
-        row_height=Inches(0.40),
+         ["Recall (IS ≥ 2.00)", "97.6–100%"],
+         ["Config range", "κ 0.62–0.86"]],
+        SRL, CT + Inches(3.00), SRW, text_size=Pt(15),
+        row_height=Inches(0.34),
         col_widths=[Inches(3.1), Inches(2.83)])
 
     _finish(slide, "A3",
@@ -1430,39 +1434,32 @@ def slide_a11(prs):  # audit:bigfonts
     add_title(slide, "A4: LLM Salvage — Recoverable Segments")
     add_accent_line(slide)
 
-    # Key numbers
+    # Pass 4 (visual-match-to-source v13): drop Pt(24)->Pt(16) so 2-col layout
+    # holds full labels ("Metric-failed segments", "Useful output (IS ≥ 2.00)").
     add_text(slide, "Key Numbers", MX, CT, SLW, Inches(0.3),
-             size=Pt(24), color=TEAL, bold=True)
+             size=Pt(18), color=TEAL, bold=True)
 
-    # audit:niv_yp_pct_top1 (62%) — slide table reports the top-1 baseline
-    # because LLM-salvage analysis was conducted against the top-1 hypothesis
-    # (heuristic was tuned on top-1; salvage analysis predates MBR shipping).
-    # Judge 65% is the v1 blind gold-standard (audit:llm_judge_v1).
-    # tbl1: row_h set 0.42 for Pt(24); long row labels shortened (audit:bigfonts).
-    # col_widths added so "Useful (IS ≥ 2.00, top-1)" (24 chars) fits in col1.
     tbl1 = add_table(slide,
         ["Metric", "Value"],
-        [["Metric-failed segs", "900"],
-         ["LLM-recoverable", "165 (18%)"],
-         ["Useful (IS ≥ 2.00, top-1)", "62%"],  # audit:niv_yp_pct_top1
-         ["Judge v1 blind (Y+P)", "65%"],  # audit:llm_judge_v1
-         ["IS vs Judge κ", "0.818"]],
-        MX, CT + Inches(0.4), SLW, text_size=Pt(24),
-        row_height=Inches(0.42),
-        col_widths=[Inches(3.5), Inches(2.1)],
+        [["Metric-failed segments", "900"],
+         ["LLM-recoverable", "165 (18.3%)"],
+         ["Useful output (IS ≥ 2.00)", "61.6%"],
+         ["LLM Judge confirms (Y+P)", "64.9%"],
+         ["IS vs Judge agreement", "κ = 0.818"]],
+        MX, CT + Inches(0.4), SLW, text_size=Pt(16),
+        row_height=Inches(0.36),
+        col_widths=[Inches(3.3), Inches(2.3)],
         row_colors={1: {1: TEAL}, 3: {1: TEAL}})
 
-    add_text(slide, "58% salvageable have WER 50–70%.\n"
+    add_text(slide, "58% of salvageable have moderate WER (50–70%).\n"
              "Decision tree: 15 rules, r=0.934 with IS.",
-             MX, CT + Inches(3.20), SLW, Inches(1.4),
-             size=Pt(24), color=LGRAY)
+             MX, CT + Inches(2.95), SLW, Inches(1.0),
+             size=Pt(15), color=LGRAY)
 
-    # Recovery categories — h aligned with bumped tbl1 (audit:bigfonts).
+    # Recovery categories — right column
     add_text(slide, "6 Recovery Categories", SRL, CT, SRW, Inches(0.35),
-             size=Pt(24), color=TEAL, bold=True)
+             size=Pt(18), color=TEAL, bold=True)
 
-    # col1=2.6" so "Entity-Preserved"/"WER Over-Punish." have eff=2.3" (0.2" margin).
-    # Non-breaking hyphen (U+2011) in "WER Over‑Punish." prevents line break at hyphen.
     tbl2 = add_table(slide,
         ["Category", "N", "Key Signal"],
         [["Hidden Gems", "54", "LLM prob ≥ 0.8"],
@@ -1471,15 +1468,15 @@ def slide_a11(prs):  # audit:bigfonts
          ["Entity-Preserved", "44", "NEA F1 ≥ 50%"],
          ["Structure Match", "74", "Word order intact"],
          ["WER Over‑Punish.", "27", "WER−WWER ≥ 10pp"]],
-        SRL, CT + Inches(0.4), SRW, text_size=Pt(24),
-        row_height=Inches(0.42),
-        col_widths=[Inches(2.6), Inches(0.7), Inches(2.63)])
+        SRL, CT + Inches(0.4), SRW, text_size=Pt(15),
+        row_height=Inches(0.36),
+        col_widths=[Inches(2.0), Inches(0.6), Inches(3.33)])
 
-    # y moved CT+3.45->CT+3.60 for more clearance after tbl2 end at ~4.79".
-    add_text(slide, "Categories overlap — system delivers useful output "
-             "for 1 in 2 segments.",
-             SRL, CT + Inches(3.60), SRW, Inches(0.55),
-             size=Pt(18), color=LGRAY, italic=True)
+    add_text(slide, "Categories overlap — segments can exhibit multiple "
+             "recovery signals. System delivers useful output for 1 in 2 "
+             "segments.",
+             SRL, CT + Inches(3.10), SRW, Inches(0.8),
+             size=Pt(14), color=LGRAY, italic=True)
 
     _finish(slide, "A4",
         # audit:niv_yp_pct_top1 — LLM-salvage analysis is top-1-anchored.
@@ -1656,16 +1653,17 @@ def slide_a15(prs):  # audit:bigfonts
     half = Inches(5.9)
     gap  = Inches(0.33)
 
-    # row_height bumped 0.28 -> 0.32 to fit Pt(24) text (audit:bigfonts).
+    # Pass 4 (visual-match-to-source v13): Pt(24) caused cell overflow with
+    # 5 cols × 18 rows × narrow widths. Drop to Pt(11) to match source v13 A5.
     tbl_l = add_table(slide, headers, left_rows,
                       MX, CT + Inches(0.38), half,
-                      row_height=Inches(0.32), text_size=Pt(24),
+                      row_height=Inches(0.28), text_size=Pt(11),
                       col_widths=[Inches(1.85), Inches(1.5), Inches(0.7),
                                   Inches(0.6), Inches(0.45)])
 
     tbl_r = add_table(slide, headers, right_rows,
                       MX + half + gap, CT + Inches(0.38), half,
-                      row_height=Inches(0.32), text_size=Pt(24),
+                      row_height=Inches(0.28), text_size=Pt(11),
                       col_widths=[Inches(1.85), Inches(1.5), Inches(0.7),
                                   Inches(0.6), Inches(0.45)])
 
@@ -1691,9 +1689,6 @@ def slide_future_transition(prs):  # audit:bigfonts
     add_text(slide, "From Analysis to Action",
              MX, Inches(3.5), CW, Inches(0.6),
              size=Pt(30), color=LGRAY, align=PP_ALIGN.CENTER)
-
-    add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
-             fill_color=GREEN)
 
     add_text(slide, "5 research insights  \u2192  5-phase improvement roadmap",
              MX, Inches(4.8), CW, Inches(0.5),
@@ -1911,39 +1906,37 @@ def slide_a16(prs):  # audit:bigfonts2
     add_title(slide, "A8: LLM Judge \u00d7 IS Tier Cross-Tabulation")
     add_accent_line(slide)
 
-    # audit:bigfonts \u2014 deleted N (count) column to free width for Pt(24)
-    # cells; only Y%, P%, N% are load-bearing in observations.
+    # Pass 4 (visual-match-to-source v13): add back N (count) column +
+    # extended tier labels (e.g. "5 \u2014 Excellent (4.0\u20135.0)") and
+    # the long key-observation lines that match v13 source slide 74.
     add_text(slide,
-        "Judge verdict distribution across IS tiers (blind):",
-        MX, CT, CW, Inches(0.4), size=Pt(24), color=LGRAY)
+        "How the LLM judge verdict distributes across IS quality tiers (blind evaluation):",
+        MX, CT, CW, Inches(0.4), size=Pt(16), color=LGRAY)
 
-    # Pass 3 final fix (audit:opus_a16_clip): table rendered at ~3.15"
-    # actual (rows hold Pt(24) text). Move heading to CT+3.30 below table;
-    # bullets at CT+3.70, h=2.00 with Pt(22). bot = CT+3.70+2.00 = CT+5.70 = 7.15
-    # which exceeds safe \u2014 shrink to Pt(20) so 4 bullets need only 1.65".
     tbl = add_table(slide,
-        ["IS Tier", "Y", "Y%", "P", "P%", "N%"],
-        [["5 \u2014 Excellent", "157", "57%", "105", "38%", "5%"],
-         ["4 \u2014 Good",      "67",  "21%", "189", "59%", "20%"],
-         ["3 \u2014 Fair",      "25",  "8%",  "167", "51%", "41%"],
-         ["2 \u2014 Poor",      "14",  "4%",  "115", "34%", "62%"],
-         ["1 \u2014 Failed",    "5",   "2%",  "41",  "17%", "81%"]],
-        MX, CT + Inches(0.5), Inches(10.0), text_size=Pt(22),
-        row_height=Inches(0.42),
-        col_widths=[Inches(2.6), Inches(1.4), Inches(1.4),
-                    Inches(1.4), Inches(1.4), Inches(1.8)],
-        row_colors={0: {2: GREEN}, 4: {5: CORAL}})
+        ["IS Tier", "Y (count)", "Y%", "P (count)", "P%", "N (count)", "N%"],
+        [["5 \u2014 Excellent (4.0\u20135.0)", "157", "56.9%", "105", "38.0%", "14", "5.1%"],
+         ["4 \u2014 Good (3.0\u20133.99)",      "67",  "20.9%", "189", "58.9%", "65", "20.2%"],
+         ["3 \u2014 Fair (2.0\u20132.99)",      "25",  "7.7%",  "167", "51.4%", "133","40.9%"],
+         ["2 \u2014 Poor (1.0\u20131.99)",      "14",  "4.2%",  "115", "34.2%", "207","61.6%"],
+         ["1 \u2014 Failed (0.0\u20130.99)",    "5",   "2.1%",  "41",  "17.2%", "193","80.8%"]],
+        MX, CT + Inches(0.5), Inches(10.6), text_size=Pt(14),
+        row_height=Inches(0.40),
+        col_widths=[Inches(2.4), Inches(1.4), Inches(1.4),
+                    Inches(1.4), Inches(1.4), Inches(1.4), Inches(1.2)],
+        row_colors={0: {2: GREEN}, 4: {6: CORAL}})
 
-    # Pt(22) reduces row-text demand so table fits in 6\u00d70.42=2.52 starting
-    # at CT+0.5 = 1.95 \u2192 ends 4.47. Heading at CT+3.20 = 4.65.
-    add_text(slide, "Key Observations:", MX, CT + Inches(3.20), CW, Inches(0.4),
-             size=Pt(22), color=TEAL, bold=True)
+    add_text(slide, "Key Observations:", MX, CT + Inches(3.10), CW, Inches(0.4),
+             size=Pt(18), color=TEAL, bold=True)
     add_bullets(slide, [
-        "Tier 5: 57% Y \u2014 strong excellent agreement",
-        "Tiers 2-3: majority P \u2014 partial value",
-        "Tier 1: 81% N \u2014 strong failure agreement",
-        ("NIV \u03ba 0.816 (Y+P), 0.707 (Y)", {"color": GOLD}),
-    ], MX, CT + Inches(3.65), CW, Inches(1.80), size=Pt(20))
+        "IS Tier 5: 57% full Y \u2014 strong agreement on excellent output",
+        "IS Tiers 2-3: majority P not N \u2014 judge sees partial value metrics miss",
+        "IS Tier 1: 81% N \u2014 strong agreement on complete failure",
+        ("Pearson r = 0.85 between IS and judge verdict (coded Y=3, P=2, N=1)",
+            {"color": TEAL}),
+        ("Y+P peaks at IS \u2265 2.0 (\u03ba=0.82) not IS \u2265 2.00 (\u03ba=0.52) \u2014 systems agree on ranking, differ on threshold",
+            {"color": GOLD}),
+    ], MX, CT + Inches(3.55), CW, Inches(2.20), size=Pt(14))
 
     _finish(slide, "A8",
         "LLM Judge cross-tabulated with IS tiers across all 1,497 segments "
@@ -1976,18 +1969,17 @@ def slide_a17(prs):  # audit:bigfonts
     # OVERLAP fix (audit:appendix_round6): heading h 1.0 -> 0.4 \u2014 1.0" frame
     # extended to y=2.45 while tbl1 starts at y=1.95 (0.50" overlap).
     lt = add_text(slide, "Blind \u2192 Context Transition Matrix", MX, CT,
-                  col_w, Inches(0.4), size=Pt(24), color=TEAL, bold=True)
+                  col_w, Inches(0.4), size=Pt(18), color=TEAL, bold=True)
 
-    # tbl1 col5 widened to 1.25" so "Total" (5 chars bold 24pt \u2248 0.81")
-    # fits in eff=0.95" without wrapping. Col1 reduced to 2.2" to compensate.
     tbl1 = add_table(slide,
         ["Blind \u2193 / Ctx \u2192", "Y", "P", "N", "Total"],
         [["Y", "207", "138", "0", "345"],
          ["P", "17", "519", "90", "626"],
          ["N", "1", "48", "477", "526"]],
-        MX, CT + Inches(0.5), col_w, text_size=Pt(24),
-        col_widths=[Inches(2.2), Inches(0.75), Inches(0.65),
-                    Inches(0.65), Inches(1.25)],
+        MX, CT + Inches(0.45), col_w, text_size=Pt(15),
+        row_height=Inches(0.36),
+        col_widths=[Inches(2.0), Inches(0.85), Inches(0.85),
+                    Inches(0.85), Inches(0.95)],
         row_colors={0: {2: CORAL}, 1: {3: CORAL}})
 
     # Moved CT+2.2 -> CT+2.40 for 0.38" gap after tbl1 OOXML end.
@@ -1996,32 +1988,28 @@ def slide_a17(prs):  # audit:bigfonts
     # 2-line content at 24pt.
     add_text(slide, "Dominant transition: Y\u2192P (138 cases, 40% of all Y)\n"
              "Only 1 N\u2192Y rescue across all 1,497 pairs",
-             MX, CT + Inches(2.40), col_w, Inches(0.85),
-             size=Pt(24), color=LGRAY)
+             MX, CT + Inches(2.00), col_w, Inches(0.7),
+             size=Pt(14), color=LGRAY)
 
-    # tbl2 y moved CT+3.0->CT+3.40 so it clears the "Dominant transition"
-    # text content which ends at ~CT+3.30 (3.85"\u21924.70" without expansion).
     tbl2 = add_table(slide,
         ["Metric", "Value"],
-        [["Total downgrades", "230 (15%)"],
-         ["Total upgrades", "68 (4%)"],
-         ["Unchanged", "1,199 (80%)"],
-         ["Cross-condition agree.", "80%"]],
-        MX, CT + Inches(3.40), col_w, text_size=Pt(24),
-        col_widths=[Inches(3.2), Inches(2.3)])
+        [["Total downgrades", "230 (15.4%)"],
+         ["Total upgrades", "68 (4.5%)"],
+         ["Unchanged", "1,199 (80.1%)"],
+         ["Cross-condition agree.", "80.0%"]],
+        MX, CT + Inches(2.80), col_w, text_size=Pt(15),
+        row_height=Inches(0.36),
+        col_widths=[Inches(3.0), Inches(2.5)])
 
     # Right — per-topic deltas
     rx = MX + col_w + gap
     # OVERLAP fix (audit:appendix_round6): heading h 1.0 -> 0.4 \u2014 was extending
     # to y=2.45 while tbl3 starts at y=1.95 (0.50" overlap).
     rt = add_text(slide, "Per-Topic Y+P Delta (Blind \u2192 Context)", rx, CT,
-                  col_w, Inches(0.4), size=Pt(24), color=CORAL, bold=True)
+                  col_w, Inches(0.4), size=Pt(18), color=CORAL, bold=True)
 
-    # tbl3 headers shortened: "Blind Y+P"->"Blind", "Ctx Y+P"->"Ctx" so they
-    # fit in the data columns. Col_widths adjusted: col1=2.6" for topic names
-    # (Education/Lecture 17 chars eff=2.3" \u2713), col2=1.0" for "Blind", col3=0.9".
     tbl3 = add_table(slide,
-        ["Topic", "Blind", "Ctx", "\u0394"],
+        ["Topic", "Blind Y+P", "Ctx Y+P", "\u0394"],
         [["Business/Finance", "72%", "70%", "\u22122pp"],
          ["Education/Lecture", "67%", "64%", "\u22123pp"],
          ["Entertainment", "64%", "61%", "\u22123pp"],
@@ -2029,15 +2017,17 @@ def slide_a17(prs):  # audit:bigfonts
          ["Tech/Science", "62%", "59%", "\u22123pp"],
          ["Sports/Health", "60%", "57%", "\u22123pp"],
          ["DIY/Home", "48%", "44%", "\u22124pp"]],
-        rx, CT + Inches(0.5), col_w, text_size=Pt(24),
-        row_height=Inches(0.40),
-        col_widths=[Inches(2.6), Inches(1.0), Inches(0.9), Inches(1.0)],
+        rx, CT + Inches(0.45), col_w, text_size=Pt(15),
+        row_height=Inches(0.36),
+        col_widths=[Inches(2.2), Inches(1.2), Inches(1.1), Inches(1.0)],
         row_colors={6: {3: CORAL}})
 
     add_text(slide,
-        "Context stricter everywhere; DIY/Home largest drop (\u22124pp).",
-        rx, CT + Inches(4.10), col_w, Inches(0.6),
-        size=Pt(18), color=LGRAY, italic=True)
+        "Context is uniformly stricter across all topics. DIY/Home has the "
+        "largest delta (\u22124pp) \u2014 context reveals the most "
+        "visual-content vocabulary failures.",
+        rx, CT + Inches(3.40), col_w, Inches(1.0),
+        size=Pt(13), color=LGRAY, italic=True)
 
     _finish(slide, "A9",
         "Full transition matrix and per-topic deltas for the context-aware "
@@ -2353,12 +2343,12 @@ def slide_confidence_scoring(prs):  # audit:bigfonts
     add_accent_line(slide)
 
     sub1 = add_text(slide,
-        "Per-segment confidence isn't uniform. Three tiers, three "
+        "Per-segment confidence isn’t uniform. Three tiers, three "
         "different treatments. Measured on 23,261 real words.",
         MX, CT, CW, Inches(0.40),
         size=Pt(18), color=LGRAY, italic=True)
     sub2 = add_text(slide,
-        "The numbers below are blue-word reliability - measured on the "
+        "The numbers below are blue-word reliability — measured on the "
         "actual deployment, not a benchmark",
         MX, CT + Inches(0.38), CW, Inches(0.30),
         size=Pt(13), color=MGRAY, italic=True)
@@ -2370,22 +2360,22 @@ def slide_confidence_scoring(prs):  # audit:bigfonts
     right_x_off = Inches(0.30)
 
     bands = [
-        ("TRUST",   "confidence >= 82%", GREEN,
+        ("TRUST",   "confidence ≥ 82%", GREEN,
          "Full per-word coloring. No banner. Show as-is.",
-         "9 out of 10 blue words are correct (measured 85-93%)",
-         "24% of segments - what users see by default"),
-        ("SALVAGE", "confidence 65-82%", GOLD,
+         "9 out of 10 blue words are correct (measured 85–93%)",
+         "24% of segments — what users see by default"),
+        ("SALVAGE", "confidence 65–82%", GOLD,
          "Full coloring + review banner. Verify names, numbers, "
          "dates against video.",
-         "7 out of 10 blue words are correct - most segments still "
+         "7 out of 10 blue words are correct — most segments still "
          "useful with a quick check",
-         "38% of segments - the review zone"),
+         "38% of segments — the review zone"),
         ("STRIP",   "confidence < 65%", CORAL,
          "Coloring removed. Plain gray text. Coloring would mislead "
-         "- so we hide it.",
-         "Fewer than half would be right - surface uncertainty, "
+         "— so we hide it.",
+         "Fewer than half would be right — surface uncertainty, "
          "not fake confidence",
-         "39% of segments - honest about what failed"),
+         "39% of segments — honest about what failed"),
     ]
 
     groups = []
@@ -2401,7 +2391,7 @@ def slide_confidence_scoring(prs):  # audit:bigfonts
         sublbl = add_text(slide, sub_,
                           MX + Inches(2.05), y + Inches(0.15),
                           Inches(2.6), Inches(0.45),
-                          size=Pt(22), color=color, bold=True)
+                          size=Pt(20), color=color, bold=True)
         treat = add_text(slide, treatment,
                          MX + Inches(0.30), y + Inches(0.62),
                          left_w - Inches(0.4), band_h - Inches(0.7),
@@ -2420,7 +2410,7 @@ def slide_confidence_scoring(prs):  # audit:bigfonts
 
     bot = add_text(slide,
         "Tier distribution measured on 23,261 words from 1,427 segments  "
-        "*  thresholds re-fit when the model is swapped",
+        "•  thresholds re-fit when the model is swapped",
         MX, Inches(6.55), CW, Inches(0.40),
         size=Pt(16), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 

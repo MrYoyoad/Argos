@@ -300,7 +300,7 @@ def slide_25(prs):
     # Bottom text
     add_text(slide,
              "Our metric is deliberately conservative. "
-             "Independent LLM judge confirms true useful rate is 3pp higher.",
+             "An independent LLM judge confirms the true useful rate is 3pp higher.",
              MX, Inches(6.55), CW, Inches(0.5),
              size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -489,12 +489,12 @@ def slide_25d(prs):
     # body font was 9-10pt (below 12pt readability floor). Card height
     # bumped to 5.4" and all body fonts lifted to 12pt minimum.
     # Three cards side by side
-    cw_card = Inches(3.8)
-    ch_card = Inches(5.4)
-    gap = Inches(0.27)
+    cw_card = Inches(3.95)
+    ch_card = Inches(5.25)
+    gap = Inches(0.21)
     total = 3 * cw_card + 2 * gap
     cx = (SL_W - total) / 2
-    cy = CT + Inches(0.45)
+    cy = CT + Inches(0.30)
 
     # CUT v3: each "how" trimmed to ~70 chars so Pt(24) wraps in 4 lines
     # within the 2.00" frame (was 9 lines, bottom 8.55). Full prose for each
@@ -506,10 +506,14 @@ def slide_25d(prs):
             "is_score": "1.29", "wer": "150%", "prob": "0.55",
             "ref": "when jesus rose again",
             "hyp": "in one sense it\u2019s rose\nand kennedy",
-            # audit:bigfonts \u2014 trimmed from ~330 chars to ~180 (cut the
-            # mouth-shape aside; full text in salvage_example_gallery.md).
-            "how": "Religious-program viewer reads \u201cJesus rose.\u201d "
-                   "Mouth shapes nearly identical.",
+            "how": "A wise viewer watching a religious program sees "
+                   "\u201cin one sense it\u2019s rose\u201d and thinks: "
+                   "\u201cthis is about Jesus rising \u2014 \u2018sense it\u2019s\u2019 "
+                   "sounds like \u2018Jesus,\u2019 and \u2018rose\u2019 = "
+                   "resurrection.\u201d The mouth shapes for \u201cjesus\u201d/"
+                   "\u201csense it\u2019s\u201d are nearly identical. The "
+                   "overall message is preserved even though exact words "
+                   "differ.",
         },
         {
             "title": "Semantic Preservation",
@@ -517,9 +521,11 @@ def slide_25d(prs):
             "is_score": "2.18", "wer": "75%", "prob": "0.90",
             "ref": "moving conceptual surface data\nover to engineering solutions\nand tools",
             "hyp": "moved the conceptual rules\nover to engineering tools",
-            # audit:bigfonts \u2014 trimmed (cut "WER over-punishes ..." aside).
-            "how": "Core meaning intact: concepts \u2192 tools. "
-                   "Function words changed only.",
+            "how": "Core meaning intact: \u201cmoving concepts \u2192 "
+                   "engineering tools.\u201d WER is 75% because function "
+                   "words changed, but a tech viewer follows the intent "
+                   "perfectly. WER over-punishes this by counting every "
+                   "small word change.",
         },
         {
             "title": "Structure Match",
@@ -527,9 +533,11 @@ def slide_25d(prs):
             "is_score": "2.55", "wer": "40%", "prob": "0.95",
             "ref": "over the last 10 years we have\nhad 8,616 students",
             "hyp": "over the last 10 years we have\nhad 1,600 students",
-            # audit:bigfonts \u2014 trimmed (cut closing aside about exact figure).
-            "how": "Only the number changed (8,616 \u2192 1,600). "
-                   "Viewer reads \u201cmany students.\u201d",
+            "how": "Grammar and word order are perfect. Only the number "
+                   "changed (8,616 \u2192 1,600). A viewer understands "
+                   "\u201cmany students over 10 years\u201d \u2014 the "
+                   "structure carries the message even when the exact "
+                   "figure is wrong.",
         },
     ]
 
@@ -545,9 +553,9 @@ def slide_25d(prs):
         add_text(slide, ex["title"],
                  x + Inches(0.15), cy + Inches(0.05), cw_card - Inches(0.3), Inches(0.45),
                  size=Pt(20), color=ex["color"], bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, f'IS {ex["is_score"]}  |  Prob {ex["prob"]}',
+        add_text(slide, f'IS {ex["is_score"]}  |  WER {ex["wer"]}  |  Prob {ex["prob"]}',
                  x + Inches(0.15), cy + Inches(0.50), cw_card - Inches(0.3), Inches(0.40),
-                 size=Pt(18), color=LGRAY, align=PP_ALIGN.CENTER)
+                 size=Pt(14), color=LGRAY, align=PP_ALIGN.CENTER)
 
         # Reference
         add_text(slide, "Reference:", x + Inches(0.15), cy + Inches(0.95),
@@ -565,11 +573,11 @@ def slide_25d(prs):
 
         # How it's recovered
         add_text(slide, "How a viewer recovers this:",
-                 x + Inches(0.15), cy + Inches(3.65),
-                 cw_card - Inches(0.3), Inches(0.30), size=Pt(16), color=TEAL, bold=True)
+                 x + Inches(0.15), cy + Inches(3.50),
+                 cw_card - Inches(0.3), Inches(0.30), size=Pt(13), color=TEAL, bold=True)
         add_text(slide, ex["how"],
-                 x + Inches(0.15), cy + Inches(3.95), cw_card - Inches(0.3), Inches(1.10),
-                 size=Pt(16), color=WHITE)
+                 x + Inches(0.15), cy + Inches(3.80), cw_card - Inches(0.3), Inches(1.40),
+                 size=Pt(11), color=WHITE)
 
     _finish(slide, 0,
         "Three real salvage examples drawn from the LLM-Salvage analysis "
@@ -1113,11 +1121,12 @@ def slide_llm_judge(prs):
         "Evaluate every reference+hypothesis pair holistically",
         "3-level verdict: Y (preserved) / P (partial) / N (not preserved)",
         ("30 duplicate pairs → 86.7% intra-rater reliability", {"bold": True}),
-    ], MX, CT + Inches(0.5), col_w, Inches(2.1), size=Pt(18))
+    ], MX, CT + Inches(0.5), col_w, Inches(2.4), size=Pt(16))
 
-    # Results table \u2014 pushed down to CT+2.7 / CT+3.1 to clear bullet overflow
-    res_t = add_text(slide, "Results (Blind, 1,497 Pairs)", MX, CT + Inches(2.7), col_w, Inches(0.3),
-             size=Pt(24), color=TEAL, bold=True)
+    # Results table \u2014 push down to clear bullet wrap-overflow.
+    # Bullets at 16pt across 5.5" col wrap to ~2 lines each \u2192 ~2.4" frame.
+    res_t = add_text(slide, "Results (Blind, 1,497 Pairs)", MX, CT + Inches(3.05), col_w, Inches(0.35),
+             size=Pt(18), color=TEAL, bold=True)
 
     tbl = add_table(slide,
         ["Verdict", "Count", "%"],
@@ -1125,7 +1134,7 @@ def slide_llm_judge(prs):
          ["P (partially)", "626", "41.8%"],
          ["N (not preserved)", "526", "35.1%"],
          ["Y+P (any useful)", "971", "64.9%"]],
-        MX, CT + Inches(3.1), col_w, text_size=Pt(20),
+        MX, CT + Inches(3.50), col_w, text_size=Pt(14),
         # OVERLAP fix (May 2026): font 24->20pt + row_height 0.40->0.36 so
         # PowerPoint's auto-grow on 24pt cells (which forced the table past
         # 6.55 and into the v1-judge footer label at 6.6) no longer fires.
@@ -1232,7 +1241,7 @@ def slide_context_eval(prs):
     # Bottom text
     add_text(slide,
              "Our metric is deliberately conservative. "
-             "Independent LLM judge confirms true useful rate is 3pp higher.",
+             "An independent LLM judge confirms the true useful rate is 3pp higher.",
              MX, Inches(6.55), CW, Inches(0.5),
              size=Pt(20), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1309,56 +1318,57 @@ def slide_llm_context_engine(prs):
     col_w = Inches(5.5)
     gap = Inches(1.13)
 
-    # Left — what the LLM does
+    # Pass 4 (visual-match-to-source v13): drop Pt(24)->Pt(16-20) so left
+    # bullets and right-card bullets fit on single lines.
     lt = add_text(slide, "What the LLM Does", MX, CT, col_w, Inches(0.4),
-                  size=Pt(24), color=TEAL, bold=True)
+                  size=Pt(20), color=TEAL, bold=True)
 
     add_text(slide, "The visual encoder sees mouth shapes.",
-             MX, CT + Inches(0.6), col_w, Inches(0.3),
-             size=Pt(24), color=WHITE)
+             MX, CT + Inches(0.5), col_w, Inches(0.3),
+             size=Pt(16), color=WHITE)
     add_text(slide, "The LLM resolves ambiguity using language context.",
-             MX, CT + Inches(1.0), col_w, Inches(0.3),
-             size=Pt(24), color=TEAL, bold=True)
+             MX, CT + Inches(0.85), col_w, Inches(0.3),
+             size=Pt(16), color=TEAL, bold=True)
 
     lb = add_bullets(slide, [
         '"p/b/m" \u2192 Is it "pat," "bat," or "mat"?',
         "LLM uses surrounding words to disambiguate",
         "Stronger LLM = better disambiguation",
         ("This is why LLM quality matters more than size", {"bold": True}),
-    ], MX, CT + Inches(1.6), col_w, Inches(2.0), size=Pt(24))
+    ], MX, CT + Inches(1.4), col_w, Inches(2.5), size=Pt(16))
 
-    # Right — current vs upgrade
+    # Right — current vs upgrade (Pt(24)->smaller for source visual match)
     rx = MX + col_w + gap
     rt = add_text(slide, "Current vs Upgrade", rx, CT, col_w, Inches(0.4),
-                  size=Pt(24), color=CORAL, bold=True)
+                  size=Pt(20), color=CORAL, bold=True)
 
     # Current
-    r1 = add_rect(slide, rx, CT + Inches(0.5), col_w, Inches(1.8),
+    r1 = add_rect(slide, rx, CT + Inches(0.5), col_w, Inches(1.6),
                   fill_color=NAVY2, border_color=CORAL, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "Current: LLaMA-2 7B", rx + Inches(0.2), CT + Inches(0.6),
+    add_text(slide, "Current: LLaMA-2 7B", rx + Inches(0.2), CT + Inches(0.65),
              col_w - Inches(0.4), Inches(0.3),
-             size=Pt(24), color=CORAL, bold=True)
+             size=Pt(18), color=CORAL, bold=True)
     add_bullets(slide, [
         "32K vocab, 4K context",
         "2023 model, limited reasoning",
-    ], rx + Inches(0.2), CT + Inches(1.0), col_w - Inches(0.4), Inches(0.8),
-       size=Pt(24), bullet_color=CORAL)
+    ], rx + Inches(0.2), CT + Inches(1.05), col_w - Inches(0.4), Inches(0.8),
+       size=Pt(15), bullet_color=CORAL)
 
     # Upgrade
-    r2 = add_rect(slide, rx, CT + Inches(2.5), col_w, Inches(2.0),
+    r2 = add_rect(slide, rx, CT + Inches(2.3), col_w, Inches(2.2),
                   fill_color=NAVY2, border_color=GREEN, border_width=Pt(2),
                   corner_radius=True)
-    add_text(slide, "Upgrade: Llama 3.1 8B", rx + Inches(0.2), CT + Inches(2.6),
+    add_text(slide, "Upgrade: Llama 3.1 8B", rx + Inches(0.2), CT + Inches(2.45),
              col_w - Inches(0.4), Inches(0.3),
-             size=Pt(24), color=GREEN, bold=True)
+             size=Pt(18), color=GREEN, bold=True)
     add_bullets(slide, [
         "128K vocab, 128K context",
         "Quality \u2248 LLaMA-2 70B",
         ("Same hidden_size (4096) = architecture-compatible upgrade", {"color": GREEN}),
         ("Setup: 2\u20134 weeks + retraining", {"bold": True}),
-    ], rx + Inches(0.2), CT + Inches(3.0), col_w - Inches(0.4), Inches(1.2),
-       size=Pt(24), bullet_color=GREEN)
+    ], rx + Inches(0.2), CT + Inches(2.85), col_w - Inches(0.4), Inches(1.6),
+       size=Pt(15), bullet_color=GREEN)
 
     _finish(slide, 0,
         "The LLM is a context engine. The visual encoder sees mouth shapes but "
@@ -1484,8 +1494,10 @@ def _judge_video_slide(prs, *, vid_key, title, ref, hyp, wer, wwer, is_score,
         metrics_text = (f"WER {wer}   WWER {wwer}   IS {is_score} ({is_tier})   "
                         f"Judge: {judge}")
     # CUT v3 (overflow): grew 0.4 -> 0.85 so 24pt metrics text fits one line.
-    mt = add_text(slide, metrics_text, rx, CT, rw, Inches(0.85),
-                  size=Pt(24), color=badge_col, bold=True)
+    # POLISH FIX: 24pt wraps for "WER 51.5%   WWER 47.1%   IS 3.02 (Good)   Judge: P"
+    # in available rw ≈ 5.6"; 18pt single-line layout matches source.
+    mt = add_text(slide, metrics_text, rx, CT, rw, Inches(0.45),
+                  size=Pt(18), color=badge_col, bold=True)
 
     # Reference — CUT v3: shrunk 24->20pt + h bumped 1.0->1.25.
     # audit:FONT_BELOW_24PT_BODY — REF/HYP frame heights tightened

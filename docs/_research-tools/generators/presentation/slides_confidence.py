@@ -42,12 +42,12 @@ def slide_confidence_problem(prs):
 
     bul = add_bullets(slide, [
         ("Most ASR systems hand you a transcript. You read all of it. "
-         "If something's wrong, you find out the hard way.",
+         "If something’s wrong, you find out the hard way.",
          {"bold": True}),
         ("Argos is different. Every word and every segment carries a "
          "confidence signal.",
          {"color": GREEN, "bold": True}),
-        ("You read what's flagged - not everything. The system tells you "
+        ("You read what’s flagged — not everything. The system tells you "
          "which parts are reliable and which need a second look.",
          {"color": TEAL, "bold": True}),
         ("Two layers: per-word probabilities surfaced as inline color, "
@@ -170,7 +170,7 @@ def slide_per_word_confidence_distribution(prs):
     add_accent_line(slide)
 
     sub = add_text(slide,
-        "Adding beam-agreement (a >= 0.80) on top of conf (p1 >= 0.95) "
+        "Adding beam-agreement (α ≥ 0.80) on top of conf (p₁ ≥ 0.95) "
         "reassigns ~30% of words from green to red.  "
         "Greens that survive are more reliable.",
         MX, CT, CW, Inches(0.45),
@@ -233,14 +233,14 @@ def slide_per_word_confidence_distribution(prs):
 
     legacy = _draw_card(
         MX, "LEGACY", LGRAY,
-        "rule:  p1 >= 0.95  (conf only)",
+        "rule:  p₁ ≥ 0.95  (conf only)",
         [("GREEN",  11309, 49, GREEN),
          ("YELLOW",  7470, 32, GOLD),
          ("RED",     4482, 19, CORAL)])
 
     joint = _draw_card(
         MX + card_w + gap_, "JOINT (production)", TEAL,
-        "rule:  p1 >= 0.95  AND  a >= 0.80",
+        "rule:  p₁ ≥ 0.95  AND  α ≥ 0.80",
         [("GREEN",   7591, 33, GREEN),
          ("YELLOW",  6571, 28, GOLD),
          ("RED",     9099, 39, CORAL)])
@@ -361,11 +361,11 @@ def slide_band_reliability_stratified(prs):
     arbitrary - it's where green reliability falls below 50%.'
     """
     slide = new_slide(prs)
-    add_title(slide, "Green Reliability vs Segment Quality - the 0.65 Cliff")
+    add_title(slide, "Green Reliability vs Segment Quality — the 0.65 Cliff")
     add_accent_line(slide)
 
     sub = add_text(slide,
-        "P(green word correct) stratified by segment confidence m.  "
+        "P(green word correct) stratified by segment confidence  m.  "
         "Green is reliable above 0.65, falls off a cliff below.",
         MX, CT, CW, Inches(0.40),
         size=Pt(16), color=LGRAY, italic=True)
@@ -425,11 +425,11 @@ def slide_band_reliability_stratified(prs):
     rw = CW - col_w - Inches(0.30)
     headers = ["m bin", "P(green correct)", "note"]
     rows = [
-        ["m  >= 0.85",      "96%", "above strip"],
-        ["m  0.75 - 0.85",  "92%", ""],
-        ["m  0.65 - 0.75",  "86%", "  above boundary"],
-        ["m  0.55 - 0.65",  "41%", "  below boundary - strip"],
-        ["m  0.40 - 0.55",  "22%", ""],
+        ["m  ≥ 0.85",      "96%", "above strip"],
+        ["m  0.75 – 0.85",  "92%", ""],
+        ["m  0.65 – 0.75",  "86%", "↑ above boundary"],
+        ["m  0.55 – 0.65",  "41%", "↓ below boundary — strip"],
+        ["m  0.40 – 0.55",  "22%", ""],
         ["m  < 0.40",       "18%", ""],
     ]
     row_colors = {
@@ -447,8 +447,8 @@ def slide_band_reliability_stratified(prs):
                     text_size=Pt(13), row_colors=row_colors)
 
     bot = add_text(slide,
-        "Strip boundary at  m < 0.65  isn't arbitrary - it's where "
-        "green reliability falls below 50%.  Above the cliff: trustworthy.  "
+        "Strip boundary at  m < 0.65  isn’t arbitrary — it’s where "
+        "green reliability falls below 50%. Above the cliff: trustworthy. "
         "Below: misleading.",
         MX, Inches(6.55), CW, Inches(0.40),
         size=Pt(14), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
@@ -470,7 +470,7 @@ def slide_green_leakage_examples(prs):
     teal-bordered callout describes the production response.
     """
     slide = new_slide(prs)
-    add_title(slide, "Green Leakage - When High Confidence Misleads")
+    add_title(slide, "Green Leakage — When High Confidence Misleads")
     add_accent_line(slide)
 
     sub = add_rich_text(slide,
@@ -491,20 +491,20 @@ def slide_green_leakage_examples(prs):
 
     examples = [
         ("NUMERIC SCALE FLIP", CORAL,
-         "1 ", "billion", " CFUs of probiotics",
-         "1 ", "million", " CFUs of probiotics",
-         "P(billion -> million) = 0.965",
-         "Off by 1000x.  Confident, fluent, wrong."),
+         '"1 ', "billion", ' CFUs of probiotics"',
+         '"1 ', "million", ' CFUs of probiotics"',
+         "P(billion → million) = 0.965",
+         "Off by 1000×.  Confident, fluent, wrong."),
         ("NUMERIC DIGIT DROP", CORAL,
-         "the value is ", "1024", "",
-         "the value is ", "24", "",
-         "P(1024 -> 24) = 0.958",
+         '"the value is ', "1024", '"',
+         '"the value is ', "24", '"',
+         "P(1024 → 24) = 0.958",
          "Tokeniser mis-merge. The model never saw it as a 4-digit number."),
         ("YEAR DRIFT", GOLD,
-         "in ", "2011", " the project began",
-         "in ", "2000", " the project began",
-         "P(2011 -> 2000) = 0.894",
-         "Visually similar mouth shapes - the visemes don't disambiguate."),
+         '"in ', "2011", ' the project began"',
+         '"in ', "2000", ' the project began"',
+         "P(2011 → 2000) = 0.894",
+         "Visually similar mouth shapes — the visemes don’t disambiguate."),
     ]
 
     cards = []
@@ -971,7 +971,7 @@ def slide_agreement_vs_conf_information(prs):
         ("The probability the model assigned to the chosen word at this "
          "position", {}),
         ("Limitation: softmax can be sharp by accident, not by "
-         "certainty - two populations hide in \"conf >= 0.95\"",
+         "certainty — two populations hide in \"conf ≥ 0.95\"",
          {"bold": True}),
     ], MX + Inches(0.25), s1_y + Inches(0.60),
        col_w - Inches(0.5), Inches(1.65), size=Pt(13)))
@@ -988,7 +988,7 @@ def slide_agreement_vs_conf_information(prs):
     L.append(add_bullets(slide, [
         ("Of the 20 beam hypotheses, what fraction picked this same word "
          "at this position?", {}),
-        ("Independent of softmax shape - measures whether the model's "
+        ("Independent of softmax shape — measures whether the model’s "
          "alternatives agreed", {"bold": True}),
     ], MX + Inches(0.25), s2_y + Inches(0.60),
        col_w - Inches(0.5), Inches(1.55), size=Pt(13)))
@@ -996,17 +996,17 @@ def slide_agreement_vs_conf_information(prs):
     # Right: The 54-Point Gap
     rx = MX + col_w + gap_
     R = []
-    R.append(add_text(slide, "The 54-Point Gap at conf >= 0.95",
+    R.append(add_text(slide, "The 54-Point Gap at conf ≥ 0.95",
              rx, CT, col_w, Inches(0.40),
              size=Pt(22), color=CORAL, bold=True))
     R.append(add_text(slide,
         "Same top-1 confidence. Different beam agreement. Very different "
-        "reliability.\nBeam agreement is ~2x more discriminative than "
+        "reliability.\nBeam agreement is ~2× more discriminative than "
         "softmax alone in this band.",
         rx, CT + Inches(0.45), col_w, Inches(0.95),
         size=Pt(13), color=WHITE, bold=True))
 
-    headers = ["", "agreement >= 0.80", "agreement < 0.80"]
+    headers = ["", "agreement ≥ 0.80", "agreement < 0.80"]
     rows = [
         ["P(correct)", "94%",    "40%"],
         ["UI band",    "BLUE",   "downgraded to ORANGE"],
@@ -1026,18 +1026,18 @@ def slide_agreement_vs_conf_information(prs):
              rx, CT + Inches(2.95), col_w, Inches(0.35),
              size=Pt(15), color=TEAL, bold=True))
     R.append(add_text(slide,
-        "BLUE = top-1 conf >= 0.95  AND  beam agreement >= 0.80\n"
-        "ORANGE = top-1 conf >= 0.65  AND  beam agreement >= 0.50\n"
-        "PURPLE = otherwise.  Numbers and named entities are CAPPED at "
+        "BLUE = top-1 conf ≥ 0.95  AND  beam agreement ≥ 0.80\n"
+        "ORANGE = top-1 conf ≥ 0.65  AND  beam agreement ≥ 0.50\n"
+        "PURPLE = otherwise. Numbers and named entities are CAPPED at "
         "ORANGE regardless.",
         rx, CT + Inches(3.30), col_w, Inches(1.30),
         size=Pt(12), color=WHITE))
 
     R.append(add_text(slide,
-        "Effect of joint rule:  BLUE words 11,309 -> 7,591 (33% downgraded)  "
-        "|  reliability 81% -> 90%",
+        "Effect of joint rule:  BLUE words 11,309 → 7,591 (33% downgraded)  "
+        "|  reliability 81% → 90%",
         rx, CT + Inches(4.70), col_w, Inches(0.50),
-        size=Pt(12), color=LGRAY, italic=True))
+        size=Pt(12), color=LGRAY))
 
     _finish(slide, 0,
         "v13 layout: left column 'The Two Trust Signals' (top-1 conf + beam "
@@ -1343,66 +1343,134 @@ def slide_mbr_decision(prs):  # audit:bigfonts2
 
 
 def slide_v1_vs_v3_judge_lesson(prs):
-    """Dual-conf prompt design lesson."""
-    # audit:bigfonts — 5 bullets at 18pt fit 3.5" box per side (~2.0"
-    # used); lesson rect 0.7" fits 3-line 18pt body in 0.55" h text box.
+    """Dual-conf prompt design lesson — v13 source-match layout."""
     slide = new_slide(prs)
     add_title(slide, "v1 vs v3 Judge: A Prompt-Design Lesson")
     add_accent_line(slide)
 
     sub = add_text(slide,
-        "Same n-best methods. Same judge model. Different prompt. "
+        "Same n-best methods.  Same judge model.  Different prompt.  "
         "Opposite conclusions.",
         MX, CT, CW, Inches(0.4),
-        size=Pt(18), color=LGRAY, italic=True)
+        size=Pt(16), color=LGRAY, italic=True)
 
-    # Pass 3: ch 3.9 -> 3.75 so cards end at cy+ch = 2.05+3.75 = 5.80,
-    # leaving 0.15" gap before lesson rect at 5.95.
     card_w = Inches(5.85)
     gap = Inches(0.4)
-    cy = CT + Inches(0.6)
-    ch = Inches(3.75)
+    cy = CT + Inches(0.5)
+    ch = Inches(4.20)
 
+    # ============ LEFT CARD (BROKEN / v1) ============
     L = []
     L.append(add_rect(slide, MX, cy, card_w, ch, fill_color=NAVY2,
-                     border_color=CORAL, border_width=Pt(2), corner_radius=True))
-    L.append(add_text(slide, "v1 - conf-in-prompt (broken)",
-             MX + Inches(0.25), cy + Inches(0.15), card_w - Inches(0.5),
-             Inches(0.35), size=Pt(24), color=CORAL, bold=True))
-    L.append(add_bullets(slide, [
-        ("Method-conf only in prompt", {"bold": True}),
-        ("Y+P: vote_conf loses (p < 0.05)", {"color": CORAL}),
-        ("Identical-text drift: 27%", {"color": CORAL}),
-        ("Bias: against n-best variants", {"color": CORAL, "bold": True}),
-    ], MX + Inches(0.25), cy + Inches(0.6),
-       card_w - Inches(0.5), Inches(3.2), size=Pt(24)))
+                     border_color=CORAL, border_width=Pt(2),
+                     corner_radius=True))
+    L.append(add_rect(slide, MX + Inches(0.25), cy + Inches(0.20),
+                      Inches(1.05), Inches(0.32),
+                      fill_color=CORAL, border_color=CORAL,
+                      border_width=Pt(0), corner_radius=True))
+    L.append(add_text(slide, "BROKEN",
+             MX + Inches(0.25), cy + Inches(0.21),
+             Inches(1.05), Inches(0.32), size=Pt(11),
+             color=WHITE, bold=True, align=PP_ALIGN.CENTER))
+    L.append(add_text(slide, "v1  — conf-in-prompt",
+             MX + Inches(1.45), cy + Inches(0.17),
+             Inches(4.0), Inches(0.40), size=Pt(18),
+             color=WHITE, bold=True))
+    L.append(add_text(slide, "PROMPT GIVES JUDGE",
+             MX + Inches(0.25), cy + Inches(0.70),
+             Inches(3.5), Inches(0.30), size=Pt(10),
+             color=LGRAY, bold=True))
+    L.append(add_text(slide, "• Each method's confidence shown to judge",
+             MX + Inches(0.25), cy + Inches(0.95),
+             card_w - Inches(0.5), Inches(0.30), size=Pt(13),
+             color=WHITE))
+    L.append(add_text(slide, "• Baseline (top-1) confidence not shown",
+             MX + Inches(0.25), cy + Inches(1.20),
+             card_w - Inches(0.5), Inches(0.30), size=Pt(13),
+             color=CORAL, italic=True))
+    L.append(add_text(slide, "Y+P  vote_conf  vs  baseline",
+             MX + Inches(0.25), cy + Inches(1.65),
+             card_w - Inches(0.5), Inches(0.28), size=Pt(11),
+             color=LGRAY))
+    L.append(add_text(slide, "vote_conf  loses  (p < 0.05)",
+             MX + Inches(0.25), cy + Inches(1.95),
+             card_w - Inches(0.5), Inches(0.45), size=Pt(20),
+             color=CORAL, bold=True))
+    L.append(add_text(slide, "IDENTICAL-TEXT DRIFT",
+             MX + Inches(0.25), cy + Inches(2.55),
+             card_w - Inches(0.5), Inches(0.30), size=Pt(10),
+             color=LGRAY, bold=True))
+    L.append(add_text(slide, "27%   judge flips on identical text",
+             MX + Inches(0.25), cy + Inches(2.85),
+             card_w - Inches(0.5), Inches(0.55), size=Pt(22),
+             color=CORAL, bold=True))
+    L.append(add_text(slide, "BIAS  against n-best variants",
+             MX + Inches(0.25), cy + Inches(3.55),
+             card_w - Inches(0.5), Inches(0.40), size=Pt(14),
+             color=CORAL, bold=True, italic=True))
 
+    # ============ RIGHT CARD (CURRENT / v3) ============
     R = []
     rx = MX + card_w + gap
     R.append(add_rect(slide, rx, cy, card_w, ch, fill_color=NAVY2,
-                     border_color=GREEN, border_width=Pt(2), corner_radius=True))
-    R.append(add_text(slide, "v3 - dual-conf prompt (current)",
-             rx + Inches(0.25), cy + Inches(0.15), card_w - Inches(0.5),
-             Inches(1.0), size=Pt(24), color=GREEN, bold=True))
-    R.append(add_bullets(slide, [
-        ("Method-conf AND baseline_conf shown", {"bold": True}),
-        ("Y+P: vote_conf wins (p = 0.00257)", {"color": GREEN}),
-        ("Identical-text drift: 12.6/10.4/14%", {"color": GREEN}),
-        ("Bias: balanced", {"color": GREEN, "bold": True}),
-    ], rx + Inches(0.25), cy + Inches(0.6),
-       card_w - Inches(0.5), Inches(3.2), size=Pt(24)))
+                     border_color=GREEN, border_width=Pt(2),
+                     corner_radius=True))
+    R.append(add_rect(slide, rx + Inches(0.25), cy + Inches(0.20),
+                      Inches(1.10), Inches(0.32),
+                      fill_color=GREEN, border_color=GREEN,
+                      border_width=Pt(0), corner_radius=True))
+    R.append(add_text(slide, "CURRENT",
+             rx + Inches(0.25), cy + Inches(0.21),
+             Inches(1.10), Inches(0.32), size=Pt(11),
+             color=WHITE, bold=True, align=PP_ALIGN.CENTER))
+    R.append(add_text(slide, "v3  — dual-conf",
+             rx + Inches(1.50), cy + Inches(0.17),
+             Inches(4.0), Inches(0.40), size=Pt(18),
+             color=WHITE, bold=True))
+    R.append(add_text(slide, "PROMPT GIVES JUDGE",
+             rx + Inches(0.25), cy + Inches(0.70),
+             Inches(3.5), Inches(0.30), size=Pt(10),
+             color=LGRAY, bold=True))
+    R.append(add_text(slide, "• Each method's confidence shown to judge",
+             rx + Inches(0.25), cy + Inches(0.95),
+             card_w - Inches(0.5), Inches(0.30), size=Pt(13),
+             color=WHITE))
+    R.append(add_text(slide, "• Baseline confidence shown alongside",
+             rx + Inches(0.25), cy + Inches(1.20),
+             card_w - Inches(0.5), Inches(0.30), size=Pt(13),
+             color=GREEN, italic=True))
+    R.append(add_text(slide, "Y+P  vote_conf  vs  baseline",
+             rx + Inches(0.25), cy + Inches(1.65),
+             card_w - Inches(0.5), Inches(0.28), size=Pt(11),
+             color=LGRAY))
+    R.append(add_text(slide, "vote_conf  wins  (p = 0.00257)",
+             rx + Inches(0.25), cy + Inches(1.95),
+             card_w - Inches(0.5), Inches(0.45), size=Pt(20),
+             color=GREEN, bold=True))
+    R.append(add_text(slide, "IDENTICAL-TEXT DRIFT",
+             rx + Inches(0.25), cy + Inches(2.55),
+             card_w - Inches(0.5), Inches(0.30), size=Pt(10),
+             color=LGRAY, bold=True))
+    R.append(add_text(slide, "12–14%   per method, balanced",
+             rx + Inches(0.25), cy + Inches(2.85),
+             card_w - Inches(0.5), Inches(0.55), size=Pt(22),
+             color=GREEN, bold=True))
+    R.append(add_text(slide, "BIAS  balanced",
+             rx + Inches(0.25), cy + Inches(3.55),
+             card_w - Inches(0.5), Inches(0.40), size=Pt(14),
+             color=GREEN, bold=True, italic=True))
 
-    # Pass 3 (audit:opus_lesson_overflow): Pt(24) text wrapped 2 lines but
-    # rect h=0.65 only fit 1 line. Bump rect h to 1.05 so 2-line wrap fits;
-    # also shrink card height ch (4.20->3.85) so cards end above lesson rect.
+    # ============ LESSON BAR ============
     lesson = []
-    lesson.append(add_rect(slide, MX, Inches(5.95), CW, Inches(1.05),
-                           fill_color=NAVY3, border_color=GOLD,
+    ly = Inches(5.95)
+    lesson.append(add_rect(slide, MX, ly, CW, Inches(0.70),
+                           fill_color=NAVY3, border_color=TEAL,
                            border_width=Pt(1.5), corner_radius=True))
     lesson.append(add_text(slide,
-        "LESSON: provide BOTH sides' confidence — single-sided injection biases the judge.",
-        MX + Inches(0.3), Inches(6.05), CW - Inches(0.6),
-        Inches(0.85), size=Pt(22), color=GOLD, bold=True,
+        "LESSON  •  show the judge both sides' confidence.  "
+        "Single-sided injection biases the judge against the candidate it doesn't see.",
+        MX + Inches(0.3), ly + Inches(0.18), CW - Inches(0.6),
+        Inches(0.40), size=Pt(13), color=WHITE, bold=True,
         align=PP_ALIGN.CENTER))
 
     _finish(slide, 0,
@@ -1412,10 +1480,8 @@ def slide_v1_vs_v3_judge_lesson(prs):
         "variants - vote_conf significantly LOST on Y+P. v3 (dual-conf "
         "with baseline_conf anchor) flipped the verdict: vote_conf "
         "significantly WINS on Y+P (p=0.00257). Identical-text drift "
-        "fell from 27% to 12.6-14% per method (audit:_note_drift). "
-        "v1 is archived; v3 is the current gold standard. Transferable "
-        "lesson: when prompting LLMs to compare hypotheses, always "
-        "provide BOTH sides' confidence as anchors.",
+        "fell from 27% to 12-14% per method. v1 is archived; v3 is "
+        "the current gold standard.",
         [[sub], L, R, lesson], click_reveal=True)
 
 

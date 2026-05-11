@@ -125,7 +125,7 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
         size=Pt(18), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     card_w = Inches(11.0)
-    card_h = Inches(1.45)
+    card_h = Inches(1.30)
     gap_y = Inches(0.10)
     start_y = CT + Inches(0.95)
 
@@ -164,7 +164,7 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
                  size=Pt(13), color=WHITE)
         if True:
             t3 = add_text(slide, f"\u25b8 {example}",
-                     MX + Inches(0.2), y + Inches(1.08),
+                     MX + Inches(0.2), y + Inches(0.95),
                      card_w - Inches(0.4), Inches(0.30),
                      size=Pt(12), color=LGRAY, italic=True)
             card_groups.append([r, t1, t2, t3])
@@ -212,8 +212,8 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
       add_text(slide,
         "IS = 0.25\u00d7Semantic + 0.15\u00d7(Phonetic + InvWER + WWER + NEA + Length)   \u2022   "
         "Fully deterministic   \u2022   $0 per evaluation",
-        MX, Inches(6.80), CW, Inches(0.25),
-        size=Pt(11), color=LGRAY, align=PP_ALIGN.CENTER)
+        MX, Inches(6.95), CW, Inches(0.25),
+        size=Pt(13), color=LGRAY, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "IS Slide A: Three standard word-accuracy signals. Inverse WER (15% "
@@ -785,11 +785,14 @@ def slide_is_radar(prs):
     img_main = add_image(slide, "P6b_radar_dual", img_x, img_top,
                          width=img_w, height=img_h)
 
+    # Caption is baked into the radar image itself ("Domain gap — clean benchmark
+    # vs MBR-aggregated real-world"). The slide-level caption was creating a
+    # duplicate. Keep a (hidden) anchor shape for _finish() bullet references.
     cap_y = img_top + img_h + Inches(0.05)
     cap_main = add_text(slide,
-        "The Domain Gap: clean benchmark vs real-world conditions",
-        MX, cap_y, CW, Inches(0.4),
-        size=Pt(15), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
+        "",
+        MX, cap_y, CW, Inches(0.01),
+        size=Pt(1), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
     _finish(slide, 0,
         "Single-radar layout (May 2026 trim, research-overview C3): the "
@@ -864,10 +867,10 @@ def slide_is_wer_scatter(prs):
                     width=CW - left_w - Inches(0.2),
                     height=Inches(4.95))
 
-    # Combined bottom caption (was 2 \u00d7 Pt(16) lines; merged at Pt(18)).
+    # Source-matched bottom caption (single line).
     add_text(slide,
-        "WER correlates with IS (r\u2248\u22120.7) but misses phonetic/semantic preservation.  "
-        "(IS<2.00 \u2260 WER unusable bucket \u2014 different metrics.)",
+        "WER correlates with IS (r \u2248 \u22120.7) but misses phonetic and "
+        "semantic preservation \u2014 insufficient alone.",
         MX, Inches(6.45), CW, Inches(0.55),
         size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER)
 
@@ -1429,7 +1432,7 @@ def slide_failure_deep_1b(prs):
         size=Pt(18), color=GOLD, bold=True)
     add_text(slide,
         "Accumulated errors respond to multi-hypothesis aggregation (shipped). "
-        "Signal loss is detectable and filterable - lowest priority to fix.",
+        "Signal loss is detectable and filterable — lowest priority to fix.",
         MX + Inches(0.3), sum_y + Inches(0.55), CW - Inches(0.6), Inches(0.50),
         size=Pt(14), color=WHITE)
     anim_groups.append([sr])
@@ -1475,7 +1478,7 @@ def slide_failure_deep_2(prs):
 
     # Three cards side by side
     cw_card = Inches(3.95)
-    ch_card = Inches(5.7)
+    ch_card = Inches(5.6)
     gap = Inches(0.21)
     total = 3 * cw_card + 2 * gap
     cx = (SL_W - total) / 2
@@ -1484,43 +1487,48 @@ def slide_failure_deep_2(prs):
     examples = [
         {
             "title": "Hallucination",
-            "pct": "19%",
+            "pct": "18.8%",
             "color": CORAL,
             "ref": "carry strap",
             "hyp": "holocaust denier explanation\nof the final act",
             "wer": "100%", "is_score": "0.1",
             "why_label": "Why this category?",
-            # audit:bigfonts trimmed 6 lines -> 2 short ones
-            "why": "LLM \u2018ran away\u2019 \u2014 fluent\n"
-                   "but fabricated. Output LONGER\n"
-                   "than reference (WER \u2265 100%).",
+            "why": "The model generated 8 words from\n"
+                   "a 2-word input. The LLM\u2019s language\n"
+                   "model \u2018ran away\u2019 \u2014 output is fluent\n"
+                   "English but completely fabricated.\n"
+                   "Distinguishing feature: output is\n"
+                   "LONGER than reference (WER \u2265 100%).",
         },
         {
             "title": "Wrong Topic",
-            "pct": "44%",
+            "pct": "44.4%",
             "color": GOLD,
             "ref": "i\u2019ve made lots of videos\nabout weight loss and diet",
             "hyp": "when i was a little girl i\nalways wanted to be a princess",
             "wer": "97%", "is_score": "0.38",
             "why_label": "Why this category?",
-            # audit:bigfonts trimmed 6 lines -> 2 short ones
-            "why": "Same LENGTH as reference, but a\n"
-                   "completely different subject. The\n"
-                   "LLM picked the wrong domain.",
+            "why": "Output is similar LENGTH to\n"
+                   "reference (not hallucination) but\n"
+                   "about a completely different subject.\n"
+                   "The visual encoder extracted mouth\n"
+                   "shapes that the LLM mapped to a\n"
+                   "wrong but coherent domain.",
         },
         {
             "title": "Right Topic, Wrong Details",
-            "pct": "14%",
+            "pct": "13.8%",
             "color": TEAL,
             "ref": "about the 13th amendment\nthe 13th amendment is going",
             "hyp": "13th may mean something to\nhim because it can help him",
             "wer": "81%", "is_score": "2.14",
             "why_label": "Why this category?",
-            # CUT v3: 3 lines -> 2 so Pt(24) wrap fits in 1.90" frame
-            # (was rendering bottom 7.20). Topic-recoverable detail and
-            # rule citation moved to speaker notes.
-            "why": "\u201c13th\u201d survived, \u201camendment\u201d lost.\n"
-                   "Rule: Semantic \u2265 0.2.",
+            "why": "The word \u201c13th\u201d survived but\n"
+                   "\u201camendment\u201d was lost. A viewer\n"
+                   "might guess the topic (law) but\n"
+                   "critical entity information is\n"
+                   "irrecoverable. Key distinction:\n"
+                   "Semantic \u2265 0.2 (topic is correct).",
         },
     ]
 
@@ -1561,11 +1569,11 @@ def slide_failure_deep_2(prs):
 
         # Why explanation
         card_shapes.append(add_text(slide, ex["why_label"],
-                 x + Inches(0.15), cy + Inches(4.00),
-                 cw_card - Inches(0.3), Inches(0.30), size=Pt(16), color=TEAL, bold=True))
+                 x + Inches(0.15), cy + Inches(3.85),
+                 cw_card - Inches(0.3), Inches(0.30), size=Pt(13), color=TEAL, bold=True))
         card_shapes.append(add_text(slide, ex["why"],
-                 x + Inches(0.15), cy + Inches(4.30), cw_card - Inches(0.3), Inches(1.30),
-                 size=Pt(16), color=LGRAY))
+                 x + Inches(0.15), cy + Inches(4.15), cw_card - Inches(0.3), Inches(1.40),
+                 size=Pt(11), color=LGRAY))
 
         anim_groups.append(card_shapes)
 

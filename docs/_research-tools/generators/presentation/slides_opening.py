@@ -561,6 +561,7 @@ def slide_04(prs):  # audit:bigfonts
     slide = build_split(prs, 4, "The Benchmark: Paper vs Reality", "P2_paper",
         big_num="25.4%", num_color=TEAL,
         num_label="AV-HuBERT on LRS3 — TED talks, ideal conditions",
+        num_sublabel="AutoAVSR sharper: 19%  ·  literature reports WER only",
         # v13 Amosi: 25.4% paper number; 4 bullets per source.
         bullet_size=Pt(17),
         bullets=[
@@ -600,11 +601,15 @@ def slide_04(prs):  # audit:bigfonts
     # one line to keep height under slide-num ceiling.
     # CUT v3: top 6.78 -> 6.40 + h 0.32 -> 0.30 so Pt(16) bottom <= 7.05.
     # Bottom caption: Pt(16)\u2192Pt(18) italic to clear the caption-floor.
+    # Two-line footer matching source.
     add_text(slide,
-        "Different dataset, fundamentally harder. "
-        "(LRS3 reproduction reaches 32% WER \u2014 pretrain split differences.)",
-        MX, Inches(6.22), CW, Inches(0.73),
-        size=Pt(18), color=MGRAY, italic=True)
+        "Different dataset, fundamentally harder problem.",
+        MX, Inches(6.05), CW, Inches(0.40),
+        size=Pt(18), color=LGRAY, italic=True)
+    add_text(slide,
+        "Note: Our best LRS3 reproduction achieved 32% WER \u2014 gap likely due to pretrain/test split differences.",
+        MX, Inches(6.50), CW, Inches(0.40),
+        size=Pt(13), color=MGRAY, italic=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 # SLIDE 5 — THE REALITY GAP
@@ -886,7 +891,7 @@ def slide_visemes(prs):  # audit:bigfonts
             str(gif_path), gif_x, CT + Inches(0.6), width=gif_w, height=gif_h))
     # audit:bigfonts — caption Pt(12) -> Pt(24); copy trimmed.
     poster_shapes.append(add_text(slide,
-        "Identical mouth shapes can produce different words",
+        "Lip reading: identical mouth shapes can produce completely different words",
         rx, CT + Inches(2.18), col_w, Inches(0.73),
         size=Pt(18), color=LGRAY, italic=True, align=PP_ALIGN.CENTER))
 

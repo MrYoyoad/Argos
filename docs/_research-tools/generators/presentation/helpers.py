@@ -878,13 +878,16 @@ def _finish(slide, num, notes, anim_groups=None, click_reveal=True,
 
 
 def build_split(prs, num, title, image_key, notes, big_num=None,
-                num_color=TEAL, num_label=None, bullets=None,
+                num_color=TEAL, num_label=None, num_sublabel=None, bullets=None,
                 bottom_text=None, bullet_size=Pt(15)):
     """Split layout: text/numbers left, image right.
 
     bullet_size: per-call override for bullet font (default Pt(15) preserves
     backward compatibility; pass Pt(24) for body-tier bullet text per audit
     FONT_BELOW_24PT_BODY rule).
+
+    num_sublabel: optional small italic text below num_label (e.g. citation
+    note "AutoAVSR sharper: 19% — literature reports WER only").
     """
     slide = new_slide(prs)
     t = add_title(slide, title)
@@ -903,6 +906,11 @@ def build_split(prs, num, title, image_key, notes, big_num=None,
                           size=Pt(15), color=LGRAY)
             left_shapes.append(s2)
             top += Inches(0.55)
+        if num_sublabel:
+            s3 = add_text(slide, num_sublabel, MX, top, SLW, Inches(0.30),
+                          size=Pt(12), color=LGRAY, italic=True)
+            left_shapes.append(s3)
+            top += Inches(0.30)
 
     if bullets:
         # Cap bullet height so it doesn't overlap bottom_text at y=6.4

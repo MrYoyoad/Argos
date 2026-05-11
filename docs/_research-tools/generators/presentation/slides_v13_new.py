@@ -282,15 +282,20 @@ def slide_four_numbers(prs):
                      card_x + Inches(2.55), y + Inches(0.15),
                      card_w - Inches(2.8), Inches(0.95),
                      size=Pt(13), color=LGRAY)
-        # Down arrow between rows
+        # Down triangle between rows (source uses ▼ arrow shape)
         if i < 3:
             arrow_y = y + row_h + Inches(0.005)
             arrow_color = rows[i + 1][1]  # arrow takes color of next card
             try:
-                add_rect(slide, MX + CW/2 - Inches(0.075), arrow_y,
-                         Inches(0.15), Inches(0.15),
-                         fill_color=arrow_color, border_color=None,
-                         corner_radius=False)
+                tri = slide.shapes.add_shape(
+                    MSO_SHAPE.ISOSCELES_TRIANGLE,
+                    int(MX + CW/2 - Inches(0.12)), arrow_y,
+                    Inches(0.24), Inches(0.18))
+                # Rotate to point downward (default points up)
+                tri.rotation = 180.0
+                tri.fill.solid()
+                tri.fill.fore_color.rgb = arrow_color
+                tri.line.fill.background()
             except Exception:
                 pass
 
@@ -335,8 +340,8 @@ def slide_is_conf_correlate_combined(prs):
              col_w - Inches(0.5), Inches(0.40),
              size=Pt(15), color=TEAL, bold=True))
     L.append(add_bullets(slide, [
-        ("Pearson r ( IS , <log p> )  ~  0.74", {}),
-        ("Spearman rho  ~  0.78  (rank correlation, robust to "
+        ("Pearson r ( IS , ⟨log p⟩ )  ≈  0.74", {}),
+        ("Spearman ρ  ≈  0.78  (rank correlation, robust to "
          "saturation at the ends)", {"bold": True}),
     ], MX + Inches(0.25), b1_y + Inches(0.60),
        col_w - Inches(0.5), Inches(1.40), size=Pt(13)))
@@ -352,10 +357,10 @@ def slide_is_conf_correlate_combined(prs):
              col_w - Inches(0.5), Inches(0.40),
              size=Pt(15), color=GREEN, bold=True))
     L.append(add_bullets(slide, [
-        ("Cohen's k ( IS-tier , Confidence-tier )  ~  0.62  -  "
+        ("Cohen’s κ ( IS-tier, Confidence-tier )  ≈  0.62  —  "
          "substantial agreement", {}),
-        ("Raw agreement ~ 79% on diagonal.  Off-diagonal cases mostly "
-         "adjacent  (Y <-> TRUST off-by-one).",
+        ("Raw agreement ≈ 79% on diagonal. Off-diagonal cases mostly "
+         "adjacent  (Y ↔ TRUST off-by-one).",
          {"bold": True}),
     ], MX + Inches(0.25), b2_y + Inches(0.60),
        col_w - Inches(0.5), Inches(1.55), size=Pt(13)))
@@ -367,7 +372,7 @@ def slide_is_conf_correlate_combined(prs):
              rx, CT, col_w, Inches(0.40),
              size=Pt(22), color=CORAL, bold=True))
     R.append(add_text(slide,
-        "2x2 contingency on 1,497 segments. Both metrics agree on the "
+        "2×2 contingency on 1,497 segments. Both metrics agree on the "
         "\"useful or not\" verdict 96% of the time.",
         rx, CT + Inches(0.45), col_w, Inches(0.75),
         size=Pt(13), color=WHITE, bold=True))
@@ -395,14 +400,14 @@ def slide_is_conf_correlate_combined(prs):
         "IS uses the reference text. Confidence uses only the softmax. "
         "Different inputs, same answer.\n"
         "Both metrics independently calibrated to the same blind judge "
-        "(k_IS-Opus = 0.818).",
+        "(κ_IS-Opus = 0.818).",
         rx, CT + Inches(3.50), col_w, Inches(1.40),
-        size=Pt(12), color=WHITE))
+        size=Pt(13), color=WHITE))
     R.append(add_text(slide,
-        "That shared anchor forces them to track each other - "
+        "That shared anchor forces them to track each other — "
         "mathematically, not just conceptually.",
         rx, CT + Inches(4.80), col_w, Inches(0.50),
-        size=Pt(12), color=LGRAY, italic=True))
+        size=Pt(13), color=WHITE))
 
     _finish(slide, 0,
         "v13 merge of correlation + contingency. Left: statistical "

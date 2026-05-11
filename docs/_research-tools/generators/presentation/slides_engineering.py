@@ -736,10 +736,6 @@ def slide_eng_transition(prs):
              MX, Inches(3.5), CW, Inches(0.6),
              size=Pt(30), color=LGRAY, align=PP_ALIGN.CENTER)
 
-    # Subtle accent line
-    add_rect(slide, Inches(4.5), Inches(4.3), Inches(4.33), Inches(0.04),
-             fill_color=TEAL)
-
     add_text(slide, "3 research repositories  \u2192  1 automated pipeline  \u2192  deployed container",
              MX, Inches(4.8), CW, Inches(0.5),
              size=Pt(22), color=MGRAY, align=PP_ALIGN.CENTER)

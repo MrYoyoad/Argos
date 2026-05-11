@@ -180,6 +180,50 @@ def hide(builder):
     return wrapped
 
 
+def with_footer(builder, new_footer):
+    """Wrap a builder so its slide's bottom-left number is rewritten.
+
+    Used for appendix slides where the builder hardcodes its own A-number,
+    but the v13 deck needs a different A-number.
+    """
+    def wrapped(prs):
+        n_before = len(prs.slides)
+        result = builder(prs)
+        if len(prs.slides) <= n_before:
+            return result
+        slide = prs.slides[n_before]
+        # add_slide_num places a textbox at left=MX(0.6"), top=SL_H-0.38",
+        # width=0.5", height=0.25". Find that shape.
+        from pptx.util import Inches as _In
+        target_left = _In(0.6)
+        # SL_H = 7.5" -> top of slide-num textbox = 7.5 - 0.38 = 7.12"
+        target_top_emu = _In(7.0)  # tolerate ~0.2" wiggle
+        for shape in slide.shapes:
+            if not shape.has_text_frame:
+                continue
+            if shape.top is None or shape.top < target_top_emu:
+                continue
+            if shape.left is None or abs(shape.left - target_left) > _In(0.2):
+                continue
+            tf = shape.text_frame
+            # Replace run text preserving format
+            if tf.paragraphs and tf.paragraphs[0].runs:
+                tf.paragraphs[0].runs[0].text = new_footer
+                for r in tf.paragraphs[0].runs[1:]:
+                    r.text = ''
+            else:
+                tf.text = new_footer
+            break
+        return result
+    wrapped.__name__ = f"{builder.__name__}__footer__{new_footer}"
+    return wrapped
+
+
+def with_title_and_footer(builder, new_title, new_footer):
+    """Combine with_title and with_footer in one wrap."""
+    return with_footer(with_title(builder, new_title), new_footer)
+
+
 def main():
     _auto_num[0] = 0
 
@@ -292,15 +336,23 @@ def main():
 
         # ── Appendix (9 slides, renumbered) ──────────────────────────
         slide_a1,                                               # 91: A1
-        with_title(slide_a8, "A2: IS Component Correlation"),   # 92
-        with_title(slide_a11, "A3: LLM Salvage — Recoverable Segments"),  # 93
-        hide(with_title(slide_a11b, "A5: LLM Salvage — Curated Examples")),  # 94: HIDDEN
-        with_title(slide_a13, "A4: Failure Mode Examples"),     # 95
-        with_title(slide_a15, "A5: Video Gallery — All Example Segments"),  # 96
-        with_title(slide_a16, "A6: LLM Judge × IS Tier Cross-Tabulation"),  # 97
-        with_title(slide_a17, "A7: Context Evaluation — Transition Details"),  # 98
-        with_title(slide_v1_vs_v3_judge_lesson,
-                   "A8: Why a Dual-Conf Judge Prompt — a Methodology Lesson"),  # 99
+        with_title_and_footer(slide_a8,
+            "A2: IS Component Correlation", "A2"),              # 92
+        with_title_and_footer(slide_a11,
+            "A3: LLM Salvage — Recoverable Segments", "A3"),    # 93
+        hide(with_title(slide_a11b,
+            "A5: LLM Salvage — Curated Examples")),             # 94: HIDDEN
+        with_title_and_footer(slide_a13,
+            "A4: Failure Mode Examples", "A4"),                 # 95
+        with_title_and_footer(slide_a15,
+            "A5: Video Gallery — All Example Segments", "A5"),  # 96
+        with_title_and_footer(slide_a16,
+            "A6: LLM Judge × IS Tier Cross-Tabulation", "A6"),  # 97
+        with_title_and_footer(slide_a17,
+            "A7: Context Evaluation — Transition Details", "A7"),  # 98
+        with_title_and_footer(slide_v1_vs_v3_judge_lesson,
+            "A8: Why a Dual-Conf Judge Prompt — a Methodology Lesson",
+            "A8"),                                              # 99
     ]
 
     print(f"Target: 99 slides (23 hidden)")

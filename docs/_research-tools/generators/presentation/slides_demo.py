@@ -302,6 +302,167 @@ def _demo_research_slide(prs, *, title, video_key, ref, hyp_runs,
             click_reveal=True)
 
 
+def _demo_card_slide_with_ref_runs(prs, *, title, ref_runs, hyp_runs,
+                                   wer, is_score, mean_prob, min_word_conf,
+                                   metric_color, sub_caption,
+                                   ref_label_extra, hyp_label_extra,
+                                   badge_text, badge_color,
+                                   body_lead, body_lead_color, body_tail,
+                                   notes=""):
+    """Variant of _demo_card_slide accepting rich-text reference + per-label suffixes.
+
+    Used for INSPECT/SALVAGE slides where the reference highlights domain
+    vocabulary in bold.
+    """
+    slide = new_slide(prs)
+    add_title(slide, title)
+    add_accent_line(slide)
+
+    # Metrics row + tier badge (same as _demo_card_slide)
+    metrics_runs = [
+        ("WER ", {"size": Pt(20), "color": LGRAY}),
+        (f"{wer}", {"size": Pt(20), "color": metric_color, "bold": True}),
+        ("   /   IS ", {"size": Pt(20), "color": LGRAY}),
+        (f"{is_score}", {"size": Pt(20), "color": metric_color, "bold": True}),
+        ("   /   mean_prob ", {"size": Pt(20), "color": LGRAY}),
+        (f"{mean_prob}", {"size": Pt(20), "color": metric_color, "bold": True}),
+        ("   /   min word conf ", {"size": Pt(20), "color": LGRAY}),
+        (f"{min_word_conf}", {"size": Pt(20), "color": metric_color, "bold": True}),
+    ]
+    badge_w = Inches(2.6)
+    metrics_t = add_rich_text(slide, [metrics_runs],
+             MX, Inches(1.40), CW - badge_w - Inches(0.2), Inches(0.45))
+
+    badge_x = MX + CW - badge_w
+    badge_box = add_rect(slide, badge_x, Inches(1.40), badge_w, Inches(0.55),
+             fill_color=badge_color, border_color=badge_color,
+             border_width=Pt(1.0), corner_radius=True)
+    badge_t = add_text(slide, badge_text,
+             badge_x, Inches(1.42), badge_w, Inches(0.50),
+             size=Pt(20), bold=True, color=NAVY3, align=PP_ALIGN.CENTER)
+
+    add_text(slide, sub_caption,
+             MX, Inches(1.95), CW, Inches(0.30),
+             size=Pt(13), color=PURPLE, italic=True)
+
+    # REFERENCE
+    add_text(slide, f"REFERENCE{ref_label_extra}",
+             MX, Inches(2.40), CW, Inches(0.30),
+             size=Pt(16), bold=True, color=LGRAY)
+    ref_box = add_rect(slide, MX, Inches(2.72), CW, Inches(1.55),
+             fill_color=NAVY2, border_color=NAVY3,
+             border_width=Pt(0.5), corner_radius=True)
+    ref_t = add_rich_text(slide, [ref_runs],
+             MX + Inches(0.25), Inches(2.84), CW - Inches(0.5), Inches(1.35))
+
+    # HYPOTHESIS
+    add_text(slide, f"HYPOTHESIS{hyp_label_extra}",
+             MX, Inches(4.45), CW, Inches(0.30),
+             size=Pt(16), bold=True, color=WHITE)
+    hyp_box = add_rect(slide, MX, Inches(4.77), CW, Inches(1.50),
+             fill_color=NAVY2, border_color=badge_color,
+             border_width=Pt(1.5), corner_radius=True)
+    hyp_t = add_rich_text(slide, [hyp_runs],
+             MX + Inches(0.30), Inches(4.90), CW - Inches(0.6), Inches(1.30))
+
+    # Body annotation
+    body_runs = [
+        (body_lead, {"size": Pt(16), "color": body_lead_color, "italic": True}),
+        (body_tail, {"size": Pt(16), "color": PURPLE, "italic": True}),
+    ]
+    body_t = add_rich_text(slide, [body_runs],
+             MX, Inches(6.40), CW, Inches(0.60))
+
+    if notes:
+        set_notes(slide, notes)
+
+
+def _demo_card_slide(prs, *, title, ref, hyp_runs,
+                     wer, is_score, mean_prob, min_word_conf,
+                     metric_color, sub_caption,
+                     badge_text, badge_color,
+                     body_lead, body_lead_color, body_tail, notes):
+    """Card-based demo layout (no video).
+
+    Used for the TRUST and INSPECT demo slides where the source deck shows
+    big rounded REF / HYP boxes and a solid-fill TIER badge instead of a
+    video hero. Layout mirrors source slides 59 and 60 in
+    Argos_VSP_v13_Amosi_2.pptx.
+    """
+    slide = new_slide(prs)
+    add_title(slide, title)
+    add_accent_line(slide)
+
+    # ── Metrics row (top, color-highlighted values) ──────────────────
+    # Build a single rich-text line with values colored by metric_color.
+    metrics_runs = [
+        ("WER ", {"size": Pt(20), "color": LGRAY}),
+        (f"{wer}", {"size": Pt(20), "color": metric_color, "bold": True}),
+        ("   /   IS ", {"size": Pt(20), "color": LGRAY}),
+        (f"{is_score}", {"size": Pt(20), "color": metric_color, "bold": True}),
+        ("   /   mean_prob ", {"size": Pt(20), "color": LGRAY}),
+        (f"{mean_prob}", {"size": Pt(20), "color": metric_color, "bold": True}),
+        ("   /   min word conf ", {"size": Pt(20), "color": LGRAY}),
+        (f"{min_word_conf}", {"size": Pt(20), "color": metric_color, "bold": True}),
+    ]
+    badge_w = Inches(2.4)
+    metrics_t = add_rich_text(slide, [metrics_runs],
+             MX, Inches(1.40), CW - badge_w - Inches(0.2), Inches(0.45))
+
+    # ── TIER badge (solid fill on the right) ────────────────────────
+    badge_x = MX + CW - badge_w
+    badge_box = add_rect(slide, badge_x, Inches(1.40), badge_w, Inches(0.55),
+             fill_color=badge_color, border_color=badge_color,
+             border_width=Pt(1.0), corner_radius=True)
+    badge_t = add_text(slide, badge_text,
+             badge_x, Inches(1.42), badge_w, Inches(0.50),
+             size=Pt(20), bold=True, color=NAVY3, align=PP_ALIGN.CENTER)
+
+    # ── Sub-caption (joint band rule etc.) ───────────────────────────
+    sub_t = add_text(slide, sub_caption,
+             MX, Inches(1.95), CW, Inches(0.30),
+             size=Pt(14), color=MGRAY, italic=True)
+
+    # ── REFERENCE label + rounded box ────────────────────────────────
+    add_text(slide, "REFERENCE",
+             MX, Inches(2.45), CW, Inches(0.30),
+             size=Pt(16), bold=True, color=LGRAY)
+
+    ref_box = add_rect(slide, MX, Inches(2.78), CW, Inches(1.10),
+             fill_color=NAVY2, border_color=NAVY3,
+             border_width=Pt(0.5), corner_radius=True)
+    ref_t = add_text(slide, ref,
+             MX + Inches(0.25), Inches(2.88), CW - Inches(0.5), Inches(0.95),
+             size=Pt(20), color=WHITE)
+
+    # ── HYPOTHESIS label + rounded box (color-coded text) ───────────
+    add_text(slide, "HYPOTHESIS",
+             MX, Inches(4.10), Inches(2.0), Inches(0.30),
+             size=Pt(16), bold=True, color=WHITE)
+    add_text(slide, " (per-word confidence — joint rule)",
+             MX + Inches(1.55), Inches(4.10), CW - Inches(1.6), Inches(0.30),
+             size=Pt(14), color=MGRAY, italic=True)
+
+    hyp_box = add_rect(slide, MX, Inches(4.43), CW, Inches(1.40),
+             fill_color=NAVY2, border_color=badge_color,
+             border_width=Pt(1.5), corner_radius=True)
+    hyp_t = add_rich_text(slide, [hyp_runs],
+             MX + Inches(0.30), Inches(4.60), CW - Inches(0.6), Inches(1.15))
+
+    # ── Body annotation (two-part: colored lead + grey tail) ────────
+    body_runs = [
+        (body_lead, {"size": Pt(18), "color": body_lead_color, "bold": True}),
+        ("  " + body_tail, {"size": Pt(18), "color": LGRAY, "italic": True}),
+    ]
+    body_t = add_rich_text(slide, [body_runs],
+             MX, Inches(6.10), CW, Inches(0.50))
+
+    _finish(slide, 0, notes,
+            [[metrics_t, badge_box, badge_t, sub_t],
+             [ref_box, ref_t], [hyp_box, hyp_t], [body_t]],
+            click_reveal=True)
+
+
 def slide_live_example_intro(prs):
     """Early example — Obama 14 (29 words, all green) — sets the bar.
 
@@ -365,84 +526,79 @@ def slide_failure_live_demo(prs):
     Column width 5.85" triggers the narrow-column audit exemption (18pt floor).
     """
     slide = new_slide(prs)
-    add_title(slide, "Failure Modes — Live: Right-Topic-Names-Lost & Hallucination")
+    add_title(slide, "Demo: Where Word Accuracy and Meaning Diverge")
     add_accent_line(slide)
 
-    # Two columns filling CW exactly: 5.85 + 0.43 + 5.85 = 12.13"
-    col_w = Inches(5.85)
-    gap = Inches(0.43)
-    start_x = MX  # = 0.6"
+    # Three columns side by side: smartphone (semantic flip), street_photo
+    # (names lost), halluc (full hallucination).  Mirrors source slide 61.
+    col_w = Inches(3.95)
+    gap = Inches(0.20)
+    total = 3 * col_w + 2 * gap
+    start_x = (SL_W - total) / 2
 
-    vid_h = Inches(2.65)
-    vid_y = CT + Inches(0.05)   # = 1.50"
+    vid_h = Inches(2.40)
+    vid_y = CT + Inches(0.05)
 
     tiles = [
         {
+            "key": "smartphone",
+            "label": "WER 28%   ·   IS 4.1",
+            "caption_runs": [
+                ("“consumers want a bigger smartphone”\n",
+                 {"size": Pt(15), "color": WHITE, "italic": True}),
+                ("→ misleading polarity flip:\n",
+                 {"size": Pt(14), "color": ORANGE, "italic": True}),
+                ("IS 4.1 says polarity flips won’t upgrade\n",
+                 {"size": Pt(13), "color": LGRAY, "italic": True}),
+                ("their smartphone\n\n",
+                 {"size": Pt(13), "color": LGRAY, "italic": True}),
+                ("Polarity-sensitive content requires human\n",
+                 {"size": Pt(12), "color": MGRAY, "italic": True}),
+                ("review regardless of IS.",
+                 {"size": Pt(12), "color": MGRAY, "italic": True}),
+            ],
+        },
+        {
             "key": "street_photo",
-            "label": "Right Topic, Names Lost",
-            "color": ORANGE,
-            "ref": "\u201cjames and will talk about street photography\u201d",
-            "hyp": "\u201ci'm here to talk about street photography\u201d",
-            "wer": "WER 56%  \u00b7  IS 2.91 (Fair)  \u00b7  INSPECT",
+            "label": "WER 56%   ·   IS 2.9",
+            "caption_runs": [
+                ("“james and will talk about street\n",
+                 {"size": Pt(15), "color": WHITE, "italic": True}),
+                ("photography”\n",
+                 {"size": Pt(15), "color": WHITE, "italic": True}),
+                ("→ “i’m here to talk about street\n",
+                 {"size": Pt(15), "color": ORANGE, "italic": True}),
+                ("photography”\n\n",
+                 {"size": Pt(15), "color": ORANGE, "italic": True}),
+                ("Topic right, speaker names lost (IS 2.9).",
+                 {"size": Pt(13), "color": MGRAY, "italic": True}),
+            ],
         },
         {
             "key": "halluc",
-            "label": "Hallucination",
-            "color": RED,
-            "ref": "\u201c\u2026it doesn't have a carry strap\u201d",
-            "hyp": "\u201cthis is david irving he's a holocaust "
-                   "denier and a computer hacker\u201d",
-            "wer": "WER 100%  \u00b7  IS 0.81 (Failed)  \u00b7  STRIP",
+            "label": "WER 100%   ·   IS 0.1",
+            "caption_runs": [
+                ("“carry strap”\n→ “holoc"
+                 "aust denier”",
+                 {"size": Pt(15), "color": RED, "italic": True}),
+            ],
         },
     ]
-
-    # base offsets relative to (vid_y + vid_h).
-    # lbl h=0.50 accommodates 24pt 1-liner; badge h=0.36 accommodates 18pt
-    # 1-liner (badge text kept to <42 chars to avoid wrap); spacing designed
-    # so hyp_t bottom lands at base+2.85 = 4.15+2.85 = 7.00 < 7.05 safe-zone.
-    base_offsets = {
-        "lbl":      Inches(0.07),   # h=0.50 → bottom base+0.57
-        "badge":    Inches(0.62),   # h=0.36 → bottom base+0.98
-        "ref_lbl":  Inches(1.03),   # h=0.28 → bottom base+1.31
-        "ref_t":    Inches(1.34),   # h=0.55 → bottom base+1.89
-        "hyp_lbl":  Inches(1.94),   # h=0.28 → bottom base+2.22
-        "hyp_t":    Inches(2.25),   # h=0.60 → bottom base+2.85
-    }
 
     anim_groups = []
     for i, t in enumerate(tiles):
         x = start_x + i * (col_w + gap)
-        base = vid_y + vid_h
 
         add_video(slide, t["key"], x, vid_y, col_w, vid_h)
 
-        lbl = add_text(slide, t["label"],
-                x, base + base_offsets["lbl"], col_w, Inches(0.50),
-                size=Pt(24), bold=True, color=t["color"],
-                align=PP_ALIGN.CENTER)
+        badge = add_text(slide, t["label"],
+                x, vid_y + vid_h + Inches(0.05), col_w, Inches(0.30),
+                size=Pt(14), color=MGRAY, bold=True, align=PP_ALIGN.CENTER)
 
-        badge = add_text(slide, t["wer"],
-                x, base + base_offsets["badge"], col_w, Inches(0.36),
-                size=Pt(18), color=WHITE, bold=True,
-                align=PP_ALIGN.CENTER)
+        cap_t = add_rich_text(slide, [t["caption_runs"]],
+                x, vid_y + vid_h + Inches(0.40), col_w, Inches(2.65))
 
-        ref_lbl = add_text(slide, "REFERENCE",
-                x, base + base_offsets["ref_lbl"], col_w, Inches(0.28),
-                size=Pt(18), bold=True, color=LGRAY)
-
-        ref_t = add_text(slide, t["ref"],
-                x, base + base_offsets["ref_t"], col_w, Inches(0.55),
-                size=Pt(18), color=LGRAY, italic=True)
-
-        hyp_lbl = add_text(slide, "HYPOTHESIS",
-                x, base + base_offsets["hyp_lbl"], col_w, Inches(0.28),
-                size=Pt(18), bold=True, color=WHITE)
-
-        hyp_t = add_text(slide, t["hyp"],
-                x, base + base_offsets["hyp_t"], col_w, Inches(0.60),
-                size=Pt(18), color=t["color"], italic=True)
-
-        anim_groups.append([lbl, badge, ref_lbl, ref_t, hyp_lbl, hyp_t])
+        anim_groups.append([badge, cap_t])
 
     _finish(slide, 0,
         "Two live failure examples chosen to span the spectrum: 'not that bad' "
@@ -484,24 +640,27 @@ def slide_demo_obama_trust(prs):
     target — proves the model handles diverse speakers, not just rehearsed
     political video. VSP_NBEST=1 sidecar available, so the joint
     conf+agreement rule applied.
+
+    Card layout (no video) to match the source deck's TRUST tier slide.
     """
-    # Per-word colors all BLUE (TRUST band) — every word is high-conf + high-agreement.
+    # Per-word colors all GREEN (TRUST band) — every word high-conf + high-agreement.
     runs = [
-        ("to this wave of ", {"size": Pt(22), "color": BLUE}),
-        ("artificial intelligence ", {"size": Pt(22), "color": BLUE, "bold": True}),
-        ("that is slowly taking place", {"size": Pt(22), "color": BLUE}),
+        ("to this wave of ", {"size": Pt(22), "color": GREEN, "bold": True}),
+        ("artificial intelligence ", {"size": Pt(22), "color": GREEN, "bold": True}),
+        ("that is slowly taking place", {"size": Pt(22), "color": GREEN, "bold": True}),
     ]
-    _demo_research_slide(prs,
-        title="Demo — TRUST: AI talk, Indian-accent speaker (IS=5.00)",
-        video_key="clean_tech",
+    _demo_card_slide(prs,
+        title="Demo — TRUST tier: AI talk, Indian-English speaker",
         ref="to this wave of artificial intelligence that is slowly taking place",
         hyp_runs=runs,
-        metrics_line="WER 0%   /   IS 5.00   /   mean_prob = 0.988   "
-                     "(VSP_NBEST=1, joint band rule)",
-        badge_text="TIER: TRUST",
-        badge_color=BLUE,
-        body="Every word GREEN under the joint rule. Diverse speaker, "
-             "Indian-English accent, perfect transcription.",
+        wer="0%", is_score="5.00", mean_prob="0.988", min_word_conf="0.94",
+        metric_color=GREEN,
+        sub_caption="VSP_NBEST = 1   ·   joint band rule  (p₁ ≥ 0.95  ∧  α ≥ 0.80)",
+        badge_text="TIER:  TRUST",
+        badge_color=GREEN,
+        body_lead="Every word GREEN under the joint rule.",
+        body_lead_color=GREEN,
+        body_tail="Diverse speaker, Indian-English accent, perfect transcription — system at its best.",
         notes="Non-Obama TRUST exemplar (segment "
               "K0h33Ps7vz4_11__e66d3063_00_000000_000103, ~4s, IS=5.00 / "
               "WER=0% / mean_word_prob=0.988). South-Asian speaker with "
@@ -591,27 +750,58 @@ def slide_demo_obama_strip(prs):
     # production label for what the research literature calls 'Salvage'.
     # Per-word color sample: structure-preserved (BLUE) "tells us when to make"
     # vs domain-vocab replacement (ORANGE/PURPLE).
+    # Per-word colors illustrating structure preserved (green) but
+    # vocabulary substituted (purple/orange) under the joint rule.
     runs = [
-        ("tells us when to make ", {"size": Pt(22), "color": BLUE}),
-        ("stops", {"size": Pt(22), "color": PURPLE, "bold": True}),
-        (" — vs ref's ", {"size": Pt(22), "color": LGRAY}),
-        ("cortisol/testosterone", {"size": Pt(22), "color": ORANGE, "italic": True}),
+        ("the job prescription takes into account ", {"size": Pt(18), "color": PURPLE, "bold": True}),
+        ("our ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("environment tells us ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("what ", {"size": Pt(18), "color": ORANGE, "bold": True}),
+        ("to ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("eat ", {"size": Pt(18), "color": PURPLE, "bold": True}),
+        ("tells ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("us ", {"size": Pt(18), "color": ORANGE, "bold": True}),
+        ("where ", {"size": Pt(18), "color": PURPLE, "bold": True}),
+        ("to ", {"size": Pt(18), "color": ORANGE, "bold": True}),
+        ("make ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("turns ", {"size": Pt(18), "color": PURPLE, "bold": True}),
+        ("tells ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("us ", {"size": Pt(18), "color": ORANGE, "bold": True}),
+        ("when ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("to make ", {"size": Pt(18), "color": GREEN, "bold": True}),
+        ("stops ", {"size": Pt(18), "color": PURPLE, "bold": True}),
+        ("basically switches on", {"size": Pt(18), "color": GREEN, "bold": True}),
     ]
-    _demo_research_slide(prs,
-        title="Demo — INSPECT: structure preserved, vocabulary lost",
-        video_key="judge_cortisol",
-        ref="couples us to light cycles in our environment tells us when "
-            "to sleep tells us when to make cortisol tells us when to "
-            "make testosterone basically switches on",
+    # Reference with domain-vocab words bolded.
+    ref_runs = [
+        ("us and couples us to light cycles in our environment tells us when to ",
+         {"size": Pt(18), "color": WHITE}),
+        ("sleep", {"size": Pt(18), "color": WHITE, "bold": True}),
+        (" tells us when to make ", {"size": Pt(18), "color": WHITE}),
+        ("cortisol", {"size": Pt(18), "color": WHITE, "bold": True}),
+        (" tells us when to make\n", {"size": Pt(18), "color": WHITE}),
+        ("testosterone", {"size": Pt(18), "color": WHITE, "bold": True}),
+        (" basically switches on", {"size": Pt(18), "color": WHITE}),
+    ]
+    _demo_card_slide_with_ref_runs(prs,
+        title="Demo — SALVAGE: structure preserved, vocabulary lost",
+        ref_runs=ref_runs,
         hyp_runs=runs,
-        # OVERLAP fix (May 2026): metrics line shortened so it fits one
-        # 18pt line in 9.53"-wide box (was wrapping into the video below).
-        metrics_line="WER 43%  /  IS 2.66 (Salvage)  /  "
-                     "mean_prob 0.739  /  joint rule",
-        badge_text="TIER: INSPECT",
-        badge_color=ORANGE,
-        body="Repeating 'tells us when to X' structure preserved, but "
-             "domain vocabulary (cortisol, testosterone) replaced.",
+        wer="43%", is_score="2.66", mean_prob="0.739", min_word_conf="0.12",
+        metric_color=GOLD,
+        sub_caption="VSP_NBEST = 1   ·   joint band rule   ·   "
+                    "purple flags substituted nouns: prescription (0.12), "
+                    "turns (0.18), stops (0.23)",
+        ref_label_extra="  (domain vocabulary highlighted)",
+        hyp_label_extra="  (structure preserved — vocabulary substituted)",
+        badge_text="TIER:  SALVAGE",
+        badge_color=GOLD,
+        body_lead="Repeating \"tells us when to X\" structure preserved (green/yellow); "
+                  "domain nouns lost (",
+        body_lead_color=WHITE,
+        body_tail="sleep → eat, cortisol → turns, testosterone → stops). "
+                  "Per-word confidence flagged the substituted nouns at p₁ ≤ 0.23 — "
+                  "a reader is told exactly where to verify.",
         notes="Non-Obama INSPECT exemplar (segment "
               "9HanJOCw2Sc_11__19c7ec4e_00_000000_000261, ~13s). "
               "Reference: '… couples us to light cycles in our "
