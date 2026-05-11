@@ -10,7 +10,7 @@ This log tracks the in-flight migration from Llama-2-7b-hf to Llama-3.1-8B-Instr
 
 | Decision | Choice | Why |
 |---|---|---|
-| Target LLM | **Llama-3.1-8B-Instruct** | `hidden_size=4096` (drop-in projector), same LoRA target names, smallest `transformers` bump vs current fairseq pin, battle-tested `inputs_embeds` recipes |
+| Target LLM | **Llama-3.1-8B** (BASE, not Instruct) | `hidden_size=4096` (drop-in projector), same LoRA target names, smallest `transformers` bump vs current fairseq pin. **Base over Instruct**: original paper used `Llama-2-7b-hf` (base), and every 2025 VSR paper (MMS-LLaMA, VALLR, Llama-AVSR) uses base — RLHF/instruct tuning is wasted capacity here since visual features are injected via `inputs_embeds`, not as text instructions. Instruct's chat-eos list (3 ids) is also a complication we don't need. Instruct download kept as a backup for future chat-mode experiments |
 | Ruled out | Qwen 3 8B, Llama 4, Gemma 3, DeepSeek-V3 | Published LRS3 VSR ablation ([arXiv 2509.14880](https://arxiv.org/html/2509.14880v1)) shows Qwen underperforms Llama at matched scale (27.2% vs 25.7% WER); others require projector resize or are too large |
 | Training data | LRS3 (433h, paper-equivalent) | Matches original VSP-LLM paper recipe; well above the ~5K-segment data floor that limited the prior AVSpeech experiments |
 | Training instance | **p4d.24xlarge** (8× A100 40GB) in eu-west-1 | Matches paper hardware exactly; ~$300 for the full run; user confirmed acceptable |
@@ -49,8 +49,10 @@ Two-commit pattern: submodule first, then parent submodule-pointer bump.
 | Llama 3.1 license accepted | ✅ | Submitted under user's personal HF account `MrYoyoad` (not `RonKanto`). Granted by Meta on 2026-05-11 |
 | HF token swapped on EC2 | ✅ | `~/.cache/huggingface/token` now holds `MrYoyoad`'s read token. Old `RonKanto` token backed up to `~/.cache/huggingface/token.RonKanto.bak` |
 | Fine-grained token gated-repo permission | ✅ | Initial token failed with "Please enable access to public gated repositories" — user enabled the toggle in HF settings, retest passed |
-| Model download to `/home/ubuntu/Llama-3.1-8B-Instruct/` | 🟡 in progress | Background task, 16 GB, ~5-15 min |
-| Sanity-check config | ✅ (from preflight) | `hidden_size=4096`, `vocab_size=128256`, `eos_token_id=[128001,128008,128009]` |
+| Instruct download to `/home/ubuntu/Llama-3.1-8B-Instruct/` | ✅ done | 30 GB on disk (16 GB safetensors + 16 GB Meta-format `consolidated.00.pth`). Kept as backup for future chat-mode experiments |
+| Base download to `/home/ubuntu/Llama-3.1-8B/` | 🟡 in progress | Background task `b0iwmeinz`, 16 GB, ~5-10 min. This is the model that will actually be trained against |
+| Sanity-check Instruct config | ✅ (preflight) | `hidden_size=4096`, `vocab_size=128256`, `eos_token_id=[128001,128008,128009]` |
+| Sanity-check Base config | pending | Will run once base download completes; expect scalar `eos_token_id=128001` |
 
 ---
 
@@ -69,10 +71,11 @@ Two-commit pattern: submodule first, then parent submodule-pointer bump.
 
 ## 5. Quirks encountered (lessons for future LLM swaps)
 
-1. **Llama 3 has no pad token** — Llama 2 silently used `<unk>` (id 0) as pad in the loss mask; Llama 3's tokenizer ships with `pad_token=None`. Two places need a guard: `AutoTokenizer.from_pretrained()` callsites (set `tokenizer.pad_token = tokenizer.eos_token`) AND the model's `config.pad_token_id` (set to `eos_token_id`).
-2. **Llama 3's `config.eos_token_id` is a list** — `[128001, 128008, 128009]` for end-of-text, end-of-message, end-of-turn. HF's tokenizer abstraction returns a scalar (`128009` for instruct), but the model config is the raw list. Forward-pass tensor comparisons (`llm_labels == _pad_id`) need a scalar — pick `eos[0]` (end-of-text) as the canonical pad.
-3. **HF fine-grained tokens default to denying gated repos** — even after the user accepts a gated license, a fine-grained token without the explicit "Read access to public gated repos" toggle returns 403. Either toggle the permission or fall back to a classic "Read" token.
-4. **HF auto-approval is account-scoped, not org-scoped** — license acceptance on one account does not propagate to other accounts even within the same org. Migration required a token swap from `RonKanto` to `MrYoyoad`.
+1. **Use BASE not Instruct for projector training** — VSR's visual features are injected via `inputs_embeds`, bypassing the text-instruction-following pathway entirely. RLHF/instruct alignment is wasted capacity at best, harmful interference at worst (the model has to "unlearn" its preference for "Here's the transcription:" style outputs). Every published VSR system (original VSP-LLM, MMS-LLaMA, VALLR, Llama-AVSR) uses base. Caught after we initially downloaded Instruct.
+2. **Llama 3 has no pad token** — Llama 2 silently used `<unk>` (id 0) as pad in the loss mask; Llama 3's tokenizer ships with `pad_token=None`. Two places need a guard: `AutoTokenizer.from_pretrained()` callsites (set `tokenizer.pad_token = tokenizer.eos_token`) AND the model's `config.pad_token_id` (set to `eos_token_id`).
+3. **Llama 3 Instruct's `config.eos_token_id` is a list** — `[128001, 128008, 128009]` for end-of-text, end-of-message, end-of-turn (chat-template artifact). Base has a scalar (`128001`). HF's tokenizer abstraction returns a scalar either way (`128009` for instruct), but the model config is the raw list for Instruct. Forward-pass tensor comparisons (`llm_labels == _pad_id`) need a scalar — pick `eos[0]` (end-of-text) as the canonical pad. With Base, this is a no-op.
+4. **HF fine-grained tokens default to denying gated repos** — even after the user accepts a gated license, a fine-grained token without the explicit "Read access to public gated repos" toggle returns 403. Either toggle the permission or fall back to a classic "Read" token.
+5. **HF auto-approval is account-scoped, not org-scoped** — license acceptance on one account does not propagate to other accounts even within the same org. Migration required a token swap from `RonKanto` to `MrYoyoad`.
 
 ---
 
