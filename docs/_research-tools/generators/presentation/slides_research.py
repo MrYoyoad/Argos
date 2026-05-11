@@ -116,18 +116,18 @@ def slide_is_intro_a(prs):  # audit:bigfonts2
     add_accent_line(slide)
 
     # Top banner — shortened so Pt(24) fits on one line (audit:bigfonts)
-    banner = add_rect(slide, MX, CT, CW, Inches(0.80), fill_color=NAVY2,  # tall enough for 2-line 24pt text
+    banner = add_rect(slide, MX, CT, CW, Inches(0.55), fill_color=NAVY2,  # single-line at 15pt
                       border_color=TEAL, border_width=Pt(2), corner_radius=True)
     banner_txt = add_text(slide,
         "IS = composite of 6 signals (0\u20135).  IS \u2265 2.00 = \"Useful Output\" (Y+P).  "
         "These 3 signals measure raw word accuracy and output sanity.",
-        MX + Inches(0.3), CT + Inches(0.08), CW - Inches(0.6), Inches(0.70),
-        size=Pt(18), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
+        MX + Inches(0.10), CT + Inches(0.10), CW - Inches(0.2), Inches(0.40),
+        size=Pt(15), color=TEAL, bold=True, align=PP_ALIGN.CENTER)
 
     card_w = Inches(11.0)
     card_h = Inches(1.30)
     gap_y = Inches(0.10)
-    start_y = CT + Inches(0.95)
+    start_y = CT + Inches(0.75)
 
     # audit:bigfonts2 — example bullets shortened to one line.
     # CUT v2: dropped redundant "Like WER, but" framing on WWER.

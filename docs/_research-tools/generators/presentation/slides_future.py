@@ -1289,7 +1289,7 @@ def slide_a1(prs):  # audit:bigfonts
         row_height=Inches(0.36))
 
     add_text(slide, 'Context is the ONLY disambiguation signal.\n'
-             'This is why the LLM matters.',
+             'This is why the LLM component matters.',
              SRL, CT + Inches(3.85), SRW, Inches(1.4),
              size=Pt(22), color=TEAL, italic=True)
 

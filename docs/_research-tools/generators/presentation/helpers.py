@@ -359,10 +359,11 @@ def add_video(slide, vid_key, left, top, width, height):
 
 def add_table(slide, headers, rows, left, top, width, row_height=Inches(0.38),
               header_color=TEAL, text_size=Pt(11), col_widths=None,
-              row_colors=None):
+              row_colors=None, bold_cols=None):
     """
     Add a styled table. row_colors: dict mapping row_index -> dict mapping
     col_index -> RGBColor for cell text coloring.
+    bold_cols: optional list of column indices whose cells render bold.
     """
     n_rows = 1 + len(rows)
     n_cols = len(headers)
@@ -394,8 +395,12 @@ def add_table(slide, headers, rows, left, top, width, row_height=Inches(0.38),
             txt_color = WHITE
             if row_colors and ri in row_colors and ci in row_colors[ri]:
                 txt_color = row_colors[ri][ci]
+            cell_bold = bool(bold_cols and ci in bold_cols)
+            cell_size = text_size
+            if cell_bold:
+                cell_size = Pt(text_size.pt + 3) if hasattr(text_size, 'pt') else text_size
             for p in cell.text_frame.paragraphs:
-                _fmt(p, size=text_size, color=txt_color)
+                _fmt(p, size=cell_size, color=txt_color, bold=cell_bold)
                 p.alignment = PP_ALIGN.LEFT
     # Remove table borders for dark theme
     _style_table_borders(tbl, "1a3550")

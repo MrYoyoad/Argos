@@ -444,7 +444,8 @@ def slide_band_reliability_stratified(prs):
                     rx, CT + Inches(0.65), rw,
                     row_height=Inches(0.45),
                     col_widths=[Inches(2.0), Inches(2.0), Inches(3.13)],
-                    text_size=Pt(13), row_colors=row_colors)
+                    text_size=Pt(13), row_colors=row_colors,
+                    bold_cols=[1])
 
     bot = add_text(slide,
         "Strip boundary at  m < 0.65  isn’t arbitrary — it’s where "
@@ -1348,11 +1349,12 @@ def slide_v1_vs_v3_judge_lesson(prs):
     add_title(slide, "v1 vs v3 Judge: A Prompt-Design Lesson")
     add_accent_line(slide)
 
-    sub = add_text(slide,
-        "Same n-best methods.  Same judge model.  Different prompt.  "
-        "Opposite conclusions.",
-        MX, CT, CW, Inches(0.4),
-        size=Pt(16), color=LGRAY, italic=True)
+    sub = add_rich_text(slide, [[
+        ("Same n-best methods.  Same judge model.  Different prompt.  ",
+         {"size": Pt(16), "color": LGRAY, "italic": True}),
+        ("Opposite conclusions.",
+         {"size": Pt(16), "color": LGRAY, "italic": True, "bold": True}),
+    ]], MX, CT, CW, Inches(0.4))
 
     card_w = Inches(5.85)
     gap = Inches(0.4)
@@ -1372,10 +1374,11 @@ def slide_v1_vs_v3_judge_lesson(prs):
              MX + Inches(0.25), cy + Inches(0.21),
              Inches(1.05), Inches(0.32), size=Pt(11),
              color=WHITE, bold=True, align=PP_ALIGN.CENTER))
-    L.append(add_text(slide, "v1  — conf-in-prompt",
-             MX + Inches(1.45), cy + Inches(0.17),
-             Inches(4.0), Inches(0.40), size=Pt(18),
-             color=WHITE, bold=True))
+    L.append(add_rich_text(slide, [[
+        ("v1", {"size": Pt(22), "color": WHITE, "bold": True}),
+        ("  — ", {"size": Pt(16), "color": LGRAY}),
+        ("conf-in-prompt", {"size": Pt(16), "color": LGRAY, "italic": True}),
+    ]], MX + Inches(1.45), cy + Inches(0.17), Inches(4.0), Inches(0.40)))
     L.append(add_text(slide, "PROMPT GIVES JUDGE",
              MX + Inches(0.25), cy + Inches(0.70),
              Inches(3.5), Inches(0.30), size=Pt(10),
@@ -1392,22 +1395,32 @@ def slide_v1_vs_v3_judge_lesson(prs):
              MX + Inches(0.25), cy + Inches(1.65),
              card_w - Inches(0.5), Inches(0.28), size=Pt(11),
              color=LGRAY))
-    L.append(add_text(slide, "vote_conf  loses  (p < 0.05)",
-             MX + Inches(0.25), cy + Inches(1.95),
-             card_w - Inches(0.5), Inches(0.45), size=Pt(20),
-             color=CORAL, bold=True))
+    L.append(add_rich_text(slide, [[
+        ("vote_conf", {"size": Pt(20), "color": CORAL, "bold": True,
+                       "font": "Consolas"}),
+        ("  ", {"size": Pt(20), "color": CORAL}),
+        ("loses", {"size": Pt(20), "color": CORAL, "bold": True}),
+        ("  (", {"size": Pt(17), "color": LGRAY}),
+        ("p", {"size": Pt(17), "color": LGRAY, "italic": True}),
+        (" < 0.05)", {"size": Pt(17), "color": LGRAY}),
+    ]], MX + Inches(0.25), cy + Inches(1.95),
+       card_w - Inches(0.5), Inches(0.45)))
     L.append(add_text(slide, "IDENTICAL-TEXT DRIFT",
              MX + Inches(0.25), cy + Inches(2.55),
              card_w - Inches(0.5), Inches(0.30), size=Pt(10),
              color=LGRAY, bold=True))
-    L.append(add_text(slide, "27%   judge flips on identical text",
-             MX + Inches(0.25), cy + Inches(2.85),
-             card_w - Inches(0.5), Inches(0.55), size=Pt(22),
-             color=CORAL, bold=True))
-    L.append(add_text(slide, "BIAS  against n-best variants",
-             MX + Inches(0.25), cy + Inches(3.55),
-             card_w - Inches(0.5), Inches(0.40), size=Pt(14),
-             color=CORAL, bold=True, italic=True))
+    L.append(add_rich_text(slide, [[
+        ("27%", {"size": Pt(26), "color": CORAL, "bold": True}),
+        ("   judge flips on identical text",
+         {"size": Pt(15), "color": LGRAY}),
+    ]], MX + Inches(0.25), cy + Inches(2.85),
+       card_w - Inches(0.5), Inches(0.55)))
+    L.append(add_rich_text(slide, [[
+        ("BIAS  ", {"size": Pt(14), "color": LGRAY, "bold": True}),
+        ("against n-best variants",
+         {"size": Pt(14), "color": CORAL, "italic": True}),
+    ]], MX + Inches(0.25), cy + Inches(3.55),
+       card_w - Inches(0.5), Inches(0.40)))
 
     # ============ RIGHT CARD (CURRENT / v3) ============
     R = []
@@ -1423,10 +1436,11 @@ def slide_v1_vs_v3_judge_lesson(prs):
              rx + Inches(0.25), cy + Inches(0.21),
              Inches(1.10), Inches(0.32), size=Pt(11),
              color=WHITE, bold=True, align=PP_ALIGN.CENTER))
-    R.append(add_text(slide, "v3  — dual-conf",
-             rx + Inches(1.50), cy + Inches(0.17),
-             Inches(4.0), Inches(0.40), size=Pt(18),
-             color=WHITE, bold=True))
+    R.append(add_rich_text(slide, [[
+        ("v3", {"size": Pt(22), "color": WHITE, "bold": True}),
+        ("  — ", {"size": Pt(16), "color": LGRAY}),
+        ("dual-conf", {"size": Pt(16), "color": LGRAY, "italic": True}),
+    ]], rx + Inches(1.50), cy + Inches(0.17), Inches(4.0), Inches(0.40)))
     R.append(add_text(slide, "PROMPT GIVES JUDGE",
              rx + Inches(0.25), cy + Inches(0.70),
              Inches(3.5), Inches(0.30), size=Pt(10),
@@ -1443,22 +1457,32 @@ def slide_v1_vs_v3_judge_lesson(prs):
              rx + Inches(0.25), cy + Inches(1.65),
              card_w - Inches(0.5), Inches(0.28), size=Pt(11),
              color=LGRAY))
-    R.append(add_text(slide, "vote_conf  wins  (p = 0.00257)",
-             rx + Inches(0.25), cy + Inches(1.95),
-             card_w - Inches(0.5), Inches(0.45), size=Pt(20),
-             color=GREEN, bold=True))
+    R.append(add_rich_text(slide, [[
+        ("vote_conf", {"size": Pt(20), "color": GREEN, "bold": True,
+                       "font": "Consolas"}),
+        ("  ", {"size": Pt(20), "color": GREEN}),
+        ("wins", {"size": Pt(20), "color": GREEN, "bold": True}),
+        ("  (", {"size": Pt(17), "color": LGRAY}),
+        ("p", {"size": Pt(17), "color": LGRAY, "italic": True}),
+        (" = 0.00257)", {"size": Pt(17), "color": LGRAY}),
+    ]], rx + Inches(0.25), cy + Inches(1.95),
+       card_w - Inches(0.5), Inches(0.45)))
     R.append(add_text(slide, "IDENTICAL-TEXT DRIFT",
              rx + Inches(0.25), cy + Inches(2.55),
              card_w - Inches(0.5), Inches(0.30), size=Pt(10),
              color=LGRAY, bold=True))
-    R.append(add_text(slide, "12–14%   per method, balanced",
-             rx + Inches(0.25), cy + Inches(2.85),
-             card_w - Inches(0.5), Inches(0.55), size=Pt(22),
-             color=GREEN, bold=True))
-    R.append(add_text(slide, "BIAS  balanced",
-             rx + Inches(0.25), cy + Inches(3.55),
-             card_w - Inches(0.5), Inches(0.40), size=Pt(14),
-             color=GREEN, bold=True, italic=True))
+    R.append(add_rich_text(slide, [[
+        ("12–14%", {"size": Pt(26), "color": GREEN, "bold": True}),
+        ("   per method, balanced",
+         {"size": Pt(15), "color": LGRAY}),
+    ]], rx + Inches(0.25), cy + Inches(2.85),
+       card_w - Inches(0.5), Inches(0.55)))
+    R.append(add_rich_text(slide, [[
+        ("BIAS  ", {"size": Pt(14), "color": LGRAY, "bold": True}),
+        ("balanced",
+         {"size": Pt(14), "color": GREEN, "italic": True}),
+    ]], rx + Inches(0.25), cy + Inches(3.55),
+       card_w - Inches(0.5), Inches(0.40)))
 
     # ============ LESSON BAR ============
     lesson = []
@@ -1466,12 +1490,15 @@ def slide_v1_vs_v3_judge_lesson(prs):
     lesson.append(add_rect(slide, MX, ly, CW, Inches(0.70),
                            fill_color=NAVY3, border_color=TEAL,
                            border_width=Pt(1.5), corner_radius=True))
-    lesson.append(add_text(slide,
-        "LESSON  •  show the judge both sides' confidence.  "
-        "Single-sided injection biases the judge against the candidate it doesn't see.",
-        MX + Inches(0.3), ly + Inches(0.18), CW - Inches(0.6),
-        Inches(0.40), size=Pt(13), color=WHITE, bold=True,
-        align=PP_ALIGN.CENTER))
+    lesson.append(add_rich_text(slide, [[
+        ("LESSON", {"size": Pt(13), "color": TEAL, "bold": True}),
+        ("  •  show the judge ", {"size": Pt(13), "color": WHITE}),
+        ("both sides' confidence",
+         {"size": Pt(13), "color": WHITE, "italic": True, "bold": True}),
+        (".  Single-sided injection biases the judge against the candidate it doesn't see.",
+         {"size": Pt(13), "color": WHITE}),
+    ]], MX + Inches(0.3), ly + Inches(0.18), CW - Inches(0.6),
+       Inches(0.40), align=PP_ALIGN.LEFT))
 
     _finish(slide, 0,
         "Source: docs/evaluation/llm_judge_nbest/llm_judge_nbest_analysis.md "

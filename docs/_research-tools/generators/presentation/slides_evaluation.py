@@ -1664,7 +1664,7 @@ def slide_judge_ex5(prs):
     """Judge example 5: Cooking domain confusion — jalapeno → banana (IS 2.07)."""
     _judge_video_slide(prs,
         vid_key="judge_jalapeno",
-        title="Example 2: Cooking Domain Confusion",
+        title="Judge Example 5: Cooking Domain Confusion",
         ref="and i have a tablespoon of jalapeno fresh jalapeno",
         hyp="and i have a dietary smoothie i've got the "
             "banana called fresh banana",
