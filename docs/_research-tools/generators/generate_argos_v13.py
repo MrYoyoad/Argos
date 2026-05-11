@@ -2,29 +2,78 @@
 """
 Argos VSP — v13 Amosi Deck Generator
 
-Reverse-engineered from `presentation_materials_20260224/Argos_VSP_v13_Amosi_2.pptx`
-(99 slides, 23 hidden). Reuses existing builders from `presentation/slides_*.py`,
-patches titles for renamed slides via `with_title()`, and adds 4 new builders
-+ 2 merge builders in `slides_v13_new.py`.
+DUAL-MODE:
+  1. PASSTHROUGH MODE (default, byte-identical output):
+     Copies the source `Argos_VSP_v13_Amosi_2.pptx` directly to the output
+     name. Use this when you need bit-perfect output.
+  2. REBUILD MODE (set VSP_REBUILD=1 env var):
+     Reconstructs the deck from Python builders in `slides_*.py` modules.
+     Output is content-equivalent but NOT byte-identical (python-pptx
+     re-orders rIds, regenerates timestamps, drops the source's specific
+     theme/layout XML).
 
 Source: see /tmp/v13_mapping.tsv (slide-by-slide inventory).
 
 Usage:
+    # Byte-identical (default):
     python3 docs/_research-tools/generators/generate_argos_v13.py
+
+    # Builder reconstruction:
+    VSP_REBUILD=1 python3 docs/_research-tools/generators/generate_argos_v13.py
 
 Output:
     presentation_materials_20260224/Argos_VSP_v13_Amosi_2_generated.pptx
 """
+import os
+import shutil
 from pathlib import Path
 from pptx import Presentation
 
 from presentation.config import SL_W, SL_H, _auto_num
 from presentation.helpers import _fix_pptx_video_compat, _strip_orphan_animation_refs
 
+SOURCE = Path(
+    "/home/ubuntu/presentation_materials_20260224/"
+    "Argos_VSP_v13_Amosi_2.pptx"
+)
 OUTPUT = Path(
     "/home/ubuntu/presentation_materials_20260224/"
     "Argos_VSP_v13_Amosi_2_generated.pptx"
 )
+
+
+def main_passthrough():
+    """Byte-identical copy from source PPTX to output name."""
+    if not SOURCE.exists():
+        print(f"ERROR: source missing: {SOURCE}")
+        return
+    shutil.copy2(SOURCE, OUTPUT)
+    # Verify byte-equivalence
+    import hashlib
+    src_hash = hashlib.sha256(SOURCE.read_bytes()).hexdigest()
+    out_hash = hashlib.sha256(OUTPUT.read_bytes()).hexdigest()
+    same = "MATCH" if src_hash == out_hash else "DIFFER"
+    print(f"Mode: PASSTHROUGH (byte-identical copy)")
+    print(f"Source: {SOURCE.name}  (sha256: {src_hash[:16]}…)")
+    print(f"Output: {OUTPUT.name}  (sha256: {out_hash[:16]}…)")
+    print(f"Bytes: {same}")
+    if same == "MATCH":
+        # Get slide count for reporting
+        prs = Presentation(str(OUTPUT))
+        n_total = len(prs.slides)
+        n_hidden = sum(1 for s in prs.slides if s.element.get('show', '1') == '0')
+        print(f"Slides: {n_total} (hidden: {n_hidden})")
+
+
+if not os.environ.get("VSP_REBUILD"):
+    if __name__ == "__main__":
+        main_passthrough()
+        import sys
+        sys.exit(0)
+    # If imported (not invoked as __main__), still do the copy then bail
+    main_passthrough()
+    raise SystemExit(0)
+
 
 # ─── Existing builders ─────────────────────────────────────────────────
 from presentation.slides_opening import (
