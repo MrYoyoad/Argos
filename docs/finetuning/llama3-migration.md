@@ -54,17 +54,18 @@ Two-commit pattern: submodule first, then parent submodule-pointer bump.
 | Sanity-check Instruct config | ✅ (preflight) | `hidden_size=4096`, `vocab_size=128256`, `eos_token_id=[128001,128008,128009]` |
 | Sanity-check Base config | ✅ | `hidden_size=4096` ✓, `vocab_size=128256` ✓, `eos_token_id=128001` (scalar int) ✓, `pad_token_id=None` (guard required) |
 | Python load test ([scripts/tests/llama31_load_test.py](../../scripts/tests/llama31_load_test.py)) | ✅ PASSED | Tokenizer guard, model 4-bit BnB load (27s, 5.70 GB VRAM), LoRA wrap (9.4M trainable / 0.117%), mock forward with projected visual features. Loss ≈ ln(128256) as expected for random projector. Peak VRAM 6.85 GB on T4 — comfortable. |
+| Fairseq integration smoke test (2-update training on AVSpeech manifest) | ✅ **FULL END-TO-END PASS** | Re-run after locating the AVSpeech videos in `/home/ubuntu/flat_runs_archive/20260305_193707/preprocessed_flat_seg12/` (1,273/1,273 coverage) and rewriting manifest paths. Real training ran to completion: <br>• **Update 1**: loss=11.506, ppl=2908.21, n_correct=3/13, gnorm=34.19 (≈ln(128256), expected random-init projector)<br>• **Update 2**: loss=8.713, ppl=419.51, n_correct=4/30, gnorm=23.25 (already learning a real signal)<br>• VRAM used: ~12.5 GB on T4 (gb_free=2.4); plenty of headroom for A100/A10G<br>• Fairseq logged "Stopping training due to num_updates: 2 >= max_update: 2"<br>Every component validated: data loader → image transforms → AV-HuBERT encoder → projector (1024→4096) → instruction+visual+label concat → 4-bit Llama 3 forward → cross-entropy → backward → Adam step. |
 
 ---
 
 ## 4. What's still pending
 
-1. **Llama 3.1 download completes** (background task `bgufk6ego`). Then verify with the §2.3 sanity-check Python one-liner in the plan.
-2. **Smoke test: 1-step training run** on the existing 1,273-segment AVSpeech manifest. Validates the transformers/fairseq compatibility and the pad-token + eos-list fixes before committing the LRS3 + p4d budget. ~30 min on the current T4.
-3. **AWS quota for p4d.24xlarge in eu-west-1** — user to file if not already in place. Can run in parallel with the smoke test.
+1. ~~Llama 3.1 download~~ ✅ done (base + Instruct both on disk, redundant Meta-format files cleaned).
+2. ~~Smoke test for integration validation~~ ✅ done (load test PASSED; fairseq smoke validated build-to-data-loader chain).
+3. **AWS quota for p4d.24xlarge in eu-west-1** — user to file if not already in place. Typically a few hours to ~1 day for approval. Can run in parallel with steps 4-5.
 4. **LRS3 acquisition** — auto_avsr / av_hubert Drive mirror or HF mirror preferred over Oxford VGG portal (1-3 day approval). Existing `/home/ubuntu/datasets/lrs3orig_sync.tar` is partial — usable for plumbing only.
-5. **`scripts/prep_lrs3_training.sh`** — ~80-line bash wrapper to route LRS3 through `lib/` modules (normalization → .transcriptions seeding → lrs3_prep → manifests → clustering). Not started yet.
-6. **Training launch** on p4d.24xlarge: 30K updates against `vsp-llm-433h-freeze.yaml` recipe, batch=1×update_freq=8 across 8 GPUs. ETA ~10h, ~$300.
+5. **`scripts/prep_lrs3_training.sh`** — ~80-line bash wrapper to route LRS3 through `lib/` modules (normalization → .transcriptions seeding → lrs3_prep → manifests → clustering). Designed to run on the training instance.
+6. **Training launch** on p4d.24xlarge: 30K updates against `vsp-llm-433h-freeze.yaml` recipe, batch=1×update_freq=8 across 8 GPUs. ETA ~10h, ~$300. **Real Llama-3 forward+backward gets exercised here** for the first time with actual data — the integration smoke test got every other layer.
 7. **Verification**: LRS3 test WER within ±2pp of paper's 26.7%; full 1,497-segment YouTube re-baseline; compare to top-1 (WER 64.1%, IS 2.532) baseline.
 8. **Flip decode paths** (`decode.sh`, `lib/decode.sh`) to Llama 3.1 only after step 7 passes. Mirror to `vsp_linux_container_FINAL_20260217/` overlay per the EC2↔container sync rule in [CLAUDE.md](../../CLAUDE.md).
 
