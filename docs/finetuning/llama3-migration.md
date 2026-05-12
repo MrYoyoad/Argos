@@ -63,7 +63,11 @@ Two-commit pattern: submodule first, then parent submodule-pointer bump.
 1. ~~Llama 3.1 download~~ ✅ done (base + Instruct both on disk, redundant Meta-format files cleaned).
 2. ~~Smoke test for integration validation~~ ✅ done (load test PASSED; fairseq smoke validated build-to-data-loader chain).
 3. **AWS quota for p4d.24xlarge in eu-west-1** — user to file if not already in place. Typically a few hours to ~1 day for approval. Can run in parallel with steps 4-5.
-4. **LRS3 acquisition** — auto_avsr / av_hubert Drive mirror or HF mirror preferred over Oxford VGG portal (1-3 day approval). Existing `/home/ubuntu/datasets/lrs3orig_sync.tar` is partial — usable for plumbing only.
+4. **LRS3 acquisition** — concrete guidance from inspecting the repo (May 2026):
+   - **Existing `/home/ubuntu/datasets/lrs3orig_sync.tar` is 136 MB / 198 videos in a flat `lrs3orig_sync/<id>/` layout.** Not usable for training (paper needs the full ~165K utterances / 270 GB in `{pretrain,trainval,test}/` layout).
+   - **Raw videos** must come from **Oxford VGG portal** — both `auto_avsr/preparation/README.md` and `av_hubert/avhubert/preparation/README.md` confirm this is the canonical source. Application takes 1-3 days; start it as the first thing.
+   - **Pre-computed landmarks shortcut**: `auto_avsr/preparation/README.md` ships an 18 GB Google Drive bundle of pre-computed LRS3 landmarks at <https://bit.ly/33rEsax> (or BaiduDrive <https://bit.ly/3rwQSph> key `mi3c`). Grabbing these lets the prep wrapper skip the slow `detect_landmark.py` stage — set `LRS3_LANDMARKS=/path/to/extracted_landmarks` before running `scripts/pipeline/prep_lrs3_training.sh` and it'll route around stage 2 detection automatically.
+   - HuggingFace community mirrors of the raw videos exist but vary in completeness; only worth a look if Oxford VGG is unreachable.
 5. **`scripts/prep_lrs3_training.sh`** — ~80-line bash wrapper to route LRS3 through `lib/` modules (normalization → .transcriptions seeding → lrs3_prep → manifests → clustering). Designed to run on the training instance.
 6. **Training launch** on p4d.24xlarge: 30K updates against `vsp-llm-433h-freeze.yaml` recipe, batch=1×update_freq=8 across 8 GPUs. ETA ~10h, ~$300. **Real Llama-3 forward+backward gets exercised here** for the first time with actual data — the integration smoke test got every other layer.
 7. **Verification**: LRS3 test WER within ±2pp of paper's 26.7%; full 1,497-segment YouTube re-baseline; compare to top-1 (WER 64.1%, IS 2.532) baseline.

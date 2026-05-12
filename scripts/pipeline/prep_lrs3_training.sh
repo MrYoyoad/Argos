@@ -21,6 +21,10 @@
 # Environment (override via env vars, defaults shown):
 #   LRS3_RAW        = /home/ubuntu/datasets/lrs3_raw
 #   LRS3_PROCESSED  = /home/ubuntu/datasets/lrs3_processed
+#   LRS3_LANDMARKS  = ""  (path to pre-computed landmarks dir; if set + exists,
+#                          stage 2's detect_landmark.py is skipped — saves hours.
+#                          Auto_avsr team ships 18 GB precomputed landmarks at
+#                          https://bit.ly/33rEsax — see docs/finetuning/llama3-migration.md)
 #   VSP_TRAIN_DATA  = /home/ubuntu/lrs3_train_data
 #   AVH             = /home/ubuntu/av_hubert
 #   VSP             = /home/ubuntu/VSP-LLM
@@ -36,6 +40,7 @@ set -euo pipefail
 
 LRS3_RAW="${LRS3_RAW:-/home/ubuntu/datasets/lrs3_raw}"
 LRS3_PROCESSED="${LRS3_PROCESSED:-/home/ubuntu/datasets/lrs3_processed}"
+LRS3_LANDMARKS="${LRS3_LANDMARKS:-}"
 VSP_TRAIN_DATA="${VSP_TRAIN_DATA:-/home/ubuntu/lrs3_train_data}"
 AVH="${AVH:-/home/ubuntu/av_hubert}"
 VSP="${VSP:-/home/ubuntu/VSP-LLM}"
@@ -92,19 +97,30 @@ fi
 # ----------------------------------------------------------------------------
 SENTINEL_S2="${LRS3_PROCESSED}/video"
 if [ ! -d "${SENTINEL_S2}" ] || [ -z "$(ls -A "${SENTINEL_S2}" 2>/dev/null)" ]; then
-  log_stage "2" "detect_landmark.py + align_mouth.py — face detect + mouth ROI"
   cd "${AVH}/avhubert/preparation"
+  # Pre-computed landmarks shortcut: if LRS3_LANDMARKS points at a valid dir,
+  # skip the slow detect_landmark.py stage entirely. auto_avsr ships these at
+  # https://bit.ly/33rEsax (18 GB) -- worth grabbing on the training instance.
+  if [ -n "${LRS3_LANDMARKS}" ] && [ -d "${LRS3_LANDMARKS}" ]; then
+    log_stage "2" "align_mouth.py — mouth ROI (using pre-computed landmarks at ${LRS3_LANDMARKS})"
+    LANDMARK_SRC="${LRS3_LANDMARKS}"
+  else
+    log_stage "2" "detect_landmark.py + align_mouth.py — face detect + mouth ROI"
+    for rank in $(seq 0 $((NSHARD - 1))); do
+      python detect_landmark.py \
+        --root "${LRS3_RAW}" \
+        --landmark "${LRS3_RAW}/landmark" \
+        --manifest "${LRS3_RAW}/file.list" \
+        --rank "${rank}" \
+        --nshard "${NSHARD}" \
+        --ffmpeg "${FFMPEG}"
+    done
+    LANDMARK_SRC="${LRS3_RAW}/landmark"
+  fi
   for rank in $(seq 0 $((NSHARD - 1))); do
-    python detect_landmark.py \
-      --root "${LRS3_RAW}" \
-      --landmark "${LRS3_RAW}/landmark" \
-      --manifest "${LRS3_RAW}/file.list" \
-      --rank "${rank}" \
-      --nshard "${NSHARD}" \
-      --ffmpeg "${FFMPEG}"
     python align_mouth.py \
       --video-direc "${LRS3_RAW}" \
-      --landmark "${LRS3_RAW}/landmark" \
+      --landmark-direc "${LANDMARK_SRC}" \
       --filename-path "${LRS3_RAW}/file.list" \
       --save-direc "${LRS3_PROCESSED}/video" \
       --mean-face "${AVH}/avhubert/preparation/data/20words_mean_face.npy" \
