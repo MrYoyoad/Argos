@@ -63,11 +63,20 @@ Two-commit pattern: submodule first, then parent submodule-pointer bump.
 1. ~~Llama 3.1 download~~ ✅ done (base + Instruct both on disk, redundant Meta-format files cleaned).
 2. ~~Smoke test for integration validation~~ ✅ done (load test PASSED; fairseq smoke validated build-to-data-loader chain).
 3. **AWS quota for p4d.24xlarge in eu-west-1** — user to file if not already in place. Typically a few hours to ~1 day for approval. Can run in parallel with steps 4-5.
-4. **LRS3 acquisition** — concrete guidance from inspecting the repo (May 2026):
-   - **Existing `/home/ubuntu/datasets/lrs3orig_sync.tar` is 136 MB / 198 videos in a flat `lrs3orig_sync/<id>/` layout.** Not usable for training (paper needs the full ~165K utterances / 270 GB in `{pretrain,trainval,test}/` layout).
-   - **Raw videos** must come from **Oxford VGG portal** — both `auto_avsr/preparation/README.md` and `av_hubert/avhubert/preparation/README.md` confirm this is the canonical source. Application takes 1-3 days; start it as the first thing.
-   - **Pre-computed landmarks shortcut**: `auto_avsr/preparation/README.md` ships an 18 GB Google Drive bundle of pre-computed LRS3 landmarks at <https://bit.ly/33rEsax> (or BaiduDrive <https://bit.ly/3rwQSph> key `mi3c`). Grabbing these lets the prep wrapper skip the slow `detect_landmark.py` stage — set `LRS3_LANDMARKS=/path/to/extracted_landmarks` before running `scripts/pipeline/prep_lrs3_training.sh` and it'll route around stage 2 detection automatically.
-   - HuggingFace community mirrors of the raw videos exist but vary in completeness; only worth a look if Oxford VGG is unreachable.
+4. **LRS3 acquisition — BLOCKED (May 2026 access reality)**: a deep search of every documented mirror showed that **LRS3 is no longer publicly downloadable**. Tracking decisions/options below; user is sourcing the dataset out-of-band.
+   - **Oxford VGG** `/lrs3.html` returns **HTTP 404** — page removed, no application form. Search confirms "Downloads are no longer available from the main website."
+   - **OpenDataLab/LRS3-TED** (`OpenDataLab/LRS3-TED`): `odl info` returns 404. The newer `openxlab` tool says "Direct download is currently not available. To download, please visit the dataset homepage: <Oxford VGG URL>" — which is dead.
+   - **TIB LDM** (German research data service): HTTP 403, requires institutional auth we don't have here.
+   - **mmai.io**: SSL cert errors, page unreachable.
+   - **HuggingFace mirrors**: only derivatives exist — `mattymchen/lrs3-test` (677 MB / 1,321 entries, **test-only**, parquet features not raw videos), `JusperLee/LRS3-2Mix` (a 2-speaker mixture for source-separation work). Neither suitable for paper-equivalent training (paper used ~165K utterances).
+   - **GeneFace's 26 GB Drive bundle**: data-masked features only (HuBERT embeddings, mel-spec, 3DMM) — explicitly does NOT contain raw videos to avoid copyright issues.
+   - **auto_avsr / av_hubert Drive mirrors**: host model checkpoints + 18 GB pre-computed landmarks at <https://bit.ly/33rEsax>. NO raw videos. The landmarks are still valuable — they cut hours off the prep pipeline once raw videos are obtained (see `LRS3_LANDMARKS` env var on the prep wrapper).
+   - **Local `/home/ubuntu/datasets/lrs3orig_sync.tar`**: 136 MB / 198 videos in a flat layout — sample only.
+   - **Realistic paths to actually obtain LRS3 in 2026**:
+     1. Email Triantafyllos Afouras / Joon Son Chung / Andrew Zisserman directly with a research-use request.
+     2. Get a copy from a colleague at an academic institution who downloaded before the takedown.
+     3. Pivot to AVSpeech-only training (lose paper-equivalence; need to scale to 20K+ segments).
+   - **Status: user is sourcing LRS3 out-of-band; will update.**
 5. **`scripts/prep_lrs3_training.sh`** — ~80-line bash wrapper to route LRS3 through `lib/` modules (normalization → .transcriptions seeding → lrs3_prep → manifests → clustering). Designed to run on the training instance.
 6. **Training launch** on p4d.24xlarge: 30K updates against `vsp-llm-433h-freeze.yaml` recipe, batch=1×update_freq=8 across 8 GPUs. ETA ~10h, ~$300. **Real Llama-3 forward+backward gets exercised here** for the first time with actual data — the integration smoke test got every other layer.
 7. **Verification**: LRS3 test WER within ±2pp of paper's 26.7%; full 1,497-segment YouTube re-baseline; compare to top-1 (WER 64.1%, IS 2.532) baseline.
