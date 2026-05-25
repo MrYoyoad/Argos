@@ -37,8 +37,17 @@ fi
 export PYTHONPATH="${ROOT}/fairseq:$PYTHONPATH"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-# Auto-patch fairseq GenerationConfig if fields are missing (Bug 11/19/22)
-# Must run AFTER PYTHONPATH is set so it patches the fairseq that decode will use
+# Auto-patch fairseq GenerationConfig if fields are missing (Bugs 11/19/22 + May-2026 Bug 17)
+# Must run AFTER PYTHONPATH is set so it patches the fairseq that decode will use.
+#
+# Why this exists: PYTHONPATH=${ROOT}/fairseq pins the LOCAL fairseq fork at
+# /host/galaxy_export/VSP-LLM/fairseq/, which is older than the EC2 fork.
+# The EC2 fork has 4 added fields the decoder reads via cfg.generation.*:
+#   max_len, repetition_penalty (decode tuning; bugs 11/19/22 — already patched)
+#   do_sample, top_p             (HF sampling; May-2026 add — Bug 17 below)
+# Without these fields OmegaConf strict-struct raises ConfigAttributeError at
+# vsp_llm_decode.py:301-303.  The pip-installed fairseq has all four already
+# but is shadowed by PYTHONPATH; we patch the local fork at runtime instead.
 python3 -c "
 import fairseq.dataclass.configs as c
 patched = False
@@ -70,6 +79,40 @@ if not hasattr(c.GenerationConfig, 'repetition_penalty'):
         print('WARNING: Could not find no_repeat_ngram_size anchor for repetition_penalty patch')
 else:
     print('OK: repetition_penalty')
+
+# Patch 3 (May 2026 — Bug 17): do_sample field for HF generate stochastic sampling.
+# vsp_llm_decode.py:301 reads cfg.generation.do_sample to toggle sampling vs
+# pure beam search. Without this field decode crashes with
+#   omegaconf.errors.ConfigAttributeError: Key 'do_sample' is not in struct
+# even when the value would be False. Anchor on 'sampling: bool' (upstream).
+if not hasattr(c.GenerationConfig, 'do_sample'):
+    target = '    sampling: bool'
+    patch = '    do_sample: bool = field(\n        default=False,\n        metadata={\n            \"help\": \"enable stochastic sampling in HuggingFace generate (default False = pure beam search)\"\n        },\n    )\n    sampling: bool'
+    if target in content:
+        content = content.replace(target, patch, 1)
+        patched = True
+        print('Patched: do_sample')
+    else:
+        print('WARNING: Could not find sampling: bool anchor for do_sample patch')
+else:
+    print('OK: do_sample')
+
+# Patch 4 (May 2026 — Bug 17): top_p field for HF nucleus sampling.
+# vsp_llm_decode.py:303 reads cfg.generation.top_p. Upstream fairseq has
+# 'sampling_topp' (default -1.0) which is semantically different — kept here.
+# Anchor on the same 'sampling: bool' line; Patch 3 already inserted its block
+# before that line, so this insert lands between them. Order does not matter.
+if not hasattr(c.GenerationConfig, 'top_p'):
+    target = '    sampling: bool'
+    patch = '    top_p: float = field(\n        default=0.9,\n        metadata={\n            \"help\": \"nucleus sampling top-p for HuggingFace generate (requires do_sample=True)\"\n        },\n    )\n    sampling: bool'
+    if target in content:
+        content = content.replace(target, patch, 1)
+        patched = True
+        print('Patched: top_p')
+    else:
+        print('WARNING: Could not find sampling: bool anchor for top_p patch')
+else:
+    print('OK: top_p')
 
 if patched:
     with open(src, 'w') as f: f.write(content)

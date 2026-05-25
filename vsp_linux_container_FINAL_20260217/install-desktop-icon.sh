@@ -66,8 +66,10 @@ fi
 
 # The .desktop file uses /usr/bin/bash to invoke the script, because:
 # 1. The script may be on a mounted filesystem where chmod +x doesn't work
-# 2. Terminal=false means the DE does NOT wrap in an extra shell (no double-bash)
-# 3. vsp-start.sh detects "no terminal" and self-relaunches in gnome-terminal
+# 2. Terminal=false: vsp-start.sh runs HEADLESS when launched without a TTY
+#    (docker -d + zenity progress + browser auto-open). No terminal emulator
+#    is required — earlier versions failed on minimal desktops with
+#    "VSP PIPELINE ERROR: No terminal emulator found."
 DESKTOP_CONTENT="[Desktop Entry]
 Version=1.0
 Type=Application
@@ -109,19 +111,20 @@ else
     echo "    .desktop file: WARNING - not created"
     PROBLEMS=1
 fi
-# Check terminal emulator exists (script needs it for self-relaunch)
-TERM_FOUND=""
-for _t in x-terminal-emulator gnome-terminal kgx gnome-console xfce4-terminal mate-terminal konsole lxterminal tilix terminator kitty alacritty xterm; do
+# Headless launcher requires zenity (progress dialog) or notify-send (toast).
+# It will still work without either, but the user gets no visual feedback.
+NOTIFIER_FOUND=""
+for _t in zenity notify-send kdialog yad; do
     if command -v "$_t" &>/dev/null; then
-        TERM_FOUND="$_t"
+        NOTIFIER_FOUND="$_t"
         break
     fi
 done
-if [ -n "$TERM_FOUND" ]; then
-    echo "    Terminal:      $TERM_FOUND ($(command -v "$TERM_FOUND"))"
+if [ -n "$NOTIFIER_FOUND" ]; then
+    echo "    Notifier:      $NOTIFIER_FOUND ($(command -v "$NOTIFIER_FOUND"))"
 else
-    echo "    Terminal:      WARNING - none found!"
-    PROBLEMS=1
+    echo "    Notifier:      WARNING - zenity/notify-send not found; launcher will be silent"
+    echo "                   (log will still be written to ~/.vsp-pipeline.log)"
 fi
 
 # Configure VLC to not show video title overlay (obscures burned subtitles)

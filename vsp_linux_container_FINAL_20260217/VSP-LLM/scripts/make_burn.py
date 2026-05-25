@@ -754,12 +754,16 @@ def main() -> None:
         txt = wrap_text(hyp, width=wrap, max_lines=eff_max_lines)
 
         line_h = fs + args.line_spacing
-        # Size the box to the ACTUAL number of wrapped lines, not the max.
-        # This avoids covering more of the frame than the text needs.
+        # Size the dark subtitle box TIGHT to the actual text — earlier this
+        # used max(needed, args.box_h=320) which always produced a 320-px-tall
+        # black box even for one-line subtitles, dominating the lower portion
+        # of the frame ("dark patch" complaint, May-2026). Now we use only
+        # the actual rendered height, capped at 45% of the frame so a very
+        # long wrapped transcript stays readable.
         actual_lines = max(1, len(txt.splitlines())) if txt.strip() else 1
         needed = pad_y * 2 + (actual_lines * line_h)
-        # Cap box_h at 45% of the frame so the full transcript is visible.
-        box_h = max(int(needed), min(args.box_h, int(h * 0.45)))
+        box_h = min(int(needed), int(h * 0.45))
+        box_h = max(box_h, line_h + pad_y)   # floor so a 0-line edge case still has a visible box
         box_h = min(box_h, h - 2)
 
         dst = out_dir / _file_names.get(uid, f"{uid}_with_hyp.mp4")
@@ -815,12 +819,12 @@ def main() -> None:
             # libass needs the path single-quoted and any colon escaped.
             ass_for_filter = ass_file.replace(":", r"\:").replace("'", r"\'")
             vf = (
-                f"drawbox=x=0:y={y_box}:w=iw:h={box_h}:color=black@0.65:t=fill,"
+                f"drawbox=x=0:y={y_box}:w=iw:h={box_h}:color=black@0.55:t=fill,"
                 f"subtitles='{ass_for_filter}'"
             )
         else:
             vf = (
-                f"drawbox=x=0:y={y_box}:w=iw:h={box_h}:color=black@0.65:t=fill,"
+                f"drawbox=x=0:y={y_box}:w=iw:h={box_h}:color=black@0.55:t=fill,"
                 f"drawtext=textfile='{textfile_for_filter}':"
                 f"expansion=none:"
                 f"fontcolor=white:fontsize={fs}:"

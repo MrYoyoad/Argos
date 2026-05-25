@@ -1,1 +1,1 @@
-vsp-llm-pipeline:client-build-001
+vsp-llm-pipeline:client-build-003

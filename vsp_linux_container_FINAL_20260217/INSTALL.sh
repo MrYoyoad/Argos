@@ -192,6 +192,17 @@ else
     echo -e "${YELLOW}  ⚠️  VSP-LLM clustering modules not found in package${NC}"
 fi
 
+# Component 9b: golden k-means model files (needed by UI's /api/golden-models endpoint)
+echo -e "${BLUE}[3.9b] Installing golden k-means models...${NC}"
+if [ -d "$SCRIPT_DIR/VSP-LLM/golden_kmeans" ]; then
+    mkdir -p VSP-LLM/golden_kmeans
+    cp "$SCRIPT_DIR/VSP-LLM/golden_kmeans/"* VSP-LLM/golden_kmeans/ 2>/dev/null || true
+    GOLDEN_COUNT=$(ls VSP-LLM/golden_kmeans/*.bin 2>/dev/null | wc -l)
+    echo -e "${GREEN}  ✅ Copied $GOLDEN_COUNT golden model(s) to VSP-LLM/golden_kmeans/${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  golden_kmeans/ not found in package — UI golden-model dropdown will be empty${NC}"
+fi
+
 # Component 10: Fairseq max_len patch
 echo -e "${BLUE}[3.10] Patching fairseq GenerationConfig (max_len field)...${NC}"
 if [ -f "$SCRIPT_DIR/patch_fairseq_max_len.py" ]; then
@@ -290,6 +301,88 @@ else
     echo -e "${YELLOW}  ⚠️  spacy_wheels/ not found in package (metrics will use online install)${NC}"
 fi
 
+# ============================================================================
+# Component 17: IS / confidence / agreement dependencies (May 2026 addition)
+# ============================================================================
+# Confidence / IS / N-best / agreement features need packages NOT in the
+# Feb-2026 vsp-llm-yoad-venv: sentence-transformers, Metaphone, doublemetaphone,
+# matplotlib, scipy. We bundle cp310 wheels offline (the venv is Python 3.10)
+# plus the HF MiniLM model cache (sentence-transformers/all-MiniLM-L6-v2) so
+# semantic-similarity scoring works without internet.
+#
+# Strategy: --upgrade-strategy=only-if-needed means existing packages
+# (transformers, numpy, torch...) won't be touched unless a hard requirement
+# bumps them.
+echo -e "${BLUE}[3.17] Installing IS / confidence / agreement deps (offline cp310 wheels)...${NC}"
+if [ -d "$SCRIPT_DIR/is_wheels_cp310" ] && [ -n "${PATCH_VENV:-}" ]; then
+    mkdir -p is_wheels_cp310
+    cp "$SCRIPT_DIR/is_wheels_cp310/"* is_wheels_cp310/ 2>/dev/null || true
+    IS_WHEEL_COUNT=$(ls is_wheels_cp310/*.whl is_wheels_cp310/*.tar.gz 2>/dev/null | wc -l)
+    echo -e "${BLUE}  Found $IS_WHEEL_COUNT IS wheel(s); installing into $PATCH_VENV ...${NC}"
+
+    source "$PATCH_VENV/bin/activate"
+    # Quiet install; only-if-needed avoids upgrading existing torch/numpy/transformers.
+    if pip install -q \
+            --no-index \
+            --find-links "$SCRIPT_DIR/is_wheels_cp310" \
+            --upgrade-strategy only-if-needed \
+            sentence-transformers Metaphone doublemetaphone matplotlib scipy editdistance \
+            2>&1 | tail -20; then
+        echo -e "${GREEN}  ✅ IS / confidence deps installed${NC}"
+    else
+        echo -e "${YELLOW}  ⚠️  Some IS deps failed to install — features may degrade silently${NC}"
+        echo -e "${YELLOW}     See pip output above. Pipeline will still run, IS will warn-and-skip.${NC}"
+    fi
+
+    # Smoke-test the imports
+    echo -e "${BLUE}  Smoke-testing imports...${NC}"
+    python3 - <<'PY' 2>&1 | sed 's/^/    /'
+import importlib, sys
+ok, fail = [], []
+for mod in ("sentence_transformers", "metaphone", "matplotlib", "scipy", "editdistance"):
+    try:
+        importlib.import_module(mod); ok.append(mod)
+    except Exception as e:
+        fail.append(f"{mod}: {e}")
+print("OK:", ", ".join(ok))
+if fail:
+    print("FAIL:")
+    for f in fail: print(" -", f)
+    sys.exit(1)
+PY
+    IS_IMPORT_RC=$?
+    deactivate
+    if [ $IS_IMPORT_RC -eq 0 ]; then
+        echo -e "${GREEN}  ✅ All IS imports OK${NC}"
+    else
+        echo -e "${RED}  ❌ One or more IS imports failed (see above)${NC}"
+    fi
+elif [ ! -d "$SCRIPT_DIR/is_wheels_cp310" ]; then
+    echo -e "${YELLOW}  ⚠️  is_wheels_cp310/ not in package — IS / confidence features may not work${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  vsp venv not detected — skip wheel install; run [3.17] manually after venv is up${NC}"
+fi
+
+# ============================================================================
+# Component 18: HF MiniLM model cache (for sentence-transformers offline)
+# ============================================================================
+# sentence-transformers loads "sentence-transformers/all-MiniLM-L6-v2" from
+# the HuggingFace hub by default. Without internet AND without a local cache,
+# IS scoring crashes. We ship the 88 MB model snapshot inside the overlay and
+# copy it to /workspace/is_model_cache/ inside the container. The pipeline
+# sets HF_HOME / HF_HUB_OFFLINE via lib/outputs.sh so the load is offline.
+echo -e "${BLUE}[3.18] Installing HF MiniLM model cache (offline IS)...${NC}"
+if [ -d "$SCRIPT_DIR/is_model_cache" ]; then
+    mkdir -p is_model_cache
+    # Copy preserving the hub/ subdir layout
+    cp -r "$SCRIPT_DIR/is_model_cache/"* is_model_cache/ 2>/dev/null || true
+    CACHE_SIZE=$(du -sh is_model_cache 2>/dev/null | cut -f1)
+    echo -e "${GREEN}  ✅ HF model cache copied ($CACHE_SIZE) → ./is_model_cache${NC}"
+    echo -e "${BLUE}  Pipeline reads HF_HOME=\$GALAXY_EXPORT/is_model_cache (set in lib/outputs.sh)${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  is_model_cache/ not in package — IS semantic scoring will fail offline${NC}"
+fi
+
 # ====================
 # Fix file permissions for host access
 # ====================
@@ -386,6 +479,96 @@ else
     echo -e "${YELLOW}   (This may be normal if some components are optional)${NC}"
 fi
 
+echo ""
+
+# ============================================================================
+# Critical May-2026 marker verification — abort install if ANY missing.
+# These are the FIXES from the May-2026 refresh. If they're absent from the
+# deployed files, the docker-commit step in apply_update.sh would bake a
+# half-broken image. Better to fail here so the operator notices.
+# ============================================================================
+echo -e "${BLUE}[4/6] Verifying May-2026 critical markers in deployed files...${NC}"
+
+verify_marker() {
+    local description="$1"
+    local file="$2"
+    local pattern="$3"
+    if [ ! -f "$file" ]; then
+        echo -e "${RED}  ✗ MISSING-FILE: $description ($file)${NC}"
+        return 1
+    fi
+    if grep -qE "$pattern" "$file" 2>/dev/null; then
+        echo -e "${GREEN}  ✓ $description${NC}"
+        return 0
+    else
+        echo -e "${RED}  ✗ STALE: $description${NC}"
+        echo -e "${YELLOW}    file:    $file${NC}"
+        echo -e "${YELLOW}    expects: $pattern${NC}"
+        return 1
+    fi
+}
+
+CRITICAL_FAILS=0
+verify_marker "lib/outputs.sh: VSP_FULL_OUTPUTS=1 default" \
+    "lib/outputs.sh" 'VSP_FULL_OUTPUTS:-1' || ((CRITICAL_FAILS++))
+verify_marker "lib/outputs.sh: HF_HUB_OFFLINE inline" \
+    "lib/outputs.sh" 'HF_HUB_OFFLINE' || ((CRITICAL_FAILS++))
+verify_marker "lib/outputs.sh: nbest_aggregate orchestration" \
+    "lib/outputs.sh" 'nbest_aggregate' || ((CRITICAL_FAILS++))
+verify_marker "VSP-LLM/scripts/decode.sh: do_sample patch" \
+    "VSP-LLM/scripts/decode.sh" "Patched: do_sample" || ((CRITICAL_FAILS++))
+verify_marker "VSP-LLM/scripts/decode.sh: top_p patch" \
+    "VSP-LLM/scripts/decode.sh" "Patched: top_p" || ((CRITICAL_FAILS++))
+verify_marker "VSP-LLM/scripts/nbest_aggregate.py present" \
+    "VSP-LLM/scripts/nbest_aggregate.py" "hyp_mbr" || ((CRITICAL_FAILS++))
+verify_marker "VSP-LLM/scripts/compute_word_agreement.py present" \
+    "VSP-LLM/scripts/compute_word_agreement.py" "_word_confs_for_utt" || ((CRITICAL_FAILS++))
+verify_marker "VSP-LLM/scripts/generate_intelligibility_scores.py present" \
+    "VSP-LLM/scripts/generate_intelligibility_scores.py" "doublemetaphone" || ((CRITICAL_FAILS++))
+verify_marker "vsp-ui/app/static/app.js: handleDrop isUploading-only gate" \
+    "vsp-ui/app/static/app.js" 'if \(isUploading\) \{' || ((CRITICAL_FAILS++))
+verify_marker "vsp-ui/app/static/index.html: upload-progress at body level" \
+    "vsp-ui/app/static/index.html" 'upload-progress-floating' || ((CRITICAL_FAILS++))
+verify_marker "vsp-ui/app/static/style.css: floating toast CSS" \
+    "vsp-ui/app/static/style.css" '\.upload-progress-floating' || ((CRITICAL_FAILS++))
+verify_marker "vsp-start.sh: HF_HUB_OFFLINE -e flag" \
+    "vsp-start.sh" 'HF_HUB_OFFLINE=1' || ((CRITICAL_FAILS++))
+verify_marker "vsp-ui/app/services/pipeline_runner.py: HF env setdefault" \
+    "vsp-ui/app/services/pipeline_runner.py" 'env\.setdefault\("HF_HUB_OFFLINE"' || ((CRITICAL_FAILS++))
+verify_marker "VSP-LLM/golden_kmeans: baseline model present" \
+    "VSP-LLM/golden_kmeans/baseline_1396vid_20260218.bin" "" || true   # binary file, just exists-check
+
+# spaCy wheels — must be cp310 for the Feb-2026 client's vsp-llm-yoad-venv.
+# Earlier overlay shipped cp311 wheels which silently failed offline install
+# (spaCy entity metrics then degraded to fallback). Verify a cp310 wheel exists.
+if ls spacy_wheels/spacy-*-cp310-*.whl >/dev/null 2>&1; then
+    echo -e "${GREEN}  ✓ spacy_wheels/: cp310 wheel present${NC}"
+else
+    echo -e "${RED}  ✗ spacy_wheels/: NO cp310 spacy wheel — entity metrics will degrade${NC}"
+    ((CRITICAL_FAILS++))
+fi
+
+# make_burn.py — subtitle box should be tight to text (was a 320-px dark patch).
+verify_marker "VSP-LLM/scripts/make_burn.py: tight subtitle box (no 320 px dark patch)" \
+    "VSP-LLM/scripts/make_burn.py" 'box_h = min\(int\(needed\), int\(h \* 0.45\)\)' || ((CRITICAL_FAILS++))
+
+if [ $CRITICAL_FAILS -gt 0 ]; then
+    echo ""
+    echo -e "${RED}========================================${NC}"
+    echo -e "${RED}❌ INSTALL.sh ABORTING — $CRITICAL_FAILS critical May-2026 marker(s) missing${NC}"
+    echo -e "${RED}========================================${NC}"
+    echo ""
+    echo -e "${YELLOW}This means either:${NC}"
+    echo -e "${YELLOW}  1. You're running an OLD version of this overlay tarball${NC}"
+    echo -e "${YELLOW}     → Re-pull from S3:${NC}"
+    echo -e "${YELLOW}        aws s3 cp s3://yoad-vsp-transfer/vsp/vsp_linux_container_FINAL_20260217.tar.gz . --region eu-west-1${NC}"
+    echo -e "${YELLOW}  2. The overlay was extracted to a different folder${NC}"
+    echo -e "${YELLOW}     → Check tarball sha matches what's in S3 (see UPDATE_GUIDE_MAY2026.md)${NC}"
+    echo ""
+    echo -e "${YELLOW}DO NOT proceed to docker commit — the resulting image would be half-broken.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}  ✅ All critical May-2026 markers verified in deployed files${NC}"
 echo ""
 
 # ====================

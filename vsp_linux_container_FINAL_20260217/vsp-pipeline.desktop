@@ -5,6 +5,6 @@ Name=VSP Pipeline
 Comment=Visual Speech Processing Pipeline - Start UI
 Exec=__INSTALL_DIR__/vsp-start.sh
 Icon=__INSTALL_DIR__/vsp-ui/logo.png
-Terminal=true
+Terminal=false
 Categories=AudioVideo;Video;
 StartupNotify=true

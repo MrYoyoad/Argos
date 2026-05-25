@@ -6,8 +6,12 @@
 
 set -euo pipefail
 
-# Use absolute path to avoid SCRIPT_DIR conflicts when sourcing modules
-LIB_DIR="/home/ubuntu/lib"
+# Auto-detect lib/ from this script's own location so the same test suite
+# works on EC2 (~/lib), in the Feb-2026 container (/host/galaxy_export/lib),
+# and inside the May-2026 air-gapped image (/workspace/lib). Earlier versions
+# hardcoded LIB_DIR=/home/ubuntu/lib, which silently passed inside INSTALL.sh's
+# `|| true` wrapper while doing no actual testing.
+LIB_DIR="${LIB_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 TEST_TEMP_DIR="/tmp/vsp_module_tests_$$"
 mkdir -p "$TEST_TEMP_DIR"
 

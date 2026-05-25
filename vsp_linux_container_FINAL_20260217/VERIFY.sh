@@ -48,7 +48,7 @@ fi
 # ====================
 
 FAILED_FIXES=0
-TOTAL_FIXES=12
+TOTAL_FIXES=22
 
 verify_fix() {
     local fix_num=$1
@@ -144,6 +144,108 @@ verify_fix 12 \
 echo ""
 
 # ====================
+# May-2026 Additions: confidence / IS / N-best / agreement / headless icon
+# ====================
+
+echo -e "${YELLOW}Checking May-2026 feature additions...${NC}"
+echo ""
+
+verify_fix 13 \
+    "Per-token confidence script present" \
+    "VSP-LLM/scripts/compute_word_confidence.py" \
+    "classify_joint"
+
+verify_fix 14 \
+    "Intelligibility Score script present" \
+    "VSP-LLM/scripts/generate_intelligibility_scores.py" \
+    "doublemetaphone"
+
+verify_fix 15 \
+    "N-best aggregation script present" \
+    "VSP-LLM/scripts/nbest_aggregate.py" \
+    "hyp_mbr"
+
+verify_fix 16 \
+    "Beam-agreement script present" \
+    "VSP-LLM/scripts/compute_word_agreement.py" \
+    "_word_confs_for_utt"
+
+verify_fix 17 \
+    "outputs.sh wires HF_HUB_OFFLINE for IS" \
+    "lib/outputs.sh" \
+    "HF_HUB_OFFLINE"
+
+verify_fix 18 \
+    "Desktop entry is terminal-free" \
+    "vsp-pipeline.desktop" \
+    "Terminal=false"
+
+verify_fix 19 \
+    "vsp-start.sh has headless branch" \
+    "vsp-start.sh" \
+    "VSP_HEADLESS"
+
+# Non-grep checks: directory-presence asserts.
+asset_dir_check() {
+    local fix_num=$1
+    local description=$2
+    local dir=$3
+    local marker=$4   # one filename expected inside
+
+    printf "%-60s" "Fix $fix_num: $description"
+    if [ -d "$dir" ] && [ -e "$dir/$marker" ]; then
+        echo -e "${GREEN}✅${NC}"
+    else
+        echo -e "${RED}❌${NC} (${dir}/${marker} missing)"
+        ((FAILED_FIXES++))
+    fi
+}
+
+asset_dir_check 20 \
+    "HF MiniLM model cache bundled" \
+    "is_model_cache/hub/models--sentence-transformers--all-MiniLM-L6-v2" \
+    "snapshots"
+
+asset_dir_check 21 \
+    "IS / confidence cp310 wheels bundled" \
+    "is_wheels_cp310" \
+    "sentence_transformers-5.1.2-py3-none-any.whl"
+
+# Golden k-means model — UI's /api/golden-models scans here.
+printf "%-60s" "Fix 21b: Golden k-means model present"
+if ls VSP-LLM/golden_kmeans/*.bin >/dev/null 2>&1; then
+    echo -e "${GREEN}✅${NC}"
+else
+    echo -e "${RED}❌${NC} (VSP-LLM/golden_kmeans/*.bin missing — UI dropdown will be empty)"
+    ((FAILED_FIXES++))
+fi
+
+# Live import check — only meaningful if the venv is reachable.
+printf "%-60s" "Fix 22: IS deps importable in vsp-llm-yoad-venv"
+_venv=""
+for _v in /workspace/vsp-llm-yoad-venv "$HOME/vsp-llm-yoad-venv"; do
+    [ -d "$_v" ] && _venv="$_v" && break
+done
+if [ -n "$_venv" ]; then
+    _rc=0
+    "$_venv/bin/python3" - <<'PY' >/tmp/_vsp_is_check 2>&1 || _rc=$?
+import importlib
+for m in ("sentence_transformers", "metaphone", "matplotlib", "scipy", "editdistance"):
+    importlib.import_module(m)
+PY
+    if [ $_rc -eq 0 ]; then
+        echo -e "${GREEN}✅${NC}"
+    else
+        echo -e "${RED}❌${NC} (see /tmp/_vsp_is_check)"
+        ((FAILED_FIXES++))
+    fi
+else
+    echo -e "${YELLOW}⚠️  skipped (venv not found at /workspace or \$HOME)${NC}"
+fi
+
+echo ""
+
+# ====================
 # Module Tests
 # ====================
 
@@ -183,19 +285,20 @@ if [ $FAILED_FIXES -eq 0 ]; then
     echo ""
     echo -e "${GREEN}Package Status: READY TO USE ✅${NC}"
     echo ""
-    echo "All 12 critical fixes are properly installed:"
-    echo "  1. ✅ Cython auto-build (lib/decode.sh)"
-    echo "  2. ✅ max_len config (VSP-LLM/src/conf/s2s_decode.yaml)"
-    echo "  3. ✅ Dynamic transcription paths (lib/asr.sh)"
-    echo "  4. ✅ VSP_INPUT_DIR support (vsp-ui/app/config.py)"
-    echo "  5. ✅ Absolute imports (vsp-ui/app/services/transcription_manager.py)"
-    echo "  6. ✅ log_info stderr redirect (lib/common.sh)"
-    echo "  7. ✅ POST_ROOT definition (run_flat_english_pipeline.sh)"
-    echo "  8. ✅ Step 2.5 metadata creation (run_flat_english_pipeline.sh)"
-    echo "  9. ✅ Non-segmented naming (run_flat_english_pipeline.sh)"
-    echo " 10. ✅ make_burn segment matching (VSP-LLM/scripts/make_burn.py)"
-    echo " 11. ✅ Logger duplication fix (VSP-LLM/src/vsp_llm_decode.py)"
-    echo " 12. ✅ Segment duration = 12s (vsp-ui/app/config.py)"
+    echo "Feb-2026 baseline fixes:"
+    echo "  1. ✅ Cython auto-build           7. ✅ POST_ROOT definition"
+    echo "  2. ✅ max_len config              8. ✅ Step 2.5 metadata"
+    echo "  3. ✅ Dynamic transcription paths 9. ✅ Non-segmented naming"
+    echo "  4. ✅ VSP_INPUT_DIR support      10. ✅ make_burn segment matching"
+    echo "  5. ✅ Absolute imports           11. ✅ Logger duplication fix"
+    echo "  6. ✅ log_info stderr redirect   12. ✅ Segment duration = 12s"
+    echo ""
+    echo "May-2026 additions (confidence / IS / n-best / agreement / headless):"
+    echo " 13. ✅ Per-token confidence       18. ✅ Desktop entry terminal-free"
+    echo " 14. ✅ Intelligibility Score      19. ✅ vsp-start.sh headless branch"
+    echo " 15. ✅ N-best aggregation         20. ✅ HF MiniLM model cache bundled"
+    echo " 16. ✅ Beam-agreement script      21. ✅ IS cp310 wheels bundled"
+    echo " 17. ✅ outputs.sh HF_HUB_OFFLINE  22. ✅ IS deps importable in venv"
     echo ""
     echo -e "${BLUE}Next Steps:${NC}"
     echo "  1. Test pipeline with sample video:"

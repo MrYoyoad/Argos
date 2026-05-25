@@ -16,37 +16,22 @@
 set -euo pipefail
 
 # =====================
-# Self-relaunch in a terminal if not already in one
+# Headless mode detection (May 2026)
 # =====================
-# When launched from a .desktop file or file manager, there's no terminal.
-# Detect this and re-exec ourselves inside a terminal emulator.
-if [ ! -t 0 ] && [ ! -t 1 ] && [ "${VSP_IN_TERMINAL:-}" != "1" ]; then
-    # Find a terminal emulator (Layer 1: known terminals)
-    for _term in x-terminal-emulator gnome-terminal kgx gnome-console xfce4-terminal mate-terminal konsole lxterminal tilix terminator kitty alacritty xterm; do
-        _term_path="$(command -v "$_term" 2>/dev/null || true)"
-        if [ -n "$_term_path" ] && [ -x "$_term_path" ]; then
-            export VSP_IN_TERMINAL=1
-            # Use /usr/bin/bash so the script doesn't need +x (mounted filesystems)
-            case "$_term" in
-                gnome-terminal|kgx|gnome-console) exec "$_term_path" -- /usr/bin/bash "$0" "$@" ;;
-                *)              exec "$_term_path" -e /usr/bin/bash "$0" "$@" ;;
-            esac
-        fi
-    done
-    # Layer 2: search for any terminal-like executable in /usr/bin
-    for _candidate in /usr/bin/*terminal* /usr/bin/*-term; do
-        if [ -x "$_candidate" ] && [ -f "$_candidate" ]; then
-            export VSP_IN_TERMINAL=1
-            exec "$_candidate" -e /usr/bin/bash "$0" "$@"
-        fi
-    done
-    # No terminal found — show actionable error
-    _msg="VSP Pipeline: No terminal emulator found.\n\nOpen any terminal application and run:\n  $0"
-    notify-send "VSP Pipeline" "No terminal emulator found. Open a terminal and run: $0" 2>/dev/null || true
-    # Also try zenity for a visible dialog
-    zenity --error --title="VSP Pipeline" --text="$_msg" 2>/dev/null || true
-    exit 1
+# When launched from a .desktop file or file manager there is no TTY.
+# Previously the script tried to re-exec itself inside a terminal emulator
+# (gnome-terminal/xterm/etc.). On minimal client desktops none of those exist,
+# producing "VSP PIPELINE ERROR: No terminal emulator found."
+#
+# Fix: do NOT require a terminal. Run docker in detached mode, stream logs
+# to ~/.vsp-pipeline.log, and use zenity/notify-send for user-facing status.
+# A TTY (i.e. running from a real terminal) keeps the original foreground UX.
+if [ -t 0 ] && [ -t 1 ]; then
+    VSP_HEADLESS=0
+else
+    VSP_HEADLESS=1
 fi
+export VSP_HEADLESS
 
 # =====================
 # Configuration
@@ -235,11 +220,23 @@ do_start() {
     echo "  Volume: ${GALAXY_EXPORT_DIR}"
     echo "  Port:   ${PORT}"
     echo ""
+
+    if [ "${VSP_HEADLESS:-0}" = "1" ]; then
+        do_start_headless
+    else
+        do_start_foreground
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# Foreground mode (launched from a terminal): preserve the proven behavior:
+# docker -it in foreground, browser opens when server is up, Ctrl+C stops.
+# ---------------------------------------------------------------------------
+do_start_foreground() {
     echo "Server output will appear below."
     echo "Close this window (or Ctrl+C) to stop the server."
     echo ""
 
-    # Launch background task: wait for server, then open browser
     (
         local_max=60
         local_i=0
@@ -249,7 +246,6 @@ do_start() {
                 echo "========================================="
                 echo "  VSP Pipeline is ready!"
                 echo "========================================="
-                echo ""
                 echo "  UI:   ${URL}"
                 echo "  Stop: close this window or Ctrl+C"
                 echo ""
@@ -260,38 +256,137 @@ do_start() {
             local_i=$((local_i + 1))
         done
         echo ""
-        echo "========================================="
-        echo "  SERVER FAILED TO START"
-        echo "========================================="
-        echo ""
-        echo "Server did not respond within 60 seconds."
-        echo ""
-        echo "--- Container logs ---"
-        docker logs "${CONTAINER_NAME}" 2>&1 || echo "(could not retrieve logs)"
-        echo "--- End of logs ---"
-        echo ""
-        echo "If you see a Python error above, please report it."
+        echo "SERVER FAILED TO START — last container logs:"
+        docker logs "${CONTAINER_NAME}" 2>&1 || true
     ) &
     BROWSER_PID=$!
-
-    # Clean up background task when this script exits
     trap "kill ${BROWSER_PID} 2>/dev/null; exit" INT TERM EXIT
 
-    # Run Docker in foreground — this is the exact mode confirmed working
-    # VSP_INPUT_DIR: tells config.py where the input folder is INSIDE the container
-    # VSP_HOST_INPUT_DIR: tells the UI what path to show for "Open Folder" on the HOST
     docker run --rm -it \
         --name "${CONTAINER_NAME}" \
         --gpus all \
         -p ${PORT}:${PORT} \
         -e "VSP_INPUT_DIR=/host/galaxy_export/vsp_input" \
         -e "VSP_HOST_INPUT_DIR=${GALAXY_EXPORT_DIR}/vsp_input" \
+        -e "HF_HOME=/host/galaxy_export/is_model_cache" \
+        -e "HF_HUB_OFFLINE=1" \
+        -e "TRANSFORMERS_OFFLINE=1" \
+        -e "HF_DATASETS_OFFLINE=1" \
         -v "${GALAXY_EXPORT_DIR}:/host/galaxy_export" \
         "${DOCKER_IMAGE}" \
-        -c 'cd /host/galaxy_export/vsp-ui && python3 -m app.server; EC=$?; if [ $EC -ne 0 ]; then echo ""; echo "========================================="; echo "  SERVER FAILED (exit code $EC)"; echo "========================================="; echo "  Check the error messages above."; echo "  Press Enter to close..."; read; fi'
+        -c 'cd /host/galaxy_export/vsp-ui && python3 -m app.server; EC=$?; if [ $EC -ne 0 ]; then echo ""; echo "  SERVER FAILED (exit code $EC) — press Enter to close..."; read; fi'
 
     echo ""
     echo "Server stopped."
+}
+
+# ---------------------------------------------------------------------------
+# Headless mode (launched from .desktop / file manager — no TTY):
+# - docker run detached (-d), no TTY required
+# - container stdout/stderr → ~/.vsp-pipeline.log
+# - status surfaced via zenity progress bar (or notify-send as fallback)
+# - browser opens when server is ready
+# - on failure, zenity dialog shows the last 30 lines of the log
+# ---------------------------------------------------------------------------
+do_start_headless() {
+    local log_file="${HOME}/.vsp-pipeline.log"
+    : >"$log_file"
+
+    # Show "starting" notification if available (non-blocking)
+    if command -v notify-send &>/dev/null; then
+        notify-send -t 3000 "VSP Pipeline" "Starting Docker container…" 2>/dev/null || true
+    fi
+
+    # Detached docker run — no TTY required
+    if ! docker run -d \
+            --name "${CONTAINER_NAME}" \
+            --gpus all \
+            -p ${PORT}:${PORT} \
+            -e "VSP_INPUT_DIR=/host/galaxy_export/vsp_input" \
+            -e "VSP_HOST_INPUT_DIR=${GALAXY_EXPORT_DIR}/vsp_input" \
+            -e "HF_HOME=/host/galaxy_export/is_model_cache" \
+            -e "HF_HUB_OFFLINE=1" \
+            -e "TRANSFORMERS_OFFLINE=1" \
+            -e "HF_DATASETS_OFFLINE=1" \
+            -v "${GALAXY_EXPORT_DIR}:/host/galaxy_export" \
+            "${DOCKER_IMAGE}" \
+            -c 'cd /host/galaxy_export/vsp-ui && exec python3 -m app.server' >>"$log_file" 2>&1; then
+        _headless_show_error "Failed to start Docker container." "$log_file"
+        return 1
+    fi
+
+    # Pipe container logs to the same file in the background
+    (docker logs -f "${CONTAINER_NAME}" >>"$log_file" 2>&1) &
+    local _logs_pid=$!
+
+    # Poll for server readiness (max 90s) with a zenity progress dialog
+    if command -v zenity &>/dev/null; then
+        (
+            local i=0
+            local max=90
+            while [ $i -lt $max ]; do
+                if curl -s --max-time 2 "${URL}/api/status" >/dev/null 2>&1; then
+                    echo 100
+                    echo "# Ready — opening browser…"
+                    exit 0
+                fi
+                local pct=$(( (i * 100) / max ))
+                echo "$pct"
+                echo "# Waiting for VSP Pipeline server (${i}s / ${max}s)…"
+                sleep 1
+                i=$((i + 1))
+            done
+            exit 1
+        ) | zenity --progress \
+                   --title="VSP Pipeline" \
+                   --text="Starting…" \
+                   --percentage=0 \
+                   --auto-close \
+                   --no-cancel 2>/dev/null
+    else
+        # Fallback: blocking poll without UI
+        local i=0
+        while [ $i -lt 90 ]; do
+            curl -s --max-time 2 "${URL}/api/status" >/dev/null 2>&1 && break
+            sleep 1
+            i=$((i + 1))
+        done
+    fi
+
+    # Verify we're actually ready
+    if curl -s --max-time 2 "${URL}/api/status" >/dev/null 2>&1; then
+        open_browser "${URL}"
+        if command -v notify-send &>/dev/null; then
+            notify-send -t 5000 "VSP Pipeline" "Ready at ${URL}" 2>/dev/null || true
+        fi
+        # Detach the log follower so the script can exit cleanly
+        disown "${_logs_pid}" 2>/dev/null || true
+        return 0
+    fi
+
+    # Failure path — kill log follower, surface logs
+    kill "${_logs_pid}" 2>/dev/null || true
+    _headless_show_error "Server did not respond within 90 seconds." "$log_file"
+    return 1
+}
+
+# Helper: surface an error in headless mode via the best UI available.
+_headless_show_error() {
+    local headline="$1"
+    local log_file="$2"
+    local tail_lines
+    tail_lines="$(tail -n 30 "$log_file" 2>/dev/null || echo "(no log)")"
+    local body="${headline}
+
+Log: ${log_file}
+
+Last 30 lines:
+${tail_lines}"
+    if command -v zenity &>/dev/null; then
+        zenity --error --title="VSP Pipeline" --width=720 --text="$body" 2>/dev/null || true
+    elif command -v notify-send &>/dev/null; then
+        notify-send -t 10000 "VSP Pipeline — failed" "${headline}  See ${log_file}." 2>/dev/null || true
+    fi
 }
 
 do_stop() {

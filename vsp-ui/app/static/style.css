@@ -638,6 +638,23 @@ header h1 {
     margin: 16px 0;
 }
 
+/* Body-level upload progress toast (May-2026 fix). When the section is moved
+   out of #welcome-screen and placed at <body> level, it needs explicit
+   positioning so it floats above any active screen instead of becoming a
+   page-bottom strip. Fixed top-right, scrollable internally, max-height
+   constrained so it doesn't dominate the viewport on big uploads. */
+.upload-progress-floating {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 360px;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border-color, #444);
+}
+
 .upload-progress h3 {
     font-size: 1rem;
     margin-bottom: 12px;

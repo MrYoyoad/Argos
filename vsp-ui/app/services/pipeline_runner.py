@@ -274,6 +274,16 @@ class PipelineRunner:
         # Add any necessary environment variables
         env["PYTHONUNBUFFERED"] = "1"
 
+        # HuggingFace offline-mode env vars — belt-and-suspenders. The docker
+        # run command in vsp-start.sh already passes these; we set them here
+        # too so any code path that exec's the pipeline directly inside the
+        # container (CLI debug, future automation) still gets offline IS load.
+        # setdefault() preserves any caller-provided override.
+        env.setdefault("HF_HUB_OFFLINE", "1")
+        env.setdefault("TRANSFORMERS_OFFLINE", "1")
+        env.setdefault("HF_DATASETS_OFFLINE", "1")
+        env.setdefault("HF_HOME", "/host/galaxy_export/is_model_cache")
+
         # Pass golden k-means model path if specified
         if self._golden_model:
             env["GOLDEN_KMEANS"] = self._golden_model
@@ -289,12 +299,6 @@ class PipelineRunner:
 
         # Pass segment-only option (fast segmentation, then show transcription screen)
         env["SEGMENT_ONLY"] = "1" if self._segment_only else "0"
-
-        # Always produce burned videos and lip crops
-        env["VSP_FULL_OUTPUTS"] = "1"
-
-        # Video enhancement disabled (CLAHE didn't help — face detection already works)
-        env["VSP_ENHANCE"] = "0"
 
         return env
 

@@ -35,9 +35,16 @@ run_client_outputs() {
   local burn_dir="${post_root}/burned_videos"
 
   mkdir -p "$report_dir"
-  # Burned videos / lip-crops / beam-analysis are opt-in. Default output is
-  # just the two HTML reports. Set VSP_FULL_OUTPUTS=1 to restore the rest.
-  local full_outputs="${VSP_FULL_OUTPUTS:-0}"
+  # Full client outputs are the default since May-2026:
+  #   - burned_videos/         (subtitled MP4s)
+  #   - lip_crops/             (small mouth-crop MP4s)
+  #   - intelligibility_scores.csv (full semantic IS via sentence-transformers)
+  #   - beam_analysis/         (analyze_beam_variance plots)
+  # Earlier the default was 0 ("HTML-only minimal") for fast dev iteration on
+  # EC2. For client deployments that was the wrong default — operators expect
+  # to receive every artifact unless they opt out. Set VSP_FULL_OUTPUTS=0 to
+  # restore the dev-time minimal mode.
+  local full_outputs="${VSP_FULL_OUTPUTS:-1}"
   [ "$full_outputs" = "1" ] && mkdir -p "$burn_dir"
 
   # Find decode output (check both nested and flat paths)
@@ -210,6 +217,16 @@ run_client_outputs() {
     fi
     if [ -f "$is_script" ] && [ -f "$report_dir/report.csv" ]; then
       echo ">>> [8] Computing full Intelligibility analysis (IS + LLM context recovery)..."
+      # Offline HuggingFace cache: sentence-transformers/all-MiniLM-L6-v2 must
+      # load without internet on the air-gapped client. We bundle the snapshot
+      # alongside the pipeline at "$BASE_DIR/is_model_cache" (BASE_DIR = the
+      # install root, which is one level above vsp_dir). Setting HF_HOME +
+      # HF_HUB_OFFLINE keeps the load fully local.
+      local _hf_cache="$(dirname "$vsp_dir")/is_model_cache"
+      HF_HOME="${HF_HOME:-$_hf_cache}" \
+      HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}" \
+      TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-1}" \
+      HF_DATASETS_OFFLINE="${HF_DATASETS_OFFLINE:-1}" \
       python3 "$is_script" \
         --csv "$report_dir/report.csv" \
         --out_dir "$report_dir" \
