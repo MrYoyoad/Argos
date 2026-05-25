@@ -118,6 +118,31 @@ All should report "No such file or directory."
 **Why:** `lib/asr.sh` had `local segment_vid_dir="$prep_root/${data_name}/${data_name}_video_${dir_suffix}"` (mouth crops, no audio). Should be the normalized full-frame videos which have audio.
 **Fix:** Adopt previous kit's pattern: `local segment_vid_dir="$auto_avsr_dir/${data_name}"` (full-frame, audio preserved).
 
+### 17. Local fairseq fork missing `do_sample` / `top_p` fields
+**Fail:** Decode crashes at `model.generate()` with
+```
+omegaconf.errors.ConfigAttributeError: Key 'do_sample' is not in struct
+  full_key: generation.do_sample
+File "/host/galaxy_export/VSP-LLM/src/vsp_llm_decode.py", line 301, in _main
+    do_sample=cfg.generation.do_sample,
+```
+**Why:** `decode.sh` exports `PYTHONPATH=${ROOT}/fairseq:$PYTHONPATH`, pinning the local fairseq fork at `/host/galaxy_export/VSP-LLM/fairseq/`. That fork is older than the EC2 fork and lacks four custom fields the decoder reads:
+- `max_len`, `repetition_penalty` (already patched by `decode.sh`'s monkey-patch — Patches 1 + 2)
+- **`do_sample`, `top_p`** (new — needed since `vsp_llm_decode.py` calls HF `model.generate(do_sample=…, top_p=…)`)
+
+The pip-installed fairseq in `vsp-llm-yoad-venv` *does* have all four fields, but it's shadowed by the local fork's PYTHONPATH entry.
+
+**Fix:** Extend the runtime monkey-patch in `decode.sh` with Patches 3 + 4 — same pattern as the existing patches, anchored on upstream's `sampling: bool` line. The patch writes to the local fairseq's `configs.py` once on first decode; idempotent thereafter.
+
+**Grep:** `grep -c "Patched: \|Patch [0-9]" VSP-LLM/scripts/decode.sh` should be ≥ 8 (four patches × ≥2 marker lines each).
+
+**Why this hadn't shown up earlier:** Confidence + n-best aggregation are env-var-toggled HuggingFace features (`VSP_OUTPUT_SCORES`, `VSP_NBEST`) — they enable additional `model.generate()` kwargs but those flow through the existing flag. `do_sample` and `top_p` are read **unconditionally** at line 301 / 303, so any decode crashes — including the default `do_sample=False` beam-search path. The bug was latent until anyone ran decode after merging Mission 4 / Mission 6.
+
+**Affected:**
+- Feb-2026 overlay kit (`vsp_linux_container_FINAL_20260217/`) — fixed in this overlay revision
+- May-2026 image source (`container_payload_20260507/`) — synced
+- May-2026 image (`vsp-llm-pipeline:client-build-001` and later) — **also vulnerable** until next image rebuild. Operators running that image hit the same crash; same fix applies (patch decode.sh inside the image and `docker commit`, or wait for the next image bake).
+
 ## Online vs offline matrix
 
 For each external resource, the rule for the air-gapped container:
@@ -207,6 +232,8 @@ Saves ~8 GB. Final image ~58 GB.
 
 ## Total bug count surfaced
 
-16 distinct bugs found and fixed across 3 build cycles. The first build was conceptually right but had silent feature degradation (matplotlib/spaCy/prune-before-export/nbest-path/transcription-persistence). The second build picked up those fixes; the third pass added UI-mode wiring + bloat cleanup + NIV column.
+**17 distinct bugs** found and fixed across 3 build cycles + one in-field followup. The first build was conceptually right but had silent feature degradation (matplotlib/spaCy/prune-before-export/nbest-path/transcription-persistence). The second build picked up those fixes; the third pass added UI-mode wiring + bloat cleanup + NIV column. Bug 17 surfaced from a real client decode crash on 2026-05-12 (Feb-2026 client running the May overlay) — it had been latent since the Mission 4 / Mission 6 merge because nobody had run decode against the older local-fairseq fork after those features landed.
 
 The biggest lesson: **`exit=0` does not mean features worked.** lib/outputs.sh has many `|| log_warn "X failed (non-critical)"` patterns. They protect the pipeline from crashing but mask feature loss. Mechanism-checks on actual artifacts (does aggregated.json exist? does it have hyp_mbr key? does report.csv have NIV column?) are the only honest validation.
+
+The second-biggest lesson: **two fairseq installations live side-by-side** in this stack. The pip-installed one inside `vsp-llm-yoad-venv` AND the local fork at `VSP-LLM/fairseq/`. PYTHONPATH pins the local one. When EC2 main and the local fork drift (EC2 adds fields to its fork, local stays old), the runtime monkey-patch in `decode.sh` is the only thing keeping decode working. Any new field the decoder reads from cfg.generation.* needs a matching `if not hasattr…` patch added. **Audit `grep "cfg\.generation\." VSP-LLM/src/vsp_llm_decode.py | sort -u` whenever Mission code touches decode.**

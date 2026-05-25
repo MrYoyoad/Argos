@@ -620,6 +620,48 @@ Mismatch (e.g., `badge_text="INSPECT"` with `badge_color=PURPLE`) is silently mi
 
 This rule is enforced ad-hoc; consider adding a grep-based check to `audit_pptx_text_render.py` that flags `badge_color != expected[badge_text]` per slide.
 
+## 7.8 Build-and-Review Discipline (B1–B12)
+
+Added May 2026 from the HAPARDES vs Argos_VSP_v13_mosi side-by-side deck review. These are process rules (orthogonal to layout). Each maps to a concrete failure mode observed in real review; ignoring any of them lets a "successful save" ship a broken slide.
+
+**B1 — Visually inspect every touched slide; programmatic checks lie.**
+A successful `prs.save()` means the bytes are valid, not that the slide looks right. Bbox sweeps and `audit_pptx_*.py` miss: content overflow into adjacent shapes, callout borders bisecting text, captions overwritten by text above, bullets stomping page numbers, LESSON callouts clipped below the slide edge. After every build batch, render touched slides to PNG (or run the audit scripts) and look. Caveat: if your renderer (LibreOffice) disagrees with the user's renderer (PowerPoint), the user wins — see B10. (Reconciles with the no-PDF-review rule: render via `soffice --convert-to png` or `python-pptx` shape inspection, never PDF.)
+
+**B2 — Semantic colors are reserved keywords.**
+Tier colors carry meaning in this deck and must be reserved: **green = TRUST**, **yellow = SALVAGE**, **purple/red = STRIP**. Never paint the literal word "Green" in cyan. Never decoratively highlight unrelated text in a tier color. Use cyan (or another neutral accent) for non-semantic "look here" emphasis. Tier/status badges: solid fill + high-contrast text, not transparent fill with colored borders.
+
+**B3 — Canonical terminology wins over draft sources.**
+In this project the canonical tier names are **TRUST / SALVAGE / STRIP**. INSPECT is deprecated (lingers in older notebooks and `make_burn.py` aliases only). The live deck is authoritative for naming — if a draft generator or research note uses an older term, the deck wins. Inventory 5–10 representative slides from the current deck first, build a short dictionary, and don't deviate.
+
+**B4 — Show full evidence when the slide's thesis depends on full evidence.**
+If a slide claims "structure preserved, vocabulary lost," the slide must let the reader verify both. A 5-word fragment of the hypothesis transfers proof to the speaker's voice — fine in a live talk, dangerous in screenshots/async review, worst for legal/security audiences. The full band-colored hypothesis is almost always already in `report.csv` or the aggregated decode artifacts; pull it. Same applies to confidence demos: show the whole sentence with per-word coloring, not the green words alone.
+
+**B5 — Color-code table *cell values* by tier, not the header row.**
+Tables that show how a metric varies across rows × columns should encode that variance in every cell (green ≥80%, yellow 50–80%, red <50%, mapped to TRUST/SALVAGE/STRIP). Headers stay muted. Co-locate auxiliary stats (`n=…`, std, p-value) inside the same cell — don't split into adjacent count columns that force left-right eye-tracking.
+
+**B6 — Prefer native shapes/tables over rasterized chart screenshots.**
+For data ≤10 rows, build a native `slide.shapes.add_table()`. For bar-shape encodings, use `add_shape(MSO_SHAPE.RECTANGLE, …)` with widths proportional to value. matplotlib PNGs on slides are pixelated, don't scale, and can't be edited downstream. Reserve raster for: photos, real video stills, UI screenshots, complex multi-series scatter plots that genuinely need matplotlib.
+
+**B7 — Inline footnote markers via run-split, not paragraph append.**
+`para.add_run('*')` appends to the paragraph end — wrong placement when you want `65%*` inline. Correct sequence: locate the target `<a:r>` run, split it at the marker position, clone the run via `lxml`, set the clone to contain only the asterisk (with footnote styling), insert with `addnext()` immediately after the original; optionally add a third run for any text after the marker. Wrap this in a `deck_helpers.py` function (see B8).
+
+**B8 — Shared helper library; no per-slide XML gymnastics.**
+If more than three slide builders construct styled runs from raw `<a:r>` / lxml, extract `deck_helpers.py` with `styled_run`, `styled_paragraph`, color constants, animation timing blocks. Treat raw run construction in a slide builder as a code smell. Fix rendering bugs in the helper once and re-render all slides — not slide-by-slide.
+
+**B9 — Reorder slides via slide-list manipulation, not add-then-delete.**
+`prs.slides.add_slide()` always appends. To insert at an earlier position: add, capture `slide.slide_id`, remove the `<p:sldId>` from `prs.slides._sldIdLst`, insert it back at the target index. Companion gotcha: use `prs.part.related_part(rId)` (singular, function call), not `prs.part.related_parts[rId]` (the bracket form silently returns the wrong type in some python-pptx versions).
+
+**B10 — The user's renderer is authoritative; yours is approximate.**
+LibreOffice renders disagree with PowerPoint on font metrics, antialiasing, and theme color inheritance. When the user says a slide looks wrong, re-render at ≥220 DPI, crop tight, and look hard at the specific element. If it still looks fine, ask which element specifically — don't push back from your screenshot. (This is also why the no-PDF rule exists: PDF round-tripping introduces a *third* renderer's quirks.)
+
+**B11 — Build for the audience's worst-case interpretation.**
+A presentation is judged by what the audience can attack. For VSP outputs in legal/security/compliance contexts, the worst failure modes are: **polarity inversion** (negation flips like "did" → "didn't"), **entity hallucination** ("billion" → "million", 3× orders of magnitude), and **unhedged numeric claims**. These must be demonstrated explicitly with paired before/after examples — not hidden in aggregate WER. Add a "What we claim / What we do not claim" framing slide where stakes are high. Negative space (what's *not* promised) is load-bearing.
+
+**B12 — Decks longer than ~30 slides need an explicit Thesis slide.**
+At position 2 or 3, place a single-large-sentence Thesis slide (36–44pt, plenty of whitespace) stating the central claim. Follow with a "What we claim / What we do not claim" slide if the audience is external (clients, legal review). The thesis should be defensible at a whiteboard with no slides; every subsequent section should be checkable against "does this support or qualify the thesis?" A long deck without one is a research archive, not a presentation.
+
+**Source:** Distilled from the 12-section side-by-side review (HAPARDES vs Argos_VSP_v13_mosi, May 2026). The biggest single rule is B1 — most of B2–B6 would have been caught by visually inspecting every slide instead of trusting that the save succeeded. Memory references: `feedback_pptx_render_every_slide.md` through `feedback_pptx_thesis_slide.md`.
+
 ---
 
 # Cross-Format Rules
@@ -634,4 +676,4 @@ This rule is enforced ad-hoc; consider adding a grep-based check to `audit_pptx_
 | **Numbers** | All formats must use same canonical numbers (see MEMORY.md) |
 | **Design-time LLM** | Always clarify: "Claude designed the rubric; no LLM runs at eval time" |
 | **IS explanation** | 6 signals with weight rationale; PCA shows 2 dimensions: signal quality (68.4%, all 5 content signals) and output length (19.5%, Length Ratio) |
-| **Visual guardrails** | PPTX: all rules (O/D/T/S/F/A). Docx: T1 (min fonts), T3 (word wrap), D3 (one table per section), F1–F4 (data freshness) |
+| **Visual guardrails** | PPTX: all rules (O/D/T/S/F/A/V/B). Docx: T1 (min fonts), T3 (word wrap), D3 (one table per section), F1–F4 (data freshness). B1–B12 are PPTX-only process rules. |

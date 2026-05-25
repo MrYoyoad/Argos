@@ -1845,3 +1845,146 @@ The joint rule is **not** an experimental opt-in. It is the production default a
 **Verification (EC2, 7 segments, latest decode artifacts)**: Before fix: 6 colored spans across the report (3 Strip rows wrapping their text, 0 paint in Salvage). After fix with `--display-method hyp_mbr`: 17 conf-high + 42 conf-med + 6 conf-low spans in the Salvage rows, plus 6 conf-stripped wraps in Strip rows. Tier pill counts unchanged.
 
 **Path translation note**: No hardcoded paths. EC2 and `/workspace/` paths translate identically.
+
+### 32. Fairseq `do_sample` + `top_p` field patches in decode.sh (May 12 2026, Bug 17)
+
+**Problem**: At the original client's standalone (running the May-2026 overlay on the Feb-2026 Docker image), the decode step crashed with:
+
+```
+omegaconf.errors.ConfigAttributeError: Key 'do_sample' is not in struct
+  full_key: generation.do_sample
+File "/host/galaxy_export/VSP-LLM/src/vsp_llm_decode.py", line 301, in _main
+    do_sample=cfg.generation.do_sample,
+```
+
+**Root cause**: `decode.sh` exports `PYTHONPATH="${ROOT}/fairseq:$PYTHONPATH"`, so Python imports fairseq from the **local fork** at `/host/galaxy_export/VSP-LLM/fairseq/` — not from the pip-installed fairseq in `vsp-llm-yoad-venv`. The local fork is older than the EC2 fork and lacks four custom `GenerationConfig` fields the decoder reads:
+
+- `max_len`, `repetition_penalty` — already patched by the existing runtime monkey-patch in `decode.sh` (Patches 1 + 2, Bugs 11/19/22)
+- **`do_sample`, `top_p`** — newly needed by Mission 4 / Mission 6 wiring; **decoder reads them unconditionally** at lines 301–303, so any decode crashes regardless of whether sampling is enabled
+
+The pip-installed fairseq inside the venv *does* have all four fields, but it's shadowed by the local fork's PYTHONPATH entry.
+
+**Fix**: Extend the runtime monkey-patch in `VSP-LLM/scripts/decode.sh` with Patches 3 + 4 — identical pattern to Patches 1 + 2, anchored on the standard upstream `sampling: bool` line. The patches add:
+
+```python
+do_sample: bool = field(default=False, metadata={"help": "enable stochastic sampling in HuggingFace generate"})
+top_p: float = field(default=0.9, metadata={"help": "nucleus sampling top-p for HuggingFace generate"})
+```
+
+Idempotent — guarded by `if not hasattr(c.GenerationConfig, '<field>')`.
+
+**Files mirrored from EC2 + cross-container**:
+
+- `vsp_linux_container_FINAL_20260217/VSP-LLM/scripts/decode.sh` — patched
+- `vsp_docker/container_payload_20260507/VSP-LLM/scripts/decode.sh` — synced (same fix; the May-2026 image source has the same latent bug until the next image rebuild bakes it in)
+
+**Container action — Feb-2026 image clients**: re-apply the overlay (new tarball contains the fix). Or apply in-place via the `docker run … python3 -c 'patch local fairseq configs.py'` snippet documented in `vsp_linux_container_FINAL_20260217/UPDATE_GUIDE_MAY2026.md` § "Fix on the client".
+
+**Container action — May-2026 image clients** (`vsp-llm-pipeline:client-build-001` etc.): the same crash applies to those images. Fix is either (a) `docker run` + `docker commit` to bake the patched decode.sh into the image, or (b) wait for the next image rebuild that picks up `container_payload_20260507/`.
+
+**Why this hadn't been caught**: confidence (Mission 4) and n-best (Mission 6) are env-var-gated HuggingFace features — operators tend to think "they're optional". But `do_sample` and `top_p` are read **unconditionally**, so the bug fires regardless of which features are toggled. The latent gap existed since the Mission 4 / Mission 6 merge but didn't surface on EC2 because EC2's local fairseq fork **does** have these fields. It only fires on container deployments where the local fairseq fork is the older one from the VSP-LLM submodule pin.
+
+**Audit lesson**: whenever Mission code adds a new `cfg.generation.<field>` read in `vsp_llm_decode.py`, run:
+
+```bash
+grep -oE 'cfg\.generation\.[a-z_]+' VSP-LLM/src/vsp_llm_decode.py | sort -u
+```
+
+…and confirm every field has a matching `if not hasattr(c.GenerationConfig, '<field>')` patch in `decode.sh`.
+
+**Path translation note**: No path-translation needed. The two `decode.sh` files are byte-identical between overlay and container_payload.
+
+### 33. VSP_FULL_OUTPUTS default flip 0 → 1 + drag-drop visibility fix (May 12 2026)
+
+**Problem A — silent artifact loss**: `lib/outputs.sh` defaulted `VSP_FULL_OUTPUTS=0`, which on a client deployment silently dropped:
+- `burned_videos/` (subtitled MP4s — the client-visible deliverable)
+- `lip_crops/` (small mouth-crop MP4s)
+- `intelligibility_scores.csv` (the full semantic IS — sentence-transformers + Metaphone)
+- `beam_analysis/` plots (analyze_beam_variance.py outputs)
+- Then a prune step removed everything except `report.html` + `confidence_breakdown.html`.
+
+The minimal-output mode was an EC2 dev-time optimization that should never have been the default for client deployments.
+
+**Problem B — drag-and-drop silent failure on non-welcome screens**: `#upload-progress-section` was nested inside `#welcome-screen`. After the UI moves past welcome (any video detected), welcome becomes `display:none` and the upload progress widget is buried inside a hidden parent. Drag-and-drop uploads on subsequent screens executed correctly but produced no visible feedback, so operators concluded "drag-drop is broken."
+
+**Fix**:
+- `lib/outputs.sh`: `VSP_FULL_OUTPUTS:-0` → `VSP_FULL_OUTPUTS:-1`. Opt-out for dev iteration: set explicitly to 0.
+- `vsp-ui/app/static/index.html`: `#upload-progress-section` moved out of `#welcome-screen` to body level, after `#drop-zone-overlay`.
+- `vsp-ui/app/static/style.css`: new `.upload-progress-floating` rule pins it as a fixed top-right toast (360px wide, max-height 70vh, scrollable, z-index 1000) so it floats above any active screen.
+- Earlier May-12 fixes also already in place: `handleDrop` gate is now `if (isUploading)` only (removed welcome-screen check); `handleDragOver` shows the drop overlay on every screen (removed welcome-screen check there too).
+
+**Files mirrored from EC2 to all targets**:
+- `lib/outputs.sh` (overlay + `container_payload_20260507` + EC2 main — all md5-identical)
+- `vsp-ui/app/static/app.js`, `index.html`, `style.css` (same three targets)
+
+**Container action — Feb-2026 image clients**: re-apply overlay (new tarball). After `apply_update.sh` succeeds and the next pipeline run completes, expect the full output set in `flat_runs_archive/<latest>/client_outputs/` AND drag-and-drop progress toast in the UI on every screen.
+
+**Container action — May-2026 image clients** (`vsp-llm-pipeline:client-build-001` etc.): drop in the four patched files (`lib/outputs.sh`, three vsp-ui static files) via `docker run + docker commit` to bake them into the image, OR wait for the next image rebuild that picks up `container_payload_20260507/`.
+
+**Why two problems batched**: both surfaced in the same client run — operator reported "no burned videos" (Problem A) and "drag-and-drop doesn't work" (Problem B). The fixes are independent but ship together since both are silent-failure modes that hide successful pipeline execution behind missing visible artifacts.
+
+**Path translation note**: No path translation needed; the four files are byte-identical across overlay / `container_payload_20260507` / EC2 main.
+
+**Verification**: `diagnose_run.sh` (new utility in this overlay) auto-detects each missing output type and prints actionable hints. Run on host: `bash diagnose_run.sh`.
+
+### 34. HF offline env vars at docker-run boundary (May 12 2026)
+
+**Problem**: During report generation on the air-gapped Feb-2026 client, operators saw "offline" warnings with HuggingFace retrying up to 5 attempts before continuing. The retries delay each pipeline run by ~30-60 seconds per failed call and occasionally surface as red error messages even though the run eventually succeeds.
+
+**Root cause**: `HF_HUB_OFFLINE` / `TRANSFORMERS_OFFLINE` / `HF_DATASETS_OFFLINE` / `HF_HOME` were set only inline in `lib/outputs.sh` around the `generate_intelligibility_scores.py` subprocess. Any OTHER `from_pretrained()` invocation inside the same container (sentence-transformers internal init, transformers fallback paths in `analyze_beam_variance` or `make_report`, third-party hooks) ran without those vars set, hit the hub, retried 5×, then either failed or fell back to cached files after the retry budget exhausted.
+
+**Fix** — set them at the docker-run boundary so every Python process in the container inherits them:
+- `vsp-start.sh` foreground branch (`docker run --rm -it …`) — `-e HF_HOME=…`, `-e HF_HUB_OFFLINE=1`, `-e TRANSFORMERS_OFFLINE=1`, `-e HF_DATASETS_OFFLINE=1`
+- `vsp-start.sh` headless branch (`docker run -d …`) — same flags
+- `vsp-ui/app/services/pipeline_runner.py::_get_env()` — `env.setdefault(...)` for the same four vars, so any code path that exec's the pipeline inside an already-running container (CLI debug, future automation) also gets offline mode
+
+This is exactly what the May-2026 lessons doc (Bug 13) prescribes — the inline-only placement in the original overlay port was insufficient.
+
+**Files mirrored from EC2 to all targets** (md5-identical):
+- `vsp-start.sh` (overlay + `container_payload_20260507` + EC2 main)
+- `vsp-ui/app/services/pipeline_runner.py` (same three)
+
+**Why these vars don't go in the Dockerfile**: `HF_HUB_OFFLINE=1` baked into the image would break `python -m spacy download en_core_web_sm` during the image build (spaCy needs network access to fetch the model). They must be set at runtime via `-e` flags, not at build time.
+
+**Container action — Feb-2026 image clients**: re-apply overlay (new tarball). The next `vsp-start.sh` invocation picks up the new `-e` flags automatically.
+
+**Container action — May-2026 image clients**: same launcher files synced to `container_payload_20260507`; the existing image's launcher is unchanged on disk and will keep emitting offline retries until either (a) the launcher is patched in-place via `docker cp` or volume-mounted, or (b) the next image rebuild ships the patched launcher.
+
+**Path translation note**: None — `vsp-start.sh` is host-side (no path translation between EC2 and container target). `pipeline_runner.py` lives at the same relative path in all three trees.
+
+**Verification**: After the fix, the report-generation stage should complete without any "HF offline retry" messages. Operators can confirm with:
+```bash
+docker run --rm \
+    -e HF_HOME=/host/galaxy_export/is_model_cache \
+    -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \
+    -v ~/Desktop/galaxy_export:/host/galaxy_export \
+    vsp-llm-pipeline:may2026-update \
+    -c 'python3 -c "from transformers import AutoModel; AutoModel.from_pretrained(\"sentence-transformers/all-MiniLM-L6-v2\"); print(\"OK\")"'
+```
+
+### 35. spacy_wheels cp311 → cp310 + make_burn subtitle dark patch (May 12 2026)
+
+**Problem A — spaCy install silently failed**: The Feb-2026 overlay shipped `spacy_wheels/` with cp311 ABI wheels (spacy-3.8.11, thinc-8.3.9, etc.). The Feb-2026 client's `vsp-llm-yoad-venv` is **Python 3.10** — cp311 wheels can't install. `lib/outputs.sh:71-78` tries `pip install --no-index --find-links=spacy_wheels/ spacy` at runtime, fails silently, falls back to online install which also fails (air-gapped). Operators saw warnings about "spacy install skipped" buried in logs; NEA / WWER entity metrics degraded to regex-based fallback with no surfaced error. Same root cause as Bug 6 in `container-deployment-lessons-may2026.md` (which already documented the May-2026 cp39 case).
+
+**Problem B — burned video has a tall "dark patch" at the bottom**: `VSP-LLM/scripts/make_burn.py` paints a black-65%-opacity drawbox behind the subtitle text. Box height computed as `max(needed, min(args.box_h=320, h*0.45))`. The `max()` always inflated the box to ≥320 px or 45% of the frame regardless of how many lines of text were actually rendered → one-line subtitles got the same tall dark band as multi-line ones. The comment in the code (`# Size the box to the ACTUAL number of wrapped lines, not the max.`) accurately described the INTENT but the implementation contradicted it.
+
+**Fix**:
+
+- `spacy_wheels/` — replaced all 40 cp311 wheels with cp310 versions of the same packages (spacy==3.8.11, thinc==8.3.9, blis, cymem, preshed, murmurhash, pydantic, etc.). `en_core_web_sm-3.8.0` is `py3-none-any` (Python-version-agnostic) so no swap needed. numpy and setuptools NOT included to avoid ABI breakage of the host venv. New size: 65 MB.
+- `VSP-LLM/scripts/make_burn.py` — `box_h = max(int(needed), min(args.box_h, ...))` → `box_h = min(int(needed), int(h * 0.45))`. Floor of `line_h + pad_y` for 0-line edge case. Opacity reduced 0.65 → 0.55 for less visually-dominant subtitle backing.
+
+**Files mirrored from EC2 to all targets**:
+- `spacy_wheels/*.whl` (overlay + `container_payload_20260507`)
+- `VSP-LLM/scripts/make_burn.py` (overlay + `container_payload_20260507` + EC2 main, md5-identical)
+
+**Marker checks** added to `INSTALL.sh` Component [4/6] and `diagnose_run.sh` "Deployed file freshness":
+- `spacy_wheels/spacy-*-cp310-*.whl` must exist (catches cp311 regression)
+- `make_burn.py` must contain `box_h = min(int(needed), int(h * 0.45))` (catches dark-patch regression)
+
+**Container action — Feb-2026 image clients**: re-apply overlay (new tarball). After `apply_update.sh` commits, next pipeline run produces tight subtitle box + spaCy NEA metrics work.
+
+**Container action — May-2026 image clients** (`vsp-llm-pipeline:client-build-001`): the cp310 issue does NOT apply (May-2026 venv is cp39, not cp310; that needed a separate fix per Bug 6 in the lessons doc). The make_burn.py fix DOES apply — `docker run + docker commit` the patched make_burn.py into the image, OR wait for next image rebuild that picks up `container_payload_20260507/`.
+
+**Path translation note**: None.
+
+**Verification**: After re-apply, `bash diagnose_run.sh` should show ✓ for both new marker checks. Visual: drop a short MP4 → check the resulting burned video → subtitle backing should be tight around the text (1 line ≈ 50–80 px tall, not 320 px), 55% opacity not 65%.
