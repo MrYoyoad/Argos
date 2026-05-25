@@ -1,7 +1,15 @@
 # Linux Container Deployment - Ready!
 
+> **⚠️ HISTORICAL — February 1, 2026 readiness snapshot.** The packages
+> described here (`galaxy_export_*_20260201.tar.gz`, 4-second segments,
+> hardcoded `/workspace` paths) have been superseded by the May 2026
+> client build (cu128 Blackwell bwfix image, 12-second segments with 2s
+> overlap, dynamic path detection). For the current state see
+> [container-deployment-lessons-may2026.md](container-deployment-lessons-may2026.md)
+> and [user-guide-vsp-pipeline.md](user-guide-vsp-pipeline.md).
+
 **Date**: February 1, 2026
-**Status**: ✅ All fixes applied and verified
+**Status**: ✅ All fixes applied and verified _(as of Feb 2026; superseded May 2026)_
 
 ## Two Deployment Packages Ready
 

@@ -252,16 +252,16 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | [docs/evaluation/](docs/evaluation/) | Report 1 (executive assessment), R&D journal, project summary, intelligibility methodology & scores (IS 2.52/5.0), IS correlation analysis + [cross-config validation](docs/evaluation/is_cross_config_validation.md), [extended analysis](docs/evaluation/intelligibility_extended_analysis.md), [LLM salvage](docs/evaluation/llm_salvage/) (165 recoverable segments + [example gallery](docs/evaluation/llm_salvage/salvage_example_gallery.md)), [LLM-as-a-Judge](docs/evaluation/llm_judge/) gold standard (1,497 pairs, Y/P/N + [context eval](docs/evaluation/llm_judge/context_eval/)), [human expert comparison](docs/evaluation/human_expert_comparison.md) (model+human vs expert lip reader) | M5: Expanded Metrics |
 | [docs/tuning/](docs/tuning/) | Report 2 (hyperparameter tuning), metrics explainer, 13 experiments, HTML reports | M7: Hyperparams, M14: Auto-tuning |
 | [docs/confidence/](docs/confidence/) | Report 4 (confidence scoring & quality filtering); per-token confidence shipped in pipeline (April 30, 2026) — `report.csv` gains `sentence_confidence` + 2 cols, `report.html` renders Confidence: line in blue/orange/purple beside the existing accuracy line; user-facing reading guide at [docs/features/per-word-confidence-user-guide.md](docs/features/per-word-confidence-user-guide.md); client-facing case studies (aggregation + confidence) at [docs/features/aggregation-and-confidence-case-studies.md](docs/features/aggregation-and-confidence-case-studies.md); NIV-stratified band reliability at [band_reliability_by_niv.md](docs/confidence/band_reliability_by_niv.md) | M4: Confidence Scoring (**DONE**); M4.1: Calibration (PENDING B3 data) |
-| [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR); [n_best_implementation.md](docs/beam-search/n_best_implementation.md) — Mission 6 shipped May 1, 2026: 5 offline aggregation methods (MBR, score-vote, conf-vote, safe, xseg-merge) gated by `VSP_NBEST=1`; tuning-set validated: `hyp_vote_conf` ↓2.15pp WER (~3.6% rel), `hyp_mbr` r_calibration improves to −0.458 at sent_conf≥0.85; per-word posterior conf emitted per method | M6: Beam Aggregation (**VALIDATED on 107**, 1,497 eval running) |
+| [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR); [n_best_implementation.md](docs/beam-search/n_best_implementation.md) — Mission 6 shipped May 1, 2026: 5 offline aggregation methods (MBR, score-vote, conf-vote, safe, xseg-merge) gated by `VSP_NBEST=1`. **Production default is `hyp_mbr`** since May 2 2026 — emits per-word posterior conf; pure MBR ships as displayed output via `lib/outputs.sh` (`VSP_DISPLAY_METHOD` override available, default `hyp_mbr` when `aggregated.json` exists, else `top1`). Full 1,497-segment eval: WER 64.1→63.8, IS mean 2.532→2.547, NIV-Y 24.0%→23.9%, NIV-Y+P 61.7%→61.9%, judge Y+P 68.4%→71.1% (paired McNemar p=0.0002). | M6: Beam Aggregation (**SHIPPED**, MBR-default on prod) |
 | [docs/prompts/](docs/prompts/) | Report 3 (prompt engineering & context injection) | M8: Prompt Engineering |
 | [docs/finetuning/](docs/finetuning/) | Report 6 (fine-tuning analysis), training research notes | M9: AVSpeech Fine-Tuning |
-| [docs/paper/](docs/paper/) | VSP-LLM paper (PDF + text), 2025 Presentation, [Beamer presentation](docs/paper/beamer-presentation/) (75 slides, 5 sections + appendix) | — |
+| [docs/paper/](docs/paper/) | VSP-LLM paper (PDF + text), 2025 Presentation, [Beamer presentation](docs/paper/beamer-presentation/) (75 slides, 5 sections + appendix). [Google Slides "Research Findings and Production Roadmap"](https://docs.google.com/presentation/d/1UNZVtpcODsTOFolRgVyo4h6jKTx_6Y5u/edit) — **February 2026 snapshot**; May-2026 work (MBR-default, agreement-aware bands, client UX bundle) is in the docs below, not the slides. | — |
 
 ### Operations
 
 | Folder | Contents |
 |--------|----------|
-| [docs/guides/](docs/guides/) | Installation, deployment, testing, container validation, transfer instructions, [container update guide](docs/guides/container-update-feb2026.md) |
+| [docs/guides/](docs/guides/) | Installation, deployment, testing, container validation, transfer instructions, [container update guide](docs/guides/container-update-feb2026.md), [May-2026 deployment lessons](docs/guides/container-deployment-lessons-may2026.md). **Client-facing user guide**: [user-guide-vsp-pipeline.md](docs/guides/user-guide-vsp-pipeline.md) / [.pdf](docs/guides/user-guide-vsp-pipeline.pdf) — drag-drop, segment review, k-means choice, report colors, troubleshooting. |
 | [docs/features/](docs/features/) | Feature documentation (golden k-means, transcription, segmentation, etc.) |
 | [docs/changelog/](docs/changelog/) | Fix history (complete changelog, fix inventory, individual fix docs) |
 | [docs/backlog/](docs/backlog/) | Mission backlog (roadmap, Missions 1-14), cleanup log |
@@ -363,7 +363,7 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── logs/                  # Logs: Pipeline run logs
 ├── build_assets/          # Build: Wheel caches & build venvs
 │
-├── presentation_materials_20260224/  # Presentations: PPTX (~47 slides) + plots + poster frames
+├── presentation_materials_20260224/  # Presentations: PPTX from Feb 24, 2026 (~47 slides) + plots + poster frames
 ├── vsp_docker/            # Deploy: Docker build dir (galaxy_export/ working copy)
 ├── vsp_linux_container_FINAL_20260217/  # Deploy: Container code overlay
 │

@@ -75,7 +75,7 @@ Architecture: SEGMENT-FIRST NORMALIZATION (since Feb 2026)
 │   ├── flat_wrd/                       # Whisper ASR outputs (.wrd files)
 │   ├── flat_txt/                       # Converted text files
 │   ├── preprocess_ready_flat/          # Prepared for preprocessing
-│   └── preprocessed_flat_seg4/         # Final preprocessed outputs
+│   └── preprocessed_flat_seg12/        # Final preprocessed outputs (12s segments, current default)
 │       └── 433h_data/                  # Manifests (train.tsv, train.wrd)
 │
 ├── VSP-LLM/                            # LLM-based visual speech processing

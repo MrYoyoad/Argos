@@ -1,5 +1,12 @@
 # Container Deployment Instructions - Final Version
 
+> **⚠️ HISTORICAL — February 2026 snapshot.** Superseded by the May 2026
+> client deployment (cu128 bwfix image, dynamic path detection, `-e HOME=/workspace`,
+> persistent CUDA JIT cache, `VSP_HOST_INPUT_DIR` host-path surfacing). For the
+> current procedure see [container-deployment-lessons-may2026.md](container-deployment-lessons-may2026.md)
+> and the [user-facing guide](user-guide-vsp-pipeline.md). Keep this doc for
+> reference on the Feb-2026 hardcoded-path design only.
+
 ## Package Information
 
 **File:** `galaxy_export_CONTAINER_UPDATE_20260201.tar.gz` (12KB)

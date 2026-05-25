@@ -15,7 +15,7 @@
 
 This executes all stages:
 1. ASR transcription (Whisper) to generate .wrd files
-2. Video preprocessing and mouth cropping (mediapipe detector, 4-second segments)
+2. Video preprocessing and mouth cropping (mediapipe detector, **12-second segments with 2-second overlap**; see [docs/architecture.md](architecture.md) for the segment-level architecture)
 3. Manifest and TSV generation
 4. K-means clustering (200 clusters) on AV-HuBERT features
 5. VSP-LLM decoding for final transcription
@@ -79,7 +79,7 @@ python preprocess_lrs2lrs3.py \
   --detector mediapipe \
   --gpu_type cuda \
   --subset train \
-  --seg-duration 4 \
+  --seg-duration 12 \
   --groups 1 \
   --job-index 0
 ```
@@ -152,10 +152,11 @@ bash scripts/decode.sh  # (after editing paths to small test set)
 ### Modifying Preprocessing Parameters
 
 Key parameters in `preprocess_lrs2lrs3.py`:
-- `--seg-duration`: Segment length (default 4 seconds)
+- `--seg-duration`: Segment length (**default 12 seconds** since Jan 2026; older runs used 4s)
 - `--detector`: Face detector (mediapipe, retinaface)
 - `--gpu_type`: cuda or cpu
 - Output resolution: 88x88 mouth crops at 25fps (hardcoded in detectors)
+- Overlap between segments: controlled by `OVERLAP_DURATION` env var (default 2 s); set `OVERLAP_ENABLED=0` to disable
 
 ### Changing K-means Clusters
 

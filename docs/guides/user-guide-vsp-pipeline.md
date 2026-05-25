@@ -28,10 +28,12 @@ evaluation set):
 
 - Mean WER **64.1%** (top-1 displayed output) / **63.8%** (MBR
   aggregated output, the production default).
-- Mean Intelligibility Score **2.53 / 5.0** (top-1) /
-  **2.55 / 5.0** (MBR).
-- Useful content rate (any partially-correct meaning, NIV Y+P):
-  **61.6%** (top-1) / **61.9%** (MBR).
+- Mean Intelligibility Score **2.532 / 5.0** (top-1) /
+  **2.547 / 5.0** (MBR).
+- Useful content rate, as judged blindly by an LLM (NIV Y+P):
+  **68.4%** (top-1) / **71.1%** (MBR; +2.7 pp, paired McNemar p=0.0002).
+- Deterministic IS-NIV cut at IS ≥ 2.00: **61.7%** (top-1) /
+  **61.9%** (MBR) — used as a cheap proxy when re-judging is too costly.
 
 These numbers are the system's wild-video baseline. Your individual
 videos may do better or worse depending on the speaker, framing, and

@@ -74,7 +74,7 @@ For detailed environment setup and package installation, see **[INSTALL.md](INST
 | **[User guide for the desktop pipeline](docs/guides/user-guide-vsp-pipeline.pdf)** ([markdown source](docs/guides/user-guide-vsp-pipeline.md)) | Client-facing PDF: drag-drop, segment review, k-means choice, report colors, troubleshooting |
 | [Architecture](docs/architecture.md) | Pipeline flow, data formats, directory layout |
 | [Development Guide](docs/development-guide.md) | Commands, debugging, troubleshooting |
-| [Testing Guide](TESTING_GUIDE.md) | Test procedures and validation |
+| [Testing Guide](docs/guides/TESTING_GUIDE.md) | Test procedures and validation |
 
 ## Acknowledgements
 

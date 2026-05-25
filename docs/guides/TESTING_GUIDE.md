@@ -1,9 +1,18 @@
 # Testing Guide
 
 **Package**: vsp_linux_container_FINAL v1.0.0
-**Date**: February 3, 2026
+**Date**: February 3, 2026 _(test procedures still valid; May-2026 additions noted inline below)_
 
 Comprehensive testing procedures to verify all fixes are working correctly.
+
+> **May 2026 additions to test after a fresh install**:
+> - **Drag-and-drop** on the welcome screen — overlay appears, file uploads land in `%USERPROFILE%\vsp-input\`.
+> - **Add files…** button fallback (if drag-drop blocked by Edge regression).
+> - Welcome screen shows the **real Windows host path** (`C:\Users\<name>\vsp-input`), not `/data/in`.
+> - **Archive** + **Restore** flow (formerly Exclude): archive a video → `.excluded/` → restore from welcome-screen Archived section.
+> - **Back** button from segment review → returns to welcome, does NOT bounce back.
+> - First decode includes one-time **10–15 min CUDA JIT** on Blackwell GPUs; persistent cache (`%USERPROFILE%\vsp-cuda-cache:/root/.nv`) keeps subsequent runs ~3 min.
+> - Report shows **MBR-as-default** hypothesis (look for `aggregated.json` next to `decode_results.json` and the agreement-aware band coloring).
 
 ---
 

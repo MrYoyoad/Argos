@@ -1,5 +1,12 @@
 # Container Package Validation Checklist
 
+> **⚠️ HISTORICAL — February 2026 bug catalog.** The bugs listed below
+> were fixed in the Feb-2026 packaging pass. For the **May 2026** bug
+> catalog (cu124→cu128 Blackwell, fairseq weights_only, container-
+> Whisper offline mode, drag-drop Edge regression, etc.) see
+> [container-deployment-lessons-may2026.md](container-deployment-lessons-may2026.md)
+> and memory `windows_docker_deployment_lessons.md`.
+
 ## Critical Bugs Fixed
 
 ### ✅ Bug #1: Missing Space in Python3 Calls

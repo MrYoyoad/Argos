@@ -1,5 +1,15 @@
 # Production-Ready Deployment Package - Instructions
 
+> **⚠️ HISTORICAL — February 2026 snapshot.** Describes the
+> `galaxy_export_PRODUCTION_READY_20260201.tar.gz` package and the
+> hardcoded `/workspace` paths used at the time. Superseded by the
+> **May 2026 client deployment**: bwfix image (cu128 + sm_120 SASS for
+> Blackwell), dynamic path detection, persistent CUDA JIT cache,
+> `VSP_HOST_INPUT_DIR` host-path surfacing, drag-drop file-picker
+> fallback, Archive/Restore UX. See [container-deployment-lessons-may2026.md](container-deployment-lessons-may2026.md)
+> and [user-guide-vsp-pipeline.md](user-guide-vsp-pipeline.md) for the
+> current procedure.
+
 ## Package Information
 
 **File:** `galaxy_export_PRODUCTION_READY_20260201.tar.gz` (139KB)
