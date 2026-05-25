@@ -1676,6 +1676,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => { btn.textContent = old; }, 1500);
             }
         } catch (e) {
+            // Fallback for non-secure contexts: select the text.
             const range = document.createRange();
             range.selectNode(elements.inputPath);
             window.getSelection().removeAllRanges();

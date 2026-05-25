@@ -86,11 +86,18 @@ class ProgressTracker:
         self._decode_flush = re.compile(r"Incremental flush at (\d+) samples")
 
     def reset(self, run_id: Optional[str] = None):
-        """Reset tracker for a new pipeline run."""
+        """Reset tracker.
+
+        With a run_id: start a fresh RUNNING state for a new pipeline run.
+        Without one: clear to IDLE — used by runner.reset() so the UI can
+        get back to the welcome screen instead of bouncing to segment
+        review on every refreshStatus() (which checks state == 'completed').
+        """
         self.state = ProgressState()
-        self.state.run_id = run_id
-        self.state.state = PipelineState.RUNNING
-        self.state.start_time = time.time()
+        if run_id is not None:
+            self.state.run_id = run_id
+            self.state.state = PipelineState.RUNNING
+            self.state.start_time = time.time()
 
     def process_line(self, line: str) -> bool:
         """

@@ -23,9 +23,15 @@
                 <p>Drag video files directly into this window, or add them to the input folder. The pipeline will segment videos, then let you review and transcribe each segment.</p>
 
                 <div class="input-folder-display">
-                    <code id="input-path">~/vsp_input/</code>
+                    <code id="input-path" title="Click to copy" style="cursor: pointer;">Loading...</code>
+                    <button id="btn-copy-path" class="btn btn-text" title="Copy to clipboard">Copy</button>
+                    <button id="btn-add-files" class="btn btn-secondary" title="Pick video files from a folder dialog">Add files…</button>
                     <button id="btn-inspect-videos" class="btn btn-secondary">Inspect Videos</button>
+                    <input id="file-picker-input" type="file" multiple accept="video/*,.mp4,.mkv,.webm,.mov,.m4v,.avi" style="display: none;">
                 </div>
+                <p class="help-text" id="input-path-hint" style="margin-top: 4px; font-size: 12px;">
+                    Paste this path into File Explorer (Win+E → click address bar → Ctrl+V) to drop videos in directly.
+                </p>
 
                 <div class="video-count">
                     <span id="video-count-text">Loading...</span>
@@ -40,14 +46,23 @@
                     <ul id="inspection-videos-list" class="video-list"></ul>
                 </div>
 
-                <!-- Upload Progress Section -->
-                <div id="upload-progress-section" class="upload-progress" style="display: none;">
-                    <h3>Uploading Files</h3>
-                    <div id="upload-status" class="upload-status">Uploading 0 of 0 files...</div>
-                    <div id="upload-files-list" class="upload-files-list">
-                        <!-- Dynamically populated with upload-file-item divs -->
+                <!-- Archived Videos Section (expandable) -->
+                <div id="archived-section" class="video-inspection" style="display: none; margin-top: 16px;">
+                    <div class="inspection-header">
+                        <h3>Archived Videos (not processed)</h3>
+                        <button id="btn-close-archived" class="btn btn-text">Close</button>
                     </div>
+                    <p class="help-text" style="font-size: 12px; margin: 4px 0 8px;">
+                        These videos are in <code>.excluded/</code> and skipped by the pipeline. Restore one to bring it back into processing.
+                    </p>
+                    <ul id="archived-videos-list" class="video-list"></ul>
                 </div>
+                <button id="btn-toggle-archived" class="btn btn-text" style="display: none; margin-top: 4px;">Show archived videos</button>
+
+                <!-- Upload Progress Section was here. Moved to body level
+                     so drag-and-drop uploads are visible on every screen,
+                     not just the welcome screen (was a child of #welcome-screen
+                     which is display:none once any video is detected). -->
 
                 <!-- Segmentation Options -->
                 <div class="processing-options" style="margin-top: 24px;">
@@ -274,6 +289,18 @@
             <div class="drop-icon">📁</div>
             <h2>Drop video files here</h2>
             <p>Supported: MP4, MKV, WebM, MOV, M4V, AVI</p>
+        </div>
+    </div>
+
+    <!-- Upload Progress Section (body-level so it's visible on every screen).
+         Previously nested inside #welcome-screen which hid it after first
+         video was detected — drag-and-drop uploads then ran silently with no
+         visible feedback. May-2026 fix. -->
+    <div id="upload-progress-section" class="upload-progress upload-progress-floating" style="display: none;">
+        <h3>Uploading Files</h3>
+        <div id="upload-status" class="upload-status">Uploading 0 of 0 files...</div>
+        <div id="upload-files-list" class="upload-files-list">
+            <!-- Dynamically populated with upload-file-item divs -->
         </div>
     </div>
 

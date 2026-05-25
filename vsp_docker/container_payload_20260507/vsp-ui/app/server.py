@@ -20,6 +20,7 @@ from .config import (
     SERVER_HOST,
     SERVER_PORT,
     INPUT_DIR,
+    BASE_DIR,
     PipelineState,
 )
 from .services.validator import validate_input_folder
@@ -88,9 +89,9 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(self.STATIC_DIR), **kwargs)
 
     def setup(self):
-        """Increase socket timeout for large file uploads."""
+        """Increase socket timeout for large video uploads (up to 5 minutes)."""
         super().setup()
-        self.request.settimeout(300)  # 5 minutes
+        self.request.settimeout(300)
 
     def log_message(self, format, *args):
         """Suppress default logging."""
@@ -265,6 +266,11 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
                     archived_count += len(list(excluded_dir.glob(f"*{ext}")))
                     archived_count += len(list(excluded_dir.glob(f"*{ext.upper()}")))
 
+        # Host-side path is supplied by the launcher (vsp-start.ps1) as
+        # VSP_HOST_INPUT_DIR. Inside the container we only see /data/in,
+        # which is meaningless on Windows; the UI needs the real path
+        # (e.g. C:\Users\Amos\vsp-input) so the user can paste it into
+        # File Explorer.
         host_input_folder = os.environ.get("VSP_HOST_INPUT_DIR", "")
 
         self.send_json({
@@ -340,9 +346,16 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
                 transcription_type = info.type if info else "auto"
             else:
                 # Fallback: check preprocessed text directory
-                text_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
-                transcription_file = text_dir / f"{segment_id}.txt"
-                if transcription_file.exists():
+                text_dir_seg = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
+                text_dir_whole = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / "flat_text_whole"
+
+                transcription_file = None
+                if text_dir_seg.exists():
+                    transcription_file = text_dir_seg / f"{segment_id}.txt"
+                elif text_dir_whole.exists():
+                    transcription_file = text_dir_whole / f"{segment_id}.txt"
+
+                if transcription_file and transcription_file.exists():
                     has_transcription = True
                     transcription_type = "manual"  # Preprocessed text files are manual transcriptions
 
@@ -371,27 +384,20 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         return segments
 
     def handle_list_golden_models(self):
-        """List all available golden k-means models with metadata."""
+        """List all available golden k-means models."""
         try:
-            golden_dir = Path.home() / "VSP-LLM" / "golden_kmeans"
+            golden_dir = BASE_DIR / "VSP-LLM" / "golden_kmeans"
             models = []
 
             if golden_dir.exists():
                 for model_file in sorted(golden_dir.glob("*.bin")):
                     stat = model_file.stat()
-                    entry = {
+                    models.append({
                         "name": model_file.name,
                         "path": str(model_file),
                         "size": stat.st_size,
                         "created": stat.st_mtime
-                    }
-                    # Load companion metadata JSON if it exists
-                    meta_file = model_file.with_suffix(".json")
-                    if meta_file.exists():
-                        import json as _json
-                        with open(meta_file) as f:
-                            entry["metadata"] = _json.load(f)
-                    models.append(entry)
+                    })
 
             self.send_json({"models": models})
         except Exception as e:
@@ -564,9 +570,16 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         # Try to open folder
         success = open_folder(folder_path)
 
+        # Use host-side path if available (set by vsp-start.sh for Docker)
+        display_path = str(folder_path)
+        if folder_type == "input":
+            host_path = os.environ.get("VSP_HOST_INPUT_DIR")
+            if host_path:
+                display_path = host_path
+
         self.send_json({
             "success": success,
-            "path": str(folder_path),
+            "path": display_path,
             "message": "Folder opened" if success else "Could not open folder automatically",
         })
 
@@ -669,7 +682,7 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         # First check for fast_segments (from SEGMENT_ONLY mode)
         fast_seg_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "fast_segments"
 
-        # Check for fully preprocessed segments (segmented videos)
+        # Fallback to fully preprocessed segments
         full_seg_dir = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_video_seg{SEGMENT_DURATION}s"
 
         # Check for whole videos (non-segmented mode)
@@ -720,9 +733,7 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
                 transcription_type = info.type if info else "auto"
             else:
                 # Fallback: check preprocessed text directory
-                # Try segmented text directory first
                 text_dir_seg = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
-                # Try whole video text directory (non-segmented mode)
                 text_dir_whole = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / "flat_text_whole"
 
                 transcription_file = None
@@ -1018,21 +1029,18 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
                 self.send_error_json("Missing multipart boundary", 400)
                 return
 
-            # Read body in chunks (prevents timeout/OOM on large video files)
-            size_str = self._format_file_size(content_length)
-            print(f"[UPLOAD] Starting: {content_length} bytes ({size_str})")
-            CHUNK_SIZE = 1024 * 1024  # 1 MB
+            # Read body in chunks (1MB at a time) for large video uploads
+            print(f"[UPLOAD] Starting: {content_length / (1024*1024):.1f} MB")
+            CHUNK_SIZE = 1024 * 1024  # 1MB
             body = bytearray()
-            bytes_read = 0
-            while bytes_read < content_length:
-                to_read = min(CHUNK_SIZE, content_length - bytes_read)
-                chunk = self.rfile.read(to_read)
+            remaining = content_length
+            while remaining > 0:
+                chunk = self.rfile.read(min(CHUNK_SIZE, remaining))
                 if not chunk:
                     break
                 body.extend(chunk)
-                bytes_read += len(chunk)
+                remaining -= len(chunk)
             body = bytes(body)
-            print(f"[UPLOAD] Read complete: {bytes_read} bytes")
             boundary_bytes = boundary.encode('utf-8')
             delimiter = b'--' + boundary_bytes
 

@@ -104,6 +104,17 @@ function showScreen(screenName) {
     console.log('showScreen called with:', screenName);
     console.log('Available screens:', Object.keys(screens));
 
+    // A1 audit: stop polling whenever we leave the processing screen for a
+    // non-processing one. Old code only stopped polling on state transitions
+    // (completed/failed/cancelled). If the user navigated away mid-run,
+    // pollInterval would keep firing /api/progress every 500ms forever and
+    // could even bounce the user back to a stale screen.
+    if (currentScreen === 'processing' && screenName !== 'processing') {
+        if (typeof stopProgressPolling === 'function') {
+            stopProgressPolling();
+        }
+    }
+
     Object.keys(screens).forEach(name => {
         const screen = screens[name];
         if (screen) {
@@ -167,18 +178,42 @@ async function refreshStatus() {
     const status = await api('status');
 
     if (status.error) {
-        elements.videoCountText.textContent = 'Error connecting to server';
+        // A1 audit: never leave the UI in a dead-end "Error connecting" state.
+        // Auto-retry every 2s so a transient failure self-heals.
+        console.warn('[A1 audit] refreshStatus: status error, retrying in 2s:', status.error);
+        elements.videoCountText.textContent = 'Cannot reach server — retrying…';
+        clearTimeout(refreshStatus._retry);
+        refreshStatus._retry = setTimeout(refreshStatus, 2000);
         return;
     }
+    // Clear any pending retry timer on a successful poll.
+    if (refreshStatus._retry) {
+        clearTimeout(refreshStatus._retry);
+        refreshStatus._retry = null;
+    }
 
-    elements.inputPath.textContent = status.input_folder;
+    // Prefer the host-side path (e.g. C:\Users\Amos\vsp-input) over the
+    // container's internal /data/in — the latter is meaningless to the
+    // end user on Windows.
+    elements.inputPath.textContent = status.host_input_folder || status.input_folder;
 
+    let countText;
     if (status.video_count === 0) {
-        elements.videoCountText.textContent = 'No videos detected - drag videos here or add to folder';
+        countText = 'No videos detected — drag videos here or copy them into the folder above';
         document.getElementById('btn-start-processing').disabled = true;
     } else {
-        elements.videoCountText.textContent = `${status.video_count} video(s) ready for processing`;
+        countText = `${status.video_count} video(s) ready for processing`;
         document.getElementById('btn-start-processing').disabled = false;
+    }
+    if (status.archived_count && status.archived_count > 0) {
+        countText += ` · ${status.archived_count} archived`;
+    }
+    elements.videoCountText.textContent = countText;
+
+    // Surface the "Show archived" toggle only when there are archived videos.
+    const toggleBtn = document.getElementById('btn-toggle-archived');
+    if (toggleBtn) {
+        toggleBtn.style.display = (status.archived_count > 0) ? 'inline-block' : 'none';
     }
 
     // If pipeline is running, show processing screen
@@ -230,8 +265,8 @@ async function inspectVideos() {
                                 : ''}
                         </div>
                         <div class="video-actions">
-                            <button class="btn-remove" data-index="${index}" title="Exclude from processing">
-                                Exclude
+                            <button class="btn-remove" data-index="${index}" title="Archive (move to .excluded; can be restored)">
+                                Archive
                             </button>
                         </div>
                     </div>
@@ -261,16 +296,16 @@ async function removeVideoFromInspection(index) {
 
     const video = validationResult.valid_videos[index];
 
-    // Confirm removal
-    if (!confirm(`Exclude "${video.filename}" from processing?\n\nThe video will be moved to the .excluded folder.`)) {
+    // Confirm archive
+    if (!confirm(`Archive "${video.filename}"?\n\nThe pipeline will not process it. You can restore it later from the Archived section.`)) {
         return;
     }
 
-    // Call API to move the file to .excluded
+    // Call API to move the file to .excluded (archive)
     const result = await api('remove-video', 'POST', { filename: video.filename });
 
     if (!result.success) {
-        alert(`Failed to exclude video: ${result.error || 'Unknown error'}`);
+        alert(`Failed to archive video: ${result.error || 'Unknown error'}`);
         return;
     }
 
@@ -291,8 +326,8 @@ async function removeVideoFromInspection(index) {
                             : ''}
                     </div>
                     <div class="video-actions">
-                        <button class="btn-remove" data-index="${idx}" title="Exclude from processing">
-                            Exclude
+                        <button class="btn-remove" data-index="${idx}" title="Archive (move to .excluded; can be restored)">
+                            Archive
                         </button>
                     </div>
                 </div>
@@ -390,50 +425,58 @@ async function continueFullPipeline() {
     const btn = document.getElementById('btn-continue-pipeline');
     if (!btn) return;
 
+    // A1 audit: try/finally guarantees the button never stays stuck on
+    // "Starting...". A thrown error or unexpected api() response would
+    // previously leave the user with a frozen button.
     btn.disabled = true;
     btn.textContent = 'Starting...';
+    let started = false;
 
-    // Get k-means mode from segment review screen
-    const kmeansMode = document.querySelector('#segment-review-screen input[name="kmeans-mode"]:checked')?.value;
-    let trainKmeans = false;
-    let goldenModel = null;
+    try {
+        const kmeansMode = document.querySelector('#segment-review-screen input[name="kmeans-mode"]:checked')?.value;
+        let trainKmeans = false;
+        let goldenModel = null;
 
-    if (kmeansMode === 'train') {
-        trainKmeans = true;
-    } else if (kmeansMode === 'golden') {
-        const goldenSelect = document.querySelector('#segment-review-screen #golden-model-select');
-        goldenModel = goldenSelect?.value;
+        if (kmeansMode === 'train') {
+            trainKmeans = true;
+        } else if (kmeansMode === 'golden') {
+            const goldenSelect = document.querySelector('#segment-review-screen #golden-model-select');
+            goldenModel = goldenSelect?.value;
 
-        if (!goldenModel) {
-            alert('Please select a golden model or choose a different option');
-            btn.disabled = false;
-            btn.textContent = 'Continue Pipeline';
+            if (!goldenModel) {
+                alert('Please select a golden model or choose a different option');
+                return;
+            }
+        }
+
+        const segmentationEnabled = document.getElementById('segmentation-enabled')?.checked ?? true;
+        const overlapEnabled = document.getElementById('overlap-enabled')?.checked ?? true;
+
+        const result = await api('start', 'POST', {
+            train_kmeans: trainKmeans,
+            golden_model: goldenModel,
+            segmentation_enabled: segmentationEnabled,
+            overlap_enabled: overlapEnabled,
+            segment_only: false
+        });
+
+        if (!result.success) {
+            alert(`Failed to start: ${result.errors?.join(', ') || result.message || result.error || 'Unknown error'}`);
             return;
         }
+
+        started = true;
+        showScreen('processing');
+        startProgressPolling();
+    } catch (err) {
+        console.warn('[A1 audit] continueFullPipeline threw:', err);
+        alert(`Failed to start: ${err?.message || err}`);
+    } finally {
+        if (!started) {
+            btn.disabled = false;
+            btn.textContent = 'Continue Pipeline';
+        }
     }
-
-    // Get segmentation and overlap checkboxes from welcome screen
-    const segmentationEnabled = document.getElementById('segmentation-enabled')?.checked ?? true;
-    const overlapEnabled = document.getElementById('overlap-enabled')?.checked ?? true;
-
-    // Continue with full processing
-    const result = await api('start', 'POST', {
-        train_kmeans: trainKmeans,
-        golden_model: goldenModel,
-        segmentation_enabled: segmentationEnabled,
-        overlap_enabled: overlapEnabled,
-        segment_only: false  // Full pipeline now
-    });
-
-    if (!result.success) {
-        alert(`Failed to start: ${result.errors?.join(', ') || result.message}`);
-        btn.disabled = false;
-        btn.textContent = 'Continue Pipeline';
-        return;
-    }
-
-    showScreen('processing');
-    startProgressPolling();
 }
 
 function displaySegmentReview(segmentsData, orphanedTranscriptionsParam) {
@@ -1291,18 +1334,33 @@ async function startNew() {
 }
 
 // Drag-and-Drop Upload Functions
+// A2 audit (May 2026): the overlay never appeared on the Win 11 client.
+// Hardened: try/catch around every check, scoped #status-badge selector,
+// console breadcrumbs so we can diagnose if it recurs, and a guaranteed
+// file-picker fallback (see #btn-add-files in the welcome screen).
 
 function handleDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    // Only show drop zone on welcome screen and when not uploading or processing
-    if (currentScreen === 'welcome' && !isUploading) {
-        const runner = document.querySelector('.badge');
-        const isProcessing = runner && runner.classList.contains('running');
-        if (!isProcessing) {
-            elements.dropZoneOverlay.style.display = 'flex';
+    try {
+        if (isUploading) {
+            console.warn('[A2] dragover: skipped — isUploading=true');
+            return;
         }
+        const badge = document.querySelector('#status-badge');
+        const isProcessing = !!(badge && badge.classList.contains('running'));
+        if (isProcessing) {
+            console.warn('[A2] dragover: skipped — pipeline running');
+            return;
+        }
+        if (!elements.dropZoneOverlay) {
+            console.warn('[A2] dragover: drop-zone-overlay element missing');
+            return;
+        }
+        elements.dropZoneOverlay.style.display = 'flex';
+    } catch (err) {
+        console.warn('[A2] dragover handler threw:', err);
     }
 }
 
@@ -1310,9 +1368,11 @@ function handleDragLeave(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    // Only hide if leaving the window, not just moving between elements
+    // Only hide if leaving the window, not just moving between elements.
     if (e.target === document.body || e.target === elements.dropZoneOverlay) {
-        elements.dropZoneOverlay.style.display = 'none';
+        if (elements.dropZoneOverlay) {
+            elements.dropZoneOverlay.style.display = 'none';
+        }
     }
 }
 
@@ -1320,16 +1380,22 @@ function handleDrop(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    elements.dropZoneOverlay.style.display = 'none';
-
-    // Only handle drops on welcome screen
-    if (currentScreen !== 'welcome' || isUploading) {
-        return;
+    if (elements.dropZoneOverlay) {
+        elements.dropZoneOverlay.style.display = 'none';
     }
 
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-        uploadFiles(files);
+    try {
+        if (isUploading) {
+            console.warn('[A2] drop: blocked — isUploading=true');
+            return;
+        }
+        const files = Array.from(e.dataTransfer?.files || []);
+        console.info('[A2] drop: files=', files.length);
+        if (files.length > 0) {
+            uploadFiles(files);
+        }
+    } catch (err) {
+        console.warn('[A2] drop handler threw:', err);
     }
 }
 
@@ -1410,12 +1476,15 @@ async function uploadFiles(files) {
     elements.uploadStatus.textContent = `Complete: ${successCount} uploaded, ${failCount} failed`;
 
     // Refresh video count
+    // A2 audit: clear isUploading IMMEDIATELY so the user can drop again
+    // without waiting 3s. The 3s timer is only for hiding the visual block,
+    // not for gating drops.
+    isUploading = false;
     await refreshStatus();
 
-    // Hide upload progress after 3 seconds
+    // Hide upload progress after 3 seconds (visual delay only).
     setTimeout(() => {
         elements.uploadProgressSection.style.display = 'none';
-        isUploading = false;
     }, 3000);
 }
 
@@ -1545,10 +1614,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize overlap options visibility based on checkbox state
     overlapContainer.style.display = segmentationCheckbox.checked ? 'block' : 'none';
 
-    // Segment review screen
-    document.getElementById('btn-back')?.addEventListener('click', () => {
+    // Segment review screen — Back must clear backend state first,
+    // otherwise refreshStatus() sees state='completed' && segment_only=true
+    // and bounces straight back to segment review.
+    document.getElementById('btn-back')?.addEventListener('click', async () => {
+        await api('reset', 'POST');
         showScreen('welcome');
-        refreshStatus();
+        await refreshStatus();
     });
     document.getElementById('btn-continue-pipeline')?.addEventListener('click', continueFullPipeline);
 
@@ -1590,9 +1662,105 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Copy host input path to clipboard (so the client can paste it into
+    // File Explorer instead of memorising %USERPROFILE%\vsp-input).
+    const copyPathHandler = async () => {
+        const path = elements.inputPath?.textContent?.trim();
+        if (!path || path === 'Loading...') return;
+        try {
+            await navigator.clipboard.writeText(path);
+            const btn = document.getElementById('btn-copy-path');
+            if (btn) {
+                const old = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = old; }, 1500);
+            }
+        } catch (e) {
+            const range = document.createRange();
+            range.selectNode(elements.inputPath);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+        }
+    };
+    document.getElementById('btn-copy-path')?.addEventListener('click', copyPathHandler);
+    elements.inputPath?.addEventListener('click', copyPathHandler);
+
+    // A2 file-picker fallback. Guaranteed to work even when native drag-drop
+    // is broken (Edge late-2025 regression, Docker Desktop NAT quirks, etc.).
+    const filePicker = document.getElementById('file-picker-input');
+    document.getElementById('btn-add-files')?.addEventListener('click', () => {
+        filePicker?.click();
+    });
+    filePicker?.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []);
+        console.info('[A2] file-picker: files=', files.length);
+        if (files.length > 0) {
+            uploadFiles(files);
+        }
+        // Reset so the same file can be re-picked.
+        e.target.value = '';
+    });
+
+    // Archived videos: open/close and restore handlers.
+    document.getElementById('btn-toggle-archived')?.addEventListener('click', async () => {
+        const section = document.getElementById('archived-section');
+        if (!section) return;
+        section.style.display = 'block';
+        document.getElementById('btn-toggle-archived').style.display = 'none';
+        await loadArchivedVideos();
+    });
+    document.getElementById('btn-close-archived')?.addEventListener('click', () => {
+        const section = document.getElementById('archived-section');
+        if (section) section.style.display = 'none';
+        const btn = document.getElementById('btn-toggle-archived');
+        if (btn) btn.style.display = 'inline-block';
+    });
+
     // Initial status check
     refreshStatus();
 });
+
+async function loadArchivedVideos() {
+    const list = document.getElementById('archived-videos-list');
+    if (!list) return;
+    list.innerHTML = '<li>Loading…</li>';
+    const result = await api('list-archived');
+    const files = result.archived || [];
+    if (files.length === 0) {
+        list.innerHTML = '<li>No archived videos.</li>';
+        return;
+    }
+    list.innerHTML = files
+        .map(f => `
+            <li>
+                <div class="video-list-item">
+                    <div class="video-info">
+                        <span class="video-name">${escapeHtml(f)}</span>
+                    </div>
+                    <div class="video-actions">
+                        <button class="btn-restore-archived" data-filename="${escapeHtml(f)}">Restore</button>
+                    </div>
+                </div>
+            </li>
+        `)
+        .join('');
+    list.querySelectorAll('.btn-restore-archived').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const filename = btn.dataset.filename;
+            btn.disabled = true;
+            btn.textContent = 'Restoring…';
+            const r = await api('restore-video', 'POST', { filename });
+            if (!r.success) {
+                alert(`Failed to restore: ${r.error || 'Unknown error'}`);
+                btn.disabled = false;
+                btn.textContent = 'Restore';
+                return;
+            }
+            await loadArchivedVideos();
+            await refreshStatus();
+        });
+    });
+}
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
@@ -1700,8 +1868,28 @@ function setupVideoLazyLoading() {
                         source.setAttribute('src', dataSrc);
                         video.load();
 
+                        // A1 audit: 30-second timeout. The /api/segment-video/<id>
+                        // endpoint runs ffmpeg on demand; it can hang in some
+                        // conditions (locked source file, codec quirk). Without
+                        // this, the page shows "Loading video..." forever and
+                        // looks frozen to the user.
+                        const timeoutId = setTimeout(() => {
+                            if (loadingDiv && loadingDiv.style.display !== 'none') {
+                                console.warn('[A1 audit] video load timed out:', dataSrc);
+                                loadingDiv.innerHTML =
+                                    '<button class="btn btn-text" title="Retry loading this segment">[Click to retry]</button>';
+                                loadingDiv.querySelector('button')?.addEventListener('click', () => {
+                                    loadingDiv.textContent = 'Loading video...';
+                                    source.setAttribute('src', '');
+                                    source.setAttribute('src', dataSrc + '?retry=' + Date.now());
+                                    video.load();
+                                });
+                            }
+                        }, 30000);
+
                         // Hide loading indicator when video can play
                         video.addEventListener('loadeddata', () => {
+                            clearTimeout(timeoutId);
                             if (loadingDiv) {
                                 loadingDiv.style.display = 'none';
                                 video.style.display = 'block';

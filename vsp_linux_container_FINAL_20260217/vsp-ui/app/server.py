@@ -163,6 +163,8 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             self.handle_get_orphaned_transcriptions()
         elif path == "/api/segments":
             self.handle_get_segments()
+        elif path == "/api/list-archived":
+            self.handle_list_archived()
         elif path.startswith("/api/segment-video/"):
             segment_id = path.split("/")[-1]
             self.handle_get_segment_video(segment_id)
@@ -203,6 +205,8 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             self.handle_reset()
         elif path == "/api/remove-video":
             self.handle_remove_video(data)
+        elif path == "/api/restore-video":
+            self.handle_restore_video(data)
         elif path == "/api/transcription":
             self.handle_post_transcription(data)
         elif path == "/api/save-segment-transcription":
@@ -246,19 +250,30 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
 
     def handle_status(self):
         """Return current system status."""
+        import os
         runner = get_runner()
 
         # Count videos in input folder
         video_count = 0
+        archived_count = 0
         if INPUT_DIR.exists():
             for ext in [".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"]:
                 video_count += len(list(INPUT_DIR.glob(f"*{ext}")))
                 video_count += len(list(INPUT_DIR.glob(f"*{ext.upper()}")))
+            excluded_dir = INPUT_DIR / ".excluded"
+            if excluded_dir.exists():
+                for ext in [".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"]:
+                    archived_count += len(list(excluded_dir.glob(f"*{ext}")))
+                    archived_count += len(list(excluded_dir.glob(f"*{ext.upper()}")))
+
+        host_input_folder = os.environ.get("VSP_HOST_INPUT_DIR", "")
 
         self.send_json({
             "state": runner.state,
             "input_folder": str(INPUT_DIR),
+            "host_input_folder": host_input_folder,
             "video_count": video_count,
+            "archived_count": archived_count,
             "is_running": runner.is_running,
         })
 
@@ -323,7 +338,7 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
 
             if has_transcription:
                 info = transcription_mgr.get_transcription_info(f"{segment_id}.mp4")
-                transcription_type = info.type if info else "manual"
+                transcription_type = info.type if info else "auto"
             else:
                 # Fallback: check preprocessed text directory
                 text_dir_seg = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"
@@ -482,6 +497,49 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             })
         except Exception as e:
             self.send_error_json(f"Failed to exclude video: {e}", 500)
+
+    def handle_list_archived(self):
+        """List filenames in INPUT_DIR/.excluded/. Reverse of handle_remove_video."""
+        excluded_dir = INPUT_DIR / ".excluded"
+        files = []
+        if excluded_dir.exists():
+            for ext in [".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"]:
+                files.extend(p.name for p in excluded_dir.glob(f"*{ext}"))
+                files.extend(p.name for p in excluded_dir.glob(f"*{ext.upper()}"))
+        files.sort()
+        self.send_json({"archived": files})
+
+    def handle_restore_video(self, data: Dict[str, Any]):
+        """Move a previously-archived video back to INPUT_DIR."""
+        filename = data.get("filename")
+
+        if not filename:
+            self.send_error_json("No filename provided", 400)
+            return
+
+        # Security: same guards as handle_remove_video.
+        if ".." in filename or "/" in filename or "\\" in filename:
+            self.send_error_json("Invalid filename", 400)
+            return
+
+        excluded_path = INPUT_DIR / ".excluded" / filename
+        target_path = INPUT_DIR / filename
+
+        if not excluded_path.exists():
+            self.send_error_json(f"Archived video not found: {filename}", 404)
+            return
+        if target_path.exists():
+            self.send_error_json(
+                f"A file named {filename} already exists in the input folder",
+                409,
+            )
+            return
+
+        try:
+            excluded_path.rename(target_path)
+            self.send_json({"success": True, "message": f"Restored {filename}"})
+        except Exception as e:
+            self.send_error_json(f"Failed to restore video: {e}", 500)
 
     def handle_open_folder(self, data: Dict[str, Any]):
         """Open a folder in the file manager."""
@@ -667,7 +725,7 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
 
                 # Get transcription type from metadata
                 info = transcription_mgr.get_transcription_info(f"{segment_id}.mp4")
-                transcription_type = info.type if info else "manual"
+                transcription_type = info.type if info else "auto"
             else:
                 # Fallback: check preprocessed text directory
                 text_dir_seg = AUTO_AVSR_DIR / f"preprocessed_flat_seg{SEGMENT_DURATION}" / "flat" / f"flat_text_seg{SEGMENT_DURATION}s"

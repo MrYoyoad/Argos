@@ -55,6 +55,12 @@ class TranscriptionManager:
         Returns:
             Dict with success status and word count
         """
+        # Reload metadata from disk before mutating — asr.sh and concurrent
+        # requests can update metadata.json out-of-band, and the in-memory
+        # copy is stale otherwise (this previously caused a single UI save
+        # to clobber every auto entry on the next _save_metadata write).
+        self._load_metadata()
+
         # Normalize text (one word per line)
         words = self.normalize_text(text)
 
@@ -108,6 +114,8 @@ class TranscriptionManager:
         Returns:
             True if deleted, False if not found
         """
+        self._load_metadata()
+
         stem = Path(filename).stem
         wrd_path = self.TRANSCRIPTIONS_DIR / f"{stem}.wrd"
 
@@ -148,6 +156,7 @@ class TranscriptionManager:
         if not self.has_transcription(filename):
             return None
 
+        self._load_metadata()
         meta = self.metadata["transcriptions"].get(filename, {})
         stem = Path(filename).stem
         wrd_path = self.TRANSCRIPTIONS_DIR / f"{stem}.wrd"
@@ -155,7 +164,12 @@ class TranscriptionManager:
 
         return TranscriptionInfo(
             filename=filename,
-            type=meta.get("type", "manual"),
+            # Default to "auto" when metadata is missing for a .wrd file:
+            # orphan .wrd files in .transcriptions/ are overwhelmingly from
+            # Whisper (asr.sh step 1.5), not from manual UI saves (which
+            # always write metadata). Returning "manual" here previously
+            # made every untracked .wrd render as MANUAL in the UI.
+            type=meta.get("type", "auto"),
             created_at=meta.get("created_at"),  # Returns None if not present
             edited_at=meta.get("edited_at"),
             word_count=word_count,
@@ -178,6 +192,7 @@ class TranscriptionManager:
         Returns:
             List of TranscriptionInfo for orphaned transcriptions
         """
+        self._load_metadata()
         valid_stems = {Path(f).stem for f in valid_filenames}
         orphaned = []
 
@@ -230,6 +245,7 @@ class TranscriptionManager:
         dest_path.write_text(wrd_source_path.read_text())
 
         # Update metadata
+        self._load_metadata()
         word_count = len(wrd_source_path.read_text().strip().split("\n"))
         now = datetime.utcnow().isoformat() + "Z"
 
