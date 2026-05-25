@@ -281,3 +281,56 @@ snap/
 /*.png
 /*.jpg
 /*.jpeg
+
+# ---------- May-2026 client deployment artifacts (regenerable / large) ----------
+# Docker image tars and the kit zips we hand to clients — produced by
+# `docker save | zstd` and `Compress-Archive` flows; not source.
+*.tar.zst
+Argos_VSP_Client_*.zip
+vsp_docker/vsp-image-*.tar*
+vsp_docker/windows_kit/
+vsp_docker/galaxy_export.pre-regen-*/
+
+# Llama-3.1-8B model weights (downloaded from HF, multi-GB, regenerable).
+Llama-3.1-8B/
+Llama-3.1-8B-Instruct/
+
+# Preview / demo / scratch output dirs.
+_e2e_report_preview/
+client_demo_report_*/
+screenshot_tmp/
+vsp_input_realtalk_demo/
+
+# Stray top-level files that should live elsewhere.
+/vsp-start.sh
+/LESSONS_for_VS_Code_Claude.md
+
+# Per-build caches inside the container-overlay tree (IS model cache,
+# extracted wheel staging dirs).
+vsp_linux_container_FINAL_20260217/is_model_cache/
+vsp_linux_container_FINAL_20260217/is_wheels_cp310/
+
+# Pre-claude / pre-refactor backups of run_flat_english_pipeline.sh.
+**/run_flat_english_pipeline.sh.pre-*-backup
+
+# Heavy regenerable subdirs inside the container_payload snapshot.
+# Source files (lib/, scripts/, tests/, docs/, vsp-ui/, .md, .sh, .py)
+# ARE tracked — see commit "chore(container_payload): May-7 client-build-003 source snapshot".
+vsp_docker/container_payload_20260507/VSP-LLM/
+vsp_docker/container_payload_20260507/auto_avsr/
+vsp_docker/container_payload_20260507/av_hubert/
+vsp_docker/container_payload_20260507/golden_weights/
+vsp_docker/container_payload_20260507/is_model_cache/
+vsp_docker/container_payload_20260507/is_wheels/
+vsp_docker/container_payload_20260507/is_wheels_cp310/
+vsp_docker/container_payload_20260507/samples/
+vsp_docker/container_payload_20260507/spacy_wheels/
+vsp_docker/container_payload_20260507/pre-process-venv/
+vsp_docker/container_payload_20260507/vsp-llm-yoad-venv/
+vsp_docker/container_payload_20260507/whisper_cache/
+vsp_docker/container_payload_20260507/face_alignment/
+vsp_docker/container_payload_20260507/face_detection/
+
+# OpenDataLab / OpenXLab download caches.
+.opendatalab/
+.openxlab/
