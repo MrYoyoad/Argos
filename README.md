@@ -64,13 +64,14 @@ For detailed environment setup and package installation, see **[INSTALL.md](INST
 
 ## Presentation
 
-[Research Findings and Production Roadmap (Google Slides)](https://docs.google.com/presentation/d/1UNZVtpcODsTOFolRgVyo4h6jKTx_6Y5u/edit?usp=sharing&ouid=113034242173553309203&rtpof=true&sd=true) — covers evaluation methodology, baseline results, engineering decisions, and future directions.
+[Research Findings and Production Roadmap (Google Slides, February 2026)](https://docs.google.com/presentation/d/1UNZVtpcODsTOFolRgVyo4h6jKTx_6Y5u/edit?usp=sharing&ouid=113034242173553309203&rtpof=true&sd=true) — covers evaluation methodology, baseline results, engineering decisions, and future directions. _Snapshot from February 2026; subsequent work (May-2026 client deployment, MBR-as-default, per-word confidence, agreement-aware bands) is in the documentation below._
 
 ## Documentation
 
 | Document | Description |
 |----------|-------------|
 | **[INSTALL.md](INSTALL.md)** | Environment setup, dependencies, verification |
+| **[User guide for the desktop pipeline](docs/guides/user-guide-vsp-pipeline.pdf)** ([markdown source](docs/guides/user-guide-vsp-pipeline.md)) | Client-facing PDF: drag-drop, segment review, k-means choice, report colors, troubleshooting |
 | [Architecture](docs/architecture.md) | Pipeline flow, data formats, directory layout |
 | [Development Guide](docs/development-guide.md) | Commands, debugging, troubleshooting |
 | [Testing Guide](TESTING_GUIDE.md) | Test procedures and validation |
