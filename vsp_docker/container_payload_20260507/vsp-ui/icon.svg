@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#2563eb"/>
+
+  <!-- Video/play icon -->
+  <rect x="18" y="20" width="28" height="20" rx="3" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Play triangle -->
+  <polygon points="28,25 28,35 38,30" fill="#2563eb"/>
+
+  <!-- Sound waves (speech) -->
+  <path d="M44 24 Q48 27 48 30 Q48 33 44 36" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M47 21 Q53 26 53 30 Q53 34 47 39" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- Lips/mouth icon at bottom -->
+  <ellipse cx="32" cy="48" rx="10" ry="5" fill="#ffffff" opacity="0.9"/>
+  <path d="M24 48 Q32 52 40 48" stroke="#2563eb" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

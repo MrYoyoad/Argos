@@ -1,0 +1,116 @@
+cd ~/Desktop/galaxy_export
+
+# 1) Fresh venv for auto_avsr
+python3 -m venv auto_avsr/pre-process-venv
+
+# 2) Activate (make sure you're in bash, not fish)
+bash
+cd ~/Desktop/galaxy_export
+source auto_avsr/pre-process-venv/bin/activate
+
+cd ~/Desktop/galaxy_export
+
+# 1) Fresh venv for auto_avsr
+python3 -m venv auto_avsr/pre-process-venv
+
+# 2) Activate (make sure you're in bash, not fish)
+bash
+cd ~/Desktop/galaxy_export
+source auto_avsr/pre-process-venv/bin/activate
+
+pip install --no-index --find-links=./torch_gpu_wheels \
+  "torch==2.2.2+cu121" \
+  "torchaudio==2.2.2+cu121" \
+  "torchvision==0.17.2+cu121" \
+  numpy tqdm ffmpeg-python sentencepiece transformers
+
+
+python -c "import sys, torch; \
+print('PYTHON =', sys.executable); \
+print('TORCH  =', torch.__version__); \
+print('CUDA   =', torch.cuda.is_available())"
+
+
+
+
+
+# in run_flat_pipeline_version_for_stand_alone.sh you should have:
+
+HOME_DIR="${HOME}"
+
+AUTO_AVSR="${HOME_DIR}/Desktop/galaxy_export/auto_avsr"
+VSP="${HOME_DIR}/Desktop/galaxy_export/VSP-LLM"
+AVH="${HOME_DIR}/Desktop/galaxy_export/av_hubert"
+
+ASR_VENV="${AUTO_AVSR}/pre-process-venv"
+PREP_VENV="${AUTO_AVSR}/pre-process-venv"
+VSP_VENV="${HOME_DIR}/Desktop/galaxy_export/vsp-llm-yoad-venv"   # leave as-is for now
+
+
+
+echo ">>> [1] Running ASR to create .wrd files"
+source "$ASR_VENV/bin/activate"
+
+python "$AUTO_AVSR/asr_to_words_notime.py" \
+  --in_videos "$FLAT_VID_DIR" \
+  --out_wrd   "$WRD_DIR" \
+  --model medium \
+  --lang en \
+  --tokenize alnum \
+  --lower
+
+deactivate
+
+
+
+bash ~/Desktop/galaxy_export/run_flat_pipeline_version_for_stand_alone.sh \
+     ~/Desktop/galaxy_export/ui/input_videos
+
+
+
+#Now, the vsp-llm env:
+
+cd ~/Desktop/galaxy_export
+
+# Go into the venv dir
+cd vsp-llm-yoad-venv
+
+# Remove the old broken python shims (ignore errors)
+rm -f bin/python bin/python3 bin/python3.9
+
+# Re-bootstrap the venv IN PLACE using the Galaxy python3
+python3 -m venv .
+
+cd ~/Desktop/galaxy_export
+source vsp-llm-yoad-venv/bin/activate
+
+# Just to be safe, if some CPU torch is in there, nuke it first (won't error if missing)
+pip uninstall -y torch torchaudio torchvision || true
+
+# Install GPU wheels offline
+pip install --no-index --find-links=./torch_gpu_wheels \
+  "torch==2.2.2+cu121" \
+  "torchaudio==2.2.2+cu121" \
+  "torchvision==0.17.2+cu121"
+
+
+python -c "import sys, torch; \
+print('PYTHON =', sys.executable); \
+print('TORCH  =', torch.__version__); \
+print('CUDA   =', torch.cuda.is_available())"
+
+
+deactivate
+
+
+HOME_DIR="${HOME}"
+
+AUTO_AVSR="${HOME_DIR}/Desktop/galaxy_export/auto_avsr"
+VSP="${HOME_DIR}/Desktop/galaxy_export/VSP-LLM"
+AVH="${HOME_DIR}/Desktop/galaxy_export/av_hubert"
+
+ASR_VENV="${AUTO_AVSR}/pre-process-venv"
+PREP_VENV="${AUTO_AVSR}/pre-process-venv"
+VSP_VENV="${HOME_DIR}/Desktop/galaxy_export/vsp-llm-yoad-venv"
+
+

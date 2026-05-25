@@ -1,0 +1,12 @@
+# Python cache (safe to ignore)
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Big raw videos (you mount these at runtime)
+**/*.mp4
+
+# Host virtualenvs – Docker recreates these
+galaxy_export/auto_avsr/pre-process-venv
+galaxy_export/pre-process-venv
+galaxy_export/vsp-llm-yoad-venv

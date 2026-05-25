@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "fitted_on": "tuning_results/exp_nbest_validation (107 segments, ~1,649 words)",
+    "fit_date": "2026-05-01",
+    "method": "Binary temperature scaling (Guo et al. 2017), 5-fold CV, scipy.optimize.minimize_scalar over NLL",
+    "validation": "5-fold held-out CV ECE within \u00b10.005pp of pool ECE \u2192 fitted T transfers from this small set; revalidate on full 1,497 baseline once available",
+    "literature": [
+      "Guo et al. 2017 - On Calibration of Modern Neural Networks (introduces temperature scaling)",
+      "Eikema & Aziz 2020 - Sampling-Based MBR Decoding for NMT (beam-search bias)",
+      "Spagnolo et al. 2025 - Don't Throw Away Your Beams (beam-weighted estimator is biased)"
+    ]
+  },
+  "methods": {
+    "hyp_top1": {
+      "T_pool": 2.431493517622085,
+      "ece_uncalibrated": 0.15878776140401474,
+      "ece_calibrated": 0.08933953551147558,
+      "n_words": 1649
+    },
+    "hyp_mbr": {
+      "T_pool": 2.4185720647786075,
+      "ece_uncalibrated": 0.1522862622347757,
+      "ece_calibrated": 0.08256307723487386,
+      "n_words": 1649
+    },
+    "hyp_vote_score": {
+      "T_pool": 14.210877054554885,
+      "ece_uncalibrated": 0.3046100645451566,
+      "ece_calibrated": 0.0737083356318599,
+      "n_words": 1644
+    },
+    "hyp_vote_conf": {
+      "T_pool": 14.18420048073311,
+      "ece_uncalibrated": 0.30120566981703295,
+      "ece_calibrated": 0.06556771165359418,
+      "n_words": 1611
+    },
+    "hyp_safe": {
+      "T_pool": 2.4725158824781324,
+      "ece_uncalibrated": 0.16310574679782094,
+      "ece_calibrated": 0.09258928185650607,
+      "n_words": 1649
+    },
+    "hyp_xseg_merge": {
+      "T_pool": 1.0,
+      "n_words": 0,
+      "_note": "no overlap in tuning data; T=1 is a placeholder until full-1497 fits a real value"
+    }
+  }
+}
