@@ -51,15 +51,38 @@ _NUMBER_WORDS = frozenset(
     "zero one two three four five six seven eight nine ten eleven twelve "
     "thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty "
     "thirty forty fifty sixty seventy eighty ninety hundred thousand "
-    "million billion trillion".split()
+    "million billion trillion "
+    # Plurals of magnitude words ("thousands", "millions of dollars", etc.).
+    "hundreds thousands millions billions trillions "
+    # Currency words (May 2026 extension): clip Llama hallucinations on
+    # plausible-sounding amounts ("five billion dollars" → "five million
+    # dollars" is an off-by-1000× failure mode that the confidence band
+    # otherwise misses).
+    "dollar dollars euro euros pound pounds yen shekel shekels "
+    "cent cents penny pence".split()
 )
+
+# Bare currency symbols. The pre-existing strip regex r"[^a-z0-9]" reduces
+# these to the empty string, so an unsupported word like "$" would slip
+# through. Check the raw word for any of these before normalization.
+_CURRENCY_SYMBOLS = frozenset("$€£¥₪")
 
 
 def is_numeric(word: Optional[str]) -> bool:
-    """True if word contains a digit or is a known number-word."""
+    """True if word looks numeric in a way that warrants the conf-med cap.
+
+    Triggers on:
+      - Any digit-bearing token (covers years 1900–2099, $50, 10%, etc.).
+      - Bare currency symbols $€£¥₪.
+      - Number-word vocabulary (one..nineteen, decades, hundred..trillion,
+        and currency words dollar/euro/pound/yen/shekel/cent + plurals).
+    """
     if not word:
         return False
-    w = re.sub(r"[^a-z0-9]", "", str(word).lower())
+    s = str(word)
+    if any(c in _CURRENCY_SYMBOLS for c in s):
+        return True
+    w = re.sub(r"[^a-z0-9]", "", s.lower())
     if not w:
         return False
     if any(c.isdigit() for c in w):

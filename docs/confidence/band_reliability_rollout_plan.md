@@ -168,3 +168,38 @@ running [`diagnose_confidence_signals.py`](../_research-tools/generators/diagnos
 This is now an explicit maintenance burden the team owns: the diagnostic
 is fast (~1 minute on full set), but it must run before any model
 upgrade ships.
+
+## May 2026 — surface coverage + numeric cap extension
+
+The trust stack now also applies to the dark client-styled
+**confidence_breakdown.html** view (generator
+[`generate_client_demo_report.py`](../../VSP-LLM/scripts/generate_client_demo_report.py)).
+Previously this surface only used the conf-only `classify(prob)` rule;
+now `load_records()` reads the agreement and aggregated sidecars and
+runs every word through `classify_joint()`, applying the segment-level
+strip gate at `sentence_confidence < 0.65`. Segments under the floor
+render plain grey text and carry a "low confidence — coloring stripped"
+tag. Per-parent-video segments are grouped under a thin header so the
+view scans cleanly without piling stats on top — colour carries the
+trust signal.
+
+Numeric/currency detection in
+[`compute_word_confidence.is_numeric()`](../../VSP-LLM/scripts/compute_word_confidence.py)
+was widened to capture two failure modes the old rule missed:
+
+- **Currency words** — `dollar(s)`, `euro(s)`, `pound(s)`, `yen`,
+  `shekel(s)`, `cent(s)`, `penny`, `pence`. The "five billion dollars"
+  → "five million dollars" off-by-1000× class previously coloured
+  `dollars` green at LLama-2's typical 0.93+ confidence on common
+  English words.
+- **Bare currency symbols** — `$ € £ ¥ ₪`. The pre-existing strip
+  regex reduced these to the empty string and the rule fell through;
+  now they short-circuit to True.
+- **Plural magnitude words** — `thousands`, `millions`, `billions`,
+  `trillions`, `hundreds` (the original set only had singulars).
+- **Year range note (no code change)** — any 4-digit token in
+  1900–2099 is already caught by the existing "has digit" branch.
+
+All caps are clamped at `conf-med` regardless of joint score; numbers
+empirically hit only P(correct)=0.744 at the joint green threshold,
+well below the 0.85 band promise (see SAFETY_ANALYSIS.md).
