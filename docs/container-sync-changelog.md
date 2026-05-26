@@ -1988,3 +1988,88 @@ docker run --rm \
 **Path translation note**: None.
 
 **Verification**: After re-apply, `bash diagnose_run.sh` should show ✓ for both new marker checks. Visual: drop a short MP4 → check the resulting burned video → subtitle backing should be tight around the text (1 line ≈ 50–80 px tall, not 320 px), 55% opacity not 65%.
+
+### 31. Confidence-breakdown trust stack + whole-video CC + audio injection (May 25, 2026)
+
+Three additions, synced wholesale to `vsp_docker/container_payload_20260507/`
+and `vsp_linux_container_FINAL_20260217/`.
+
+**1. Confidence breakdown polish**
+
+- `VSP-LLM/scripts/compute_word_confidence.py` — `is_numeric()` extended
+  to currency words (dollar/euro/pound/yen/shekel/cent + plurals),
+  bare currency symbols ($€£¥₪), and plural magnitude words
+  (thousands/millions/billions/trillions/hundreds). Years 1900–2099
+  already caught by the existing "has digit" branch. No signature
+  change.
+- `VSP-LLM/scripts/generate_client_demo_report.py` — `load_records()`
+  now reads `confidence-{fid}.json`, `agreement-{fid}.json`, and
+  `aggregated.json`. Per-word coloring runs through `classify_joint()`
+  (agreement-aware + numeric cap). Segment-level strip gate at
+  `sentence_confidence < 0.65` paints plain grey text with a "low
+  confidence — coloring stripped" tag. Segments grouped under thin
+  per-video headers. New `--display-method` flag (defaults to
+  `$VSP_DISPLAY_METHOD` or `hyp_mbr`) swaps the displayed hypothesis to
+  an aggregated method.
+
+**2. Whole-video CC overlay**
+
+- New `--whole-video-cc <path>` flag on `generate_client_demo_report.py`
+  emits a `whole_video_cc.json` sidecar mapping each parent video to its
+  ordered segments + word bands + sentence_confidence.
+- `lib/outputs.sh` passes `--whole-video-cc "$report_dir/whole_video_cc.json"`
+  and adds `whole_video_cc.json` to the pruning allowlist (alongside
+  `report.html` and `confidence_breakdown.html`).
+- `vsp-ui/app/server.py` adds two GET endpoints:
+  - `/api/original-video/<id>` — serves the user-uploaded video from
+    `INPUT_DIR` with `INPUT_DIR/.excluded` as fallback; reuses
+    `_ensure_browser_safe()`.
+  - `/api/whole-video-cc` — streams the latest sidecar (active run's
+    output_path → `flat_runs_archive` newest fallback).
+- `vsp-ui/app/static/{index.html, app.js, style.css}` adds a "Watch
+  with CC" panel on the Complete screen. HTML5 `<video>` player +
+  segment-level caption highlighting words by trust band as the video
+  plays. No Whisper word-level timestamps (segment-level captions
+  only).
+
+**3. Audio-aligned transcription injection**
+
+- New CLI `scripts/pipeline/inject_transcription_from_audio.py` —
+  clips audio per segment using `--audio-start`/`--video-start`
+  alignment, runs Whisper, writes `.wrd` files into
+  `<input-dir>/.transcriptions/` with `type="audio-injected"` +
+  `source_audio` + `audio_offset` metadata. `--dry-run` prints the
+  plan without touching disk.
+- `vsp-ui/app/server.py` adds POST `/api/inject-from-audio` (multipart:
+  audio file + video filename + offsets + whisper_model). Synchronous
+  subprocess invocation of the CLI via `sys.executable`. Generic
+  `_read_multipart_body()` parser added to the handler class.
+- `vsp-ui/app/static/{index.html, app.js, style.css}` adds an "Inject
+  from audio…" button to the Segment Review screen + a modal form.
+- New doc `docs/guides/audio-injection.md` — concise CLI + UI walkthrough.
+
+**Path translation notes**: None. All new code uses `INPUT_DIR`,
+`ARCHIVE_DIR`, `SUPPORTED_EXTENSIONS` imported from `config.py` (which
+the overlay's container-aware `BASE_DIR` config already exports under
+the same names), or `Path.home()` for golden-kmeans (resolves to
+`/workspace` inside the container).
+
+**Container action**:
+- May-2026 image (`vsp-llm-pipeline:client-build-003`): use overlay
+  `apply_update.sh` to layer the new files in. The `whisper` and
+  `torch` packages required by the injection CLI are already in the
+  image's `vsp-llm-yoad-venv`.
+- Next image rebuild from `vsp_docker/container_payload_20260507/`
+  picks up everything automatically (payload synced wholesale this
+  commit).
+
+**Tests added (EC2 unit/)**:
+- `tests/unit/test_confidence_breakdown.py` — 41 cases (numeric cap
+  surface, trust stack, per-video grouping).
+- `tests/unit/test_whole_video_cc.py` — 5 cases (sidecar shape, strip
+  flag round-trip, frame→sec, endpoint resolver order).
+- `tests/unit/test_inject_transcription_from_audio.py` — 6 cases
+  (frame parse, clip-window math, past-end skip, normalization,
+  metadata writer, --dry-run).
+
+**Verification**: `python3 -m pytest tests/unit/test_{confidence_breakdown,whole_video_cc,inject_transcription_from_audio}.py -q` → 52 passed. Visual: run a small pipeline, open `confidence_breakdown.html`, see per-video headers + numeric/currency words capped at yellow + low-conf segments stripped to grey. Open the UI Complete screen → "Watch with CC" plays the original video with segment-level coloured captions.
