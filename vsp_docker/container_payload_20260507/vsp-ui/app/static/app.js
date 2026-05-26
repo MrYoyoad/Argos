@@ -1640,6 +1640,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-download-output').addEventListener('click', downloadOutput);
     document.getElementById('btn-new').addEventListener('click', startNew);
 
+    // Watch with CC panel
+    const btnWatchCc = document.getElementById('btn-watch-cc');
+    if (btnWatchCc) btnWatchCc.addEventListener('click', openWatchCcPanel);
+    const btnCcClose = document.getElementById('btn-cc-close');
+    if (btnCcClose) btnCcClose.addEventListener('click', closeWatchCcPanel);
+    const ccSelect = document.getElementById('cc-video-select');
+    if (ccSelect) ccSelect.addEventListener('change', () => loadCcVideo(ccSelect.value));
+    const ccVideo = document.getElementById('cc-video');
+    if (ccVideo) ccVideo.addEventListener('timeupdate', renderCcCaption);
+
+    // Inject-from-audio modal
+    const btnInjectAudio = document.getElementById('btn-inject-audio');
+    if (btnInjectAudio) btnInjectAudio.addEventListener('click', openInjectAudioModal);
+
     // Error screen
     document.getElementById('btn-show-error-logs').addEventListener('click', showErrorLogs);
     document.getElementById('btn-retry').addEventListener('click', retryProcessing);
@@ -1676,7 +1690,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => { btn.textContent = old; }, 1500);
             }
         } catch (e) {
-            // Fallback for non-secure contexts: select the text.
             const range = document.createRange();
             range.selectNode(elements.inputPath);
             window.getSelection().removeAllRanges();
@@ -2026,3 +2039,190 @@ document.getElementById('btn-cancel-transcription')?.addEventListener('click', (
         showScreen('welcome');
     }
 });
+
+// =====================================================================
+// Watch with CC panel — plays the original (un-segmented) video and
+// overlays the per-segment caption coloured by the model's trust band.
+// Sidecar: GET /api/whole-video-cc returns {videos: {id: {segments: [...]}}}.
+// Video stream: GET /api/original-video/<id>.
+// =====================================================================
+let ccSidecar = null; // {videos: {...}, _source: "..."}
+
+async function openWatchCcPanel() {
+    const panel = document.getElementById('watch-cc-panel');
+    const empty = document.getElementById('cc-empty');
+    const select = document.getElementById('cc-video-select');
+    if (!panel) return;
+    panel.style.display = 'block';
+    try {
+        const resp = await fetch('/api/whole-video-cc');
+        if (!resp.ok) {
+            ccSidecar = null;
+            select.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+        ccSidecar = await resp.json();
+    } catch (err) {
+        ccSidecar = null;
+        select.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+    const ids = Object.keys(ccSidecar.videos || {});
+    if (ids.length === 0) {
+        empty.style.display = 'block';
+        select.innerHTML = '';
+        return;
+    }
+    empty.style.display = 'none';
+    select.innerHTML = ids.map(id => `<option value="${id}">${id}</option>`).join('');
+    loadCcVideo(ids[0]);
+}
+
+function closeWatchCcPanel() {
+    const panel = document.getElementById('watch-cc-panel');
+    const video = document.getElementById('cc-video');
+    if (video) { video.pause(); video.src = ''; }
+    if (panel) panel.style.display = 'none';
+}
+
+function loadCcVideo(videoId) {
+    const video = document.getElementById('cc-video');
+    const caption = document.getElementById('cc-caption');
+    if (!video) return;
+    video.src = `/api/original-video/${encodeURIComponent(videoId)}`;
+    video.load();
+    if (caption) caption.innerHTML = '';
+}
+
+function _activeSegment(videoInfo, t) {
+    // Linear scan — segment counts per video are small (tens, not thousands)
+    // and the timeupdate fires at ~4Hz so this is well within budget.
+    if (!videoInfo) return null;
+    for (const seg of videoInfo.segments) {
+        if (t >= seg.start_sec && t < seg.end_sec) return seg;
+    }
+    return null;
+}
+
+function renderCcCaption() {
+    if (!ccSidecar || !ccSidecar.videos) return;
+    const select = document.getElementById('cc-video-select');
+    const video = document.getElementById('cc-video');
+    const caption = document.getElementById('cc-caption');
+    if (!select || !video || !caption) return;
+    const info = ccSidecar.videos[select.value];
+    const seg = _activeSegment(info, video.currentTime);
+    if (!seg) {
+        caption.innerHTML = '';
+        caption.classList.remove('cc-stripped');
+        return;
+    }
+    const wordsHtml = (seg.words || []).map(w => {
+        const klass = w.conf_class || 'conf-unknown';
+        const probStr = (typeof w.prob === 'number') ? w.prob.toFixed(2) : 'n/a';
+        // Escape word content defensively.
+        const txt = (w.word || '').replace(/[&<>"']/g, c => (
+            {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+        ));
+        return `<span class="word ${klass}" title="p = ${probStr}">${txt}</span>`;
+    }).join(' ');
+    if (seg.stripped) {
+        caption.classList.add('cc-stripped');
+        caption.innerHTML = `<div class="cc-strip-tag">low confidence — coloring stripped</div><div>${wordsHtml}</div>`;
+    } else {
+        caption.classList.remove('cc-stripped');
+        caption.innerHTML = wordsHtml;
+    }
+}
+
+// =====================================================================
+// Audio-aligned transcription injection modal.
+// =====================================================================
+async function openInjectAudioModal() {
+    const modal = document.getElementById('inject-audio-modal');
+    const select = document.getElementById('inject-video-select');
+    if (!modal || !select) return;
+    // Populate the video dropdown from the live INPUT_DIR. Reuse the
+    // /api/status path that returns video_count, but we need names —
+    // fall back to scanning the segment list which knows parent videos.
+    select.innerHTML = '<option>Loading…</option>';
+    document.getElementById('inject-status').style.display = 'none';
+    document.getElementById('inject-log').style.display = 'none';
+    document.getElementById('inject-audio-file').value = '';
+    try {
+        // /api/segments groups segments by parent video already.
+        const resp = await fetch('/api/segments');
+        if (!resp.ok) throw new Error('segments endpoint failed');
+        const data = await resp.json();
+        // Derive parent video filenames from segment IDs. Segment id format:
+        //   <video>_NN_NNNNNN_NNNNNN
+        const seenParents = new Set();
+        for (const s of (data.segments || [])) {
+            const stem = (s.id || '').replace(/_(\d{2})_(\d{6})_(\d{6})$/, '');
+            if (stem && !seenParents.has(stem)) seenParents.add(stem);
+        }
+        const parents = Array.from(seenParents).sort();
+        if (parents.length === 0) {
+            select.innerHTML = '<option value="">(no segmented videos found)</option>';
+        } else {
+            // Try .mp4 first; the CLI will resolve other extensions too.
+            select.innerHTML = parents.map(p => `<option value="${p}.mp4">${p}</option>`).join('');
+        }
+    } catch (err) {
+        select.innerHTML = `<option value="">(error: ${err.message})</option>`;
+    }
+    modal.style.display = 'flex';
+}
+
+function closeInjectAudioModal() {
+    document.getElementById('inject-audio-modal').style.display = 'none';
+}
+
+async function submitInjectAudio() {
+    const videoName = document.getElementById('inject-video-select').value;
+    const audioFile = document.getElementById('inject-audio-file').files[0];
+    const audioStart = parseFloat(document.getElementById('inject-audio-start').value || '0');
+    const videoStart = parseFloat(document.getElementById('inject-video-start').value || '0');
+    const whisperModel = document.getElementById('inject-whisper-model').value || 'medium';
+    const status = document.getElementById('inject-status');
+    const log = document.getElementById('inject-log');
+    const btn = document.getElementById('btn-inject-submit');
+
+    if (!videoName) { alert('Please pick a video.'); return; }
+    if (!audioFile) { alert('Please choose an audio file.'); return; }
+
+    status.style.display = 'block';
+    status.textContent = `Uploading audio and running Whisper on ${whisperModel} model…`;
+    log.style.display = 'none';
+    btn.disabled = true;
+    try {
+        const form = new FormData();
+        form.append('video', videoName);
+        form.append('audio', audioFile, audioFile.name);
+        form.append('audio_start', String(audioStart));
+        form.append('video_start', String(videoStart));
+        form.append('whisper_model', whisperModel);
+        const resp = await fetch('/api/inject-from-audio', { method: 'POST', body: form });
+        const data = await resp.json();
+        if (resp.ok && data.success) {
+            status.textContent = `Done — written: ${data.segments_written} · skipped: ${data.segments_skipped} · failed: ${data.segments_failed}`;
+        } else {
+            status.textContent = `Failed (rc=${data.returncode ?? '—'}): ${data.error || ''}`;
+        }
+        if (data.log) {
+            log.textContent = data.log;
+            log.style.display = 'block';
+        }
+        // Refresh the segment list so freshly-written .wrd files show up
+        // with their MANUAL/AUTO badges.
+        if (typeof loadAndDisplaySegments === 'function') {
+            try { await loadAndDisplaySegments(); } catch (_) { /* non-fatal */ }
+        }
+    } catch (err) {
+        status.textContent = `Error: ${err.message}`;
+    } finally {
+        btn.disabled = false;
+    }
+}

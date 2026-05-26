@@ -1213,3 +1213,78 @@ header h1 {
     margin: 0;
     font-size: 1.1em;
 }
+
+/* =====================================================================
+   Watch with CC panel — original video playback with per-segment caption
+   coloured by the model's trust band. Colour palette intentionally matches
+   confidence_breakdown.html so the visual signal is stable across surfaces.
+   ===================================================================== */
+#watch-cc-panel { padding: 18px 22px; }
+#watch-cc-panel h3 { margin: 0 0 6px 0; }
+#watch-cc-panel .cc-help { font-size: 13px; color: #6b7280; margin: 0 0 12px 0; }
+.cc-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.cc-controls label { font-size: 13px; color: #374151; }
+.cc-controls select {
+    padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    background: #fff; font-size: 14px; min-width: 240px;
+}
+.cc-player-wrap { display: flex; flex-direction: column; gap: 10px; }
+#cc-video {
+    width: 100%; max-width: 960px;
+    background: #000; border-radius: 8px;
+}
+.cc-caption {
+    min-height: 56px;
+    padding: 10px 14px;
+    background: #0f172a;
+    color: #e5e7eb;
+    border-radius: 6px;
+    font-size: 17px;
+    line-height: 1.55;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.cc-caption.cc-stripped { border-left: 4px solid #ba68c8; }
+.cc-strip-tag {
+    font-size: 11px;
+    color: #ba68c8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+}
+/* Per-word colour classes — same palette as confidence_breakdown.html. */
+.cc-caption .word { padding: 1px 5px; border-radius: 3px; margin: 0 1px; }
+.cc-caption .word.conf-high, #watch-cc-panel .conf-high { color: #4fc3f7; }
+.cc-caption .word.conf-med,  #watch-cc-panel .conf-med  { color: #ffb300; }
+.cc-caption .word.conf-low,  #watch-cc-panel .conf-low  {
+    color: #ba68c8; text-decoration: underline wavy #ba68c8;
+}
+.cc-caption .word.conf-stripped, #watch-cc-panel .conf-stripped { color: #9ca3af; }
+.cc-empty {
+    padding: 14px 18px; background: #fef3c7; color: #92400e;
+    border-radius: 6px; font-size: 14px;
+}
+
+/* Inject-from-audio modal */
+#inject-audio-modal .form-row {
+    display: flex; flex-direction: column;
+    margin-bottom: 14px; gap: 6px;
+}
+#inject-audio-modal .form-row label {
+    font-size: 13px; color: #374151; font-weight: 500;
+}
+#inject-audio-modal .form-row input[type=number],
+#inject-audio-modal .form-row input[type=file],
+#inject-audio-modal .form-row select {
+    padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 14px; background: #fff;
+}
+#inject-audio-modal .form-row-inline {
+    flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+#inject-audio-modal .form-row-inline label { margin-right: 4px; }
+#inject-audio-modal .form-row-inline input[type=number] { width: 100px; }
+#inject-audio-modal .logs-output {
+    max-height: 220px; overflow: auto; background: #0f172a; color: #e5e7eb;
+    padding: 10px 14px; border-radius: 6px; font-size: 12px;
+    margin-top: 10px;
+}

@@ -331,6 +331,7 @@ print(f'[INFO] Copied {copied} lip crop(s) to {lip_dir}')
     find "$report_dir" -mindepth 1 -maxdepth 1 \
       ! -name 'report.html' \
       ! -name 'confidence_breakdown.html' \
+      ! -name 'whole_video_cc.json' \
       -exec rm -rf {} + 2>/dev/null || true
   fi
 
@@ -370,13 +371,16 @@ run_argos_demo_report() {
   fi
 
   local out_html="${report_dir}/confidence_breakdown.html"
+  local out_cc="${report_dir}/whole_video_cc.json"
   echo ">>> [8] Generating Confidence Breakdown HTML report"
   python3 "$gen_script" \
     --decode "$decode_json" \
     --out "$out_html" \
+    --whole-video-cc "$out_cc" \
     || { log_warn "Confidence breakdown report generator failed"; return 1; }
 
   log_info "Confidence breakdown report: $out_html"
+  [ -f "$out_cc" ] && log_info "Whole-video CC sidecar: $out_cc"
   return 0
 }
 

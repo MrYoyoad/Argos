@@ -4,7 +4,9 @@ Provides REST API and WebSocket-like polling for progress updates.
 """
 import json
 import os
+import re
 import subprocess
+import sys
 import threading
 import time
 import zipfile
@@ -20,6 +22,8 @@ from .config import (
     SERVER_HOST,
     SERVER_PORT,
     INPUT_DIR,
+    ARCHIVE_DIR,
+    SUPPORTED_EXTENSIONS,
     PipelineState,
 )
 from .services.validator import validate_input_folder
@@ -167,6 +171,11 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         elif path.startswith("/api/segment-video/"):
             segment_id = path.split("/")[-1]
             self.handle_get_segment_video(segment_id)
+        elif path.startswith("/api/original-video/"):
+            video_id = path.split("/", 3)[-1]
+            self.handle_get_original_video(video_id)
+        elif path == "/api/whole-video-cc":
+            self.handle_get_whole_video_cc()
         elif path == "/" or path == "/index.html":
             self.serve_static("index.html")
         elif path.startswith("/"):
@@ -183,6 +192,11 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         # Handle file upload separately (multipart/form-data)
         if path == "/api/upload":
             self.handle_upload()
+            return
+
+        # Audio injection — also multipart/form-data (audio file + offsets).
+        if path == "/api/inject-from-audio":
+            self.handle_inject_from_audio()
             return
 
         # Read body if present
@@ -898,6 +912,92 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         except Exception as e:
             self.send_error_json(f"Failed to serve video segment: {e}", 500)
 
+    def _resolve_original_video(self, video_id: str) -> Optional[Path]:
+        """Find the un-segmented user-uploaded video matching `video_id`.
+
+        Resolution order:
+          1. ``INPUT_DIR/<video_id>.<ext>`` for each supported extension.
+          2. ``INPUT_DIR/.excluded/<video_id>.<ext>`` (user clicked Remove).
+        Returns the first match or None.
+
+        ``video_id`` here is the base video ID parsed from a segment name
+        (the part before ``_NN_NNNNNN_NNNNNN``). The original upload kept
+        its full filename, so we match by stem.
+        """
+        if '..' in video_id or '/' in video_id or '\\' in video_id:
+            return None
+        search_dirs = [INPUT_DIR, INPUT_DIR / ".excluded"]
+        for d in search_dirs:
+            if not d.exists():
+                continue
+            for ext in SUPPORTED_EXTENSIONS:
+                for candidate in (d / f"{video_id}{ext}", d / f"{video_id}{ext.upper()}"):
+                    if candidate.exists() and candidate.is_file():
+                        return candidate
+        return None
+
+    def handle_get_original_video(self, video_id: str):
+        """GET /api/original-video/<video_id> — serve the un-segmented
+        user-uploaded video for the 'Watch with CC' overlay viewer.
+
+        Looks first in INPUT_DIR, then in INPUT_DIR/.excluded (so a
+        recently-removed video can still be viewed against its existing
+        run output). Reuses ``_ensure_browser_safe`` for HEVC/10-bit/HDR
+        sources.
+        """
+        try:
+            src = self._resolve_original_video(video_id)
+            if src is None:
+                self.send_error_json(
+                    f"Original video not found for id '{video_id}'", 404
+                )
+                return
+            served = _ensure_browser_safe(src)
+            self.send_file(served, 'video/mp4')
+        except Exception as e:
+            print(f"Error serving original video: {e}")
+            import traceback
+            traceback.print_exc()
+            self.send_error_json(f"Error serving original video: {e}", 500)
+
+    def _find_latest_whole_video_cc(self) -> Optional[Path]:
+        """Find the most recent ``whole_video_cc.json`` to serve.
+
+        Order:
+          1. The active run's ``output_path`` (set by progress tracker).
+          2. The newest ``flat_runs_archive/<ts>/client_outputs/report/``
+             that contains a sidecar.
+        """
+        try:
+            runner = get_runner()
+            output_path = runner.tracker.state.output_path
+        except Exception:
+            output_path = None
+        if output_path:
+            candidate = Path(output_path) / "report" / "whole_video_cc.json"
+            if candidate.exists():
+                return candidate
+        if ARCHIVE_DIR.exists():
+            for ts_dir in sorted(ARCHIVE_DIR.iterdir(), reverse=True):
+                candidate = ts_dir / "client_outputs" / "report" / "whole_video_cc.json"
+                if candidate.exists():
+                    return candidate
+        return None
+
+    def handle_get_whole_video_cc(self):
+        """GET /api/whole-video-cc — stream the whole_video_cc.json sidecar
+        from the most recent pipeline run (active or archived)."""
+        try:
+            sidecar = self._find_latest_whole_video_cc()
+            if sidecar is None:
+                self.send_error_json("No whole_video_cc.json sidecar found", 404)
+                return
+            data = json.loads(sidecar.read_text(encoding="utf-8"))
+            data["_source"] = str(sidecar)
+            self.send_json(data)
+        except Exception as e:
+            self.send_error_json(f"Error reading CC sidecar: {e}", 500)
+
     def handle_save_segment_transcription(self, data: Dict[str, Any]):
         """POST /api/save-segment-transcription - Save transcription for a segment."""
         from .config import AUTO_AVSR_DIR, SEGMENT_DURATION
@@ -1117,6 +1217,175 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
             traceback.print_exc()
             print(f"[UPLOAD] Failed: {str(e)}")
             self.send_error_json(f"Upload failed: {str(e)}", 500)
+
+    def _read_multipart_body(self) -> Optional[Dict[str, Dict[str, Any]]]:
+        """Generic multipart/form-data parser.
+
+        Returns ``{field_name: {"filename": str|None, "data": bytes,
+        "text": str|None}}`` or None on protocol error. The text form is
+        the utf-8 decode of the data (best-effort) — useful for non-file
+        form fields. File fields keep ``data`` as raw bytes.
+        """
+        content_type = self.headers.get('Content-Type', '')
+        content_length = int(self.headers.get('Content-Length', 0))
+        if 'multipart/form-data' not in content_type or content_length <= 0:
+            return None
+        boundary = None
+        for part in content_type.split(';'):
+            part = part.strip()
+            if part.startswith('boundary='):
+                boundary = part[len('boundary='):]
+                if boundary.startswith('"') and boundary.endswith('"'):
+                    boundary = boundary[1:-1]
+                break
+        if not boundary:
+            return None
+
+        CHUNK_SIZE = 1024 * 1024
+        body = bytearray()
+        bytes_read = 0
+        while bytes_read < content_length:
+            chunk = self.rfile.read(min(CHUNK_SIZE, content_length - bytes_read))
+            if not chunk:
+                break
+            body.extend(chunk)
+            bytes_read += len(chunk)
+        body = bytes(body)
+        delimiter = b'--' + boundary.encode('utf-8')
+        out: Dict[str, Dict[str, Any]] = {}
+        for raw in body.split(delimiter):
+            if not raw or raw == b'--\r\n' or raw == b'--':
+                continue
+            sep = raw.find(b'\r\n\r\n')
+            if sep == -1:
+                continue
+            headers_raw = raw[:sep].decode('utf-8', errors='replace')
+            data = raw[sep + 4:]
+            if data.endswith(b'\r\n'):
+                data = data[:-2]
+            field_name = None
+            filename = None
+            for line in headers_raw.split('\r\n'):
+                if 'Content-Disposition' in line:
+                    m = re.search(r'name="([^"]+)"', line)
+                    if m:
+                        field_name = m.group(1)
+                    fm = re.search(r'filename="([^"]*)"', line)
+                    if fm:
+                        filename = fm.group(1)
+            if not field_name:
+                continue
+            try:
+                text = data.decode('utf-8') if filename is None else None
+            except UnicodeDecodeError:
+                text = None
+            out[field_name] = {"filename": filename, "data": data, "text": text}
+        return out
+
+    def handle_inject_from_audio(self):
+        """POST /api/inject-from-audio — multipart form: audio file + video
+        filename + audio_start + video_start + optional whisper_model.
+
+        Saves the audio under ``INPUT_DIR/.transcriptions/.injected/`` and
+        runs ``scripts/pipeline/inject_transcription_from_audio.py``
+        synchronously (typical runs are tens of seconds for short audio,
+        a few minutes for long speeches — the UI shows a spinner).
+        """
+        import re as _re  # alias to avoid shadowing the module-level import
+        import uuid
+        try:
+            fields = self._read_multipart_body()
+            if not fields:
+                self.send_error_json("Expected multipart/form-data with an "
+                                     "'audio' file and a 'video' name", 400)
+                return
+            video_field = fields.get('video')
+            audio_field = fields.get('audio')
+            if not video_field or not video_field.get('text'):
+                self.send_error_json("Missing 'video' field", 400)
+                return
+            if not audio_field or not audio_field.get('data'):
+                self.send_error_json("Missing 'audio' file", 400)
+                return
+            video_name = os.path.basename(video_field['text'].strip())
+            if not self._is_safe_filename(video_name):
+                self.send_error_json(f"Invalid video filename: {video_name}", 400)
+                return
+            try:
+                audio_start = float(fields.get('audio_start', {}).get('text') or 0.0)
+                video_start = float(fields.get('video_start', {}).get('text') or 0.0)
+            except (TypeError, ValueError):
+                self.send_error_json("audio_start / video_start must be numeric", 400)
+                return
+            whisper_model = (fields.get('whisper_model', {}).get('text') or 'medium').strip()
+            if not _re.fullmatch(r'[a-zA-Z0-9._\-]+', whisper_model):
+                self.send_error_json("Invalid whisper_model", 400)
+                return
+
+            # Persist the supplied audio under a private subdir so it stays
+            # out of the segment-review list. Use the supplied filename's
+            # extension when present, otherwise default to .wav.
+            inj_dir = INPUT_DIR / ".transcriptions" / ".injected"
+            inj_dir.mkdir(parents=True, exist_ok=True)
+            ext = ".wav"
+            src_name = audio_field.get('filename') or ""
+            if src_name and Path(src_name).suffix:
+                ext = Path(src_name).suffix.lower()
+            uid = uuid.uuid4().hex[:12]
+            audio_path = inj_dir / f"{uid}{ext}"
+            audio_path.write_bytes(audio_field['data'])
+
+            # Invoke CLI synchronously. Reuse the same Python that runs the
+            # server so we inherit its venv (Whisper + torch live there for
+            # this UI deployment).
+            cli = Path(__file__).resolve().parent.parent.parent / "scripts" / "pipeline" / "inject_transcription_from_audio.py"
+            if not cli.exists():
+                cli = Path("/workspace/scripts/pipeline/inject_transcription_from_audio.py")
+            if not cli.exists():
+                self.send_error_json(f"injection CLI not found at {cli}", 500)
+                return
+            cmd = [
+                sys.executable, str(cli),
+                "--video", video_name,
+                "--audio", str(audio_path),
+                "--audio-start", str(audio_start),
+                "--video-start", str(video_start),
+                "--input-dir", str(INPUT_DIR),
+                "--whisper-model", whisper_model,
+            ]
+            print(f"[INJECT] running: {' '.join(cmd)}")
+            try:
+                proc = subprocess.run(
+                    cmd, capture_output=True, text=True, timeout=3600,
+                )
+            except subprocess.TimeoutExpired:
+                self.send_error_json("Injection timed out after 1 hour", 504)
+                return
+            log = (proc.stdout or "") + (proc.stderr or "")
+            success = proc.returncode == 0
+            # Best-effort parse of the summary line emitted by the CLI:
+            # "Written: 7    Skipped: 1    Failed: 0"
+            n_written = 0
+            n_skipped = 0
+            n_failed = 0
+            m = _re.search(
+                r"Written:\s*(\d+)\s+Skipped:\s*(\d+)\s+Failed:\s*(\d+)", log,
+            )
+            if m:
+                n_written, n_skipped, n_failed = (int(x) for x in m.groups())
+            self.send_json({
+                "success": success,
+                "returncode": proc.returncode,
+                "segments_written": n_written,
+                "segments_skipped": n_skipped,
+                "segments_failed": n_failed,
+                "log": log[-8000:],
+                "audio_saved_at": str(audio_path),
+            }, status=200 if success else 500)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.send_error_json(f"Injection failed: {e}", 500)
 
     def _is_safe_filename(self, filename: str) -> bool:
         """Check if filename is safe (no path traversal)."""

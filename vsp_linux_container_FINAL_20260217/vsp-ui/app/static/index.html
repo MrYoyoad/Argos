@@ -226,6 +226,10 @@
 
                 <div class="button-row">
                     <button id="btn-save-transcriptions" class="btn btn-primary" disabled>Continue Pipeline</button>
+                    <button id="btn-inject-audio" class="btn btn-secondary"
+                            title="Upload an audio recording to auto-transcribe every segment of a parent video">
+                        Inject from audio…
+                    </button>
                     <button id="btn-cancel-transcription" class="btn btn-secondary">Cancel</button>
                 </div>
             </div>
@@ -248,7 +252,32 @@
                 <div class="button-row">
                     <button id="btn-download-output" class="btn btn-primary">Download Results</button>
                     <button id="btn-open-output" class="btn btn-secondary">Open Results Folder</button>
+                    <button id="btn-watch-cc" class="btn btn-secondary">Watch with CC</button>
                     <button id="btn-new" class="btn btn-secondary">Process New Videos</button>
+                </div>
+            </div>
+
+            <!-- Watch with CC panel (revealed by btn-watch-cc) -->
+            <div id="watch-cc-panel" class="card" style="display:none; margin-top:16px;">
+                <h3>Watch with CC</h3>
+                <p class="cc-help">Play the original video alongside the model's
+                    per-word confidence overlay. Each segment's caption appears
+                    at its time window; <span class="conf-high">trust</span>,
+                    <span class="conf-med">inspect</span>,
+                    <span class="conf-low">don't believe</span>,
+                    <span class="conf-stripped">stripped</span>.</p>
+                <div class="cc-controls">
+                    <label for="cc-video-select">Video:</label>
+                    <select id="cc-video-select"></select>
+                    <button id="btn-cc-close" class="btn btn-text">Hide</button>
+                </div>
+                <div class="cc-player-wrap">
+                    <video id="cc-video" controls preload="metadata"></video>
+                    <div id="cc-caption" class="cc-caption"></div>
+                </div>
+                <div id="cc-empty" class="cc-empty" style="display:none;">
+                    No CC sidecar available yet — run the pipeline to produce
+                    a confidence breakdown first.
                 </div>
             </div>
         </section>
@@ -349,6 +378,62 @@
                     Delete Transcription
                 </button>
                 <button class="btn btn-primary" onclick="saveTranscription()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio-aligned transcription injection modal. Uploads an audio
+         recording and runs Whisper per segment of the chosen parent
+         video. See docs/guides/audio-injection.md. -->
+    <div id="inject-audio-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Inject transcription from audio</h3>
+                <button class="modal-close" onclick="closeInjectAudioModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="help-text">
+                    Pick the un-segmented parent video and upload an audio
+                    file that contains its spoken content. Whisper will be
+                    run per segment; the resulting <code>.wrd</code> files
+                    are auto-picked up on the next pipeline run.
+                </p>
+                <div class="form-row">
+                    <label for="inject-video-select">Video</label>
+                    <select id="inject-video-select"></select>
+                </div>
+                <div class="form-row">
+                    <label for="inject-audio-file">Audio file</label>
+                    <input id="inject-audio-file" type="file"
+                           accept="audio/*,.wav,.mp3,.m4a,.aac,.flac,.ogg" />
+                </div>
+                <div class="form-row form-row-inline">
+                    <label for="inject-audio-start" title="Time in the supplied audio that aligns with --video-start">
+                        Audio start (s)
+                    </label>
+                    <input id="inject-audio-start" type="number" step="0.01" value="0" />
+                    <label for="inject-video-start" title="Time in the parent video that aligns with --audio-start">
+                        Video start (s)
+                    </label>
+                    <input id="inject-video-start" type="number" step="0.01" value="0" />
+                </div>
+                <div class="form-row">
+                    <label for="inject-whisper-model">Whisper model</label>
+                    <select id="inject-whisper-model">
+                        <option value="tiny">tiny (fastest)</option>
+                        <option value="base">base</option>
+                        <option value="small">small</option>
+                        <option value="medium" selected>medium (default)</option>
+                        <option value="large">large (slowest, best)</option>
+                    </select>
+                </div>
+                <div id="inject-status" class="help-text" style="display:none;"></div>
+                <pre id="inject-log" class="logs-output" style="display:none;"></pre>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeInjectAudioModal()">Cancel</button>
+                <button id="btn-inject-submit" class="btn btn-primary"
+                        onclick="submitInjectAudio()">Run injection</button>
             </div>
         </div>
     </div>
