@@ -304,15 +304,37 @@ class MDParser:
                 self.i += 1
             else:
                 break
+        bullet_flowables = []
         for marker, txt in items:
             bullet = "•" if marker == "bullet" else marker
-            self.story.append(
+            bullet_flowables.append(
                 Paragraph(
                     f'<para leftIndent="14" bulletIndent="2">'
                     f'<bullet>{bullet}</bullet>{_inline(txt)}</para>',
                     S_BULLET,
                 )
             )
+
+        # Keep an immediately-preceding heading attached to its list.
+        # ReportLab's keepWithNext=1 on the heading is unreliable when the
+        # following flowable is a Paragraph styled as a bullet; wrap the
+        # heading + any trailing spacers + the bullet block in a
+        # KeepTogether so they stay on the same page. Fixes the page-5
+        # "Quick decision" orphan in the user guide PDF.
+        heading_idx = None
+        for j in range(len(self.story) - 1, -1, -1):
+            fl = self.story[j]
+            if isinstance(fl, Spacer):
+                continue
+            if isinstance(fl, Paragraph) and fl.style.name in {"H1", "H2", "H3"}:
+                heading_idx = j
+            break
+        if heading_idx is not None:
+            tail = self.story[heading_idx:]
+            del self.story[heading_idx:]
+            self.story.append(KeepTogether([*tail, *bullet_flowables]))
+        else:
+            self.story.extend(bullet_flowables)
         self._spacer(3)
 
     def _consume_quote(self):
