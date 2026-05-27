@@ -914,6 +914,21 @@ header h1 {
     letter-spacing: 0.5px;
 }
 
+/* "Inject from audio" — Whisper-on-separate-audio. Visually distinct
+   from [AUTO] (Whisper-on-video) so the operator can tell at a glance
+   which segments came from the separate-audio injection flow.
+   See docs/guides/audio-injection.md. */
+.badge-audio-injected {
+    background: #6A5ACD;
+    color: white;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .badge-none {
     background: #9E9E9E;
     color: white;

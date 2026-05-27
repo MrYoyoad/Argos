@@ -227,8 +227,10 @@ The modal asks for:
 - **Audio start (`T_a`)** and **Video start (`T_v`)** — two offsets that
   declare "audio time `T_a` corresponds to video time `T_v`". Leave both
   at `0` if the audio and video are perfectly aligned at their starts.
-- **Whisper model** — small/medium/large. Larger is slower but better
-  on accents and noise.
+- **Whisper model** — five options in the dropdown:
+  `tiny` / `base` / `small` / `medium` (default) / `large`. Larger is
+  slower but better on accents and noise; `medium` is the sweet spot
+  for clear English speech.
 
 The tool clips the audio per segment, runs Whisper on each clip, and
 writes the result into `.transcriptions/` with a new badge type
@@ -249,22 +251,22 @@ mode on the Segment Review screen, in the **K-means Model Options**
 panel.
 
 ```
-                  ┌─────────────────────────┐
-                  │ How are your videos?    │
-                  └──────────┬──────────────┘
-                             │
-        ┌────────────────────┼────────────────────────┐
-        │                    │                        │
-        ▼                    ▼                        ▼
-  Normal English      >200 segments of         Same speaker /
-  speech, mixed       one speaker, OR          same conditions
-  speakers, no        unusual accent, OR       as the last run
-  special vocab.      non-English, OR
-                      specialised vocab.
-        │                    │                        │
-        ▼                    ▼                        ▼
-  Use GOLDEN MODEL     Choose TRAIN FRESH       Choose USE EXISTING
-  (default).           on current videos.       (from last run).
+                +---------------------------+
+                |   How are your videos?    |
+                +-------------+-------------+
+                              |
+        +---------------------+---------------------+
+        |                     |                     |
+        v                     v                     v
+  Normal English        >200 segments of       Same speaker /
+  speech, mixed         one speaker, OR        same conditions
+  speakers, no          unusual accent, OR     as the last run
+  special vocab.        non-English, OR
+                        specialised vocab.
+        |                     |                     |
+        v                     v                     v
+  Use GOLDEN MODEL      Choose TRAIN FRESH     Choose USE EXISTING
+  (default).            on current videos.     (from last run).
 ```
 
 ### Mode A — Use Golden Model *(default)*
@@ -312,10 +314,13 @@ quality is whatever the last run's k-means was.
 
 ## 7. Reading the report
 
-After Stage 2 completes, open `outputs\<run-id>\report\report.html`
-in any browser. The columns are described below in left-to-right
-order. Numbers and reliability values cited here are from the
-canonical project benchmark (1,497 wild-YouTube segments, May 2026).
+After Stage 2 completes, open
+`%USERPROFILE%\vsp-output\<run-id>\client_outputs\report\report.html`
+in any browser (on a fresh install `<run-id>` is the timestamp
+directory created at run time). The columns are described below in
+left-to-right order. Numbers and reliability values cited here are
+from the canonical project benchmark (1,497 wild-YouTube segments,
+May 2026).
 
 ### Top of the report — overall summary
 
@@ -503,9 +508,9 @@ mouth movement.
 ## 10. Troubleshooting
 
 Most of the issues you'll hit on a Windows + Docker Desktop + RTX
-5090 laptop are documented in
-`/home/ubuntu/.claude/projects/-home-ubuntu/memory/windows_docker_deployment_lessons.md`.
-The five highest-frequency cases are summarised here.
+5090 laptop are documented in the internal deployment-lessons memory.
+The five highest-frequency cases are summarised here. If you hit
+something not covered, email the operator the outputs listed in §10e.
 
 ### 10a. Port 8080 busy
 
@@ -583,12 +588,14 @@ Docker Desktop's IPv6 forwarding is unreliable.
 
 When emailing support, attach the following two items:
 
-1. The current container log:
-   ```
-   docker logs vsp > vsp.log 2>&1
-   ```
-2. The PowerShell transcript file (if the installer enabled one)
-   from `%USERPROFILE%\vsp-logs\`.
+**1. The current container log.** Capture it with:
+
+```
+docker logs vsp > vsp.log 2>&1
+```
+
+**2. The PowerShell transcript file** (if the installer enabled one)
+from `%USERPROFILE%\vsp-logs\`.
 
 Five extra one-liners that diagnose ~95 % of *"the server is up but
 I can't reach it"* situations — paste the output of all five:

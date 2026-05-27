@@ -104,9 +104,10 @@ The next pipeline run skips Whisper for any segment with a matching
    summary line (`Written: N · Skipped: M · Failed: K`) and the full
    tail of the CLI log for diagnostics.
 5. The Segment Review list refreshes; segments with a freshly
-   injected `.wrd` will display an AUTO badge (the metadata says
-   `audio-injected` but the UI's badge logic groups all non-manual
-   entries as AUTO).
+   injected `.wrd` display an **[AUDIO-INJECTED]** badge (purple) —
+   distinct from `[AUTO]` (Whisper-on-video, orange) and `[MANUAL]`
+   (typed by hand, green). The badge is sourced from the `type`
+   field in `.transcriptions/metadata.json`.
 6. Click **Continue Pipeline** to proceed; the full pipeline will
    reuse the injected references instead of re-running Whisper on
    the silent video.
