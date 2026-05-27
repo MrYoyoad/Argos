@@ -17,6 +17,7 @@ from ..config import (
     PIPELINE_SCRIPT,
     ARCHIVE_DIR,
     AUTO_AVSR_DIR,
+    SUPPORTED_EXTENSIONS,
     PipelineState,
 )
 from .progress_tracker import ProgressTracker
@@ -168,9 +169,7 @@ class PipelineRunner:
 
         video_count = 0
         for video_file in INPUT_DIR.iterdir():
-            if video_file.is_file() and video_file.suffix.lower() in {
-                ".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"
-            }:
+            if video_file.is_file() and video_file.suffix.lower() in SUPPORTED_EXTENSIONS:
                 video_count += 1
 
         if video_count == 0:

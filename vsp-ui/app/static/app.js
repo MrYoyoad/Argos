@@ -1400,7 +1400,13 @@ function handleDrop(e) {
 }
 
 function isValidVideoFile(filename) {
-    const validExtensions = ['.mp4', '.mkv', '.webm', '.mov', '.m4v', '.avi'];
+    // Mirror of backend SUPPORTED_EXTENSIONS in vsp-ui/app/config.py.
+    // Keep these two lists in sync when adding/removing a format.
+    const validExtensions = [
+        '.mp4', '.mkv', '.webm', '.mov', '.m4v', '.avi',
+        '.mts', '.m2ts', '.ts',
+        '.wmv', '.flv',
+    ];
     const ext = filename.toLowerCase().match(/\.[^.]+$/);
     return ext && validExtensions.includes(ext[0]);
 }

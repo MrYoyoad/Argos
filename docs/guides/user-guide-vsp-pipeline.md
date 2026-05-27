@@ -109,9 +109,18 @@ input folder.
 
 ### Supported inputs
 
-- Container formats: `.mp4`, `.mov`, `.mkv`, `.avi`, `.webm`.
+- Container formats — eleven extensions accepted:
+  - **Modern web / mobile**: `.mp4`, `.mov`, `.mkv`, `.webm`, `.m4v`.
+  - **Camcorders (AVCHD / MPEG-TS)**: `.mts`, `.m2ts`, `.ts` — Sony /
+    Panasonic / many handheld camcorders.
+  - **Legacy**: `.avi`, `.wmv` (Windows Media), `.flv` (Flash).
 - 10-bit / HDR videos are auto-converted to 8-bit BT.709 on the way in
-  (GPU-accelerated where possible).
+  (GPU-accelerated where possible). Camcorder `.MTS` / `.m2ts` files
+  are re-muxed to `.mp4` by the normalization stage; original files
+  stay untouched in your input folder.
+- Anything ffmpeg can decode that's not in this list — drop it in and
+  the normalization stage will tell you in the log if it can't read
+  it; nothing else in the input folder is affected.
 - USB drives: copy the videos onto `C:` first. Docker Desktop's
   bind-mount of removable drives is unreliable.
 

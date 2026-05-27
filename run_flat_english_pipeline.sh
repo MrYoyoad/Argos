@@ -126,7 +126,9 @@ else
   # Copy whole videos to fast_segments
   copied_count=0
   shopt -s nullglob  # Avoid literal glob patterns if no files match
-  for video_file in "${RAW_DIR}"/*.mp4 "${RAW_DIR}"/*.mkv "${RAW_DIR}"/*.webm "${RAW_DIR}"/*.mov "${RAW_DIR}"/*.avi "${RAW_DIR}"/*.m4v; do
+  for video_file in "${RAW_DIR}"/*.mp4 "${RAW_DIR}"/*.mkv "${RAW_DIR}"/*.webm "${RAW_DIR}"/*.mov "${RAW_DIR}"/*.avi "${RAW_DIR}"/*.m4v \
+                    "${RAW_DIR}"/*.mts "${RAW_DIR}"/*.m2ts "${RAW_DIR}"/*.ts \
+                    "${RAW_DIR}"/*.wmv "${RAW_DIR}"/*.flv; do
     if [ -f "$video_file" ]; then
       video_name=$(basename "$video_file")
       # Keep original name (no segment suffix for whole videos)
@@ -145,7 +147,7 @@ else
   echo "{" > "${FAST_SEG_DIR}/segment_metadata.json"
   first_video=true
   shopt -s nullglob
-  for video_file in "$RAW_DIR"/*.{mp4,mkv,avi,mov,webm,MP4,MKV,AVI,MOV,WEBM}; do
+  for video_file in "$RAW_DIR"/*.{mp4,mkv,avi,mov,webm,m4v,mts,m2ts,ts,wmv,flv,MP4,MKV,AVI,MOV,WEBM,M4V,MTS,M2TS,TS,WMV,FLV}; do
     if [ -f "$video_file" ]; then
       video_name=$(basename "$video_file")
       video_id="${video_name%.*}"

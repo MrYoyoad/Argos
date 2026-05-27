@@ -20,7 +20,11 @@ PID_FILE = HOME_DIR / ".vsp-ui.pid"
 LOG_FILE = HOME_DIR / ".vsp-ui.log"
 
 # Video validation
-SUPPORTED_EXTENSIONS = {".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"}
+SUPPORTED_EXTENSIONS = {
+    ".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi",
+    ".mts", ".m2ts", ".ts",   # AVCHD / MPEG-TS — Sony/Panasonic camcorders
+    ".wmv", ".flv",            # Windows Media + Flash
+}
 SEGMENT_DURATION = 12  # seconds per segment
 MIN_SPLIT_DURATION = 12.0  # minimum duration to trigger overlapping segments
 MIN_SEGMENTS_FOR_KMEANS = 200

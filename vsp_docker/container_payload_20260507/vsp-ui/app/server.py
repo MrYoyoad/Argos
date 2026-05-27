@@ -270,12 +270,12 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         video_count = 0
         archived_count = 0
         if INPUT_DIR.exists():
-            for ext in [".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"]:
+            for ext in SUPPORTED_EXTENSIONS:
                 video_count += len(list(INPUT_DIR.glob(f"*{ext}")))
                 video_count += len(list(INPUT_DIR.glob(f"*{ext.upper()}")))
             excluded_dir = INPUT_DIR / ".excluded"
             if excluded_dir.exists():
-                for ext in [".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"]:
+                for ext in SUPPORTED_EXTENSIONS:
                     archived_count += len(list(excluded_dir.glob(f"*{ext}")))
                     archived_count += len(list(excluded_dir.glob(f"*{ext.upper()}")))
 
@@ -516,7 +516,7 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
         excluded_dir = INPUT_DIR / ".excluded"
         files = []
         if excluded_dir.exists():
-            for ext in [".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"]:
+            for ext in SUPPORTED_EXTENSIONS:
                 files.extend(p.name for p in excluded_dir.glob(f"*{ext}"))
                 files.extend(p.name for p in excluded_dir.glob(f"*{ext.upper()}"))
         files.sort()
@@ -1397,9 +1397,8 @@ class VSPRequestHandler(SimpleHTTPRequestHandler):
 
     def _is_valid_video_extension(self, filename: str) -> bool:
         """Check if file has a valid video extension."""
-        valid_extensions = {'.mp4', '.mkv', '.webm', '.mov', '.m4v', '.avi'}
         ext = Path(filename).suffix.lower()
-        return ext in valid_extensions
+        return ext in SUPPORTED_EXTENSIONS
 
     def _format_file_size(self, size: int) -> str:
         """Format file size in human-readable format."""
