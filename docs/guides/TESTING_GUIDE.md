@@ -13,6 +13,9 @@ Comprehensive testing procedures to verify all fixes are working correctly.
 > - **Back** button from segment review → returns to welcome, does NOT bounce back.
 > - First decode includes one-time **10–15 min CUDA JIT** on Blackwell GPUs; persistent cache (`%USERPROFILE%\vsp-cuda-cache:/root/.nv`) keeps subsequent runs ~3 min.
 > - Report shows **MBR-as-default** hypothesis (look for `aggregated.json` next to `decode_results.json` and the agreement-aware band coloring).
+> - **Watch with CC** button on the Complete screen — opens in-page player with per-segment color-coded captions sourced from `whole_video_cc.json`.
+> - **Inject from audio…** button on Segment Review — accepts an audio file + two offsets, runs Whisper per segment, badges populate as `[AUDIO-INJECTED]`. Also testable headless via `scripts/pipeline/inject_transcription_from_audio.py --dry-run`.
+> - **Confidence trust-stack v2** in `confidence_breakdown.html` — numeric / currency / big-number-word tokens cap at YELLOW even at high model conf (see `compute_word_confidence.py`).
 
 ---
 

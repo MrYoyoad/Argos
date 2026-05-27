@@ -112,10 +112,12 @@ Architecture: SEGMENT-FIRST NORMALIZATION (since Feb 2026)
 │
 ├── vsp_input/                          # User video input directory
 │   ├── *.mp4, *.mkv, etc.              # Raw video files
-│   ├── .excluded/                      # Excluded videos (not deleted)
+│   ├── .excluded/                      # Archived videos (not deleted; restore via UI)
 │   └── .transcriptions/                # Unified transcription storage (NEW: Jan 25, 2026)
-│       ├── *.wrd                       # One file per video (one word per line)
-│       └── metadata.json               # Tracks type (auto/manual), timestamps, word counts
+│       ├── *.wrd                       # One file per video / segment (one word per line)
+│       ├── .injected/                  # Cached audio uploads from "Inject from audio" (May 2026)
+│       └── metadata.json               # Tracks type (auto / manual / audio-injected — May 2026),
+│                                       # timestamps, word counts, source_audio + audio_offset
 │
 ├── flat_runs_archive/                  # Archived pipeline runs
 │   └── [timestamp]/                    # Each run archived by timestamp
@@ -124,6 +126,9 @@ Architecture: SEGMENT-FIRST NORMALIZATION (since Feb 2026)
 │           ├── report/                 # Transcription reports (CSV, HTML, TXT, ANSI)
 │           │   ├── report.csv          # Per-segment metrics (+ IS columns on EC2)
 │           │   ├── report.html         # Color-coded HTML report (+ IS column on EC2)
+│           │   ├── confidence_breakdown.html      # Per-word trust-stack (May 2026): green/yellow/red bands,
+│           │   │                                  # numeric/currency tokens capped at YELLOW
+│           │   ├── whole_video_cc.json # Per-video CC sidecar for the UI's "Watch with CC" player (May 2026)
 │           │   ├── intelligibility_scores.csv   # EC2 only: full IS analysis
 │           │   └── intelligibility_summary.json # EC2 only: aggregate IS stats
 │           ├── burned_videos/          # Videos with burned subtitles

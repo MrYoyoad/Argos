@@ -214,6 +214,31 @@ runs through the pipeline, the saved transcription is reused
 automatically and Whisper is skipped for it. This is how you build a
 clean reference set for repeat-processed videos.
 
+### Inject from audio (when you have a separate recording)
+
+If the video has bad or missing audio but you have a **clean separate
+audio recording** of the same speech (e.g. a microphone the camera
+didn't capture, or a podcast version of a talking-head video), use the
+**"Inject from audio…"** button on the Segment Review screen.
+
+The modal asks for:
+- **Video** — pick the parent video from the dropdown.
+- **Audio file** — drag in `.wav`, `.mp3`, `.m4a`, or `.flac`.
+- **Audio start (`T_a`)** and **Video start (`T_v`)** — two offsets that
+  declare "audio time `T_a` corresponds to video time `T_v`". Leave both
+  at `0` if the audio and video are perfectly aligned at their starts.
+- **Whisper model** — small/medium/large. Larger is slower but better
+  on accents and noise.
+
+The tool clips the audio per segment, runs Whisper on each clip, and
+writes the result into `.transcriptions/` with a new badge type
+**[AUDIO-INJECTED]** (distinct from `[AUTO]` Whisper-on-video and
+`[MANUAL]` typed-by-hand). Re-runs of the pipeline reuse these the
+same way they reuse manual transcriptions.
+
+Same flow available from the CLI for batch / scripted use — see
+[audio-injection.md](audio-injection.md).
+
 ---
 
 ## 6. K-means model choice
@@ -458,6 +483,20 @@ the report's *Hypothesis (Confidence)* column:
 A segment's tier badge is also burned into the corner of the frame
 (Trust / Salvage / Strip). If you need a frame-accurate clip for a
 client demo, the burned video is the asset to use.
+
+### Watch with CC (in-browser preview)
+
+On the **Complete** screen there's also a **"Watch with CC"** button.
+It plays the original video in a small in-page player and overlays the
+hypothesis text as captions, one segment at a time, coloured by trust
+band the same way the report and burned videos are. Useful for a quick
+review before downloading and sharing — no ffmpeg burn needed.
+
+The captions live in a sidecar called `whole_video_cc.json` next to
+`report.html`, generated automatically when the pipeline completes. v1
+maps wall-clock time to segment captions linearly (no per-word
+timestamps), so a fast talker may see a caption a beat ahead of the
+mouth movement.
 
 ---
 

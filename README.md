@@ -71,7 +71,8 @@ For detailed environment setup and package installation, see **[INSTALL.md](INST
 | Document | Description |
 |----------|-------------|
 | **[INSTALL.md](INSTALL.md)** | Environment setup, dependencies, verification |
-| **[User guide for the desktop pipeline](docs/guides/user-guide-vsp-pipeline.pdf)** ([markdown source](docs/guides/user-guide-vsp-pipeline.md)) | Client-facing PDF: drag-drop, segment review, k-means choice, report colors, troubleshooting |
+| **[User guide for the desktop pipeline](docs/guides/user-guide-vsp-pipeline.pdf)** ([markdown source](docs/guides/user-guide-vsp-pipeline.md)) | Client-facing PDF: drag-drop, segment review, k-means choice, report colors, **Watch with CC** preview, **Inject from audio** workflow, troubleshooting |
+| [Audio injection workflow](docs/guides/audio-injection.md) | Use a clean separate audio recording to transcribe a silent / bad-audio video — two-offset alignment, CLI + UI, Whisper model choice |
 | [Architecture](docs/architecture.md) | Pipeline flow, data formats, directory layout |
 | [Development Guide](docs/development-guide.md) | Commands, debugging, troubleshooting |
 | [Testing Guide](docs/guides/TESTING_GUIDE.md) | Test procedures and validation |
