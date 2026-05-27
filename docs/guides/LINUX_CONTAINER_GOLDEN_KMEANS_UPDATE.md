@@ -1,5 +1,13 @@
 # Golden K-means Models Feature - Linux Container Deployment Guide
 
+> **⚠️ HISTORICAL — January 2026 deployment plan.** The Golden K-means
+> Models feature has been **fully deployed** to the Linux container and
+> baked into the May-2026 `client-build-003-bwfix` image. The default
+> golden model lives at
+> `/workspace/golden_weights/baseline_20260218/flat_kmeans_200.bin`
+> and is selected by the UI's "Use Golden Model" radio option.
+> See [docs/features/](../features/) for the current feature documentation.
+
 **Feature:** Save and reuse pre-trained k-means models across pipeline runs
 **Date Added:** January 25, 2026
 **EC2 Version:** Fully implemented and tested

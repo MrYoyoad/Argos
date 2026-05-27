@@ -1,5 +1,13 @@
 # Pipeline Modifications for Overlapping Segmentation
 
+> **⚠️ HISTORICAL — January 2026 modification plan.** All modifications
+> in this doc have been **applied and shipped**; overlapping segmentation
+> with `OVERLAP_ENABLED=1`, `OVERLAP_DURATION=2.0`, 12-second segments
+> with 2-second overlap is the production default. Kept as a record of
+> what changed; current behavior is documented in
+> [docs/architecture.md](../architecture.md) under "Segment-Level
+> Architecture (Since Jan 2026)".
+
 This document contains the modifications needed for `run_flat_english_pipeline.sh` to support overlapping segmentation.
 
 ## ✅ ALREADY APPLIED

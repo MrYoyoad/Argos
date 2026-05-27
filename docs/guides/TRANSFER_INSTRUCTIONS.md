@@ -1,5 +1,12 @@
 # Transfer Instructions - VSP Linux Container FINAL
 
+> **⚠️ HISTORICAL — February 2026 transfer package.** Refers to a
+> `.tar.gz` overlay that patched an EXISTING container. The May-2026
+> client deployment ships as a single self-contained Docker image
+> (`vsp-llm-pipeline:client-build-003-bwfix`, ~30 GB tarball compressed
+> with zstd) — not an overlay. See [build-and-transfer.md](build-and-transfer.md)
+> for the current air-gapped image transfer flow.
+
 **Package**: vsp_linux_container_FINAL_20260203.tar.gz
 **Size**: 1.8 MB
 **SHA256**: 1872040879166e7108b92be08376b67c8e1dbd0b70c28ff0722d54f31b56f39b

@@ -1,5 +1,13 @@
 # Path Update Checklist for Linux Container
 
+> **⚠️ HISTORICAL — Jan-Feb 2026 hardcoded-path migration checklist.**
+> All checklist items below have been **completed** in the May-2026
+> container payload (`vsp_docker/container_payload_20260507/`). The
+> current approach uses dynamic path detection via `SCRIPT_DIR` in
+> `run_flat_english_pipeline.sh` and `_detect_environment()` in
+> `vsp-ui/app/config.py` — no manual `/home/ubuntu` → `/workspace`
+> sweeps required for new clones.
+
 ## Critical Scripts to Update (Priority Order)
 
 ### 1. Master Pipeline Script

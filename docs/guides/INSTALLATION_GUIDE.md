@@ -1,7 +1,7 @@
 # Installation Guide
 
 **Package**: vsp_linux_container_FINAL v1.0.0
-**Date**: February 3, 2026
+**Date**: February 3, 2026 _(Linux-container install. For the **May 2026 Windows + Docker Desktop** client install — desktop shortcut, drag-drop / Add files… fallback, host-path display, Archive/Restore — see [user-guide-vsp-pipeline.md](user-guide-vsp-pipeline.md) and [container-deployment-lessons-may2026.md](container-deployment-lessons-may2026.md))_
 
 Complete installation instructions for deploying all fixes to the Linux container.
 

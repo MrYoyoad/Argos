@@ -1,5 +1,15 @@
 # Updates Required for Linux Container Version
 
+> **⚠️ HISTORICAL — Jan-Feb 2026 to-do list, all items COMPLETED.**
+> The three items below (`make_report.py` color-coding, unified
+> transcription management, overlapping segmentation with merging) have
+> been shipped to the container and are part of the May-2026
+> `client-build-003-bwfix` image. The "Output Merging" idea was
+> subsequently **reverted** — current production keeps segments
+> independent (see segment-level architecture note in
+> [docs/architecture.md](../architecture.md)). For the current
+> EC2↔container sync log see [docs/container-sync-changelog.md](../container-sync-changelog.md).
+
 ## Table of Contents
 1. [make_report.py Color Coding Fix](#make_reportpy-color-coding-fix)
 2. [Unified Transcription Management (NEW)](#unified-transcription-management)
