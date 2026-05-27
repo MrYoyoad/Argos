@@ -237,3 +237,25 @@ Saves ~8 GB. Final image ~58 GB.
 The biggest lesson: **`exit=0` does not mean features worked.** lib/outputs.sh has many `|| log_warn "X failed (non-critical)"` patterns. They protect the pipeline from crashing but mask feature loss. Mechanism-checks on actual artifacts (does aggregated.json exist? does it have hyp_mbr key? does report.csv have NIV column?) are the only honest validation.
 
 The second-biggest lesson: **two fairseq installations live side-by-side** in this stack. The pip-installed one inside `vsp-llm-yoad-venv` AND the local fork at `VSP-LLM/fairseq/`. PYTHONPATH pins the local one. When EC2 main and the local fork drift (EC2 adds fields to its fork, local stays old), the runtime monkey-patch in `decode.sh` is the only thing keeping decode working. Any new field the decoder reads from cfg.generation.* needs a matching `if not hasattr…` patch added. **Audit `grep "cfg\.generation\." VSP-LLM/src/vsp_llm_decode.py | sort -u` whenever Mission code touches decode.**
+
+---
+
+## Client-side lessons (late May 2026)
+
+These came out of remote walkthroughs over the phone with a non-engineer operator. Apply them upfront on the next client deployment.
+
+### Video format support — camcorder family was missing
+
+The client tried to upload `.MTS` (Sony / Panasonic AVCHD) files; the pipeline silently rejected them because `SUPPORTED_EXTENSIONS` only listed `mp4/mkv/webm/mov/m4v/avi`. **Most consumer / prosumer camcorders dump `.MTS` or `.m2ts`**. Production now also accepts `.ts`, `.wmv`, `.flv` (11 total). ffmpeg via `lib/normalization.sh` handles all of them — the gating is purely a user-visible whitelist. Adding a new format = update `vsp-ui/app/config.py::SUPPORTED_EXTENSIONS` + four mirror sites (app.js validExtensions, index.html `accept`, two bash globs, `find -iname` block in `lib/normalization.sh`), then run the test plan from `feedback_test_before_push.md` in memory.
+
+### Client terminology rarely matches button labels
+
+When a non-engineer says "restart", "loading", "the link doesn't open", "frozen", or names a file extension that doesn't exist (`.mtk`, `.mbs`), they almost never mean what the literal phrase suggests. Translation table is in memory at `client_feedback_terminology.md`. The two highest-leverage diagnostic questions are: **"What exactly is on the screen when this happens?"** and **"What did you click immediately before?"**.
+
+### Test before push — for input-boundary changes specifically
+
+Pushing a "we now accept 5 more video formats" change with only syntax checks (`python -c "import ast"` + `bash -n`) is **not enough**. Syntax-check passes when the failure mode is "doesn't accept this thing at all" because no existing test covers the new shape. Run the system on real fixtures — `ffmpeg -f lavfi -i testsrc=duration=2…` produces a small valid sample per container in seconds. The May-2026 11-format expansion was test-driven on 5 generated camcorder/wmv/flv fixtures (all normalised to valid h264 mp4, durations preserved). General template in memory at `feedback_test_before_push.md`.
+
+### Document version dates explicitly
+
+The client reading the deck thought "Roadmap" meant current state. The deck was a **February 2026** snapshot, but didn't say so on its title or in the link text. Subsequent work (MBR-as-default, agreement-aware bands, client UX bundle) lives in `/docs/`, not the slides. Always tag the date prominently on long-lived shared artifacts (Google Slides title, PPTX filename, doc front-matter), and add a one-line note in `README.md`'s link telling readers where the current state actually lives.
