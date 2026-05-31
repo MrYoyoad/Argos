@@ -102,6 +102,15 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ---
 
+### Mission 4.2: Quality-Signal Additivity Test (reusable)
+- **Priority**: MEDIUM (cross-cutting — gates every new quality signal we ship)
+- **Status**: SCOPED (May 2026)
+- **Scoped project spec**: [training_project_additivity_test.md](training_project_additivity_test.md) — 5-day project. Build a re-runnable script that answers, for any candidate signal (pre-decode VRS, post-decode confidence, future signals), *"does this add information beyond the existing baseline, or are we already getting it for free?"* — via a likelihood-ratio test + AUC lift on a stratified held-out split, against the AI-judge labels.
+- **Why**: Without it we ship quality signals on intuition. The procedure is the template for evaluating every future signal, on every retrain/fine-tune/language extension.
+- **Dependencies**: Reuses the stratified dataset from Mission 15 (1,497 labeled clips + AVSpeech augmentation); first consumers are the Mission 15 VRS and the Mission 4 confidence score.
+
+---
+
 ### Mission 5: Expanded Metrics & Evaluation
 - **Priority**: HIGH
 - **Status**: SUBSTANTIALLY ADVANCED (March 2026) — IS metric system, LLM Judge, and LLM Salvage all complete
@@ -259,6 +268,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
 ### Mission 12: Multi-Speaker & Overlapping Speech
 - **Priority**: LOW
 - **Goal**: Handle videos with multiple visible speakers or speaker transitions
+- **Scoped project spec** (May 2026): [training_project_multi_speaker.md](training_project_multi_speaker.md) — 5-day off-the-shelf-only project (no model training): per-speaker attributed transcript via face tracking + diarization. docx via `build_proposal_docx.py`.
 - **Items**:
   - Detect multiple faces per frame and track across segments
   - Associate mouth crops with speaker identity (speaker diarization)
@@ -294,6 +304,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
 
 ### Mission 15: Pre-Decode Video Quality Heuristics
 - **Priority**: HIGH
+- **Scoped project spec** (May 2026): [training_project_video_quality.md](training_project_video_quality.md) — 5-day classical-CV-only project (no GPU/NN): per-clip 0–1 "readable vs hopeless" score that runs before decode. Doubles as the Arabic YouTube-scrape quality filter and a per-tier evaluation stratifier. docx via `build_proposal_docx.py`.
 - **Goal**: Predict whether a video segment will produce reliable lip-reading output BEFORE running the expensive decode pipeline, using video-level quality metrics extracted during preprocessing
 - **Motivation**: Currently 20.5% of segments hallucinate (WER ≥ 100%) and 16% score IS < 1.0 (Failed tier). The pipeline spends full GPU decode time on these segments with no early warning. Face detection confidence, landmark scores, and head pose are already partially computed during preprocessing but silently discarded — storing and thresholding them could skip doomed segments and save hours of compute.
 - **Items**:
