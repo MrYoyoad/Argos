@@ -76,11 +76,20 @@ collapses. **Conclusion: clean per-speaker turn segmentation is the better input
 though the "one continuous stream" framing is intuitive. (Also note: conversation-level WER 86% ≪
 per-segment 122% — the per-segment metric is far harsher than the whole-conversation view.)
 
-## iPhone vs client-camera (planned, prerequisites running)
-The שפם scene exists in both: **iPhone 4K masters** (`שפם 4K` crops, ~1200px from 3840×2160) and
-**client-camera** screen-recordings (`שפם` crops, 380px). A controlled test of video-quality effect
-on lip-reading. שפם script (1 vs 2) is auto-detected by aligning each video to both scripts and
-taking the higher-confidence match. Streams built; decode + comparison pending the scene1+2 run.
+## iPhone 4K vs client-camera (same שפם scene) — DONE
+Controlled test of capture quality. Script auto-detected per video (yoad_amosi→scene1,
+amosi_ido & masters→scene2). The iPhone footage is **dramatically more lip-readable**:
+
+| Source | n | WER | IS | NEA-F1 | useful IS≥2 | clear IS≥3 | align_conf |
+|---|---|---|---|---|---|---|---|
+| **iPhone 4K** (~1200px native) | 153 | 155% | **1.51** | 20% | **29%** | **13.7%** | 0.33–0.38 |
+| **client camera** (380px screen-rec) | 133 | 165% | **0.88** | 10% | 11% | **0.8%** | 0.07–0.14 |
+
+IS +72%, entities 2×, useful ~3×, **clearly-conveyed 17×** (14% vs 0.8%). The client camera here is
+a 380px screen-recording of a composite (with UI chrome) — near-unusable; the iPhone is sharp,
+frontal, native 4K. (Not a pure-resolution test — different capture setups — but the direction is
+unambiguous and large.) Confirms the angle finding: **the model is dominated by input quality
+(resolution / frontality / articulation)** far more than anything tunable downstream.
 
 ## Open items
 - שפם / master per-file script (1 vs 2) — resolved via auto-detect (align-to-both); to be confirmed.
