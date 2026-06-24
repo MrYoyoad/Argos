@@ -48,7 +48,16 @@ Confidence works at two levels, and both matter:
 
 ## Metrics: how well the confidence works
 
-Measured on 23,261 words across 1,427 segments.
+**The headline numbers — confidence, in plain terms:**
+
+- **Green means right about 9 times out of 10.**
+- **A green word is roughly 5× more likely to be correct than a red one** (81% vs 15%).
+- **In the cleanest videos, a green word is right 19 times out of 20** (93%).
+- **The model gives useful output for about 6 in 10 clips — confidence tells you which 6**, so an operator doesn't have to re-check all ten.
+- **Read just the cleanest third of videos and you still capture two-thirds of all the useful content.**
+- **Correct and fabricated transcripts read equally fluently — confidence is the only thing that tells them apart.**
+
+**The detail behind those numbers** — measured on 23,261 words across 1,427 segments.
 
 **Per-word coloring — does a color mean what it says?**
 
