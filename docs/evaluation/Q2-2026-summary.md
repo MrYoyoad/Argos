@@ -37,10 +37,15 @@ error too.
 
 Confidence works at two levels, and both matter:
 
-- **Per word** — each word is colored **green / yellow / red** from two signals combined: the model's own
-  probability for that word, and *beam agreement* (how many of the 20 readings chose the same word).
-  Beam agreement turned out to be about **twice as informative** as the raw probability in the
-  high-confidence range — a word the model is sure of but the beam disagrees on is usually wrong.
+- **Per word** — each word is colored **green / yellow / red** from the signals the beam gives us:
+  - *word confidence* — how sure the model is of the single word it picked (its own probability for it);
+  - *beam confidence* — the word's probability pooled across all 20 readings (the consensus probability,
+    weighted by how good each reading is);
+  - *beam agreement* — how many of the 20 readings actually picked that same word.
+
+  Beam agreement is the most useful of the three — about **twice as informative** as the model's raw word
+  confidence in the high-confidence range, where a word the model is sure of but the beam disagrees on is
+  usually wrong.
 - **Per video (segment)** — each segment first gets a **Trust / Salvage / Strip** tier from its average
   confidence, which decides whether per-word coloring is even shown. This level exists because the *same*
   green word is highly reliable in a clean segment and almost worthless in a noisy one — so we judge the
