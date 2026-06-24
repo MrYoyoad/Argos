@@ -40,6 +40,19 @@ Context-aware **Y+P ≈ 46%** of turns convey useful meaning vs the per-segment 
 whole-sequence + context roughly **doubles** intelligibility. Failures are one-word reactions
 (no lip signal, no context to recover). See `work/eval/judge/judgments/s1_tomer_yoad_1.json`.
 
+## Full scene1+2 results (448 turns, 11 conversations) — per-segment
+Overall WER **122%**, IS **1.55**, NIV-Y+P **24.8%** (per-segment metric is brutal on this footage).
+Speaker attribution is rigorous via face-ID (`face_id.json`, constraint-propagation naming, 19/21
+videos verified) — NOT filename guesses.
+
+**Per-speaker (lip-readability):** Tomer WER 104% / IS 1.97 / Y+P 37.6% (best) > Yoad 112% / 1.50 /
+24.7% > Tal 160% / 1.19 / 12.2% > Ido 145% / 1.11 / 7.7%. Individual face/articulation dominates.
+
+**Per-angle (clean finding):** front WER 118% / IS 1.62 / Y+P 27.4% ≫ 30° 133% / 1.24 / 16.7% ≫
+45° 158% / 1.03 / **3.2%**. Lip-reading collapses as the face turns to profile (model is frontal-trained).
+
+Per-scene: scene1 119.8% / 1.50, scene2 125.2% / 1.62 (similar).
+
 ## iPhone vs client-camera (planned, prerequisites running)
 The שפם scene exists in both: **iPhone 4K masters** (`שפם 4K` crops, ~1200px from 3840×2160) and
 **client-camera** screen-recordings (`שפם` crops, 380px). A controlled test of video-quality effect

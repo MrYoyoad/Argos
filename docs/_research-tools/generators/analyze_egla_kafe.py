@@ -57,6 +57,7 @@ def load(report_csv, provenance):
             row = {"utt_id": uid, **{k: fnum(r.get(k)) for k in METRICS if k in r}}
             row["is_score"] = fnum(r.get("is_score"))
             row.update({"scene": p.get("scene"), "char": p.get("char"), "side": p.get("side"),
+                        "person": p.get("person") or "?",
                         "angle": p.get("angle"), "arm": p.get("arm", "?"),
                         "speakers": "+".join(sorted(p.get("speakers_in_name", []))) or "?",
                         "align_conf": p.get("align_conf")})
@@ -157,7 +158,7 @@ def main():
     rows = load(args.report, args.provenance)
     os.makedirs(args.out_dir, exist_ok=True)
 
-    dims = ["arm", "scene", "char", "side", "angle", "speakers"]
+    dims = ["arm", "scene", "person", "char", "side", "angle", "speakers"]
     all_groups = {d: group_stats(rows, d) for d in dims}
     overall = group_stats(rows, "_all")  # everything in one group
     for r in rows:

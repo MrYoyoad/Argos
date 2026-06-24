@@ -52,8 +52,15 @@ def main():
     ap.add_argument("--scripts-dir", default="/home/ubuntu/datasets/clients/egla_kafe/work/eval")
     ap.add_argument("--out-dir", default="/home/ubuntu/datasets/clients/egla_kafe/work/eval")
     ap.add_argument("--arm", default="turnseg", help="provenance arm label")
+    ap.add_argument("--face-id", default="/home/ubuntu/datasets/clients/egla_kafe/work/eval/face_id.json",
+                    help="face_id.json mapping stem+side -> person (for per-PERSON stats)")
     ap.add_argument("--run-report", action="store_true", help="re-run make_report on corrected refs")
     args = ap.parse_args()
+
+    face_person = {}
+    if args.face_id and os.path.exists(args.face_id):
+        fid = json.load(open(args.face_id, encoding="utf-8"))
+        face_person = {k: v.get("person") for k, v in fid.get("per_crop", {}).items()}
 
     hypo_path = args.hypo or newest_hypo(args.vsp_dir)
     if not hypo_path:
@@ -109,6 +116,7 @@ def main():
             mm = next(x for x in recs if x["seg_id"] == r["seg_id"])["_meta"]
             provenance[r["seg_id"]] = {
                 "stem": stem, "scene": scene_num, "side": r["side"], "char": r["char"],
+                "person": face_person.get(f"{stem}__{r['side']}"),
                 "angle": mm.get("angle"), "speakers_in_name": mm.get("speakers_in_name", []),
                 "arm": args.arm, "align_conf": r["align_conf"], "ref_turn_idxs": r["ref_turn_idxs"]}
         all_aligned.extend(aligned)
