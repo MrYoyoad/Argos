@@ -20,3 +20,59 @@ clients actually need and drew a lot of "this is useful" — with strong interes
 separate groups, one of which handed us 100 hours of real footage to evaluate. Next quarter focuses on
 the model upgrade, evaluating that 100-hour client footage, a human-comparison study, and the clients'
 top requests: handling multiple speakers and Arabic.
+
+## How it works: beam search and aggregation
+
+When the model reads a clip it does not commit to one word at a time — it keeps the 20 most likely
+full-sentence readings (this candidate set is the *beam*; the readings are the *N-best* list).
+Previously we just took the single top-scoring reading. Now we **aggregate** the 20: the shipped method
+(called MBR — "return the reading that most agrees with all the others") gives back the *consensus*
+reading instead of the single best guess. The reason is that a top guess can be fluent but confidently
+wrong, whereas the reading the other 19 mostly agree with is more robust. This is invisible to the
+operator — still one answer per clip — but measurably better: an independent LLM judge rated the output
+"useful" for **71% of clips, up from 68%** (a statistically significant gain), with a small drop in word
+error too.
+
+## How it works: confidence
+
+Confidence works at two levels, and both matter:
+
+- **Per word** — each word is colored **green / yellow / red** from two signals combined: the model's own
+  probability for that word, and *beam agreement* (how many of the 20 readings chose the same word).
+  Beam agreement turned out to be about **twice as informative** as the raw probability in the
+  high-confidence range — a word the model is sure of but the beam disagrees on is usually wrong.
+- **Per video (segment)** — each segment first gets a **Trust / Salvage / Strip** tier from its average
+  confidence, which decides whether per-word coloring is even shown. This level exists because the *same*
+  green word is highly reliable in a clean segment and almost worthless in a noisy one — so we judge the
+  whole video first, then the words inside it.
+
+## Metrics: how well the confidence works
+
+Measured on 23,261 words across 1,427 segments.
+
+**Per-word coloring — does a color mean what it says?**
+
+| Word color | What it tells the operator | Actually correct |
+|---|---|---|
+| Green | trust this word | **81%** (≈ **90%** under the stronger confidence + agreement rule) |
+| Yellow | uncertain | 38–59% |
+| Red | do not trust | 15–22% |
+
+Inside videos that carry useful content the separation is even sharper — green / yellow / red are
+**87% / 49% / 25%** correct, a 62-point spread from green to red.
+
+**Per-video tier — why we gate whole videos first.** Reliability of a *green* word depends heavily on
+the video it sits in:
+
+| Segment quality | A green word is correct… |
+|---|---|
+| Very high | **93%** of the time |
+| Medium | ~70% |
+| Low | ~22% |
+| Very low | **18%** |
+
+The tiers split the data into Trust **23%** / Salvage **36%** / Strip **37%**. Used as a filter, keeping
+the cleanest ~30% of videos recovers about **two-thirds of all the useful content at roughly a 6%
+false-positive rate** — i.e. a small, high-trust pile an operator can act on directly without re-checking
+everything. The main residual risk is "confident-but-wrong" words (~9% of greens), dominated by numbers
+and names (e.g. "billion" → "million"), which is why numbers are now capped at yellow.
