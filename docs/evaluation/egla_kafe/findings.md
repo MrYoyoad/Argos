@@ -40,6 +40,15 @@ Context-aware **Y+P ≈ 46%** of turns convey useful meaning vs the per-segment 
 whole-sequence + context roughly **doubles** intelligibility. Failures are one-word reactions
 (no lip signal, no context to recover). See `work/eval/judge/judgments/s1_tomer_yoad_1.json`.
 
+**All 11 conversations (context-judge, Claude Opus 4.8 in-session, holistic):** mean context-aware
+**Y+P 36.9%** / Y 15.2% — roughly double the per-segment captured rate (~12–24%). Two patterns:
+- **Scene 2 (Military) 44.4% ≫ Scene 1 (Emma/Jake) 30.7%** — the military script's distinctive
+  content words ("biggest problem", "communications", "options", "three hours", "small mistakes
+  become big problems", "military life is action movies") survive lip-reading and are recoverable
+  with context; the airport dialogue is more generic/recoverable-poor.
+- Best: `s2_tomer_ido_1` 62.5% (frontal Military); worst: `s1_yoad_tal_z45` 11.5% (45° profile).
+Verdicts in `work/eval/judge/judgments/`, summary `work/eval/judge/context_judge_summary.json`.
+
 ## Full scene1+2 results (448 turns, 11 conversations) — per-segment
 Overall WER **122%**, IS **1.55**, NIV-Y+P **24.8%** (per-segment metric is brutal on this footage).
 Speaker attribution is rigorous via face-ID (`face_id.json`, constraint-propagation naming, 19/21
