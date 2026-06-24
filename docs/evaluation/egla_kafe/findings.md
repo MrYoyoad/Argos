@@ -53,6 +53,20 @@ videos verified) — NOT filename guesses.
 
 Per-scene: scene1 119.8% / 1.50, scene2 125.2% / 1.62 (similar).
 
+## Stacked-stream vs per-turn input (conversation-level, scene1+2)
+Tested whether feeding the whole conversation as ONE continuous active-speaker stream (≈12s windows
+that cut across speakers) beats decoding clean per-speaker turn clips. **It is worse:**
+
+| Input regime | WER | IS | NEA-F1 |
+|---|---|---|---|
+| per-turn (one speaker/clip) | **86.2%** | **1.79** | **31%** |
+| stacked stream (12s windows, mid-clip cuts) | 90.6% | 1.09 | 9% |
+
+Mid-clip speaker/position cuts disrupt the lip-reader (not trained on identity jumps); entity recovery
+collapses. **Conclusion: clean per-speaker turn segmentation is the better input for this model**, even
+though the "one continuous stream" framing is intuitive. (Also note: conversation-level WER 86% ≪
+per-segment 122% — the per-segment metric is far harsher than the whole-conversation view.)
+
 ## iPhone vs client-camera (planned, prerequisites running)
 The שפם scene exists in both: **iPhone 4K masters** (`שפם 4K` crops, ~1200px from 3840×2160) and
 **client-camera** screen-recordings (`שפם` crops, 380px). A controlled test of video-quality effect

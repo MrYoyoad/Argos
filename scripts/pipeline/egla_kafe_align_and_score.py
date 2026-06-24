@@ -88,14 +88,23 @@ def main():
     for stem, recs in sorted(by_stem.items()):
         recs.sort(key=lambda r: r["t0"])
         scene = recs[0]["_meta"].get("scene")
-        scene_num = "scene1" if scene == "scene1" else ("scene2" if scene == "scene2" else None)
-        if scene_num is None:
-            print(f"[skip] {stem}: scene unknown ({scene}); cannot pick script", file=sys.stderr)
-            continue
-        script = json.load(open(os.path.join(args.scripts_dir, f"script_{scene_num}.json"),
-                                 encoding="utf-8"))
-        s2c = AL.infer_side_to_char(recs, script)
-        aligned = AL.build_references(recs, script, s2c)
+        if scene in ("scene1", "scene2"):
+            candidates = [scene]
+        else:
+            # unknown script (שפם / masters): align to BOTH and keep the higher-confidence match
+            candidates = ["scene1", "scene2"]
+        best = None
+        for cand in candidates:
+            script = json.load(open(os.path.join(args.scripts_dir, f"script_{cand}.json"),
+                                     encoding="utf-8"))
+            s2c = AL.infer_side_to_char(recs, script)
+            aligned = AL.build_references(recs, script, s2c)
+            mc = sum(r["align_conf"] for r in aligned) / max(1, len(aligned))
+            if best is None or mc > best[0]:
+                best = (mc, cand, script, s2c, aligned)
+        _, scene_num, script, s2c, aligned = best
+        if len(candidates) > 1:
+            print(f"[align] {stem}: auto-detected script={scene_num} (conf={best[0]:.3f})", file=sys.stderr)
         # per-stem outputs
         stem_dir = os.path.join(args.out_dir, "align", stem)
         os.makedirs(stem_dir, exist_ok=True)
