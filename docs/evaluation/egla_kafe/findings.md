@@ -174,6 +174,30 @@ frontal, native 4K. (Not a pure-resolution test — different capture setups —
 unambiguous and large.) Confirms the angle finding: **the model is dominated by input quality
 (resolution / frontality / articulation)** far more than anything tunable downstream.
 
+## Statistical significance & calibration (Mann-Whitney U on is_score, bootstrap 95% CIs)
+Tool: `docs/_research-tools/generators/egla_kafe_significance.py` → `work/eval/significance.json`.
+Deck plots: `docs/_research-tools/generators/egla_kafe_deck_plots.py` → `deliverables/plots/`.
+Scored segments only (empty-reference turns excluded): scene1+2 n=410, שפם-run n=286.
+
+| Contrast | groups (mean IS [95% CI]) | diff | p (MW-U) | verdict |
+|---|---|---|---|---|
+| iPhone-4K vs client-camera | 1.51 [1.31,1.71] vs 0.88 [0.77,0.99] | +0.63 | **2.3e-05** | **significant** |
+| Military (s2) vs Emma/Jake (s1) | 1.62 [1.45,1.79] vs 1.50 [1.36,1.64] | +0.12 | 0.38 | **n.s.** (IS sees no scene gap; context-judge gap is real) |
+| angle front vs 45° | 1.62 [1.50,1.75] vs 1.03 [0.76,1.39] | +0.59 | **2.0e-03** | **significant** |
+| angle front vs 30° | 1.62 vs 1.24 [0.94,1.61] | +0.38 | 0.055 | borderline (small n=30) |
+| Tomer vs Yoad / Tal / Ido | 1.97 vs 1.50 / 1.19 / 1.11 | +0.47/+0.78/+0.86 | 1.8e-04 / 8e-07 / 6e-04 | **Tomer sig. beats all three** |
+
+- **Capture quality and frontality are the only statistically robust levers.** iPhone-vs-camera and
+  front-vs-45° are real; the Military-vs-Emma/Jake IS gap is **not** significant at the per-segment level
+  (the +14pp context-judge advantage comes from distinctive *content words* surviving + cross-turn
+  redundancy, not from higher per-segment IS — state it that way, don't overclaim a scene effect on IS).
+- **Confidence gate (own word-prob, scene1+2):** ALL→IS 1.55/25% useful; ≥0.6→2.34/55% (keeps 25%);
+  ≥0.7→2.86/70%, WER 65% (keeps 10%); ≥0.8→3.54/92% (keeps 3%). Reproduces the canonical operating points.
+- **Calibration (3,617 aligned words, both runs):** confidence is well-**ranked** (empirical P(exact-word
+  correct) rises monotonically 7%→45% across prob buckets) so the gate works for *selection*, but raw
+  probabilities run **optimistic at the exact-word level** (0.95-bucket words are correct only ~45% of the
+  time). Headline the gate's relative selection power, not the absolute probability number.
+
 ## Open items
 - שפם / master per-file script (1 vs 2) — resolved via auto-detect (align-to-both); to be confirmed.
 - Full scene1+2 scores + grouped stats (per scene/char/side/angle/speaker) once decode completes.
