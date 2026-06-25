@@ -117,6 +117,34 @@ bottleneck — NOT script↔video misalignment.**
 - Over-segmentation is real (51 detected turns vs 48 script) but the many-to-one turn-oracle does not beat
   86%; alignment is second-order. Conclusion unchanged: input-quality + confidence-gating are the levers.
 
+## What can you understand after gating? — per word-category trust (all 778 segs)
+For green (high-confidence) words, P(correct) by category, and coverage (recall) of reference words:
+
+| category | P(correct\|green) | n | recovered (green) |
+|---|---|---|---|
+| NOUN (common) | **82%** | 65 | 11% |
+| NUMBER/date | 73% | 22 | 7% |
+| VERB | 65% | 37 | 5% |
+| ADJ/ADV | 53% | 45 | 5% |
+| FUNCTION | 54% | 127 | 5% |
+| **ENTITY (names/places)** | **0%** | 2/8 | **0%** |
+
+**Interpretation — what a gated output actually gives you:**
+1. A **topical skeleton, not sentences**: green common-nouns are reliable (~82%) but only ~10% of nouns
+   said are recovered → a scatter of trustworthy content words a reader fuses with context (≈ the 37%
+   context-judge recovery), not full intelligible text.
+2. **Names/places are a black hole AND dangerous**: 0% recovered, and the model emits confident
+   hallucinated entities — "Abu **dhabi**" (0.997), "**states**" (0.991), "Wikipedia". Never trust a
+   proper noun from this model.
+3. **Numbers ~73% green but unsafe**: confident-wrong leaks + the project's billion→million / 1024→24
+   class mean a confident number still needs verification.
+4. **Verbs/modifiers/grammar ~53–65% even when green** → you get *what it's about*, not exactly
+   *what happened*.
+
+Bottom line: trust the **common-noun topic skeleton** (+ rough numbers), reconstruct the **gist with
+context**, but do **not** trust any name/place/precise claim, and expect only ~10% word coverage.
+Tool: `scripts/pipeline/egla_kafe_word_category_trust.py`; data: `work/eval/word_category_trust_ALL.json`.
+
 ## Stacked-stream vs per-turn input (conversation-level, scene1+2)
 Tested whether feeding the whole conversation as ONE continuous active-speaker stream (≈12s windows
 that cut across speakers) beats decoding clean per-speaker turn clips. **It is worse:**
