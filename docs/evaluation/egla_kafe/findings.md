@@ -97,6 +97,26 @@ is a coverage problem, not capability — frontal high-res capture + confidence-
 a reliable stream on the subset that matters** (the project's Trust/Salvage/Strip philosophy,
 confirmed on client data).
 
+## Is the poor WER an alignment problem? (disentangled)
+Tested directly. Verdict: **a scoring-granularity artifact inflates the number, but the model is the
+bottleneck — NOT script↔video misalignment.**
+
+| WER measure | value | isolates |
+|---|---|---|
+| per-turn (short 1-word refs) | 135% | granularity blow-up |
+| per-segment (production alignment) | 120% | what was reported |
+| **conversation-level (alignment-FREE concat)** | **86%** | **truest model floor** |
+| position-free oracle (cherry-pick best line/seg) | 81% | absolute floor |
+
+- The 120→86 gap (~34pp) is a **per-short-segment scoring artifact**, not model error → headline the
+  alignment-free **86%** (and IS / context-judge), not 120%.
+- It is **not** a script↔video alignment error: conversation-level WER (no mapping at all) is still 86%;
+  hyp/ref **word ratio = 0.96** (not verbose → genuine substitutions); and where the model is confident
+  WER is 65% (alignment correct there). Failures concentrate on low-confidence, hallucinated, un-alignable
+  output — no alignment can fix output that corresponds to no line.
+- Over-segmentation is real (51 detected turns vs 48 script) but the many-to-one turn-oracle does not beat
+  86%; alignment is second-order. Conclusion unchanged: input-quality + confidence-gating are the levers.
+
 ## Stacked-stream vs per-turn input (conversation-level, scene1+2)
 Tested whether feeding the whole conversation as ONE continuous active-speaker stream (≈12s windows
 that cut across speakers) beats decoding clean per-speaker turn clips. **It is worse:**
