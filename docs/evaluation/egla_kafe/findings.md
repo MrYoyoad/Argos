@@ -62,6 +62,41 @@ videos verified) — NOT filename guesses.
 
 Per-scene: scene1 119.8% / 1.50, scene2 125.2% / 1.62 (similar).
 
+## Recovery ceiling under filtering (scene1+2 per-turn) — the key result
+Filtering by static conditions helps only modestly; filtering by where the model *locks on* is
+transformative — revealing a high ceiling hidden under the pessimistic average.
+
+| Filter | n | WER | IS | useful IS≥2 | clear IS≥3 |
+|---|---|---|---|---|---|
+| ALL | 411 | 122% | 1.55 | 25% | 12% |
+| front only | 350 | 118% | 1.62 | 27% | 13% |
+| front + Tomer/Yoad | 266 | 107% | 1.74 | 32% | 17% |
+| front + Tomer | 125 | 104% | 1.97 | 38% | 22% |
+| front + Tomer + Military | 58 | 101% | 2.18 | 41% | 29% |
+| **locked on (align_conf≥0.4)** | 93 | **63%** | **3.04** | **75%** | **50%** |
+| **front + best spk + locked on** | 74 | **61%** | **3.16** | **81%** | **55%** |
+
+**Takeaway:** when the model is confident it performs at the **LRS3 English benchmark (WER ~61% vs
+64%)** with 75–81% useful / ~50% clear. The model isn't incapable on this footage — it only *locks
+on* ~20% of the time (coverage problem, not capability). Product implication: **confidence-gate**
+(deliver the segments the model is sure about; flag the rest) rather than chase the average.
+**Deployable gate confirmed** — gating by the model's OWN `sentence_confidence` (no reference needed)
+reproduces the ceiling and quantifies the recovery/coverage tradeoff:
+
+| gate (model conf) | keeps | WER | IS | useful IS≥2 | clear IS≥3 |
+|---|---|---|---|---|---|
+| ALL | 100% | 122% | 1.55 | 25% | 12% |
+| ≥0.5 | 47% | 107% | 1.99 | 39% | 22% |
+| ≥0.6 | 25% | 90% | 2.34 | 55% | 32% |
+| ≥0.7 | 10% | 65% | 2.86 | 70% | 45% |
+| ≥0.8 | 3% | 41% | 3.54 | 92% | 67% |
+
+The model *knows when it's right*. Operating points: conf≥0.7 → English-benchmark quality (WER 65%,
+70% useful) keeping top 10%; conf≥0.6 → 55% useful keeping a quarter. **Bottom line: the 122% average
+is a coverage problem, not capability — frontal high-res capture + confidence-gating turns this into
+a reliable stream on the subset that matters** (the project's Trust/Salvage/Strip philosophy,
+confirmed on client data).
+
 ## Stacked-stream vs per-turn input (conversation-level, scene1+2)
 Tested whether feeding the whole conversation as ONE continuous active-speaker stream (≈12s windows
 that cut across speakers) beats decoding clean per-speaker turn clips. **It is worse:**
