@@ -17,11 +17,19 @@ def stem_of(utt):
 
 
 def main():
-    idx = {e["stem"]: e for e in json.load(open(f"{BASE}/index.json"))["entries"]}
-    fid = json.load(open(f"{BASE}/face_id.json")).get("per_crop", {})
-    # per-stem metrics from both reports
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--eval-dir", default=BASE)
+    ap.add_argument("--reports", default=f"{BASE}/run_scene12_all/report/report.csv,{BASE}/run_shaam_all/report/report.csv",
+                    help="comma list of make_report report.csv files (default: egla_kafe two-run)")
+    ap.add_argument("--out", default="/home/ubuntu/docs/evaluation/egla_kafe/per_video_understanding.md")
+    args = ap.parse_args()
+    ev = args.eval_dir
+    idx = {e["stem"]: e for e in json.load(open(f"{ev}/index.json"))["entries"]}
+    fid = json.load(open(f"{ev}/face_id.json")).get("per_crop", {}) if os.path.exists(f"{ev}/face_id.json") else {}
+    # per-stem metrics from the report(s)
     metrics = {}
-    for rep in (f"{BASE}/run_scene12_all/report/report.csv", f"{BASE}/run_shaam_all/report/report.csv"):
+    for rep in args.reports.split(","):
         if not os.path.exists(rep):
             continue
         for r in csv.DictReader(open(rep)):
@@ -30,7 +38,7 @@ def main():
             except: continue
             metrics.setdefault(st, []).append(is_)
     judg = {}
-    for jp in glob.glob(f"{BASE}/judge/judgments/*.json"):
+    for jp in glob.glob(f"{ev}/judge/judgments/*.json"):
         j = json.load(open(jp)); judg[j["stem"]] = j
 
     rows = []
@@ -65,7 +73,8 @@ def main():
     for r in rows:
         facts = ", ".join(r["facts"]) if r["facts"] else "— (nothing reliably recovered)"
         L.append(f"- **{r['stem']}** ({r['source']}, {r['script']}, Y+P {r['ctx_yp']}%): {facts}")
-    out = "/home/ubuntu/docs/evaluation/egla_kafe/per_video_understanding.md"
+    out = args.out
+    os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w", encoding="utf-8").write("\n".join(L) + "\n")
     print("\n".join(L))
     print(f"\n-> {out}")

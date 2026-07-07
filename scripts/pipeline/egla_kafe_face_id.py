@@ -91,10 +91,11 @@ def main():
 
     idx = json.load(open(args.index, encoding="utf-8"))
     scenes = set(args.scenes.split(","))
+    all_scenes = "all" in scenes
     # collect crop list first
     crops = []
     for e in idx["entries"]:
-        if e.get("scene") not in scenes:
+        if not all_scenes and e.get("scene") not in scenes:
             continue
         pair = e.get("speakers_in_name") or []
         for side in ("left", "right"):

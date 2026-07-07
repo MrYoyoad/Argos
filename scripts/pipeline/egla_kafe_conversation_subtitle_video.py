@@ -116,12 +116,17 @@ def probe_wh(path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stems", required=True, help="comma list or 'scene12'/'shaam'/'all'")
+    ap.add_argument("--stems", required=True, help="comma list or a RUNS key ('scene12'/'shaam'/'all')")
     ap.add_argument("--out-dir", default="/home/ubuntu/datasets/clients/egla_kafe/deliverables/conversation_videos")
     ap.add_argument("--max-h", type=int, default=900, help="scale output down if taller")
+    ap.add_argument("--runs-json", default=None,
+                    help="JSON overriding the run map {key:{seg_meta,align,wconf}} for a generic dataset")
+    ap.add_argument("--index", default="/home/ubuntu/datasets/clients/egla_kafe/work/eval/index.json")
     args = ap.parse_args()
+    if args.runs_json and os.path.exists(args.runs_json):
+        RUNS.clear(); RUNS.update(json.load(open(args.runs_json)))
     os.makedirs(args.out_dir, exist_ok=True)
-    idx = {e["stem"]: e for e in json.load(open("/home/ubuntu/datasets/clients/egla_kafe/work/eval/index.json"))["entries"]}
+    idx = {e["stem"]: e for e in json.load(open(args.index))["entries"]}
 
     if args.stems in ("scene12", "shaam", "all"):
         stems = [s for s in sorted(os.listdir(RUNS[args.stems]["align"]))] if args.stems != "all" else \
