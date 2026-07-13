@@ -234,6 +234,8 @@ When making changes, ALWAYS:
 
 ## Documentation Map
 
+> **Inheriting this project?** Start at [docs/guides/project-handover-july2026.md](docs/guides/project-handover-july2026.md) — the departing lead's handover: system state, deployment doctrine, client commitments, open bets, ready-to-assign projects, traps, first-week checklist.
+
 All documentation is organized under `docs/` with subdirectories for easy discovery:
 
 ### Core References (docs/ top level)
