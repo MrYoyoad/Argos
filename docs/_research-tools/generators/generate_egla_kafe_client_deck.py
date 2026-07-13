@@ -64,7 +64,7 @@ _CLIPS = {
 VID.update(_CLIPS)
 
 OUTPUT = Path("/home/ubuntu/presentation_materials_20260224/"
-              "Argos_VSP_EglaKafe_20260625.pptx")
+              "Argos_VSP_EglaKafe_20260713.pptx")
 
 # ── Small local helpers ─────────────────────────────────────────────────
 
@@ -148,7 +148,7 @@ def slide_title(prs):
              "Reading speech from the lips alone — no audio",
              MX, Inches(3.7), CW, Inches(0.6),
              size=Pt(24), color=LGRAY, align=PP_ALIGN.CENTER)
-    add_text(slide, "Argos  —  The Orchard      ·      June 2026",
+    add_text(slide, "Argos  —  The Orchard      ·      July 2026",
              MX, Inches(5.6), CW, Inches(0.5),
              size=Pt(20), color=LGRAY, align=PP_ALIGN.CENTER)
     _finish(slide,
@@ -350,7 +350,7 @@ def slide_confidence_flag(prs):
     add_title(slide, "The model flags its own good output")
     add_accent_line(slide)
     add_text(slide,
-             "On the confident subset: 75–90% of turns are useful",
+             "On the confident subset: 70–92% of turns are useful",
              MX, CT, CW, Inches(0.5), size=Pt(26), bold=True, color=GREEN,
              align=PP_ALIGN.CENTER)
     # Plot left, colored clip right.
@@ -579,7 +579,9 @@ def main():
         slide_best_vs_worst,
         slide_honest_limits,
         slide_recommendations,
-        slide_whats_next,
+        # slide_whats_next dropped for the July 2026 meeting — the roadmap
+        # now lives in the companion deck (generate_egla_kafe_roadmap_deck.py)
+        # so it isn't presented twice.
         slide_thank_you,
     ]
     total = len(builders)

@@ -42,5 +42,26 @@
 - "Model beats human lip readers" → **"combined system beats unaided humans"**
 
 ## Pull-only (don't volunteer)
-- **Beam aggregation**: shipped May 1, gated by env var, full 1,497 eval running. WER 59→57% on 107-segment validation; voting method has best calibration error of any method measured.
+- **Consensus aggregation** ("20 candidate readings combined" — never "MBR"): production default since May 2. Full 1,497 eval done: review-useful 68.4% → 71.1% (blind judge, statistically significant).
 - **Runtime confidence**: per-token softmax + length-anomaly check. **IS is dev-time only — needs reference text. Never claim IS at runtime.**
+
+---
+
+## Egla-Kafe numbers (July 2026 meeting)
+
+**Anchors** (their footage: 21 conversations, 448 turns):
+- Best video (iPhone 4K, frontal): **~73% of turns understood in context — full plot recovered.**
+- The model's confident subset: **70–92% useful** (own-confidence gate; keeps top 10% → 3%). "It flags its own good output."
+- Capture levers: clearly-conveyed turns **1 in 7 (iPhone) vs 1 in 125 (screen-rec)**; useful turns **27% frontal vs 3% at 45°**. Both statistically significant.
+- Names/places on this footage: **0% recovered, sometimes confidently invented** — never trust an entity unverified.
+- Speaker-notes only, never on slide: per-segment WER 122% (scoring-granularity artifact — conversation-level is 86%), IS values, p-values.
+
+**Hard questions to expect:**
+
+| Q | A |
+|---|---|
+| **"Why did our camera do so badly?"** | "It wasn't your camera — it was a 380px *screen-recording of a composite*, with UI chrome. Native-resolution recording from the same camera is exactly the re-shoot pilot we're proposing." |
+| **"Why is the average so low on our footage?"** | "Per-segment averages punish every one-word turn equally. The deployment view is the confident subset — 70–92% useful — plus whole-conversation reading. Coverage problem, not capability ceiling: where the model locks on, it performs at its English benchmark." |
+| **"Can it tell us names, numbers, dates?"** | "No — and it flags that honestly. On your footage entities were 0% recovered and sometimes fluently invented. Verify specifics against the video; trust the gist and topic." |
+| **"What makes this production-grade on our footage?"** | "Three things, in order: capture protocol (free, immediate), multi-speaker attribution (scoped, weeks), and a training run on your domain data (the partnership)." |
+| **"Two people talking?"** (their canonical case) | "The evaluation already handled it — visual active-speaker detection built the 21 conversation videos. Productizing per-speaker attribution is the scoped next project." |

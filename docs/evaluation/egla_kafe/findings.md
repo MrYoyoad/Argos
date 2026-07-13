@@ -1,7 +1,8 @@
 # Egla-Kafe (עגלת קפה) — active-speaker lip-reading evaluation
 
-Status: **in progress** (scene1+2 full decode running; iPhone-vs-camera + full LLM-judge pending decode).
-Pipeline + tooling validated end-to-end; numbers below are from the first validated conversation.
+Status: **complete** (June 25, 2026). Scene1+2 full decode, iPhone-vs-camera comparison,
+context-aware LLM judge, significance tests, and word-category trust analysis all done;
+deliverables (deck, per-video PDF, 21 said-vs-heard videos, clips, plots) built the same day.
 
 ## What was built
 Active-speaker → decode → align → score → judge pipeline for the client conversations
