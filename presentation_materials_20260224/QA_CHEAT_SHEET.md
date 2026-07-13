@@ -60,7 +60,7 @@
 
 | Q | A |
 |---|---|
-| **"Why did our camera do so badly?"** | "It wasn't your camera — it was a 380px *screen-recording of a composite*, with UI chrome. Native-resolution recording from the same camera is exactly the re-shoot pilot we're proposing." |
+| **"Why did our camera do so badly?"** | "Very likely it wasn't your camera at all — the files we received are *screen recordings of your viewer app*, not camera output. Every file has a different non-standard resolution (1258×696, 1102×650…), the viewer's zoom slider and targeting circle are visible in the pixels, and bitrate is ~7× below the iPhone's. Faces end up 60–90 px tall — the lip signal is destroyed before our model ever sees it. **First ask: export the original files from the camera system** — that alone may fix it, no re-shoot needed. The re-shoot pilot is plan B." |
 | **"Why is the average so low on our footage?"** | "Per-segment averages punish every one-word turn equally. The deployment view is the confident subset — 70–92% useful — plus whole-conversation reading. Coverage problem, not capability ceiling: where the model locks on, it performs at its English benchmark." |
 | **"Can it tell us names, numbers, dates?"** | "No — and it flags that honestly. On your footage entities were 0% recovered and sometimes fluently invented. Verify specifics against the video; trust the gist and topic." |
 | **"What makes this production-grade on our footage?"** | "Three things, in order: capture protocol (free, immediate), multi-speaker attribution (scoped, weeks), and a training run on your domain data (the partnership)." |

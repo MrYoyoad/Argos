@@ -175,6 +175,24 @@ frontal, native 4K. (Not a pure-resolution test — different capture setups —
 unambiguous and large.) Confirms the angle finding: **the model is dominated by input quality
 (resolution / frontality / articulation)** far more than anything tunable downstream.
 
+### File forensics — the "client camera" files are screen recordings, not camera output (Jul 13 2026)
+ffprobe on the raw client files vs the iPhone masters settles what the pipeline actually received:
+
+| Property | iPhone master (IMG_6825) | client files (שפם / סצנה 1-2) |
+|---|---|---|
+| Resolution | 3840×2160 (standard 4K) | **1258×696, 1268×674, 1102×650, 1104×664** — every file a different non-standard size |
+| Codec / bitrate | HEVC, 24.9 Mbps (single encode) | h264, **3.0–3.7 Mbps** (camera encode → screen display → screen-rec re-encode) |
+| Frame content | clean camera image | **viewer-app UI visible in pixels**: zoom slider, yellow targeting-circle overlay, watermark icon |
+
+Non-standard, per-file-varying resolutions are the signature of window captures (someone resized the
+viewer window between recordings); no camera records at 1258×696. In the wide shot inside that window,
+faces are ~60–90 px tall → mouths ~20–30 px, below what the mouth-crop pipeline needs; the lip signal
+is destroyed before decode. Notably the viewer has a zoom control, so **the camera's native stream may
+carry more resolution than was ever exported** — the model has never seen this camera's true output.
+Implication for the client ask, in order of cost: (1) export original files from the camera system
+(may make a re-shoot unnecessary), (2) re-shoot pilot recording natively. Frontality remains an
+independent lever either way (front-vs-45° was measured on iPhone-quality footage).
+
 ## Statistical significance & calibration (Mann-Whitney U on is_score, bootstrap 95% CIs)
 Tool: `docs/_research-tools/generators/egla_kafe_significance.py` → `work/eval/significance.json`.
 Deck plots: `docs/_research-tools/generators/egla_kafe_deck_plots.py` → `deliverables/plots/`.
