@@ -17,7 +17,7 @@ Full-corpus decode finished 2026-05-02 09:39 (beam=20, lenpen=0, repetition_pena
 | `hyp_safe` | 64.02% | ↓0.03pp | 2.533 | 24.05 | 61.66 | 287 / 237 |
 | `hyp_xseg_merge` | 64.05% | =0pp (no overlap in dataset) | 2.532 | 23.98 | 61.66 | 288 / 237 |
 
-`hyp_vote_conf` remains the WER winner on the full set, but the gap shrank from −2.15pp (107 seg) to **−1.56pp** (1,497). All four in-beam methods still improve on top-1; `hyp_safe` is again essentially neutral (by design); `hyp_xseg_merge` is a no-op (the full dataset has no configured cross-segment overlap either). NIV-Y / NIV-Y+P barely move (+0.07 / +0.60pp for vote_conf — useful-output capture is roughly unchanged).
+`hyp_vote_conf` remains the WER winner on the full set, but the gap shrank from −2.15pp (107 seg) to **−1.56pp** (1,497). All four in-beam methods still improve on top-1; `hyp_safe` is again essentially neutral (by design); `hyp_xseg_merge` is a no-op — **correction (July 2026): not because the dataset lacks overlap** (123 video pairs genuinely overlap ~2 s) but because of a `segment_metadata.json` format mismatch that emptied the neighbor map, and the [overlap-consistency analysis](overlap_consistency_analysis.md) shows the no-op was lucky: wired up, xseg would have broken ~10× more words than it fixed. NIV-Y / NIV-Y+P barely move (+0.07 / +0.60pp for vote_conf — useful-output capture is roughly unchanged).
 
 ### Calibration on full set
 
@@ -141,7 +141,7 @@ Dominated by short function-word swaps (`the/a/and/in`) and contraction loss (`y
 | `hyp_mbr` 2nd-best WER | ↓0.78pp | ↓0.22pp | **Yes** (smaller margin) |
 | `hyp_mbr` best calibration at sent_conf≥0.85 | r=−0.458 | r=−0.285 | **Yes, directionally** (gap shrank) |
 | Voting compresses confidence | mean 0.95+, p50=1.000 | mean 0.96+ | **Yes** |
-| `hyp_xseg_merge` no-op | yes | yes | **Yes** (no overlap configured) |
+| `hyp_xseg_merge` no-op | yes | yes | **Yes** (but for the wrong reason — a metadata plumbing bug, not absent overlap; see [overlap analysis](overlap_consistency_analysis.md)) |
 | `hyp_safe` neutral by design | =0.01pp | =0.03pp | **Yes** |
 | NIV-Y+P improves with vote_conf | +0.9pp | +0.60pp | **Yes** (smaller) |
 
@@ -152,6 +152,10 @@ Dominated by short function-word swaps (`the/a/and/in`) and contraction loss (`y
 `hyp_vote_conf` is the production drop-in for raw quality (~2.4% relative WER reduction on 1,497 segs) but ships with confidence that is no longer Bayesian-meaningful — keep voted output for transcripts, keep `hyp_top1` or `hyp_mbr` for any UI surface that uses per-word confidence shading until thresholds are recalibrated. `hyp_mbr` remains the calibration recommendation for confidence-honest workflows.
 
 ---
+
+## Post-hoc phonetic substitution (July 2026) — where the n-best sidecars went next
+
+The 20-beam artifacts this mission ships (`nbest-<fid>.json` + `aggregated.json`) became the candidate source for a post-hoc substitution module ([scripts/pipeline/phonetic_substitute.py](../../scripts/pipeline/phonetic_substitute.py)): medium-confidence `hyp_mbr` display words get beam-mass-weighted, viseme-gated alternatives, arbitrated by two context engines (in-session Claude + local Llama-3.1-8B), applied only where both agree. Validation vs references (egla scene12/shaam + this 1,497 set; arms incl. naive max-mass, span-level, L4 overlap layer, and a Llama-margin sweep through the real apply gates): [phonetic_substitution_eval.md](../evaluation/egla_kafe/phonetic_substitution_eval.md). Headlines: raw beam mass alone breaks 2.2× more than it fixes (the engines are what make it safe); the dual-engine ship arm passed its GO gate for the egla client package (2 subs, 1 fixed / 0 broke); on the wild 1,497 the solo-Llama fix:break ratio crosses 3× at margin **4.0 nats** (45F/15B, ΔWER −0.11pp) — the validated path to any production default.
 
 ## What landed
 
@@ -343,7 +347,7 @@ ls tuning_results/exp_nbest_validation/{aggregated.json,report/aggregator_method
 - **Optimize the per-step entropy gather**: currently a Python loop over 20 sequences × 200+ steps × top-3 vocab gather, ≈2× slower per segment than the buggy old single-beam version. Vectorizing this is the next perf win — should restore ~28 s/seg (the prior baseline timing).
 - **Recalibrate CONF_HIGH / CONF_MED for voted output**: the voting methods compress >50% of words to posterior=1.0. Need new thresholds (proposal: CONF_HIGH=0.95, CONF_MED=0.70 for voted text) so per-word coloring still discriminates.
 - **POS-aware confidence threshold**: function-word calibration is r ≈ −0.45; content-word calibration collapses to ~0 at sent_conf ≥ 0.85. A stricter band for content words (e.g. green only at p ≥ 0.95 for content, p ≥ 0.82 for function) should reduce green-but-wrong leakage on entities/numbers.
-- **Cross-segment merge on overlap-configured datasets**: tuning set has no overlap (no-op confirmed). Full 1,497 also has no overlap configured (`hyp_xseg_merge` = `hyp_top1` exactly).
+- **Cross-segment merge on overlap-configured datasets — RESOLVED July 2026, retire xseg**: the full 1,497 set *does* contain 123 overlapping pairs; `hyp_xseg_merge` no-op'd only because `load_segment_neighbors` can't parse `segment_metadata.json`'s per-clip format. Simulation with a corrected neighbor map: fixed/broke = 18/192 (1:10.7) — do not wire it up; the overlap signal is exploited instead as an engine-gated L4 candidate layer in the phonetic-substitution module. Full analysis: [overlap_consistency_analysis.md](overlap_consistency_analysis.md).
 - **Optimize / replace `word_confusion_conditional.py`**: original conditional script ran past 2h wall-clock on the full set (terminated 2026-05-02 13:35Z). The headline finding (function vs content calibration) was already in [per_method_calibration/](../../english_full_nbest_eval/per_method_calibration/), and [top_confused_words.py](../_research-tools/generators/top_confused_words.py) now produces the top-15 lists in ~12 s. Either retire the old script or vectorize its `per_position_disagreement` hot loop and add tqdm progress.
 
 ## Calibration shipped (Option A — 2026-05-01)
