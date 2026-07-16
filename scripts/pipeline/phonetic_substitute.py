@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Phonetic substitution — lexicon builder + beam-evidence candidate generator (P1).
+"""Phonetic substitution — lexicon + candidates (P1); apply, engines, L4 (P2).
 
 Post-hoc correction pipeline for VSP-LLM lip-reading output, anchored on the
-``hyp_mbr`` display text (production default since May 2 2026). This module
-implements the first two stages:
+``hyp_mbr`` display text (production default since May 2 2026). Subcommands:
 
   build-lexicon   metaphone-bucketed English lexicon from spaCy vocab + on-disk
                   .wrd corpora (+ best-effort LRS3 tar), with a HARD exclusion
@@ -12,9 +11,27 @@ implements the first two stages:
                   layered candidate generation (L1 beam mass / L2 token-top3 /
                   L3 lexicon neighbors) + span-level candidates + phonetic
                   admission scoring -> candidates.json
+  apply           (P2) candidates.json + one-or-more engine decisions.json ->
+                  substitutions.json. Mechanically re-validates EVERY gate
+                  (engine output is untrusted); --agree-mode all is the ship
+                  arm (all engines replace with the SAME chosen word). Pure
+                  function, deterministic output (byte-idempotent), never
+                  mutates candidates.
+  engine-heuristic (P2) engine (c), no LLM: replace iff beam_mass(cand) >=
+                  original_mass + HEUR_MASS_DOMINANCE AND viseme_ok AND spaCy
+                  POS in the slot matches -> decisions.json (shared schema).
+  inject-l4       (P2) overlap-neighbor candidate injector for sets decoded as
+                  OVERLAPPING segments (the 1497 baseline; egla turns don't
+                  overlap): green-gated neighbor words become candidates with
+                  evidence ["overlap"] -> candidates_l4.json.
 
-The ``apply`` subcommand and the context-plausibility engines are a later
-agent's job (P2); they consume candidates.json as specified below.
+Engine (b) (local Llama-3.1-8B-Instruct, teacher-forced conditional log-prob)
+lives in scripts/pipeline/substitution_engine_llama.py; engine (a) (in-session
+Claude) in scripts/pipeline/egla_kafe_substitution_judge.py. All engines emit
+the same decisions.json schema:
+
+  {"engine": <name>, ..., "decisions": [{"utt_id", "pos", "decision":
+    "replace"|"keep", "chosen", "verdict", "rationale"}]}
 
 candidates.json contract (consumed by P2 engines + in-session judging)
 =====================================================================
@@ -146,6 +163,76 @@ corpus_freq desc). Always display-only ("no beam evidence").
 Percentages are always "share of beam-search probability mass", never
 P(correct).
 
+APPLY (P2). apply_substitutions() is a pure function (candidates, decisions,
+agree_mode, marking, overlap_eligible) -> substitutions dict. Only decisions
+are untrusted input; candidates.json is P1's trusted mechanical output. Every
+gate is re-validated regardless of engine:
+  flag level:    not display_only; prob in [FLAG_P_LO, FLAG_P_HI); not numeric
+                 (stored flag + recomputed is_numeric); not entity_suspect;
+                 segment gate RECOMPUTED from mean_word_prob >= SEG_MEANPROB_
+                 FLOOR (stored segment_gate_passed is ignored).
+  decision:      decision == "replace" AND verdict == "clearly_better" (in
+                 --agree-mode all: every engine must say replace with the SAME
+                 chosen word and verdict clearly_better; any: first engine in
+                 CLI order whose proposal passes all gates wins).
+  candidate:     chosen must be a listed candidate; not numeric (recomputed);
+                 not entity_suspect; admissible; "beam" in evidence with
+                 beam_mass >= MIN_BEAM_MASS. With --overlap-eligible (L4
+                 liberal arm, default OFF) a candidate whose eligible_via
+                 contains "overlap" may pass on its green-gated overlap
+                 evidence instead (overlap_weight >= FLAG_P_HI*GREEN_AGREE);
+                 numeric/entity/flag/segment gates still apply.
+  segment level: MAX_SUBS_PER_SEG enforced, priority by candidate score,
+                 deterministic tie-breaks (position asc, word asc).
+Constants come from the candidates file's meta.constants snapshot (module
+CONSTANTS fill any missing key). Output contains NO timestamps: identical
+inputs -> byte-identical substitutions.json (idempotent; adversarially tested
+in scripts/pipeline/test_phonetic_substitute_apply.py).
+
+substitutions.json contract (consumed by V/T renderers + P3 eval):
+{
+  "meta": {"engines", "agree_mode", "method", "constants", "marking",
+           "overlap_eligible", "candidates_file", "decisions_files",
+           "counts": {...}, "blocked": [{utt_id,pos,engine,chosen,reasons}]},
+  "segments": {                       # every candidates segment with >=1 flag
+    "<utt_id>": {
+      "text_original": str,           # display_text verbatim
+      "text_substituted": str,        # == text_original when n_subs == 0;
+                                      # marking subtle: word + U+00B0 degree
+                                      # sign; debug: [orig->chosen]; none: plain
+      "n_subs": int,
+      "subs": [{"pos", "original": {word,prob,agreement,beam_mass_pct},
+                "chosen": {word,beam_mass_pct,phon_dist_norm,viseme_ok},
+                "alternatives": [{word,beam_mass_pct,phon_dist_norm,
+                                  viseme_ok}],  # other beam-evidenced, <=3
+                "engine", "verdict", "rationale"}],
+      "flags_kept": [{"pos", "word",
+                      "candidates": [{word,beam_mass_pct}]}]  # top-2 by mass
+                     # (display cutoff MASS_FLOOR_DISPLAY), for T hovers
+    }}}
+
+L4 (inject-l4; docs/beam-search/overlap_consistency_analysis.md Q4). Overlap
+pairs derive from utt-name frame ranges (segment_metadata.json supplies only
+original_duration for the frames->seconds conversion); both segments' overlap
+spans are extracted with the uniform-position window and aligned with
+align_word_lists — the exact approach of docs/_research-tools/generators/
+analyze_overlap_consistency.py (whose build_pairs/overlap_indices are
+imported, not reimplemented). Where the aligned words differ, the primary
+position is a flag, and the NEIGHBOR word is production-green in the
+neighbor's word_confidence_mbr.json (prob >= FLAG_P_HI AND agreement >=
+GREEN_AGREE), the neighbor word is added as a candidate: evidence gains
+"overlap", overlap_weight = nb_prob * nb_agreement (max over sources; all
+sources recorded), beam_mass stays whatever L1 gave it (possibly 0.0).
+CONSERVATIVE DEFAULT: overlap evidence alone never sets eligible_for_sub —
+the standard beam gate is unchanged. eligible_via (present only on
+overlap-evidenced candidates) lists the policies that admit the candidate:
+"beam" (passes the standard gate) and/or "overlap" (green-gated + flag not
+display_only + not numeric + in-lexicon — NOT requiring phonetic admission,
+since a second decode of the same footage is an independent visual-evidence
+channel; phon fields are still computed and recorded). P3 evaluates both
+policies; apply/engines accept the liberal one only behind explicit
+--overlap-eligible / --include-overlap-eligible flags.
+
 Run with the VSP venv python: /home/ubuntu/vsp-llm-yoad-venv/bin/python
 """
 from __future__ import annotations
@@ -185,6 +272,10 @@ CONSTANTS = {
 # Implementation detail (not part of the specified CONSTANTS contract): cap on
 # how many bucket members get viseme-scored per anchor, by corpus freq desc.
 _L3_SCORE_POOL = 500
+# Engine (c) heuristic: candidate must beat the original's beam mass by this
+# margin (in addition to viseme_ok + POS match). Engine-specific, not a P1
+# candidate-generation constant.
+HEUR_MASS_DOMINANCE = 0.05
 
 # ── Reused primitives (NOT reimplemented) ────────────────────────────────────
 _GEN_CANDIDATES = [
@@ -1172,6 +1263,588 @@ def cmd_candidates(args: argparse.Namespace) -> None:
           f"max |dev| = {mass_dev_max:.2e}")
 
 
+# ── apply (P2) ────────────────────────────────────────────────────────────────
+_VALID_MARKING = ("subtle", "none", "debug")
+_CLEARLY = "clearly_better"
+
+
+def decisions_index(data: dict, path: str = "") -> dict:
+    """Loaded decisions.json -> engine record {engine, path, by_key}. First
+    entry per (utt_id, pos) wins (collect steps dedupe upstream)."""
+    engine = data.get("engine")
+    decisions = data.get("decisions")
+    if not isinstance(engine, str) or not isinstance(decisions, list):
+        raise ValueError(f"not a decisions.json (needs engine + decisions): {path}")
+    by_key: Dict[Tuple[str, int], dict] = {}
+    for d in decisions:
+        key = (d.get("utt_id"), d.get("pos"))
+        if key not in by_key:
+            by_key[key] = d
+    return {"engine": engine, "path": path, "by_key": by_key}
+
+
+def _merged_constants(cands: dict) -> dict:
+    C = dict(CONSTANTS)
+    C.update((cands.get("meta") or {}).get("constants") or {})
+    return C
+
+
+def _flag_gate_reasons(seg: dict, fl: dict, C: dict) -> List[str]:
+    """Flag + segment level re-validation (stored convenience bits ignored)."""
+    reasons = []
+    if fl.get("display_only"):
+        reasons.append("flag_display_only")
+    p = fl.get("prob")
+    if p is None or not (C["FLAG_P_LO"] <= p < C["FLAG_P_HI"]):
+        reasons.append("flag_prob_out_of_band")
+    if fl.get("is_numeric") or is_numeric((fl.get("word") or "").strip().lower()):
+        reasons.append("flag_numeric")
+    if fl.get("entity_suspect"):
+        reasons.append("flag_entity_suspect")
+    mp = seg.get("mean_word_prob")
+    if mp is None or mp < C["SEG_MEANPROB_FLOOR"]:
+        reasons.append("segment_gate")  # recomputed; stored gate bit ignored
+    return reasons
+
+
+def _cand_gate_reasons(cand: dict, C: dict, overlap_eligible: bool) -> List[str]:
+    """Candidate-level re-validation. Standard gate: beam evidence + mass +
+    admissible. Liberal L4 gate (only with overlap_eligible): green-gated
+    overlap evidence. Numeric/entity always block."""
+    reasons = []
+    dor = cand.get("display_only_reasons") or []
+    if is_numeric(cand.get("word") or "") or "numeric" in dor:
+        reasons.append("candidate_numeric")
+    if "entity_suspect" in dor:
+        reasons.append("candidate_entity_suspect")
+    ev = cand.get("evidence") or []
+    standard = ("beam" in ev
+                and (cand.get("beam_mass") or 0.0) >= C["MIN_BEAM_MASS"]
+                and bool(cand.get("admissible")))
+    liberal = (overlap_eligible and "overlap" in ev
+               and "overlap" in (cand.get("eligible_via") or [])
+               and (cand.get("overlap_weight") or 0.0)
+               >= C["FLAG_P_HI"] * C["GREEN_AGREE"])
+    if not (standard or liberal):
+        if "beam" not in ev:
+            reasons.append("candidate_no_beam_evidence")
+        elif (cand.get("beam_mass") or 0.0) < C["MIN_BEAM_MASS"]:
+            reasons.append("candidate_mass_below_floor")
+        if not cand.get("admissible"):
+            reasons.append("candidate_inadmissible")
+    return reasons
+
+
+def _marked_word(orig: str, chosen: str, marking: str) -> str:
+    if marking == "subtle":
+        return chosen + "°"
+    if marking == "debug":
+        return f"[{orig}→{chosen}]"
+    return chosen
+
+
+def apply_substitutions(cands: dict, engines: List[dict], agree_mode: str,
+                        marking: str = "subtle",
+                        overlap_eligible: bool = False) -> dict:
+    """Pure function: candidates + engine decision records -> substitutions
+    dict (see module docstring contract). Never mutates inputs; deterministic
+    (no timestamps), so identical inputs serialize byte-identically."""
+    if agree_mode not in ("any", "all"):
+        raise ValueError(f"agree_mode must be any|all, got {agree_mode!r}")
+    if marking not in _VALID_MARKING:
+        raise ValueError(f"marking must be one of {_VALID_MARKING}, got {marking!r}")
+    if not engines:
+        raise ValueError("at least one decisions file is required")
+    C = _merged_constants(cands)
+    segs = cands["segments"]
+    flag_at = {(u, fl["position"]): fl
+               for u, seg in segs.items() for fl in seg.get("flags", [])}
+
+    keys = sorted({k for eng in engines for k, d in eng["by_key"].items()
+                   if d.get("decision") == "replace"},
+                  key=lambda k: (str(k[0]), k[1] if isinstance(k[1], int) else -1))
+
+    blocked: List[dict] = []
+    accepted: Dict[Tuple[str, int], dict] = {}
+
+    def block(utt, pos, engine, chosen, reasons):
+        blocked.append({"utt_id": utt, "pos": pos, "engine": engine,
+                        "chosen": chosen, "reasons": reasons})
+
+    for key in keys:
+        utt, pos = key
+        proposals = [(eng["engine"], eng["by_key"][key]) for eng in engines
+                     if (eng["by_key"].get(key) or {}).get("decision") == "replace"]
+        if agree_mode == "all":
+            agree_reasons = []
+            not_replace = [eng["engine"] for eng in engines
+                           if (eng["by_key"].get(key) or {}).get("decision") != "replace"]
+            if not_replace:
+                agree_reasons.append(
+                    "engine_disagreement:not_all_replace:" + ",".join(not_replace))
+            chosen_words = sorted({(d.get("chosen") or "").strip().lower()
+                                   for _, d in proposals})
+            if len(chosen_words) > 1:
+                agree_reasons.append(
+                    "engine_disagreement:chosen_differs:" + "|".join(chosen_words))
+            weak = [n for n, d in proposals if d.get("verdict") != _CLEARLY]
+            if weak:
+                agree_reasons.append("verdict_not_clearly_better:" + ",".join(weak))
+            if agree_reasons:
+                block(utt, pos, "+".join(e["engine"] for e in engines),
+                      "|".join(chosen_words), agree_reasons)
+                continue
+            attempts = [("+".join(e["engine"] for e in engines), chosen_words[0],
+                         _CLEARLY,
+                         "; ".join(f"{n}: {d.get('rationale', '')}"
+                                   for n, d in proposals))]
+        else:  # any: engines in CLI order; first proposal passing all gates wins
+            attempts = [(n, (d.get("chosen") or "").strip().lower(),
+                         d.get("verdict"), d.get("rationale", ""))
+                        for n, d in proposals]
+
+        for engine_label, cand_word, verdict, rationale in attempts:
+            reasons: List[str] = []
+            seg = segs.get(utt)
+            fl = flag_at.get(key)
+            if seg is None or fl is None:
+                reasons.append("unknown_utt_pos")
+            else:
+                reasons += _flag_gate_reasons(seg, fl, C)
+            if verdict != _CLEARLY:
+                reasons.append("verdict_not_clearly_better")
+            cand = None
+            if fl is not None:
+                cand = next((c for c in fl.get("candidates", [])
+                             if c.get("word") == cand_word), None)
+                if cand is None:
+                    reasons.append("chosen_not_a_listed_candidate")
+                else:
+                    reasons += _cand_gate_reasons(cand, C, overlap_eligible)
+            if reasons:
+                block(utt, pos, engine_label, cand_word, reasons)
+                continue
+            accepted[key] = {"cand": cand, "engine": engine_label,
+                             "verdict": verdict, "rationale": rationale}
+            break
+
+    # MAX_SUBS_PER_SEG: priority by candidate score, ties (position, word)
+    max_subs = int(C["MAX_SUBS_PER_SEG"])
+    per_seg: Dict[str, List[Tuple[int, dict]]] = defaultdict(list)
+    for (utt, pos), a in accepted.items():
+        per_seg[utt].append((pos, a))
+    final: Dict[str, List[Tuple[int, dict]]] = {}
+    for utt in per_seg:
+        lst = sorted(per_seg[utt],
+                     key=lambda t: (-(t[1]["cand"].get("score") or 0.0),
+                                    t[0], t[1]["cand"]["word"]))
+        for pos, a in lst[max_subs:]:
+            block(utt, pos, a["engine"], a["cand"]["word"], ["max_subs_per_seg"])
+        final[utt] = sorted(lst[:max_subs], key=lambda t: t[0])
+
+    # ── Output (segments in candidates order; every segment with >=1 flag) ──
+    display_floor = C.get("MASS_FLOOR_DISPLAY", CONSTANTS["MASS_FLOOR_DISPLAY"])
+    segments_out: Dict[str, dict] = {}
+    counts: Counter = Counter()
+    for utt, seg in segs.items():
+        flags = seg.get("flags", [])
+        subs_here = final.get(utt, [])
+        if not flags and not subs_here:
+            continue
+        text = seg.get("display_text") or ""
+        words = split_words(text)
+        sub_positions = {pos for pos, _ in subs_here}
+        subs_json = []
+        for pos, a in subs_here:
+            fl = flag_at[(utt, pos)]
+            cand = a["cand"]
+            alternatives = [
+                {"word": c["word"], "beam_mass_pct": c.get("beam_mass_pct", 0.0),
+                 "phon_dist_norm": c.get("phon_dist_norm"),
+                 "viseme_ok": c.get("viseme_ok")}
+                for c in fl.get("candidates", [])
+                if c is not cand and (c.get("beam_mass") or 0.0) > 0.0][:3]
+            subs_json.append({
+                "pos": pos,
+                "original": {
+                    "word": fl["word"], "prob": fl.get("prob"),
+                    "agreement": fl.get("agreement"),
+                    "beam_mass_pct": round(100.0 * (fl.get("original_mass") or 0.0), 1)},
+                "chosen": {
+                    "word": cand["word"],
+                    "beam_mass_pct": cand.get("beam_mass_pct", 0.0),
+                    "phon_dist_norm": cand.get("phon_dist_norm"),
+                    "viseme_ok": cand.get("viseme_ok")},
+                "alternatives": alternatives,
+                "engine": a["engine"], "verdict": a["verdict"],
+                "rationale": a["rationale"],
+            })
+            counts["subs_total"] += 1
+        if subs_here:
+            out_words = list(words)
+            for pos, a in subs_here:
+                out_words[pos] = _marked_word(words[pos], a["cand"]["word"], marking)
+            text_sub = " ".join(out_words)
+        else:
+            text_sub = text
+        flags_kept = []
+        for fl in flags:
+            if fl["position"] in sub_positions:
+                continue
+            top = sorted((c for c in fl.get("candidates", [])
+                          if (c.get("beam_mass") or 0.0) >= display_floor
+                          or (c.get("mass_floor") or 0.0) >= display_floor),
+                         key=lambda c: (-(c.get("beam_mass") or 0.0), c["word"]))[:2]
+            flags_kept.append({"pos": fl["position"], "word": fl["word"],
+                               "candidates": [{"word": c["word"],
+                                               "beam_mass_pct": c.get("beam_mass_pct", 0.0)}
+                                              for c in top]})
+            counts["flags_kept"] += 1
+        segments_out[utt] = {
+            "text_original": text,
+            "text_substituted": text_sub,
+            "n_subs": len(subs_json),
+            "subs": subs_json,
+            "flags_kept": flags_kept,
+        }
+        counts["segments"] += 1
+        if subs_json:
+            counts["segments_with_subs"] += 1
+
+    blocked_reasons: Counter = Counter()
+    for b in blocked:
+        for r in b["reasons"]:
+            blocked_reasons[r.split(":")[0]] += 1
+    meta = {
+        "engines": [e["engine"] for e in engines],
+        "agree_mode": agree_mode,
+        "method": (cands.get("meta") or {}).get("method"),
+        "constants": C,
+        "marking": marking,
+        "overlap_eligible": overlap_eligible,
+        "candidates_file": (cands.get("meta") or {}).get("run"),
+        "decisions_files": [e["path"] for e in engines],
+        "counts": {
+            "replace_proposal_keys": len(keys),
+            "accepted_before_seg_cap": len(accepted),
+            "subs_total": counts["subs_total"],
+            "segments_with_subs": counts["segments_with_subs"],
+            "segments": counts["segments"],
+            "flags_kept": counts["flags_kept"],
+            "blocked_total": len(blocked),
+            "blocked_reasons": dict(sorted(blocked_reasons.items())),
+        },
+        "blocked": blocked,
+    }
+    return {"meta": meta, "segments": segments_out}
+
+
+def cmd_apply(args: argparse.Namespace) -> None:
+    with open(args.candidates, encoding="utf-8") as f:
+        cands = json.load(f)
+    engines = []
+    for path in [p.strip() for p in args.decisions.split(",") if p.strip()]:
+        with open(path, encoding="utf-8") as f:
+            engines.append(decisions_index(json.load(f), path))
+    out = apply_substitutions(cands, engines, args.agree_mode,
+                              marking=args.marking,
+                              overlap_eligible=args.overlap_eligible)
+    outp = Path(args.out)
+    outp.parent.mkdir(parents=True, exist_ok=True)
+    with outp.open("w", encoding="utf-8") as f:
+        json.dump(out, f, indent=1, ensure_ascii=False)
+    c = out["meta"]["counts"]
+    print(f"[apply] engines={'+'.join(out['meta']['engines'])} "
+          f"agree_mode={args.agree_mode} marking={args.marking}")
+    print(f"[apply] proposals={c['replace_proposal_keys']} "
+          f"subs={c['subs_total']} (segments_with_subs={c['segments_with_subs']}) "
+          f"blocked={c['blocked_total']} {c['blocked_reasons']}")
+    print(f"[apply] wrote {outp} ({c['segments']} segments, "
+          f"{c['flags_kept']} flags_kept)")
+
+
+# ── engine-heuristic (P2, engine c) ──────────────────────────────────────────
+
+def cmd_engine_heuristic(args: argparse.Namespace) -> None:
+    with open(args.candidates, encoding="utf-8") as f:
+        cands = json.load(f)
+    segs = cands["segments"]
+
+    import spacy
+    nlp = spacy.load(args.spacy_model, disable=["parser", "lemmatizer", "ner"])
+
+    def slot_pos(text: str, doc, pos: int) -> Optional[str]:
+        spans = _word_char_spans(text)
+        if pos >= len(spans):
+            return None
+        s, e = spans[pos]
+        for t in doc:
+            if t.idx < e and t.idx + len(t.text) > s:
+                return t.pos_
+        return None
+
+    # Work list: judgeable flags (not display_only, >=1 eligible candidate)
+    work = []
+    texts: List[str] = []
+    tindex: Dict[str, int] = {}
+
+    def text_id(t: str) -> int:
+        i = tindex.get(t)
+        if i is None:
+            i = tindex[t] = len(texts)
+            texts.append(t)
+        return i
+
+    for utt, seg in segs.items():
+        text = seg.get("display_text") or ""
+        words = split_words(text)
+        for fl in seg.get("flags", []):
+            if fl.get("display_only"):
+                continue
+            eligible = [c for c in fl.get("candidates", [])
+                        if c.get("eligible_for_sub")]
+            if not eligible:
+                continue
+            pos = fl["position"]
+            variants = []
+            for c in eligible:
+                vw = list(words)
+                vw[pos] = c["word"]
+                variants.append((c, text_id(" ".join(vw))))
+            work.append({"utt": utt, "pos": pos, "fl": fl,
+                         "orig_tid": text_id(text), "variants": variants})
+
+    docs = list(nlp.pipe(texts, batch_size=64))
+    decisions = []
+    n_replace = 0
+    gate_fail: Counter = Counter()
+    for w in work:
+        fl = w["fl"]
+        orig_mass = fl.get("original_mass") or 0.0
+        orig_tag = slot_pos(texts[w["orig_tid"]], docs[w["orig_tid"]], w["pos"])
+        passing = []
+        best_fail = None
+        for c, tid in sorted(w["variants"],
+                             key=lambda t: (-(t[0].get("beam_mass") or 0.0),
+                                            t[0]["word"])):
+            fails = []
+            bm = c.get("beam_mass") or 0.0
+            if bm < orig_mass + HEUR_MASS_DOMINANCE:
+                fails.append(f"mass {bm:.3f} < orig {orig_mass:.3f}+{HEUR_MASS_DOMINANCE}")
+            if not c.get("viseme_ok"):
+                fails.append("viseme_ok false")
+            cand_tag = slot_pos(texts[tid], docs[tid], w["pos"])
+            if orig_tag is None or cand_tag is None or orig_tag != cand_tag:
+                fails.append(f"POS mismatch {orig_tag}!={cand_tag}")
+            if fails:
+                if best_fail is None:
+                    best_fail = (c, fails)
+                for f_ in fails:
+                    gate_fail[f_.split(" ")[0]] += 1
+            else:
+                passing.append(c)
+        if passing:  # highest mass already first by the sort above
+            c = passing[0]
+            n_replace += 1
+            decisions.append({
+                "utt_id": w["utt"], "pos": w["pos"], "decision": "replace",
+                "chosen": c["word"], "verdict": _CLEARLY,
+                "rationale": (f"mass {c.get('beam_mass', 0):.3f} >= orig "
+                              f"{orig_mass:.3f}+{HEUR_MASS_DOMINANCE}; viseme_ok; "
+                              f"POS {orig_tag} match")})
+        else:
+            c, fails = best_fail if best_fail else (None, ["no eligible candidate"])
+            decisions.append({
+                "utt_id": w["utt"], "pos": w["pos"], "decision": "keep",
+                "chosen": "", "verdict": "equal",
+                "rationale": (f"best '{c['word']}': " if c else "") + "; ".join(fails)})
+
+    out = {
+        "engine": "heuristic",
+        "rule": (f"replace iff beam_mass(cand) >= original_mass + "
+                 f"{HEUR_MASS_DOMINANCE} AND viseme_ok AND spaCy POS in slot "
+                 f"matches ({args.spacy_model})"),
+        "candidates": str(Path(args.candidates).resolve()),
+        "spacy_model": args.spacy_model,
+        "n_decisions": len(decisions),
+        "n_replace": n_replace,
+        "gate_failures": dict(sorted(gate_fail.items())),
+        "decisions": decisions,
+    }
+    outp = Path(args.out)
+    outp.parent.mkdir(parents=True, exist_ok=True)
+    with outp.open("w", encoding="utf-8") as f:
+        json.dump(out, f, indent=1, ensure_ascii=False)
+    print(f"[heuristic] {len(decisions)} decisions ({n_replace} replace) "
+          f"-> {outp}")
+    print(f"[heuristic] gate failures: {dict(sorted(gate_fail.items()))}")
+
+
+# ── inject-l4 (P2): overlap-neighbor candidates for overlapping-segment sets ─
+
+def cmd_inject_l4(args: argparse.Namespace) -> None:
+    with open(args.candidates, encoding="utf-8") as f:
+        data = json.load(f)
+    meta = data["meta"]
+    segs = data["segments"]
+    C = _merged_constants(data)
+
+    # Reuse the Workstream-X generator's pair building + window extraction
+    # (generators dir is already on sys.path).
+    import analyze_overlap_consistency as ovl
+
+    with open(args.seg_meta, encoding="utf-8") as f:
+        seg_meta = json.load(f)
+    pairs = ovl.build_pairs(seg_meta)
+    wconf_path = args.wconf or meta.get("inputs", {}).get("wconf")
+    with open(wconf_path, encoding="utf-8") as f:
+        wconf = json.load(f)
+    lex = Lexicon(args.lexicon or meta["inputs"]["lexicon"])
+    green_conf, green_agree = C["FLAG_P_HI"], C["GREEN_AGREE"]
+
+    counts: Counter = Counter()
+    counts["pairs_total"] = len(pairs)
+    touched_flags = set()
+    for p in pairs:
+        for pu, nu, pside, nside, pdur, pov, ndur, nov in (
+                (p["utt_a"], p["utt_b"], "tail", "head",
+                 p["dur_a"], p["ov_a"], p["dur_b"], p["ov_b"]),
+                (p["utt_b"], p["utt_a"], "head", "tail",
+                 p["dur_b"], p["ov_b"], p["dur_a"], p["ov_a"])):
+            counts["directed_pairs"] += 1
+            pseg = segs.get(pu)
+            nrec = wconf.get(nu) or {}
+            nwords_rec = nrec.get("words") or []
+            if pseg is None or not nwords_rec:
+                counts["directed_skipped_missing"] += 1
+                continue
+            pwords = split_words(pseg.get("display_text") or "")
+            nwords = [(r.get("word") or "") for r in nwords_rec]
+            ip = ovl.overlap_indices(pwords, pdur, pov, pside)
+            iq = ovl.overlap_indices(nwords, ndur, nov, nside)
+            if not ip or not iq:
+                counts["directed_empty_span"] += 1
+                continue
+            A = [pwords[i] for i in ip]
+            B = [nwords[i] for i in iq]
+            flags_by_pos = {fl["position"]: fl for fl in pseg.get("flags", [])}
+            for si, ni in align_word_lists(A, B):
+                if si < 0 or ni < 0:
+                    continue
+                counts["aligned_positions"] += 1
+                p_idx, n_idx = ip[si], iq[ni]
+                pw = pwords[p_idx].strip().lower()
+                nw = nwords[n_idx].strip().lower()
+                if pw == nw:
+                    continue
+                counts["differing"] += 1
+                fl = flags_by_pos.get(p_idx)
+                if fl is None:
+                    counts["skipped_primary_not_flagged"] += 1
+                    continue
+                nb = nwords_rec[n_idx]
+                nb_p, nb_a = nb.get("prob"), nb.get("agreement")
+                if (nb_p is None or nb_a is None
+                        or nb_p < green_conf or nb_a < green_agree):
+                    counts["skipped_neighbor_not_green"] += 1
+                    continue
+                counts["green_gated"] += 1
+                anchor_l = (fl.get("word") or "").strip().lower()
+                weight = nb_p * nb_a
+                cand = next((c for c in fl["candidates"] if c["word"] == nw), None)
+                if cand is None:
+                    ph = phon_score(anchor_l, nw)
+                    c_reasons = []
+                    if is_numeric(nw):
+                        c_reasons.append("numeric")
+                    if nw not in lex:
+                        c_reasons.append("entity_suspect")
+                    c_reasons.append("no_beam_evidence")
+                    cand = {
+                        "word": nw,
+                        "beam_mass": 0.0, "beam_mass_pct": 0.0, "n_beams": 0,
+                        "evidence": [],
+                        "corpus_freq": lex.freq(nw),
+                        "phon_dist_norm": ph["phon_dist_norm"],
+                        "viseme_ok": ph["viseme_ok"],
+                        "phon_scorer": ph["phon_scorer"],
+                        "admissible": ph["admissible"],
+                        "display_only": True,
+                        "display_only_reasons": c_reasons,
+                        "eligible_for_sub": False,  # conservative: overlap
+                        # evidence alone never satisfies the beam gate
+                        "score": round(C["PHON_W"] * (1.0 - ph["phon_dist_norm"]), 4),
+                    }
+                    fl["candidates"].append(cand)
+                    counts["injected_new"] += 1
+                else:
+                    counts["corroborated_existing"] += 1
+                if "overlap" not in cand["evidence"]:
+                    cand["evidence"].append("overlap")
+                cand["overlap_weight"] = round(
+                    max(cand.get("overlap_weight") or 0.0, weight), 6)
+                cand.setdefault("overlap_sources", []).append(
+                    {"utt": nu, "pos": n_idx,
+                     "prob": round(nb_p, 6), "agreement": round(nb_a, 6)})
+                via = []
+                if cand.get("eligible_for_sub"):
+                    via.append("beam")
+                dor = cand.get("display_only_reasons") or []
+                if (not fl.get("display_only") and not is_numeric(cand["word"])
+                        and "entity_suspect" not in dor):
+                    via.append("overlap")
+                    counts["eligible_via_overlap"] += 1
+                cand["eligible_via"] = via
+                touched_flags.add((pu, p_idx))
+                counts["overlap_candidates"] += 1
+
+    # keep the contract ordering on every touched flag
+    for pu, p_idx in touched_flags:
+        for fl in segs[pu].get("flags", []):
+            if fl["position"] == p_idx:
+                fl["candidates"].sort(key=lambda c: (-c["score"], c["word"]))
+    counts["flags_touched"] = len(touched_flags)
+    # eligible_via_overlap counts events; report unique candidates too
+    counts["eligible_via_overlap_unique"] = sum(
+        1 for pu, p_idx in touched_flags
+        for fl in segs[pu].get("flags", []) if fl["position"] == p_idx
+        for c in fl["candidates"]
+        if "overlap" in (c.get("eligible_via") or []))
+
+    meta["l4"] = {
+        "seg_meta": args.seg_meta,
+        "wconf": wconf_path,
+        "green_gate": {"conf": green_conf, "agreement": green_agree},
+        "weight": "overlap_weight = nb_prob * nb_agreement (max over sources)",
+        "policy": ("conservative default: eligible_for_sub unchanged (beam "
+                   "evidence + mass >= MIN_BEAM_MASS required); eligible_via "
+                   "'overlap' marks candidates the liberal green-gated policy "
+                   "would admit (apply --overlap-eligible / engine "
+                   "--include-overlap-eligible)"),
+        "counts": {k: counts[k] for k in sorted(counts)},
+    }
+    meta.setdefault("contract_notes", []).append(
+        "L4: candidates with 'overlap' in evidence carry overlap_weight and "
+        "eligible_via (subset of {beam, overlap}); overlap evidence alone "
+        "NEVER sets eligible_for_sub")
+    outp = Path(args.out)
+    outp.parent.mkdir(parents=True, exist_ok=True)
+    with outp.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=1, ensure_ascii=False)
+    print(f"[inject-l4] pairs={counts['pairs_total']} "
+          f"directed={counts['directed_pairs']} "
+          f"aligned={counts['aligned_positions']} differing={counts['differing']}")
+    print(f"[inject-l4] green_gated={counts['green_gated']} -> "
+          f"injected_new={counts['injected_new']} "
+          f"corroborated_existing={counts['corroborated_existing']} "
+          f"(flags touched: {counts['flags_touched']})")
+    print(f"[inject-l4] eligible_via overlap (liberal arm): "
+          f"{counts['eligible_via_overlap_unique']} candidates; "
+          f"skipped: not_flagged={counts['skipped_primary_not_flagged']} "
+          f"not_green={counts['skipped_neighbor_not_green']}")
+    print(f"[inject-l4] wrote {outp}")
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1212,6 +1885,46 @@ def main() -> None:
     ca.add_argument("--tokenizer-dir",
                     default="/home/ubuntu/VSP-LLM/checkpoints/Llama-2-7b-hf")
     ca.set_defaults(func=cmd_candidates)
+
+    apl = sub.add_parser("apply",
+                         help="decisions -> substitutions.json (re-validates "
+                              "every gate; multi-engine agreement arm)")
+    apl.add_argument("--candidates", required=True)
+    apl.add_argument("--decisions", required=True,
+                     help="comma list of decisions.json files (one per engine)")
+    apl.add_argument("--agree-mode", choices=("any", "all"), default="all",
+                     help="all (SHIP ARM): every engine must replace with the "
+                          "same chosen word; any: first passing engine wins")
+    apl.add_argument("--out", required=True)
+    apl.add_argument("--marking", choices=_VALID_MARKING, default="subtle",
+                     help="text_substituted marking: subtle = word+U+00B0, "
+                          "none = plain, debug = [orig->chosen]")
+    apl.add_argument("--overlap-eligible", action="store_true",
+                     help="L4 liberal arm: accept green-gated overlap-evidence "
+                          "candidates in place of the beam gate (default OFF)")
+    apl.set_defaults(func=cmd_apply)
+
+    eh = sub.add_parser("engine-heuristic",
+                        help="engine (c): mass-dominance + viseme_ok + POS "
+                             "match -> decisions.json")
+    eh.add_argument("--candidates", required=True)
+    eh.add_argument("--out", required=True)
+    eh.add_argument("--spacy-model", default="en_core_web_sm")
+    eh.set_defaults(func=cmd_engine_heuristic)
+
+    l4 = sub.add_parser("inject-l4",
+                        help="overlap-neighbor candidate injector (overlapping-"
+                             "segment sets only) -> candidates_l4.json")
+    l4.add_argument("--candidates", required=True)
+    l4.add_argument("--out", required=True)
+    l4.add_argument("--seg-meta",
+                    default="/home/ubuntu/english_full_results/segment_metadata.json")
+    l4.add_argument("--wconf", default=None,
+                    help="word_confidence_mbr.json (default: candidates meta "
+                         "inputs.wconf)")
+    l4.add_argument("--lexicon", default=None,
+                    help="lexicon.json (default: candidates meta inputs.lexicon)")
+    l4.set_defaults(func=cmd_inject_l4)
 
     args = ap.parse_args()
     args.func(args)
