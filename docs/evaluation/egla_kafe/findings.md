@@ -217,7 +217,31 @@ Scored segments only (empty-reference turns excluded): scene1+2 n=410, שפם-ru
   probabilities run **optimistic at the exact-word level** (0.95-bucket words are correct only ~45% of the
   time). Headline the gate's relative selection power, not the absolute probability number.
 
+## July 2026 follow-up package — the "guessing game" bundle (Jul 16 2026)
+
+`deliverables/EglaKafe_guessing_game_20260716.zip` — 7 videos × the triple (`__clean.mp4` /
+`__model_read.mp4` / `__transcript.html`) + client README. Selection (deliberate mix, not a
+highlight reel): top-3 iPhone 4K (img_6825, img_6824, img_6822) + the two worn-mustache scenes
+(img_6821, img_6823) + the two best client-camera scenes (s2_tomer_ido_1, s1_tomer_yoad_1).
+Audio stripped everywhere (`-an`); neutral side labels ("Left/Right speaker"); the hyp-only
+renderer never opens alignment/scripts, so reference leakage is impossible by construction
+(QA: ffprobe 0 audio streams on all 14 mp4s; zero hits for labels/names/script lines/external
+refs across all .ass + .html).
+
+- **MBR anchoring**: display text = `hyp_mbr` via the new `word_confidence_mbr.json` sidecars —
+  aligns the package with the May-2026 production default. Texts differ in places from the
+  July-13 said-vs-heard bundle (top-1-anchored); intended, per user decision.
+- **Phonetic substitution shipped (GO)**: the dual-engine agreement arm passed the binding gate
+  (fixed ≥ 3× broke, ΔWER ≤ 0, 0 entity/number introductions, rate ≤ 5%) — verdict + full arms
+  in [phonetic_substitution_eval.md](phonetic_substitution_eval.md). Exactly **2 corrections
+  ship**, both on s1_tomer_yoad_1: `figured`→`forgot°`, `on`→`of°` — marked subtly (orange +
+  degree sign, never green) with a one-line legend in that video's transcript only.
+- Related analyses: [overlap_consistency_analysis.md](../../beam-search/overlap_consistency_analysis.md)
+  (did overlapping split decodes help; L4 narrow-GO); `resolution_ablation.md` (pending — the
+  4K→2K→1080 decode sweep is the only remaining workstream).
+
 ## Open items
 - שפם / master per-file script (1 vs 2) — resolved via auto-detect (align-to-both); to be confirmed.
 - Full scene1+2 scores + grouped stats (per scene/char/side/angle/speaker) once decode completes.
 - Phase B: dynamic per-frame cropping + audio-visual ASD (masters have audio).
+- Resolution ablation report (`resolution_ablation.md`) — decode sweep + comparator pending.
