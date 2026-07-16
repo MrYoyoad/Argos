@@ -485,11 +485,235 @@ def print_examples(examples, k=8, seed=7):
 
 
 # ---------------------------------------------------------------------------
+# Egla-Kafe analog: per-turn decode vs stream-windows decode (--egla)
+#
+# The egla eval decoded the same client footage twice: (a) per-turn segments
+# (variable length, speaker-boundary-aligned) and (b) fixed non-overlapping
+# 12 s windows over the same active-speaker stream. Both utt names encode
+# [t0,t1] in 25 fps frames on the SAME stream timeline, so each turn can be
+# joined to the window(s) covering its time range. Turn-side word positions
+# are exact (the turn IS the range); only the stream side uses the uniform-
+# position approximation (within its 12 s window). Turns crossing a window
+# boundary take words from both windows, concatenated in time order.
+# Both hyps are scored against the same reference: the turn's corrected
+# script ref. Tokens are normalized with the egla contract regex.
+# ---------------------------------------------------------------------------
+EGLA_EVAL = os.path.expanduser("~/datasets/clients/egla_kafe/work/eval")
+EGLA_TURN_REPORT = os.path.expanduser(
+    "~/flat_runs_archive/20260624_145832/client_outputs/report")   # per-turn run
+EGLA_STREAM_REPORT = os.path.expanduser(
+    "~/flat_runs_archive/20260624_172906/client_outputs/report")   # stream-windows run
+
+_EGLA_TOK = re.compile(r"[a-z0-9]+(?:'[a-z0-9]+)?")
+
+
+def egla_norm(w: str) -> str:
+    """Per-word normalization matching the egla tokenizer (keeps 1:1 word count)."""
+    return "".join(_EGLA_TOK.findall(w.lower()))
+
+
+def egla_load():
+    pt = json.load(open(os.path.join(EGLA_EVAL, "hypo_perturn_scene12.json")))
+    sw = json.load(open(os.path.join(EGLA_EVAL, "hypo_streamwins_scene12.json")))
+    hc = json.load(open(os.path.join(EGLA_EVAL, "run_scene12_all", "hypo-corrected.json")))
+    refs = dict(zip(hc["utt_id"], hc["ref"]))
+    turn_hyps = dict(zip(pt["utt_id"], pt["hypo"]))
+    win_hyps = dict(zip(sw["utt_id"], sw["hypo"]))
+    agg_t = json.load(open(os.path.join(EGLA_TURN_REPORT, "aggregated.json")))
+    agg_s = json.load(open(os.path.join(EGLA_STREAM_REPORT, "aggregated.json")))
+    agr_t = json.load(open(os.path.join(EGLA_TURN_REPORT, "agreement-172610.json")))
+    agr_s = json.load(open(os.path.join(EGLA_STREAM_REPORT, "agreement-172610.json")))
+    wins = defaultdict(list)
+    for u in sw["utt_id"]:
+        m = UTT_PAT.match(u)
+        wins[m.group(1)].append((int(m.group(3)) / 25.0, int(m.group(4)) / 25.0, u))
+    for k in wins:
+        wins[k].sort()
+    return turn_hyps, win_hyps, refs, wins, agg_t, agg_s, agr_t, agr_s
+
+
+def egla_stream_words(wins, win_hyps, stem, t0, t1, scale=1.0):
+    """Stream-window words whose approximate midpoints fall in [t0,t1] (stream
+    timeline). scale expands/shrinks the range around its center. Returns
+    [(win_utt, word_index, word), ...] in time order."""
+    c, half = (t0 + t1) / 2.0, (t1 - t0) / 2.0 * scale
+    lo, hi = c - half, c + half
+    out = []
+    for w0, w1, wu in wins.get(stem, []):
+        if w0 >= hi or w1 <= lo:
+            continue
+        words = split_words(win_hyps.get(wu, ""))
+        n = len(words)
+        dur = w1 - w0
+        for i in range(n):
+            mid = w0 + (i + 0.5) / n * dur
+            if lo <= mid <= hi:
+                out.append((wu, i, words[i]))
+    return out
+
+
+def egla_analyze(scale=1.0, collect_examples=False):
+    turn_hyps, win_hyps, refs, wins, agg_t, agg_s, agr_t, agr_s = egla_load()
+    conf_t = {u: [c if c is not None else 0.0 for _, c in v["hyp_top1_word_confs"]]
+              for u, v in agg_t.items()}
+    conf_s = {u: [c if c is not None else 0.0 for _, c in v["hyp_top1_word_confs"]]
+              for u, v in agg_s.items()}
+
+    stats = Counter()
+    conf_cond = Counter()
+    examples = []
+    for tu, thyp in turn_hyps.items():
+        m = UTT_PAT.match(tu)
+        stem, t0, t1 = m.group(1), int(m.group(3)) / 25.0, int(m.group(4)) / 25.0
+        t_words = split_words(thyp)
+        s_items = egla_stream_words(wins, win_hyps, stem, t0, t1, scale=scale)
+        if not any(w0 < t1 and w1 > t0 for w0, w1, _ in wins.get(stem, [])):
+            stats["turns_uncovered"] += 1
+            continue
+        if not t_words:
+            stats["turns_empty_turnhyp"] += 1
+            continue
+        if not s_items:
+            stats["turns_empty_streamspan"] += 1
+            continue
+        stats["turns_compared"] += 1
+
+        ref_clean = " ".join(_EGLA_TOK.findall(refs.get(tu, "").lower()))
+        t_clean = [egla_norm(w) for w in t_words]
+        s_clean = [egla_norm(w) for _, _, w in s_items]
+        flags_t = ref_alignment_flags(ref_clean, t_clean)
+        flags_s = ref_alignment_flags(ref_clean, s_clean)
+
+        ex = {"turn": tu, "ref": refs.get(tu, ""), "turn_words": t_words,
+              "stream_words": [w for _, _, w in s_items],
+              "windows": sorted({wu for wu, _, _ in s_items}), "rows": []}
+        for ti, si in align_word_lists(t_clean, s_clean):
+            if ti < 0 or si < 0:
+                stats["gaps"] += 1
+                continue
+            stats["aligned_pairs"] += 1
+            t_ref, t_ok = flags_t[ti]
+            s_ref, s_ok = flags_s[si]
+            agree = t_clean[ti] == s_clean[si]
+            if agree:
+                stats["agree"] += 1
+            else:
+                stats["disagree"] += 1
+                if t_ok and not s_ok:
+                    stats["dis_turn_right"] += 1
+                elif s_ok and not t_ok:
+                    stats["dis_stream_right"] += 1
+                elif not t_ok and not s_ok:
+                    stats["dis_both_wrong"] += 1
+                else:
+                    stats["dis_both_right"] += 1
+                wu, wi, _ = s_items[si]
+                sc = conf_s[wu][wi] if wu in conf_s and wi < len(conf_s[wu]) else None
+                sa = agr_s.get(wu, [])
+                sa = sa[wi] if wi < len(sa) else None
+                tc = conf_t[tu][ti] if tu in conf_t and ti < len(conf_t[tu]) else None
+                ta = agr_t.get(tu, [])
+                ta = ta[ti] if ti < len(ta) else None
+                # stream word as candidate for the turn (primary = turn)
+                if sc is not None:
+                    for cond, tag in ((sc >= 0.95, "s95"),
+                                      (sc >= 0.95 and (sa or 0) >= 0.80, "sgreen")):
+                        if cond:
+                            conf_cond[tag] += 1
+                            if s_ok and not t_ok:
+                                conf_cond[tag + "_nb_right"] += 1
+                            if t_ok and not s_ok:
+                                conf_cond[tag + "_self_right"] += 1
+                # turn word as candidate for the stream text (primary = stream)
+                if tc is not None:
+                    for cond, tag in ((tc >= 0.95, "t95"),
+                                      (tc >= 0.95 and (ta or 0) >= 0.80, "tgreen")):
+                        if cond:
+                            conf_cond[tag] += 1
+                            if t_ok and not s_ok:
+                                conf_cond[tag + "_nb_right"] += 1
+                            if s_ok and not t_ok:
+                                conf_cond[tag + "_self_right"] += 1
+                if collect_examples:
+                    ex["rows"].append({"t": t_words[ti], "s": s_items[si][2],
+                                       "t_ref": t_ref, "s_ref": s_ref,
+                                       "t_ok": t_ok, "s_ok": s_ok})
+            if not t_ok:
+                stats["turn_wrong"] += 1
+                if s_ok and not agree:
+                    stats["turn_wrong_stream_right"] += 1
+            if not s_ok:
+                stats["stream_wrong"] += 1
+                if t_ok and not agree:
+                    stats["stream_wrong_turn_right"] += 1
+        if collect_examples and ex["rows"]:
+            examples.append(ex)
+    return stats, conf_cond, examples
+
+
+def egla_report(args):
+    print("== EGLA-KAFE: per-turn decode vs stream-windows decode ==")
+    turn_hyps, win_hyps, refs, wins, agg_t, agg_s, _, _ = egla_load()
+    n_empty_w = sum(1 for h in win_hyps.values() if not h.strip())
+    n_empty_t = sum(1 for h in turn_hyps.values() if not h.strip())
+    print(f"turns: {len(turn_hyps)} (empty hyp: {n_empty_t}) | "
+          f"stream windows: {len(win_hyps)} across {len(wins)} streams "
+          f"(EMPTY window hyp: {n_empty_w} = {pct(n_empty_w, len(win_hyps))})")
+
+    for sc in (0.8, 1.0, 1.2):
+        stats, conf_cond, examples = egla_analyze(scale=sc, collect_examples=(sc == 1.0))
+        ap_, ag, dis = stats["aligned_pairs"], stats["agree"], stats["disagree"]
+        print(f"\n-- extraction range x{sc} --")
+        print(f"  turns compared: {stats['turns_compared']} "
+              f"(uncovered {stats['turns_uncovered']}, empty turn hyp {stats['turns_empty_turnhyp']}, "
+              f"empty stream span {stats['turns_empty_streamspan']})")
+        print(f"  aligned word pairs: {ap_} (gaps {stats['gaps']})  "
+              f"agree {ag} ({pct(ag, ap_)})  disagree {dis} ({pct(dis, ap_)})")
+        print(f"  disagreements: turn-right {stats['dis_turn_right']} ({pct(stats['dis_turn_right'], dis)}), "
+              f"stream-right {stats['dis_stream_right']} ({pct(stats['dis_stream_right'], dis)}), "
+              f"both-wrong {stats['dis_both_wrong']} ({pct(stats['dis_both_wrong'], dis)}), "
+              f"both-right {stats['dis_both_right']} ({pct(stats['dis_both_right'], dis)})")
+        print(f"  rescue: turn wrong {stats['turn_wrong']} -> stream right "
+              f"{stats['turn_wrong_stream_right']} ({pct(stats['turn_wrong_stream_right'], stats['turn_wrong'])})")
+        print(f"          stream wrong {stats['stream_wrong']} -> turn right "
+              f"{stats['stream_wrong_turn_right']} ({pct(stats['stream_wrong_turn_right'], stats['stream_wrong'])})")
+        if sc == 1.0:
+            for tag, lab in (("s95", "stream word conf >= 0.95 (candidate for turn)"),
+                             ("sgreen", "stream word GREEN (conf>=0.95 & agree>=0.80)"),
+                             ("t95", "turn word conf >= 0.95 (candidate for stream)"),
+                             ("tgreen", "turn word GREEN (conf>=0.95 & agree>=0.80)")):
+                n = conf_cond[tag]
+                print(f"  {lab}: n={n}  neighbor right {conf_cond[tag + '_nb_right']} "
+                      f"({pct(conf_cond[tag + '_nb_right'], n)}), self right "
+                      f"{conf_cond[tag + '_self_right']} ({pct(conf_cond[tag + '_self_right'], n)})")
+            if args.examples:
+                rng = random.Random(7)
+                exs = [e for e in examples if any(r["t_ok"] != r["s_ok"] for r in e["rows"])]
+                rng.shuffle(exs)
+                print(f"\n-- examples ({min(args.examples, len(exs))} of {len(exs)} turns with a winner) --")
+                for e in exs[:args.examples]:
+                    print(f"\n  turn {e['turn']}  windows {e['windows']}")
+                    print(f"    ref         : {e['ref']}")
+                    print(f"    turn hyp    : {' '.join(e['turn_words'])}")
+                    print(f"    stream span : {' '.join(e['stream_words'])}")
+                    for r in e["rows"]:
+                        who = ("turn right" if r["t_ok"] and not r["s_ok"] else
+                               "stream right" if r["s_ok"] and not r["t_ok"] else
+                               "both right" if r["t_ok"] else "both wrong")
+                        print(f"      turn:'{r['t']}' vs stream:'{r['s']}'  ref:'{r['t_ref']}'/'{r['s_ref']}'  -> {who}")
+
+
+# ---------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--examples", type=int, default=8, help="disagreement examples to print")
     ap.add_argument("--spot-check", type=int, default=5, help="videos for the raw tail/head spot check")
+    ap.add_argument("--egla", action="store_true",
+                    help="run the Egla-Kafe turn-vs-stream analog instead of the 1497 analysis")
     args = ap.parse_args()
+    if args.egla:
+        egla_report(args)
+        return
 
     meta, refs, hyps, agg, is_score = load_all()
     pairs = build_pairs(meta)

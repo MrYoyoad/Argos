@@ -109,3 +109,45 @@ Two design flaws explain the damage: (a) it aligns **60-word edges** — here ef
 
 Reproduce: `/home/ubuntu/vsp-llm-yoad-venv/bin/python docs/_research-tools/generators/analyze_overlap_consistency.py --examples 12`
 Inputs: `english_full_results/segment_metadata.json`, `english_full_nbest_eval/decode_output/hypo-172610.json` + `agreement-172610.json`, `english_full_nbest_eval/aggregated.json`, `english_full_nbest_eval/report/report.csv`.
+
+---
+
+# Egla-Kafe analog: turn-decode vs stream-decode
+
+**Added July 16, 2026** (follow-up: *"overlap for the EglaKafe vids?"*). The egla per-turn decode has no overlapping segments — but the June-24 eval decoded the same footage twice with different windowing: **per-turn segments** (448 utts, speaker-boundary-aligned, median 1.6 s / mean 2.0 s) and **fixed non-overlapping 12 s stream windows** (79 utts tiling the same 11 active-speaker streams, scene 1+2). Both utt names encode `[t0,t1]` in 25 fps frames on the *same stream timeline*, so every turn joins to the window(s) covering its time range — the same twice-decoded-footage question, with window↔turn instead of segment↔segment.
+
+**Artifacts mapped.** Turn hyps: `work/eval/hypo_perturn_scene12.json`; window hyps: `work/eval/hypo_streamwins_scene12.json` (both `{utt_id, ref, hypo}`; `ref` is the "no audio" placeholder — real refs are the corrected script in `work/eval/run_scene12_all/hypo-corrected.json`). **Both runs have full n-best sidecars** (`aggregated.json` with `hyp_top1_word_confs`, `agreement-172610.json`, `nbest-172610.json`): turn run in `flat_runs_archive/20260624_145832/client_outputs/report/`, stream-windows run in `flat_runs_archive/20260624_172906/client_outputs/report/` (hyp files verified identical to each archive's `hyp_top1`, 448/448 and 79/79). Shaam streams were built (`stream_build_shaam.log`) but never window-decoded — this analog covers scene 1+2 only. (`decode_streams_scene12.log` is a third, separate run — the full streams through pipeline auto-segmentation — not used here.)
+
+**Join method.** Turn-side word positions are exact (the turn *is* the time range); only the stream side uses the uniform-position approximation, within its 12 s window. A turn takes the window words whose midpoints fall in `[t0,t1]`; turns crossing a window boundary (65/448) concatenate words from both windows in time order. Both texts are scored against the same reference — the turn's corrected script line — with the egla contract tokenizer. Comparability funnel: 448 turns → **262 compared** (5 uncovered past the last window, 1 empty turn hyp, **180 with an empty stream span**). The dominant loss is the stream side's silence: **29/79 windows (36.7%) decoded to empty text** (vs 1/448 turns) — 12 s hard-cut windows crossing speaker changes often produce nothing at all.
+
+| Metric (extraction range ×1.0) | Value |
+|---|---|
+| Aligned word pairs | 1,112 (gaps 455) |
+| Agree / **disagree** | 14.0% / **86.0%** (1,497-set analog: 49.1% / 50.9%) |
+| Disagreements: turn-right / stream-right / both-wrong / both-right | 15.2% / 4.2% / **80.0%** / 0.6% |
+| Rescue: turn wrong → stream right | **4.6%** (40/864) |
+| Rescue: stream wrong → turn right | **14.8%** (145/978) |
+| Sensitivity ×0.8 / ×1.2 (disagree; rescues) | 85.8% / 85.4%; 3.8%→3.6% and 14.3%→14.0% — stable |
+
+**Gated rates** (directed disagreements; conf/agreement from each run's own sidecars):
+
+| Candidate word condition | n | Neighbor right | Incumbent right |
+|---|---|---|---|
+| stream word conf ≥ 0.95 (candidate for turn) | 93 | **5.4%** | 20.4% |
+| stream word GREEN (conf ≥ 0.95 ∧ agree ≥ 0.80) | 73 | **6.8%** | 19.2% |
+| turn word conf ≥ 0.95 (candidate for stream) | 97 | 41.2% | 2.1% |
+| turn word GREEN | 63 | **57.1%** | 1.6% |
+
+The green gate that qualified L4 on the 1,497 set (50.6% precision) **inverts** here: a green-confidence stream-window word disagreeing with the turn is right 6.8% of the time, while the turn it would replace is right 19.2% — swapping in green stream words would be ~3× more likely to break than fix. The signal all flows the other way (turn→stream 57.1%), i.e. the per-turn decode is simply the better reading — consistent with the 1,497-set finding that context-appropriate segmentation drives read quality, and independently re-validating the June decision to ship the per-turn arm.
+
+**Examples** (turn hyp vs stream span vs script ref):
+
+1. **`s1_tomer_yoad_1_43_001898_001943`** — ref *"That's why I keep you around."* / turn: *"that's why i came to your house"* / stream: *"that's why i **keep** them in"*. **Stream right** on `keep` — one of only 40 genuine stream rescues.
+2. **`s2_tomer_ido_1_26_001908_001960`** — ref *"So what's next?"* / turn: *"for **what's next**"* / stream: *"did in 2001 space"*. **Turn right ×2**; the window's text at this position is unrelated content.
+3. **`s2_tomer_ido_1_29_002226_002304`** — ref *"Most people have never seen a planning spreadsheet."* / turn: *"**people** with disabilities and people with"* / stream: *"is like action movies i don't know if"* — the extracted stream span is the *previous* turn's speech ("…life is like action movies"): with only ~20 words decoded for a 12 s window, uniform positions misplace them across turn boundaries. This is the join's main hazard (documented below), and it cannot create the 80% both-wrong rate on its own — the window text is wrong wherever it lands.
+
+**Verdict for the egla substitution module: NO-GO.** The stream-windows decode is not a usable candidate source (no L4-analog layer): (a) 40% of turns get no stream text at all (36.7% of windows are empty); (b) where both exist, disagreement is 86% and both-wrong is 80%; (c) the confidence gate inverts — green stream words are 3× more likely to break than fix (6.8% vs 19.2%, n=73); (d) the only strong direction (turn rescues stream, 57.1% green precision) is useless for the package — the turn text *is* the production output. The L4 conclusion from the 1,497 set does not transfer: that GO required two *comparable* readings of the same footage under decode-friendly windowing; here the arms are not comparable (June conversation-level mean WER: per-turn 86.2% vs stream-windows 90.7%, and 36.7% of windows empty) — the weaker windowing arm contributes noise, not candidates.
+
+**Caveats.** Window≠turn boundaries: partial coverage handled by clipping to the intersection and concatenating across covered windows; the ×0.8/×1.2 sweep bounds the resulting placement error (all rates move ≤1.2pp). Sparse window text makes the uniform-position approximation coarser here than on the 1,497 set (example 3); there is no ref-vs-ref calibration analog (both sides share the script ref). Correctness is judged against each turn's own script line, so stream words belonging to a neighboring turn are counted wrong-for-this-turn even if they transcribe the neighboring speech correctly — this can only *understate* stream quality within the turn's range, and the window-level evidence (36.7% empty; June conversation-level mean WER 90.7% vs per-turn 86.2%) supports the same verdict. Independent recheck (difflib alignment, 20 random turns): agree 18.1%, turn-wrong→stream-right 4.1%, stream-wrong→turn-right 11.4% — same picture as the main implementation (14.0% / 4.6% / 14.8%).
+
+Reproduce: `/home/ubuntu/vsp-llm-yoad-venv/bin/python docs/_research-tools/generators/analyze_overlap_consistency.py --egla --examples 10`
