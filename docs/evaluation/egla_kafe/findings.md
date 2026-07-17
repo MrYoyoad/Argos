@@ -174,6 +174,11 @@ a 380px screen-recording of a composite (with UI chrome) — near-unusable; the 
 frontal, native 4K. (Not a pure-resolution test — different capture setups — but the direction is
 unambiguous and large.) Confirms the angle finding: **the model is dominated by input quality
 (resolution / frontality / articulation)** far more than anything tunable downstream.
+**July 17 update**: the pure-resolution test now exists — [resolution_ablation.md](resolution_ablation.md)
+downscaled the same 175 iPhone segments 4K→2K→1080p and found **no measurable change** (all paired
+tests n.s.; clean 1080p with 30–56px mouths scores IS 1.59 vs the screen-recs' 0.88). The camera
+gap is a capture-chain problem (screen-record generations, mouth px in frame), not the resolution
+number.
 
 ### File forensics — the "client camera" files are screen recordings, not camera output (Jul 13 2026)
 ffprobe on the raw client files vs the iPhone masters settles what the pipeline actually received:
@@ -237,11 +242,12 @@ refs across all .ass + .html).
   ship**, both on s1_tomer_yoad_1: `figured`→`forgot°`, `on`→`of°` — marked subtly (orange +
   degree sign, never green) with a one-line legend in that video's transcript only.
 - Related analyses: [overlap_consistency_analysis.md](../../beam-search/overlap_consistency_analysis.md)
-  (did overlapping split decodes help; L4 narrow-GO); `resolution_ablation.md` (pending — the
-  4K→2K→1080 decode sweep is the only remaining workstream).
+  (did overlapping split decodes help; L4 narrow-GO); [resolution_ablation.md](resolution_ablation.md)
+  (**done Jul 17** — 4K→2K→1080p paired sweep on the 175 iPhone segments: resolution changes nothing
+  measurable; mouth-px framing and original-file exports are the levers).
 
 ## Open items
 - שפם / master per-file script (1 vs 2) — resolved via auto-detect (align-to-both); to be confirmed.
 - Full scene1+2 scores + grouped stats (per scene/char/side/angle/speaker) once decode completes.
 - Phase B: dynamic per-frame cropping + audio-visual ASD (masters have audio).
-- Resolution ablation report (`resolution_ablation.md`) — decode sweep + comparator pending.
+- ~~Resolution ablation report~~ — **done Jul 17 2026**: [resolution_ablation.md](resolution_ablation.md).
