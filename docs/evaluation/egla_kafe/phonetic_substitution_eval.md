@@ -180,3 +180,90 @@ That is the ceiling with **reference-derived** candidates: +1–4pp proxy on the
 ```
 
 Cross-references: candidate/gate contract in [phonetic_substitute.py](../../../scripts/pipeline/phonetic_substitute.py) (module docstring); engines `egla_kafe_substitution_judge.py` / `substitution_engine_llama.py`; overlap L4 rationale in [overlap_consistency_analysis.md](../../beam-search/overlap_consistency_analysis.md); n-best context in [n_best_implementation.md](../../beam-search/n_best_implementation.md); oracle bundle in [docs/nbest_viseme_handoff/](../../nbest_viseme_handoff/).
+
+## Addendum (July 19 2026) — judge robustness battery: engine swap, test-retest, determinism
+
+Three questions, one battery: (1) what changes if the agreement arm pairs **two Claude models
+(Fable ∧ Opus)** instead of Claude ∧ Llama — same rubric, same batches, same mechanical collect
+gates, no Llama; (2) is the in-session judge **repeatable** — same query, same model, different
+sessions; (3) is the Llama engine **deterministic** on re-run. All runs reuse the unchanged
+prepare batches and `collect` validation; decisions files sit next to the originals
+(`decisions_claude_r2.json`, `decisions_claude_opus{,_r2}.json`, `decisions_llama_r2.json`;
+1497: `judge/decisions_claude_opus.json`, arms + stats in `eval_arms/fable_opus_analysis.json`,
+runner [analyze_fable_opus_1497.py](../../_research-tools/generators/analyze_fable_opus_1497.py)).
+
+### Test-retest (egla, 91 judgeable flags, fresh session per run)
+
+| pair | decision agreement | replaces (r1 vs r2) | verdict-label agreement |
+|---|---|---|---|
+| Fable r1 vs Fable r2 | **91/91 (100 %)** | 2 vs 2 — same words, same positions | 80/91 (87.9 %) |
+| Opus r1 vs Opus r2 | **91/91 (100 %)** | 0 vs 0 | 80/91 (87.9 %) |
+
+The replace/keep layer is perfectly stable across sessions for both models; variance lives only in
+verdict *labels* on kept flags (equal ↔ worse ↔ somewhat_better relabeling). 87.9 % label
+test-retest matches the March judge gold standard's 86.7 % intra-rater exact rate — that is the
+noise floor of LLM verdict labeling, which the `clearly_better`-only replace gate sits above.
+
+### Engine swap — egla (91 flags)
+
+| pair | decision agreement | replaces | verdict labels |
+|---|---|---|---|
+| Fable r1 vs Opus r1 | 89/91 (97.8 %) | 2 vs 0 | 68/91 (74.7 %) |
+| Fable r1 vs Llama | 80/91 (87.9 %) | 2 vs 13 | — |
+| Opus r1 vs Llama | 78/91 (85.7 %) | 0 vs 13 | — |
+
+The only two Fable–Opus disagreements are **exactly the two shipped substitutions**
+(`figured→forgot`, `on→of`, both s1_tomer_yoad_1): Opus sees the same direction but rates them
+`somewhat_better` / `keep` — below its "clearly better" bar (κ degenerate at 0 because Opus never
+replaces on egla). **Fable ∧ Opus arm on egla = 0 substitutions** — the shipped package would have
+contained no corrections. Conservatism ordering on identical evidence: **Opus (0) < Fable (2) <
+Llama (13)** — the models differ in where "clearly better" begins, not in reading.
+
+### Engine swap — wild set (1497 sample, 300 joint keys)
+
+Opus judged the same 300-flag stratified sample Fable judged (fresh session; collect passed
+300/300, 0 drops, 6 replaces vs Fable's 12).
+
+| pair | raw agreement | κ | replaces | verdict labels |
+|---|---|---|---|---|
+| Fable vs Opus | 292/300 (97.3 %) | **0.543** | 12 vs 6 (5 same-word overlap) | 81.7 % |
+| Opus vs Llama | 83.3 % | 0.106 | 6 vs 52 | 45.0 % |
+| Fable vs Llama (§Engine agreement) | 83.3 % | 0.164 | 12 vs 52 | — |
+
+Same-family κ=0.54 vs cross-family κ≈0.11–0.16: the two Claude models are correlated raters;
+Llama is the independent one. Arms through the real apply gates (sample-only engines — compare
+within this table, not to full-set rows):
+
+| arm | subs | fixed | broke | neutral | ΔWER pp | num/ent intro |
+|---|---|---|---|---|---|---|
+| fable_only (`claude_only`) | 12 | 4 | 3 | 5 | −0.009 | 0/0 |
+| ship (Fable ∧ Llama) | 7 | 3 | 2 | 2 | −0.007 | 0/0 |
+| opus_only | 6 | 2 | 1 | 3 | −0.003 | 0/0 |
+| **fable_opus_agree** | **5** | **2** | **1** | **2** | −0.003 | 0/0 |
+
+Fable ∧ Opus is not a better arm, just a smaller one: 2F/1B vs the ship arm's 3F/2B —
+indistinguishable at this n. Its 2 fixes are genuine phonetic bridges (`that→then`,
+`information→inflammation`); its 1 break (`life→lifestyle`) was endorsed by **both** Claude
+models — intersecting same-family judges does not filter shared failure modes, it mostly takes
+the stricter model's set (5 of Opus's 6 survive). The cross-family Llama veto, by contrast,
+blocked breaks Claude would have shipped (§Engine agreement). The one Opus-only replace Fable
+vetoed (`to→notice`) was neutral (both wrong).
+
+### Determinism (Llama engine)
+
+Re-running `substitution_engine_llama.py` on the identical egla candidates file (same 4-bit NF4
+quantization, same flag order, greedy teacher-forcing) reproduces **bit-identical output**: 91/91
+decisions unchanged, 0 chosen-word flips, max |Δ| drift **0.0000 nats**. The ±0.03-nat caveat in
+§Caveats applies across *changed invocation contexts* (the calibration-vs-eval observation), not
+to like-for-like re-runs — under a pinned invocation the engine is exactly reproducible, so
+`decisions_llama.json` is a stable artifact, not a sample.
+
+### Takeaway
+
+Repeatability is a non-issue at the decision layer (100 % test-retest for both Claude models;
+Llama exact under pinned invocation). The consequential knob is **which model defines "clearly
+better"**: swapping the second engine from Llama to Opus switches the egla arm off entirely
+(0 subs vs the 2 shipped) and shrinks the wild-set arm 7→5 subs at the same ~1.5–2:1 fix:break
+precision — strictly less output, no precision gain, because same-family judges share failure
+modes (κ=0.54) while the cross-family pair is near-independent (κ≈0.11–0.16). The dual-family
+agreement arm (Claude ∧ Llama) remains the shipped design.
