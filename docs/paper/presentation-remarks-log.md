@@ -729,3 +729,15 @@ User request: plan the final client presentation before departure (~1 hr, Egla-K
 | 351 | Deck 2 new (roadmap & ask) | done — `Argos_VSP_EglaKafe_Roadmap_20260713.pptx` (12 slides) via new `generate_egla_kafe_roadmap_deck.py`. 6 net-new slides (title, since-we-met 68→71% consensus beat, what-the-eval-proved, capture-protocol free win incl. "1 in 7 vs 1 in 125", built-to-continue, three-decisions close) + 6 borrowed May-approved builders (compared-to-today, multi-speaker, quality-filter, data-ask, investment-ask, next-steps). |
 | 352 | Audit | done — geometry/jargon/number audit script: 2 footer-overlap bugs in new card stacks fixed (stacks ended 6.35 > footer 6.05; card h 1.45→1.35); zero jargon leaks (no WER/κ/MBR/NIV/LoRA on visible slides); all canonical claims verified present; Deck 1's 4 embedded clips verified inside the package. 9pt slide numbers exempt; borrowed quality-filter micro-labels left as May-approved. |
 | 353 | Collateral | done — QA_CHEAT_SHEET.md: stale "eval running" aggregation line → shipped 68.4→71.1%; new "Egla-Kafe numbers (July 2026)" section with anchors + 5 hard-question answers. New PRE_MEETING_CHECKLIST_JULY2026.md (two-deck dry-run, six in-meeting questions, leave-behinds). findings.md stale "in progress" status → complete (June 25). |
+
+## 2026-07-19 — Amosi continuation deck (ProjectFuture) — round-1 fixes
+
+User request: fix `Argos_VSP_ProjectFuture_20260720.pptx` in place via unzip → XML edit → re-zip (backup first). All five applied to the pptx AND synced into `generate_project_future_deck.py` so a rebuild reproduces them.
+
+| # | Slide | Kind | Remark | Disposition |
+|---|-------|------|--------|-------------|
+| 354 | 2 | content | Stray degree symbol in "figured → forgot°" | done — "figured → forgot" (° was the substitution-mark convention from the guessing-game transcripts; dropped here as noise for this audience) |
+| 355 | 13 (B1) | accuracy | Caption "IS / WER / hallucination per condition" overstates — chart shows only IS and WER panels | done — caption now "IS / WER per condition" |
+| 356 | 7 | layout | Card 2 "Long sentences · framing · file exports" wraps badly (mid-dot starts a line) | done — three separate <a:p> paragraphs: "Long sentences" / "Framing" / "File exports", no bullet chars |
+| 357 | 8 | layout | Lines start with literal "·" fake bullets | done — leading "· " stripped from all 8 lines, one item per <a:p> paragraph (both cards) |
+| 358 | all + notes | style | Global dash pass: em dash "—" → plain hyphen " - " in visible text and speaker notes; keep arrows (→), mid-dot separators (·), minus signs, and en-dash numeric ranges (70–92%, 2–3, 20K–50K) | done — 38 visible runs + 28 notes occurrences replaced; verified zero "—" remain, 4 en-dash ranges intact |
