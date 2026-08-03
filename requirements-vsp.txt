@@ -2,6 +2,13 @@
 # Source venv: /home/ubuntu/vsp-llm-yoad-venv (VSP_VENV)
 # Python 3.9.23 (deadsnakes). Install: see docs/guides/ec2-setup-from-scratch.md §4.
 #
+# !!! INSTALL WITH --no-deps !!!
+#     pip install --no-deps -r requirements-vsp.txt
+# A plain `pip install -r` FAILS (ResolutionImpossible): requests==2.28.2 (legacy
+# openxlab constraint) conflicts with markdown_pdf 1.13.1's declared
+# requests>=2.32.5. The freeze is complete, so --no-deps is safe and exact.
+# (Verified on a fresh py3.9 venv, 2026-08-03.)
+#
 # ---- Editable installs (commented out — install from the LOCAL checkout) ----
 # The frozen editable fairseq line below would re-clone the whole VSP-LLM repo
 # from GitHub. On a fresh box, fairseq must instead be installed editable from

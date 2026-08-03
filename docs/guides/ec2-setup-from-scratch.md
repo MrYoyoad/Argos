@@ -163,15 +163,22 @@ Key pins you should see afterwards: `openai-whisper` (git pin 20250625), `mediap
 /home/ubuntu/vsp-llm-yoad-venv/bin/pip install \
   --index-url https://download.pytorch.org/whl/cu124 torch==2.5.1+cu124
 
-# Bulk install (fairseq -e line is commented out in this file on purpose):
-/home/ubuntu/vsp-llm-yoad-venv/bin/pip install -r /home/ubuntu/requirements-vsp.txt
+# Bulk install — MUST be --no-deps (freeze-restore mode; fairseq -e line is
+# commented out in this file on purpose). Without --no-deps pip's resolver
+# REFUSES this freeze (ResolutionImpossible): the venv carries a legacy
+# requests==2.28.2 (openxlab constraint) while markdown_pdf 1.13.1 declares
+# requests>=2.32.5. The live venv works because it grew incrementally; a fresh
+# resolve of the full set fails. The freeze is complete, so --no-deps is safe.
+# (Verified live 2026-08-03: plain -r fails, --no-deps -r succeeds, all pins land.)
+/home/ubuntu/vsp-llm-yoad-venv/bin/pip install --no-deps -r /home/ubuntu/requirements-vsp.txt
 
 # fairseq — editable, from the LOCAL checkout (NOT from PyPI, NOT re-cloned):
 /home/ubuntu/vsp-llm-yoad-venv/bin/pip install -e /home/ubuntu/VSP-LLM/fairseq
 
-# spaCy English model (pinned in requirements-vsp.txt as a direct wheel URL; if it
-# didn't install, do it explicitly):
-/home/ubuntu/vsp-llm-yoad-venv/bin/python -m spacy download en_core_web_sm
+# spaCy English model: installed BY the freeze (direct wheel URL line, works under
+# --no-deps — verified 2026-08-03: en_core_web_sm 3.8.0 loads). Fallback if missing:
+/home/ubuntu/vsp-llm-yoad-venv/bin/python -c 'import en_core_web_sm' 2>/dev/null || \
+  /home/ubuntu/vsp-llm-yoad-venv/bin/python -m spacy download en_core_web_sm
 ```
 
 Key pins afterwards: `transformers 4.49.0`, `hydra-core 1.0.7`, `omegaconf 2.0.6`,
@@ -212,10 +219,10 @@ on the current box at the listed destination path).
 | 5 | `all-MiniLM-L6-v2` (sentence-transformers, IS scoring) | ~90 MB | `~/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2/` | auto-downloads on first IS run if online; pre-seed from old box for offline |
 | 6 | Whisper `medium.pt` — **what the pipeline uses** (`lib/asr.sh` runs `--model medium`) | 1.5 GB | `/home/ubuntu/.cache/whisper/medium.pt` | auto-downloads on first ASR run, or old box / `vsp_docker/container_payload_20260507/whisper/medium.pt` |
 | 7 | Whisper `large-v3.pt` (research/eval use) | 3.1 GB | `/home/ubuntu/.cache/whisper/large-v3.pt` | auto-downloads when requested, or old box |
-| 8 | insightface `buffalo_l` (5 .onnx files) | ~280 MB | `/home/ubuntu/.insightface/models/buffalo_l/` | auto-downloads when online on first use; **must pre-seed from old box for offline/air-gapped** |
-| 9 | `golden_weights/baseline_20260218/` — golden k-means (`flat_kmeans_200.bin`, cluster counts, decode params) | ~30 MB | `/home/ubuntu/golden_weights/baseline_20260218/` | old box / S3 — irreplaceable, back it up |
-| 10 | `face_alignment/` — vendored ibug git checkout (**NOT a pip package**) | ~100 MB | `/home/ubuntu/face_alignment/` | old box, or `git clone https://github.com/hhj1897/face_alignment` (+ its weights) |
-| 11 | `face_detection/` — vendored ibug git checkout (**NOT a pip package**) | ~100 MB | `/home/ubuntu/face_detection/` | old box, or `git clone https://github.com/hhj1897/face_detection` (+ its weights) |
+| 8 | insightface `buffalo_l` (5 .onnx files) | ~330 MB | `/home/ubuntu/.insightface/models/buffalo_l/` | auto-downloads when online on first use; **must pre-seed from old box for offline/air-gapped** |
+| 9 | `golden_weights/baseline_20260218/` — golden k-means (`flat_kmeans_200.bin`, cluster counts, decode params) | ~1.5 MB | `/home/ubuntu/golden_weights/baseline_20260218/` | old box / S3 — irreplaceable, back it up |
+| 10 | `face_alignment/` — vendored ibug git checkout (**NOT a pip package**) | ~400 MB | `/home/ubuntu/face_alignment/` | old box, or `git clone https://github.com/hhj1897/face_alignment` (+ its weights) |
+| 11 | `face_detection/` — vendored ibug git checkout (**NOT a pip package**) | ~2 MB | `/home/ubuntu/face_detection/` | old box, or `git clone https://github.com/hhj1897/face_detection`. Note: on the current box `Resnet50_Final.pth` is a **broken git-lfs pointer** (134 B) — harmless, the pipeline runs `--detector mediapipe`; only the mobilenet weight (1.8 MB) is real. Use `git lfs pull` if you ever need the retinaface/resnet path. |
 | 12 | `~/vsp_input/` | — | `/home/ubuntu/vsp_input/` | `mkdir -p` (done in §2.4); drop input videos here |
 
 S3 pull pattern (byte-exact for non-Latin keys):
@@ -292,3 +299,18 @@ A fresh box is "done" when 7.3 passes: the report CSV exists with a non-empty hy
 
 8. **`av_hubert/fairseq` is an empty submodule dir on the working box** — leave it empty.
    Only `VSP-LLM/fairseq` is installed and authoritative for decode.
+
+9. **`pip install -r requirements-vsp.txt` without `--no-deps` fails** with
+   ResolutionImpossible (`requests==2.28.2` vs `markdown_pdf`'s `requests>=2.32.5`
+   metadata). The live venv predates that constraint; a fresh resolve of the full set
+   refuses it. Always `--no-deps` for the VSP freeze (§4.3). The ASR freeze resolves
+   fine either way.
+
+10. **Never `pip install -e VSP-LLM/fairseq` from a SECOND venv on a box whose
+    production venv shares the same checkout.** The isolated build re-cythonizes the
+    sources with whatever Cython the build env grabs, overwriting the in-place `.so` +
+    `.cpp` + `version.py` that the production venv loads — observed to half-break
+    production imports (2026-08-03). Recovery: `git checkout -- <cpp/version.py>` then
+    rebuild with the production venv: `cd VSP-LLM/fairseq && <prod-venv>/bin/python
+    setup.py build_ext --inplace`. On a genuinely fresh box (one venv) this is a
+    non-issue.
