@@ -31,24 +31,38 @@ the EC2 role can read everything but write nothing here.
   the AVSpeech processed set, and the LRS3 sample remain **EC2-box-only**, as do all 37 GB of
   model checkpoints.
 
-## Bucket 2 — `s3://yoad-vsp-transfer` (NOT listable; key-by-key access only)
+## Bucket 2 — `s3://yoad-vsp-transfer` — **holds the FULL LRS3 and FULL AVSpeech**
 
-The role has GetObject bucket-wide and PutObject under `vsp/` only. Verified keys (HeadObject):
+> **Major correction (2026-08-03, evening).** Enumerated with short-lived admin credentials
+> (General-Admin-PS role; the "paste a temporary `transfer` profile, delete after" flow).
+> Every prior "LRS3/AVSpeech not in S3" conclusion — including the July-16 sweep in
+> [llama3-migration.md](../finetuning/llama3-migration.md) §4 — was wrong: the EC2 instance
+> role's GetObject is scoped to `vsp/*` only (403 elsewhere), which made the rest of the
+> bucket invisible from the box and earlier probes came up empty.
 
-| Key | Size | What |
-|---|---|---|
-| `vsp/vsp-image-client-build-003-20260513.tar.zst` (+`.sha256`) | 42.7 GB | The shipped client Docker image (build-003 + bwfix) |
-| `vsp/vsp-kit-extras-client-build-003.tar.gz` | 1.6 GB | Build-003 companion kit |
-| `vsp/vsp-kit-extras-client-build-001.tar.gz` | 9.8 MB | Older kit |
-| `vsp/teammate_package_20260803.zip` (+`.sha256`) | 39.8 MB | The Aug-2026 teammate onboarding package |
+**Totals: ~1.47 TB, ~1.83 M objects.** This is a June-15-2026 S3-migration (see `_mig/`) of a
+July-2025 AWS-Backup restore of the original Argos file server.
 
-Probed and absent: `vsp/vsp-image-client-build-001.tar.zst`, `...-002...` (never uploaded or
-differently named — not enumerable without ListBucket).
+| Prefix | Size | Objects | What |
+|---|---|---|---|
+| **`argos/datasets/lrs3orig/`** | **133.8 GB** | **303,901** | **The FULL LRS3 corpus** in canonical layout: `<youtube-id>/<NNNNN>.mp4 + .txt` pairs, main (0xxxx) and pretrain (5xxxx) clips together per talk dir. ~152 K clips ≈ the complete 151,819-utterance LRS3. **This unblocks the Llama-3.1 migration.** The box's 136 MB `lrs3orig_sync.tar` was a 5-talk sample of exactly this tree |
+| **`argos/datasets/avspeech/`** | **519.9 GB** | **611,352** | **The full AVSpeech download**: `videos/xaa/…xa*/<youtube-id>/…` chunked layout. The box's 938 MB `data/avspeech` (1.3 K segments) was a tiny processed slice of this |
+| `argos/custom_data/` | 38.1 GB | 1,118 | The 2024 project filming days: `filming_day_2024_{07_18,10_13,10_28}`, `clean_*` variants, `*_with_25_fps` re-encodes, inference sets |
+| `argos//aws-backup-restore_2025-07-28T…/` | 653.0 GB | 915,248 | The RAW backup-restore dump (note double-slash key prefix). `argos/datasets/` above is its tidied migrated copy — this dump is largely a **duplicate** of lrs3orig+avspeech; candidate for deletion to cut ~650 GB of storage cost once the tidied copy is verified |
+| `vsp/` | 122.2 GB | 27 | All THREE client image builds (001/002/003, ~42.7 GB each — 001/002 exist after all, my key-guessing just missed the date suffixes), kit-extras, Windows installers (WSL msixbundle, zstd, ps1 suite), `vsp_linux_container_FINAL_20260217.tar.gz`, `EglaKafe_guessing_game_20260719.zip` (412 MB), `Argos_VSP_v13_Amosi_2.pptx`, and the Aug-2026 `teammate_package_20260803.zip` |
+| `_mig/` | 253 MB | 9 | Migration tooling: 125 MB `manifest.csv` mapping `il-fs-migration-bucket` backup keys → this bucket, batch-job reports |
 
 ## Access rules (hard-won — do not re-probe)
 
-- EC2 role: **read** both buckets (list only `conversation-datasets-*`), **write** only
-  `yoad-vsp-transfer/vsp/`. No `ListAllMyBuckets`.
-- Writing to `conversation-datasets-*`: laptop only, short-lived portal credentials
-  (`conversation_datasets/refresh_aws_creds.sh` in the bucket documents the flow).
+- EC2 instance role: list+read `conversation-datasets-*`; on `yoad-vsp-transfer` it can
+  **Get/Put under `vsp/*` ONLY** — `argos/*` (the datasets!) returns 403, and no ListBucket
+  anywhere on this bucket. No `ListAllMyBuckets`.
+- **To read the LRS3/AVSpeech trees from the EC2 box**: either (a) paste short-lived portal
+  credentials into a temporary profile (`aws configure --profile transfer`, region `eu-west-1`;
+  **delete `~/.aws/credentials` immediately after**) — the established flow; or (b) extend the
+  bucket policy to grant the instance role `s3:GetObject`+`s3:ListBucket` on `argos/*`
+  (the durable fix if training work starts).
+- Writing to `conversation-datasets-*`: laptop/portal credentials only.
 - Use `aws` CLI or `s5cmd` (`--numworkers 32`); never FUSE. `LC_ALL=C.UTF-8` for Hebrew keys.
+- Disk math before any sync: LRS3 needs 134 GB, AVSpeech 520 GB — the box currently has
+  ~94 GB free. Grow the volume (or attach a data volume) first.

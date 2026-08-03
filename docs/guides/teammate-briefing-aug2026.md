@@ -28,7 +28,9 @@ Sizes measured on this box, August 3, 2026.
 | AVSpeech fine-tune set | `data/` | 938 MB | The 1,273 segments used in LoRA Exp A/B | Box-only |
 | Egla-Kafe processed | `datasets/clients/egla_kafe/` (inside 9.4 GB `datasets/clients/`) | — | Speaker crops, decode runs, deliverables for the live client | Box-only (raw masters have an S3 copy, see next row) |
 | Egla-Kafe RAW masters | `~/egla_kafe/` (repo root) | 2.8 GB | 5 iPhone-4K originals IMG_6821–6825 + client files | **Backed up in S3** (see below) |
-| LRS3 | `datasets/lrs3orig_sync.tar` only | 136 MB | 198 videos, 5 speakers, flat sample — the full corpus is NOT on this box | None found anywhere reachable; this blocks the Llama-3.1 migration ([llama3-migration.md](../finetuning/llama3-migration.md) §4) |
+| LRS3 | `datasets/lrs3orig_sync.tar` (136 MB sample) on box | **133.8 GB full corpus in S3** | **FOUND 2026-08-03: the FULL LRS3** (303,901 objects, ~152K clips) at `s3://yoad-vsp-transfer/argos/datasets/lrs3orig/` — **the Llama-3.1 migration blocker is data-resolved** ([llama3-migration.md](../finetuning/llama3-migration.md) §4) | S3 needs portal creds or a bucket-policy grant to read from EC2 (instance role is 403 on `argos/*`); box needs ≥134 GB free to sync |
+| AVSpeech (full) | — (only the 938 MB slice in `data/`) | **519.9 GB full corpus in S3** | **FOUND 2026-08-03**: complete AVSpeech download (611,352 objects) at `s3://yoad-vsp-transfer/argos/datasets/avspeech/` — removes the 20K-segment training-data ceiling | Same access caveats as LRS3 |
+| 2024 filming days | — | 38.1 GB in S3 | Historical project footage (`argos/custom_data/`: filming days Jul/Oct 2024 + clean + 25fps variants) | S3 only |
 | seamless_interaction | `datasets/seamless_interaction/` | 1.9 GB | Candidate multi-speaker data | Box copy is the only real one — the S3 upload never completed (139 KB stub) |
 | Arabic samples | `datasets/arabic_raw/` (44 MB), `datasets/arabic_flat/`, `datasets/arabic_sample.tar.gz` | ~44 MB+ | Language-extension experiments | Box-only |
 
@@ -42,7 +44,9 @@ Sizes measured on this box, August 3, 2026.
 - **EgoCom (14.9 GB), RealTalk (4.3 GB), AMI (1.1 GB) — curated multi-speaker candidate corpora with word-level transcripts, existing ONLY in S3, not on this box** (relevant to Mission 12)
 - `tmp/` — the July client deliverable bundles (`EglaKafe_full_deliverables.zip` 385 MB, `egla_kafe_meeting_package_20260713.zip` 24 MB)
 - `seamless_interaction/` — 139 KB scripts-only stub (the 1.9 GB sample is box-only)
-- **Zero keys matching avspeech / english_data / lrs3** → those sets exist only on this box.
+- **Zero keys matching avspeech / english_data / lrs3 in THIS bucket** — but see below: the full LRS3 and AVSpeech live in the *other* bucket, invisible to the instance role. The English eval set (`english_data_2025_11_20`) remains genuinely box-only.
+
+**`s3://yoad-vsp-transfer` — where the real data turned out to be** (found 2026-08-03 with temporary admin credentials; the instance role gets 403 outside `vsp/*`, which is why every EC2-side probe missed it): `argos/datasets/lrs3orig/` = **full LRS3, 133.8 GB**; `argos/datasets/avspeech/` = **full AVSpeech, 519.9 GB**; `argos/custom_data/` = 2024 filming days, 38.1 GB; a 653 GB raw backup-restore dump (duplicate of the above); `vsp/` = all three client image builds + kits (122.2 GB). Full breakdown + access recipes: [s3-data-inventory-aug2026.md](s3-data-inventory-aug2026.md).
 
 `s3://yoad-vsp-transfer` is NOT a dataset channel: it is the May-2026 Windows client delivery bucket (Docker image builds). No ListBucket; the instance role has GetObject bucket-wide and — verified 2026-08-03 — **PutObject under the `vsp/` prefix only** (that's how the image tarballs were uploaded). The role cannot `ListAllMyBuckets`; do not re-probe — the sweep is documented in [docs/sessions/HANDOVER.md](../sessions/HANDOVER.md) (2026-07-16 17:32 entry). Writes to `conversation-datasets-733430125971` are NOT possible from this box (uploads there were done from a laptop with short-lived access-portal credentials — see `conversation_datasets/refresh_aws_creds.sh` in the bucket).
 
