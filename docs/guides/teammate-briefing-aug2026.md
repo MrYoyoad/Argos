@@ -36,11 +36,12 @@ Sizes measured on this box, August 3, 2026.
 
 ### S3 reality (verified live 2026-08-03)
 
-`s3://conversation-datasets-733430125971` is the only listable dataset bucket (instance IAM role, bucket-policy pattern; use `s5cmd`; no FUSE mounts, ever). Measured contents:
+`s3://conversation-datasets-733430125971` is the only listable dataset bucket (instance IAM role, bucket-policy pattern; use `s5cmd`; no FUSE mounts, ever). Full object-level breakdown: [s3-data-inventory-aug2026.md](s3-data-inventory-aug2026.md). Highlights:
 
-- `conversation_datasets/egla_kafe/` — 2.98 GB, 68 objects, including all 5 iPhone masters IMG_6821–6825
-- `egocom/` 14.9 GB • `realtalk/` 4.3 GB • `ami/` 1.1 GB • `tmp/` 410 MB
-- `seamless_interaction/` — 139 KB stub (incomplete upload, not a backup)
+- `conversation_datasets/egla_kafe/` — 2.98 GB, 68 objects: the **whole raw client corpus** (5 iPhone masters IMG_6821–6825 + scene 1/2 videos + worn-mustache scenes + 42 per-speaker crops + manifest)
+- **EgoCom (14.9 GB), RealTalk (4.3 GB), AMI (1.1 GB) — curated multi-speaker candidate corpora with word-level transcripts, existing ONLY in S3, not on this box** (relevant to Mission 12)
+- `tmp/` — the July client deliverable bundles (`EglaKafe_full_deliverables.zip` 385 MB, `egla_kafe_meeting_package_20260713.zip` 24 MB)
+- `seamless_interaction/` — 139 KB scripts-only stub (the 1.9 GB sample is box-only)
 - **Zero keys matching avspeech / english_data / lrs3** → those sets exist only on this box.
 
 `s3://yoad-vsp-transfer` is NOT a dataset channel: it is the May-2026 Windows client delivery bucket (Docker image builds). No ListBucket; the instance role has GetObject bucket-wide and — verified 2026-08-03 — **PutObject under the `vsp/` prefix only** (that's how the image tarballs were uploaded). The role cannot `ListAllMyBuckets`; do not re-probe — the sweep is documented in [docs/sessions/HANDOVER.md](../sessions/HANDOVER.md) (2026-07-16 17:32 entry). Writes to `conversation-datasets-733430125971` are NOT possible from this box (uploads there were done from a laptop with short-lived access-portal credentials — see `conversation_datasets/refresh_aws_creds.sh` in the bucket).
