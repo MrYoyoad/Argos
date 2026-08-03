@@ -16,7 +16,8 @@ The two deploy locations are **complementary, not redundant**. They serve disjoi
 
 This is what gets baked into a fresh Docker image.
 
-- `vsp_docker/Dockerfile` does literally `COPY galaxy_export/ ./` into `/workspace`. Whatever sits in `galaxy_export/` becomes the running container's filesystem on first boot.
+- `vsp_docker/Dockerfile` does literally `COPY container_payload_20260507/ ./` into `/workspace`. Whatever sits in `container_payload_20260507/` becomes the running container's filesystem on first boot.
+- **Note (May 2026):** `galaxy_export/` is a legacy stub — the Dockerfile stopped COPYing it when the build context moved to `container_payload_20260507/`; mentions of `galaxy_export/` below describe the same *role* (Docker build context), now fulfilled by the dated payload directory.
 - It is a **complete self-contained bundle**: all source (lib/, vsp-ui/, VSP-LLM/, auto_avsr/, av_hubert/), all docs, **the offline pip wheels** (`offline_requirments.txt`, `spacy_wheels/`), the venvs setup, model caches (`whisper_cache/`, `is_model_cache/`), the desktop icon files. Big.
 - Submodules (VSP-LLM/auto_avsr/av_hubert) are pinned to specific commits so the Docker build is reproducible.
 - Built once and shipped (or rebuilt and re-shipped) when major releases happen.

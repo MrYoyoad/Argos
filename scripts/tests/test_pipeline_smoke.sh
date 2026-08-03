@@ -8,7 +8,10 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR/vsp_docker/galaxy_export"
+# Repo root is two levels up from scripts/tests/. All relative checks below
+# (lib modules, main pipeline, vsp-ui files) run against the EC2 repo root.
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$REPO_ROOT"
 
 PASSED=0
 FAILED=0
@@ -20,12 +23,12 @@ NC='\033[0m'
 
 pass() {
     echo -e "${GREEN}✓${NC} $*"
-    ((PASSED++))
+    ((PASSED++)) || true
 }
 
 fail() {
     echo -e "${RED}✗${NC} $*"
-    ((FAILED++))
+    ((FAILED++)) || true
 }
 
 echo "=================================================="
@@ -221,7 +224,9 @@ echo ""
 # ==================================================
 echo "Checking Whisper model cache..."
 
-WHISPER_CACHE="/home/ubuntu/vsp_docker/galaxy_export/whisper"
+# EC2 uses ~/.cache/whisper (see lib/asr.sh auto-detection); the container
+# payload copy lives at vsp_docker/container_payload_20260507/whisper/.
+WHISPER_CACHE="$HOME/.cache/whisper"
 if [ -d "$WHISPER_CACHE" ]; then
     pass "Whisper cache directory exists"
 

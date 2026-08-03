@@ -218,7 +218,6 @@ class ProgressTracker:
 
         self.state.percent_complete = min(99, int(completed_weight))
 
-
     def _mark_complete(self):
         """Mark pipeline as completed."""
         self.state.state = PipelineState.COMPLETED
