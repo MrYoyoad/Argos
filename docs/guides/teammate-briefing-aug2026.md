@@ -43,7 +43,9 @@ Sizes measured on this box, August 3, 2026.
 - `seamless_interaction/` — 139 KB stub (incomplete upload, not a backup)
 - **Zero keys matching avspeech / english_data / lrs3** → those sets exist only on this box.
 
-`s3://yoad-vsp-transfer` is NOT a dataset channel: the role has GetObject only; it is the May-2026 Windows client delivery bucket (Docker image builds). The role cannot `ListAllMyBuckets`; do not re-probe — the sweep is documented in [docs/sessions/HANDOVER.md](../sessions/HANDOVER.md) (2026-07-16 17:32 entry).
+`s3://yoad-vsp-transfer` is NOT a dataset channel: it is the May-2026 Windows client delivery bucket (Docker image builds). No ListBucket; the instance role has GetObject bucket-wide and — verified 2026-08-03 — **PutObject under the `vsp/` prefix only** (that's how the image tarballs were uploaded). The role cannot `ListAllMyBuckets`; do not re-probe — the sweep is documented in [docs/sessions/HANDOVER.md](../sessions/HANDOVER.md) (2026-07-16 17:32 entry). Writes to `conversation-datasets-733430125971` are NOT possible from this box (uploads there were done from a laptop with short-lived access-portal credentials — see `conversation_datasets/refresh_aws_creds.sh` in the bucket).
+
+**This package as a zip**: `s3://yoad-vsp-transfer/vsp/teammate_package_20260803.zip` (39.8 MB, + `.sha256`) — briefing (md+docx), the four guides, conversation scripts, requirements freezes, vocab tools, the three training-project briefs (md+docx), and `Argos_VSP_Final.pptx`, with a README manifest.
 
 ## 3. Configuration
 
@@ -162,7 +164,7 @@ All numbers verified against [after_amosi_audit.md](../evaluation/after_amosi_au
 | `datasets/seamless_interaction/` | 1.9 GB | No (139 KB stub only) | Upload never completed |
 | `english_full_results/client_outputs/` | 1.7 GB | No | Reproducible from the benchmark set |
 
-Transfer route: `s3://conversation-datasets-733430125971` with `s5cmd` — NOT `yoad-vsp-transfer` (GetObject-only client delivery bucket).
+Transfer route for datasets: `s3://conversation-datasets-733430125971` (readable from this box; writes need laptop portal credentials). Small deliverables: `s3://yoad-vsp-transfer/vsp/` (instance role can write under that prefix).
 
 ## 10. How to run things
 
