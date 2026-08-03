@@ -1,0 +1,1025 @@
+# lrs3_safe_vocab.csv — vocabulary foundation for lip-reading-friendly scripts (Aug 2026)
+# lrs3_freq: word count in 197 LRS3 transcripts (5 TED talks, datasets/lrs3orig_sync.tar)
+# hist_n/hist_acc: hyp-side P(correct) from B3 per-word diagnostic (23,261 words, english_full_nbest_eval/trust_diagnostic/per_word_diagnostic.csv)
+# ref_n/ref_recall: ref-side recall over 1,497 benchmark segments (english_full_results/client_outputs/report/report.csv)
+# flag: safe | risky (common but poorly decoded) | function | entity | number | rare
+word,lrs3_freq,hist_n,hist_acc,ref_n,ref_recall,flag,notes
+you,104,495,0.655,634,0.667,safe,P(correct)=0.65 on 495 decoded; recall=0.67 on 634 ref occurrences
+that,147,458,0.629,520,0.677,safe,P(correct)=0.63 on 458 decoded; recall=0.68 on 520 ref occurrences
+this,62,225,0.569,281,0.548,safe,P(correct)=0.57 on 225 decoded; recall=0.55 on 281 ref occurrences
+have,40,199,0.779,258,0.651,safe,P(correct)=0.78 on 199 decoded; recall=0.65 on 258 ref occurrences
+was,79,202,0.520,170,0.700,safe,P(correct)=0.52 on 202 decoded; recall=0.70 on 170 ref occurrences
+for,24,163,0.638,184,0.647,safe,P(correct)=0.64 on 163 decoded; recall=0.65 on 184 ref occurrences
+what,69,144,0.562,138,0.667,safe,P(correct)=0.56 on 144 decoded; recall=0.67 on 138 ref occurrences
+but,19,144,0.681,175,0.606,safe,P(correct)=0.68 on 144 decoded; recall=0.61 on 175 ref occurrences
+about,51,134,0.701,143,0.699,safe,P(correct)=0.70 on 134 decoded; recall=0.70 on 143 ref occurrences
+with,35,136,0.588,156,0.551,safe,P(correct)=0.59 on 136 decoded; recall=0.55 on 156 ref occurrences
+like,9,144,0.542,160,0.537,safe,P(correct)=0.54 on 144 decoded; recall=0.54 on 160 ref occurrences
+your,20,129,0.628,163,0.546,safe,P(correct)=0.63 on 129 decoded; recall=0.55 on 163 ref occurrences
+are,23,140,0.464,139,0.525,safe,P(correct)=0.46 on 140 decoded; recall=0.53 on 139 ref occurrences
+can,24,122,0.541,154,0.487,safe,P(correct)=0.54 on 122 decoded; recall=0.49 on 154 ref occurrences
+all,28,114,0.640,136,0.574,safe,P(correct)=0.64 on 114 decoded; recall=0.57 on 136 ref occurrences
+going,13,137,0.474,123,0.610,safe,P(correct)=0.47 on 137 decoded; recall=0.61 on 123 ref occurrences
+not,29,102,0.637,140,0.507,safe,P(correct)=0.64 on 102 decoded; recall=0.51 on 140 ref occurrences
+i'm,11,120,0.442,115,0.565,safe,P(correct)=0.44 on 120 decoded; recall=0.57 on 115 ref occurrences
+just,11,102,0.549,129,0.496,safe,P(correct)=0.55 on 102 decoded; recall=0.50 on 129 ref occurrences
+know,9,91,0.582,127,0.488,safe,P(correct)=0.58 on 91 decoded; recall=0.49 on 127 ref occurrences
+they,12,93,0.581,115,0.539,safe,P(correct)=0.58 on 93 decoded; recall=0.54 on 115 ref occurrences
+when,17,103,0.427,88,0.568,safe,P(correct)=0.43 on 103 decoded; recall=0.57 on 88 ref occurrences
+because,17,93,0.591,89,0.652,safe,P(correct)=0.59 on 93 decoded; recall=0.65 on 89 ref occurrences
+don't,15,77,0.584,94,0.585,safe,P(correct)=0.58 on 77 decoded; recall=0.59 on 94 ref occurrences
+there,16,82,0.549,87,0.563,safe,P(correct)=0.55 on 82 decoded; recall=0.56 on 87 ref occurrences
+out,16,80,0.575,86,0.581,safe,P(correct)=0.57 on 80 decoded; recall=0.58 on 86 ref occurrences
+get,14,78,0.551,89,0.517,safe,P(correct)=0.55 on 78 decoded; recall=0.52 on 89 ref occurrences
+will,23,64,0.750,94,0.553,safe,P(correct)=0.75 on 64 decoded; recall=0.55 on 94 ref occurrences
+now,7,70,0.700,101,0.505,safe,P(correct)=0.70 on 70 decoded; recall=0.50 on 101 ref occurrences
+from,18,76,0.724,78,0.731,safe,P(correct)=0.72 on 76 decoded; recall=0.73 on 78 ref occurrences
+really,20,68,0.779,82,0.671,safe,P(correct)=0.78 on 68 decoded; recall=0.67 on 82 ref occurrences
+that's,14,66,0.576,90,0.544,safe,P(correct)=0.58 on 66 decoded; recall=0.54 on 90 ref occurrences
+how,22,60,0.700,83,0.542,safe,P(correct)=0.70 on 60 decoded; recall=0.54 on 83 ref occurrences
+people,25,62,0.855,73,0.781,safe,P(correct)=0.85 on 62 decoded; recall=0.78 on 73 ref occurrences
+time,27,73,0.548,53,0.774,safe,P(correct)=0.55 on 73 decoded; recall=0.77 on 53 ref occurrences
+very,8,73,0.740,72,0.764,safe,P(correct)=0.74 on 73 decoded; recall=0.76 on 72 ref occurrences
+you're,7,53,0.509,74,0.500,safe,P(correct)=0.51 on 53 decoded; recall=0.50 on 74 ref occurrences
+some,5,54,0.667,71,0.606,safe,P(correct)=0.67 on 54 decoded; recall=0.61 on 71 ref occurrences
+our,7,57,0.561,65,0.508,safe,P(correct)=0.56 on 57 decoded; recall=0.51 on 65 ref occurrences
+things,21,53,0.698,55,0.673,safe,P(correct)=0.70 on 53 decoded; recall=0.67 on 55 ref occurrences
+think,25,53,0.528,51,0.588,safe,P(correct)=0.53 on 53 decoded; recall=0.59 on 51 ref occurrences
+more,9,56,0.804,63,0.762,safe,P(correct)=0.80 on 56 decoded; recall=0.76 on 63 ref occurrences
+them,5,48,0.729,66,0.545,safe,P(correct)=0.73 on 48 decoded; recall=0.55 on 66 ref occurrences
+where,12,56,0.554,51,0.627,safe,P(correct)=0.55 on 56 decoded; recall=0.63 on 51 ref occurrences
+right,2,49,0.571,67,0.433,safe,P(correct)=0.57 on 49 decoded; recall=0.43 on 67 ref occurrences
+make,10,48,0.729,56,0.643,safe,P(correct)=0.73 on 48 decoded; recall=0.64 on 56 ref occurrences
+then,12,44,0.545,57,0.456,safe,P(correct)=0.55 on 44 decoded; recall=0.46 on 57 ref occurrences
+say,8,48,0.500,54,0.519,safe,P(correct)=0.50 on 48 decoded; recall=0.52 on 54 ref occurrences
+something,9,46,0.783,55,0.691,safe,P(correct)=0.78 on 46 decoded; recall=0.69 on 55 ref occurrences
+why,22,44,0.591,40,0.725,safe,P(correct)=0.59 on 44 decoded; recall=0.72 on 40 ref occurrences
+way,12,41,0.683,49,0.592,safe,P(correct)=0.68 on 41 decoded; recall=0.59 on 49 ref occurrences
+these,6,38,0.658,47,0.617,safe,P(correct)=0.66 on 38 decoded; recall=0.62 on 47 ref occurrences
+well,2,31,0.806,58,0.483,safe,P(correct)=0.81 on 31 decoded; recall=0.48 on 58 ref occurrences
+been,10,35,0.686,45,0.600,safe,P(correct)=0.69 on 35 decoded; recall=0.60 on 45 ref occurrences
+also,0,43,0.698,45,0.689,safe,P(correct)=0.70 on 43 decoded; recall=0.69 on 45 ref occurrences
+actually,16,33,0.727,37,0.676,safe,P(correct)=0.73 on 33 decoded; recall=0.68 on 37 ref occurrences
+which,9,37,0.595,40,0.600,safe,P(correct)=0.59 on 37 decoded; recall=0.60 on 40 ref occurrences
+there's,6,29,0.690,50,0.420,safe,P(correct)=0.69 on 29 decoded; recall=0.42 on 50 ref occurrences
+their,8,32,0.562,42,0.452,safe,P(correct)=0.56 on 32 decoded; recall=0.45 on 42 ref occurrences
+those,17,29,0.690,36,0.556,safe,P(correct)=0.69 on 29 decoded; recall=0.56 on 36 ref occurrences
+doing,15,26,0.846,40,0.550,safe,P(correct)=0.85 on 26 decoded; recall=0.55 on 40 ref occurrences
+back,12,32,0.656,36,0.639,safe,P(correct)=0.66 on 32 decoded; recall=0.64 on 36 ref occurrences
+got,14,27,0.519,38,0.421,safe,P(correct)=0.52 on 27 decoded; recall=0.42 on 38 ref occurrences
+lot,6,32,0.719,41,0.561,safe,P(correct)=0.72 on 32 decoded; recall=0.56 on 41 ref occurrences
+much,5,34,0.735,40,0.625,safe,P(correct)=0.74 on 34 decoded; recall=0.62 on 40 ref occurrences
+other,4,33,0.576,40,0.475,safe,P(correct)=0.58 on 33 decoded; recall=0.47 on 40 ref occurrences
+years,2,51,0.373,24,0.833,safe,P(correct)=0.37 on 51 decoded; recall=0.83 on 24 ref occurrences
+only,4,27,0.852,43,0.558,safe,P(correct)=0.85 on 27 decoded; recall=0.56 on 43 ref occurrences
+down,9,32,0.688,30,0.767,safe,P(correct)=0.69 on 32 decoded; recall=0.77 on 30 ref occurrences
+need,3,30,0.633,37,0.541,safe,P(correct)=0.63 on 30 decoded; recall=0.54 on 37 ref occurrences
+could,13,20,0.600,36,0.333,safe,P(correct)=0.60 on 20 decoded; recall=0.33 on 36 ref occurrences
+most,14,27,0.778,26,0.846,safe,P(correct)=0.78 on 27 decoded; recall=0.85 on 26 ref occurrences
+use,6,21,0.571,40,0.325,safe,P(correct)=0.57 on 21 decoded; recall=0.33 on 40 ref occurrences
+even,3,30,0.567,33,0.515,safe,P(correct)=0.57 on 30 decoded; recall=0.52 on 33 ref occurrences
+look,5,24,0.542,37,0.351,safe,P(correct)=0.54 on 24 decoded; recall=0.35 on 37 ref occurrences
+who,10,29,0.414,27,0.593,safe,P(correct)=0.41 on 29 decoded; recall=0.59 on 27 ref occurrences
+any,3,31,0.452,31,0.548,safe,P(correct)=0.45 on 31 decoded; recall=0.55 on 31 ref occurrences
+important,13,26,0.692,26,0.731,safe,P(correct)=0.69 on 26 decoded; recall=0.73 on 26 ref occurrences
+than,5,29,0.621,30,0.633,safe,P(correct)=0.62 on 29 decoded; recall=0.63 on 30 ref occurrences
+life,26,16,0.562,21,0.571,safe,P(correct)=0.56 on 16 decoded; recall=0.57 on 21 ref occurrences
+over,5,23,0.739,35,0.514,safe,P(correct)=0.74 on 23 decoded; recall=0.51 on 35 ref occurrences
+talk,11,27,0.481,24,0.542,safe,P(correct)=0.48 on 27 decoded; recall=0.54 on 24 ref occurrences
+day,11,29,0.310,21,0.571,safe,P(correct)=0.31 on 29 decoded; recall=0.57 on 21 ref occurrences
+good,3,22,0.545,36,0.333,safe,P(correct)=0.55 on 22 decoded; recall=0.33 on 36 ref occurrences
+thing,7,20,0.650,34,0.412,safe,P(correct)=0.65 on 20 decoded; recall=0.41 on 34 ref occurrences
+wanted,10,30,0.400,21,0.762,safe,P(correct)=0.40 on 30 decoded; recall=0.76 on 21 ref occurrences
+being,7,31,0.355,21,0.571,safe,P(correct)=0.35 on 31 decoded; recall=0.57 on 21 ref occurrences
+through,9,29,0.379,21,0.571,safe,P(correct)=0.38 on 29 decoded; recall=0.57 on 21 ref occurrences
+work,10,21,0.571,28,0.464,safe,P(correct)=0.57 on 21 decoded; recall=0.46 on 28 ref occurrences
+before,0,27,0.852,30,0.767,safe,P(correct)=0.85 on 27 decoded; recall=0.77 on 30 ref occurrences
+kind,2,23,0.565,32,0.469,safe,P(correct)=0.57 on 23 decoded; recall=0.47 on 32 ref occurrences
+let's,0,21,0.619,36,0.389,safe,P(correct)=0.62 on 21 decoded; recall=0.39 on 36 ref occurrences
+new,2,22,0.636,30,0.500,safe,P(correct)=0.64 on 22 decoded; recall=0.50 on 30 ref occurrences
+she,2,29,0.379,22,0.591,safe,P(correct)=0.38 on 29 decoded; recall=0.59 on 22 ref occurrences
+tell,2,29,0.379,22,0.500,safe,P(correct)=0.38 on 29 decoded; recall=0.50 on 22 ref occurrences
+come,5,27,0.370,19,0.526,safe,P(correct)=0.37 on 27 decoded; recall=0.53 on 19 ref occurrences
+always,2,27,0.519,21,0.762,safe,P(correct)=0.52 on 27 decoded; recall=0.76 on 21 ref occurrences
+bit,3,19,0.632,28,0.464,safe,P(correct)=0.63 on 19 decoded; recall=0.46 on 28 ref occurrences
+different,2,18,0.778,30,0.467,safe,P(correct)=0.78 on 18 decoded; recall=0.47 on 30 ref occurrences
+guys,5,15,0.733,29,0.448,safe,P(correct)=0.73 on 15 decoded; recall=0.45 on 29 ref occurrences
+started,10,18,0.722,21,0.619,safe,P(correct)=0.72 on 18 decoded; recall=0.62 on 21 ref occurrences
+around,7,23,0.565,18,0.722,safe,P(correct)=0.57 on 23 decoded; recall=0.72 on 18 ref occurrences
+can't,0,25,0.600,23,0.652,safe,P(correct)=0.60 on 25 decoded; recall=0.65 on 23 ref occurrences
+maybe,3,22,0.773,23,0.739,safe,P(correct)=0.77 on 22 decoded; recall=0.74 on 23 ref occurrences
+same,2,20,0.600,26,0.462,safe,P(correct)=0.60 on 20 decoded; recall=0.46 on 26 ref occurrences
+many,3,21,0.667,23,0.696,safe,P(correct)=0.67 on 21 decoded; recall=0.70 on 23 ref occurrences
+off,4,19,0.684,24,0.542,safe,P(correct)=0.68 on 19 decoded; recall=0.54 on 24 ref occurrences
+great,0,17,0.765,29,0.448,safe,P(correct)=0.76 on 17 decoded; recall=0.45 on 29 ref occurrences
+point,12,15,0.733,19,0.579,safe,P(correct)=0.73 on 15 decoded; recall=0.58 on 19 ref occurrences
+sure,1,22,0.773,23,0.739,safe,P(correct)=0.77 on 22 decoded; recall=0.74 on 23 ref occurrences
+find,6,20,0.750,19,0.789,safe,P(correct)=0.75 on 20 decoded; recall=0.79 on 19 ref occurrences
+pretty,1,17,0.882,27,0.556,safe,P(correct)=0.88 on 17 decoded; recall=0.56 on 27 ref occurrences
+put,3,15,0.600,27,0.370,safe,P(correct)=0.60 on 15 decoded; recall=0.37 on 27 ref occurrences
+own,4,22,0.455,18,0.556,safe,P(correct)=0.45 on 22 decoded; recall=0.56 on 18 ref occurrences
+should,0,20,0.600,24,0.542,safe,P(correct)=0.60 on 20 decoded; recall=0.54 on 24 ref occurrences
+didn't,3,22,0.318,18,0.556,safe,P(correct)=0.32 on 22 decoded; recall=0.56 on 18 ref occurrences
+home,7,14,1.000,22,0.636,safe,P(correct)=1.00 on 14 decoded; recall=0.64 on 22 ref occurrences
+video,0,18,0.833,25,0.640,safe,P(correct)=0.83 on 18 decoded; recall=0.64 on 25 ref occurrences
+probably,2,18,0.778,21,0.667,safe,P(correct)=0.78 on 18 decoded; recall=0.67 on 21 ref occurrences
+another,3,15,0.733,22,0.500,safe,P(correct)=0.73 on 15 decoded; recall=0.50 on 22 ref occurrences
+every,3,17,0.706,20,0.600,safe,P(correct)=0.71 on 17 decoded; recall=0.60 on 20 ref occurrences
+school,4,19,0.526,17,0.588,safe,P(correct)=0.53 on 19 decoded; recall=0.59 on 17 ref occurrences
+year,2,24,0.333,14,0.571,safe,P(correct)=0.33 on 24 decoded; recall=0.57 on 14 ref occurrences
+long,8,14,0.500,17,0.412,safe,P(correct)=0.50 on 14 decoded; recall=0.41 on 17 ref occurrences
+mean,1,13,0.538,25,0.320,safe,P(correct)=0.54 on 13 decoded; recall=0.32 on 25 ref occurrences
+next,3,17,0.588,19,0.526,safe,P(correct)=0.59 on 17 decoded; recall=0.53 on 19 ref occurrences
+try,6,14,0.571,19,0.421,safe,P(correct)=0.57 on 14 decoded; recall=0.42 on 19 ref occurrences
+between,4,14,0.857,20,0.600,safe,P(correct)=0.86 on 14 decoded; recall=0.60 on 20 ref occurrences
+high,3,19,0.632,16,0.812,safe,P(correct)=0.63 on 19 decoded; recall=0.81 on 16 ref occurrences
+give,2,15,0.800,20,0.600,safe,P(correct)=0.80 on 15 decoded; recall=0.60 on 20 ref occurrences
+idea,5,16,0.500,16,0.500,safe,P(correct)=0.50 on 16 decoded; recall=0.50 on 16 ref occurrences
+everything,1,17,0.765,18,0.778,safe,P(correct)=0.76 on 17 decoded; recall=0.78 on 18 ref occurrences
+name,1,16,0.562,19,0.474,safe,P(correct)=0.56 on 16 decoded; recall=0.47 on 19 ref occurrences
+after,1,16,0.562,18,0.556,safe,P(correct)=0.56 on 16 decoded; recall=0.56 on 18 ref occurrences
+help,9,11,0.636,15,0.600,safe,P(correct)=0.64 on 11 decoded; recall=0.60 on 15 ref occurrences
+show,1,15,0.600,19,0.474,safe,P(correct)=0.60 on 15 decoded; recall=0.47 on 19 ref occurrences
+camera,2,11,0.909,21,0.476,safe,P(correct)=0.91 on 11 decoded; recall=0.48 on 21 ref occurrences
+keep,10,13,0.538,11,0.636,safe,P(correct)=0.54 on 13 decoded; recall=0.64 on 11 ref occurrences
+system,1,16,0.625,17,0.588,safe,P(correct)=0.62 on 16 decoded; recall=0.59 on 17 ref occurrences
+ever,11,12,0.583,10,0.700,safe,P(correct)=0.58 on 12 decoded; recall=0.70 on 10 ref occurrences
+never,4,15,0.533,14,0.571,safe,P(correct)=0.53 on 15 decoded; recall=0.57 on 14 ref occurrences
+talking,2,14,0.643,16,0.562,safe,P(correct)=0.64 on 14 decoded; recall=0.56 on 16 ref occurrences
+whole,0,15,0.667,17,0.588,safe,P(correct)=0.67 on 15 decoded; recall=0.59 on 17 ref occurrences
+better,1,14,0.500,16,0.438,safe,P(correct)=0.50 on 14 decoded; recall=0.44 on 16 ref occurrences
+few,1,12,0.500,18,0.333,safe,P(correct)=0.50 on 12 decoded; recall=0.33 on 18 ref occurrences
+job,9,11,0.727,11,0.818,safe,P(correct)=0.73 on 11 decoded; recall=0.82 on 11 ref occurrences
+last,1,15,0.467,15,0.533,safe,P(correct)=0.47 on 15 decoded; recall=0.53 on 15 ref occurrences
+you've,8,10,0.600,13,0.538,safe,P(correct)=0.60 on 10 decoded; recall=0.54 on 13 ref occurrences
+yourself,10,10,0.500,11,0.545,safe,P(correct)=0.50 on 10 decoded; recall=0.55 on 11 ref occurrences
+business,3,14,0.786,13,0.846,safe,P(correct)=0.79 on 14 decoded; recall=0.85 on 13 ref occurrences
+course,6,10,0.900,14,0.643,safe,P(correct)=0.90 on 10 decoded; recall=0.64 on 14 ref occurrences
+feel,2,16,0.562,12,0.750,safe,P(correct)=0.56 on 16 decoded; recall=0.75 on 12 ref occurrences
+learn,2,11,1.000,17,0.706,safe,P(correct)=1.00 on 11 decoded; recall=0.71 on 17 ref occurrences
+trying,4,14,0.571,12,0.667,safe,P(correct)=0.57 on 14 decoded; recall=0.67 on 12 ref occurrences
+came,4,13,0.538,12,0.583,safe,P(correct)=0.54 on 13 decoded; recall=0.58 on 12 ref occurrences
+might,1,13,0.692,15,0.600,safe,P(correct)=0.69 on 13 decoded; recall=0.60 on 15 ref occurrences
+process,7,12,0.667,10,0.900,safe,P(correct)=0.67 on 12 decoded; recall=0.90 on 10 ref occurrences
+called,1,16,0.375,11,0.545,safe,P(correct)=0.38 on 16 decoded; recall=0.55 on 11 ref occurrences
+he's,3,7,0.571,18,0.222,safe,P(correct)=0.57 on 7 decoded; recall=0.22 on 18 ref occurrences
+hear,0,13,0.615,15,0.533,safe,P(correct)=0.62 on 13 decoded; recall=0.53 on 15 ref occurrences
+looking,1,14,0.571,13,0.615,safe,P(correct)=0.57 on 14 decoded; recall=0.62 on 13 ref occurrences
+money,1,17,0.588,10,1.000,safe,P(correct)=0.59 on 17 decoded; recall=1.00 on 10 ref occurrences
+person,1,15,0.733,12,0.917,safe,P(correct)=0.73 on 15 decoded; recall=0.92 on 12 ref occurrences
+working,4,12,0.583,12,0.583,safe,P(correct)=0.58 on 12 decoded; recall=0.58 on 12 ref occurrences
+obviously,7,8,0.750,12,0.500,safe,P(correct)=0.75 on 8 decoded; recall=0.50 on 12 ref occurrences
+thought,7,8,0.875,12,0.583,safe,P(correct)=0.88 on 8 decoded; recall=0.58 on 12 ref occurrences
+together,5,11,0.727,11,0.727,safe,P(correct)=0.73 on 11 decoded; recall=0.73 on 11 ref occurrences
+using,0,10,0.900,17,0.529,safe,P(correct)=0.90 on 10 decoded; recall=0.53 on 17 ref occurrences
+while,3,12,0.750,12,0.750,safe,P(correct)=0.75 on 12 decoded; recall=0.75 on 12 ref occurrences
+basically,2,10,0.800,14,0.571,safe,P(correct)=0.80 on 10 decoded; recall=0.57 on 14 ref occurrences
+let,0,10,0.800,16,0.500,safe,P(correct)=0.80 on 10 decoded; recall=0.50 on 16 ref occurrences
+part,1,12,0.500,13,0.462,safe,P(correct)=0.50 on 12 decoded; recall=0.46 on 13 ref occurrences
+remember,3,9,0.778,14,0.500,safe,P(correct)=0.78 on 9 decoded; recall=0.50 on 14 ref occurrences
+still,2,14,0.286,10,0.500,safe,P(correct)=0.29 on 14 decoded; recall=0.50 on 10 ref occurrences
+we've,2,10,0.700,14,0.714,safe,P(correct)=0.70 on 10 decoded; recall=0.71 on 14 ref occurrences
+whatever,2,12,0.667,12,0.750,safe,P(correct)=0.67 on 12 decoded; recall=0.75 on 12 ref occurrences
+become,1,11,0.727,13,0.692,safe,P(correct)=0.73 on 11 decoded; recall=0.69 on 13 ref occurrences
+body,0,12,0.750,13,0.692,safe,P(correct)=0.75 on 12 decoded; recall=0.69 on 13 ref occurrences
+book,3,8,0.500,14,0.286,safe,P(correct)=0.50 on 8 decoded; recall=0.29 on 14 ref occurrences
+certain,2,11,0.636,12,0.667,safe,P(correct)=0.64 on 11 decoded; recall=0.67 on 12 ref occurrences
+difficult,0,12,0.833,13,0.769,safe,P(correct)=0.83 on 12 decoded; recall=0.77 on 13 ref occurrences
+done,4,11,0.364,10,0.500,safe,P(correct)=0.36 on 11 decoded; recall=0.50 on 10 ref occurrences
+everybody,4,7,0.857,14,0.500,safe,P(correct)=0.86 on 7 decoded; recall=0.50 on 14 ref occurrences
+example,0,13,0.769,12,0.833,safe,P(correct)=0.77 on 13 decoded; recall=0.83 on 12 ref occurrences
+food,0,12,0.750,13,0.769,safe,P(correct)=0.75 on 12 decoded; recall=0.77 on 13 ref occurrences
+i'd,8,7,0.286,10,0.500,safe,P(correct)=0.29 on 7 decoded; recall=0.50 on 10 ref occurrences
+such,2,11,0.545,12,0.500,safe,P(correct)=0.55 on 11 decoded; recall=0.50 on 12 ref occurrences
+went,10,9,0.444,6,0.667,safe,P(correct)=0.44 on 9 decoded; recall=0.67 on 6 ref occurrences
+bad,2,10,0.800,12,0.750,safe,P(correct)=0.80 on 10 decoded; recall=0.75 on 12 ref occurrences
+big,2,6,0.667,16,0.312,safe,P(correct)=0.67 on 6 decoded; recall=0.31 on 16 ref occurrences
+change,3,10,0.700,11,0.727,safe,P(correct)=0.70 on 10 decoded; recall=0.73 on 11 ref occurrences
+coming,3,11,0.545,10,0.600,safe,P(correct)=0.55 on 11 decoded; recall=0.60 on 10 ref occurrences
+each,0,11,0.545,13,0.462,safe,P(correct)=0.55 on 11 decoded; recall=0.46 on 13 ref occurrences
+felt,3,11,0.727,10,0.900,safe,P(correct)=0.73 on 11 decoded; recall=0.90 on 10 ref occurrences
+hand,0,9,0.778,15,0.467,safe,P(correct)=0.78 on 9 decoded; recall=0.47 on 15 ref occurrences
+looks,3,6,0.833,15,0.333,safe,P(correct)=0.83 on 6 decoded; recall=0.33 on 15 ref occurrences
+old,3,15,0.267,6,0.667,safe,P(correct)=0.27 on 15 decoded; recall=0.67 on 6 ref occurrences
+phone,0,10,0.800,14,0.571,safe,P(correct)=0.80 on 10 decoded; recall=0.57 on 14 ref occurrences
+play,2,13,0.385,9,0.667,safe,P(correct)=0.38 on 13 decoded; recall=0.67 on 9 ref occurrences
+thank,2,14,0.143,8,0.625,safe,P(correct)=0.14 on 14 decoded; recall=0.62 on 8 ref occurrences
+yeah,0,12,0.417,12,0.500,safe,P(correct)=0.42 on 12 decoded; recall=0.50 on 12 ref occurrences
+having,5,8,0.500,10,0.400,safe,P(correct)=0.50 on 8 decoded; recall=0.40 on 10 ref occurrences
+sort,3,8,0.625,12,0.583,safe,P(correct)=0.62 on 8 decoded; recall=0.58 on 12 ref occurrences
+build,1,6,0.667,15,0.267,safe,P(correct)=0.67 on 6 decoded; recall=0.27 on 15 ref occurrences
+fact,4,8,0.875,10,0.700,safe,P(correct)=0.88 on 8 decoded; recall=0.70 on 10 ref occurrences
+left,1,8,0.625,13,0.462,safe,P(correct)=0.62 on 8 decoded; recall=0.46 on 13 ref occurrences
+less,1,11,0.727,10,0.800,safe,P(correct)=0.73 on 11 decoded; recall=0.80 on 10 ref occurrences
+means,0,5,1.000,17,0.294,safe,P(correct)=1.00 on 5 decoded; recall=0.29 on 17 ref occurrences
+number,3,9,0.667,10,0.600,safe,P(correct)=0.67 on 9 decoded; recall=0.60 on 10 ref occurrences
+stuff,0,11,0.545,11,0.545,safe,P(correct)=0.55 on 11 decoded; recall=0.55 on 11 ref occurrences
+thinking,8,6,0.667,8,0.500,safe,P(correct)=0.67 on 6 decoded; recall=0.50 on 8 ref occurrences
+water,4,7,0.571,11,0.455,safe,P(correct)=0.57 on 7 decoded; recall=0.45 on 11 ref occurrences
+bring,3,7,0.714,11,0.455,safe,P(correct)=0.71 on 7 decoded; recall=0.45 on 11 ref occurrences
+call,0,10,0.600,11,0.545,safe,P(correct)=0.60 on 10 decoded; recall=0.55 on 11 ref occurrences
+control,3,9,0.889,9,0.889,safe,P(correct)=0.89 on 9 decoded; recall=0.89 on 9 ref occurrences
+family,6,6,0.667,9,0.444,safe,P(correct)=0.67 on 6 decoded; recall=0.44 on 9 ref occurrences
+group,2,9,0.778,10,0.700,safe,P(correct)=0.78 on 9 decoded; recall=0.70 on 10 ref occurrences
+happened,7,8,0.375,6,0.500,safe,P(correct)=0.38 on 8 decoded; recall=0.50 on 6 ref occurrences
+place,2,9,0.556,10,0.500,safe,P(correct)=0.56 on 9 decoded; recall=0.50 on 10 ref occurrences
+question,5,9,0.556,7,0.714,safe,P(correct)=0.56 on 9 decoded; recall=0.71 on 7 ref occurrences
+room,1,8,0.625,12,0.417,safe,P(correct)=0.62 on 8 decoded; recall=0.42 on 12 ref occurrences
+set,9,5,0.800,7,0.571,safe,P(correct)=0.80 on 5 decoded; recall=0.57 on 7 ref occurrences
+away,4,7,0.857,9,0.667,safe,P(correct)=0.86 on 7 decoded; recall=0.67 on 9 ref occurrences
+both,0,8,0.625,12,0.417,safe,P(correct)=0.62 on 8 decoded; recall=0.42 on 12 ref occurrences
+far,0,6,1.000,14,0.429,safe,P(correct)=1.00 on 6 decoded; recall=0.43 on 14 ref occurrences
+move,2,9,0.667,9,0.667,safe,P(correct)=0.67 on 9 decoded; recall=0.67 on 9 ref occurrences
+single,1,10,0.500,9,0.556,safe,P(correct)=0.50 on 10 decoded; recall=0.56 on 9 ref occurrences
+whether,3,5,1.000,12,0.417,safe,P(correct)=1.00 on 5 decoded; recall=0.42 on 12 ref occurrences
+able,4,8,0.500,7,0.571,safe,P(correct)=0.50 on 8 decoded; recall=0.57 on 7 ref occurrences
+anything,2,7,0.714,10,0.500,safe,P(correct)=0.71 on 7 decoded; recall=0.50 on 10 ref occurrences
+check,0,8,0.625,11,0.545,safe,P(correct)=0.62 on 8 decoded; recall=0.55 on 11 ref occurrences
+experience,3,6,0.500,10,0.300,safe,P(correct)=0.50 on 6 decoded; recall=0.30 on 10 ref occurrences
+happens,2,7,0.857,10,0.600,safe,P(correct)=0.86 on 7 decoded; recall=0.60 on 10 ref occurrences
+moment,6,6,0.667,7,0.714,safe,P(correct)=0.67 on 6 decoded; recall=0.71 on 7 ref occurrences
+myself,3,9,0.667,7,0.857,safe,P(correct)=0.67 on 9 decoded; recall=0.86 on 7 ref occurrences
+program,0,9,0.889,10,0.800,safe,P(correct)=0.89 on 9 decoded; recall=0.80 on 10 ref occurrences
+reason,5,7,0.714,7,0.714,safe,P(correct)=0.71 on 7 decoded; recall=0.71 on 7 ref occurrences
+united,1,13,0.308,5,1.000,safe,P(correct)=0.31 on 13 decoded; recall=1.00 on 5 ref occurrences
+weight,0,8,0.875,11,0.636,safe,P(correct)=0.88 on 8 decoded; recall=0.64 on 11 ref occurrences
+welcome,0,6,0.833,13,0.385,safe,P(correct)=0.83 on 6 decoded; recall=0.38 on 13 ref occurrences
+wrong,3,9,0.556,7,0.714,safe,P(correct)=0.56 on 9 decoded; recall=0.71 on 7 ref occurrences
+young,6,7,0.714,6,0.833,safe,P(correct)=0.71 on 7 decoded; recall=0.83 on 6 ref occurrences
+believe,0,8,1.000,10,0.800,safe,P(correct)=1.00 on 8 decoded; recall=0.80 on 10 ref occurrences
+company,0,7,1.000,11,0.636,safe,P(correct)=1.00 on 7 decoded; recall=0.64 on 11 ref occurrences
+hands,1,8,0.500,9,0.444,safe,P(correct)=0.50 on 8 decoded; recall=0.44 on 9 ref occurrences
+hard,2,10,0.500,6,0.833,safe,P(correct)=0.50 on 10 decoded; recall=0.83 on 6 ref occurrences
+live,2,6,0.667,10,0.400,safe,P(correct)=0.67 on 6 decoded; recall=0.40 on 10 ref occurrences
+problem,2,6,0.833,10,0.500,safe,P(correct)=0.83 on 6 decoded; recall=0.50 on 10 ref occurrences
+sometimes,1,8,0.875,9,0.778,safe,P(correct)=0.88 on 8 decoded; recall=0.78 on 9 ref occurrences
+though,2,6,0.833,10,0.500,safe,P(correct)=0.83 on 6 decoded; recall=0.50 on 10 ref occurrences
+week,0,6,0.833,12,0.417,safe,P(correct)=0.83 on 6 decoded; recall=0.42 on 12 ref occurrences
+common,0,7,0.857,10,0.700,safe,P(correct)=0.86 on 7 decoded; recall=0.70 on 10 ref occurrences
+couple,2,8,0.750,7,0.857,safe,P(correct)=0.75 on 8 decoded; recall=0.86 on 7 ref occurrences
+enough,4,5,0.800,8,0.500,safe,P(correct)=0.80 on 5 decoded; recall=0.50 on 8 ref occurrences
+making,1,6,0.833,10,0.500,safe,P(correct)=0.83 on 6 decoded; recall=0.50 on 10 ref occurrences
+minutes,2,8,0.750,7,0.857,safe,P(correct)=0.75 on 8 decoded; recall=0.86 on 7 ref occurrences
+outside,2,9,0.556,6,0.833,safe,P(correct)=0.56 on 9 decoded; recall=0.83 on 6 ref occurrences
+song,1,11,0.364,5,0.800,safe,P(correct)=0.36 on 11 decoded; recall=0.80 on 5 ref occurrences
+turn,0,6,0.500,11,0.273,safe,P(correct)=0.50 on 6 decoded; recall=0.27 on 11 ref occurrences
+yes,0,6,0.667,11,0.364,safe,P(correct)=0.67 on 6 decoded; recall=0.36 on 11 ref occurrences
+almost,1,7,0.857,8,0.750,safe,P(correct)=0.86 on 7 decoded; recall=0.75 on 8 ref occurrences
+already,0,5,0.600,11,0.273,safe,P(correct)=0.60 on 5 decoded; recall=0.27 on 11 ref occurrences
+ask,2,6,0.500,8,0.375,safe,P(correct)=0.50 on 6 decoded; recall=0.38 on 8 ref occurrences
+difference,1,6,0.833,9,0.556,safe,P(correct)=0.83 on 6 decoded; recall=0.56 on 9 ref occurrences
+music,7,5,0.600,4,0.750,safe,P(correct)=0.60 on 5 decoded
+series,1,7,1.000,8,0.875,safe,P(correct)=1.00 on 7 decoded; recall=0.88 on 8 ref occurrences
+space,2,8,0.500,6,0.833,safe,P(correct)=0.50 on 8 decoded; recall=0.83 on 6 ref occurrences
+based,2,6,0.500,7,0.571,safe,P(correct)=0.50 on 6 decoded; recall=0.57 on 7 ref occurrences
+else,1,8,0.250,6,0.500,safe,P(correct)=0.25 on 8 decoded; recall=0.50 on 6 ref occurrences
+future,1,5,0.800,9,0.444,safe,P(correct)=0.80 on 5 decoded; recall=0.44 on 9 ref occurrences
+itself,1,6,0.667,8,0.500,safe,P(correct)=0.67 on 6 decoded; recall=0.50 on 8 ref occurrences
+light,1,5,0.800,9,0.444,safe,P(correct)=0.80 on 5 decoded; recall=0.44 on 9 ref occurrences
+line,0,5,0.800,10,0.400,safe,P(correct)=0.80 on 5 decoded; recall=0.40 on 10 ref occurrences
+matters,15,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+people's,2,6,0.833,7,1.000,safe,P(correct)=0.83 on 6 decoded; recall=1.00 on 7 ref occurrences
+without,3,5,0.800,7,0.571,safe,P(correct)=0.80 on 5 decoded; recall=0.57 on 7 ref occurrences
+asking,9,3,0.667,2,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+enjoy,5,4,0.750,5,0.600,safe,recall=0.60 on 5 ref occurrences
+matter,3,5,0.800,6,0.833,safe,P(correct)=0.80 on 5 decoded; recall=0.83 on 6 ref occurrences
+needs,1,7,0.571,6,0.667,safe,P(correct)=0.57 on 7 decoded; recall=0.67 on 6 ref occurrences
+possible,7,3,1.000,4,0.750,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+share,1,6,0.500,7,0.429,safe,P(correct)=0.50 on 6 decoded; recall=0.43 on 7 ref occurrences
+social,2,6,0.667,6,0.833,safe,P(correct)=0.67 on 6 decoded; recall=0.83 on 6 ref occurrences
+sound,1,6,0.500,7,0.429,safe,P(correct)=0.50 on 6 decoded; recall=0.43 on 7 ref occurrences
+university,4,5,0.800,5,0.800,safe,P(correct)=0.80 on 5 decoded; recall=0.80 on 5 ref occurrences
+until,3,5,0.600,6,0.500,safe,P(correct)=0.60 on 5 decoded; recall=0.50 on 6 ref occurrences
+worked,4,4,0.750,6,0.500,safe,recall=0.50 on 6 ref occurrences
+completely,4,4,1.000,5,0.800,safe,recall=0.80 on 5 ref occurrences
+die,5,3,0.667,5,0.600,safe,recall=0.60 on 5 ref occurrences
+lesson,3,4,1.000,6,0.667,safe,recall=0.67 on 6 ref occurrences
+order,1,6,0.500,6,0.500,safe,P(correct)=0.50 on 6 decoded; recall=0.50 on 6 ref occurrences
+reading,1,4,1.000,8,0.625,safe,recall=0.62 on 8 ref occurrences
+structure,4,4,1.000,5,0.800,safe,recall=0.80 on 5 ref occurrences
+tried,1,6,0.667,6,0.667,safe,P(correct)=0.67 on 6 decoded; recall=0.67 on 6 ref occurrences
+wants,1,5,0.600,7,0.429,safe,P(correct)=0.60 on 5 decoded; recall=0.43 on 7 ref occurrences
+eyes,1,6,0.500,5,0.800,safe,P(correct)=0.50 on 6 decoded; recall=0.80 on 5 ref occurrences
+heard,1,6,0.500,5,0.600,safe,P(correct)=0.50 on 6 decoded; recall=0.60 on 5 ref occurrences
+lives,6,3,1.000,3,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+lose,1,5,0.600,6,0.500,safe,P(correct)=0.60 on 5 decoded; recall=0.50 on 6 ref occurrences
+questions,3,4,1.000,5,1.000,safe,recall=1.00 on 5 ref occurrences
+wait,3,5,0.800,4,1.000,safe,P(correct)=0.80 on 5 decoded
+achieve,1,5,0.800,5,0.800,safe,P(correct)=0.80 on 5 decoded; recall=0.80 on 5 ref occurrences
+answer,1,5,0.600,5,0.600,safe,P(correct)=0.60 on 5 decoded; recall=0.60 on 5 ref occurrences
+benefit,1,5,0.800,5,0.800,safe,P(correct)=0.80 on 5 decoded; recall=0.80 on 5 ref occurrences
+changing,5,4,0.250,2,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+decision,5,2,1.000,4,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+film,4,4,0.750,3,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+individual,1,5,0.600,5,0.600,safe,P(correct)=0.60 on 5 decoded; recall=0.60 on 5 ref occurrences
+involved,5,3,0.667,3,0.667,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+night,5,2,1.000,4,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+playing,4,4,0.250,3,0.333,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+situation,2,4,1.000,5,0.800,safe,recall=0.80 on 5 ref occurrences
+spend,3,4,0.500,4,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+brought,1,5,0.600,4,0.750,safe,P(correct)=0.60 on 5 decoded
+certainly,3,4,0.750,3,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+create,4,3,0.333,3,0.333,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+decisions,5,2,1.000,3,0.667,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+everywhere,1,4,1.000,5,0.800,safe,recall=0.80 on 5 ref occurrences
+happening,1,5,0.800,4,1.000,safe,P(correct)=0.80 on 5 decoded
+hopefully,3,3,0.667,4,0.750,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+least,1,5,0.600,4,0.750,safe,P(correct)=0.60 on 5 decoded
+meant,1,5,0.600,4,0.750,safe,P(correct)=0.60 on 5 decoded
+media,3,4,0.750,3,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+plan,1,5,0.800,4,1.000,safe,P(correct)=0.80 on 5 decoded
+realize,2,5,0.600,3,1.000,safe,P(correct)=0.60 on 5 decoded
+relationship,1,6,0.500,3,1.000,safe,P(correct)=0.50 on 6 decoded
+stop,1,5,0.600,4,0.750,safe,P(correct)=0.60 on 5 decoded
+took,3,4,0.250,3,0.333,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+continue,4,3,0.333,2,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+extra,1,3,1.000,5,0.600,safe,recall=0.60 on 5 ref occurrences
+form,3,3,0.667,3,0.667,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+ground,3,3,0.333,3,0.333,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+late,4,2,1.000,3,0.667,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+met,3,3,0.667,3,0.667,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+sorry,1,3,1.000,5,0.800,safe,recall=0.80 on 5 ref occurrences
+success,4,2,1.000,3,0.667,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+war,1,3,0.667,5,0.600,safe,recall=0.60 on 5 ref occurrences
+afghanistan,4,2,1.000,2,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+amazing,3,3,0.667,2,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+global,5,2,0.500,1,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+intensive,7,0,,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+peace,4,2,0.500,2,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+track,3,2,0.000,3,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+changed,3,0,,4,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+lots,4,1,1.000,2,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+office,6,0,,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+truce,7,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+answers,6,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+beneficial,3,1,1.000,2,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+career,4,1,1.000,1,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+drive,4,1,0.000,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+dying,3,2,0.500,1,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+fantastic,5,0,,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+forgotten,4,1,1.000,1,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+impact,5,1,0.000,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+path,4,2,0.000,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+rather,4,1,0.000,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+result,3,1,1.000,2,0.500,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+spending,6,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+suddenly,4,1,1.000,1,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+sunflower,6,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+waiting,3,2,0.000,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+ensure,3,1,0.000,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+incredible,5,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+individuals,4,0,,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+studying,3,0,,2,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+wonderful,3,1,1.000,1,1.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+brahimi,4,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+businesses,3,0,,1,0.000,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+letters,4,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+passionate,4,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+annan,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+dalai,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+filming,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+flute,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+journey,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+knowing,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+lama,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+mattered,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+priorities,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+providing,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+realise,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+sombre,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+structured,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+suppose,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+surely,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+younger,3,0,,0,,safe,unmeasured in benchmark; qualifies on LRS3 frequency
+it's,17,138,0.362,159,0.440,risky,common but poorly decoded; P(correct)=0.36 on 138 decoded; recall=0.44 on 159 ref occurrences
+want,10,66,0.439,64,0.484,risky,common but poorly decoded; P(correct)=0.44 on 66 decoded; recall=0.48 on 64 ref occurrences
+we're,3,41,0.488,76,0.329,risky,common but poorly decoded; P(correct)=0.49 on 41 decoded; recall=0.33 on 76 ref occurrences
+had,24,43,0.465,49,0.429,risky,common but poorly decoded; P(correct)=0.47 on 43 decoded; recall=0.43 on 49 ref occurrences
+here,5,35,0.286,71,0.155,risky,common but poorly decoded; P(correct)=0.29 on 35 decoded; recall=0.15 on 71 ref occurrences
+see,7,48,0.458,53,0.434,risky,common but poorly decoded; P(correct)=0.46 on 48 decoded; recall=0.43 on 53 ref occurrences
+would,10,42,0.476,51,0.490,risky,common but poorly decoded; P(correct)=0.48 on 42 decoded; recall=0.49 on 51 ref occurrences
+has,9,44,0.477,49,0.449,risky,common but poorly decoded; P(correct)=0.48 on 44 decoded; recall=0.45 on 49 ref occurrences
+into,6,47,0.362,43,0.442,risky,common but poorly decoded; P(correct)=0.36 on 47 decoded; recall=0.44 on 43 ref occurrences
+little,7,35,0.371,46,0.304,risky,common but poorly decoded; P(correct)=0.37 on 35 decoded; recall=0.30 on 46 ref occurrences
+were,5,33,0.485,47,0.362,risky,common but poorly decoded; P(correct)=0.48 on 33 decoded; recall=0.36 on 47 ref occurrences
+his,14,25,0.320,23,0.391,risky,common but poorly decoded; P(correct)=0.32 on 25 decoded; recall=0.39 on 23 ref occurrences
+said,15,25,0.320,22,0.409,risky,common but poorly decoded; P(correct)=0.32 on 25 decoded; recall=0.41 on 22 ref occurrences
+start,8,24,0.458,30,0.400,risky,common but poorly decoded; P(correct)=0.46 on 24 decoded; recall=0.40 on 30 ref occurrences
+take,4,34,0.294,24,0.417,risky,common but poorly decoded; P(correct)=0.29 on 34 decoded; recall=0.42 on 24 ref occurrences
+they're,0,14,0.429,40,0.225,risky,common but poorly decoded; P(correct)=0.43 on 14 decoded; recall=0.23 on 40 ref occurrences
+today,6,24,0.417,24,0.458,risky,common but poorly decoded; P(correct)=0.42 on 24 decoded; recall=0.46 on 24 ref occurrences
+world,7,27,0.259,18,0.444,risky,common but poorly decoded; P(correct)=0.26 on 27 decoded; recall=0.44 on 18 ref occurrences
+him,13,18,0.389,17,0.471,risky,common but poorly decoded; P(correct)=0.39 on 18 decoded; recall=0.47 on 17 ref occurrences
+did,8,19,0.368,16,0.438,risky,common but poorly decoded; P(correct)=0.37 on 19 decoded; recall=0.44 on 16 ref occurrences
+i've,5,15,0.467,22,0.364,risky,common but poorly decoded; P(correct)=0.47 on 15 decoded; recall=0.36 on 22 ref occurrences
+love,9,17,0.353,13,0.462,risky,common but poorly decoded; P(correct)=0.35 on 17 decoded; recall=0.46 on 13 ref occurrences
+her,0,19,0.316,19,0.368,risky,common but poorly decoded; P(correct)=0.32 on 19 decoded; recall=0.37 on 19 ref occurrences
+again,0,13,0.462,23,0.304,risky,common but poorly decoded; P(correct)=0.46 on 13 decoded; recall=0.30 on 23 ref occurrences
+made,9,14,0.214,10,0.300,risky,common but poorly decoded; P(correct)=0.21 on 14 decoded; recall=0.30 on 10 ref occurrences
+doesn't,0,15,0.200,17,0.353,risky,common but poorly decoded; P(correct)=0.20 on 15 decoded; recall=0.35 on 17 ref occurrences
+saying,4,12,0.417,16,0.312,risky,common but poorly decoded; P(correct)=0.42 on 12 decoded; recall=0.31 on 16 ref occurrences
+okay,2,3,0.667,26,0.077,risky,common but poorly decoded; recall=0.08 on 26 ref occurrences
+too,5,13,0.462,13,0.462,risky,common but poorly decoded; P(correct)=0.46 on 13 decoded; recall=0.46 on 13 ref occurrences
+gonna,0,2,0.000,28,0.000,risky,common but poorly decoded; recall=0.00 on 28 ref occurrences
+side,1,12,0.250,14,0.214,risky,common but poorly decoded; P(correct)=0.25 on 12 decoded; recall=0.21 on 14 ref occurrences
+does,1,10,0.300,15,0.267,risky,common but poorly decoded; P(correct)=0.30 on 10 decoded; recall=0.27 on 15 ref occurrences
+i'll,0,9,0.222,17,0.235,risky,common but poorly decoded; P(correct)=0.22 on 9 decoded; recall=0.24 on 17 ref occurrences
+real,0,12,0.333,14,0.357,risky,common but poorly decoded; P(correct)=0.33 on 12 decoded; recall=0.36 on 14 ref occurrences
+used,1,13,0.231,12,0.250,risky,common but poorly decoded; P(correct)=0.23 on 13 decoded; recall=0.25 on 12 ref occurrences
+what's,1,9,0.333,14,0.214,risky,common but poorly decoded; P(correct)=0.33 on 9 decoded; recall=0.21 on 14 ref occurrences
+end,0,9,0.222,14,0.143,risky,common but poorly decoded; P(correct)=0.22 on 9 decoded; recall=0.14 on 14 ref occurrences
+once,1,10,0.400,10,0.400,risky,common but poorly decoded; P(correct)=0.40 on 10 decoded; recall=0.40 on 10 ref occurrences
+getting,1,7,0.429,12,0.250,risky,common but poorly decoded; P(correct)=0.43 on 7 decoded; recall=0.25 on 12 ref occurrences
+happy,7,8,0.375,4,0.750,risky,common but poorly decoded; P(correct)=0.38 on 8 decoded
+nice,0,7,0.429,12,0.250,risky,common but poorly decoded; P(correct)=0.43 on 7 decoded; recall=0.25 on 12 ref occurrences
+percent,4,10,0.200,4,0.500,risky,common but poorly decoded; P(correct)=0.20 on 10 decoded
+understand,1,9,0.333,8,0.375,risky,common but poorly decoded; P(correct)=0.33 on 9 decoded; recall=0.38 on 8 ref occurrences
+eye,1,7,0.429,9,0.333,risky,common but poorly decoded; P(correct)=0.43 on 7 decoded; recall=0.33 on 9 ref occurrences
+you'll,3,4,0.250,10,0.100,risky,common but poorly decoded; recall=0.10 on 10 ref occurrences
+behind,3,7,0.286,6,0.333,risky,common but poorly decoded; P(correct)=0.29 on 7 decoded; recall=0.33 on 6 ref occurrences
+case,5,5,0.400,6,0.333,risky,common but poorly decoded; P(correct)=0.40 on 5 decoded; recall=0.33 on 6 ref occurrences
+we'll,1,7,0.143,8,0.125,risky,common but poorly decoded; P(correct)=0.14 on 7 decoded; recall=0.12 on 8 ref occurrences
+care,7,3,0.000,5,0.000,risky,common but poorly decoded; recall=0.00 on 5 ref occurrences
+comes,4,5,0.400,6,0.333,risky,common but poorly decoded; P(correct)=0.40 on 5 decoded; recall=0.33 on 6 ref occurrences
+here's,0,4,0.500,11,0.182,risky,common but poorly decoded; recall=0.18 on 11 ref occurrences
+hey,0,3,0.667,11,0.182,risky,common but poorly decoded; recall=0.18 on 11 ref occurrences
+level,1,4,0.500,9,0.222,risky,common but poorly decoded; recall=0.22 on 9 ref occurrences
+man,3,5,0.200,6,0.167,risky,common but poorly decoded; P(correct)=0.20 on 5 decoded; recall=0.17 on 6 ref occurrences
+says,0,4,0.500,10,0.200,risky,common but poorly decoded; recall=0.20 on 10 ref occurrences
+type,0,4,0.250,10,0.100,risky,common but poorly decoded; recall=0.10 on 10 ref occurrences
+its,1,4,0.250,8,0.125,risky,common but poorly decoded; recall=0.12 on 8 ref occurrences
+living,4,3,0.667,6,0.333,risky,common but poorly decoded; recall=0.33 on 6 ref occurrences
+read,3,4,0.250,6,0.167,risky,common but poorly decoded; recall=0.17 on 6 ref occurrences
+saw,3,6,0.333,4,0.500,risky,common but poorly decoded; P(correct)=0.33 on 6 decoded
+along,3,3,0.667,6,0.333,risky,common but poorly decoded; recall=0.33 on 6 ref occurrences
+friends,4,5,0.400,3,0.667,risky,common but poorly decoded; P(correct)=0.40 on 5 decoded
+key,3,6,0.167,3,0.333,risky,common but poorly decoded; P(correct)=0.17 on 6 decoded
+ways,4,5,0.400,3,0.667,risky,common but poorly decoded; P(correct)=0.40 on 5 decoded
+decided,4,5,0.400,2,1.000,risky,common but poorly decoded; P(correct)=0.40 on 5 decoded
+must,3,3,0.333,5,0.200,risky,common but poorly decoded; recall=0.20 on 5 ref occurrences
+quite,3,3,0.667,5,0.400,risky,common but poorly decoded; recall=0.40 on 5 ref occurrences
+support,3,5,0.400,3,0.667,risky,common but poorly decoded; P(correct)=0.40 on 5 decoded
+wasn't,4,5,0.200,2,0.500,risky,common but poorly decoded; P(correct)=0.20 on 5 decoded
+starting,3,2,0.500,5,0.200,risky,common but poorly decoded; recall=0.20 on 5 ref occurrences
+the,192,972,0.617,1081,0.734,function,
+to,201,887,0.539,852,0.739,function,
+and,162,705,0.582,820,0.657,function,
+i,184,594,0.582,586,0.737,function,
+a,88,548,0.544,659,0.612,function,
+of,114,500,0.706,558,0.729,function,
+in,86,342,0.462,398,0.513,function,
+is,79,343,0.519,382,0.592,function,
+it,61,298,0.480,362,0.528,function,
+so,20,274,0.595,302,0.632,function,
+we,65,179,0.642,195,0.651,function,
+on,23,147,0.558,179,0.508,function,
+my,42,145,0.703,154,0.734,function,
+be,30,151,0.576,158,0.665,function,
+or,12,118,0.559,156,0.506,function,
+do,46,105,0.476,118,0.525,function,
+if,19,112,0.732,138,0.623,function,
+as,26,93,0.559,122,0.426,function,
+at,26,97,0.526,107,0.542,function,
+me,22,81,0.543,72,0.639,function,
+he,44,56,0.411,62,0.468,function,
+up,9,61,0.623,73,0.603,function,
+an,10,58,0.414,64,0.422,function,
+go,20,51,0.549,56,0.518,function,
+by,15,48,0.521,52,0.519,function,
+no,12,45,0.489,53,0.547,function,
+us,8,34,0.294,28,0.429,function,
+am,9,19,0.368,12,0.583,function,
+oh,0,6,0.833,13,0.385,function,
+s,3,4,0.000,12,0.250,function,
+d,0,2,0.000,13,0.000,function,
+th,1,0,,8,0.625,function,
+u,3,1,0.000,2,0.000,function,
+st,4,0,,1,0.000,function,
+n,2,0,,2,0.000,function,
+o,1,3,0.000,0,,function,
+may,0,9,0.444,15,0.267,entity,
+god,0,10,0.600,13,0.462,entity,
+india,1,4,0.000,5,0.000,entity,
+september,3,2,0.500,2,0.500,entity,
+york,1,4,0.000,0,,entity,
+john,1,1,0.000,2,0.000,entity,
+london,1,2,0.000,0,,entity,
+mary,1,0,,0,,entity,
+one,15,98,0.582,102,0.588,number,
+first,11,34,0.706,33,0.788,number,
+two,3,36,0.583,36,0.611,number,
+second,3,16,0.500,15,0.533,number,
+three,2,16,0.438,14,0.571,number,
+four,2,9,0.333,11,0.273,number,
+half,1,7,0.714,14,0.357,number,
+six,1,7,0.143,8,0.125,number,
+eight,1,6,0.167,4,0.250,number,
+seventh,1,3,0.667,2,1.000,number,
+story,2,16,0.062,5,0.200,rare,"low evidence (lrs3=2, ref_n=5)"
+exactly,1,7,0.429,7,0.429,rare,"low evidence (lrs3=1, ref_n=7)"
+kids,2,8,0.000,4,0.000,rare,"low evidence (lrs3=2, ref_n=4)"
+sitting,2,8,0.250,4,0.500,rare,"low evidence (lrs3=2, ref_n=4)"
+someone,2,8,0.250,4,0.500,rare,"low evidence (lrs3=2, ref_n=4)"
+knew,2,5,0.400,6,0.333,rare,"low evidence (lrs3=2, ref_n=6)"
+mind,2,8,0.125,3,0.333,rare,"low evidence (lrs3=2, ref_n=3)"
+soon,1,5,0.400,7,0.286,rare,"low evidence (lrs3=1, ref_n=7)"
+top,1,5,0.200,7,0.143,rare,"low evidence (lrs3=1, ref_n=7)"
+clear,2,4,0.500,6,0.333,rare,"low evidence (lrs3=2, ref_n=6)"
+since,2,5,0.400,5,0.400,rare,"low evidence (lrs3=2, ref_n=5)"
+stage,1,6,0.333,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+team,2,7,0.286,3,0.667,rare,"low evidence (lrs3=2, ref_n=3)"
+walk,2,7,0.286,3,0.667,rare,"low evidence (lrs3=2, ref_n=3)"
+yet,2,6,0.333,4,0.500,rare,"low evidence (lrs3=2, ref_n=4)"
+children,1,3,0.333,7,0.143,rare,"low evidence (lrs3=1, ref_n=7)"
+community,1,5,0.400,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+learned,1,6,0.167,4,0.250,rare,"low evidence (lrs3=1, ref_n=4)"
+minute,1,4,0.250,6,0.167,rare,"low evidence (lrs3=1, ref_n=6)"
+quickly,2,5,0.200,4,0.250,rare,"low evidence (lrs3=2, ref_n=4)"
+run,1,5,0.400,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+under,1,6,0.333,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+word,1,6,0.000,4,0.000,rare,"low evidence (lrs3=1, ref_n=4)"
+born,1,6,0.333,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+boy,2,3,0.333,5,0.200,rare,"low evidence (lrs3=2, ref_n=5)"
+building,1,5,0.400,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+discovered,1,3,0.667,6,0.333,rare,"low evidence (lrs3=1, ref_n=6)"
+earlier,1,2,0.500,7,0.143,rare,"low evidence (lrs3=1, ref_n=7)"
+forward,1,4,0.500,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+happen,2,4,0.750,4,0.750,rare,"low evidence (lrs3=2, ref_n=4)"
+morning,2,4,0.500,4,0.500,rare,"low evidence (lrs3=2, ref_n=4)"
+takes,1,5,0.200,4,0.250,rare,"low evidence (lrs3=1, ref_n=4)"
+test,1,4,0.250,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+asked,1,4,0.500,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+blood,1,4,0.750,4,0.750,rare,"low evidence (lrs3=1, ref_n=4)"
+drop,2,1,0.000,6,0.000,rare,"low evidence (lrs3=2, ref_n=6)"
+excited,1,3,0.667,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+expecting,1,4,1.000,4,1.000,rare,"low evidence (lrs3=1, ref_n=4)"
+friend,1,4,0.750,4,0.750,rare,"low evidence (lrs3=1, ref_n=4)"
+head,1,4,0.250,4,0.250,rare,"low evidence (lrs3=1, ref_n=4)"
+hours,1,5,0.400,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+listening,1,3,0.333,5,0.200,rare,"low evidence (lrs3=1, ref_n=5)"
+news,1,3,0.333,5,0.200,rare,"low evidence (lrs3=1, ref_n=5)"
+notes,2,3,0.000,4,0.000,rare,"low evidence (lrs3=2, ref_n=4)"
+red,1,5,0.000,3,0.000,rare,"low evidence (lrs3=1, ref_n=3)"
+son,1,5,0.400,3,1.000,rare,"low evidence (lrs3=1, ref_n=3)"
+state,1,5,0.000,3,0.000,rare,"low evidence (lrs3=1, ref_n=3)"
+stay,1,4,0.250,4,0.250,rare,"low evidence (lrs3=1, ref_n=4)"
+art,1,4,0.250,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+cutting,1,2,1.000,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+dark,1,4,0.500,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+everyone,1,4,0.500,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+familiar,1,5,0.400,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+general,1,2,1.000,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+inside,1,3,0.000,4,0.000,rare,"low evidence (lrs3=1, ref_n=4)"
+leave,2,4,0.250,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+men,2,2,0.500,4,0.250,rare,"low evidence (lrs3=2, ref_n=4)"
+opportunity,2,3,1.000,3,1.000,rare,"low evidence (lrs3=2, ref_n=3)"
+places,1,4,0.500,3,1.000,rare,"low evidence (lrs3=1, ref_n=3)"
+rich,2,3,0.333,3,0.333,rare,"low evidence (lrs3=2, ref_n=3)"
+showing,1,2,0.500,5,0.200,rare,"low evidence (lrs3=1, ref_n=5)"
+similar,1,3,1.000,4,0.750,rare,"low evidence (lrs3=1, ref_n=4)"
+strength,1,2,1.000,5,0.400,rare,"low evidence (lrs3=1, ref_n=5)"
+strong,1,3,1.000,4,0.750,rare,"low evidence (lrs3=1, ref_n=4)"
+talked,1,3,0.667,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+thanks,1,3,1.000,4,0.750,rare,"low evidence (lrs3=1, ref_n=4)"
+window,2,1,1.000,5,0.200,rare,"low evidence (lrs3=2, ref_n=5)"
+anyway,1,3,0.000,3,0.000,rare,"low evidence (lrs3=1, ref_n=3)"
+arm,1,4,0.250,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+aware,2,1,1.000,4,0.250,rare,"low evidence (lrs3=2, ref_n=4)"
+days,1,3,0.667,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+death,1,3,0.333,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+degree,2,3,0.333,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+giving,2,1,0.000,4,0.000,rare,"low evidence (lrs3=2, ref_n=4)"
+growth,2,2,0.500,3,0.333,rare,"low evidence (lrs3=2, ref_n=3)"
+helps,1,3,1.000,3,1.000,rare,"low evidence (lrs3=1, ref_n=3)"
+hope,1,4,0.500,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+large,1,2,1.000,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+listen,1,2,0.500,4,0.250,rare,"low evidence (lrs3=1, ref_n=4)"
+local,1,4,0.250,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+movie,2,4,0.000,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+older,2,3,0.333,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+patient,1,2,1.000,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+possibly,1,2,1.000,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+separate,2,2,1.000,3,0.667,rare,"low evidence (lrs3=2, ref_n=3)"
+street,1,2,1.000,4,0.500,rare,"low evidence (lrs3=1, ref_n=4)"
+therefore,2,2,0.500,3,0.333,rare,"low evidence (lrs3=2, ref_n=3)"
+today's,2,1,1.000,4,0.250,rare,"low evidence (lrs3=2, ref_n=4)"
+unfortunately,1,3,1.000,3,1.000,rare,"low evidence (lrs3=1, ref_n=3)"
+unite,2,2,1.000,3,0.667,rare,"low evidence (lrs3=2, ref_n=3)"
+age,1,3,0.333,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+ahead,1,1,0.000,4,0.000,rare,"low evidence (lrs3=1, ref_n=4)"
+audience,2,2,0.000,2,0.000,rare,"low evidence (lrs3=2, ref_n=2)"
+awareness,2,2,1.000,2,1.000,rare,"low evidence (lrs3=2, ref_n=2)"
+beautiful,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+biggest,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+cancer,1,2,0.500,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+constantly,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+countries,1,2,1.000,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+document,2,1,1.000,3,0.333,rare,"low evidence (lrs3=2, ref_n=3)"
+force,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+goal,2,2,1.000,2,1.000,rare,"low evidence (lrs3=2, ref_n=2)"
+himself,1,2,1.000,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+interested,1,2,1.000,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+largest,2,4,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+letter,2,2,0.500,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+lifestyle,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+literally,1,2,1.000,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+meet,1,2,0.500,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+message,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+often,2,2,0.500,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+reach,1,3,0.333,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+received,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+sat,1,2,1.000,3,0.667,rare,"low evidence (lrs3=1, ref_n=3)"
+serious,1,3,0.333,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+shape,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+sick,2,2,0.500,2,1.000,rare,"low evidence (lrs3=2, ref_n=2)"
+spent,2,2,1.000,2,1.000,rare,"low evidence (lrs3=2, ref_n=2)"
+successful,1,3,0.667,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+tremendous,2,2,1.000,2,1.000,rare,"low evidence (lrs3=2, ref_n=2)"
+trick,1,2,0.000,3,0.000,rare,"low evidence (lrs3=1, ref_n=3)"
+concepts,1,1,1.000,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+dangerous,1,3,0.333,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+described,1,3,0.333,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+died,2,2,0.500,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+ear,1,2,1.000,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+early,1,2,0.000,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+eventually,1,1,1.000,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+guy,1,3,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+keeping,2,1,1.000,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+kinds,1,1,1.000,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+longer,2,1,1.000,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+necessarily,2,1,1.000,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+raise,2,2,0.000,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+raising,1,3,0.333,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+reality,1,2,1.000,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+reduction,2,1,0.000,2,0.000,rare,"low evidence (lrs3=2, ref_n=2)"
+ride,2,1,1.000,2,1.000,rare,"low evidence (lrs3=2, ref_n=2)"
+seeing,1,1,0.000,3,0.000,rare,"low evidence (lrs3=1, ref_n=3)"
+short,1,2,0.500,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+simply,1,2,0.500,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+sisters,1,3,0.333,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+skin,1,2,0.500,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+slowly,1,2,1.000,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+society,1,2,0.500,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+soil,2,2,0.500,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+terms,2,1,1.000,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+thoughts,1,2,1.000,2,1.000,rare,"low evidence (lrs3=1, ref_n=2)"
+towards,1,4,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+vision,1,3,0.333,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+west,1,1,1.000,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+wife,2,1,1.000,2,0.500,rare,"low evidence (lrs3=2, ref_n=2)"
+worried,1,2,0.500,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+worth,1,1,1.000,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+wrote,1,1,1.000,3,0.333,rare,"low evidence (lrs3=1, ref_n=3)"
+absolutely,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+alive,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+bomb,2,2,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+brings,1,1,0.000,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+century,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+choices,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+daughters,1,1,0.000,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+dead,2,0,,2,0.000,rare,"low evidence (lrs3=2, ref_n=2)"
+decades,1,3,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+discussion,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+doctor,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+driving,1,1,0.000,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+ended,1,1,0.000,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+enter,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+everyday,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+expect,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+faith,2,1,0.000,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+fortunate,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+handy,2,0,,2,0.000,rare,"low evidence (lrs3=2, ref_n=2)"
+increased,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+indeed,1,2,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+international,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+literature,1,1,0.000,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+motivated,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+near,2,0,,2,0.000,rare,"low evidence (lrs3=2, ref_n=2)"
+opportunities,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+oregon,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+others,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+pen,1,1,0.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+philosophy,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+physician,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+politics,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+possibility,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+realized,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+screen,1,0,,3,0.000,rare,"low evidence (lrs3=1, ref_n=3)"
+shouldn't,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+sides,1,1,1.000,2,0.500,rare,"low evidence (lrs3=1, ref_n=2)"
+spoken,2,0,,2,0.000,rare,"low evidence (lrs3=2, ref_n=2)"
+stood,2,2,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+thin,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+touch,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+upon,2,0,,2,0.000,rare,"low evidence (lrs3=2, ref_n=2)"
+waited,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+walking,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+wanting,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+we'd,1,2,0.500,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+weren't,1,1,0.000,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+wisdom,2,1,1.000,1,1.000,rare,"low evidence (lrs3=2, ref_n=1)"
+you'd,2,1,0.000,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+access,2,1,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+actions,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+actor,2,1,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+aid,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+ambassador,2,0,,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+appreciation,2,1,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+bank,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+broken,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+campaign,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+capacity,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+comfortable,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+confident,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+consciousness,2,1,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+considered,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+considering,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+content,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+couldn't,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+created,2,0,,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+cultures,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+cycle,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+dad,2,0,,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+defined,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+demonstrate,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+determines,2,0,,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+education,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+elders,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+enable,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+failed,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+glass,1,2,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+goals,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+hated,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+heroes,1,2,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+historically,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+hit,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+humanity,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+industry,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+isolated,2,1,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+led,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+meetings,1,2,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+mom's,2,0,,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+nuts,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+page,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+particularly,1,1,0.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+perhaps,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+period,1,1,0.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+pneumonia,2,1,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+prove,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+quote,1,2,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+religion,1,1,0.000,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+response,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+seriously,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+sets,1,0,,2,0.000,rare,"low evidence (lrs3=1, ref_n=2)"
+somehow,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+stem,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+utilizing,1,1,1.000,1,1.000,rare,"low evidence (lrs3=1, ref_n=1)"
+weak,2,1,0.000,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+wherever,2,0,,1,0.000,rare,"low evidence (lrs3=2, ref_n=1)"
+wind,1,2,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+youth,1,2,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+absurd,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+addressing,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+anywhere,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+apologize,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+bear,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+behalf,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+behaviour,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+blew,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+caught,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+circles,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+constituencies,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+convenience,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+date,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+delay,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+deserve,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+desk,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+etc,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+filmmaker,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+frank,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+garden,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+hero,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+hospital,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+knows,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+kofi,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+lacking,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+leaving,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+legacy,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+lift,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+memories,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+missed,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+morbid,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+motivation,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+nagasaki,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+nations,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+neglected,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+notices,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+nuclear,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+outcome,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+partnerships,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+phase,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+piano,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+pillars,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+pot,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+press,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+profession,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+protection,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+reached,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+reaching,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+realised,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+respiratory,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+salim,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+saving,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+shall,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+shared,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+sharing,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+shown,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+staying,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+structuring,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+stuck,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+succeeded,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+suffering,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+suicide,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+sword,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+tears,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+technologies,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+they'd,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+troops,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+ultimately,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+visiting,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+vital,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+voted,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+wondering,1,1,0.000,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+worse,1,0,,1,0.000,rare,"low evidence (lrs3=1, ref_n=1)"
+yourselves,2,0,,0,,rare,"low evidence (lrs3=2, ref_n=0)"
+accountable,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+ahmed,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+ambush,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+ample,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+apparently,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+assembly,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+assisted,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+barnaby,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+bites,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+blossoming,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+boat,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+bored,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+brave,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+brazil,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+buddy,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+burundi,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+ceasefire,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+chart,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+chores,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+chosen,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+christie,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+coe,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+concerning,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+confusing,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+constituency,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+constructively,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+contained,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+critically,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+daughter's,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+detailed,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+determine,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+dialects,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+dialogue,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+dilemma,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+dose,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+due,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+dwindling,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+elderly,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+emerge,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+empowered,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+empowering,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+euthanasia,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+exceptions,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+favelas,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+feeding,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+finance,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+firmly,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+flowers,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+fond,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+freaked,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+friendships,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+fundamental,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+gardener,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+gaza,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+gemma,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+gloria,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+governments,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+graph,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+habit,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+habits,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+hearts,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+heyday,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+highschool,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+hopes,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+hosting,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+hunter,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+imagined,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+immortal,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+impossible,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+increasing,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+incredibly,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+initiated,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+inspire,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+inspired,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+interestingly,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+internationally,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+internships,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+invited,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+jim,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+kindness,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+launch,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+lived,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+lobby,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+longevity,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+loosely,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+magical,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+messing,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+mightier,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+momentum,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+motivates,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+motivations,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+neighbours,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+ngos,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+nonviolence,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+nutrient,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+oath,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+oau,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+occurs,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+olympics,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+opponent,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+organizations,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+outcomes,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+pardon,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+pashto,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+peaceful,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+phrase,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+physicist,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+piss,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+placing,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+poetry,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+poisoned,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+poisonous,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+proceeds,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+produces,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+progress,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+progressing,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+prolong,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+promising,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+provided,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+pushed,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+questioning,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+rapidly,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+recorded,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+refine,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+regains,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+regarded,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+relation,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+relatives,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+remembered,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+responsibility,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+restricted,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+robinson,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+roger,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+rooted,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+scenario,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+seb,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+shaping,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+skewed,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+somalia,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+sounded,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+spectrum,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+spoke,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+sport,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+sri,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+statements,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+steinem,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+stopped,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+stronger,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+studies,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+sturdy,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+subjects,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+surrounded,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+surveys,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+swore,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+symbolism,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+taxes,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+tends,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+there'd,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+topics,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+tucked,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+undoubtedly,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+utmost,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+validation,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+vibrance,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+violence,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+walked,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+ward,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+wasted,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+weekend,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+whose,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
+youngest,1,0,,0,,rare,"low evidence (lrs3=1, ref_n=0)"
