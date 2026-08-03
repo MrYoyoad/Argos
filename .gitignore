@@ -334,3 +334,16 @@ vsp_docker/container_payload_20260507/face_detection/
 # OpenDataLab / OpenXLab download caches.
 .opendatalab/
 .openxlab/
+# Local-only data & caches (Aug 2026 cleanup) — never commit.
+/egla_kafe/
+claude-backup-*.tgz
+/.insightface/
+/.claude-argos/
+/.claude-personal/
+/knowledge/
+
+# Generated presentation review artifacts.
+.poster_frames/
+.review_png_*/
+_archive_*/
+*.backup-*.pptx
