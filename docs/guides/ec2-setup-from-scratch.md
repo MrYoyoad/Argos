@@ -163,20 +163,18 @@ Key pins you should see afterwards: `openai-whisper` (git pin 20250625), `mediap
 /home/ubuntu/vsp-llm-yoad-venv/bin/pip install \
   --index-url https://download.pytorch.org/whl/cu124 torch==2.5.1+cu124
 
-# Bulk install — MUST be --no-deps (freeze-restore mode; fairseq -e line is
-# commented out in this file on purpose). Without --no-deps pip's resolver
-# REFUSES this freeze (ResolutionImpossible): the venv carries a legacy
-# requests==2.28.2 (openxlab constraint) while markdown_pdf 1.13.1 declares
-# requests>=2.32.5. The live venv works because it grew incrementally; a fresh
-# resolve of the full set fails. The freeze is complete, so --no-deps is safe.
-# (Verified live 2026-08-03: plain -r fails, --no-deps -r succeeds, all pins land.)
-/home/ubuntu/vsp-llm-yoad-venv/bin/pip install --no-deps -r /home/ubuntu/requirements-vsp.txt
+# Bulk install (fairseq -e line is commented out in this file on purpose).
+# The freeze RESOLVES cleanly as of 2026-08-03 — the venv was repaired that day
+# (vestigial openxlab download chain removed, requests 2.28.2 → 2.32.5) precisely
+# so this plain install works on a fresh box. If a future re-freeze ever hits
+# ResolutionImpossible again, see trap §8.9.
+/home/ubuntu/vsp-llm-yoad-venv/bin/pip install -r /home/ubuntu/requirements-vsp.txt
 
 # fairseq — editable, from the LOCAL checkout (NOT from PyPI, NOT re-cloned):
 /home/ubuntu/vsp-llm-yoad-venv/bin/pip install -e /home/ubuntu/VSP-LLM/fairseq
 
-# spaCy English model: installed BY the freeze (direct wheel URL line, works under
-# --no-deps — verified 2026-08-03: en_core_web_sm 3.8.0 loads). Fallback if missing:
+# spaCy English model: installed BY the freeze (direct wheel URL line — verified
+# 2026-08-03: en_core_web_sm 3.8.0 loads on a fresh venv). Fallback if missing:
 /home/ubuntu/vsp-llm-yoad-venv/bin/python -c 'import en_core_web_sm' 2>/dev/null || \
   /home/ubuntu/vsp-llm-yoad-venv/bin/python -m spacy download en_core_web_sm
 ```
@@ -300,11 +298,17 @@ A fresh box is "done" when 7.3 passes: the report CSV exists with a non-empty hy
 8. **`av_hubert/fairseq` is an empty submodule dir on the working box** — leave it empty.
    Only `VSP-LLM/fairseq` is installed and authoritative for decode.
 
-9. **`pip install -r requirements-vsp.txt` without `--no-deps` fails** with
-   ResolutionImpossible (`requests==2.28.2` vs `markdown_pdf`'s `requests>=2.32.5`
-   metadata). The live venv predates that constraint; a fresh resolve of the full set
-   refuses it. Always `--no-deps` for the VSP freeze (§4.3). The ASR freeze resolves
-   fine either way.
+9. **A pip freeze of an incrementally-grown venv can be unresolvable on a fresh box.**
+   Happened here (2026-08-03): the VSP freeze carried `requests==2.28.2` (pinned by a
+   vestigial `openxlab` install from a dead May-2026 LRS3 download attempt) while
+   `markdown_pdf 1.13.1` declares `requests>=2.32.5` — plain `pip install -r` failed
+   with ResolutionImpossible even though the live venv worked. **Fixed at the root**:
+   removed `openxlab`/`opendatalab`/`oss2`/`aliyun-sdk`/`crcmod`/`pycryptodome` from the
+   live venv, upgraded `requests` to 2.32.5, re-froze. Both freezes now resolve plainly.
+   If this ever recurs after a re-freeze: either repair the venv the same way (find the
+   stale pin-holder via `pip show <pkg>` → Required-by, remove it, re-freeze), or as a
+   stopgap restore the freeze with `pip install --no-deps -r` (a freeze is complete by
+   construction, so skipping resolution is safe).
 
 10. **Never `pip install -e VSP-LLM/fairseq` from a SECOND venv on a box whose
     production venv shares the same checkout.** The isolated build re-cythonizes the
