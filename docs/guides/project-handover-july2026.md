@@ -4,6 +4,12 @@ Written by the departing lead (Yoad Oxman) for whoever inherits this project. Ev
 is a pointer into docs that already exist — read this first, then follow the links. The single
 biggest rule: **[CLAUDE.md](../../CLAUDE.md) is the hub**; when in doubt, start there.
 
+**Aug 2026:** a compact topic briefing (IS metric, confidence, datasets + where data actually
+lives, configuration, Egla-Kafe results, how-to-run) now exists at
+[teammate-briefing-aug2026.md](teammate-briefing-aug2026.md) — read it right after this doc.
+Environment rebuild: [ec2-setup-from-scratch.md](ec2-setup-from-scratch.md). Client redeploy:
+[client-laptop-deployment-aug2026.md](client-laptop-deployment-aug2026.md).
+
 **Reading order (day 1):** [CLAUDE.md](../../CLAUDE.md) → [docs/architecture.md](../architecture.md) →
 [docs/development-guide.md](../development-guide.md) → [docs/backlog/mission-backlog.md](../backlog/mission-backlog.md) → this doc.
 
@@ -126,3 +132,42 @@ Full roadmap with phases and effort estimates: [docs/backlog/mission-backlog.md]
    (original-file export, re-shoot pilot, data ask).
 5. Take the video-quality 5-day project (M15) as your onboarding ramp — it was scoped for
    exactly this purpose and has no dependencies.
+
+## Update — July 16-20, 2026 (post-handover work)
+
+Work done after the July-13 departure snapshot (details in the three 2026-07-16 entries of
+[docs/sessions/HANDOVER.md](../sessions/HANDOVER.md)):
+
+- **Guessing-game client package shipped (Jul 16)**:
+  `datasets/clients/egla_kafe/deliverables/EglaKafe_guessing_game_20260716.zip` (412 MB) —
+  7 videos × (clean / model_read / transcript.html) + README. MBR-anchored word confidence,
+  audio stripped everywhere (`-an`), leakage-proof (QA greps clean on all .ass/.html).
+- **Phonetic substitution — GO for the agreement arm only**
+  ([phonetic_substitution_eval.md](../evaluation/egla_kafe/phonetic_substitution_eval.md)):
+  the dual-engine agree arm shipped exactly 2 substitutions (`figured`→`forgot°`, `on`→`of°`,
+  both s1_tomer_yoad_1, marked with °); all ship-gate clauses pass. The naive max-mass arm is
+  actively destructive (breaks ≫ fixes) — never ship it.
+- **Resolution ablation — resolution is not the lever**
+  ([resolution_ablation.md](../evaluation/egla_kafe/resolution_ablation.md)): 4K → 2K → 1080p,
+  same 175 segments, no significant difference on any metric (all paired tests n.s.). Mechanism:
+  the affine warp normalizes every mouth to a ~45 px canonical width inside the fixed 96×96
+  crop — 4K's extra pixels are discarded at input. Client guidance is **framing** (mouth ≥50 px,
+  ideally ≥100 px) and capture-chain cleanliness, not resolution. Companion lip-pixel probe:
+  only img_6825 reaches ≥96 px mouth width even at 4K.
+- **N-best / viseme handoff (inbound cowork)**
+  ([docs/nbest_viseme_handoff/HANDOFF.md](../nbest_viseme_handoff/HANDOFF.md)): oracle viseme
+  snapping is safe and mildly useful on Trust-tier footage only (+8.2 pp content-word recall on
+  img_6825, 0 harmful subs on the 6 best videos), useless-to-harmful on weak footage. Proposal:
+  harvest the real pre-MBR N-best the decoder already generates instead of reconstructing
+  candidates. Related finding
+  ([overlap_consistency_analysis.md](../beam-search/overlap_consistency_analysis.md)):
+  `hyp_xseg_merge` was a **silent no-op** on the 1,497 set — retire it; stream-window decode
+  is a NO-GO.
+- **LRS3 search exhausted (Jul 16)**: the full LRS3-TED dataset (~270 GB) is **not** on this box
+  or in either account S3 bucket — only the 136 MB / 198-video sample tar
+  (`datasets/lrs3orig_sync.tar`). Llama-3.1 migration remains blocked on it; next steps are
+  off-box (email/Drive/colleagues). See [llama3-migration.md](../finetuning/llama3-migration.md) §4.
+- **Amosi continuation deck**: `presentation_materials_20260224/Argos_VSP_v13_Amosi_2_generated.pptx`
+  plus the ProjectFuture 20260720 deck (`Argos_VSP_ProjectFuture_20260720.pptx`, commit `573393b`).
+
+Environment/deployment guides added Aug 3 2026 (see pointer at top of this doc).

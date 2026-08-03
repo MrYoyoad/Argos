@@ -238,7 +238,7 @@ _archive/
 # ---------- Build / Data / Model Directories ----------
 build_assets/
 data/
-datasets/
+/datasets/
 face_alignment/
 face_detection/
 finetune_data/
@@ -347,3 +347,6 @@ claude-backup-*.tgz
 .review_png_*/
 _archive_*/
 *.backup-*.pptx
+
+# Generated docx of the teammate briefing (regenerate via generate_teammate_briefing.py; distributed via drive).
+docs/guides/teammate-briefing-aug2026.docx
