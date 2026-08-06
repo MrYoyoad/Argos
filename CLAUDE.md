@@ -47,7 +47,7 @@ When creating or moving files, **always** place them in the correct directory ba
 
 This CLAUDE.md is a slim hub file. Detailed documentation lives in separate files (see Documentation Map below). **Before starting any non-trivial task**, read the relevant doc file(s):
 
-- **Modifying pipeline, UI, or container code** → read [docs/container-sync-changelog.md](docs/container-sync-changelog.md) first (has exact code diffs for all 26 pending sync items)
+- **Modifying pipeline, UI, or container code** → read [docs/container-sync-changelog.md](docs/container-sync-changelog.md) first (exact code diffs for all ~55 sync entries, Jan 2026 → present; numbering has historical duplicates — cite entries by date+title)
 - **Working on pipeline stages, data formats, or segments** → read [docs/architecture.md](docs/architecture.md) first (segment naming, directory layout, data formats)
 - **Running commands, debugging, or troubleshooting** → read [docs/development-guide.md](docs/development-guide.md) first
 - **Fixing standalone container bugs** → read the relevant bugs file in `vsp_linux_container_FINAL_20260217/`

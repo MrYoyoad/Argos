@@ -15,6 +15,11 @@ import pytest
 GENERATORS_DIR = Path(__file__).resolve().parents[2] / "docs" / "_research-tools" / "generators"
 sys.path.insert(0, str(GENERATORS_DIR))
 
+# A newer same-named compute_word_confidence lives in VSP-LLM/scripts/ and is
+# imported by test_confidence_breakdown.py; evict any cached copy so this
+# module binds to the generators version regardless of collection order.
+sys.modules.pop("compute_word_confidence", None)
+
 from compute_word_confidence import (  # noqa: E402
     aggregate_segment_records,
     aggregate_subtokens_to_words,

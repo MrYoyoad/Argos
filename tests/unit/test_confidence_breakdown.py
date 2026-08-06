@@ -20,8 +20,25 @@ import pytest
 SCRIPTS_DIR = Path("/home/ubuntu/VSP-LLM/scripts")
 sys.path.insert(0, str(SCRIPTS_DIR))
 
+# A same-named but older compute_word_confidence lives in
+# docs/_research-tools/generators/ and is imported by
+# test_compute_word_confidence.py; evict any cached copy so this module
+# (and generate_client_demo_report's late `from compute_word_confidence
+# import ...`) binds to the VSP-LLM/scripts version regardless of which
+# test file pytest collected first.
+sys.modules.pop("compute_word_confidence", None)
+sys.modules.pop("generate_client_demo_report", None)
+
 import compute_word_confidence as cwc  # noqa: E402
 import generate_client_demo_report as gen  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _pin_scripts_module(monkeypatch):
+    """gen does `from compute_word_confidence import ...` at call time, so
+    whatever sys.modules holds when a test RUNS wins — pin it to the
+    VSP-LLM/scripts copy for every test in this file, restored after each."""
+    monkeypatch.setitem(sys.modules, "compute_word_confidence", cwc)
 
 
 @pytest.mark.parametrize("word, expected", [

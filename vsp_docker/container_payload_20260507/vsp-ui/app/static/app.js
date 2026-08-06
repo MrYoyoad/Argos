@@ -226,6 +226,11 @@ async function refreshStatus() {
         if (progress.segment_only) {
             console.log('Detected completed segment-only run, loading segments...');
             await loadAndDisplaySegments();
+        } else if (progress.output_path) {
+            // Full run completed (page may have been reloaded since): restore
+            // the complete screen so Download/Open/CC remain reachable.
+            elements.outputPath.textContent = progress.output_path;
+            showScreen('complete');
         }
     }
 }
@@ -1240,10 +1245,11 @@ async function updateProgress() {
         showErrorScreen(progress);
     } else if (progress.state === 'cancelled') {
         stopProgressPolling();
-        // Reset backend state after cancellation
+        // Reset backend state after cancellation; await the refresh before
+        // showing the welcome screen so it renders post-reset state.
         await api('reset', 'POST');
+        await refreshStatus();
         showScreen('welcome');
-        refreshStatus();
     }
 }
 
@@ -1315,10 +1321,52 @@ async function retryProcessing() {
 
 // Complete Screen
 async function downloadOutput() {
-    // Download the output folder as a zip file
-    window.location.href = '/api/download-output';
+    const btn = document.getElementById('btn-download-output');
+    btn.disabled = true;
+    btn.textContent = 'Preparing download...';
+    try {
+        // Preflight: navigating straight to the endpoint would replace the
+        // whole page with raw error JSON if no output is available.
+        const progress = await api('progress');
+        if (progress.error || !progress.output_path) {
+            alert('No results available to download. Run the pipeline first.');
+            return;
+        }
+        window.location.href = '/api/download-output';
+    } catch (err) {
+        console.warn('[complete] downloadOutput failed:', err);
+        alert(`Download failed: ${err?.message || err}`);
+    } finally {
+        // Navigation downloads emit no completion event; restore after a
+        // grace period that covers the server-side zip build.
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.textContent = 'Download Results';
+        }, 3000);
+    }
 }
 
+async function openOutputFolder() {
+    const btn = document.getElementById('btn-open-output');
+    btn.disabled = true;
+    btn.textContent = 'Opening...';
+    try {
+        const result = await api('open-folder', 'POST', { type: 'output' });
+        if (result.error) {
+            alert(`Could not open the results folder: ${result.error}`);
+        } else if (!result.success) {
+            // Headless / no file manager on the server side: still give the
+            // user the path so the click is never a silent no-op.
+            alert(`No file manager available on the server.\n\nResults folder:\n${result.path}`);
+        }
+    } catch (err) {
+        console.warn('[complete] openOutputFolder failed:', err);
+        alert(`Could not open the results folder: ${err?.message || err}`);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Open Results Folder';
+    }
+}
 
 async function startNew() {
     validationResult = null;
@@ -1326,11 +1374,12 @@ async function startNew() {
     elements.logsContainer.style.display = 'none';
     elements.errorLogsContainer.style.display = 'none';
 
-    // Reset backend state
+    // Reset backend state, then refresh BEFORE flipping screens — an
+    // un-awaited refresh races the transition and renders stale state.
     await api('reset', 'POST');
+    await refreshStatus();
 
     showScreen('welcome');
-    refreshStatus();
 }
 
 // Drag-and-Drop Upload Functions
@@ -1644,6 +1693,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Complete screen
     document.getElementById('btn-download-output').addEventListener('click', downloadOutput);
+    document.getElementById('btn-open-output').addEventListener('click', openOutputFolder);
     document.getElementById('btn-new').addEventListener('click', startNew);
 
     // Watch with CC panel

@@ -2074,6 +2074,48 @@ the same names), or `Path.home()` for golden-kmeans (resolves to
 
 **Verification**: `python3 -m pytest tests/unit/test_{confidence_breakdown,whole_video_cc,inject_transcription_from_audio}.py -q` → 52 passed. Visual: run a small pipeline, open `confidence_breakdown.html`, see per-video headers + numeric/currency words capped at yellow + low-conf segments stripped to grey. Open the UI Complete screen → "Watch with CC" plays the original video with segment-level coloured captions.
 
+### Five new input formats: .mts / .m2ts / .ts / .wmv / .flv (May 27, 2026 — retro-logged Aug 6, 2026)
+
+Commit `1ef78ba`. Adds AVCHD camcorder (`.mts/.m2ts/.ts`), `.wmv`, and `.flv`
+containers → 11 supported formats total. This is the fix for the client's
+".MTS"/".mtk" camcorder files (build-003 stopgap was manual remux to mp4).
+`vsp-ui/app/config.py::SUPPORTED_EXTENSIONS` is the single source; 4
+non-Python sites mirror it. ffmpeg via `lib/normalization.sh` handles every
+container — the historical failure mode was "we never accepted it", not
+"ffmpeg can't decode".
+
+- `lib/normalization.sh`, `run_flat_english_pipeline.sh` — format globs
+- `vsp-ui/app/config.py`, `server.py`, `services/pipeline_runner.py` — accept list
+- `vsp-ui/app/static/app.js`, `index.html` — picker/drag-drop accept attrs
+
+**Container action**: DONE at the time (all three trees synced in the same
+commit; `cmp`-verified Aug 6, 2026). This entry was missing from the
+changelog — retro-logged during the Aug-2026 fleet-update audit so the
+build-004 manifest can cite it.
+
+### User-guide audit fixes, md + PDF (May 27, 2026 — retro-logged Aug 6, 2026)
+
+Commits `59d3c90`/`230b28f`. Docs-only: `docs/guides/user-guide-vsp-pipeline.md`
++ `.pdf` corrections after the May-2026 deployment. No container code change;
+the PDF ships inside the client kit at the next image rebuild.
+
+**Container action**: bundle updated user guide PDF into build-004 kit.
+
+### test_all_modules.sh: decode segment-count guard hand-merged (Aug 6, 2026)
+
+The 8-line guard test from `a350420` (May 1 — asserts the
+`Decoding ${segment_count} segments...` line exists verbatim in
+`lib/decode.sh`, protecting the UI counter's early denominator) was on EC2
+only; both container copies of `lib/test_all_modules.sh` lacked it
+(flagged in client-laptop-deployment-aug2026.md §4.1). Hand-merged into
+`vsp_linux_container_FINAL_20260217/lib/` and
+`vsp_docker/container_payload_20260507/lib/`, preserving their
+container-specific `LIB_DIR` auto-detect header (this file is one of the 6
+by-design container-adapted files — never wholesale-copied).
+
+**Container action**: DONE Aug 6, 2026; `bash -n` clean, guarded line
+confirmed present at `lib/decode.sh:42` in all three trees.
+
 ### 36. Complete-screen resilience: download preflight + open-folder handler + awaited resets (Aug 6, 2026)
 
 Uncommitted EC2 work found and committed during the Aug-2026 box evacuation.
@@ -2106,4 +2148,6 @@ Watch-with-CC, reset flow on a sandbox instance, no console errors).
 already exists in both EC2 and overlay `server.py`.
 
 **Container action**: DONE — both files copied into the overlay Aug 6,
-2026; next image rebuild picks them up via wholesale payload sync.
+2026; also copied into `vsp_docker/container_payload_20260507/` the same
+day (`cmp`-verified, `openOutputFolder` present ×3), so the build-004
+image picks them up directly.
