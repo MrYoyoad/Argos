@@ -70,7 +70,7 @@ echo | tee -a "$LOG"
 
 # --- 2. In-container module tests (the build-time gate, re-run on host) ---
 echo "[2/8] In-container module tests (lib/test_all_modules.sh)" | tee -a "$LOG"
-if docker run --rm "$IMG_TAG" bash /workspace/lib/test_all_modules.sh >>"$LOG" 2>&1; then
+if docker run --rm --entrypoint bash "$IMG_TAG" /workspace/lib/test_all_modules.sh >>"$LOG" 2>&1; then
   pass "All 37 module tests passed inside the container"
 else
   fail "lib/test_all_modules.sh failed inside the container — see log."
@@ -121,7 +121,11 @@ run_smoke_decode() {
       /workspace/run_flat_english_pipeline.sh /data/in \
       >>"$LOG" 2>&1; then
     pass "Smoke decode (${sample_label}) completed without error"
-    echo "$output_dir"
+    # Result via global, NOT command substitution: $(...) would run this
+    # function in a subshell, losing the pass/fail counters and capturing
+    # the tee'd progress lines into the "output dir" variable (the exact
+    # failure seen on the first build-004 validation run, Aug 6 2026).
+    RUN_SMOKE_OUT="$output_dir"
     return 0
   else
     fail "Smoke decode (${sample_label}) failed — see log."
@@ -130,12 +134,16 @@ run_smoke_decode() {
 }
 
 echo "[4/8] Smoke decode — 12s sample" | tee -a "$LOG"
-SMOKE12_OUT=$(run_smoke_decode "$SMOKE12" "12-second" "smoke12") || SMOKE12_OUT=""
+RUN_SMOKE_OUT=""
+run_smoke_decode "$SMOKE12" "12-second" "smoke12" || true
+SMOKE12_OUT="$RUN_SMOKE_OUT"
 echo | tee -a "$LOG"
 
 # --- 5. Smoke decode (75 s sample, exercises NBEST/MBR/aggregation paths) ---
 echo "[5/8] Smoke decode — 75s sample (exercises full pipeline + n-best)" | tee -a "$LOG"
-SMOKE75_OUT=$(run_smoke_decode "$SMOKE75" "75-second" "smoke75") || SMOKE75_OUT=""
+RUN_SMOKE_OUT=""
+run_smoke_decode "$SMOKE75" "75-second" "smoke75" || true
+SMOKE75_OUT="$RUN_SMOKE_OUT"
 echo | tee -a "$LOG"
 
 # --- 6. Mechanism checks on the 75s decode output ---
@@ -148,8 +156,8 @@ else
 
   # 6.1: aggregated.json with all 5 hypothesis methods
   if [ -s "${OUT}/aggregated.json" ]; then
-    if docker run --rm -v "${OUT}:/out:ro" "$IMG_TAG" \
-        python3 -c "
+    if docker run --rm -v "${OUT}:/out:ro" --entrypoint python3 "$IMG_TAG" \
+        -c "
 import json, sys
 d = json.load(open('/out/aggregated.json'))
 keys = set()
@@ -234,8 +242,8 @@ sys.exit(1 if missing else 0)
   # 6.7: burned video exists, has duration > 1s
   BURN=$(ls "${OUT}"/burned_videos/*_burned.mp4 2>/dev/null | head -n1)
   if [ -n "$BURN" ] && [ -f "$BURN" ]; then
-    DUR=$(docker run --rm -v "${OUT}:/out:ro" "$IMG_TAG" \
-      ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \
+    DUR=$(docker run --rm -v "${OUT}:/out:ro" --entrypoint ffprobe "$IMG_TAG" \
+      -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \
       "/out/burned_videos/$(basename "$BURN")" 2>/dev/null | head -n1)
     if [ -n "$DUR" ] && awk -v d="$DUR" 'BEGIN { exit (d < 1) ? 1 : 0 }'; then
       pass "Burned video has duration ${DUR}s"
@@ -252,6 +260,18 @@ sys.exit(1 if missing else 0)
   else
     fail "No n-best evidence in logs — VSP_NBEST default may be 0"
   fi
+fi
+echo | tee -a "$LOG"
+
+# --- 6.9: offline imports — every runtime dep must import with networking
+# disabled (air-gapped parity; runs regardless of decode output) ---
+if docker run --rm --network=none \
+    --entrypoint /workspace/vsp-llm-yoad-venv/bin/python "$IMG_TAG" \
+    -c "import sys; sys.path.insert(0, '/workspace/lib'); import torch, fairseq, spacy, matplotlib, sentence_transformers, metaphone, nbest_aggregate; spacy.load('en_core_web_sm')" \
+    >>"$LOG" 2>&1; then
+  pass "Offline imports OK with --network=none (torch/fairseq/spacy+en_core_web_sm/matplotlib/sentence-transformers/metaphone/nbest_aggregate)"
+else
+  fail "Offline import failed with networking disabled — a runtime dep is missing or reaches for the network"
 fi
 echo | tee -a "$LOG"
 

@@ -56,7 +56,7 @@ Write-Host ""
 
 # --- 2. In-container module tests ---
 Write-Host "[2/8] In-container module tests (lib/test_all_modules.sh)"
-$out = & docker run --rm $ImgTag bash /workspace/lib/test_all_modules.sh 2>&1
+$out = & docker run --rm --entrypoint bash $ImgTag /workspace/lib/test_all_modules.sh 2>&1
 Add-Content $Log ($out -join "`n")
 if ($LASTEXITCODE -eq 0) {
     Write-Pass "All module tests passed"
@@ -129,19 +129,10 @@ if (-not $smoke75Out) {
     # 6.1 aggregated.json with all 5 hyps
     $aggJson = Join-Path $OUT "aggregated.json"
     if (Test-Path $aggJson) {
-        $script = @"
-import json, sys
-d = json.load(open(r'$aggJson'))
-keys = set()
-for v in (d.values() if isinstance(d, dict) else []):
-    if isinstance(v, dict): keys |= set(v.keys())
-required = {'hyp_mbr','hyp_vote_score','hyp_vote_conf','hyp_safe','hyp_xseg_merge'}
-sys.exit(1 if not required.issubset(keys) else 0)
-"@
-        $tmp = New-TemporaryFile
-        Set-Content $tmp $script
-        & docker run --rm -v "${OUT}:/out:ro" $ImgTag python3 /tmp/check.py 2>&1 | Out-Null
-        # Simpler approach: parse JSON in PowerShell
+        # Parse JSON natively in PowerShell. (An earlier revision also ran a
+        # python check via docker, but it passed a temp file that was never
+        # mounted into the container AND hit the ENTRYPOINT [/bin/bash]
+        # doubling bug - removed Aug 6 2026, the native parse below is the check.)
         $aggData = Get-Content $aggJson | ConvertFrom-Json
         $allKeys = @()
         $aggData.PSObject.Properties | ForEach-Object {

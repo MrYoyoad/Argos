@@ -2151,3 +2151,35 @@ already exists in both EC2 and overlay `server.py`.
 2026; also copied into `vsp_docker/container_payload_20260507/` the same
 day (`cmp`-verified, `openOutputFolder` present ×3), so the build-004
 image picks them up directly.
+
+### post_install_check kit: 3 bugs found on its first real run (Aug 6, 2026)
+
+The Aug-3 verification kit (`vsp_docker/checks/`) had never been executed
+against a real image (the staging dry-run never happened). Running it
+against the freshly built `client-build-004` surfaced:
+
+1. **ENTRYPOINT doubling** — the image declares `ENTRYPOINT ["/bin/bash"]`,
+   so `docker run $IMG bash /workspace/...` ran `bash bash ...` →
+   `cannot execute binary file`. Same latent bug in the check-6.1 `python3`
+   and check-6.7 `ffprobe` invocations. Fixed with explicit
+   `--entrypoint bash|python3|ffprobe`. (`post_install_check.ps1` line 59
+   had the same bug — fixed; its smoke-decode calls were already correct
+   because they pass the script directly.)
+2. **Subshell counter/output capture** — `SMOKE75_OUT=$(run_smoke_decode …)`
+   ran the function in a subshell: pass/fail counters were lost AND the
+   tee'd progress lines were captured into the "output dir" variable, so
+   the entire check-6 mechanism-assert block self-skipped with "output dir
+   missing" even though both smoke decodes PASSED. Fixed via a
+   `RUN_SMOKE_OUT` global + direct call.
+3. **Offline-import assert missing** — the runbook (§4.3) requires
+   `--network=none` import checks but the script never implemented them.
+   Added as check 6.9: torch/fairseq/spacy+`en_core_web_sm`/matplotlib/
+   sentence-transformers/metaphone/`nbest_aggregate`, all inside the image
+   with networking disabled.
+   Also removed a dead block in the `.ps1` (unmounted temp file + the same
+   entrypoint bug, superseded by a native PowerShell JSON parse).
+
+**Container action**: none for the image (checks live in the host-side kit,
+outside `container_payload_20260507/`). Kit fix ships with the build-004
+delivery USB. Lesson reinforced: scripts that have never run are not
+verification — the staging dry-run (M3) is mandatory before client trips.
