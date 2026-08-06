@@ -2,6 +2,11 @@
 
 Three locations look like "the deployment artifact" and they have **different roles**. Pick the wrong one to sync changes to and either new clients or existing clients miss the update.
 
+> **These are directories, not machines.** For the machine fleet — which
+> standalone box runs which version, what each is missing, and the per-machine
+> update/rollback routes — see
+> [client-fleet-status-aug2026.md](client-fleet-status-aug2026.md).
+
 ## The three locations
 
 | Path | Role | Audience | Update cadence |
