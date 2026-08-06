@@ -6,4 +6,4 @@
 	url = https://github.com/MrYoyoad/auto_avsr.git
 [submodule "av_hubert"]
 	path = av_hubert
-	url = https://github.com/facebookresearch/av_hubert.git
+	url = https://github.com/MrYoyoad/av_hubert.git
