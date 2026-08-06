@@ -97,10 +97,12 @@ function Run-SmokeDecode($sample, $label, $subdir) {
     Write-Host ">>> Running smoke decode on $label..."
     $cName = "vsp_smoke_$subdir"
     & docker rm -f $cName *>$null
+    # The pipeline ignores VSP_OUTPUT_DIR; it writes each run to
+    # /workspace/flat_runs_archive/<timestamp>/client_outputs inside the
+    # container. Mount the archive root so outputs land on the host.
     & docker run --rm --name $cName --gpus all `
-        -e VSP_OUTPUT_DIR=/data/out `
         -v "${inDir}:/data/in:ro" `
-        -v "${outDir}:/data/out" `
+        -v "${outDir}:/workspace/flat_runs_archive" `
         $ImgTag `
         /workspace/run_flat_english_pipeline.sh /data/in 2>&1 | Tee-Object -FilePath $Log -Append | Out-Null
     if ($LASTEXITCODE -eq 0) {
@@ -121,13 +123,25 @@ Write-Host ""
 
 # --- 6. Mechanism checks ---
 Write-Host "[6/8] Feature-parity mechanism checks (75s output)"
-if (-not $smoke75Out) {
-    Write-Fail "75s output dir missing — skipping mechanism checks"
+$Report = $null
+$BurnDir = $null
+if ($smoke75Out) {
+    $runDir = Get-ChildItem $smoke75Out -Directory -ErrorAction SilentlyContinue |
+        Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    if ($runDir) {
+        $cand = Join-Path $runDir.FullName "client_outputs\report"
+        if (Test-Path $cand) {
+            $Report = $cand
+            $BurnDir = Join-Path $runDir.FullName "client_outputs\burned_videos"
+        }
+    }
+}
+if (-not $Report) {
+    Write-Fail "75s run dir with client_outputs\report not found under the mounted archive - skipping mechanism checks"
 } else {
-    $OUT = $smoke75Out
 
     # 6.1 aggregated.json with all 5 hyps
-    $aggJson = Join-Path $OUT "aggregated.json"
+    $aggJson = Join-Path $Report "aggregated.json"
     if (Test-Path $aggJson) {
         # Parse JSON natively in PowerShell. (An earlier revision also ran a
         # python check via docker, but it passed a temp file that was never
@@ -152,17 +166,17 @@ if (-not $smoke75Out) {
         Write-Fail "aggregated.json not produced"
     }
 
-    # 6.2 report.csv columns
-    $reportCsv = Join-Path $OUT "report.csv"
+    # 6.2 report.csv columns (real header has is_score/is_tier/is_label,
+    # not a literal 'niv' column)
+    $reportCsv = Join-Path $Report "report.csv"
     if (Test-Path $reportCsv) {
         $header = (Get-Content $reportCsv -First 1)
-        $needed = @('sentence_confidence', 'hyp_mbr')
-        $nivOk = ($header -match 'NIV|niv')
+        $needed = @('sentence_confidence', 'hyp_mbr', 'is_score', 'is_label')
         $missing = $needed | Where-Object { $header -notmatch $_ }
-        if ($missing.Count -eq 0 -and $nivOk) {
-            Write-Pass "report.csv has sentence_confidence + hyp_mbr + NIV columns"
+        if ($missing.Count -eq 0) {
+            Write-Pass "report.csv has sentence_confidence + hyp_mbr + is_score/is_label columns"
         } else {
-            Write-Fail "report.csv missing columns: $($missing -join ', ') (NIV: $nivOk)"
+            Write-Fail "report.csv missing columns: $($missing -join ', ')"
         }
     } else {
         Write-Fail "report.csv not produced"
@@ -175,22 +189,28 @@ if (-not $smoke75Out) {
         Write-Fail "No tier markers in report.csv"
     }
 
-    # 6.4 IS scoring
-    if (Test-Path (Join-Path $OUT "intelligibility_scores.csv")) {
+    # 6.4 IS scoring (full CSV, or is_score populated as the make_report fallback)
+    if (Test-Path (Join-Path $Report "intelligibility_scores.csv")) {
         Write-Pass "IS scoring produced intelligibility_scores.csv"
+    } elseif ((Test-Path $reportCsv) -and ((Import-Csv $reportCsv | Select-Object -First 1).is_score)) {
+        Write-Pass "IS scoring active (is_score populated in report.csv; full CSV absent - see log)"
     } else {
-        Write-Fail "intelligibility_scores.csv not produced"
+        Write-Fail "No IS output at all - sentence-transformers/metaphone/is_model_cache may be broken"
     }
 
-    # 6.5 k-means saved
-    if (Get-ChildItem $OUT -Filter "*_kmeans_200.bin" -ErrorAction SilentlyContinue) {
-        Write-Pass "k-means model exported"
+    # 6.5 per-segment sidecars: agreement + word confidence + Watch-with-CC
+    $sideMissing = @()
+    if (-not (Get-ChildItem $Report -Filter "agreement-*.json" -ErrorAction SilentlyContinue)) { $sideMissing += "agreement-*.json" }
+    if (-not (Test-Path (Join-Path $Report "word_confidence.json"))) { $sideMissing += "word_confidence.json" }
+    if (-not (Test-Path (Join-Path $Report "whole_video_cc.json"))) { $sideMissing += "whole_video_cc.json" }
+    if ($sideMissing.Count -eq 0) {
+        Write-Pass "Sidecars present: agreement-*.json + word_confidence.json + whole_video_cc.json"
     } else {
-        Write-Fail "No *_kmeans_200.bin in output"
+        Write-Fail "Missing sidecars: $($sideMissing -join ', ')"
     }
 
     # 6.6 Confidence palette in report.html
-    $reportHtml = Join-Path $OUT "report.html"
+    $reportHtml = Join-Path $Report "report.html"
     if (Test-Path $reportHtml) {
         $html = Get-Content -Raw $reportHtml
         if ($html -match '#(00ff00|008000|ff0000|800000|ffff00)') {
@@ -208,18 +228,18 @@ if (-not $smoke75Out) {
         Write-Fail "report.html not produced"
     }
 
-    # 6.7 VSP_NBEST=1 in logs
-    $logFiles = Get-ChildItem $OUT -Filter "*.log" -ErrorAction SilentlyContinue
-    $nbestFound = $false
-    foreach ($lf in $logFiles) {
-        if (Select-String -Path $lf.FullName -Pattern 'VSP_NBEST=1|n-best' -Quiet) {
-            $nbestFound = $true; break
-        }
-    }
-    if ($nbestFound) {
-        Write-Pass "VSP_NBEST=1 default fired"
+    # 6.7 n-best decode artifact (run logs are not archived; assert nbest-*.json)
+    if (Get-ChildItem $Report -Filter "nbest-*.json" -ErrorAction SilentlyContinue) {
+        Write-Pass "VSP_NBEST=1 default fired (nbest-*.json present)"
     } else {
-        Write-Fail "No n-best evidence in logs"
+        Write-Fail "No nbest-*.json in report dir"
+    }
+
+    # 6.8 burned video exists (real naming: *_with_hyp.mp4)
+    if ($BurnDir -and (Get-ChildItem $BurnDir -Filter "*_with_hyp.mp4" -ErrorAction SilentlyContinue)) {
+        Write-Pass "Burned video(s) present (*_with_hyp.mp4)"
+    } else {
+        Write-Fail "No *_with_hyp.mp4 in burned_videos"
     }
 }
 Write-Host ""

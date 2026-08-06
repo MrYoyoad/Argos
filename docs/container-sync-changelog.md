@@ -2179,6 +2179,25 @@ against the freshly built `client-build-004` surfaced:
    Also removed a dead block in the `.ps1` (unmounted temp file + the same
    entrypoint bug, superseded by a native PowerShell JSON parse).
 
+4. **Invented output layout** (found on the second run, once the mechanism
+   checks finally executed) — the kit passed `-e VSP_OUTPUT_DIR=/data/out`
+   and mounted `/data/out`, but the pipeline honors no such variable: runs
+   land at `/workspace/flat_runs_archive/<ts>/client_outputs/` and vanished
+   with `--rm`, so all 8 mechanism checks failed against an empty mount.
+   Fixed by mounting the archive root and resolving the newest run dir.
+   While rewriting, the asserts were re-pointed at the REAL artifact
+   layout (verified against an actual run archive):
+   `client_outputs/report/{aggregated.json, report.csv, report.html,
+   nbest-*.json, agreement-*.json, word_confidence.json,
+   whole_video_cc.json, intelligibility_scores.csv}` and
+   `client_outputs/burned_videos/*_with_hyp.mp4` (kit expected
+   `*_burned.mp4`); report.csv has `is_score/is_tier/is_label` columns,
+   NOT a literal `niv` column; the k-means `.bin` never reaches the
+   archive (assert replaced with the three per-segment sidecars, incl.
+   the Watch-with-CC sidecar that is new in build-004); run logs are not
+   archived (n-best evidence assert now uses the `nbest-*.json` artifact).
+   Same rewrite mirrored into `post_install_check.ps1`.
+
 **Container action**: none for the image (checks live in the host-side kit,
 outside `container_payload_20260507/`). Kit fix ships with the build-004
 delivery USB. Lesson reinforced: scripts that have never run are not
