@@ -22,6 +22,15 @@ Suggested reading order:
 
 Sizes measured on this box, August 3, 2026.
 
+> **⚠️ SUPERSEDED (2026-08-06): every "box-only" claim below is now stale.** The full
+> box evacuation copied all box-only artifacts (eval set, checkpoints, results,
+> archives, seamless_interaction, config) to
+> `s3://yoad-vsp-transfer/vsp/box_evac_20260806/` ahead of decommission, and all
+> uncommitted code was pushed to the GitHub repos (av_hubert now lives at the
+> `MrYoyoad/av_hubert` fork). See
+> [box-evacuation-aug2026.md](box-evacuation-aug2026.md) for the full manifest.
+> The rows below remain accurate as a map of what was WHERE on the box.
+
 | Dataset | Path on this EC2 box | Size | Purpose | Copies elsewhere |
 |---|---|---|---|---|
 | English eval set | `datasets/english_data_2025_11_20/` | 2.4 GB | The 1,497-segment benchmark behind every headline number | **Box-only (no S3, gitignored) — irreplaceable.** Results live in `english_full_results/` (metrics CSVs are in git; the 1.7 GB `client_outputs/` is box-only) |
