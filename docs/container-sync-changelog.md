@@ -2077,8 +2077,11 @@ the same names), or `Path.home()` for golden-kmeans (resolves to
 ### 36. Complete-screen resilience: download preflight + open-folder handler + awaited resets (Aug 6, 2026)
 
 Uncommitted EC2 work found and committed during the Aug-2026 box evacuation.
-**NOT yet in `vsp_linux_container_FINAL_20260217/` overlay** (its `app.js` lacks
-`openOutputFolder`) — sync pending.
+**Synced to `vsp_linux_container_FINAL_20260217/` overlay Aug 6, 2026** (both
+files copied verbatim — pure front-end, no path translation needed).
+Verified on EC2 with a headless-Chromium suite (10 checks: reload-restore,
+zip download + page intact + button restore, open-folder alert fallback,
+Watch-with-CC, reset flow on a sandbox instance, no console errors).
 
 - `vsp-ui/app/static/app.js`:
   - `refreshStatus()` — after a page reload on a completed **full** run,
@@ -2102,6 +2105,5 @@ Uncommitted EC2 work found and committed during the Aug-2026 box evacuation.
 **Path translation notes**: None — pure front-end. `/api/open-folder`
 already exists in both EC2 and overlay `server.py`.
 
-**Container action**: copy both files into the overlay (adjusting the
-cache-buster is harmless) at next overlay refresh; next image rebuild
-picks them up via wholesale payload sync.
+**Container action**: DONE — both files copied into the overlay Aug 6,
+2026; next image rebuild picks them up via wholesale payload sync.
