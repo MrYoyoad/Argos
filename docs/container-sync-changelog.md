@@ -2073,3 +2073,35 @@ the same names), or `Path.home()` for golden-kmeans (resolves to
   metadata writer, --dry-run).
 
 **Verification**: `python3 -m pytest tests/unit/test_{confidence_breakdown,whole_video_cc,inject_transcription_from_audio}.py -q` → 52 passed. Visual: run a small pipeline, open `confidence_breakdown.html`, see per-video headers + numeric/currency words capped at yellow + low-conf segments stripped to grey. Open the UI Complete screen → "Watch with CC" plays the original video with segment-level coloured captions.
+
+### 36. Complete-screen resilience: download preflight + open-folder handler + awaited resets (Aug 6, 2026)
+
+Uncommitted EC2 work found and committed during the Aug-2026 box evacuation.
+**NOT yet in `vsp_linux_container_FINAL_20260217/` overlay** (its `app.js` lacks
+`openOutputFolder`) — sync pending.
+
+- `vsp-ui/app/static/app.js`:
+  - `refreshStatus()` — after a page reload on a completed **full** run,
+    restores the Complete screen (`progress.output_path` branch) so
+    Download/Open/CC stay reachable; previously only segment-only runs
+    were restored.
+  - `downloadOutput()` — preflights `/api/progress` before navigating to
+    `/api/download-output` (raw error JSON used to replace the page when
+    no output existed); button disabled with "Preparing download..." and
+    re-enabled after a 3 s grace period (navigation downloads emit no
+    completion event).
+  - New `openOutputFolder()` — POST `/api/open-folder {type: 'output'}`
+    with alert fallback showing the path when the server has no file
+    manager; wired to `btn-open-output`.
+  - `updateProgress()` cancelled path and `startNew()` — `await
+    refreshStatus()` **before** `showScreen('welcome')` (un-awaited
+    refresh raced the transition and rendered stale state; matches the
+    established await-refresh-after-reset pattern).
+- `vsp-ui/app/static/index.html` — `app.js?v=20260806` cache-buster.
+
+**Path translation notes**: None — pure front-end. `/api/open-folder`
+already exists in both EC2 and overlay `server.py`.
+
+**Container action**: copy both files into the overlay (adjusting the
+cache-buster is harmless) at next overlay refresh; next image rebuild
+picks them up via wholesale payload sync.
