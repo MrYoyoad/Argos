@@ -7,7 +7,8 @@ from pathlib import Path
 
 import torch
 
-VIDEO_EXTS = {".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi"}
+VIDEO_EXTS = {".mp4", ".mkv", ".webm", ".mov", ".m4v", ".avi",
+              ".mts", ".m2ts", ".ts", ".wmv", ".flv"}
 
 FALLBACK_WORDS = ["no", "audio"]  # written one-per-line into .wrd
 

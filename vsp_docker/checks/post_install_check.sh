@@ -251,14 +251,16 @@ sys.exit(1 if missing else 0)
     else
       pass "report.html has no old-palette hex codes"
     fi
-    # New palette: legend should mention the four color words. The exact element
-    # selector should be pinned in samples/README.md after first Layer-2 inspection.
+    # New palette: pinned against real production output (EC2 archive
+    # 20260804_115740 and the build-004 smoke run agree): the words
+    # blue/orange/teal each appear; "purple" is rendered via hex only and
+    # never appears as a word — do not assert it.
     PALETTE_OK=1
-    for word in blue orange purple teal; do
+    for word in blue orange teal; do
       if ! grep -qi "$word" "$HTML"; then PALETTE_OK=0; fi
     done
     if [ "$PALETTE_OK" -eq 1 ]; then
-      pass "report.html legend contains all 4 expected color words (blue/orange/purple/teal)"
+      pass "report.html legend contains the expected color words (blue/orange/teal)"
     else
       fail "report.html legend missing one or more new-palette color words"
     fi

@@ -21,7 +21,9 @@ def get_video_info(video_path: Path) -> tuple:
             '-of', 'default=noprint_wrappers=1:nokey=1',
             str(video_path)
         ], capture_output=True, text=True, timeout=30)
-        duration = float(result.stdout.strip())
+        # MPEG-TS containers can emit duplicated entries (program table +
+        # stream table) — always parse the first line only.
+        duration = float(result.stdout.strip().splitlines()[0])
 
         # FPS
         result = subprocess.run([
@@ -31,7 +33,7 @@ def get_video_info(video_path: Path) -> tuple:
             '-of', 'default=noprint_wrappers=1:nokey=1',
             str(video_path)
         ], capture_output=True, text=True, timeout=30)
-        fps_str = result.stdout.strip()
+        fps_str = result.stdout.strip().splitlines()[0].strip() if result.stdout.strip() else ""
         if '/' in fps_str:
             num, den = fps_str.split('/')
             fps = float(num) / float(den)
@@ -153,7 +155,8 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Find videos
-    exts = ['.mp4', '.mkv', '.webm', '.mov', '.m4v', '.avi']
+    exts = ['.mp4', '.mkv', '.webm', '.mov', '.m4v', '.avi',
+            '.mts', '.m2ts', '.ts', '.wmv', '.flv']
     videos = []
     for ext in exts:
         videos.extend(data_dir.glob(f'*{ext}'))

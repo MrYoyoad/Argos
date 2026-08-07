@@ -140,7 +140,9 @@ def main():
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
 
-    exts = {'.mp4', '.MP4', '.mov', '.MOV', '.mkv', '.MKV', '.avi', '.AVI', '.webm', '.WEBM'}
+    exts = {'.mp4', '.MP4', '.mov', '.MOV', '.mkv', '.MKV', '.avi', '.AVI', '.webm', '.WEBM',
+            '.m4v', '.M4V', '.mts', '.MTS', '.m2ts', '.M2TS', '.ts', '.TS',
+            '.wmv', '.WMV', '.flv', '.FLV'}
     videos = sorted(v for v in inp.iterdir() if v.is_file() and v.suffix in exts)
 
     if not videos:

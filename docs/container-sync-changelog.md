@@ -2202,3 +2202,37 @@ against the freshly built `client-build-004` surfaced:
 outside `container_payload_20260507/`). Kit fix ships with the build-004
 delivery USB. Lesson reinforced: scripts that have never run are not
 verification — the staging dry-run (M3) is mandatory before client trips.
+
+### 37. Five-format support was never end-to-end: 4 missed scanner sites + MPEG-TS probe crash (Aug 6, 2026)
+
+The build-004 `.mts` E2E fixture (a real MPEG-TS remux of the smoke sample)
+died at stage 0.1 with "No videos found" — proving the May-27 five-format
+feature (`1ef78ba`) was **never actually usable** for raw
+`.mts/.m2ts/.ts/.wmv/.flv` input in ANY tree (EC2 included). That commit
+updated the UI accept-list and the normalization/RAW_DIR globs but missed
+every downstream scanner:
+
+1. `auto_avsr/preparation/fast_segment.py` `exts` list (stage 0.1 — FATAL:
+   nothing enters the pipeline)
+2. `auto_avsr/asr_to_words_notime.py` `VIDEO_EXTS` (non-split ASR path)
+3. `scripts/pipeline/enhance_videos.py` `exts` (also lacked `.m4v`)
+4. `run_flat_english_pipeline.sh` FLAT_VID_DIR brace-glob in the
+   SEGMENTATION_ENABLED=0 metadata step (also lacked `.m4v`)
+
+Plus a second, independent layer: `fast_segment.py::get_video_info` did
+`num, den = fps_str.split('/')` on ffprobe's `r_frame_rate` — MPEG-TS
+containers emit the video stream TWICE (program + stream table), so the
+output is "30/1\n30/1" → unpack crash → "could not read duration" → SKIP.
+Fixed by parsing only the first line (duration probe hardened identically).
+
+All 4 sites + the probe fixed on EC2, direct-copied to overlay + payload
+(pipeline glob hand-merged — container-adapted file). Verified:
+`fast_segment.py` on the `.mts` fixture now yields 1 mp4 segment; new
+`tests/unit/test_format_support.py` (7 tests) pins every scanner site to
+`config.py::SUPPORTED_EXTENSIONS` and asserts deploy-tree copies stay
+byte-identical, all three trees.
+
+**Container action**: DONE in overlay + payload; **image rebuild required**
+(the first build-004 image predates this fix and was discarded before
+upload). Client-visible effect: raw camcorder `.MTS` files work end-to-end
+— the remux-to-mp4 stopgap is no longer needed.
