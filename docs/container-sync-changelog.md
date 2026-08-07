@@ -2236,3 +2236,32 @@ byte-identical, all three trees.
 (the first build-004 image predates this fix and was discarded before
 upload). Client-visible effect: raw camcorder `.MTS` files work end-to-end
 — the remux-to-mp4 stopgap is no longer needed.
+
+---
+
+## SHIPPED IN IMAGE `client-build-004` (built 2026-08-07, image `268f5765d4c0`)
+
+Everything from the May-2026 wave through entry 37 is in this image —
+the first image cut from a payload at EC2 HEAD parity. Entries newly
+shipped relative to `client-build-003` (May 13):
+
+- 32 — fairseq `do_sample`/`top_p` decode-crash patch *(was already in
+  build-003; newly shipped only to the Feb-2026 overlay-route machine)*
+- 33 — `VSP_FULL_OUTPUTS=1` + drag-drop visibility *(same note as 32)*
+- 34 — HF offline env vars *(same note as 32)*
+- 35 — spaCy cp310 wheels + make_burn dark patch *(same note as 32)*
+- 31→36-mislabel (May 25) — client UX bundle: transcription editing,
+  restart-loop fix, host-path surfacing, Archive/Restore, Edge drag-drop
+- May 26 — confidence-breakdown trust stack + numeric/currency cap
+- May 26 — Watch-with-CC + audio-injection UI and CLI
+- May 27 — five new input formats (retro-logged above)
+- 36 — complete-screen resilience UI fixes (Aug 6)
+- 37 — format-scanner fix + MPEG-TS probe fix (Aug 6; without this the
+  May-27 formats never worked)
+- decode segment-count guard in `lib/test_all_modules.sh` (Aug 6)
+
+Validation: in-build 37/37 module tests · post-install battery 15/15
+(incl. `--network=none` offline imports) · raw `.mts` fixture E2E to
+report+IS. Git tag `client-build-004` @ `afe1f69`. Deployment order:
+M3 staging dry-run → M1 Windows laptop → M2 Feb-2026 box (see
+docs/guides/client-fleet-status-aug2026.md).

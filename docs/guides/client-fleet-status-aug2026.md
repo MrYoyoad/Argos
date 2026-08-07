@@ -106,12 +106,13 @@ output) + a copy of the flip file on the USB; paste into §6.
 - **Contents** (reconstructed from git — no manifest was written at ship time, which is why this section exists): payload as of ~2026-05-12, incl. MBR display default, joint bands, `VSP_NBEST=1`, `VSP_FULL_OUTPUTS=1`, HF offline vars, fairseq patches, entries 1–35.
 - **Deployed to**: M1 only.
 
-### client-build-004 (planned — fill at build time)
-- **Built**: _(date)_ · tag `vsp-llm-pipeline:client-build-004` · tarball + sha256: _(fill)_
-- **Commit range**: `client-build-003` → _(HEAD at build)_; payload synced to EC2 HEAD incl. entries 32–36, May-25/26/27 wave, Aug-6 UI fixes, decode-counter test guard.
+### client-build-004 (built, awaiting field deployment)
+- **Built**: 2026-08-07 · image ID `268f5765d4c0` (60.9 GB) · tag `vsp-llm-pipeline:client-build-004` · git tag `client-build-004` @ `afe1f69` · tarball `vsp-image-client-build-004-20260807.tar.zst` + `.sha256` + 4 GB `part_*` splits at `s3://yoad-vsp-transfer/vsp/` _(sha256 recorded in the S3 sidecar)_.
+- **Commit range**: `client-build-003` (≈`abb2167`, May 12) → `afe1f69` (Aug 7). Ships: entries 32–35 (fairseq decode-crash patch, `VSP_FULL_OUTPUTS=1`, HF offline vars, cp310 spaCy), May-25 client UX bundle, May-26 trust stack + Watch-with-CC + audio injection, May-27 five formats, Aug-6 complete-screen UI fixes (entry 36), **entry 37 format-scanner fix** (without which the five formats never worked — found by this build's `.mts` E2E), decode-counter test guard.
 - **Default-EXCLUDE (research, not client-hardened)**: MBR word-confidence sidecars (`b3cbb77`), phonetic substitution (`d9e7c0a`/`c203978`), egla_kafe eval suite, Llama-3 prep (`vsp_llm.py`/`vsp_llm_decode.py` EC2 diffs stay out).
-- **Pre-build gates passed**: _(fill: test_payload_sync.sh PASS · 37/37 module tests · 194-passed unit suite · in-container mechanism asserts · .MTS fixture E2E)_
-- **Deployed to**: _(fill per machine with date)_
+- **Gates passed**: `test_payload_sync.sh` PASS (6 expected diffs) · 201-passed unit suite (incl. new `test_format_support.py`) · in-build 37/37 module tests · post-install battery **15/15** (mechanism asserts + `--network=none` offline imports) · **raw `.mts` fixture E2E** through the full pipeline to report+IS.
+- **Build cost note**: first build-004 image (`64190858248c`) was discarded pre-upload after the `.mts` E2E exposed entry 37; rebuilt same-tag with the fix.
+- **Deployed to**: nowhere yet — M3 staging dry-run first, then M1, then M2 (§4).
 
 ---
 
