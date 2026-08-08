@@ -5,6 +5,10 @@ independent of any employer infrastructure. A frozen self-contained snapshot of
 all of it exists as **`vsp_paper_kit_20260808.zip`** —
 S3: `s3://yoad-vsp-transfer/vsp/box_evac_20260806/paper_kit/vsp_paper_kit_20260808.zip`
 (also left at `/home/ubuntu/vsp_paper_kit_20260808.zip` for direct download).
+745 MB (780,980,618 bytes), sha256
+`434d7492f7ad1a2b099d1a29a8eec0203923c96f2fcf81810ba7cca4fa11d4f4`;
+demo videos are a stratified pick of 5 per IS tier from 25 distinct parent
+videos (reproducible from `results_key_data/report.csv`).
 
 **Confidentiality rule**: everything under `CONFIDENTIAL_client_demos/` (Egla-Kafe
 material) is client data — usable for private demonstrations only, NEVER in a
