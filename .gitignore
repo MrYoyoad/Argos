@@ -350,3 +350,4 @@ _archive_*/
 
 # Generated docx of the teammate briefing (regenerate via generate_teammate_briefing.py; distributed via drive).
 docs/guides/teammate-briefing-aug2026.docx
+/vsp_paper_kit_*.zip
