@@ -92,7 +92,23 @@ c3db4977ff404749116d97713a44b2312dd330faeff090c33f26e2e3140196ef  checkpoint_fre
 ## Restore on the new server
 
 1. `git clone --recursive https://github.com/MrYoyoad/Argos.git` (or from
-   `git-bundles/` if GitHub is unavailable).
+   `git-bundles/` if GitHub is unavailable — see below). GitHub access for a
+   transfer team is granted via a **read-only fine-grained PAT** scoped to the
+   four repos (Contents: Read-only), never via collaborator invites.
+
+   **Restore from bundles without GitHub** (bundles are full-history repo
+   snapshots):
+   ```bash
+   aws s3 cp s3://<bucket>/vsp/box_evac_20260806/git-bundles/ . --recursive
+   git clone Argos.bundle /home/ubuntu && cd /home/ubuntu
+   git submodule init
+   git config submodule.VSP-LLM.url  ../VSP-LLM.bundle
+   git config submodule.auto_avsr.url ../auto_avsr.bundle
+   git config submodule.av_hubert.url ../av_hubert.bundle
+   git submodule update      # checks out the pinned commits from the bundles
+   ```
+   (Bundles are read-only snapshots from 2026-08-08; repoint remotes to
+   GitHub later if write access is ever arranged.)
 2. Follow [ec2-setup-from-scratch.md](ec2-setup-from-scratch.md); wherever it
    says "old box", the source is now a `box_evac_20260806/` key.
 3. Pull `models/vsp_checkpoints/*` into `VSP-LLM/checkpoints/`, verify against
