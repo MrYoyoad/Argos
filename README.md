@@ -70,7 +70,8 @@ For detailed environment setup and package installation, see **[INSTALL.md](INST
 
 | Document | Description |
 |----------|-------------|
-| **[INSTALL.md](INSTALL.md)** | Environment setup, dependencies, verification |
+| **[Fresh server setup](docs/guides/ec2-setup-from-scratch.md)** | Build a new machine from scratch (clone → venvs → models → data); asset S3 keys in [box-evacuation-aug2026.md](docs/guides/box-evacuation-aug2026.md) |
+| **[INSTALL.md](INSTALL.md)** | Legacy in-place-update reference (see its banner; fresh machines use the row above) |
 | **[User guide for the desktop pipeline](docs/guides/user-guide-vsp-pipeline.pdf)** ([markdown source](docs/guides/user-guide-vsp-pipeline.md)) | Client-facing PDF: drag-drop, segment review, k-means choice, report colors, **Watch with CC** preview, **Inject from audio** workflow, troubleshooting |
 | [Audio injection workflow](docs/guides/audio-injection.md) | Use a clean separate audio recording to transcribe a silent / bad-audio video — two-offset alignment, CLI + UI, Whisper model choice |
 | [Architecture](docs/architecture.md) | Pipeline flow, data formats, directory layout |

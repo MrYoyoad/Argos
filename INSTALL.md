@@ -1,5 +1,13 @@
 # Installation Guide
 
+> **⚠️ For a FRESH machine, do NOT follow this file — follow
+> [docs/guides/ec2-setup-from-scratch.md](docs/guides/ec2-setup-from-scratch.md)**
+> (verified 2026-08-03). This legacy file predates it and contains known-stale
+> details (torch cu121 → real venvs are cu128 ASR / cu124 VSP; "Python 3.10+" →
+> both venvs are 3.9; the flask/opencv UI venv → the UI is pure stdlib). Asset
+> restore keys after the 2026-08-06 box evacuation:
+> [docs/guides/box-evacuation-aug2026.md](docs/guides/box-evacuation-aug2026.md).
+
 > **Note**: These instructions are for updating an existing working VSP pipeline environment. If you already have a functional container, these steps apply the latest improvements and bug fixes.
 
 ## Prerequisites

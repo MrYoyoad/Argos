@@ -245,7 +245,7 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | **This file (CLAUDE.md)** | Rules, overview, modular architecture, EC2/container sync rules |
 | [docs/architecture.md](docs/architecture.md) | Pipeline flow, directory structure, segments, data formats, dependencies |
 | [docs/development-guide.md](docs/development-guide.md) | Commands, virtual environments, workflows, testing, troubleshooting |
-| [docs/container-sync-changelog.md](docs/container-sync-changelog.md) | Pending changes 1-26 for Linux container sync (full detail) |
+| [docs/container-sync-changelog.md](docs/container-sync-changelog.md) | ~56 sync entries for Linux container sync (Jan–Aug 2026, full detail) |
 
 ### Research by Topic (one folder per research area, maps to backlog missions)
 
@@ -257,13 +257,13 @@ All documentation is organized under `docs/` with subdirectories for easy discov
 | [docs/beam-search/](docs/beam-search/) | Report 5 (N-best hypothesis aggregation, ROVER, MBR); [n_best_implementation.md](docs/beam-search/n_best_implementation.md) — Mission 6 shipped May 1, 2026: 5 offline aggregation methods (MBR, score-vote, conf-vote, safe, xseg-merge) gated by `VSP_NBEST=1`. **Production default is `hyp_mbr`** since May 2 2026 — emits per-word posterior conf; pure MBR ships as displayed output via `lib/outputs.sh` (`VSP_DISPLAY_METHOD` override available, default `hyp_mbr` when `aggregated.json` exists, else `top1`). Full 1,497-segment eval: WER 64.1→63.8, IS mean 2.532→2.547, NIV-Y 24.0%→23.9%, NIV-Y+P 61.7%→61.9%, judge Y+P 68.4%→71.1% (paired McNemar p=0.0002). | M6: Beam Aggregation (**SHIPPED**, MBR-default on prod) |
 | [docs/prompts/](docs/prompts/) | Report 3 (prompt engineering & context injection) | M8: Prompt Engineering |
 | [docs/finetuning/](docs/finetuning/) | Report 6 (fine-tuning analysis), training research notes | M9: AVSpeech Fine-Tuning |
-| [docs/paper/](docs/paper/) | VSP-LLM paper (PDF + text), 2025 Presentation, [Beamer presentation](docs/paper/beamer-presentation/) (75 slides, 5 sections + appendix). [Google Slides "Research Findings and Production Roadmap"](https://docs.google.com/presentation/d/1UNZVtpcODsTOFolRgVyo4h6jKTx_6Y5u/edit) — **February 2026 snapshot**; May-2026 work (MBR-default, agreement-aware bands, client UX bundle) is in the docs below, not the slides. | — |
+| [docs/paper/](docs/paper/) | VSP-LLM paper (PDF + text), 2025 Presentation. [Google Slides "Research Findings and Production Roadmap"](https://docs.google.com/presentation/d/1UNZVtpcODsTOFolRgVyo4h6jKTx_6Y5u/edit) — **February 2026 snapshot**; May-2026 work (MBR-default, agreement-aware bands, client UX bundle) is in the docs below, not the slides. | — |
 
 ### Operations
 
 | Folder | Contents |
 |--------|----------|
-| [docs/guides/](docs/guides/) | Installation, deployment, testing, container validation, transfer instructions, [container update guide](docs/guides/container-update-feb2026.md), [May-2026 deployment lessons](docs/guides/container-deployment-lessons-may2026.md). **Fleet inventory**: [client-fleet-status-aug2026.md](docs/guides/client-fleet-status-aug2026.md) — which standalone machine runs which version, feature/dependency gaps, per-machine update routes, build manifests, field-verification log; update after every build and field trip. **Client-facing user guide**: [user-guide-vsp-pipeline.md](docs/guides/user-guide-vsp-pipeline.md) / [.pdf](docs/guides/user-guide-vsp-pipeline.pdf) — drag-drop, segment review, k-means choice, report colors, troubleshooting, **Watch with CC** preview, **Inject from audio** workflow. **Audio-injection**: [audio-injection.md](docs/guides/audio-injection.md) — two-offset alignment scheme, CLI + UI walkthrough, troubleshooting. |
+| [docs/guides/](docs/guides/) | Installation, deployment, testing, container validation, transfer instructions, [container update guide](docs/guides/container-update-feb2026.md), [May-2026 deployment lessons](docs/guides/container-deployment-lessons-may2026.md). **Fresh-server setup**: [ec2-setup-from-scratch.md](docs/guides/ec2-setup-from-scratch.md) — the authoritative rebuild recipe; asset/data S3 keys after the Aug-2026 box evacuation in [box-evacuation-aug2026.md](docs/guides/box-evacuation-aug2026.md) (+ [s3-data-inventory-aug2026.md](docs/guides/s3-data-inventory-aug2026.md), [s3-cross-account-transfer-datasync.md](docs/guides/s3-cross-account-transfer-datasync.md)). **Fleet inventory**: [client-fleet-status-aug2026.md](docs/guides/client-fleet-status-aug2026.md) — which standalone machine runs which version, feature/dependency gaps, per-machine update routes, build manifests, field-verification log; update after every build and field trip. **Client-facing user guide**: [user-guide-vsp-pipeline.md](docs/guides/user-guide-vsp-pipeline.md) / [.pdf](docs/guides/user-guide-vsp-pipeline.pdf) — drag-drop, segment review, k-means choice, report colors, troubleshooting, **Watch with CC** preview, **Inject from audio** workflow. **Audio-injection**: [audio-injection.md](docs/guides/audio-injection.md) — two-offset alignment scheme, CLI + UI walkthrough, troubleshooting. |
 | [docs/features/](docs/features/) | Feature documentation (golden k-means, transcription, segmentation, etc.) |
 | [docs/changelog/](docs/changelog/) | Fix history (complete changelog, fix inventory, individual fix docs) |
 | [docs/backlog/](docs/backlog/) | Mission backlog (roadmap, Missions 1-14), cleanup log |
@@ -334,6 +334,12 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 
 ## Project Directory Structure
 
+> Dirs below marked `*` are NOT in git — they are populated during setup
+> ([ec2-setup-from-scratch.md](docs/guides/ec2-setup-from-scratch.md) §5) or by
+> pipeline runs. A fresh clone will not contain them. `requirements-asr.txt` /
+> `requirements-vsp.txt` are the authoritative Aug-2026 freezes; the root
+> `requirements.txt` is a known-stale Sep-2025 file kept for history.
+
 ```
 /home/ubuntu/
 ├── CLAUDE.md, README.md, requirements.txt     # Project root files
@@ -346,24 +352,24 @@ Located in `vsp_linux_container_FINAL_20260217/`:
 ├── vsp-ui/                # Core: Web UI
 ├── tests/                 # Core: Test suite
 │
-├── datasets/              # Data: Input video datasets
-├── data/                  # Data: AVSpeech dataset
-├── vsp_input/             # Data: Pipeline input (symlinks)
-├── vsp_input_tuning/      # Data: Tuning input (symlinks)
-├── flat/                  # Data: Intermediate flat format
-├── outputs/               # Data: Current pipeline outputs
+├── datasets/*             # Data: Input video datasets
+├── data/*                 # Data: AVSpeech dataset
+├── vsp_input/*            # Data: Pipeline input (symlinks)
+├── vsp_input_tuning/*     # Data: Tuning input (symlinks)
+├── flat/*                 # Data: Intermediate flat format
+├── outputs/*              # Data: Current pipeline outputs
 ├── english_full_results/  # Results: Full dataset baseline (WER 64.1%)
 ├── tuning_results/        # Results: Decode parameter experiments
 │
-├── face_alignment/        # Models: Face alignment (pipeline dependency)
-├── face_detection/        # Models: Face detection (pipeline dependency)
+├── face_alignment/*       # Models: Face alignment (pipeline dependency)
+├── face_detection/*       # Models: Face detection (pipeline dependency)
 ├── golden_weights/        # Models: Clustering baseline weights
-├── Llama-2-7b-hf/        # Models: LLM config files
+├── Llama-2-7b-hf/*       # Models: LLM config files
 │
 ├── docs/                  # Docs: ALL documentation (organized by topic)
 ├── scripts/               # Scripts: Utility scripts (tests, monitoring, build)
-├── logs/                  # Logs: Pipeline run logs
-├── build_assets/          # Build: Wheel caches & build venvs
+├── logs/*                 # Logs: Pipeline run logs
+├── build_assets/*         # Build: Wheel caches & build venvs
 │
 ├── presentation_materials_20260224/  # Presentations: PPTX from Feb 24, 2026 (~47 slides) + plots + poster frames
 ├── vsp_docker/            # Deploy: Docker build dir (galaxy_export/ working copy)

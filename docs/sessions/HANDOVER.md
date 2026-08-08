@@ -1,5 +1,21 @@
 # Handover log — VSP-LLM project
 
+## 2026-08-08 · .claude-argos · main — BOX EVACUATED for decommission; migration to new AWS account pending DataSync
+
+**The EC2 box is fully evacuated (Aug 6, audited Aug 8).** All code pushed to GitHub —
+av_hubert now lives at the private `MrYoyoad/av_hubert` fork (2 rescued prep scripts;
+`.gitmodules` updated); fresh `clone --recursive` verified. All box-only data (~95 GB:
+critical checkpoints + sha256, 1,497-segment benchmark, client datasets, results,
+archives incl. the `ron` sole-copy, git bundles, encrypted config/secrets tarball) is at
+`s3://yoad-vsp-transfer/vsp/box_evac_20260806/` — full manifest + restore:
+`docs/guides/box-evacuation-aug2026.md`. Secrets-tarball gpg passphrase held by Yoad.
+Since the July entries below: entry-37 five-format fix shipped (`tests/unit/test_format_support.py`),
+**client-build-004 built + uploaded to S3** (see `docs/guides/client-fleet-status-aug2026.md`),
+tags `client-build-004` + `ec2-v1.2` pushed. **Remaining**: DataSync to the new account
+(dest account ID + bucket + il-central-1 opt-in — runbook TODOs in
+`docs/guides/s3-cross-account-transfer-datasync.md`), then decommission only after
+destination verification. The entries below are historical (pre-evacuation).
+
 ## 2026-07-16 ~20:00 UTC · .claude-argos · main — guessing-game client package DONE; only the resolution sweep + report remain
 
 **Package SHIPPED**: `datasets/clients/egla_kafe/deliverables/EglaKafe_guessing_game_20260716.zip`

@@ -10,6 +10,13 @@ lives, configuration, Egla-Kafe results, how-to-run) now exists at
 Environment rebuild: [ec2-setup-from-scratch.md](ec2-setup-from-scratch.md). Client redeploy:
 [client-laptop-deployment-aug2026.md](client-laptop-deployment-aug2026.md).
 
+> **⚠️ 2026-08-06 — the EC2 box was fully evacuated ahead of decommission.** Every
+> "on this box" claim below is historical. All code is on GitHub (av_hubert at the
+> `MrYoyoad/av_hubert` fork), all box-only data/checkpoints/results are at
+> `s3://yoad-vsp-transfer/vsp/box_evac_20260806/` — manifest + restore steps:
+> [box-evacuation-aug2026.md](box-evacuation-aug2026.md). The HF token now lives in
+> the encrypted config tarball there, not on a box.
+
 **Reading order (day 1):** [CLAUDE.md](../../CLAUDE.md) → [docs/architecture.md](../architecture.md) →
 [docs/development-guide.md](../development-guide.md) → [docs/backlog/mission-backlog.md](../backlog/mission-backlog.md) → this doc.
 
@@ -163,10 +170,12 @@ Work done after the July-13 departure snapshot (details in the three 2026-07-16 
   ([overlap_consistency_analysis.md](../beam-search/overlap_consistency_analysis.md)):
   `hyp_xseg_merge` was a **silent no-op** on the 1,497 set — retire it; stream-window decode
   is a NO-GO.
-- **LRS3 search exhausted (Jul 16)**: the full LRS3-TED dataset (~270 GB) is **not** on this box
-  or in either account S3 bucket — only the 136 MB / 198-video sample tar
-  (`datasets/lrs3orig_sync.tar`). Llama-3.1 migration remains blocked on it; next steps are
-  off-box (email/Drive/colleagues). See [llama3-migration.md](../finetuning/llama3-migration.md) §4.
+- **LRS3 search exhausted (Jul 16)** — **CORRECTED Aug 3**: the July-16 sweep was wrong; the
+  **full LRS3 (133.8 GB) and full AVSpeech (519.9 GB) ARE in S3** under
+  `s3://yoad-vsp-transfer/argos/datasets/`, invisible to the instance role (GetObject scoped
+  to `vsp/*` only). Llama-3.1 data blocker is RESOLVED. See the "Major correction" in
+  [s3-data-inventory-aug2026.md](s3-data-inventory-aug2026.md) and
+  [llama3-migration.md](../finetuning/llama3-migration.md) §4.
 - **Amosi continuation deck**: `presentation_materials_20260224/Argos_VSP_v13_Amosi_2_generated.pptx`
   plus the ProjectFuture 20260720 deck (`Argos_VSP_ProjectFuture_20260720.pptx`, commit `573393b`).
 

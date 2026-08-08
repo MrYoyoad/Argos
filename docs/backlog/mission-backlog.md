@@ -43,7 +43,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
 ### Mission 3: VSP-LLM Max Length Fix
 - **Status**: COMPLETE / EXPERIMENTAL (January 29, 2026)
 - **Summary**: Fixed early prediction cutoff by adjusting `max_len_a` (1.0 -> 2.0) and `max_len_b` (0 -> 200)
-- **Detail**: [MISSION3_MAX_LEN_FIX.md](../changelog/MISSION3_MAX_LEN_FIX.md)
+- **Detail**: [MISSION3_MAX_LEN_FIX.md](../_archive/changelog/MISSION3_MAX_LEN_FIX.md)
 
 ### Mission 4: Confidence Scoring & Quality Filtering
 - **Status**: COMPLETE (April 30, 2026) — pending end-to-end smoke run on real GPU decode
@@ -130,7 +130,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - LLM-as-a-Judge: blind eval (Y+P=65%) + context-aware re-eval (Y+P=62%, context STRICTER — 230 downgrades vs 68 upgrades)
   - LLM Salvage: 165 recoverable segments (18.3% of failures), effective capture 51.1%
   - Spider/radar chart for IS profile comparison (reusable for future LLM comparisons)
-- **Research**: [Report 1](../evaluation/report_1_executive_assessment.md), [LLM Judge](../evaluation/llm_judge/llm_judge_analysis.md), [LLM Salvage](../evaluation/llm_salvage/llm_salvage_analysis.md), [IS Correlation](../evaluation/is_correlation_analysis.md)
+- **Research**: [Report 1](../_archive/reports/report_1_executive_assessment.md), [LLM Judge](../evaluation/llm_judge/llm_judge_analysis.md), [LLM Salvage](../evaluation/llm_salvage/llm_salvage_analysis.md), [IS Correlation](../evaluation/is_correlation_analysis.md)
 
 ---
 
@@ -232,7 +232,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Data curation: filter face detection confidence >0.9, remove extreme head pose >30°
 - **Expected Impact**: With proper data scaling (20K-50K segments) + stronger LLM (Llama 3.1 8B) + smart prompts, target 30-40% WER is realistic. Encoder adaptation for sub-30% WER. VALLR (ICCV 2025) showed Llama 3.2-3B achieves 18.7% WER on LRS3 vs our 25.4% — proving the Llama 3 family is fundamentally better for this task
 - **GPU Requirements**: Data expansion works on T4; encoder unfreezing needs V100+ or gradient checkpointing
-- **Research**: [Report 6 - Fine-Tuning Analysis](../finetuning/report_6_finetuning_analysis.md), [Training Research Notes](../finetuning/training-research-notes.md) (Sections 6-9), [Comparison Report](../finetuning/experiments/comparison_report.md), [LLM Upgrade Analysis](../evaluation/llm_upgrade_analysis.md), [Encoder vs LLM Bottleneck](../finetuning/encoder-vs-llm-bottleneck.md) ([PDF](../finetuning/encoder-vs-llm-bottleneck.pdf)) — May 2026 analysis showing LLM-choice ceiling is ~1.5% WER on LRS3, encoder-side work is the real lever
+- **Research**: [Report 6 - Fine-Tuning Analysis](../_archive/reports/report_6_finetuning_analysis.pdf), [Training Research Notes](../finetuning/training-research-notes.md) (Sections 6-9), [LLM Upgrade Analysis](../evaluation/llm_upgrade_analysis.md), [Encoder vs LLM Bottleneck](../finetuning/encoder-vs-llm-bottleneck.md) ([PDF](../finetuning/encoder-vs-llm-bottleneck.pdf)) — May 2026 analysis showing LLM-choice ceiling is ~1.5% WER on LRS3, encoder-side work is the real lever
 - **In flight (May 2026)**: [Llama 3.1 Migration Progress Log](../finetuning/llama3-migration.md) — Llama 2 → Llama 3.1 8B Instruct swap, paper-equivalent LRS3 training. Code prep complete (VSP-LLM submodule commits `7f8f5e3`, `e27b11b`), model download + smoke test + p4d.24xlarge training pending
 
 ---
@@ -274,7 +274,7 @@ Tracking completed missions and the prioritized backlog of future work for the A
   - Associate mouth crops with speaker identity (speaker diarization)
   - Handle overlapping speech regions (pipeline currently assumes single speaker)
   - Per-speaker output tracks in reports
-- **Research**: Known limitation noted in [Report 1](../evaluation/report_1_executive_assessment.md)
+- **Research**: Known limitation noted in [Report 1](../_archive/reports/report_1_executive_assessment.md)
 
 ---
 

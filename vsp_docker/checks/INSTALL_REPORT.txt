@@ -1,0 +1,11 @@
+VSP Pipeline — Install Report
+Generated: 2026-08-07T15:45:48Z
+Image: vsp-llm-pipeline:client-build-004
+Host: ip-10-2-9-25
+
+PASSES: 15
+FAILS:  0
+
+STATUS: READY
+All checks passed. The pipeline is ready to use.
+Launch via the desktop shortcut (VSP Pipeline).

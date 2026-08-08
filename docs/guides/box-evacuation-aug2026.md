@@ -13,6 +13,12 @@ regenerable (see "Explicit discards" below).
 
 ## Git — all code pushed (verified by fresh recursive clone)
 
+> **Post-evacuation update (2026-08-08 audit):** work continued after Aug 6 — HEAD of
+> each `main` supersedes the commit column below (notably: entry-37 format fix,
+> client-build-004; Argos ahead of `f87d782`, auto_avsr at `94e4c86`). All later
+> commits are pushed, tags `client-build-004` + `ec2-v1.2` pushed, and the S3 git
+> bundles were refreshed the same day.
+
 | Repo | Remote | Final commit | What was rescued |
 |---|---|---|---|
 | Argos (main, `/home/ubuntu`) | `MrYoyoad/Argos` | `f87d782` | 4 untracked binaries (3 project-brief docx + `Argos_VSP_Final.pptx`); uncommitted vsp-ui complete-screen fixes (sync item 36); 3 orphan gitlinks under `vsp_docker/galaxy_export/` removed (they broke `clone --recursive`); submodule pointers bumped |

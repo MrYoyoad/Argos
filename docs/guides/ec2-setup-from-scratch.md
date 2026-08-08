@@ -58,10 +58,12 @@ The main repo is `github.com/MrYoyoad/Argos` with three submodules
 |-----------|-----|
 | `VSP-LLM` | https://github.com/MrYoyoad/VSP-LLM.git |
 | `auto_avsr` | https://github.com/MrYoyoad/auto_avsr.git |
-| `av_hubert` | https://github.com/facebookresearch/av_hubert.git |
+| `av_hubert` | https://github.com/MrYoyoad/av_hubert.git |
 
 `MrYoyoad/*` repos are **private** — you need GitHub auth (a PAT with `repo` scope, or SSH
-keys) before cloning. `facebookresearch/av_hubert` is public.
+keys) before cloning. (Since 2026-08-06 `av_hubert` is the private MrYoyoad fork, not
+upstream `facebookresearch/av_hubert` — the fork carries the 2 flat→LRS3 prep scripts the
+pipeline needs, which upstream lacks.)
 
 ```bash
 # 2.1 GitHub auth (HTTPS + PAT shown; SSH works too)
@@ -78,10 +80,11 @@ shopt -s dotglob && mv argos_tmp/* /home/ubuntu/ && rmdir argos_tmp && shopt -u 
 # 2.3 Submodules
 cd /home/ubuntu
 git submodule update --init VSP-LLM auto_avsr av_hubert
-# Audit-box pinned commits (for verification):
-#   VSP-LLM   bdc61b351269b5c18542cc5d2594e6cdb83aec1c
-#   auto_avsr 5b2502f461e569cfd935828683a6104e38e2bce6
-#   av_hubert 258fb50e155134eec2c4b49c2ae8de267075fd18
+# Pinned commits as of the 2026-08-06 evacuation + Aug-8 push (for verification;
+# HEAD of each main supersedes these):
+#   VSP-LLM   c6d0e0125ab9949c071ab915c1251d91aeb301b1
+#   auto_avsr 94e4c860f5517a3d49ca68adea6da37057e32c4d
+#   av_hubert 33963c845218d7704a97aca7038bc83f0e53923b
 # Do NOT recursively init av_hubert's own submodules — av_hubert/fairseq stays an
 # EMPTY directory on the working box. The only fairseq that matters is VSP-LLM/fairseq
 # (authoritative for decode; installed editable in §4.3).
@@ -200,6 +203,14 @@ None of these are in git. Sources: **HF** = Hugging Face (needs token for gated 
 **S3** = `s3://conversation-datasets-733430125971/` via s5cmd (instance role auth),
 **old box** = copy from an existing box / attached drive (fastest; everything below exists
 on the current box at the listed destination path).
+
+> **⚠️ Old box decommissioned (evacuated 2026-08-06).** Wherever this table says
+> "old box", pull the matching key from
+> `s3://yoad-vsp-transfer/vsp/box_evac_20260806/` instead — checkpoints under
+> `models/vsp_checkpoints/` (with `vsp_checkpoints.sha256`), golden_weights +
+> face_detection under `models/small/`, datasets under `datasets/`, results under
+> `results/`. Full key manifest + restore steps:
+> [box-evacuation-aug2026.md](box-evacuation-aug2026.md).
 
 ```bash
 # HF token first (needed for gated Llama-2). Get a token with access to

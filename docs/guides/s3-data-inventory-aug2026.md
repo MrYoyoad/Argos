@@ -17,7 +17,7 @@ the EC2 role can read everything but write nothing here.
 | `conversation_datasets/egla_kafe/` | 3.0 GB | 68 | **Complete raw Egla-Kafe client corpus** — more than just the masters: 5 iPhone-4K masters `IMG_6821–6825` (1.49 GB), `קטעי דוברים/` per-speaker crops (42 files, 926 MB), `שפם/` worn-mustache scenes (5 videos, 224 MB), `סצנה 1/` (6 videos, 180 MB), `סצנה 2/` (5 videos, 164 MB), plus `manifest.csv` + upload scripts. Hebrew keys — use `LC_ALL=C.UTF-8` with s5cmd |
 | `conversation_datasets/ami/` | 1.1 GB | 5,176 | **AMI Meeting Corpus** slice: 14 room-view media files (0.68 GB) + full word-level annotation set (5,158 XML files + `annotations.tar`) |
 | `tmp/` | 0.4 GB | 2 | **July client deliverable bundles**: `EglaKafe_full_deliverables.zip` (385 MB, Jul 8 — the said-vs-heard conversation videos package) and `egla_kafe_meeting_package_20260713.zip` (24 MB — the July-13 meeting package) |
-| `conversation_datasets/seamless_interaction/` | 139 KB | 17 | **Scripts only, no data** — HF downloader for the 27 TB corpus. The real 1.9 GB sample lives only on the EC2 box (`datasets/seamless_interaction/`) |
+| `conversation_datasets/seamless_interaction/` | 139 KB | 17 | **Scripts only, no data** — HF downloader for the 27 TB corpus. The real 1.9 GB sample lived only on the EC2 box; **since 2026-08-06 it is in bucket 2 at `vsp/box_evac_20260806/datasets/datasets/seamless_interaction/`** |
 | `conversation_datasets/` root + `_smoke_test/` | ~30 KB | 14 | Downloader/validation tooling (`run_all.sh`, `validate.py`, per-dataset download scripts) + the bucket `README.md` explaining the curation (four candidate "real conversation" datasets for multi-speaker work, download-from-Mac pattern) |
 
 **Notable:**
@@ -27,9 +27,12 @@ the EC2 role can read everything but write nothing here.
   (RealTalk → AMI → Seamless → EgoCom).
 - The Egla-Kafe S3 copy is effectively the **whole raw client corpus** (masters + scenes + mustache
   + speaker crops), not merely the 5 masters.
-- Still **zero** keys matching `avspeech` / `english_data` / `lrs3` — the 1,497-segment eval set,
-  the AVSpeech processed set, and the LRS3 sample remain **EC2-box-only**, as do all 37 GB of
-  model checkpoints.
+- Still **zero** keys matching `avspeech` / `english_data` / `lrs3` in THIS bucket.
+  ~~The 1,497-segment eval set, the AVSpeech processed set, and the LRS3 sample remain
+  **EC2-box-only**, as do all 37 GB of model checkpoints.~~ **⚠️ SUPERSEDED 2026-08-06:**
+  all of these were evacuated to `s3://yoad-vsp-transfer/vsp/box_evac_20260806/`
+  (bucket 2 below) — nothing is box-only anymore. See
+  [box-evacuation-aug2026.md](box-evacuation-aug2026.md).
 
 ## Bucket 2 — `s3://yoad-vsp-transfer` — **holds the FULL LRS3 and FULL AVSpeech**
 
