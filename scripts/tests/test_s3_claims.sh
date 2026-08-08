@@ -18,8 +18,9 @@
 #      (head-object on the critical checkpoint; the instance role has
 #      GetObject but no ListBucket there).
 #
-# Read-only: uses `aws s3 ls` with the instance role. Skips (exit 0) when no
-# credentials / no network, so it can live in the general test suite.
+# Read-only: uses `aws s3 ls` (bucket 1) and `aws s3api head-object` (bucket 2,
+# which the instance role cannot list) with the instance role. Skips (exit 0)
+# when no credentials / no network, so it can live in the general test suite.
 
 set -uo pipefail
 
