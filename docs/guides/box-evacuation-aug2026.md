@@ -125,3 +125,38 @@ c3db4977ff404749116d97713a44b2312dd330faeff090c33f26e2e3140196ef  checkpoint_fre
 - `scripts/tests/test_s3_claims.sh` updated (claims 2–3 annotated as
   superseded; new check 4 head-objects the critical checkpoint in box_evac).
   Run 2026-08-06: **4 passed, 0 failed**.
+
+## Post-evacuation audit (2026-08-08) — final sweep results
+
+A full machine + git audit two days after the evacuation found and fixed:
+
+**Git side** — 5 unpushed Argos commits + 1 auto_avsr commit (Aug-7 work:
+entry-37 format fix, client-build-004) → pushed; tags `client-build-004` +
+`ec2-v1.2` → pushed (plain `git push` never sends tags); av_hubert branch
+tracking → `origin/main`; `upstream` remote restored to facebookresearch
+(a `git submodule sync` had rewritten it to the fork); S3 bundles for Argos +
+auto_avsr refreshed. Verified clean everywhere: no stashes, no local-only
+branches with unique commits, kaha_summary pushed, all heads on GitHub via
+`ls-remote`.
+
+**Disk side** — 7 uncovered items found and uploaded (~140 MB):
+`misc/generally_useful/` (the transferable style-guide hub — was in NO repo
+or bucket; consider folding into the `knowledge` repo later),
+`misc/decks/Argos_VSP_For_Orchard_May2026.pptx` + `Argos_VSP_Project_Review.pptx`
+(shipped decks that existed only in /tmp),
+`misc/windows_kits_as_shipped/vsp-{final,friend}-kit.zip` (the May-2026 kits
+as actually handed to clients), `results/client_demo_report_2026-05-03/`,
+`results/vspllm_working_data/whisper_txt_ar{,_txt}/`, `misc/smoke_75s.mp4`,
+plus marginals (`misc/ipython_history.sqlite`, `misc/_e2e_report_preview/`,
+`misc/ui_v9.png`).
+
+**Verified needs-nothing**: `/home/ubuntu/flat` (358M — derivable from covered
+`vsp_input` + `.transcriptions`), windows_kit dir (inside the S3 kit-extras
+tarball), B3 confidence JSONs (inside covered results trees), no crontabs, no
+custom systemd units, `/opt`//`/root`//`/usr/local/bin` stock, all dot-dirs
+cache-only.
+
+**⚠️ Last act before destruction**: the box kept receiving commits after the
+Aug-6 evacuation — run one final `git status` + `git push` sweep across all
+four repos (and refresh `git-bundles/` if anything moved) immediately before
+terminating the instance.
